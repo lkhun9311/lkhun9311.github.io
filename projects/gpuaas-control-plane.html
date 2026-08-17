@@ -25,13 +25,13 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="Ten defects found in a Kubernetes GPU control plane. A Kubernetes control plane for sharing one GPU pool across teams: quota, training admission, serving, and a request gateway." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=20260613-portfolio-65" />
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-a11y" />
 </head>
 <body>
   <div class="topbar">
     <div class="topbar-inner notranslate">
       <a class="site-name" href="../index.html#about">Kwanghun</a>
-      <nav>
+      <nav aria-label="Primary">
         <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language">
           <option value="en" selected>English</option>
           <option value="ko">Korean</option>
@@ -82,9 +82,10 @@
         <p>Training and inference behave in opposite ways under contention, and that single fact shapes the
         whole design.</p>
 
-        <div class="table-scroll">
+        <div class="table-scroll" data-hint="scroll sideways for the rest">
         <table>
-          <thead><tr><th></th><th>Inference</th><th>Training</th></tr></thead>
+          <caption class="sr-only">How inference and training differ under contention, and what each implies for enforcement.</caption>
+          <thead><tr><th scope="col"></th><th scope="col">Inference</th><th scope="col">Training</th></tr></thead>
           <tbody>
             <tr><td>duration</td><td>milliseconds to seconds</td><td>hours to days</td></tr>
             <tr><td>can it wait</td><td>no, a user is waiting</td><td>yes, overnight is fine</td></tr>
@@ -101,9 +102,10 @@
 
         <h2>Shape of the system</h2>
 
-        <div class="table-scroll">
+        <div class="table-scroll" data-hint="scroll sideways for the rest">
         <table>
-          <thead><tr><th>layer</th><th>question it answers</th><th>mechanism</th></tr></thead>
+          <caption class="sr-only">The four layers of the control plane and the mechanism each uses.</caption>
+          <thead><tr><th scope="col">layer</th><th scope="col">question it answers</th><th scope="col">mechanism</th></tr></thead>
           <tbody>
             <tr><td>Node</td><td>is there usable GPU capacity here</td><td><code>NodeHealth</code> taints unhealthy nodes so new pods avoid them</td></tr>
             <tr><td>Policy</td><td>how much may this tenant use</td><td><code>GPUQuotaPolicy</code> syncs into a Kueue ClusterQueue and a ResourceQuota</td></tr>
@@ -162,9 +164,10 @@
 
         <h2>What has been verified, and how</h2>
 
-        <div class="table-scroll">
+        <div class="table-scroll" data-hint="scroll sideways for the rest">
         <table>
-          <thead><tr><th>area</th><th>evidence</th><th>where</th></tr></thead>
+          <caption class="sr-only">Capabilities covered by KServe compared with those this project provides.</caption>
+          <thead><tr><th scope="col">area</th><th scope="col">evidence</th><th scope="col">where</th></tr></thead>
           <tbody>
             <tr><td>Controller lookup cost</td><td>O(N) to O(1); at 2,000 objects 1.64ms to 1.09us, slope flat</td><td>benchmark with its own informer cache</td></tr>
             <tr><td>Admission webhook</td><td>unit rules, apiserver-level tests, and a live cluster check passing 6/6</td><td>envtest plus kind with cert-manager</td></tr>
@@ -206,7 +209,7 @@
       </article>
     </main>
     <footer class="notranslate">
-      <div class="footer-links"><a href="mailto:honeys29311@gmail.com">Email</a><a href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer">GitHub</a><a href="#">LinkedIn</a></div>
+      <div class="footer-links"><a href="mailto:honeys29311@gmail.com">Email</a><a href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer">GitHub</a></div>
       <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
     </footer>
   </div>
