@@ -656,7 +656,9 @@ h2 {
     border-color 0.18s ease;
 }
 
-.content-card:hover {
+/* Only a card that IS a link lifts on hover. A project with no detail page used to lift and glow identically
+   and then do nothing when clicked, which is the affordance saying something untrue. */
+.content-card.is-linked:hover {
   background: var(--surface);
   border-color: rgba(214, 41, 118, 0.32);
   box-shadow: var(--shadow-pink);
@@ -678,7 +680,7 @@ h2 {
     transform 0.22s ease;
 }
 
-.content-card:hover .project-image {
+.content-card.is-linked:hover .project-image {
   filter: saturate(1.18) contrast(1.04);
   transform: scale(1.012);
 }
@@ -761,7 +763,7 @@ h2 {
   transition: color 0.16s ease;
 }
 
-.content-card:hover .card-title {
+.content-card.is-linked:hover .card-title {
   color: var(--ig-pink);
 }
 
@@ -1942,4 +1944,81 @@ body {
     margin-left: 0;
     width: 100%;
   }
+}
+
+/* Project cards: the card itself is the link to the detail page.
+   A "Details" button beside a card that already lifts and glows on hover promised two different things and
+   delivered one; the card looked clickable and was not. The anchor stays on the title — that is what a reader
+   aims at, and what a screen reader announces — and stretches over the card with a pseudo-element, because
+   nesting the GitHub link inside an anchor would be invalid HTML. */
+.content-card.is-linked {
+  position: relative;
+}
+
+.content-card .card-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.content-card .card-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.content-card .card-link:hover {
+  text-decoration: none;
+}
+
+/* Raised above the stretched anchor so it still receives its own clicks. */
+.content-card .project-actions {
+  position: relative;
+  z-index: 1;
+}
+
+/* Keyboard focus lands on the title anchor, whose own outline sits behind the card's contents; ringing the
+   whole card is what makes the focused target match the clickable one. */
+.content-card .card-link:focus-visible {
+  outline: none;
+}
+
+.content-card:has(.card-link:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* GitHub, and any other mark that replaced its own word.
+   The label lives in aria-label and title rather than in text: the mark is recognised faster than the word,
+   and a link whose only content is an icon is unreadable without one. */
+.icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  color: var(--text-soft);
+  border: 1px solid transparent;
+}
+
+.icon-link:hover,
+.icon-link:focus-visible {
+  color: var(--ig-pink);
+  border-color: rgba(214, 41, 118, 0.32);
+  background: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+}
+
+.footer-links .icon-link {
+  width: 30px;
+  height: 30px;
+}
+
+/* The GitHub button in the About row lost its word and with it most of its width, leaving a visible gap
+   between two full-width siblings. Matching their minimum keeps the row reading as three buttons rather than
+   as one that failed to render. */
+.about-links .text-border-link {
+  min-width: 118px;
+  justify-content: center;
 }
