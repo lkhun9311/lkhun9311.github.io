@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Bugs That Return Exit Code 0 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <!-- og:start -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="The Bugs That Return Exit Code 0 | Kwanghun Lee" />
+  <meta property="og:description" content="Ten defects found in a Kubernetes GPU control plane. Not one failed a test, crashed a process, or returned a non-zero exit code." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/bugs-that-return-exit-code-zero.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="The Bugs That Return Exit Code 0 | Kwanghun Lee" />
+  <meta name="twitter:description" content="Ten defects found in a Kubernetes GPU control plane. Not one failed a test, crashed a process, or returned a non-zero exit code." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="Ten defects found in a Kubernetes GPU control plane. Not one failed a test, crashed a process, or returned a non-zero exit code." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=20260613-portfolio-65" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav>
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language">
+          <option value="en" selected>English</option>
+          <option value="ko">Korean</option>
+          <option value="ja">Japanese</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="zh-TW">Chinese (Traditional)</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="vi">Vietnamese</option>
+          <option value="id">Indonesian</option>
+          <option value="hi">Hindi</option>
+          <option value="ar">Arabic</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container">
+    <main>
+      <section class="page-hero">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Writing</a>
+        <h1>The Bugs That Return Exit Code 0</h1>
+          <div class="article-meta">Writing · Aug 2026</div>
+        </section>
+        <article class="article-body">
+
+        <p><strong>Over one week of work on a Kubernetes GPU control plane I found ten defects. Not one of
+        them failed a test, crashed a process, or returned a non-zero exit code.</strong> Every single one
+        was found by reading a result that looked fine.</p>
+
+        <p>This post is about that class of bug, and about the three habits that turned out to catch them.
+        All the numbers below are measured on a local <code>kind</code> cluster with simulated GPU capacity —
+        I say what that does and does not prove at the end.</p>
+
+        <h2>The one that would have gone on a résumé</h2>
+
+        <p>I built a chaos experiment for FR-002: delete the pod behind a model backend, and measure how long
+        the gateway takes to recover. It printed this:</p>
+
+        <pre><code>first error   49.1ms after the delete
+recovered   3079.8ms after the delete
+gateway 5xx: 9      client failures: 9</code></pre>
+
+        <p>Nine and nine. I wrote it up as the headline result — <em>every failure the client experienced
+        appears in the gateway's own counters</em> — because that agreement is the thing that actually
+        matters. An on-call engineer sees the counters, not the client. A gateway whose metrics stay clean
+        through an outage its users felt is a worse problem than the outage.</p>
+
+        <p>It was a coincidence.</p>
+
+        <p><code>gpuaas_gateway_requests_total</code> is <strong>cumulative</strong>. The harness read the
+        value <em>after</em> the run and compared that absolute number against one run's client failures.
+        They happened to match once. I only found out because I had written "this experiment is n=1" in a
+        validity table and then went back to close that gap:</p>
+
+        <pre><code>run 1:  counter = 15
+run 2:  counter = 23
+run 3:  counter = 31      ← climbing, while every run saw 9 failures</code></pre>
+
+        <p>The comparison had never been a comparison. Two corrections followed. The harness now records the
+        counter before and after and compares the <strong>delta</strong>. And a client failure with curl code
+        <code>000</code> — no HTTP response at all, its own timeout or a refused connection — is
+        <strong>excluded</strong> from what the gateway must account for, because demanding that a proxy count
+        a request that never reached it is an impossible standard. That exclusion was the whole of the
+        residual discrepancy.</p>
+
+        <p>Three corrected runs, agreeing exactly:</p>
+
+        <table>
+          <thead><tr><th>run</th><th>first error</th><th>recovery</th><th>client failed</th><th>never answered</th><th>gateway 5xx delta</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>49.5ms</td><td>1295.3ms</td><td>2</td><td>1</td><td>1</td></tr>
+            <tr><td>2</td><td>48.6ms</td><td>1295.5ms</td><td>2</td><td>1</td><td>1</td></tr>
+            <tr><td>3</td><td>49.4ms</td><td>1294.6ms</td><td>2</td><td>1</td><td>1</td></tr>
+          </tbody>
+        </table>
+
+        <p><a href="https://github.com/lkhun9311/gpu-platform-control-plane/blob/main/hack/chaos-fr002-serving-pod-killed.md" target="_blank" rel="noopener noreferrer">Full write-up, including the mistake</a> ·
+        <a href="https://github.com/lkhun9311/gpu-platform-control-plane/blob/main/hack/chaos-fr002-serving-pod-killed.sh" target="_blank" rel="noopener noreferrer">the harness</a></p>
+
+        <p><strong>The lesson is not "check your metrics".</strong> It is that a single run cannot test an
+        agreement between two observers, because coincidence and correctness look identical at n=1.</p>
+
+        <h2>Habit 1 — put the instrument's resolution in the artifact</h2>
+
+        <p>The same experiment claimed a precision it did not have. The record said:</p>
+
+        <pre><code>"samplingIntervalMs": 100        ← a constant, written by hand
+"clientView": { "sampled": 3 }   ← 3 samples across 5.3 seconds</code></pre>
+
+        <p>A failing request <strong>blocks for its timeout</strong>. The timeout was 5 seconds. So the
+        sampling interval widens exactly when things break — 100ms while healthy, seconds while broken. The
+        resolution is worst precisely where the measurement matters.</p>
+
+        <p>Now the harness measures its own interval every run and writes it down. Any latency at or under
+        that interval is reported as a <strong>bound rather than a number</strong>:</p>
+
+        <pre><code>"samplingIntervalMs": 419.4,
+"latenciesMs": { "killToRecovery": 1294.6 }   ← ± one sample, stated</code></pre>
+
+        <p>A sibling experiment (FR-004, node degradation) had the same defect from the opposite direction —
+        there the resolution <em>was</em> recorded, and the record caught a half-finished fix on its own:</p>
+
+        <pre><code>"harnessResolutionMs": 95.9,
+"readyToUntaint": 37.9        ← smaller than the resolution that produced it</code></pre>
+
+        <p>Nothing failed. The document simply contradicted itself in a way a reader could see, because the
+        judgement criterion sat next to the measurement. Had the harness reported only latencies,
+        <code>37.9ms</code> would have looked like the best number in the run.</p>
+
+        <blockquote><p><strong>Measure the instrument every run and put the number in the artifact.
+        A constant cannot contradict the data beside it.</strong></p></blockquote>
+
+        <p><a href="https://github.com/lkhun9311/gpu-platform-control-plane/blob/main/hack/chaos-fr004-degraded-node.md" target="_blank" rel="noopener noreferrer">FR-004 write-up — three instrument defects, all documented</a></p>
+
+        <h2>Habit 2 — assert the reason, not just the outcome</h2>
+
+        <p>I built an admission webhook and wanted to know whether the apiserver was really calling it, so I
+        installed the real manifest into envtest and mutated it three ways.</p>
+
+        <table>
+          <thead><tr><th>mutation</th><th>what went red</th></tr></thead>
+          <tbody>
+            <tr><td>drop <code>UPDATE</code> from <code>operations</code></td><td>only the edit test — the edit was stored</td></tr>
+            <tr><td>point <code>resources</code> at another kind</td><td>rejection tests: "the webhook was not consulted"</td></tr>
+            <tr><td>misspell <code>clientConfig.path</code></td><td><em>corrected a prediction of mine</em></td></tr>
+          </tbody>
+        </table>
+
+        <p>I predicted the third would leave the rejection tests passing. Because <code>failurePolicy</code>
+        is <code>Fail</code>, a 404 from a wrong path becomes a rejection — so a completely broken webhook
+        still refuses writes, and a suite made only of rejection cases would score it full marks.</p>
+
+        <p>It did not pass. The tests assert <strong>why</strong> a write was refused, not merely that it
+        was, and a 404 does not mention <code>spec.image</code>:</p>
+
+        <pre><code>rejected for something other than the image:
+  failed calling webhook "vmltrainingjob.kb.io": the server could not find the requested resource</code></pre>
+
+        <p>Asserting the reason turned out to be a tighter net than the control case I had built for exactly
+        this purpose.</p>
+
+        <p><a href="https://github.com/lkhun9311/gpu-platform-control-plane/blob/main/internal/webhook/v1/admission_e2e_test.go" target="_blank" rel="noopener noreferrer">The end-to-end admission tests</a></p>
+
+        <h3>The same webhook could make objects undeletable</h3>
+
+        <p>Worth including because it is my own defect, and because of how it fails. The validator refuses to
+        intercept <code>DELETE</code>, and its comment says why: <em>a webhook able to refuse one could
+        strand an object nobody can remove.</em></p>
+
+        <p>The reasoning was right. The guard was on the wrong verb. A finalizer comes off with an ordinary
+        <code>UPDATE</code>, so an object whose spec the validator rejects — an empty image on something
+        created before the rule existed — could never complete the update that ends its deletion.</p>
+
+        <p>And it is silent. <code>kubectl delete</code> <strong>succeeds</strong>; it only stamps a
+        timestamp. The object then sits in <code>Terminating</code> with no error anywhere until somebody
+        notices it never went away.</p>
+
+        <p><a href="https://github.com/lkhun9311/gpu-platform-control-plane/blob/main/internal/webhook/v1/mltrainingjob_webhook.go" target="_blank" rel="noopener noreferrer">The validator, with the deletion bypass and the reasoning</a></p>
+
+        <h2>Habit 3 — ask what the test environment cannot see</h2>
+
+        <p>The controller's scalability had never been measured. Before writing a benchmark I asked why, and
+        the answer was the actual cause: <strong>the test suite built its reconciler with an uncached
+        client</strong>, while production hands it the manager's cached one.</p>
+
+        <p>Whether a <code>List</code> consults an index or walks the store, and how that grows with object
+        count, are properties of the cache alone. To a read-through client those questions do not even exist.
+        It was not that scalability had never been measured — it <em>could not have been</em>.</p>
+
+        <p>A benchmark standing up its own informer cache found the lookup was O(N) on the path
+        <strong>every</strong> job takes on the way in:</p>
+
+        <table>
+          <thead><tr><th>workloads</th><th>before</th><th>after</th></tr></thead>
+          <tbody>
+            <tr><td>100</td><td>116,602 ns/op</td><td>1,292 ns/op</td></tr>
+            <tr><td>500</td><td>485,338 ns/op</td><td>1,423 ns/op</td></tr>
+            <tr><td>2000</td><td>1,644,429 ns/op</td><td>1,094 ns/op</td></tr>
+          </tbody>
+        </table>
+
+        <p>With <code>MaxConcurrentReconciles</code> at its default of 1 for every reconciler, a per-item cost
+        proportional to namespace size drains the queue in O(N²).</p>
+
+        <p>The fix folds both claims a Workload can carry — the job-uid label and its owner references — into
+        one field index, so a single indexed <code>List</code> replaces a full label walk plus a full
+        namespace list.</p>
+
+        <h3>The ratio is weaker evidence than the ordering</h3>
+
+        <p>A 1503× speedup only says "something got faster" — a warm cache says that too. What it cannot
+        explain is this: <strong>before the fix a miss cost about 20× a hit; after it, a miss is
+        cheaper.</strong></p>
+
+        <p>A scan walks the whole store either way, so a miss can never come in under a hit. An index can:
+        the miss returns nothing to copy while the hit deep-copies the one object it matched. The
+        <em>inversion</em> is what proves the index is consulted.</p>
+
+        <blockquote><p><strong>Evidence for a performance fix should be a change in shape, not a
+        ratio.</strong></p></blockquote>
+
+        <p><a href="https://github.com/lkhun9311/gpu-platform-control-plane/blob/main/internal/controller/scale_bench_test.go" target="_blank" rel="noopener noreferrer">The benchmark, including why it builds its own cache</a></p>
+
+        <h2>What the dashboard is for</h2>
+
+        <p>The operator and gateway export seventeen metrics. They had never been scraped — and pointing a
+        Prometheus at them found that <strong>the operator was serving none of them.</strong></p>
+
+        <p>A kustomize overlay I had written patched the manager's <code>args</code> with a strategic merge.
+        <code>containers[].args</code> is a list of plain strings with no merge key, so a strategic merge
+        <em>replaces</em> it. The patch deleted <code>--metrics-bind-address</code>.</p>
+
+        <p>Everything looked healthy: kustomize built, apply succeeded, the Deployment rolled out, the webhook
+        worked, and a live webhook verification passed 6/6 — none of which touch the metrics port.</p>
+
+        <figure>
+          <img src="../assets/writing/gpu-platform-dashboard.png" alt="Grafana dashboard showing operator reconcile rates, node quarantine transitions, and gateway request rates with an upstream error spike" style="max-width:100%;height:auto;border-radius:8px;" />
+          <figcaption>The spike at 09:50 is the FR-002 run: the serving pod deleted, upstream errors rising, p99 blowing out, and the model recovering on the spare backend.</figcaption>
+        </figure>
+
+        <p>Two panels were wrong on first render, and both are worth naming. The error stat read
+        <strong>2.26</strong> — <code>increase()</code> extrapolates across scrape boundaries, so counting
+        discrete events with it yields fractions, and a displayed value that cannot be true undermines every
+        other number on the page. And the failed-jobs stat read <strong>No data</strong> where the answer was
+        zero; those are different facts, and only one of them is good news.</p>
+
+        <p>A dashboard fails quietly by design: a panel querying a metric that does not exist renders an empty
+        graph, and empty reads as <em>no traffic</em> — the most reassuring thing a dashboard can say. So the
+        repository checks panels two ways: every expression must parse as PromQL, <strong>and</strong> every
+        metric it names must exist in the Go source. Only the second catches a rename.</p>
+
+        <p><a href="https://github.com/lkhun9311/gpu-platform-control-plane/blob/main/hack/check-dashboard.sh" target="_blank" rel="noopener noreferrer">The dashboard checker</a> ·
+        <a href="https://github.com/lkhun9311/gpu-platform-control-plane/blob/main/hack/observability-kind.md" target="_blank" rel="noopener noreferrer">what the scrape path turned up</a></p>
+
+        <h2>The ten, and what they have in common</h2>
+
+        <table>
+          <thead><tr><th>defect</th><th>what it looked like</th></tr></thead>
+          <tbody>
+            <tr><td>Discarded-work counter summed completed rows too</td><td>green suite, gates passed</td></tr>
+            <tr><td>Scalability unmeasurable — uncached test client</td><td>every test passing</td></tr>
+            <tr><td>Kustomize overlay named a Service that cannot exist</td><td>build succeeded, YAML valid</td></tr>
+            <tr><td>Chaos harness units off by 10⁶</td><td>plausible until you read it</td></tr>
+            <tr><td>Chaos "reaction time" = one API round trip</td><td>a quotable number</td></tr>
+            <tr><td>Chaos run left the cluster degraded</td><td>the next run would have passed</td></tr>
+            <tr><td><code>.gitignore</code> swallowed a document</td><td><code>git status</code> clean</td></tr>
+            <tr><td><code>args</code> replaced, metrics port gone</td><td>rollout clean, 6/6 verification</td></tr>
+            <tr><td>Cumulative counter compared to one run</td><td>a perfect 9 = 9</td></tr>
+            <tr><td>Webhook could strand deleting objects</td><td><code>kubectl delete</code> succeeds</td></tr>
+          </tbody>
+        </table>
+
+        <p><strong>Ten defects, ten exit codes of zero.</strong> Nine were caught by reading a result
+        directly — adding numbers up, comparing names to names, reading a log, asking
+        <code>git show HEAD:&lt;path&gt;</code>. Exactly one was caught by tooling: the run record that
+        contradicted itself, because the resolution was stored beside the measurements.</p>
+
+        <p>That ratio is the actual finding. Tooling caught one in ten. The other nine needed somebody to
+        look at the answer and ask whether it could be true.</p>
+
+        <h2>What this does and does not establish</h2>
+
+        <p>Every number here was measured on a three-node <code>kind</code> cluster against
+        <strong>simulated</strong> <code>nvidia.com/gpu</code> capacity. No GPU in this project is real.</p>
+
+        <table>
+          <thead><tr><th>claim</th><th>status</th></tr></thead>
+          <tbody>
+            <tr><td>Two observers agree (delta, 3 runs)</td><td>measured</td></tr>
+            <tr><td>Lookup O(N) → O(1), slope flat</td><td>measured (envtest, isolated — not under concurrent load)</td></tr>
+            <tr><td>FR-004 detection 34.6–36.9s</td><td>measured — but it is <em>Kubernetes'</em> number, not the platform's</td></tr>
+            <tr><td>Controller reaction to a degraded node</td><td><strong>not measured</strong> — below the harness resolution, bound only</td></tr>
+            <tr><td>Gateway p99</td><td><strong>not quotable</strong> — histogram top-bucket artifact</td></tr>
+            <tr><td>Anything about real GPU behaviour</td><td><strong>nothing</strong></td></tr>
+          </tbody>
+        </table>
+
+        <p>The chaos runs measure control-plane reaction, not device behaviour. The backend is a stub, not
+        vLLM. And two of the ten defects above were found by external code review, which is its own argument
+        for having one.</p>
+
+        <p><a href="https://github.com/lkhun9311/gpu-platform-control-plane" target="_blank" rel="noopener noreferrer">Source</a> ·
+        the engineering journal behind each of these is in
+        <a href="https://github.com/lkhun9311/storage/tree/main/gpu-platform-control-plane/docs/engineering-journal" target="_blank" rel="noopener noreferrer">a separate repository</a>,
+        written as the work happened rather than after it.</p>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a href="mailto:honeys29311@gmail.com">Email</a><a href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer">GitHub</a><a href="#">LinkedIn</a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,ko,ja,zh-CN,zh-TW,es,fr,de,pt,ru,vi,id,hi,ar',
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+  </script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script type="text/javascript">
+    (function () {
+      var picker = document.getElementById('langPicker');
+      if (!picker) return;
+      var m = document.cookie.match(/googtrans=\/[^/]*\/([^;]+)/);
+      if (m) picker.value = decodeURIComponent(m[1]);
+      function apply(lang) {
+        var combo = document.querySelector('.goog-te-combo');
+        if (!combo) return false;
+        combo.value = lang;
+        combo.dispatchEvent(new Event('change'));
+        return true;
+      }
+      picker.addEventListener('change', function () {
+        var lang = this.value || 'en';
+        var n = 0;
+        (function t() { if (apply(lang) || n++ > 60) return; setTimeout(t, 120); })();
+      });
+    })();
+  </script>
+</body>
+</html>
