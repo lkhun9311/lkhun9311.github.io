@@ -484,9 +484,11 @@ h1 {
   transform: translateY(-1px);
 }
 
+/* 19px read as a decoration beside the label rather than as the mark itself, and it is the only thing left
+   in the buttons that lost their word. */
 .icon {
-  width: 19px;
-  height: 19px;
+  width: 22px;
+  height: 22px;
   display: inline-block;
   vertical-align: middle;
 }
@@ -1995,8 +1997,8 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   border-radius: 999px;
   color: var(--text-soft);
   border: 1px solid transparent;
@@ -2010,9 +2012,16 @@ body {
   text-decoration: none;
 }
 
+/* The footer is now three marks and nothing else, so they carry the whole row and are sized to be aimed at
+   rather than noticed. */
 .footer-links .icon-link {
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
+}
+
+.footer-links .icon-link svg {
+  width: 22px;
+  height: 22px;
 }
 
 /* The GitHub button in the About row lost its word and with it most of its width, leaving a visible gap
@@ -2021,4 +2030,16 @@ body {
 .about-links .text-border-link {
   min-width: 118px;
   justify-content: center;
+}
+
+/* Reading pages get their own column width.
+   The shared 1100px container held a 760px article body flush left, so a post had 32px of margin on one side
+   and roughly 300px on the other, and the title stretched far past the text under it. One column, centred,
+   with the hero and the body sharing the same edges. */
+.container.reading {
+  max-width: 840px;
+}
+
+.container.reading .article-body {
+  max-width: 100%;
 }
