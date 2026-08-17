@@ -54,6 +54,13 @@
     writing: {
       items: [
         {
+          title: "The Bugs That Return Exit Code 0",
+          url: "writing/bugs-that-return-exit-code-zero.html",
+          date: "2026-08", dateLabel: "Aug 2026",
+          desc: "Ten defects in a Kubernetes GPU control plane. None failed a test or crashed a process \u2014 nine were found by reading a result that looked fine.",
+          tags: ["Kubernetes", "Observability", "GPU"]
+        },
+        {
           title: "GPU Node Readiness for Kubernetes-native GPU Platforms",
           url: "writing/gpu-node-readiness.html",
           date: "2026-02", dateLabel: "Feb 2026",
