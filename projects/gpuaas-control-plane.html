@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GPUaaS Platform Control Plane | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <!-- og:start -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="GPUaaS Platform Control Plane | Kwanghun Lee" />
+  <meta property="og:description" content="Ten defects found in a Kubernetes GPU control plane. A Kubernetes control plane for sharing one GPU pool across teams: quota, training admission, serving, and a request gateway." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/projects/gpuaas-control-plane.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="GPUaaS Platform Control Plane | Kwanghun Lee" />
+  <meta name="twitter:description" content="Ten defects found in a Kubernetes GPU control plane. A Kubernetes control plane for sharing one GPU pool across teams: quota, training admission, serving, and a request gateway." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="Ten defects found in a Kubernetes GPU control plane. A Kubernetes control plane for sharing one GPU pool across teams: quota, training admission, serving, and a request gateway." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=20260613-portfolio-65" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav>
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language">
+          <option value="en" selected>English</option>
+          <option value="ko">Korean</option>
+          <option value="ja">Japanese</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="zh-TW">Chinese (Traditional)</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="vi">Vietnamese</option>
+          <option value="id">Indonesian</option>
+          <option value="hi">Hindi</option>
+          <option value="ar">Arabic</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects" class="active">Projects</a>
+        <a href="../index.html#writing">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container">
+    <main>
+      <section class="page-hero">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Projects</a>
+        <h1>GPUaaS Platform Control Plane</h1>
+          <div class="article-meta">Project · Kubernetes-native · Go</div>
+        </section>
+        <article class="article-body">
+
+        <p><strong>One line.</strong> A Kubernetes control plane that lets several teams share one GPU pool,
+        deciding who gets capacity, when a waiting job is let in, and what happens when a node or a backend
+        fails.</p>
+
+        <p><strong>Status.</strong> Runs on a local three-node <code>kind</code> cluster against simulated
+        <code>nvidia.com/gpu</code> capacity. No real GPU, no production traffic, inference backend is a stub.
+        Everything below is control-plane behaviour, verified as described and with the gaps listed.</p>
+
+        <p><a class="text-border-link compact" href="https://github.com/lkhun9311/gpu-platform-control-plane" target="_blank" rel="noopener noreferrer">Source on GitHub</a></p>
+
+        <h2>The problem it addresses</h2>
+
+        <p>Training and inference behave in opposite ways under contention, and that single fact shapes the
+        whole design.</p>
+
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th></th><th>Inference</th><th>Training</th></tr></thead>
+          <tbody>
+            <tr><td>duration</td><td>milliseconds to seconds</td><td>hours to days</td></tr>
+            <tr><td>can it wait</td><td>no, a user is waiting</td><td>yes, overnight is fine</td></tr>
+            <tr><td>right answer when over budget</td><td>reject immediately (429)</td><td>queue it</td></tr>
+            <tr><td>if you reject it</td><td>the client retries</td><td>a human must resubmit, and nobody is there at 3am</td></tr>
+            <tr><td>enforcement point</td><td>gateway, at the request</td><td>admission, at the job</td></tr>
+          </tbody>
+        </table>
+        </div>
+
+        <p>A Kubernetes <code>ResourceQuota</code> cannot express the training half. It refuses the creation
+        outright, so there is no queue: <code>kubectl apply</code> simply fails. That is correct for a request
+        and wrong for a job.</p>
+
+        <h2>Shape of the system</h2>
+
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th>layer</th><th>question it answers</th><th>mechanism</th></tr></thead>
+          <tbody>
+            <tr><td>Node</td><td>is there usable GPU capacity here</td><td><code>NodeHealth</code> taints unhealthy nodes so new pods avoid them</td></tr>
+            <tr><td>Policy</td><td>how much may this tenant use</td><td><code>GPUQuotaPolicy</code> syncs into a Kueue ClusterQueue and a ResourceQuota</td></tr>
+            <tr><td>Workload</td><td>does this go in now or wait</td><td><code>MLTrainingJob</code> submits a suspended Job that Kueue admits; <code>InferenceDeployment</code> runs serving replicas</td></tr>
+            <tr><td>Request</td><td>is this caller within budget right now</td><td>gateway with per-tenant token buckets and backend fallback</td></tr>
+          </tbody>
+        </table>
+        </div>
+
+        <h2>The decision that shaped it: quota counted twice</h2>
+
+        <p>Two systems can each be correct about GPU usage and still leave half the budget unusable.</p>
+
+        <p>Kueue counts a GPU when it <em>admits</em> a workload. A <code>ResourceQuota</code> counts a GPU
+        when the <em>pod exists</em>. Kueue admits a 4-GPU job and unsuspends it, pods appear, and the
+        ResourceQuota charges the same 4 GPUs again. On an 8-GPU budget the tenant is blocked at 4, and
+        neither system reports an error, because each is accurate about its own ledger.</p>
+
+        <p><strong>Resolution.</strong> When <code>trainingQuota</code> is on, the ResourceQuota stops
+        counting GPUs and the Kueue ClusterQueue is the single authority. CPU and memory stay with the
+        ResourceQuota, where nothing overlaps.</p>
+
+        <p><strong>What that costs.</strong> Two things, both worth stating before an interviewer finds
+        them. A safety net disappears: if the Kueue controller is down, nothing stops GPU consumption. And a
+        bypass opens: a pod created without the queue label takes GPUs with no limit at all. Closing the
+        second needs an admission webhook that rejects GPU pods lacking a queue label, and that is not built
+        yet.</p>
+
+        <p><a href="../writing/gpu-quota-control-plane.html">Longer write-up: designing the quota control plane</a></p>
+
+        <h2>Where this sits against existing tools</h2>
+
+        <p>Serving deployment overlaps KServe directly, and KServe is better at it: autoscaling,
+        scale-to-zero, canary traffic splitting, model-storage integration and runtime abstraction are all
+        there. Rebuilding them is not a defensible use of time.</p>
+
+        <p>The obvious next move looked like a quota unification layer: a controller making KServe GPU
+        consumption visible to Kueue, so training and inference draw on one tenant budget. Before writing it
+        I checked whether Kueue already did this. It does.</p>
+
+        <p>Kueue v0.18.3 ships a <code>deployment</code> integration. Each pod of a Deployment carrying the
+        <code>kueue.x-k8s.io/queue-name</code> label becomes its own Workload charged against the same
+        ClusterQueue a training Job uses. KServe in Standard mode produces ordinary Deployments, so the whole
+        controller collapses to setting one label.</p>
+
+        <p>Measured on kind with a ClusterQueue holding a single GPU of nominal quota, one serving Deployment
+        and one training Job both requesting it:</p>
+
+<pre><code>workloads   pod-serving-...     admitted: True
+            job-training-...    admitted: (pending)
+
+ClusterQueue   used=1   admitted=1   pending=1</code></pre>
+
+        <p>One budget, shared, with no custom code. <a href="https://github.com/lkhun9311/gpu-platform-control-plane/blob/main/hack/kueue-deployment-integration.sh" target="_blank" rel="noopener noreferrer">The experiment</a>
+        runs on a laptop and needs no GPU, because Kueue reserves quota at admission, before the scheduler
+        looks for a node.</p>
+
+        <p><strong>What is actually left.</strong> KServe owns the generated Deployment and reconciles it
+        continuously, so whether that queue label survives is a field-ownership question, not an accounting
+        one. If the label does not propagate from the InferenceService, the legitimate contribution is
+        propagation or an admission mutation, not a second ledger competing with Kueue's. That is the open
+        question, and it is smaller and more honest than the layer originally planned.</p>
+
+        <h2>What has been verified, and how</h2>
+
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th>area</th><th>evidence</th><th>where</th></tr></thead>
+          <tbody>
+            <tr><td>Controller lookup cost</td><td>O(N) to O(1); at 2,000 objects 1.64ms to 1.09us, slope flat</td><td>benchmark with its own informer cache</td></tr>
+            <tr><td>Admission webhook</td><td>unit rules, apiserver-level tests, and a live cluster check passing 6/6</td><td>envtest plus kind with cert-manager</td></tr>
+            <tr><td>Node degradation</td><td>kubelet stopped for real; quarantine, scheduling avoidance and recovery observed across 3 runs</td><td>chaos script with a steady-state gate</td></tr>
+            <tr><td>Backend loss</td><td>client view and gateway counters agree by delta across 3 runs</td><td>chaos script, two independent observers</td></tr>
+            <tr><td>Backend fallback</td><td>head backend removed; 20 of 20 requests served by the spare, counter delta exactly 20</td><td>separate experiment, since one backend cannot exercise a retry</td></tr>
+            <tr><td>Observability</td><td>17 metrics scraped by Prometheus, dashboard rendered, 4 alert rules validated by promtool</td><td>kube-prometheus-stack on kind</td></tr>
+            <tr><td>GitOps</td><td>7 ArgoCD Applications render and enumerate their resources; CRDs synced</td><td>ArgoCD on kind, auto-sync deliberately off</td></tr>
+          </tbody>
+        </table>
+        </div>
+
+        <p><a href="../writing/bugs-that-return-exit-code-zero.html">Ten defects found during that
+        verification, none of which failed a test</a></p>
+
+        <h2>Not verified</h2>
+
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th>gap</th><th>why it matters</th><th>what would close it</th></tr></thead>
+          <tbody>
+            <tr><td>Queue drain under concurrent reconciles</td><td>the O(N&sup2;) claim is inferred, not shown</td><td>load a namespace with thousands of CRs and watch workqueue depth</td></tr>
+            <tr><td>Alert rules firing</td><td>rules validate but have never fired</td><td>drive a condition past threshold and observe the alert</td></tr>
+            <tr><td>Real GPU behaviour</td><td>capacity is simulated throughout</td><td>one GPU session with a real device plugin</td></tr>
+            <tr><td>Real model server</td><td>the backend is a stub, not vLLM</td><td>same session, with actual model loading</td></tr>
+            <tr><td>Multi-instance rate limiting</td><td>token buckets are process-local, so N gateways means N times the limit</td><td>run three gateways and measure the pass rate</td></tr>
+            <tr><td>Quota bypass</td><td>a GPU pod without a queue label is unconstrained</td><td>the admission webhook described above</td></tr>
+          </tbody>
+        </table>
+        </div>
+
+        <h2>Related writing</h2>
+
+        <ul>
+          <li><a href="../writing/bugs-that-return-exit-code-zero.html">Ten Bugs, Zero Failed Tests</a>
+          &mdash; what the verification actually turned up, including two defects found by external review.</li>
+          <li><a href="../writing/gpu-quota-control-plane.html">Designing a Multi-tenant GPU Quota Control
+          Plane</a> &mdash; tenant isolation, admission policy, and where gateway limits differ from scheduler
+          limits.</li>
+          <li><a href="../writing/gpu-node-readiness.html">GPU Node Readiness</a> &mdash; validating a node
+          before admitting AI workloads onto it.</li>
+        </ul>
+
+        <p>An engineering journal written while the work happened, rather than reconstructed afterwards, is
+        kept in a
+        <a href="https://github.com/lkhun9311/storage/tree/main/gpu-platform-control-plane/docs/engineering-journal" target="_blank" rel="noopener noreferrer">separate repository</a>.</p>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a href="mailto:honeys29311@gmail.com">Email</a><a href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer">GitHub</a><a href="#">LinkedIn</a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,ko,ja,zh-CN,zh-TW,es,fr,de,pt,ru,vi,id,hi,ar',
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+  </script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script type="text/javascript">
+    (function () {
+      var picker = document.getElementById('langPicker');
+      if (!picker) return;
+      var m = document.cookie.match(/googtrans=\/[^/]*\/([^;]+)/);
+      if (m) picker.value = decodeURIComponent(m[1]);
+      function apply(lang) {
+        var combo = document.querySelector('.goog-te-combo');
+        if (!combo) return false;
+        combo.value = lang;
+        combo.dispatchEvent(new Event('change'));
+        return true;
+      }
+      picker.addEventListener('change', function () {
+        var lang = this.value || 'en';
+        var n = 0;
+        (function t() { if (apply(lang) || n++ > 60) return; setTimeout(t, 120); })();
+      });
+    })();
+  </script>
+</body>
+</html>
