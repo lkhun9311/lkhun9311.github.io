@@ -25,7 +25,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="Ten defects found in a Kubernetes GPU control plane. A Kubernetes control plane for sharing one GPU pool across teams: quota, training admission, serving, and a request gateway." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=20260817-scroll" />
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-milestones" />
 </head>
 <body>
   <div class="topbar">
@@ -71,24 +71,69 @@
         node quarantine and backend failover. Verification found ten defects that no test caught; an indexed
         cache lookup cut a per-reconcile cost from 1.64 ms to 1.09 us at 2,000 objects.</p>
 
-        <p><a class="text-border-link compact" href="https://github.com/lkhun9311/gpu-platform-control-plane" target="_blank" rel="noopener noreferrer">Source on GitHub</a></p>
+        <p class="repo-links">
+          <a class="repo-link" href="https://github.com/lkhun9311/gpu-platform-control-plane" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+            <span>gpu-platform-control-plane</span>
+          </a>
+          <a class="repo-link" href="https://github.com/lkhun9311/storage/tree/main/gpu-platform-control-plane/docs/engineering-journal" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+            <span>engineering journal</span>
+          </a>
+        </p>
 
         <p><strong>Scope.</strong> A three-node <code>kind</code> cluster with simulated
         <code>nvidia.com/gpu</code> capacity and a stub inference backend. What is measured is control-plane
         behaviour.</p>
 
-        <nav class="article-toc inline" aria-label="Contents">
-          <p class="toc-label">Contents</p>
-          <ul>
-            <li><a href="#the-problem-it-addresses">The problem it addresses</a></li>
-            <li><a href="#shape-of-the-system">Shape of the system</a></li>
-            <li><a href="#the-decision-that-shaped-it-quota-counted-twice">The decision that shaped it: quota counted twice</a></li>
-            <li><a href="#where-this-sits-against-existing-tools">Where this sits against existing tools</a></li>
-            <li><a href="#what-has-been-verified-and-how">What has been verified, and how</a></li>
-            <li><a href="#prototype-boundary">Prototype boundary</a></li>
-            <li><a href="#related-writing">Related writing</a></li>
-          </ul>
-        </nav>
+        <h2 id="milestones">Milestones<a class="anchor" href="#milestones" aria-label="Link to this section">#</a></h2>
+
+        <p>Each one merged behind a pull request and left something checkable behind. What each turned up is
+        in the linked writing.</p>
+
+        <ol class="milestones">
+          <li>
+            <p class="ms-head"><span class="ms-id">M1</span> <span class="ms-name">Four CRDs and the shape of the API</span> <span class="ms-when">Jun 2026 · #1–#8</span></p>
+            <p><code>NodeHealth</code>, <code>GPUQuotaPolicy</code>, <code>MLTrainingJob</code> and
+            <code>InferenceDeployment</code>. The question settled here was which four objects the platform
+            needs and what each is allowed to know about the others.</p>
+            <p class="ms-links"><a href="#the-problem-it-addresses">why a ResourceQuota cannot express the training half</a></p>
+          </li>
+          <li>
+            <p class="ms-head"><span class="ms-id">M2</span> <span class="ms-name">Reconcilers that converge</span> <span class="ms-when">Jun 2026 · #9–#10</span></p>
+            <p>Each controller made to drive its object toward a declared state and report where it got to,
+            rather than acting once on creation.</p>
+          </li>
+          <li>
+            <p class="ms-head"><span class="ms-id">M3</span> <span class="ms-name">Enforcement, and the double-counted GPU</span> <span class="ms-when">Jun 2026 · #11–#13</span></p>
+            <p>Quota and node quarantine made to actually bind. This is where Kueue's admission accounting and
+            a Kubernetes <code>ResourceQuota</code> were found charging the same GPU twice, which decided the
+            shape of the whole quota layer.</p>
+            <p class="ms-links"><a href="#the-decision-that-shaped-it-quota-counted-twice">the decision</a> ·
+            <a href="../writing/gpu-quota-control-plane.html">designing the quota control plane</a> ·
+            <a href="../writing/gpu-node-readiness.html">validating a node before admitting work</a></p>
+          </li>
+          <li>
+            <p class="ms-head"><span class="ms-id">M4</span> <span class="ms-name">Serving, and the request gateway</span> <span class="ms-when">Jun–Jul 2026 · #14, #18–#19</span></p>
+            <p>Serving replicas from an <code>InferenceDeployment</code>, and a gateway in front of them with
+            per-tenant token buckets and backend fallback. Fallback was measured separately from failure,
+            because one backend cannot exercise a retry.</p>
+          </li>
+          <li>
+            <p class="ms-head"><span class="ms-id">M5</span> <span class="ms-name">Admission that reads backend pressure</span> <span class="ms-when">Jul 2026 · #15–#17</span></p>
+            <p>An admission guard driven by a backend's KV-cache pressure rather than a fixed rate. It fails
+            open on stale telemetry, which is the right choice and also the reason it needs an alert that can
+            see its own absence.</p>
+            <p class="ms-links"><a href="../writing/bugs-that-return-exit-code-zero.html#observability-and-what-pointing-prometheus-at-it-found">the alert that could not fire</a></p>
+          </li>
+          <li>
+            <p class="ms-head"><span class="ms-id">M6</span> <span class="ms-name">A run that refuses itself</span> <span class="ms-when">Aug 2026 · #23–#26</span></p>
+            <p>A queue-policy replay lab whose runner will not publish a result it cannot stand behind: it
+            proves exclusive ownership of its worker for the whole run, and derives a verdict from named
+            claims instead of a free-text reason.</p>
+            <p class="ms-links"><a href="../writing/bugs-that-return-exit-code-zero.html">ten defects found while verifying all of this</a></p>
+          </li>
+        </ol>
 
         <h2 id="the-problem-it-addresses">The problem it addresses<a class="anchor" href="#the-problem-it-addresses" aria-label="Link to this section">#</a></h2>
 

@@ -1843,3 +1843,103 @@ body {
     display: none;
   }
 }
+
+/* Project page: repository links and the milestone list.
+   The source link used to be a text button reading "Source on GitHub", which said less than the icon plus
+   the repository's actual name — a reader scanning for the code recognises the mark faster than the phrase,
+   and the name tells them which repository they are about to open. */
+.article-body .repo-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  margin: 16px 0 22px;
+}
+
+.article-body .repo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 13px 6px 11px;
+  border: 1px solid var(--border, rgba(0,0,0,0.12));
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.article-body .repo-link:hover,
+.article-body .repo-link:focus-visible {
+  border-color: var(--accent, #b0389a);
+}
+
+.article-body .repo-link svg {
+  flex: none;
+}
+
+/* The milestone list replaced a table of contents. A contents block on a page this short only restates the
+   headings; the milestones are the one thing about this project a reader cannot reconstruct from the
+   sections themselves, and they carry the links out to the writing that covers each. */
+.article-body ol.milestones {
+  margin: 18px 0 30px;
+  padding: 0;
+  list-style: none;
+  counter-reset: none;
+}
+
+.article-body ol.milestones > li {
+  margin: 0;
+  padding: 14px 0 16px 0;
+  border-top: 1px solid var(--border, rgba(0,0,0,0.09));
+}
+
+.article-body ol.milestones > li:last-child {
+  border-bottom: 1px solid var(--border, rgba(0,0,0,0.09));
+}
+
+.article-body ol.milestones p {
+  margin: 0 0 6px;
+}
+
+.article-body .ms-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+}
+
+/* The identifier is the column a reader scans down, so it is fixed-width and monospaced rather than sized by
+   its own characters. */
+.article-body .ms-id {
+  min-width: 2.2em;
+  font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--accent, #b0389a);
+}
+
+.article-body .ms-name {
+  font-weight: 700;
+}
+
+.article-body .ms-when {
+  margin-left: auto;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-soft);
+  opacity: 0.8;
+}
+
+.article-body .ms-links {
+  font-size: 0.9rem;
+}
+
+@media (max-width: 640px) {
+  /* margin-left:auto pushes the date to the far right, which on a wrapped two-line head leaves it stranded
+     under the name. Below this width it simply follows the name. */
+  .article-body .ms-when {
+    margin-left: 0;
+    width: 100%;
+  }
+}
