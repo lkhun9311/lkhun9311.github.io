@@ -126,8 +126,7 @@
         counting GPUs and the Kueue ClusterQueue is the single authority. CPU and memory stay with the
         ResourceQuota, where nothing overlaps.</p>
 
-        <p><strong>What that costs.</strong> Two things, both worth stating before an interviewer finds
-        them. A safety net disappears: if the Kueue controller is down, nothing stops GPU consumption. And a
+        <p><strong>What that costs.</strong> Two things. A safety net disappears: if the Kueue controller is down, nothing stops GPU consumption. And a
         bypass opens: a pod created without the queue label takes GPUs with no limit at all. Closing the
         second needs an admission webhook that rejects GPU pods lacking a queue label, and that is not built
         yet.</p>
