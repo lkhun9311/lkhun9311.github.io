@@ -54,10 +54,10 @@
     writing: {
       items: [
         {
-          title: "The Bugs That Return Exit Code 0",
+          title: "Ten Bugs, Zero Failed Tests",
           url: "writing/bugs-that-return-exit-code-zero.html",
           date: "2026-08", dateLabel: "Aug 2026",
-          desc: "Ten defects in a Kubernetes GPU control plane. None failed a test or crashed a process \u2014 nine were found by reading a result that looked fine.",
+          desc: "Control-plane verification on a Kubernetes GPU operator. What each defect broke, how it was found, and the guard that now holds it.",
           tags: ["Kubernetes", "Observability", "GPU"]
         },
         {
