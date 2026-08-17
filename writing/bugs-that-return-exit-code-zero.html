@@ -68,7 +68,8 @@
         <article class="article-body">
 
         <p><strong>Scope.</strong> This is control-plane verification work on a Kubernetes operator and
-        gateway for multi-tenant GPU scheduling. Everything below runs on a local three-node
+        gateway for multi-tenant GPU scheduling
+        (<a href="../projects/gpuaas-control-plane.html">what the system is and why</a>). Everything below runs on a local three-node
         <code>kind</code> cluster against simulated <code>nvidia.com/gpu</code> capacity. No GPU here is
         real, no production traffic has touched it, and the inference backend is a stub rather than vLLM.
         What the experiments measure is how the control plane behaves, not how devices behave.</p>
@@ -94,8 +95,8 @@
             <tr><td>Cumulative counter compared against one run</td><td>compare deltas to deltas</td><td>a perfect 9 = 9</td><td>repeated the run</td><td>before/after delta in the record</td></tr>
             <tr><td>Webhook could strand deleting objects</td><td>never block a deletion</td><td><code>kubectl delete</code> succeeds</td><td>external code review</td><td>bypass when deletion has started</td></tr>
           </tbody>
-        </table>
         </div>
+        </table>
 
         <p>Three of these are worth the detail: an observability agreement that was a coincidence, a webhook
         that could make objects undeletable, and a lookup that could not be measured by the tests that
@@ -363,7 +364,8 @@ OUT=./ex/fr002.json ./hack/chaos-fr002-serving-pod-killed.sh
         The remaining gaps are ordered: queue behaviour under load first, then alert firing, then real
         hardware.</p>
 
-        <p><a href="https://github.com/lkhun9311/gpu-platform-control-plane" target="_blank" rel="noopener noreferrer">Source</a> ·
+        <p><a href="../projects/gpuaas-control-plane.html">Project overview</a> ·
+        <a href="https://github.com/lkhun9311/gpu-platform-control-plane" target="_blank" rel="noopener noreferrer">Source</a> ·
         <a href="https://github.com/lkhun9311/storage/tree/main/gpu-platform-control-plane/docs/engineering-journal" target="_blank" rel="noopener noreferrer">engineering journal</a>,
         written while the work happened rather than after it.</p>
 
