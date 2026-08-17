@@ -1666,7 +1666,10 @@ body {
   position: relative;
 }
 
-.article-body .table-scroll::after {
+/* Both the fade and the hint are gated on .is-overflowing, which assets/article.js sets only when the table
+   is genuinely wider than its container. Shown unconditionally they told a desktop reader to scroll a table
+   that already fit, which is worse than saying nothing: it teaches them to distrust the next hint. */
+.article-body .table-scroll.is-overflowing::after {
   content: "";
   position: absolute;
   top: 0;
@@ -1677,7 +1680,7 @@ body {
   background: linear-gradient(to right, rgba(255,255,255,0), var(--bg-fade, rgba(250,245,250,0.92)));
 }
 
-.article-body .table-scroll[data-hint]::before {
+.article-body .table-scroll.is-overflowing[data-hint]::before {
   content: attr(data-hint);
   display: block;
   margin-bottom: 6px;
@@ -1717,4 +1720,74 @@ body {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* Long-form article furniture: reading time, contents, heading anchors.
+   Added when the first article long enough to need them shipped; earlier posts are a few hundred words and
+   would look over-furnished with any of this. */
+.article-meta .read-time::before {
+  content: " · ";
+}
+
+.article-toc {
+  margin: 22px 0 30px;
+  padding: 16px 18px;
+  border: 1px solid var(--border, rgba(0,0,0,0.10));
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.article-toc > .toc-label {
+  margin: 0 0 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+
+.article-toc ol {
+  margin: 0;
+  padding-left: 1.15rem;
+  font-size: 0.95rem;
+}
+
+.article-toc li {
+  margin-bottom: 5px;
+}
+
+.article-toc a {
+  text-decoration: none;
+}
+
+.article-toc a:hover,
+.article-toc a:focus-visible {
+  text-decoration: underline;
+}
+
+/* Anchors sit to the left of the heading and only appear on hover, so the reading experience is unchanged
+   while the link is still reachable by keyboard. */
+.article-body h2 {
+  position: relative;
+  scroll-margin-top: 84px;
+}
+
+.article-body .anchor {
+  position: absolute;
+  left: -0.85em;
+  opacity: 0;
+  text-decoration: none;
+  font-weight: 400;
+  color: var(--text-soft);
+}
+
+.article-body h2:hover .anchor,
+.article-body .anchor:focus-visible {
+  opacity: 0.55;
+}
+
+@media (max-width: 760px) {
+  .article-body .anchor {
+    display: none;
+  }
 }
