@@ -25,7 +25,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="Ten defects found in a Kubernetes GPU control plane. A Kubernetes control plane for sharing one GPU pool across teams: quota, training admission, serving, and a request gateway." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=20260817-a11y" />
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-longform" />
 </head>
 <body>
   <div class="topbar">
@@ -63,7 +63,7 @@
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Projects</a>
         <h1>GPUaaS Platform Control Plane</h1>
-          <div class="article-meta">Project · Kubernetes-native · Go</div>
+          <div class="article-meta">Project · Kubernetes-native · Go<span class="read-time">6 min read</span></div>
         </section>
         <article class="article-body">
 
@@ -77,7 +77,20 @@
         <code>nvidia.com/gpu</code> capacity and a stub inference backend. What is measured is control-plane
         behaviour.</p>
 
-        <h2>The problem it addresses</h2>
+        <nav class="article-toc" aria-label="Contents">
+          <p class="toc-label">Contents</p>
+          <ol>
+            <li><a href="#the-problem-it-addresses">The problem it addresses</a></li>
+            <li><a href="#shape-of-the-system">Shape of the system</a></li>
+            <li><a href="#the-decision-that-shaped-it-quota-counted-twice">The decision that shaped it: quota counted twice</a></li>
+            <li><a href="#where-this-sits-against-existing-tools">Where this sits against existing tools</a></li>
+            <li><a href="#what-has-been-verified-and-how">What has been verified, and how</a></li>
+            <li><a href="#prototype-boundary">Prototype boundary</a></li>
+            <li><a href="#related-writing">Related writing</a></li>
+          </ol>
+        </nav>
+
+        <h2 id="the-problem-it-addresses">The problem it addresses<a class="anchor" href="#the-problem-it-addresses" aria-label="Link to this section">#</a></h2>
 
         <p>Training and inference behave in opposite ways under contention, and that single fact shapes the
         whole design.</p>
@@ -100,7 +113,7 @@
         outright, so there is no queue: <code>kubectl apply</code> simply fails. That is correct for a request
         and wrong for a job.</p>
 
-        <h2>Shape of the system</h2>
+        <h2 id="shape-of-the-system">Shape of the system<a class="anchor" href="#shape-of-the-system" aria-label="Link to this section">#</a></h2>
 
         <div class="table-scroll" data-hint="scroll sideways for the rest">
         <table>
@@ -115,7 +128,7 @@
         </table>
         </div>
 
-        <h2>The decision that shaped it: quota counted twice</h2>
+        <h2 id="the-decision-that-shaped-it-quota-counted-twice">The decision that shaped it: quota counted twice<a class="anchor" href="#the-decision-that-shaped-it-quota-counted-twice" aria-label="Link to this section">#</a></h2>
 
         <p>Two systems can each be correct about GPU usage and still leave half the budget unusable.</p>
 
@@ -135,7 +148,7 @@
 
         <p><a href="../writing/gpu-quota-control-plane.html">Longer write-up: designing the quota control plane</a></p>
 
-        <h2>Where this sits against existing tools</h2>
+        <h2 id="where-this-sits-against-existing-tools">Where this sits against existing tools<a class="anchor" href="#where-this-sits-against-existing-tools" aria-label="Link to this section">#</a></h2>
 
         <p>Serving deployment overlaps KServe directly, and KServe is better at it: autoscaling,
         scale-to-zero, canary traffic splitting, model-storage integration and runtime abstraction are all
@@ -162,7 +175,7 @@
         <a href="https://github.com/lkhun9311/gpu-platform-control-plane/blob/main/hack/kueue-deployment-integration.md" target="_blank" rel="noopener noreferrer">Experiment one</a>,
         <a href="https://github.com/lkhun9311/gpu-platform-control-plane/blob/main/hack/kserve-queue-label-propagation.md" target="_blank" rel="noopener noreferrer">experiment two</a>.</p>
 
-        <h2>What has been verified, and how</h2>
+        <h2 id="what-has-been-verified-and-how">What has been verified, and how<a class="anchor" href="#what-has-been-verified-and-how" aria-label="Link to this section">#</a></h2>
 
         <div class="table-scroll" data-hint="scroll sideways for the rest">
         <table>
@@ -183,7 +196,7 @@
         <p><a href="../writing/bugs-that-return-exit-code-zero.html">Ten defects found during that
         verification, none of which failed a test</a></p>
 
-        <h2>Prototype boundary</h2>
+        <h2 id="prototype-boundary">Prototype boundary<a class="anchor" href="#prototype-boundary" aria-label="Link to this section">#</a></h2>
 
         <p>Tested against simulated GPU capacity and a stub backend. Running this for real would need queue-label
         enforcement at admission, rate limiting that survives more than one gateway replica, validation on
@@ -191,7 +204,7 @@
         <a href="../writing/bugs-that-return-exit-code-zero.html">write-up</a> carries the full claim-by-claim
         table of what is measured and what is not.</p>
 
-        <h2>Related writing</h2>
+        <h2 id="related-writing">Related writing<a class="anchor" href="#related-writing" aria-label="Link to this section">#</a></h2>
 
         <ul>
           <li><a href="../writing/bugs-that-return-exit-code-zero.html">Ten Bugs, Zero Failed Tests</a>
@@ -244,5 +257,6 @@
       });
     })();
   </script>
+  <script defer src="../assets/article.js?v=20260817"></script>
 </body>
 </html>
