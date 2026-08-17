@@ -162,21 +162,41 @@
     );
   }
 
+  /* The GitHub mark, inlined because the page loads no icon font and a CSP blocks remote images.
+     aria-label carries what the removed word said, so nothing is lost to a screen reader. */
+  function githubLink(href, label) {
+    return (
+      '<a class="icon-link" href="' + esc(href) + '" target="_blank" rel="noopener noreferrer"' +
+      ' aria-label="' + esc(label) + '" title="' + esc(label) + '">' +
+      '<svg viewBox="0 0 16 16" width="19" height="19" aria-hidden="true" focusable="false">' +
+      '<path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>' +
+      "</svg></a>"
+    );
+  }
+
   function cardProject(it) {
     var stacks = (it.stacks || []).map(function (s) {
       return '<span class="stack ' + esc(s[1]) + '">' + esc(s[0]) + "</span>";
     }).join("");
+    /* The whole card is the link to the detail page, not a "Details" button beside the title. A card that
+       looks clickable and is not is a worse affordance than no affordance, and a reader who wants the detail
+       page is aiming at the title anyway. The anchor stays on the title and stretches over the card with a
+       pseudo-element, because nesting the GitHub link inside an anchor would be invalid; the actions row is
+       raised above it so that link still receives its own clicks. */
+    var title = esc(it.title);
+    if (it.url) {
+      title = '<a class="card-link" href="' + BASE + esc(it.url) + '">' + title + "</a>";
+    }
     return (
-      '<div class="dated-card"><article class="content-card">' +
+      '<div class="dated-card"><article class="content-card' + (it.url ? " is-linked" : "") + '">' +
       '<div class="project-image" aria-hidden="true"></div>' +
       '<div class="card-content"><div class="project-top"><div>' +
       '<div class="label notranslate">' + esc(it.label) + "</div>" +
-      '<h3 class="card-title notranslate">' + esc(it.title) + "</h3>" +
+      '<h3 class="card-title notranslate">' + title + "</h3>" +
       '<p class="authors notranslate">' + esc(it.authors) + "</p>" +
       '<span class="card-date notranslate">' + esc(it.dateLabel) + "</span>" +
       '</div><div class="project-actions notranslate">' +
-      (it.url ? '<a class="text-border-link compact" href="' + BASE + esc(it.url) + '">Details</a>' : "") +
-        '<a class="text-border-link compact" href="' + esc(it.github) + '" target="_blank" rel="noopener noreferrer">GitHub</a>' +
+      githubLink(it.github, esc(it.title) + " on GitHub") +
       "</div></div>" +
       '<div class="detail-block"><p>' + esc(it.desc) + "</p>" +
       '<div class="stack-list notranslate">' + stacks + "</div></div>" +
