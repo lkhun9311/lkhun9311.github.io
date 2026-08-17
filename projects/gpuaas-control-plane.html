@@ -67,15 +67,15 @@
         </section>
         <article class="article-body">
 
-        <p><strong>One line.</strong> A Kubernetes control plane that lets several teams share one GPU pool,
-        deciding who gets capacity, when a waiting job is let in, and what happens when a node or a backend
-        fails.</p>
-
-        <p><strong>Status.</strong> Runs on a local three-node <code>kind</code> cluster against simulated
-        <code>nvidia.com/gpu</code> capacity. No real GPU, no production traffic, inference backend is a stub.
-        Everything below is control-plane behaviour, verified as described and with the gaps listed.</p>
+        <p>Four Go controllers and a request gateway that coordinate Kueue admission, tenant GPU quota,
+        node quarantine and backend failover. Verification found ten defects that no test caught; an indexed
+        cache lookup cut a per-reconcile cost from 1.64 ms to 1.09 us at 2,000 objects.</p>
 
         <p><a class="text-border-link compact" href="https://github.com/lkhun9311/gpu-platform-control-plane" target="_blank" rel="noopener noreferrer">Source on GitHub</a></p>
+
+        <p><strong>Scope.</strong> A three-node <code>kind</code> cluster with simulated
+        <code>nvidia.com/gpu</code> capacity and a stub inference backend. What is measured is control-plane
+        behaviour.</p>
 
         <h2>The problem it addresses</h2>
 
@@ -140,32 +140,26 @@
         scale-to-zero, canary traffic splitting, model-storage integration and runtime abstraction are all
         there. Rebuilding them is not a defensible use of time.</p>
 
-        <p>The obvious next move looked like a quota unification layer: a controller making KServe GPU
-        consumption visible to Kueue, so training and inference draw on one tenant budget. Before writing it
-        I checked whether Kueue already did this. It does.</p>
+        <p>During design review, before writing any of it, I tested whether the combination already did
+        this. Two experiments on kind, no GPU needed, because Kueue reserves quota at admission rather than
+        at scheduling.</p>
 
-        <p>Kueue v0.18.3 ships a <code>deployment</code> integration. Each pod of a Deployment carrying the
-        <code>kueue.x-k8s.io/queue-name</code> label becomes its own Workload charged against the same
-        ClusterQueue a training Job uses. KServe in Standard mode produces ordinary Deployments, so the whole
-        controller collapses to setting one label.</p>
+        <p><strong>Does Kueue charge a serving Deployment against the training budget?</strong> Yes. One
+        ClusterQueue with a single GPU, one serving Deployment and one training Job both requesting it:
+        <code>used=1 admitted=1 pending=1</code>, the serving pod holding the GPU and the Job queued behind
+        it.</p>
 
-        <p>Measured on kind with a ClusterQueue holding a single GPU of nominal quota, one serving Deployment
-        and one training Job both requesting it:</p>
+        <p><strong>Does a queue label on an InferenceService reach the Deployment KServe generates, and stay
+        there?</strong> Yes to both. The label arrives on
+        <code>label-probe-predictor</code> and survives a forced reconcile, and Kueue creates a Workload for
+        the serving pod. Survival was checked separately from arrival, because a label that lands once and is
+        stripped later holds quota until something triggers a reconcile and then stops with no error.</p>
 
-<pre><code>workloads   pod-serving-...     admitted: True
-            job-training-...    admitted: (pending)
-
-ClusterQueue   used=1   admitted=1   pending=1</code></pre>
-
-        <p>One budget, shared, with no custom code. <a href="https://github.com/lkhun9311/gpu-platform-control-plane/blob/main/hack/kueue-deployment-integration.sh" target="_blank" rel="noopener noreferrer">The experiment</a>
-        runs on a laptop and needs no GPU, because Kueue reserves quota at admission, before the scheduler
-        looks for a node.</p>
-
-        <p><strong>What is actually left.</strong> KServe owns the generated Deployment and reconciles it
-        continuously, so whether that queue label survives is a field-ownership question, not an accounting
-        one. If the label does not propagate from the InferenceService, the legitimate contribution is
-        propagation or an admission mutation, not a second ledger competing with Kueue's. That is the open
-        question, and it is smaller and more honest than the layer originally planned.</p>
+        <p>So the budget unifies through configuration. The planned controller came out of the design before
+        any of it existed: it would have been a second ledger beside Kueue's, wrong the first time a replica
+        scaled or a rollout overlapped. Two scripts replaced an implementation.
+        <a href="https://github.com/lkhun9311/gpu-platform-control-plane/blob/main/hack/kueue-deployment-integration.md" target="_blank" rel="noopener noreferrer">Experiment one</a>,
+        <a href="https://github.com/lkhun9311/gpu-platform-control-plane/blob/main/hack/kserve-queue-label-propagation.md" target="_blank" rel="noopener noreferrer">experiment two</a>.</p>
 
         <h2>What has been verified, and how</h2>
 
@@ -187,21 +181,13 @@ ClusterQueue   used=1   admitted=1   pending=1</code></pre>
         <p><a href="../writing/bugs-that-return-exit-code-zero.html">Ten defects found during that
         verification, none of which failed a test</a></p>
 
-        <h2>Not verified</h2>
+        <h2>Prototype boundary</h2>
 
-        <div class="table-scroll">
-        <table>
-          <thead><tr><th>gap</th><th>why it matters</th><th>what would close it</th></tr></thead>
-          <tbody>
-            <tr><td>Queue drain under concurrent reconciles</td><td>the O(N&sup2;) claim is inferred, not shown</td><td>load a namespace with thousands of CRs and watch workqueue depth</td></tr>
-            <tr><td>Alert rules firing</td><td>rules validate but have never fired</td><td>drive a condition past threshold and observe the alert</td></tr>
-            <tr><td>Real GPU behaviour</td><td>capacity is simulated throughout</td><td>one GPU session with a real device plugin</td></tr>
-            <tr><td>Real model server</td><td>the backend is a stub, not vLLM</td><td>same session, with actual model loading</td></tr>
-            <tr><td>Multi-instance rate limiting</td><td>token buckets are process-local, so N gateways means N times the limit</td><td>run three gateways and measure the pass rate</td></tr>
-            <tr><td>Quota bypass</td><td>a GPU pod without a queue label is unconstrained</td><td>the admission webhook described above</td></tr>
-          </tbody>
-        </table>
-        </div>
+        <p>Tested against simulated GPU capacity and a stub backend. Running this for real would need queue-label
+        enforcement at admission, rate limiting that survives more than one gateway replica, validation on
+        actual devices, and alert rules proven to fire. The
+        <a href="../writing/bugs-that-return-exit-code-zero.html">write-up</a> carries the full claim-by-claim
+        table of what is measured and what is not.</p>
 
         <h2>Related writing</h2>
 
@@ -215,8 +201,7 @@ ClusterQueue   used=1   admitted=1   pending=1</code></pre>
           before admitting AI workloads onto it.</li>
         </ul>
 
-        <p>An engineering journal written while the work happened, rather than reconstructed afterwards, is
-        kept in a
+        <p>An engineering journal is kept in a
         <a href="https://github.com/lkhun9311/storage/tree/main/gpu-platform-control-plane/docs/engineering-journal" target="_blank" rel="noopener noreferrer">separate repository</a>.</p>
 
       </article>
