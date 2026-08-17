@@ -32,7 +32,8 @@
           authors: "Solo",
           date: "2026-02-06",
           dateLabel: "Feb 6, 2026",
-          github: "https://github.com/lkhun9311/gpu-platform-control-plane",
+          url: "projects/gpuaas-control-plane.html",
+            github: "https://github.com/lkhun9311/gpu-platform-control-plane",
           desc: "A control-plane project for GPU-based AI workloads, focused on node readiness, tenant-level GPU governance, admission control, inference workload management, and operational observability.",
           tags: ["GPU", "Kubernetes", "Control Plane"],
           stacks: [["Kubernetes", "kubernetes"], ["Python", "python"], ["Go", "go"], ["GPU", "gpu"], ["vLLM", "vllm"], ["Prometheus", "prometheus"], ["Grafana", "grafana"], ["AWS", "aws"]]
@@ -174,7 +175,8 @@
       '<p class="authors notranslate">' + esc(it.authors) + "</p>" +
       '<span class="card-date notranslate">' + esc(it.dateLabel) + "</span>" +
       '</div><div class="project-actions notranslate">' +
-      '<a class="text-border-link compact" href="' + esc(it.github) + '" target="_blank" rel="noopener noreferrer">GitHub</a>' +
+      (it.url ? '<a class="text-border-link compact" href="' + BASE + esc(it.url) + '">Details</a>' : "") +
+        '<a class="text-border-link compact" href="' + esc(it.github) + '" target="_blank" rel="noopener noreferrer">GitHub</a>' +
       "</div></div>" +
       '<div class="detail-block"><p>' + esc(it.desc) + "</p>" +
       '<div class="stack-list notranslate">' + stacks + "</div></div>" +
