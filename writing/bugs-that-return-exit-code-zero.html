@@ -25,13 +25,13 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="Ten defects found in a Kubernetes GPU control plane. Control-plane verification on a Kubernetes GPU operator: what each defect broke, how it was found, and what guards it now." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=20260613-portfolio-65" />
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-a11y" />
 </head>
 <body>
   <div class="topbar">
     <div class="topbar-inner notranslate">
       <a class="site-name" href="../index.html#about">Kwanghun</a>
-      <nav>
+      <nav aria-label="Primary">
         <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language">
           <option value="en" selected>English</option>
           <option value="ko">Korean</option>
@@ -80,9 +80,10 @@
 
         <h2>The ten</h2>
 
-        <div class="table-scroll">
+        <div class="table-scroll" data-hint="scroll sideways for the rest">
         <table>
-          <thead><tr><th>defect</th><th>invariant it broke</th><th>how it looked</th><th>how it was found</th><th>guard now in place</th></tr></thead>
+          <caption class="sr-only">The ten defects, with the invariant each broke, how it looked, how it was found, and the guard now in place.</caption>
+          <thead><tr><th scope="col">defect</th><th scope="col">invariant it broke</th><th scope="col">how it looked</th><th scope="col">how it was found</th><th scope="col">guard now in place</th></tr></thead>
           <tbody>
             <tr><td>Discarded-work counter also summed completed rows</td><td>waste means work never credited</td><td>green suite, gates passed</td><td>added the numbers up</td><td>fixture with a completed row</td></tr>
             <tr><td>Scalability unmeasurable: test client bypassed the cache</td><td>tests exercise the production path</td><td>every test passing</td><td>asked why it was never measured</td><td>benchmark with its own cache</td></tr>
@@ -94,9 +95,9 @@
             <tr><td>Overlay replaced <code>args</code>, deleting the metrics flag</td><td>a patch adds, not replaces</td><td>rollout clean, 6/6 verification</td><td>Prometheus could not connect</td><td>overlay check asserts both flags</td></tr>
             <tr><td>Cumulative counter compared against one run</td><td>compare deltas to deltas</td><td>a perfect 9 = 9</td><td>repeated the run</td><td>before/after delta in the record</td></tr>
             <tr><td>Webhook could strand deleting objects</td><td>never block a deletion</td><td><code>kubectl delete</code> succeeds</td><td>external code review</td><td>bypass when deletion has started</td></tr>
-          </tbody>
-        </div>
+                    </tbody>
         </table>
+        </div>
 
         <p>Three of these are worth the detail: an observability agreement that was a coincidence, a webhook
         that could make objects undeletable, and a lookup that could not be measured by the tests that
@@ -151,9 +152,10 @@ run 3:  counter = 31      while every run saw 9 failures</code></pre>
 
         <p><strong>Evidence after the fix.</strong> Three runs, deltas matching exactly:</p>
 
-        <div class="table-scroll">
+        <div class="table-scroll" data-hint="scroll sideways for the rest">
         <table>
-          <thead><tr><th>run</th><th>first error</th><th>recovery</th><th>client failed</th><th>never answered</th><th>gateway 5xx delta</th></tr></thead>
+          <caption class="sr-only">Three corrected runs of the backend-deletion experiment, showing the client's view beside the gateway's counter delta.</caption>
+          <thead><tr><th scope="col">run</th><th scope="col">first error</th><th scope="col">recovery</th><th scope="col">client failed</th><th scope="col">never answered</th><th scope="col">gateway 5xx delta</th></tr></thead>
           <tbody>
             <tr><td>1</td><td>49.5ms</td><td>1295.3ms</td><td>2</td><td>1</td><td>1</td></tr>
             <tr><td>2</td><td>48.6ms</td><td>1295.5ms</td><td>2</td><td>1</td><td>1</td></tr>
@@ -228,9 +230,10 @@ run 3:  counter = 31      while every run saw 9 failures</code></pre>
         <code>MaxConcurrentReconciles</code> at its default of 1, a per-item cost proportional to namespace
         size drains the queue in O(N²).</p>
 
-        <div class="table-scroll">
+        <div class="table-scroll" data-hint="scroll sideways for the rest">
         <table>
-          <thead><tr><th>objects in namespace</th><th>before</th><th>after</th></tr></thead>
+          <caption class="sr-only">Lookup cost per operation before and after the field index, at three namespace sizes.</caption>
+          <thead><tr><th scope="col">objects in namespace</th><th scope="col">before</th><th scope="col">after</th></tr></thead>
           <tbody>
             <tr><td>100</td><td>116,602 ns/op</td><td>1,292 ns/op</td></tr>
             <tr><td>500</td><td>485,338 ns/op</td><td>1,423 ns/op</td></tr>
@@ -344,9 +347,10 @@ OUT=./ex/fr002.json ./hack/chaos-fr002-serving-pod-killed.sh
 
         <h2>What this establishes, and what it does not</h2>
 
-        <div class="table-scroll">
+        <div class="table-scroll" data-hint="scroll sideways for the rest">
         <table>
-          <thead><tr><th>claim</th><th>status</th></tr></thead>
+          <caption class="sr-only">Which claims in this article are measured and which are not.</caption>
+          <thead><tr><th scope="col">claim</th><th scope="col">status</th></tr></thead>
           <tbody>
             <tr><td>Client view and gateway counters agree, delta-compared, 3 runs</td><td>measured</td></tr>
             <tr><td>Lookup O(N) to O(1), slope flat across a 20x change in N</td><td>measured in envtest, lookup isolated</td></tr>
@@ -372,7 +376,7 @@ OUT=./ex/fr002.json ./hack/chaos-fr002-serving-pod-killed.sh
       </article>
     </main>
     <footer class="notranslate">
-      <div class="footer-links"><a href="mailto:honeys29311@gmail.com">Email</a><a href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer">GitHub</a><a href="#">LinkedIn</a></div>
+      <div class="footer-links"><a href="mailto:honeys29311@gmail.com">Email</a><a href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer">GitHub</a></div>
       <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
     </footer>
   </div>
