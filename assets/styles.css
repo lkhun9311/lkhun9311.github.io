@@ -1606,10 +1606,35 @@ body {
   border-bottom: none;
 }
 
-/* Wide tables scroll inside their own box rather than pushing the page sideways. */
+/* Wide tables scroll inside their own box rather than pushing the page sideways.
+   Two elements, not one. The edge fade has to stay pinned to the visible right edge, and an absolutely
+   positioned child of the scrolling element is positioned against the CONTENT box, so it slid away with the
+   table. The outer box does not scroll and carries the fade; the inner one scrolls. */
 .article-body .table-scroll {
+  position: relative;
+}
+
+.article-body .table-scroll-viewport {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+}
+
+/* The viewport is focusable because a keyboard-only reader otherwise has no way to scroll it: there is
+   nothing tabbable inside a table of plain text. role and label are required once tabindex is present,
+   or the focus stop is unexplained when it arrives. */
+.article-body .table-scroll-viewport:focus-visible {
+  outline: 2px solid var(--accent, #b0389a);
+  outline-offset: 2px;
+}
+
+/* Real markup rather than generated content: a screen reader cannot be relied on to announce CSS
+   ::before text, and this sentence is the instruction for the region below it. */
+.article-body .table-scroll-hint {
+  margin: 0 0 6px;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  color: var(--text-soft);
+  opacity: 0.75;
 }
 
 .article-body pre {
@@ -1668,26 +1693,25 @@ body {
 
 /* Both the fade and the hint are gated on .is-overflowing, which assets/article.js sets only when the table
    is genuinely wider than its container. Shown unconditionally they told a desktop reader to scroll a table
-   that already fit, which is worse than saying nothing: it teaches them to distrust the next hint. */
-.article-body .table-scroll.is-overflowing::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 26px;
-  height: 100%;
-  pointer-events: none;
-  background: linear-gradient(to right, rgba(255,255,255,0), var(--bg-fade, rgba(250,245,250,0.92)));
+   that already fit, which is worse than saying nothing: it teaches them to distrust the next hint.
+   .at-end withdraws them again once the reader has reached the right edge, where a fade would claim there is
+   still something further along. */
+.article-body .table-scroll:not(.is-overflowing) .table-scroll-hint,
+.article-body .table-scroll.at-end .table-scroll-hint {
+  display: none;
 }
 
-.article-body .table-scroll.is-overflowing[data-hint]::before {
-  content: attr(data-hint);
-  display: block;
-  margin-bottom: 6px;
-  font-size: 0.82rem;
-  letter-spacing: 0.02em;
-  color: var(--text-soft);
-  opacity: 0.75;
+.article-body .table-scroll.is-overflowing:not(.at-end)::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 26px;
+  /* The hint sits above the viewport inside the same box, so the fade is anchored to the bottom and sized to
+     the viewport rather than stretched over the whole container. */
+  height: var(--scroll-viewport-height, 100%);
+  pointer-events: none;
+  background: linear-gradient(to right, rgba(255,255,255,0), var(--bg-fade, rgba(250,245,250,0.92)));
 }
 
 @media (max-width: 640px) {
@@ -1725,8 +1749,10 @@ body {
 /* Long-form article furniture: reading time, contents, heading anchors.
    Added when the first article long enough to need them shipped; earlier posts are a few hundred words and
    would look over-furnished with any of this. */
-.article-meta .read-time::before {
-  content: " · ";
+/* The separator is a real character in the markup, not generated content, because a screen reader reading
+   generated punctuation is unreliable: it ran the previous version together as "Aug 202611 min read". */
+.article-meta .read-time {
+  white-space: nowrap;
 }
 
 .article-toc {
@@ -1746,14 +1772,40 @@ body {
   color: var(--text-soft);
 }
 
-.article-toc ol {
+/* Unnumbered on purpose. Three of this article's sections are titled "Case 1", "Case 2" and "Case 3", and an
+   ordered list rendered them as "3. Case 1" — two numbering schemes disagreeing in the same line. */
+.article-toc ul {
   margin: 0;
-  padding-left: 1.15rem;
+  padding-left: 1.05rem;
   font-size: 0.95rem;
 }
 
 .article-toc li {
   margin-bottom: 5px;
+}
+
+/* The inline variant is for shorter pages. A seven-item vertical block on a six-minute project page occupies
+   a third of the first screen and reads as a template rather than as navigation; the same links as a wrapped
+   row of chips take two lines and still let a reader jump. */
+.article-toc.inline ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  padding-left: 0;
+  list-style: none;
+}
+
+.article-toc.inline li {
+  margin-bottom: 0;
+}
+
+.article-toc.inline a {
+  display: inline-block;
+  padding: 3px 10px;
+  border: 1px solid var(--border, rgba(0,0,0,0.10));
+  border-radius: 999px;
+  font-size: 0.86rem;
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .article-toc a {

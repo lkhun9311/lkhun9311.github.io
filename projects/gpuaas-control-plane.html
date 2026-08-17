@@ -25,7 +25,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="Ten defects found in a Kubernetes GPU control plane. A Kubernetes control plane for sharing one GPU pool across teams: quota, training admission, serving, and a request gateway." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=20260817-longform" />
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-scroll" />
 </head>
 <body>
   <div class="topbar">
@@ -63,7 +63,7 @@
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Projects</a>
         <h1>GPUaaS Platform Control Plane</h1>
-          <div class="article-meta">Project · Kubernetes-native · Go<span class="read-time">6 min read</span></div>
+          <div class="article-meta">Project · Kubernetes-native · Go<span aria-hidden="true"> · </span><span class="read-time">6 min read</span></div>
         </section>
         <article class="article-body">
 
@@ -77,9 +77,9 @@
         <code>nvidia.com/gpu</code> capacity and a stub inference backend. What is measured is control-plane
         behaviour.</p>
 
-        <nav class="article-toc" aria-label="Contents">
+        <nav class="article-toc inline" aria-label="Contents">
           <p class="toc-label">Contents</p>
-          <ol>
+          <ul>
             <li><a href="#the-problem-it-addresses">The problem it addresses</a></li>
             <li><a href="#shape-of-the-system">Shape of the system</a></li>
             <li><a href="#the-decision-that-shaped-it-quota-counted-twice">The decision that shaped it: quota counted twice</a></li>
@@ -87,7 +87,7 @@
             <li><a href="#what-has-been-verified-and-how">What has been verified, and how</a></li>
             <li><a href="#prototype-boundary">Prototype boundary</a></li>
             <li><a href="#related-writing">Related writing</a></li>
-          </ol>
+          </ul>
         </nav>
 
         <h2 id="the-problem-it-addresses">The problem it addresses<a class="anchor" href="#the-problem-it-addresses" aria-label="Link to this section">#</a></h2>
@@ -95,7 +95,9 @@
         <p>Training and inference behave in opposite ways under contention, and that single fact shapes the
         whole design.</p>
 
-        <div class="table-scroll" data-hint="scroll sideways for the rest">
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
         <table>
           <caption class="sr-only">How inference and training differ under contention, and what each implies for enforcement.</caption>
           <thead><tr><th scope="col"></th><th scope="col">Inference</th><th scope="col">Training</th></tr></thead>
@@ -108,6 +110,7 @@
           </tbody>
         </table>
         </div>
+        </div>
 
         <p>A Kubernetes <code>ResourceQuota</code> cannot express the training half. It refuses the creation
         outright, so there is no queue: <code>kubectl apply</code> simply fails. That is correct for a request
@@ -115,7 +118,9 @@
 
         <h2 id="shape-of-the-system">Shape of the system<a class="anchor" href="#shape-of-the-system" aria-label="Link to this section">#</a></h2>
 
-        <div class="table-scroll" data-hint="scroll sideways for the rest">
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
         <table>
           <caption class="sr-only">The four layers of the control plane and the mechanism each uses.</caption>
           <thead><tr><th scope="col">layer</th><th scope="col">question it answers</th><th scope="col">mechanism</th></tr></thead>
@@ -126,6 +131,7 @@
             <tr><td>Request</td><td>is this caller within budget right now</td><td>gateway with per-tenant token buckets and backend fallback</td></tr>
           </tbody>
         </table>
+        </div>
         </div>
 
         <h2 id="the-decision-that-shaped-it-quota-counted-twice">The decision that shaped it: quota counted twice<a class="anchor" href="#the-decision-that-shaped-it-quota-counted-twice" aria-label="Link to this section">#</a></h2>
@@ -177,7 +183,9 @@
 
         <h2 id="what-has-been-verified-and-how">What has been verified, and how<a class="anchor" href="#what-has-been-verified-and-how" aria-label="Link to this section">#</a></h2>
 
-        <div class="table-scroll" data-hint="scroll sideways for the rest">
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
         <table>
           <caption class="sr-only">Capabilities covered by KServe compared with those this project provides.</caption>
           <thead><tr><th scope="col">area</th><th scope="col">evidence</th><th scope="col">where</th></tr></thead>
@@ -187,10 +195,12 @@
             <tr><td>Node degradation</td><td>kubelet stopped for real; quarantine, scheduling avoidance and recovery observed across 3 runs</td><td>chaos script with a steady-state gate</td></tr>
             <tr><td>Backend loss</td><td>client view and gateway counters agree by delta across 3 runs</td><td>chaos script, two independent observers</td></tr>
             <tr><td>Backend fallback</td><td>head backend removed; 20 of 20 requests served by the spare, counter delta exactly 20</td><td>separate experiment, since one backend cannot exercise a retry</td></tr>
-            <tr><td>Observability</td><td>17 metrics scraped by Prometheus, dashboard rendered, 4 alert rules validated by promtool</td><td>kube-prometheus-stack on kind</td></tr>
+            <tr><td>Observability</td><td>17 metrics scraped by Prometheus, dashboard rendered; one alert rule driven from inactive to firing at 5m04s against a declared <code>for: 5m</code></td><td>kube-prometheus-stack on kind</td></tr>
+            <tr><td>Alerting, the rest</td><td>promtool passes 5 rules, but two read series that only exist under a mode this gateway does not run, so they cannot fire; the rules now say so</td><td>rule checker with a live series-existence pass</td></tr>
             <tr><td>GitOps</td><td>7 ArgoCD Applications render and enumerate their resources; CRDs synced</td><td>ArgoCD on kind, auto-sync deliberately off</td></tr>
           </tbody>
         </table>
+        </div>
         </div>
 
         <p><a href="../writing/bugs-that-return-exit-code-zero.html">Ten defects found during that
@@ -200,7 +210,7 @@
 
         <p>Tested against simulated GPU capacity and a stub backend. Running this for real would need queue-label
         enforcement at admission, rate limiting that survives more than one gateway replica, validation on
-        actual devices, and alert rules proven to fire. The
+        actual devices, and alerts routed somewhere a human reads, which Prometheus alone does not do. The
         <a href="../writing/bugs-that-return-exit-code-zero.html">write-up</a> carries the full claim-by-claim
         table of what is measured and what is not.</p>
 
@@ -257,6 +267,6 @@
       });
     })();
   </script>
-  <script defer src="../assets/article.js?v=20260817"></script>
+  <script defer src="../assets/article.js?v=20260817-scroll"></script>
 </body>
 </html>
