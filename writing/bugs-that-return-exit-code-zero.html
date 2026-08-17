@@ -25,7 +25,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="Ten defects found in a Kubernetes GPU control plane. Not one failed a test, crashed a process, or returned a non-zero exit code." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=20260613-portfolio-65" />
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-article-tables" />
 </head>
 <body>
   <div class="topbar">
@@ -109,14 +109,14 @@ run 3:  counter = 31      ← climbing, while every run saw 9 failures</code></p
 
         <p>Three corrected runs, agreeing exactly:</p>
 
-        <table>
+        <div class="table-scroll"><table>
           <thead><tr><th>run</th><th>first error</th><th>recovery</th><th>client failed</th><th>never answered</th><th>gateway 5xx delta</th></tr></thead>
           <tbody>
             <tr><td>1</td><td>49.5ms</td><td>1295.3ms</td><td>2</td><td>1</td><td>1</td></tr>
             <tr><td>2</td><td>48.6ms</td><td>1295.5ms</td><td>2</td><td>1</td><td>1</td></tr>
             <tr><td>3</td><td>49.4ms</td><td>1294.6ms</td><td>2</td><td>1</td><td>1</td></tr>
           </tbody>
-        </table>
+        </table></div>
 
         <p><a href="https://github.com/lkhun9311/gpu-platform-control-plane/blob/main/hack/chaos-fr002-serving-pod-killed.md" target="_blank" rel="noopener noreferrer">Full write-up, including the mistake</a> ·
         <a href="https://github.com/lkhun9311/gpu-platform-control-plane/blob/main/hack/chaos-fr002-serving-pod-killed.sh" target="_blank" rel="noopener noreferrer">the harness</a></p>
