@@ -58,6 +58,7 @@
           title: "The Track Did Not End Until the Guarantee Was a Sentence",
           url: "writing/until-the-guarantee-was-a-sentence.html",
           date: "2026-09", dateLabel: "Sep 2026",
+          source: "commercial", sourceLabel: "Commercial project",
           desc: "A defence written per dimension breaks the moment a dimension is added. Five tickets in, what ended the privacy track was not a sixth repair but writing the guarantee as a sentence — and computing the difference between the goal and what was already true. Also in Korean and Japanese.",
           tags: ["Privacy", "Security", "Method"]
         },
@@ -65,8 +66,8 @@
           title: "We Were Calling an External API Inside the Transaction",
           url: "writing/a-pooler-fixes-only-one.html",
           date: "2026-09", dateLabel: "Sep 2026",
-          source: "side", sourceLabel: "Side project",
-          desc: "A pre-launch review of a social polling app. Connection exhaustion has two causes behind one symptom, and a pooler fixes only one of them \u2014 which follows from the definition of transaction pooling, not from any vendor document. Also in Korean and Japanese.",
+          source: "commercial", sourceLabel: "Commercial project",
+          desc: "A pre-launch review of a social polling platform. Connection exhaustion has two causes behind one symptom, and a pooler fixes only one of them \u2014 which follows from the definition of transaction pooling, not from any vendor document. Also in Korean and Japanese.",
           tags: ["Postgres", "Backend", "Method"]
         },
         {

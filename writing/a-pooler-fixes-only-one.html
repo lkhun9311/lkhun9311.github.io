@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="We Were Calling an External API Inside the Transaction | Kwanghun Lee" />
-  <meta property="og:description" content="While reviewing a social polling app before launch I went to put a connection pooler in front of the database. But connection exhaustion has two causes, and a pooler fixes only one of them. Why it cannot fix the other comes from the definition of transaction pooling, not from any vendor document." />
+  <meta property="og:description" content="While reviewing a social polling platform before launch I went to put a connection pooler in front of the database. But connection exhaustion has two causes, and a pooler fixes only one of them. Why it cannot fix the other comes from the definition of transaction pooling, not from any vendor document." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -29,7 +29,7 @@
   <meta name="twitter:title" content="We Were Calling an External API Inside the Transaction | Kwanghun Lee" />
   <meta name="twitter:description" content="Connection exhaustion has two causes. A pooler fixes one of them and is structurally powerless against the other." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="While reviewing a social polling app before launch I went to put a connection pooler in front of the database. But connection exhaustion has two causes, and a pooler fixes only one of them. Why it cannot fix the other comes from the definition of transaction pooling, not from any vendor document." />
+  <meta name="description" content="While reviewing a social polling platform before launch I went to put a connection pooler in front of the database. But connection exhaustion has two causes, and a pooler fixes only one of them. Why it cannot fix the other comes from the definition of transaction pooling, not from any vendor document." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
 </head>
@@ -69,12 +69,12 @@
     <main>
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Writing</a>
-        <h1>We Were Calling an External API Inside the Transaction<br><span class="h1-sub">A pre-launch review of a social polling app — the kind of connection exhaustion RDS Proxy cannot fix</span></h1>
-        <div class="article-meta"><span class="source-tag side notranslate">Side project</span>Writing · September 2026<span aria-hidden="true"> · </span><span class="read-time">14 min read</span></div>
+        <h1>We Were Calling an External API Inside the Transaction<br><span class="h1-sub">A pre-launch review of a social polling platform — the kind of connection exhaustion RDS Proxy cannot fix</span></h1>
+        <div class="article-meta"><span class="source-tag commercial notranslate">Commercial project</span>Writing · September 2026<span aria-hidden="true"> · </span><span class="read-time">14 min read</span></div>
       </section>
       <article class="article-body">
 
-        <p>I build a social polling app as a personal project. While reviewing the architecture before launch I
+        <p>I am building a <strong>social polling platform</strong>. While reviewing the architecture before launch I
         started from a very ordinary hypothesis — <em>“traffic will grow, database connections will run short, so
         why not put a connection pooler in front?”</em> — and the answer turned out to be
         <strong>“not in this codebase.”</strong></p>
@@ -128,8 +128,8 @@
 
         <p><strong>The code is in a private repository.</strong> The app has not launched, so the
         repository is not open. Each section therefore carries <strong>the file path and the symbol
-        name</strong> rather than a GitHub link. Package names are the anonymised ones from the original
-        notes.</p>
+        name</strong> rather than a GitHub link. Package and environment-variable names are the anonymised ones from the
+        original notes.</p>
 
         <p><strong>⚠️ One thing up front.</strong> There are <strong>no load-test numbers</strong> in this
         article, and nothing ever broke in production. The “up to 10 seconds” below is a
@@ -139,7 +139,7 @@
 
         <h2 id="what-is-the-service">What is the service?<a class="anchor" href="#what-is-the-service" aria-label="Link to this section">#</a></h2>
 
-        <p>A <strong>social polling app</strong> I build as a personal project. A user posts a question, other
+        <p>A <strong>social polling platform</strong> I am building toward commercial launch. A user posts a question, other
         people vote on it, and the result chart gets shared outside the app. It is a single monolith in Kotlin
         and Spring Boot with one managed PostgreSQL behind it. It has not launched yet.</p>
 
@@ -188,7 +188,7 @@
         once. And that call has a read timeout of <strong>10 seconds</strong>.</p>
 
 <pre data-lang="yaml"><code># application.yml
-read-timeout: ${OXY_HTTP_READ_TIMEOUT:10s}</code></pre>
+read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
 
         <p>Hold on to that number. The rest of this article comes out of it.</p>
 
