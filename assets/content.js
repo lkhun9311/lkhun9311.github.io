@@ -90,10 +90,10 @@
           tags: ["Reliability", "Method"]
         },
         {
-          title: "Parallelising It Made the Tail Three Times Worse",
+          title: "Adding Threads Made the Tail Longer",
           url: "writing/parallelism-made-the-tail-worse.html",
           date: "2026-09", dateLabel: "Sep 2026",
-          desc: "Parallelising without a cache took p99 from 42s to 129s. An external call inside computeIfAbsent, and the six-configuration test that made it visible. Also in Korean and Japanese.",
+          desc: "With the cache held fixed, going parallel took p99 from 42.6s to 79.0s. An external call inside computeIfAbsent, and the six-configuration test that made it visible. Also in Korean and Japanese.",
           tags: ["Performance", "Method"]
         },
         {

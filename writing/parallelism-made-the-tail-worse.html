@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Parallelising It Made the Tail Three Times Worse | Kwanghun Lee</title>
+  <title>Adding Threads Made the Tail Longer | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Parallelising It Made the Tail Three Times Worse | Kwanghun Lee" />
-  <meta property="og:description" content="Parallelising without a cache took p99 from 42s to 129s. An external call inside computeIfAbsent holds the bin, and only a six-configuration test made that visible." />
+  <meta property="og:title" content="Adding Threads Made the Tail Longer | Kwanghun Lee" />
+  <meta property="og:description" content="Holding the cache setting fixed, going from sequential to parallel took p99 from 42.6s to 79.0s. An external call inside computeIfAbsent holds the bin, and only a six-configuration test made that visible." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -26,8 +26,8 @@
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Parallelising It Made the Tail Three Times Worse | Kwanghun Lee" />
-  <meta name="twitter:description" content="Parallelising without a cache took p99 from 42s to 129s. An external call inside computeIfAbsent holds the bin." />
+  <meta name="twitter:title" content="Adding Threads Made the Tail Longer | Kwanghun Lee" />
+  <meta name="twitter:description" content="Holding the cache fixed, parallelising took p99 from 42.6s to 79.0s. An external call inside computeIfAbsent holds the bin." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="Parallelising without a cache took p99 from 42s to 129s. An external call inside computeIfAbsent holds the bin, and only a six-configuration test made that visible." />
   <!-- og:end -->
@@ -69,7 +69,7 @@
     <main>
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Writing</a>
-        <h1>Parallelising It Made the Tail Three Times Worse</h1>
+        <h1>Adding Threads Made the Tail Longer</h1>
         <div class="article-meta">Writing · Sep 2026<span aria-hidden="true"> · </span><span class="read-time">8 min read</span></div>
         <p class="lang-alts notranslate">Also in <a href="parallelism-made-the-tail-worse.ko.html" hreflang="ko" lang="ko">한국어</a> · <a href="parallelism-made-the-tail-worse.ja.html" hreflang="ja" lang="ja">日本語</a></p>
       </section>
@@ -86,8 +86,9 @@
         The cause was a loop calling an external API once per volume, sequentially, and the prescription
         looked obvious. <strong>Run it in parallel.</strong></p>
 
-        <p>Running it in parallel made it <strong>slower</strong>. p99 went from 42s to 129s. This is about
-        what that one cell told me, and about <strong>the test design that made the cell visible at all</strong>.</p>
+        <p>Running it in parallel made it <strong>slower</strong>. Holding the cache setting fixed and switching
+        sequential to parallel took p99 from <strong>42.6s to 79.0s</strong>. This is about what that one cell
+        told me, and about <strong>the test design that made the cell visible at all</strong>.</p>
 
         <nav class="article-toc" aria-label="Contents">
           <p class="toc-label">Contents</p>
@@ -130,11 +131,17 @@
         request that never finished is not "600 seconds"; it is <strong>unknown</strong>, and that cell has to
         be read that way.</p>
 
-        <p>The row that catches the eye is ③.</p>
+        <p>③ being worse than ② is what catches the eye first: 42.6s against 129.9s. But
+        <strong>those two rows are not controls for each other</strong> — ② is a 5s cache and sequential, ③ is
+        no cache and parallel, so <strong>two variables change at once</strong>. Nothing about parallelism
+        alone can be separated out of that difference.</p>
 
-        <p><strong>③ is worse than ②.</strong> Drop the cache and parallelise, and p99 moves from
-        <strong>42.6s to 129.9s</strong>. More threads, a tail three times longer. Throughput fell too, from
-        2.69 TPS to 0.87.</p>
+        <p>The pair that holds the cache fixed is <strong>② and ④</strong>. Both run a 5s cache; only
+        sequential versus parallel differs.</p>
+
+        <p><strong>p99 rose from 42.6s to 79.0s.</strong> More threads, a tail 1.85 times longer. That is the
+        whole of what this experiment can say about parallelism on its own, and the direction is not in
+        doubt — it was harmful.</p>
 
         <h2 id="why-3-is-worse-than-2">Why ③ is worse than ②<a class="anchor" href="#why-3-is-worse-than-2" aria-label="Link to this section">#</a></h2>
 
@@ -226,8 +233,8 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
           <thead><tr><th scope="col">step</th><th scope="col">what changed</th><th scope="col">effect</th></tr></thead>
           <tbody>
             <tr><td>① → ②</td><td>introduce cache</td><td>error rate <strong>83.3% → 0%</strong>. The first fix bought completion, not speed</td></tr>
-            <tr><td>② → ③</td><td>parallelise only</td><td><strong>worse.</strong> p99 42.6s → 129.9s</td></tr>
-            <tr><td>③ → ④</td><td>parallel + cache</td><td>p99 129.9s → 79.0s. Parallelism pays only once the cache is there</td></tr>
+            <tr><td><strong>② → ④</strong></td><td><strong>parallelise only</strong> (cache held fixed)</td><td><strong>worse.</strong> p99 42.6s → 79.0s (1.85x)</td></tr>
+            <tr><td>② ↔ ③</td><td>cache and execution mode both change</td><td><em>not comparable.</em> The two effects cannot be separated</td></tr>
             <tr><td>④ → ⑤</td><td>side-lookup optimisation</td><td>p99 79.0s → <strong>6.9s</strong></td></tr>
             <tr><td>⑤ → ⑥</td><td>Caffeine refresh</td><td>p99 6.9s → <strong>23ms</strong></td></tr>
           </tbody>
@@ -235,8 +242,11 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         </div>
         </div>
 
-        <p>The last step was the largest. And because it was the last one added, a before-and-after would have
-        credited it to the four changes ahead of it.</p>
+        <p>The last step was the largest <strong>as a ratio</strong> — 6.9s to 23ms, about 300x.
+        <strong>In absolute terms ④→⑤ is larger</strong> (a fall of roughly 72.1s against roughly 6.84s). Both
+        are true, and which one you call "largest" is decided by the scale you pick. Either way it was the
+        <strong>last change added</strong>, so a before-and-after would have credited it to the four ahead of
+        it.</p>
 
         <p>Why is ⑤→⑥ that large? Up to ⑤, a request that finds an expired entry <strong>waits for it to be
         refilled</strong>. Caffeine's refresh keeps serving the previous value at expiry and
@@ -271,16 +281,16 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         false</strong>. On its own it was harmful; it paid only alongside the cache. Not knowing that, the
         obvious next move — "let's parallelise this other screen too" — walks straight back into the same trap.</p>
 
-        <p>The table also did diagnostic work. Parallelism alone being <em>worse</em> says the bottleneck is
-        <strong>not CPU or throughput but a serialisation point</strong>. That is what sent me looking for a
+        <p>The table also did diagnostic work. Parallelising with the cache held fixed being <em>worse</em> says
+        the bottleneck is <strong>not CPU or throughput but a serialisation point</strong>. That is what sent me looking for a
         lock, and the external call inside <code>computeIfAbsent</code> is what came back. The table pointed at
         the code.</p>
 
         <p>Two objections worth answering up front.</p>
 
         <p><strong>"Why not just enlarge the thread pool?"</strong> — When the bottleneck is a lock, more
-        threads only add more waiters. ③ is exactly that experiment: the configuration with more threads was
-        slower than the sequential one.</p>
+        threads only add more waiters. ② ↔ ④ is exactly that experiment: at the same cache setting, parallel
+        was slower than sequential.</p>
 
         <p><strong>"A 4ms median is just a cache hit, isn't it?"</strong> — Yes. That is why the median is not
         read alone. On the same row p99 is 23ms and Apdex is 1.000. An Apdex of 1.000 means the whole sample
@@ -293,9 +303,15 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
           bad. ③→④ shows that removing the condition lets parallelism pay.</li>
           <li><strong>Not a production measurement.</strong> Synthetic load in an internal test environment.
           Real user distribution, data volume and network differ.</li>
+          <li><strong>② and ③ are not controls for each other.</strong> Cache and execution mode change
+          together, so their difference (42.6s → 129.9s) cannot be attributed to either. The only evidence
+          this article uses for parallelism alone is ② → ④, with the cache held fixed.</li>
+          <li><strong>An Apdex of 1.000 does not prove the whole sample was inside the satisfied
+          threshold.</strong> If the tool rounds to three decimal places, a small number of tolerating samples
+          still displays as 1.000. The unrounded value was not checked.</li>
           <li><strong>One run per configuration.</strong> There is no repeated measurement and therefore no
           variance estimate, so where two adjacent configurations differ narrowly I do not lean on the
-          difference. The only differences this article argues from are the threefold ones, like ②↔③.</li>
+          difference. The only differences this article argues from are the multiple-fold ones, like ②→④.</li>
           <li><strong>The 600s in ① is not a latency.</strong> It is the timeout ceiling. Quoting it as a p99
           would be reporting something that was never measured.</li>
           <li><strong>Apdex uses the tool's default threshold</strong>, not one derived from a service level
