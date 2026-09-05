@@ -70,7 +70,7 @@
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ</a>
         <h1>プーラーは二つの枯渇のうち一つしか直さない</h1>
-        <div class="article-meta">Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">7分</span></div>
+        <div class="article-meta">Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">8分</span></div>
         <p class="lang-alts notranslate">他の言語 <a href="a-pooler-fixes-only-one.html" hreflang="en" lang="en">English</a> · <a href="a-pooler-fixes-only-one.ko.html" hreflang="ko" lang="ko">한국어</a></p>
       </section>
       <article class="article-body">
@@ -228,7 +228,8 @@
         <p>だから<strong>コードから直した。</strong>外部モデレーション呼び出しをトランザクションの外に出す作業を
         書き込み経路三か所に施した。そのうち一つはもっと悪かった — 投票添付の経路は <code>for update</code> で
         <strong>行までロックしたまま</strong>外部呼び出しをしていた。コネクションと行ロック、<strong>二つの資源</strong>
-        を同時に握っていたのである。</p>
+        を同時に握っていたのである。記事とコメントの二経路を先に直し、投票添付は検閲の入力が<em>ロックした行から</em>
+        出てくるため staleness の再確認が必要で、<strong>意図的に後回しにして四日後に直した。</strong></p>
 
         <p>結論を一行で書けばこうだ。<strong>コード修正はプーラーの代替ではなく前提条件だった。</strong>
         直してみて初めて、プーラーが価値を出せる状態になった。</p>
@@ -238,13 +239,15 @@
         <p>②に罠が一つある。<strong>ブロッキング JDBC ではコネクションプールが事実上の同時実行上限だ。</strong>
         スレッドがいくら多くてもコネクションを受け取れなければ仕事はできない。</p>
 
-        <p>このサービスは Tomcat のスレッドが<strong>デフォルトの200</strong>、コネクションプールはその十分の一
-        だった。すると残りのリクエストはコネクションを待ってタイムアウト後に失敗する。<strong>方向は正しい</strong> —
+        <p>このサービスは Tomcat のスレッドが<strong>デフォルトの200</strong>で、コネクションプールは
+        <strong>設定が一行もなかった</strong> — フレームワークのデフォルトがそのままサービスの容量だった。すると
+        残りのリクエストはコネクションを待ってタイムアウト後に失敗する。<strong>方向は正しい</strong> —
         速く失敗してこそ残りが生きる。問題は別のところにあった。</p>
 
-        <p><strong>二つの値はどちらも誰かが選んだものではなかった。</strong>一方はフレームワークのデフォルトで、
-        もう一方はただそうなっていた。流入制御とは上限を置くことではなく<strong>その上限を意図して決めること</strong>
-        であり、デフォルト二つが作り出した同時実行ポリシーはポリシーではない。</p>
+        <p><strong>二つの値はどちらも誰かが選んだものではなかった。</strong>どちらもフレームワークのデフォルトで、
+        悪いのは数字そのものではなく<strong>その数字がどこにも書かれていないこと</strong>だった。流入制御とは上限を
+        置くことではなく<strong>その上限を意図して決めること</strong>であり、デフォルト二つが作り出した同時実行
+        ポリシーはポリシーではない。</p>
 
         <h2 id="プーラーが効くコードかを先に確認した">プーラーが効くコードかを先に確認した<a class="anchor" href="#プーラーが効くコードかを先に確認した" aria-label="この節へのリンク">#</a></h2>
 
@@ -261,9 +264,9 @@
         <p>四つともなかった。advisory lock は三か所で使っているが<strong>すべて <code>xact</code> スコープ</strong>
         だった — トランザクション終了時に自動で解放されるので、トランザクションプーリングにそのまま載る。</p>
 
-        <p>これは運だった。そして<strong>運だったと書いておくほうがいい</strong> — セッションスコープのロックを
-        一か所でも使っていれば、その経路がプーラーを無力化していたはずで、その事実はプーラーを導入した後にしか
-        分からなかっただろう。<strong>道具を買う前に、その道具がこのコードで働くかを先に見る手続き</strong>が、
+        <p>この三つが <code>xact</code> スコープだったのが意図なのか偶然なのかは、記録からは判定できない。確かな
+        のは<strong>セッションスコープのロックを一か所でも使っていれば、その経路がプーラーを無力化していた</strong>
+        はずで、その事実はプーラーを導入した後にしか分からなかっただろう、ということだ。<strong>道具を買う前に、その道具がこのコードで働くかを先に見る手続き</strong>が、
         この点検で得たもののうち最も再利用可能な部分である。</p>
 
         <h2 id="スレッドとコネクションは別の資源">スレッドとコネクションは別の資源だ<a class="anchor" href="#スレッドとコネクションは別の資源" aria-label="この節へのリンク">#</a></h2>
@@ -290,18 +293,31 @@
         <p>だから回帰防御を<strong>結果ではなく原因</strong>に置いた。外部クライアントの位置に spy を座らせ、
         <strong>呼び出しが起きるその時点でトランザクションが活性かどうか</strong>を断言する。</p>
 
-<pre><code>// 外部呼び出しの位置の spy が呼び出し時点の状態を見る
-whenever(moderationClient.screen(any())).thenAnswer {
-    assertThat(TransactionSynchronizationManager.isActualTransactionActive())
-        .isFalse()   // ← この呼び出しはトランザクションの外であるべきだ
-    ...
-}</code></pre>
+<pre><code>class TransactionProbe : ContentModerationApi {
+    val sawTransaction = mutableListOf&lt;Boolean&gt;()
+    override fun screen(text: String) {
+        sawTransaction += TransactionSynchronizationManager.isActualTransactionActive()
+    }
+}
+
+assertThat(probe.sawTransaction).isNotEmpty()         // ① 呼び出しが実際に起きたか
+assertThat(probe.sawTransaction).containsOnly(false)  // ② その呼び出しはトランザクションの外だったか</code></pre>
+
+        <p>①がなければ②は<strong>空虚に通過する。</strong>ゲートが丸ごと抜けて呼び出しが0件なら、
+        <code>containsOnly</code> は空リストに対して真だからだ。否定の表明には必ず
+        <strong>「空でない場合」を添える。</strong></p>
 
         <p>このガードは「応答が速いか」を問わない。<strong>「外部呼び出しがトランザクションの中にあるか」</strong>
         を問う。それが実際の原因であり、巻き戻しが起きる場所だ。</p>
 
-        <p>そしてガードが本当に狙えているかはミューテーションで確認した — <strong>経路ごとにそれぞれ</strong>
-        red を見た。ガード一つが三経路を守っていると信じることと、三経路それぞれで赤を見たことは別のことである。</p>
+        <p>そしてガードが本当に狙えているかはミューテーションで確認した — <code>@Transactional</code> を戻して
+        実際に走らせた。記事とコメントの経路では<strong>該当のガードだけ</strong>が red になった。投票添付の経路は
+        違った — <strong>ミューテーションが最初はグリーンだった。</strong>staleness ガードが狙う条件がテストの中で
+        作られていなかったためで、spy の <code>onScreen</code> フックで検閲の区間に行を変えて条件を作ってはじめて
+        red を見た。</p>
+
+        <p>ここで学んだことがこの記事で最も持ち出せるものだ。<strong>ミューテーションがグリーンならコードが安全
+        なのではなく、ガードが狙っていないのである。</strong></p>
 
         <h2 id="この記事が主張しないこと">この記事が主張しないこと<a class="anchor" href="#この記事が主張しないこと" aria-label="この節へのリンク">#</a></h2>
 

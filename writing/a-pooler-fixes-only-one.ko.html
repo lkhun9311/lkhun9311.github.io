@@ -225,7 +225,9 @@
 
         <p>그래서 <strong>코드부터 고쳤다.</strong> 외부 모더레이션 호출을 트랜잭션 밖으로 빼는 작업을 쓰기 경로
         세 곳에 했다. 그중 하나는 더 나빴다 — 폴 부착 경로는 <code>for update</code> 로 <strong>행까지 잠근 채</strong>
-        외부 호출을 하고 있었다. 커넥션과 행 락, <strong>두 자원</strong>을 동시에 쥔 것이다.</p>
+        외부 호출을 하고 있었다. 커넥션과 행 락, <strong>두 자원</strong>을 동시에 쥔 것이다. 글과 댓글 두 경로를 먼저
+        고치고, 폴 부착은 검열 입력이 <em>잠근 행에서</em> 나오는 탓에 staleness 재확인이 필요해
+        <strong>의도적으로 미뤘다가 나흘 뒤에 고쳤다.</strong></p>
 
         <p>결론을 한 줄로 적으면 이렇다. <strong>코드 수정은 풀러의 대안이 아니라 전제조건이었다.</strong>
         고치고 나니 이제 풀러가 값을 할 수 있는 상태가 됐다.</p>
@@ -235,12 +237,13 @@
         <p>②에 함정이 하나 있다. <strong>블로킹 JDBC 에서는 커넥션 풀이 사실상 동시성 상한이다.</strong>
         스레드가 아무리 많아도 커넥션을 못 받으면 일을 못 한다.</p>
 
-        <p>이 서비스는 톰캣 스레드가 <strong>기본값 200</strong>, 커넥션 풀이 그보다 열 배 작았다. 그러면 나머지
-        요청들은 커넥션을 기다리다 타임아웃 뒤에 실패한다. <strong>방향은 맞다</strong> — 빨리 실패해야 나머지가
-        산다. 문제는 다른 데 있었다.</p>
+        <p>이 서비스는 톰캣 스레드가 <strong>기본값 200</strong>이었고, 커넥션 풀은 <strong>설정이 한 줄도
+        없었다</strong> — 프레임워크 기본값이 그대로 서비스 용량이었다. 그러면 나머지 요청들은 커넥션을 기다리다
+        타임아웃 뒤에 실패한다. <strong>방향은 맞다</strong> — 빨리 실패해야 나머지가 산다. 문제는 다른 데
+        있었다.</p>
 
-        <p><strong>두 값 다 아무도 고른 것이 아니었다.</strong> 하나는 프레임워크 기본값이고 하나는 그냥 그렇게
-        돼 있었다. 유입 제어라는 것은 상한을 두는 것이 아니라 <strong>그 상한을 의도적으로 정하는 것</strong>이고,
+        <p><strong>두 값 다 아무도 고른 것이 아니었다.</strong> 둘 다 프레임워크 기본값이고, 나쁜 것은 숫자
+        자체가 아니라 <strong>그 숫자가 어디에도 안 적혀 있다는 것</strong>이었다. 유입 제어라는 것은 상한을 두는 것이 아니라 <strong>그 상한을 의도적으로 정하는 것</strong>이고,
         기본값 두 개가 만들어 낸 동시성 정책은 정책이 아니다.</p>
 
         <h2 id="쓸-수-있는-코드인지-먼저">풀러를 쓸 수 있는 코드인지 먼저 확인했다<a class="anchor" href="#쓸-수-있는-코드인지-먼저" aria-label="이 절로 가는 링크">#</a></h2>
@@ -258,8 +261,9 @@
         <p>네 가지 다 없었다. advisory lock 은 세 군데에서 쓰는데 <strong>전부 <code>xact</code> 스코프</strong>였다 —
         트랜잭션 종료 시 자동으로 풀리므로 트랜잭션 풀링에 그대로 얹힌다.</p>
 
-        <p>이건 운이었다. 그리고 <strong>운이라는 것을 적어 두는 편이 낫다</strong> — 세션 스코프 락을 한 군데만
-        썼어도 그 경로가 풀러를 무력화했을 것이고, 그 사실은 풀러를 도입한 뒤에야 알게 됐을 것이다.
+        <p>이 셋이 <code>xact</code> 스코프인 것이 의도였는지 우연이었는지는 기록으로 가릴 수 없다. 확실한 것은
+        <strong>세션 스코프 락을 한 군데만 썼어도 그 경로가 풀러를 무력화했을 것</strong>이고, 그 사실은 풀러를
+        도입한 뒤에야 알게 됐으리라는 것이다.
         <strong>도구를 사기 전에 그 도구가 이 코드에서 작동하는지를 먼저 보는 절차</strong>가 이 점검에서 얻은
         것 중 제일 재사용 가능한 부분이다.</p>
 
@@ -286,18 +290,31 @@
         <p>그래서 회귀 방어를 <strong>결과가 아니라 원인</strong>에 걸었다. 외부 클라이언트 자리에 spy 를 앉혀,
         <strong>호출이 일어나는 그 시점에 트랜잭션이 활성인지</strong>를 단언한다.</p>
 
-<pre><code>// 외부 호출 자리의 spy 가 호출 시점의 상태를 본다
-whenever(moderationClient.screen(any())).thenAnswer {
-    assertThat(TransactionSynchronizationManager.isActualTransactionActive())
-        .isFalse()   // ← 이 호출은 트랜잭션 밖이어야 한다
-    ...
-}</code></pre>
+<pre><code>class TransactionProbe : ContentModerationApi {
+    val sawTransaction = mutableListOf&lt;Boolean&gt;()
+    override fun screen(text: String) {
+        sawTransaction += TransactionSynchronizationManager.isActualTransactionActive()
+    }
+}
+
+assertThat(probe.sawTransaction).isNotEmpty()         // ① 호출이 실제로 일어났나
+assertThat(probe.sawTransaction).containsOnly(false)  // ② 그 호출은 트랜잭션 밖이었나</code></pre>
+
+        <p>①이 없으면 ②가 <strong>공허하게 통과한다.</strong> 게이트가 통째로 빠져 호출이 0건이면
+        <code>containsOnly</code> 는 빈 리스트에 대해 참이기 때문이다. 음성 단언에는 항상
+        <strong>「비어 있지 않은 경우」를 붙인다.</strong></p>
 
         <p>이 가드는 "응답이 빠른가"를 묻지 않는다. <strong>"외부 호출이 트랜잭션 안에 있는가"</strong>를 묻는다.
         그게 실제 원인이고, 되돌리기가 일어나는 자리다.</p>
 
-        <p>그리고 가드가 정말 겨누고 있는지는 뮤테이션으로 확인했다 — <strong>경로마다 각각</strong> red 를 봤다.
-        가드 하나가 세 경로를 다 지킨다고 믿는 것과, 세 경로에서 각각 빨강을 본 것은 다른 일이다.</p>
+        <p>그리고 가드가 정말 겨누고 있는지는 뮤테이션으로 확인했다 — <code>@Transactional</code> 을 되돌리고
+        실제로 돌렸다. 글과 댓글 경로에서는 <strong>해당 가드만</strong> red 가 됐다. 폴 부착 경로는 달랐다 —
+        <strong>뮤테이션이 처음엔 그린이었다.</strong> staleness 가드가 겨누는 조건이 테스트 안에서 만들어지지
+        않았기 때문이고, spy 의 <code>onScreen</code> 훅으로 검열 구간에 행을 바꿔 조건을 만든 뒤에야 red 를
+        봤다.</p>
+
+        <p>여기서 배운 것이 이 글에서 제일 옮길 만한 것이다. <strong>뮤테이션이 그린이면 코드가 안전한 것이
+        아니라, 가드가 겨누고 있지 않은 것이다.</strong></p>
 
         <h2 id="이-글이-주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#이-글이-주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
