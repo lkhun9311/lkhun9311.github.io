@@ -55,6 +55,13 @@
     writing: {
       items: [
         {
+          title: "Three Documents I Wrote Rested on a False Premise",
+          url: "writing/three-documents-on-a-false-premise.html",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "A migration across 2,255 commits. Reasoning from documents could not say where it breaks, so the old version went up in an isolated container and broke once. Also in Korean and Japanese.",
+          tags: ["Migration", "Method"]
+        },
+        {
           title: "Seven of Eight Failures Should Not Be Recovered",
           url: "writing/seven-of-eight-should-not-recover.html",
           date: "2026-09", dateLabel: "Sep 2026",

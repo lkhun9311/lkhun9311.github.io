@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Three Documents I Wrote Rested on a False Premise | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/three-documents-on-a-false-premise.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/three-documents-on-a-false-premise.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/three-documents-on-a-false-premise.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/three-documents-on-a-false-premise.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="Three Documents I Wrote Rested on a False Premise | Kwanghun Lee" />
+  <meta property="og:description" content="A migration across 2,255 commits. Reasoning from documents cannot tell you where it breaks, so I stood the old version up in an isolated container and broke it once. That is when three documents I had already written turned out to be wrong." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/three-documents-on-a-false-premise.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Three Documents I Wrote Rested on a False Premise | Kwanghun Lee" />
+  <meta name="twitter:description" content="Reasoning from documents cannot tell you where it breaks. A production database is the most expensive place to try something for the first time." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="A migration across 2,255 commits. Reasoning from documents cannot tell you where it breaks, so I stood the old version up in an isolated container and broke it once. That is when three documents I had already written turned out to be wrong." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language"
+                data-authored='{"en":"three-documents-on-a-false-premise.html","ko":"three-documents-on-a-false-premise.ko.html","ja":"three-documents-on-a-false-premise.ja.html"}'>
+          <option value="en" selected>English</option>
+          <option value="ko">Korean</option>
+          <option value="ja">Japanese</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="zh-TW">Chinese (Traditional)</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="vi">Vietnamese</option>
+          <option value="id">Indonesian</option>
+          <option value="hi">Hindi</option>
+          <option value="ar">Arabic</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <section class="page-hero">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Writing</a>
+        <h1>Three Documents I Wrote Rested on a False Premise</h1>
+        <div class="article-meta">Writing · Sep 2026<span aria-hidden="true"> · </span><span class="read-time">10 min read</span></div>
+        <p class="lang-alts notranslate">Also in <a href="three-documents-on-a-false-premise.ko.html" hreflang="ko" lang="ko">한국어</a> · <a href="three-documents-on-a-false-premise.ja.html" hreflang="ja" lang="ja">日本語</a></p>
+      </section>
+      <article class="article-body">
+
+        <p><strong>Scope.</strong> In July 2026 I prepared an upgrade of a customer's live OpenStack-based
+        private cloud portal to a release <strong>2,255 commits ahead</strong> of the one they were running. I
+        do not name the product, the version numbers, the customer, or ticket IDs. <strong>What I actually did
+        was the isolated reproduction and the procedure and runbooks</strong> — this is not a record of me
+        performing the production cutover. Every number below is a result from the
+        <strong>isolated container</strong>.</p>
+
+        <p>The shape of the job: two breaking changes — the authentication model changed and reset every
+        user's password, and two database schemas were merged into one. It is a production database, so there
+        is no zero-downtime path and a rollback route is mandatory. And
+        <strong>the official migration guide was written against a version one step above the one in the
+        field.</strong></p>
+
+        <p>The natural way to write a procedure here is to read the documents and reason. That is how I wrote
+        three of them. And <strong>the premise of all three was wrong.</strong> I did not learn that by reading
+        more carefully. I learned it by standing the old version up in an isolated environment and running the
+        whole thing once.</p>
+
+        <nav class="article-toc" aria-label="Contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#are-they-even-the-same">Are they even the same?</a></li>
+            <li><a href="#i-did-not-trust-date-order">I did not trust date order</a></li>
+            <li><a href="#the-method-itself-was-different">The method itself was different</a></li>
+            <li><a href="#deliberately-imprecise">The part I made deliberately imprecise</a></li>
+            <li><a href="#what-could-not-be-reproduced">I did not hide what could not be reproduced</a></li>
+            <li><a href="#and-one-of-them-blew-up">And one of them did blow up</a></li>
+            <li><a href="#i-answered-by-counting">"Isn't a fresh install easier?" — I answered by counting</a></li>
+            <li><a href="#what-this-does-not-claim">What this does not claim</a></li>
+          </ul>
+        </nav>
+
+        <h2 id="are-they-even-the-same">Are they even the same?<a class="anchor" href="#are-they-even-the-same" aria-label="Link to this section">#</a></h2>
+
+        <p>A reproduction needs a starting point. But the field had received <strong>two copies</strong> of the
+        old release build, downloaded more than six months apart. Before choosing which one to treat as the
+        baseline, I checked whether they were the same thing.</p>
+
+<pre><code>diff -rq  &lt;release A&gt;  &lt;release B&gt;      # no differences (exit 0)
+find . -type f -exec md5sum {} \;       # every file matches on both sides</code></pre>
+
+        <p>The contents were identical; the only difference was file mtime — the moment each was downloaded.
+        Either one could serve as the baseline, so I recorded that and moved on.</p>
+
+        <p>The step looks trivial and gets expensive to have skipped. If the reproduction later fails, you can
+        no longer tell <strong>"is my script wrong, or was the starting point different?"</strong> The first
+        condition of a reproduction is that the starting point is pinned, and that is something you check
+        rather than assume.</p>
+
+        <h2 id="i-did-not-trust-date-order">I did not trust date order<a class="anchor" href="#i-did-not-trust-date-order" aria-label="Link to this section">#</a></h2>
+
+        <p>Next was identifying the delta: which patches the old baseline already contains and which it does
+        not. I checked the baseline schema for marker tables, one at a time.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">Marker tables present in the old baseline and what each implies.</caption>
+          <thead><tr><th scope="col">marker</th><th scope="col">in baseline</th><th scope="col">implication</th></tr></thead>
+          <tbody>
+            <tr><td>settings table</td><td>present</td><td>—</td></tr>
+            <tr><td>blocklist table</td><td>present</td><td>the October patch is folded into the baseline</td></tr>
+            <tr><td>scheduler tables</td><td><strong>absent</strong></td><td>the July batch patch was never applied</td></tr>
+            <tr><td>batch job info</td><td><strong>absent</strong></td><td>a new patch references it — <strong>it fails without the prerequisite</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>One thing caught here. The baseline had <strong>the October patch but not the July and August ones
+        before it.</strong></p>
+
+        <p>So the baseline is not a snapshot cut at some date. It is a <strong>curation</strong> — somebody
+        picked what that line needed. Which means the policy "sort by date and apply everything after the cut"
+        <strong>guarantees nothing</strong>. You either re-apply something already in, or skip something that
+        should have gone first.</p>
+
+        <p>I concluded that the exact list, ordering and idempotency of the delta had to be
+        <strong>established by reproduction, not by inference</strong>. That is the direct reason the
+        reproduction script exists.</p>
+
+        <p>The survey also closed an item an earlier document had left open as "needs checking". The old
+        release build's patch folder <strong>did not contain the intermediate-version migration SQL at
+        all</strong> — so that migration was not included, it had to be part of the delta, and being the
+        earliest by date it had to be <strong>applied first</strong>.</p>
+
+        <h2 id="the-method-itself-was-different">The method itself was different<a class="anchor" href="#the-method-itself-was-different" aria-label="Link to this section">#</a></h2>
+
+        <p>Then I read the official migration guide properly. And met this sentence.</p>
+
+        <blockquote><p>This guide is <strong>not sequential patch application. It rebuilds a new database and
+        migrates the data across.</strong></p></blockquote>
+
+        <p>All three documents I had written assumed <strong>"apply the patches in order"</strong>. I had been
+        building a delta list, deciding an ordering, reasoning about idempotency. That whole body of work was
+        <strong>the procedure for a different method</strong>.</p>
+
+        <p>The delta survey did not become worthless — knowing which patches are in the baseline still matters
+        for a rebuild-and-migrate. What became worthless was <strong>the conclusion that applying patches in
+        order gets you there</strong>.</p>
+
+        <p>I did not delete the three documents. I <strong>annotated each with the correction.</strong> Delete
+        them and the reasoning disappears with them, and the next person at that fork reasons their way to the
+        same place. Leave them and the document carries "this premise was wrong, for this reason".</p>
+
+        <p>The lesson is not "read the guide first". The guide was there from the beginning and I did look at
+        it — more precisely, I <strong>skimmed</strong> it. The sentence about the method was in the overview,
+        not in the procedure list, and I had gone straight to the procedure list.
+        <strong>What you went to a document for and what the document is trying to tell you are not always the
+        same thing.</strong></p>
+
+        <h2 id="deliberately-imprecise">The part I made deliberately imprecise<a class="anchor" href="#deliberately-imprecise" aria-label="Link to this section">#</a></h2>
+
+        <p>The reproduction became a one-shot script. Bring up a database on an isolated port, build the old
+        version, back it up, rebuild the new version, migrate the data, update the version marker, verify.</p>
+
+<pre><code>start isolated DB
+  → build old version (both schemas) + plant test data
+  → back up
+  → rebuild new version
+  → migrate data
+  → update VERSION
+  → verify</code></pre>
+
+        <p>In the migration step I made a deliberately imprecise choice. The guide specifies the column mapping
+        in a table, and I did not have that table at the time. So the script copies
+        <strong>only the intersection of columns present in both the source and target</strong>, with
+        <code>INSERT IGNORE</code>.</p>
+
+        <p>This is not a correct migration. That was <strong>the point</strong>. The script's job is not to
+        move data correctly; it is to <strong>expose which tables break</strong>. It absorbs schema drift and
+        keeps going, and the tables that fail land in the log — so
+        <strong>the failure log is the actual schema-gap list</strong>.</p>
+
+        <p>To see whether data really moved, something recognisable has to move. I planted three kinds of test
+        data first, each proving a different thing.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">Three kinds of planted test data and what each verifies.</caption>
+          <thead><tr><th scope="col">planted</th><th scope="col">verifies</th></tr></thead>
+          <tbody>
+            <tr><td>one alarm row in one schema, destined for the other</td><td>that <strong>cross-schema</strong> migration happens</td></tr>
+            <tr><td>a settings value set away from its default</td><td>that the <strong>value</strong> follows</td></tr>
+            <tr><td>a marker string in a menu description field</td><td>that the <strong>field</strong> follows</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>The result:</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">Result of the isolated reproduction.</caption>
+          <thead><tr><th scope="col">measure</th><th scope="col">value</th></tr></thead>
+          <tbody>
+            <tr><td>test data migrated</td><td><strong>3 of 3</strong></td></tr>
+            <tr><td>data migration failures</td><td><strong>0</strong> (92 tables across the two schemas)</td></tr>
+            <tr><td>version marker</td><td>updated to the target</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <h2 id="what-could-not-be-reproduced">I did not hide what could not be reproduced<a class="anchor" href="#what-could-not-be-reproduced" aria-label="Link to this section">#</a></h2>
+
+        <p>The local environment has no OpenStack and no identity CLI. So everything entangled with the
+        authentication change — creating the account and role tables, converting user identifiers from UUIDs
+        to names, checking service accounts — <strong>could not be reproduced</strong>.</p>
+
+        <p>Two options. Drop those steps from the script and write "end-to-end success", or keep them and say
+        they did not run.</p>
+
+        <p>The script logs an explicit <code>SKIP</code> or <code>WARN</code> at each of those steps. Then
+        whoever reads the run log sees what was verified and what was not <strong>on the same screen</strong>.
+        When an unverified stretch disappears from the log, the next person reads it as verified.</p>
+
+        <p>This is the same class of problem as
+        <a href="bugs-that-return-exit-code-zero.html">Ten Bugs, Zero Failed Tests</a>.
+        <strong>Verification that cannot distinguish "did not run" from "passed" is worse than none</strong> —
+        because it makes you believe there is some.</p>
+
+        <h2 id="and-one-of-them-blew-up">And one of them did blow up<a class="anchor" href="#and-one-of-them-blew-up" aria-label="Link to this section">#</a></h2>
+
+        <p>During preparation I fast-forwarded the customisation branch to the remote tip. Thirty-nine commits
+        arrived at once, and <strong>the application exited on startup.</strong> Tomcat context initialisation
+        failed constructing a cache bean and the process died with <code>exit 1</code>.</p>
+
+<pre><code>No enum constant ConfigureKey.FEATURE_SETTINGS
+  ↑
+BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → configures findAll</code></pre>
+
+        <p>I walked the call path back from the stack trace to the enum conversion, then found the commit in
+        the history: a feature had been rolled back, and that commit removed
+        <strong>the enum constant, the patch SQL and the seed row</strong> together.</p>
+
+        <p>The code dropped the enum. But <strong>the existing database still had a row carrying that
+        value.</strong> On boot the ORM tries to map that row onto the enum, fails, and a failed context load
+        means the application cannot start at all.</p>
+
+        <p>What matters is what comes next. This class of defect surfaces <strong>one per restart</strong> —
+        clear the first mine and the next one appears. So I compared three local databases against the code's
+        enum constants <strong>exhaustively</strong>, established that this was the only stale key remaining,
+        and only then deleted it.</p>
+
+        <p>The value of the incident is not the one-line <code>DELETE</code>. Tracing it exposed
+        <strong>three defects in the field deployment procedure</strong>.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">Three defects found and corrected in the field deployment procedure.</caption>
+          <thead><tr><th scope="col">defect</th><th scope="col">what would have happened in the field</th></tr></thead>
+          <tbody>
+            <tr><td>instructs applying <strong>a patch file that does not exist</strong> (it was reverted out of the target release)</td><td>the file is not found and the run stops there</td></tr>
+            <tr><td>no step to delete the stale row</td><td>the same startup failure, this time in production</td></tr>
+            <tr><td>no container recreation command in the rollback path</td><td>the rollback only half completes</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>None of the three came from reading. They came from <strong>failing once for real</strong>. Until
+        then the procedure looked internally consistent. You find out that it points at a file that does not
+        exist at the moment you go looking for the file.</p>
+
+        <h2 id="i-answered-by-counting">"Isn't a fresh install easier?" — I answered by counting<a class="anchor" href="#i-answered-by-counting" aria-label="Link to this section">#</a></h2>
+
+        <p>A reasonable suggestion came up during preparation. <em>If migrating is this involved, wouldn't a
+        fresh install be simpler?</em> It was plausible — this site had exactly
+        <strong>one</strong> custom account, which makes the most tedious part of a migration trivial.</p>
+
+        <p>The way to answer was <strong>to count what gets deleted first</strong>.</p>
+
+        <p>What gets deleted is accumulated billing and metering history, plus audit and activity logs. Both
+        are <strong>impossible to recompute</strong>: the source events are gone, so the only path back is
+        migrating them from a backup. Meanwhile the actual VMs, volumes and networks are owned by OpenStack
+        rather than by this portal, and the portal resynchronises them from the API, so
+        <strong>they were never at risk in the first place</strong>.</p>
+
+        <p>That left "but migrating is hard". I answered that by measuring. For every table that had to be
+        preserved, I compared the old and new columns through <code>information_schema</code>.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">Measured column change across versions for the tables that had to be preserved.</caption>
+          <thead><tr><th scope="col">group</th><th scope="col">tables</th><th scope="col">columns added or dropped</th></tr></thead>
+          <tbody>
+            <tr><td>billing and metering</td><td>40</td><td><strong>0</strong></td></tr>
+            <tr><td>audit and activity history</td><td>8</td><td><strong>0</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p><strong>Zero column changes across 48 tables.</strong> Identical structure means they move with
+        <code>INSERT ... SELECT</code> and no transformation. The only difference is that the billing and
+        metering tables <strong>change which schema they live in</strong>; the table structure itself is the
+        same. As migrations go, that is the easy end.</p>
+
+        <p>A vague worry — "migrating is hard" — was <strong>settled by one number</strong>, and the direction
+        was decided: migrate, do not reinstall.</p>
+
+        <p>Nothing in that section is technically impressive; it is a few
+        <code>information_schema</code> queries. The point is <strong>working out which part of a disagreement
+        is countable</strong>. "Migration is hard" is not countable. "How many columns changed" is.</p>
+
+        <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>Not a claim that I completed the production migration.</strong> What I did was verify the
+          whole path by reproduction and prepare the field procedure and installation runbooks.</li>
+          <li><strong>Zero migration failures is an isolated-environment result.</strong> I noted in the
+          document that reproducing against a real field dump would be the accurate test, and that was left as
+          follow-up work. It was not done.</li>
+          <li><strong>Copying the intersection of columns is not a correct migration method.</strong> It was
+          built that way as a smoke test; a correct column mapping has to follow the guide's table.</li>
+          <li><strong>The authentication stretch is unverified.</strong> No identity CLI locally, so it could
+          not be reproduced, and the script leaves SKIP/WARN in its place.</li>
+          <li><strong>Zero column change is a fact about those two versions</strong>, not a claim that this
+          product's history tables never change.</li>
+        </ul>
+
+        <p>What is left is one line. <strong>Nothing here was learned by reading the documents more
+        carefully.</strong> That the two release copies were identical, that the baseline was a curation rather
+        than a date cut, that the method was different, that the procedure pointed at a file that did not exist
+        — every one of them turned up while actually running the thing. A production database is the most
+        expensive place to try something for the first time.</p>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script src="../assets/lang.js?v=20260905"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/article.js?v=20260817-scroll"></script>
+</body>
+</html>
