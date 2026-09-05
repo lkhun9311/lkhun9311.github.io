@@ -51,6 +51,94 @@
     document.fonts.ready.then(measureAll);
   }
 
+  /* ---- code windows ------------------------------------------------------------------------------ */
+  /* Every <pre> becomes a terminal-looking window with the language named in its title bar. Done here
+     rather than in the markup so that the twenty-four article pages cannot drift apart, and so that a page
+     written before this existed gets it too.
+
+     The language comes from data-lang when the author set one. Detection is only a fallback: a wrong guess
+     colours the wrong tokens and the reader has no way to tell it guessed. */
+  function decorateCode() {
+    if (typeof CodeHighlight === "undefined") return;   // the script failed to load; plain <pre> still reads
+
+    var pageLang = (document.documentElement.getAttribute("lang") || "en").toLowerCase();
+    var pres = document.querySelectorAll(".article-body pre");
+
+    for (var i = 0; i < pres.length; i++) {
+      var pre = pres[i];
+      if (pre.parentNode && pre.parentNode.className.indexOf("code-window") !== -1) continue;
+
+      var code = pre.querySelector("code") || pre;
+      var lang = pre.getAttribute("data-lang") || code.getAttribute("data-lang") ||
+                 CodeHighlight.detect(code.textContent);
+
+      var win = document.createElement("div");
+      win.className = "code-window";
+
+      var bar = document.createElement("div");
+      bar.className = "code-bar";
+      // The dots are decoration and say nothing; the label is the content, and must survive translation
+      // because "Shell" is a name, not a word.
+      bar.innerHTML = '<span class="code-dots" aria-hidden="true"><i></i><i></i><i></i></span>' +
+                      '<span class="code-lang notranslate" translate="no">' +
+                      CodeHighlight.escape(CodeHighlight.label(lang, pageLang)) + "</span>";
+
+      pre.parentNode.insertBefore(win, pre);
+      win.appendChild(bar);
+      win.appendChild(pre);
+
+      code.innerHTML = CodeHighlight.render(lang, code.textContent);
+    }
+  }
+
+  /* ---- contents rail ------------------------------------------------------------------------------ */
+  /* Marks the section the reader is in. The rail is a list of links until this runs, which is why the
+     highlight is added here and not baked into the markup: without JS the contents still work. */
+  function initToc() {
+    var toc = document.querySelector(".article-body .article-toc");
+    if (!toc) return;
+
+    var links = toc.querySelectorAll('a[href^="#"]');
+    var map = [];
+    for (var i = 0; i < links.length; i++) {
+      var raw = links[i].getAttribute("href").slice(1);
+      var id = raw;
+      try { id = decodeURIComponent(raw); } catch (e) { /* already decoded, or malformed */ }
+      var el = document.getElementById(id) || document.getElementById(raw);
+      if (el) map.push({ link: links[i], el: el });
+    }
+    if (!map.length) return;
+
+    var current = null;
+    function update() {
+      // The offset is the sticky bar plus a little, so a heading counts as reached when it arrives under
+      // the bar rather than when it touches the top of the window.
+      var line = 150;
+      var found = map[0];
+      for (var i = 0; i < map.length; i++) {
+        if (map[i].el.getBoundingClientRect().top <= line) found = map[i];
+      }
+      if (found === current) return;
+      if (current) current.link.classList.remove("is-current");
+      found.link.classList.add("is-current");
+      current = found;
+    }
+
+    var ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(function () { ticking = false; update(); });
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    update();
+  }
+
+  decorateCode();
+  initToc();
+
   // Google Translate replaces the text of every cell in place, which can turn a table that fit into one that
   // does not. It gives no callback, so the change has to be observed. The handler is the same rAF-coalesced
   // one used for resize, so a translation pass that rewrites hundreds of nodes still measures once.

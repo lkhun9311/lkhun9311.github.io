@@ -2103,30 +2103,364 @@ body {
    and roughly 300px on the other, and the title stretched far past the text under it. One column, centred,
    with the hero and the body sharing the same edges. */
 .container.reading {
-  max-width: 1120px;
+  max-width: 1280px;
 }
 
-/* Two widths, not one. Prose keeps a measure a person can read a line of without losing the next; tables,
-   code and figures do not want that measure and were being squeezed into it — a nine-column table scrolled
-   sideways at 776px of usable width when the window had room for all of it.
-   The hero shares the prose column so the title still sits over the text it belongs to. */
+/* One width for everything.
+   Before this, prose sat at 840px while tables, code and figures broke out to 1056px — the reader met a
+   column that changed width every few paragraphs. The breakout existed because 840px was too narrow for a
+   nine-column table; the fix is to make the one column wide enough for both rather than to keep two.
+   The hero shares the column so the title sits over the text it belongs to, left-aligned with it. */
 .container.reading .page-hero,
 .container.reading .article-body {
-  max-width: 840px;
-  margin-left: auto;
-  margin-right: auto;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
 }
 
-/* The breakout. width is measured against the viewport rather than the parent, because the parent is the
-   840px column this is escaping; margin-left plus the translate re-centres it on that column's centre,
-   which is also the page's. Only above 900px, where there is room to escape into — below it the element
-   would come out narrower than the prose. */
-@media (min-width: 900px) {
-  .container.reading .article-body > .table-scroll,
-  .container.reading .article-body > pre,
-  .container.reading .article-body > figure {
-    width: min(1056px, calc(100vw - 64px));
-    margin-left: 50%;
-    transform: translateX(-50%);
+/* ============================================================================================
+   Reading layout, second pass (2026-09-05)
+   Right-hand contents rail, one consistent column width, a markdown-like type scale, terminal-
+   style code windows, and numbered figures.
+   ============================================================================================ */
+
+/* The contents move out of the text and into a rail on the right, where they stay put while the
+   reader scrolls. Both the hero and the body use the same two-column template so the title, the
+   prose, the tables and the figures all share one left edge and one right edge — the column no
+   longer changes width partway down the page.
+   260px is enough for the longest section title here to wrap to two lines and no more. */
+@media (min-width: 1120px) {
+  .container.reading .page-hero,
+  .container.reading .article-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 260px;
+    column-gap: 56px;
+    align-items: start;
   }
+
+  .container.reading .page-hero > *,
+  .container.reading .article-body > * {
+    grid-column: 1;
+    min-width: 0;               /* or a wide table stretches the track instead of scrolling */
+  }
+
+  /* The rail spans every row so that `sticky` has a tall containing block to travel inside;
+     pinned to row 1 alone it would stop moving after the first paragraph. */
+  .container.reading .article-body > .article-toc {
+    grid-column: 2;
+    grid-row: 1 / span 500;
+    position: sticky;
+    top: 92px;
+    align-self: start;
+    margin: 6px 0 0;
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: none;
+    border: 0;
+    border-left: 1px solid var(--line-soft, rgba(229,222,238,0.9));
+    border-radius: 0;
+    padding: 2px 0 2px 18px;
+  }
+
+  .container.reading .article-body > .article-toc ul {
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .container.reading .article-body > .article-toc li {
+    margin-bottom: 9px;
+  }
+}
+
+/* The rail's current section. Heavier and a shade larger, with the accent bar carrying the
+   position so the weight change does not have to do all the work on its own. */
+.article-toc a {
+  display: block;
+  position: relative;
+  font-size: 0.92rem;
+  line-height: 1.4;
+  color: var(--muted, #7b7186);
+  transition: color 120ms ease;
+}
+
+.article-toc a.is-current {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text, #18121d);
+}
+
+@media (min-width: 1120px) {
+  .container.reading .article-toc a.is-current::before {
+    content: "";
+    position: absolute;
+    left: -19px;
+    top: 2px;
+    bottom: 2px;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--accent, #d62976);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .article-toc a { transition: none; }
+}
+
+/* ---- type scale ---------------------------------------------------------------------------- */
+
+.container.reading .article-body {
+  font-size: 1.075rem;
+  line-height: 1.78;
+}
+
+.container.reading .article-body h2 {
+  margin: 52px 0 14px;
+  font-size: 1.72rem;
+  line-height: 1.25;
+}
+
+.container.reading .article-body h3 {
+  margin: 32px 0 10px;
+  font-size: 1.28rem;
+  line-height: 1.3;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text, #18121d);
+}
+
+.container.reading .article-body h4 {
+  margin: 24px 0 8px;
+  font-size: 1.06rem;
+  font-weight: 700;
+  color: var(--text, #18121d);
+}
+
+.container.reading .article-body p { margin: 0 0 18px; }
+.container.reading .article-body ul,
+.container.reading .article-body ol { margin: 0 0 18px; }
+.container.reading .article-body li { margin-bottom: 10px; }
+
+/* The first heading after the hero should not push a 52px gap on top of the hero's own margin. */
+.container.reading .article-body > h2:first-of-type { margin-top: 34px; }
+
+/* ---- code windows -------------------------------------------------------------------------- */
+/* article.js wraps every <pre> in this. The bar is not decoration: it carries the language, which
+   is the thing a reader needs to know before the first token — whether they are looking at Kotlin,
+   at a YAML file, or at commands someone typed into a shell. */
+
+.article-body .code-window {
+  margin: 22px 0 26px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #16131c;
+  border: 1px solid rgba(0, 0, 0, 0.28);
+  box-shadow: 0 10px 30px rgba(42, 31, 55, 0.14);
+}
+
+.article-body .code-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  background: #221d2b;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.article-body .code-dots {
+  display: inline-flex;
+  gap: 7px;
+  flex: none;
+}
+
+.article-body .code-dots i {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  display: block;
+}
+
+.article-body .code-dots i:nth-child(1) { background: #ff5f57; }
+.article-body .code-dots i:nth-child(2) { background: #febc2e; }
+.article-body .code-dots i:nth-child(3) { background: #28c840; }
+
+.article-body .code-lang {
+  margin-left: auto;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.article-body .code-window pre {
+  margin: 0;
+  padding: 16px 18px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: #e6e1ef;
+  font-size: 0.895rem;
+  line-height: 1.62;
+  overflow-x: auto;
+}
+
+.article-body .code-window pre code { color: inherit; }
+
+/* One accent colour per kind of token, and the same kind keeps the same colour across languages —
+   a string is green whether it is in Kotlin or in a shell command. */
+.article-body .code-window .tok-comment { color: #8a8098; font-style: italic; }
+.article-body .code-window .tok-string  { color: #a5e075; }
+.article-body .code-window .tok-keyword { color: #ff7ab2; font-weight: 600; }
+.article-body .code-window .tok-type    { color: #7fd6ff; }
+.article-body .code-window .tok-number  { color: #d8b4fe; }
+.article-body .code-window .tok-anno    { color: #ffcf6b; }
+.article-body .code-window .tok-key     { color: #7fd6ff; }
+.article-body .code-window .tok-cmd     { color: #7fd6ff; font-weight: 600; }
+.article-body .code-window .tok-flag    { color: #ffcf6b; }
+.article-body .code-window .tok-prompt  { color: #6f6680; user-select: none; }
+.article-body .code-window .tok-var     { color: #ffcf6b; }
+
+/* ---- figures ------------------------------------------------------------------------------- */
+/* Numbered, so the prose can say "그림 2" and mean something. The counter lives on the body so the
+   numbering is per article, and the label follows the page's language. */
+
+.container.reading .article-body { counter-reset: fig; }
+.container.reading .article-body figure.diagram { counter-increment: fig; }
+
+.container.reading .article-body figure.diagram figcaption {
+  max-width: none;
+  margin: 12px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--line-soft, rgba(229,222,238,0.9));
+  font-size: 0.94rem;
+  line-height: 1.6;
+  color: var(--text-soft, #3b3344);
+}
+
+.container.reading .article-body figure.diagram figcaption::before {
+  content: "Figure " counter(fig) ". ";
+  font-weight: 700;
+  color: var(--text, #18121d);
+}
+
+html[lang="ko"] .container.reading .article-body figure.diagram figcaption::before {
+  content: "그림 " counter(fig) ". ";
+}
+
+html[lang="ja"] .container.reading .article-body figure.diagram figcaption::before {
+  content: "図 " counter(fig) ". ";
+}
+
+/* ---- the language picker sits in the middle of the bar ------------------------------------- */
+/* One control, centred, instead of a control up here and a row of links under every title.
+   Absolute so it is centred on the bar rather than on whatever space the nav happens to leave. */
+
+@media (min-width: 900px) {
+  .topbar-inner { position: relative; }
+  .topbar-inner nav { position: static; }
+  .topbar-inner .lang-picker {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+  }
+}
+
+/* ---- what kind of work this was ------------------------------------------------------------ */
+/* A reader deciding how much weight to give a claim needs to know whether it came out of a side
+   project or out of paid work on a production system. Putting it beside the date means they never
+   have to infer it from the prose. */
+
+.page-hero .source-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 10px;
+  padding: 3px 11px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  vertical-align: 2px;
+}
+
+.page-hero .source-tag.side    { color: #4f5bd5; }
+.page-hero .source-tag.company { color: #962fbf; }
+
+/* ---- per-section source links --------------------------------------------------------------- */
+/* A heading can point at the code it is describing. When the repository is public the icon is a
+   link; when it is not, the same line still names the file, because "this lives in
+   CommentService.kt" is useful even when the reader cannot open it. */
+
+.article-body .h2-src {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  margin: -6px 0 16px;
+  font-size: 0.84rem;
+  color: var(--muted, #7b7186);
+}
+
+.article-body .h2-src code {
+  font-size: 0.98em;
+  background: rgba(0, 0, 0, 0.045);
+  padding: 1px 6px;
+  border-radius: 5px;
+}
+
+.article-body .h2-src a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  color: var(--text-soft, #3b3344);
+}
+
+.article-body .h2-src a:hover,
+.article-body .h2-src a:focus-visible {
+  color: var(--accent, #d62976);
+  border-bottom-color: currentColor;
+}
+
+.article-body .h2-src svg { flex: none; }
+
+.article-body .h2-src .private {
+  font-style: italic;
+}
+
+/* The same distinction on the cards. Deliberately translatable — "Side project" is a phrase, not a name,
+   and a Korean reader should read it in Korean. */
+.card-source {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 9px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  font-size: 0.7rem;
+  font-weight: 700;
+  vertical-align: 1px;
+}
+
+.card-source.side { color: #4f5bd5; }
+.card-source.company { color: #962fbf; }
+
+.article-card .card-source { margin: 0 0 6px; }
+
+/* Korean and Japanese break anywhere by default, which strands a single syllable on its own line —
+   "…있었습니 / 다". keep-all breaks at word boundaries instead. anywhere is the escape hatch for a long
+   unbroken token (a URL, a path) that would otherwise push the column wider than its track. */
+html[lang="ko"] .page-hero h1,
+html[lang="ja"] .page-hero h1,
+html[lang="ko"] .page-hero h1 .h1-sub,
+html[lang="ja"] .page-hero h1 .h1-sub,
+html[lang="ko"] .container.reading .article-body,
+html[lang="ja"] .container.reading .article-body,
+html[lang="ko"] .article-toc,
+html[lang="ja"] .article-toc {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }

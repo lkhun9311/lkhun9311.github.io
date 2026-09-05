@@ -76,10 +76,18 @@ def main():
                 if lang not in hl:
                     fail.append(f"{rel}: hreflang {lang} 없음")
 
-            for block in re.findall(r'<p class="lang-alts.*?</p>', s, re.S):
-                for t in re.findall(r'href="([^"]+)"', block):
-                    if not (f.parent / t).exists():
-                        fail.append(f"{rel}: lang-alts → {t} 없음")
+            # 언어 전환은 상단 바의 셀렉트 하나로만 한다. 제목 아래 "다른 언어 …" 줄은 2026-09-05 에
+            # 걷어냈고, 이 검사는 그게 되돌아오는 것을 막는다. 예전 검사는 "lang-alts 링크가 해석되는가"
+            # 였는데, 줄을 전부 지우고 나니 findall 이 빈 리스트라 루프가 안 돌아 **공허하게 통과**했다.
+            # 없어야 하는 것은 "없는지"를 검사해야 판정이 된다.
+            if 'class="lang-alts' in s:
+                fail.append(f"{rel}: lang-alts 줄이 남아 있다 — 언어 전환은 상단 셀렉트 하나로만 한다")
+
+            # 코드 창은 highlight.js 가 정의한 CodeHighlight 를 article.js 가 쓴다. 순서가 뒤집히면
+            # article.js 는 조용히 아무것도 안 하고 코드 블록이 예전 모습 그대로 남는다.
+            i_hl, i_art = s.find('assets/highlight.js'), s.find('assets/article.js')
+            if i_art >= 0 and not (0 <= i_hl < i_art):
+                fail.append(f"{rel}: highlight.js 가 article.js 보다 앞이 아니다")
 
             # table-scroll 은 래퍼·힌트·뷰포트가 1:1:1 이어야 한다. 손으로 쓰다 뷰포트를 두 번 연
             # 실수가 두 번 나왔고, 그때 HTML 균형 검사는 통과했다(속성 안에 </div> 가 들어가 파서가
