@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>병렬로 바꾸자 꼬리가 세 배 길어졌다 | Kwanghun Lee</title>
+  <title>스레드를 늘렸더니 꼬리가 길어졌다 | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="병렬로 바꾸자 꼬리가 세 배 길어졌다 | Kwanghun Lee" />
-  <meta property="og:description" content="캐시 없이 병렬화했더니 P99가 42초에서 129초로 악화됐다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠긴다. 여섯 구성을 같은 조건으로 재고 나서야 보인 것." />
+  <meta property="og:title" content="스레드를 늘렸더니 꼬리가 길어졌다 | Kwanghun Lee" />
+  <meta property="og:description" content="캐시 설정을 고정한 채 순차를 병렬로 바꾸니 P99가 42.6초에서 79.0초로 악화됐다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠긴다. 여섯 구성을 같은 조건으로 재고 나서야 보인 것." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -26,10 +26,10 @@
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="병렬로 바꾸자 꼬리가 세 배 길어졌다 | Kwanghun Lee" />
-  <meta name="twitter:description" content="캐시 없이 병렬화했더니 P99가 42초에서 129초로 악화됐다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠긴다." />
+  <meta name="twitter:title" content="스레드를 늘렸더니 꼬리가 길어졌다 | Kwanghun Lee" />
+  <meta name="twitter:description" content="캐시를 고정한 채 병렬화하니 P99가 42.6초에서 79.0초로 악화됐다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠긴다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="캐시 없이 병렬화했더니 P99가 42초에서 129초로 악화됐다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠긴다. 여섯 구성을 같은 조건으로 재고 나서야 보인 것." />
+  <meta name="description" content="캐시 설정을 고정한 채 순차를 병렬로 바꾸니 P99가 42.6초에서 79.0초로 악화됐다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠긴다. 여섯 구성을 같은 조건으로 재고 나서야 보인 것." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
 </head>
@@ -69,7 +69,7 @@
     <main>
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing 으로</a>
-        <h1>병렬로 바꾸자 꼬리가 세 배 길어졌다</h1>
+        <h1>스레드를 늘렸더니 꼬리가 길어졌다</h1>
         <div class="article-meta">Writing · 2026년 9월<span aria-hidden="true"> · </span><span class="read-time">9분</span></div>
         <p class="lang-alts notranslate">다른 언어 <a href="parallelism-made-the-tail-worse.html" hreflang="en" lang="en">English</a> · <a href="parallelism-made-the-tail-worse.ja.html" hreflang="ja" lang="ja">日本語</a></p>
       </section>
@@ -84,8 +84,9 @@
         <p>화면은 볼륨이 늘수록 선형으로 느려지다가 결국 10분 Timeout 으로 죽었다. 원인은 볼륨 하나마다 외부
         API 를 순차로 부르는 루프였고, 처방은 뻔해 보였다. <strong>병렬로 돌리면 된다.</strong></p>
 
-        <p>병렬로 돌리자 <strong>더 느려졌다.</strong> P99 가 42초에서 129초가 됐다. 이 글은 그 한 칸이
-        무엇을 알려줬는지, 그리고 <strong>그 한 칸을 볼 수 있게 만든 시험 설계</strong>에 대한 것이다.</p>
+        <p>병렬로 돌리자 <strong>더 느려졌다.</strong> 캐시 설정을 고정한 채 순차를 병렬로 바꾸니 P99 가
+        <strong>42.6초에서 79.0초</strong>가 됐다. 이 글은 그 한 칸이 무엇을 알려줬는지, 그리고
+        <strong>그 한 칸을 볼 수 있게 만든 시험 설계</strong>에 대한 것이다.</p>
 
         <nav class="article-toc" aria-label="목차">
           <p class="toc-label">목차</p>
@@ -126,10 +127,14 @@
         그 구성은 요청의 83.3%가 끝나지 못했다. 끝나지 못한 요청의 지연은 "600초"가 아니라 <strong>모른다</strong>가
         정답이고, 표의 그 칸은 그렇게 읽어야 한다.</p>
 
-        <p>여기서 눈에 걸리는 줄은 ③이다.</p>
+        <p>③이 ②보다 나쁘다는 게 먼저 눈에 걸린다. 42.6초 대 129.9초다. 그런데
+        <strong>이 두 줄은 서로의 대조군이 아니다</strong> — ②는 캐시 5초에 순차이고 ③은 캐시 없음에 병렬이라
+        <strong>두 변수가 동시에 바뀐다.</strong> 이 차이에서 병렬화의 효과만 떼어낼 수 없다.</p>
 
-        <p><strong>③이 ②보다 나쁘다.</strong> 캐시를 빼고 병렬화만 하면 P99 가 <strong>42.6초 → 129.9초</strong>로
-        간다. 스레드를 늘렸는데 꼬리가 세 배가 됐다. 처리량도 2.69 TPS 에서 0.87 TPS 로 떨어졌다.</p>
+        <p>캐시를 고정한 쌍은 <strong>②와 ④</strong>다. 둘 다 캐시 5초이고, 순차냐 병렬이냐만 다르다.</p>
+
+        <p><strong>P99 가 42.6초에서 79.0초로 올랐다.</strong> 스레드를 늘렸는데 꼬리가 1.85배가 됐다.
+        이것이 이 실험에서 병렬화 단독의 효과로 말할 수 있는 전부이고, 방향은 분명하다 — 해로웠다.</p>
 
         <h2 id="왜-3이-2보다-나쁜가">왜 ③이 ②보다 나쁜가<a class="anchor" href="#왜-3이-2보다-나쁜가" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -221,8 +226,8 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
           <thead><tr><th scope="col">전이</th><th scope="col">바뀐 것</th><th scope="col">효과</th></tr></thead>
           <tbody>
             <tr><td>① → ②</td><td>캐시 도입</td><td>오류율 <strong>83.3% → 0%</strong>. 완주하게 만든 것이 첫 조치의 성과다</td></tr>
-            <tr><td>② → ③</td><td>병렬화만</td><td><strong>악화.</strong> P99 42.6초 → 129.9초</td></tr>
-            <tr><td>③ → ④</td><td>병렬 + 캐시</td><td>P99 129.9초 → 79.0초. 캐시가 있어야 병렬화가 값을 한다</td></tr>
+            <tr><td><strong>② → ④</strong></td><td><strong>병렬화만</strong> (캐시 고정)</td><td><strong>악화.</strong> P99 42.6초 → 79.0초 (1.85배)</td></tr>
+            <tr><td>② ↔ ③</td><td>캐시와 실행 방식이 동시에 바뀜</td><td><em>비교 불가.</em> 어느 쪽 효과인지 나눌 수 없다</td></tr>
             <tr><td>④ → ⑤</td><td>부가정보 조회 최적화</td><td>P99 79.0초 → <strong>6.9초</strong></td></tr>
             <tr><td>⑤ → ⑥</td><td>Caffeine refresh</td><td>P99 6.9초 → <strong>23ms</strong></td></tr>
           </tbody>
@@ -230,8 +235,10 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         </div>
         </div>
 
-        <p>마지막 한 단계가 가장 컸다. 그리고 그 단계는 <strong>맨 마지막에 넣은 것</strong>이라, 전후만 쟀다면
-        앞선 네 조치의 공으로 돌아갔을 것이다.</p>
+        <p>마지막 한 단계가 <strong>배수로는</strong> 가장 컸다 — 6.9초에서 23ms 로 약 300배다.
+        <strong>절대량으로는 ④→⑤ 가 더 크다</strong>(약 72.1초 감소 대 약 6.84초). 둘 다 참이고, 어느 쪽을
+        "가장 컸다"고 부를지는 척도가 정한다. 다만 어느 척도로 보든 그 단계는 <strong>맨 마지막에 넣은
+        것</strong>이라, 전후만 쟀다면 앞선 네 조치의 공으로 돌아갔을 것이다.</p>
 
         <p>⑤→⑥ 이 왜 그렇게 큰가. ⑤까지는 만료된 캐시를 읽으려는 요청이 <strong>새로 채워질 때까지 기다린다.</strong>
         Caffeine 의 refresh 는 만료 시점에 기존 값을 계속 돌려주면서 <strong>백그라운드에서 갱신</strong>한다.
@@ -265,14 +272,14 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         해로웠고, 캐시와 함께일 때만 값을 했다. 그 사실을 모른 채 다른 화면에 "여기도 병렬화하자"를 처방했다면
         같은 함정에 다시 들어갔을 것이다.</p>
 
-        <p>실제로 이 표는 진단 근거로도 쓰였다. 병렬화 단독이 악화라는 것은 <strong>병목이 CPU 나 처리량이 아니라
-        직렬화 지점</strong>이라는 뜻이고, 그래서 코드에서 락을 찾았고 <code>computeIfAbsent</code> 안의 외부
+        <p>실제로 이 표는 진단 근거로도 쓰였다. 캐시를 고정한 채 병렬화가 악화라는 것은 <strong>병목이 CPU 나
+        처리량이 아니라 직렬화 지점</strong>이라는 뜻이고, 그래서 코드에서 락을 찾았고 <code>computeIfAbsent</code> 안의 외부
         호출이 나왔다. 표가 코드를 가리켰다.</p>
 
         <p>예상되는 반문 두 가지를 미리 적어 둔다.</p>
 
         <p><strong>"그냥 스레드 풀을 키우면 되지 않나?"</strong> — 병목이 락이면 스레드를 늘려도 대기자만 늘어난다.
-        ③이 정확히 그 실험이다. 순차(②)보다 스레드가 많은 구성(③)이 더 느렸다.</p>
+        ②↔④ 가 정확히 그 실험이다. 같은 캐시 설정에서 순차보다 병렬이 느렸다.</p>
 
         <p><strong>"Median 4ms 는 캐시 히트라 당연한 것 아닌가?"</strong> — 맞다. 그래서 Median 만 보지 않는다.
         같은 줄의 P99 가 23ms 이고 Apdex 가 1.000 이다. Apdex 1.000 은 표본 전체가 만족 임계 안에 들어왔다는
@@ -285,9 +292,15 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
           ③→④ 가 보여주듯, 그 조건을 없애면 병렬화는 값을 한다.</li>
           <li><strong>프로덕션 측정이 아니다.</strong> 사내 시험 환경에서 합성 부하로 잰 값이다. 실제 사용자
           분포·데이터 규모·네트워크는 다르다.</li>
+          <li><strong>②와 ③은 서로의 대조군이 아니다.</strong> 캐시와 실행 방식이 동시에 바뀌므로 그
+          차이(42.6초 → 129.9초)에서 어느 쪽 효과인지 나눌 수 없다. 이 글이 병렬화 단독의 근거로 쓰는 것은
+          캐시를 고정한 ②→④ 뿐이다.</li>
+          <li><strong>Apdex 1.000 은 표본 전체가 만족 임계 안이라는 증명이 아니다.</strong> 도구 표기가 소수
+          셋째 자리 반올림이면 소수의 tolerating 표본이 있어도 1.000 으로 보인다. 반올림 전 원시값은
+          확인하지 않았다.</li>
           <li><strong>구성마다 한 번씩만 쟀다.</strong> 반복 측정으로 분산을 낸 것이 아니라서, 인접한 두 구성의
-          차이가 작을 때는 그 차이를 근거로 삼지 않았다. 이 글이 근거로 쓰는 것은 ②↔③ 처럼
-          <strong>세 배 규모의 차이</strong>뿐이다.</li>
+          차이가 작을 때는 그 차이를 근거로 삼지 않았다. 이 글이 근거로 쓰는 것은 ②→④ 처럼
+          <strong>배 단위의 차이</strong>뿐이다.</li>
           <li><strong>①의 600초는 지연이 아니다.</strong> Timeout 상한이다. ①의 P99 를 "600초"로 인용하면
           측정하지 못한 것을 측정한 척하는 것이 된다.</li>
           <li><strong>Apdex 임계는 도구 기본값</strong>을 그대로 썼다. 서비스 수준 목표를 별도로 정의해 맞춘 값이

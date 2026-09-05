@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>並列化したらテールが3倍になった | Kwanghun Lee</title>
+  <title>スレッドを増やしたらテールが伸びた | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,16 +16,16 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="並列化したらテールが3倍になった | Kwanghun Lee" />
-  <meta property="og:description" content="キャッシュなしで並列化したところ、p99 が 42 秒から 129 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンがロックされる。6 構成を同条件で測って初めて見えたこと。" />
+  <meta property="og:title" content="スレッドを増やしたらテールが伸びた | Kwanghun Lee" />
+  <meta property="og:description" content="キャッシュ設定を固定したまま逐次を並列に変えると、p99 が 42.6 秒から 79.0 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンがロックされる。6 構成を同条件で測って初めて見えたこと。" />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:url" content="https://lkhun9311.github.io/writing/parallelism-made-the-tail-worse.ja.html" />
   <meta property="og:locale" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="並列化したらテールが3倍になった | Kwanghun Lee" />
-  <meta name="twitter:description" content="キャッシュなしで並列化したところ、p99 が 42 秒から 129 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンがロックされる。" />
+  <meta name="twitter:title" content="スレッドを増やしたらテールが伸びた | Kwanghun Lee" />
+  <meta name="twitter:description" content="キャッシュを固定したまま並列化すると、p99 が 42.6 秒から 79.0 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンがロックされる。" />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="キャッシュなしで並列化したところ、p99 が 42 秒から 129 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンがロックされる。6 構成を同条件で測って初めて見えたこと。" />
   <!-- og:end -->
@@ -67,7 +67,7 @@
     <main>
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ戻る</a>
-        <h1>並列化したらテールが3倍になった</h1>
+        <h1>スレッドを増やしたらテールが伸びた</h1>
         <div class="article-meta">Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">10分</span></div>
         <p class="lang-alts notranslate">他の言語 <a href="parallelism-made-the-tail-worse.html" hreflang="en" lang="en">English</a> · <a href="parallelism-made-the-tail-worse.ko.html" hreflang="ko" lang="ko">한국어</a></p>
       </section>
@@ -83,8 +83,9 @@
         <p>この画面はボリュームが増えるほど線形に遅くなり、最終的に 10 分のタイムアウトで落ちた。原因はボリューム
         1 件ごとに外部 API を逐次で呼ぶループであり、処方は自明に見えた。<strong>並列にすればよい。</strong></p>
 
-        <p>並列にしたら<strong>さらに遅くなった。</strong>p99 が 42 秒から 129 秒になった。この記事は、その 1 マスが
-        何を教えたか、そして<strong>その 1 マスを見えるようにした試験設計</strong>についてである。</p>
+        <p>並列にしたら<strong>さらに遅くなった。</strong>キャッシュ設定を固定したまま逐次を並列に変えると p99 が
+        <strong>42.6 秒から 79.0 秒</strong>になった。この記事は、その 1 マスが何を教えたか、そして
+        <strong>その 1 マスを見えるようにした試験設計</strong>についてである。</p>
 
         <nav class="article-toc" aria-label="目次">
           <p class="toc-label">目次</p>
@@ -125,11 +126,14 @@
         だ。この構成ではリクエストの 83.3% が完了していない。完了しなかったリクエストの遅延は「600 秒」ではなく
         <strong>不明</strong>が正しく、表のそのマスはそう読まなければならない。</p>
 
-        <p>目に留まる行は ③ である。</p>
+        <p>③ が ② より悪いことがまず目に留まる。42.6 秒に対して 129.9 秒だ。ところが
+        <strong>この 2 行は互いの対照群ではない</strong> — ② はキャッシュ 5 秒で逐次、③ はキャッシュなしで並列なので
+        <strong>2 つの変数が同時に変わる。</strong>この差から並列化の効果だけを取り出すことはできない。</p>
 
-        <p><strong>③ は ② より悪い。</strong>キャッシュを外して並列化だけを行うと、p99 は
-        <strong>42.6 秒 → 129.9 秒</strong>になる。スレッドを増やしたのにテールが 3 倍になった。スループットも
-        2.69 TPS から 0.87 TPS へ落ちた。</p>
+        <p>キャッシュを固定した対は<strong>② と ④</strong>である。どちらもキャッシュ 5 秒で、逐次か並列かだけが違う。</p>
+
+        <p><strong>p99 は 42.6 秒から 79.0 秒に上がった。</strong>スレッドを増やしたのにテールが 1.85 倍になった。
+        これがこの実験で並列化単独の効果として言えるすべてであり、向きははっきりしている — 有害だった。</p>
 
         <h2 id="why-3-is-worse-than-2">なぜ ③ は ② より悪いのか<a class="anchor" href="#why-3-is-worse-than-2" aria-label="このセクションへのリンク">#</a></h2>
 
@@ -221,8 +225,8 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
           <thead><tr><th scope="col">遷移</th><th scope="col">変えたもの</th><th scope="col">効果</th></tr></thead>
           <tbody>
             <tr><td>① → ②</td><td>キャッシュ導入</td><td>エラー率 <strong>83.3% → 0%</strong>。最初の対策が買ったのは速度ではなく完走である</td></tr>
-            <tr><td>② → ③</td><td>並列化のみ</td><td><strong>悪化。</strong>p99 42.6 秒 → 129.9 秒</td></tr>
-            <tr><td>③ → ④</td><td>並列 + キャッシュ</td><td>p99 129.9 秒 → 79.0 秒。キャッシュがあって初めて並列化が値を持つ</td></tr>
+            <tr><td><strong>② → ④</strong></td><td><strong>並列化のみ</strong>(キャッシュ固定)</td><td><strong>悪化。</strong>p99 42.6 秒 → 79.0 秒(1.85 倍)</td></tr>
+            <tr><td>② ↔ ③</td><td>キャッシュと実行方式が同時に変わる</td><td><em>比較不可。</em>どちらの効果か分けられない</td></tr>
             <tr><td>④ → ⑤</td><td>付随情報取得の最適化</td><td>p99 79.0 秒 → <strong>6.9 秒</strong></td></tr>
             <tr><td>⑤ → ⑥</td><td>Caffeine refresh</td><td>p99 6.9 秒 → <strong>23ms</strong></td></tr>
           </tbody>
@@ -230,8 +234,10 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         </div>
         </div>
 
-        <p>最後の 1 段が最も大きかった。そしてそれは<strong>最後に入れたもの</strong>なので、前後だけを測っていたら
-        先行する 4 つの対策の手柄になっていただろう。</p>
+        <p>最後の 1 段は<strong>倍率では</strong>最も大きかった — 6.9 秒から 23ms へ、約 300 倍である。
+        <strong>絶対量では ④→⑤ のほうが大きい</strong>(約 72.1 秒の減少に対し約 6.84 秒)。どちらも真であり、
+        どちらを「最も大きい」と呼ぶかは尺度が決める。いずれにせよそれは<strong>最後に入れたもの</strong>なので、
+        前後だけを測っていたら先行する 4 つの対策の手柄になっていただろう。</p>
 
         <p>なぜ ⑤→⑥ がこれほど大きいのか。⑤ までは、期限切れのキャッシュを読もうとしたリクエストが
         <strong>新しく埋まるまで待つ。</strong>Caffeine の refresh は期限切れの時点で既存の値を返し続けながら、
@@ -265,14 +271,14 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         有害で、キャッシュと組み合わさって初めて値を持った。それを知らないまま他の画面に「ここも並列化しよう」と
         処方していたら、同じ罠に再び入っていた。</p>
 
-        <p>実際、この表は診断の根拠にもなった。並列化単独が悪化するということは、<strong>ボトルネックが CPU や
-        スループットではなく直列化点である</strong>という意味であり、だからコードの中にロックを探し、
+        <p>実際、この表は診断の根拠にもなった。キャッシュを固定したまま並列化が悪化するということは、
+        <strong>ボトルネックが CPU やスループットではなく直列化点である</strong>という意味であり、だからコードの中にロックを探し、
         <code>computeIfAbsent</code> の中の外部呼び出しが出てきた。表がコードを指した。</p>
 
         <p>予想される反論を 2 つ先に書いておく。</p>
 
         <p><strong>「スレッドプールを大きくすればよいのでは?」</strong> — ボトルネックがロックなら、スレッドを
-        増やしても待つ側が増えるだけである。③ がまさにその実験だ。逐次(②)よりスレッドの多い構成(③)のほうが
+        増やしても待つ側が増えるだけである。②↔④ がまさにその実験だ。同じキャッシュ設定で、逐次より並列のほうが
         遅かった。</p>
 
         <p><strong>「中央値 4ms はキャッシュヒットだから当然では?」</strong> — その通り。だから中央値だけを見ない。
@@ -286,9 +292,14 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
           ③→④ が示すように、その条件を無くせば並列化は値を持つ。</li>
           <li><strong>本番の測定ではない。</strong>社内試験環境での合成負荷である。実際のユーザー分布・データ規模・
           ネットワークは異なる。</li>
+          <li><strong>② と ③ は互いの対照群ではない。</strong>キャッシュと実行方式が同時に変わるため、その差
+          (42.6 秒 → 129.9 秒)をどちらの効果にも帰属できない。この記事が並列化単独の根拠に使うのは、キャッシュを
+          固定した ②→④ だけである。</li>
+          <li><strong>Apdex 1.000 は標本全体が満足しきい値の内側にあることの証明ではない。</strong>ツールの表示が
+          小数第 3 位で丸められるなら、少数の tolerating 標本があっても 1.000 に見える。丸め前の値は確認していない。</li>
           <li><strong>構成ごとに 1 回ずつしか測っていない。</strong>反復測定による分散が無いので、隣接する 2 構成の
-          差が小さいときはその差を根拠にしていない。この記事が根拠に使うのは ②↔③ のような
-          <strong>3 倍規模の差</strong>だけである。</li>
+          差が小さいときはその差を根拠にしていない。この記事が根拠に使うのは ②→④ のような
+          <strong>倍単位の差</strong>だけである。</li>
           <li><strong>① の 600 秒は遅延ではない。</strong>タイムアウト上限である。① の p99 を「600 秒」として
           引用すると、測定できなかったものを測定したふりをすることになる。</li>
           <li><strong>Apdex のしきい値はツールの既定値</strong>をそのまま使った。サービス水準目標から定義した値では
