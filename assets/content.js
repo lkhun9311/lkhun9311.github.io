@@ -155,6 +155,14 @@
     },
 
     notes: {
+      /* 왼쪽 필터의 묶음. 용어 노트(#Harness 처럼 말 자체가 태그인 것)와 분류를 갈라 놓는다 —
+         한 줄에 섞여 있으면 "무엇으로 고르는 목록인지"를 매번 다시 읽어야 한다. */
+      tagGroups: {
+        "용어": ["Harness", "Percentile", "Warm-up", "Arm", "Connection Pool", "Connection Pooler",
+                "Transaction Pooling", "Mutation Testing", "Fail-closed"],
+        "분류": ["Performance", "Database", "Verification", "Design",
+                "Troubleshooting", "Operating", "Debugging", "Chore", "Certification"]
+      },
       items: [
         {
           title: "Harness: 하네스란?",
@@ -368,7 +376,56 @@
     var buttons = hasAll ? [allLabel].concat(tagList) : tagList;
     var initial = hasAll ? allLabel : (tagList[0] || null);
 
-    if (tagRowEl) {
+    /* 태그를 두 가지로 그린다.
+       - 홈처럼 미리보기만 하는 곳: 칩 한 줄(원래 모습)
+       - 섹션 인덱스: **왼쪽 목록**. 18개가 세 줄로 감기면 고르는 게 아니라 읽는 일이 된다.
+         왼쪽에 세로로 세우면 묶어서 나눌 수 있고 개수도 붙일 수 있다(AWS 문서의 좌측 내비와 같은 형태). */
+    var asFacets = !!(tagRowEl && tagRowEl.classList.contains("facets"));
+
+    function countOf(tag) {
+      if (tag === allLabel) return sec.items.length;
+      return sec.items.filter(function (it) { return (it.tags || []).indexOf(tag) !== -1; }).length;
+    }
+
+    function facetRow(t, active) {
+      return (
+        '<button type="button" class="facet' + (active ? " active" : "") + '" data-tag="' + esc(t) + '">' +
+        '<span class="facet-label">' + (t === allLabel ? esc(t) : "#" + esc(t)) + "</span>" +
+        '<span class="n">' + countOf(t) + "</span></button>"
+      );
+    }
+
+    if (tagRowEl && asFacets) {
+      // 섹션이 tagGroups 를 선언하면 그 순서·묶음대로, 아니면 한 덩어리로 그린다.
+      var groups = sec.tagGroups || null;
+      var html = hasAll ? facetRow(allLabel, true) : "";
+      if (groups) {
+        var placed = {};
+        Object.keys(groups).forEach(function (name) {
+          // 묶음 안에서는 **개수 많은 순**으로. 큰 덩어리가 먼저 보여야 훑는 값이 있다.
+          // 같은 개수면 이름순 — 순서가 실행마다 바뀌면 "어디 있었더라"가 매번 새로 시작된다.
+          var inGroup = groups[name]
+            .filter(function (t) { return tagList.indexOf(t) !== -1; })
+            .sort(function (a, b) { return countOf(b) - countOf(a) || a.localeCompare(b); });
+          if (!inGroup.length) return;
+          inGroup.forEach(function (t) { placed[t] = 1; });
+          html += '<div class="facet-group"><h3>' + esc(name) + "</h3>" +
+                  inGroup.map(function (t) { return facetRow(t, false); }).join("") + "</div>";
+        });
+        var rest = tagList.filter(function (t) { return !placed[t]; })
+          .sort(function (a, b) { return countOf(b) - countOf(a) || a.localeCompare(b); });
+        if (rest.length) {
+          html += '<div class="facet-group"><h3>기타</h3>' +
+                  rest.map(function (t) { return facetRow(t, false); }).join("") + "</div>";
+        }
+      } else {
+        html += '<div class="facet-group">' +
+                tagList.slice()
+                  .sort(function (a, b) { return countOf(b) - countOf(a) || a.localeCompare(b); })
+                  .map(function (t) { return facetRow(t, false); }).join("") + "</div>";
+      }
+      tagRowEl.innerHTML = html;
+    } else if (tagRowEl) {
       tagRowEl.innerHTML = buttons.map(function (t, i) {
         return (
           '<button type="button" class="text-border-link tag' + (i === 0 ? " active" : "") +
@@ -390,7 +447,7 @@
       tagRowEl.addEventListener("click", function (e) {
         var btn = e.target.closest("[data-tag]");
         if (!btn) return;
-        var bs = tagRowEl.querySelectorAll(".tag");
+        var bs = tagRowEl.querySelectorAll(asFacets ? ".facet" : ".tag");
         for (var i = 0; i < bs.length; i++) bs[i].classList.remove("active");
         btn.classList.add("active");
         draw(btn.getAttribute("data-tag"));
