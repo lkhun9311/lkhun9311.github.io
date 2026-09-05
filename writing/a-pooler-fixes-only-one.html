@@ -70,7 +70,7 @@
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Writing</a>
         <h1>The Connection Exhaustion RDS Proxy Cannot Fix<br><span class="h1-sub">I was calling an external API inside the transaction — a pre-launch review of a social polling platform</span></h1>
-        <div class="article-meta"><span class="source-tag commercial notranslate">Commercial project</span>Writing · September 2026<span aria-hidden="true"> · </span><span class="read-time">16 min read</span></div>
+        <div class="article-meta"><span class="source-tag commercial notranslate">Commercial project</span>Writing · September 2026<span aria-hidden="true"> · </span><span class="read-time">19 min read</span></div>
       </section>
       <article class="article-body">
 
@@ -99,6 +99,7 @@
             <li><a href="#why-not-async">“Why not just go async?”</a></li>
             <li><a href="#the-guard">The fix is easy to undo, so the guard went on the cause</a></li>
             <li><a href="#i-measured-it">Three weeks later I actually measured it</a></li>
+            <li><a href="#overlapping-the-calls">With numbers, one more thing to fix became visible</a></li>
             <li><a href="#what-this-does-not-claim">What this article does not claim</a></li>
             <li><a href="#wrapping-up">Wrapping up</a></li>
           </ul>
@@ -743,6 +744,109 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         <p>And the first run I did showed <strong>almost no difference</strong> (p95 5 ms against 8 ms), because
         8 writers do not exhaust a pool of 10. <strong>Without pool exhaustion the phenomenon does not
         appear</strong> — this number belongs to its conditions, it is not a constant.</p>
+
+        <h2 id="overlapping-the-calls">With numbers, one more thing to fix became visible<a class="anchor" href="#overlapping-the-calls" aria-label="Link to this section">#</a></h2>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><span class="repo-private notranslate" translate="no">Private</span> <code>services/api/…/content/ModerationGate.kt</code> <code>screenPost</code></p>
+
+        <p>Having numbers produced the next question on its own — <strong>why is post-create p50 exactly twice
+        the stub delay?</strong> Opening the gate showed it calling the external classifiers
+        <strong>in sequence</strong>.</p>
+
+        <p>③ harmful-content and ④ targeting are <strong>independent checks over the same input</strong>. The
+        first one's result is not the second one's input, so there is no order to preserve.</p>
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
+            <svg viewBox="0 0 720 304" role="img" aria-labelledby="pc-t pc-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="pc-t">Calling the two classifiers in sequence and overlapped</title>
+              <desc id="pc-d">The top row is the sequential call. The banned-term and contact checks are local and finish quickly;
+              then the harmful-content classifier takes 800 milliseconds and the targeting classifier another 800, so the
+              outbound wait adds up to 1,600 milliseconds. The bottom row overlaps them. The two classifiers are
+              independent checks over the same input, so they can go out together and the total outbound wait falls to the
+              longer of the two, 800 milliseconds. The response goes out only after both have returned, and if both reject,
+              the harmful-content verdict is the one returned.</desc>
+
+              <text x="8" y="24" font-size="15" fill="#7b7186">sequential — 1,600ms of outbound wait</text>
+              <rect x="104" y="38" width="42.0" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="125.0" y="56" font-size="11" fill="#18121d" text-anchor="middle">①②</text>
+              <rect x="149.5" y="38" width="280.0" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="289.5" y="56" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">③ harmful content 800ms</text>
+              <rect x="433.0" y="38" width="280.0" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="573.0" y="56" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">④ targeting 800ms</text>
+              <path d="M149.5 72 V 80 H 713.0 V 72" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="149.5" y="98" font-size="14" fill="#d62976" font-weight="700">1,600 ms</text>
+              <text x="8" y="148" font-size="15" fill="#7b7186">overlapped — 800ms of outbound wait</text>
+              <rect x="104" y="162" width="42.0" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="125.0" y="180" font-size="11" fill="#18121d" text-anchor="middle">①②</text>
+              <rect x="149.5" y="162" width="280.0" height="26" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="289.5" y="180" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">③ harmful content 800ms</text>
+              <rect x="149.5" y="192" width="280.0" height="26" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="289.5" y="210" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">④ targeting 800ms</text>
+              <path d="M149.5 226 V 234 H 429.5 V 226" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="149.5" y="252" font-size="14" fill="#4f5bd5" font-weight="700">800 ms</text>
+              <text x="8" y="292" font-size="14" fill="#3b3344">①② are local checks and add no outbound wait. ③④ are <tspan font-weight="700" fill="#18121d">independent checks over the same input</tspan>, so they need no order.</text>
+            </svg>
+          </div>
+          <figcaption>Called in sequence the outbound waits add up; overlapped, only the longer of the two remains. ①② are local and add no outbound wait.</figcaption>
+        </figure>
+
+        <p>A virtual thread (Java 21) carries ④ while ③ runs on the calling thread.
+        <strong>Not using a fixed-size pool is the point</strong> — a pool size is a new concurrency cap, and it
+        would put the very thing this article is about, a cap nobody chose, back into the moderation path.</p>
+
+        <p><strong>The behaviour has to stay the same.</strong> This is a performance change, not a behaviour
+        change. So both are awaited (abandoning the loser means the cost is paid and nobody reads the result),
+        and ③'s exception wins over ④'s — the same response the sequential version produced.</p>
+
+        <p>⚠️ <strong>It costs something.</strong> Sequentially, if ③ blocked, ④ was never called. Now ④ runs
+        even when ③ blocks, at roughly $0.0002 more per post. That is the trade for halving the latency.</p>
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">Response time and throughput, sequential against overlapped.</caption>
+          <thead><tr><th scope="col">Metric</th><th scope="col">Sequential</th><th scope="col">Overlapped</th><th scope="col">Ratio</th></tr></thead>
+          <tbody>
+            <tr><td><strong>post create p50</strong></td><td>1,611 ms</td><td><strong>811 ms</strong></td><td><strong>1.99× faster</strong></td></tr>
+            <tr><td>post create p95</td><td>1,614 ms</td><td>814 ms</td><td>1.98×</td></tr>
+            <tr><td><strong>post create throughput</strong></td><td>2.52 req/s</td><td><strong>5.01 req/s</strong></td><td><strong>1.99×</strong></td></tr>
+            <tr><td>feed read p50</td><td>4 ms</td><td>4 ms</td><td>1.00×</td></tr>
+            <tr><td>error rate</td><td>0%</td><td>0%</td><td>—</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p><strong>Exactly 2×.</strong> Two 800 ms waits became one, which is what should happen, and feed reads
+        stayed at 4 ms — a path that was not touched should not move.</p>
+
+        <h3>And at first the improvement did not show</h3>
+
+        <p>The first run used 16 writers and gave p50 <strong>2,577 ms against 2,598 ms</strong> — no difference.
+        It looked like the change had done nothing.</p>
+
+        <p>The cause was not the code but <strong>the measuring conditions</strong>. At 16 writers the load
+        generator, the app, the stub and the database share one machine's CPU and were already saturated, so
+        throughput sat at the same ceiling of 6.26 req/s in both. <strong>The outbound call was not the
+        bottleneck at that point</strong>, so halving it changed nothing.</p>
+
+        <p>The order of checks was: ① measure whether the stub is the bottleneck — 32 concurrent requests finish
+        in 0.81 s, so no. ② compare source and jar timestamps to confirm the parallel code was in the build.
+        ③ time a <strong>single request</strong> — 0.817 s, so it was working. ④ re-measure at 4 writers, below
+        saturation, where the 2× came straight back.</p>
+
+        <p>The lesson that remains: <strong>in a saturated system, fixing what is not the bottleneck moves no
+        number.</strong> When an improvement does not show, measure <strong>what is making the ceiling</strong>
+        before suspecting the code.</p>
+
+        <h3>A new rule needs a new guard</h3>
+
+        <p>This change creates a rule that did not exist before: <strong>exception precedence</strong>.
+        Sequentially, if ③ threw, ④ was never called, so there was nothing to order.</p>
+
+        <p>Reversing it on purpose left <strong>all eight existing tests green</strong>. A new rule needs an
+        assertion that holds it. Two were added and checked with three mutations — dropping the
+        <code>ExecutionException</code> unwrap, reversing the precedence, and skipping ④ when ③ blocks. All
+        three go red.</p>
 
         <h2 id="what-this-does-not-claim">What this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
