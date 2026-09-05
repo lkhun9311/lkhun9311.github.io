@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>すべての保証は、テナントが書けるフィールドで終わる | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/every-guarantee-ends-at-a-writable-field.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/every-guarantee-ends-at-a-writable-field.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/every-guarantee-ends-at-a-writable-field.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/every-guarantee-ends-at-a-writable-field.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="すべての保証は、テナントが書けるフィールドで終わる | Kwanghun Lee" />
+  <meta property="og:description" content="同じやり方で破られた防御が 4 件。すべて読んで見つけたのではなく攻撃して見つけた。検査は自分が読んだものについては正しく、誤っていたのはテナントが書く値をテナントについての証拠として読んだ側だった。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/every-guarantee-ends-at-a-writable-field.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="すべての保証は、テナントが書けるフィールドで終わる | Kwanghun Lee" />
+  <meta name="twitter:description" content="検査は自分が読んだものについては正しかった。誤っていたのは、テナントが書く値をテナントについての証拠として読んだ側だった。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="同じやり方で破られた防御が 4 件。すべて読んで見つけたのではなく攻撃して見つけた。検査は自分が読んだものについては正しく、誤っていたのはテナントが書く値をテナントについての証拠として読んだ側だった。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language"
+                data-authored='{"en":"every-guarantee-ends-at-a-writable-field.html","ko":"every-guarantee-ends-at-a-writable-field.ko.html","ja":"every-guarantee-ends-at-a-writable-field.ja.html"}'>
+          <option value="ja" selected>Japanese</option>
+          <option value="en">English</option>
+          <option value="ko">Korean</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="zh-TW">Chinese (Traditional)</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="vi">Vietnamese</option>
+          <option value="id">Indonesian</option>
+          <option value="hi">Hindi</option>
+          <option value="ar">Arabic</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <section class="page-hero">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ戻る</a>
+        <h1>すべての保証は、テナントが書けるフィールドで終わる</h1>
+        <div class="article-meta">Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">11分</span></div>
+        <p class="lang-alts notranslate">他の言語 <a href="every-guarantee-ends-at-a-writable-field.html" hreflang="en" lang="en">English</a> · <a href="every-guarantee-ends-at-a-writable-field.ko.html" hreflang="ko" lang="ko">한국어</a></p>
+      </section>
+      <article class="article-body">
+
+        <p><strong>範囲.</strong> 個人プロジェクトである
+        <a href="../projects/gpuaas-control-plane.html">Kubernetes ネイティブ GPU コントロールプレーン</a>の
+        マルチテナントのクォータ強制を攻撃し、修理した記録である。ここでの GPU は
+        <strong>偽の device plugin が広告するシミュレーション装置</strong>だ。したがってこの記事の発見は
+        <strong>Kubernetes のアドミッションと信頼境界</strong>についてであって、装置の挙動についてではない。
+        そして最後に書くが、<strong>このガードは現在どの名前空間でも有効になっていない。</strong></p>
+
+        <p>同じやり方で破られた防御が 4 件出た。すべて<strong>文書を読んで見つけたのではなく攻撃して</strong>
+        見つけた。4 件を一箇所に集める理由は、<strong>発見はそれぞれではなくそのパターン</strong>だからである。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
+        <table>
+          <caption class="sr-only">破られた保証 4 件と、それぞれでテナントが書くフィールド。</caption>
+          <thead><tr><th scope="col">保証</th><th scope="col">テナントが書くフィールド</th><th scope="col">攻撃者が得たもの</th></tr></thead>
+          <tbody>
+            <tr><td>GPU クォータが強制される</td><td><code>ownerReferences</code></td><td>計上されない装置 2 個</td></tr>
+            <tr><td>GPU クォータが強制される</td><td><code>quota-exempt</code> アノテーション</td><td>装置数に制限なし</td></tr>
+            <tr><td>回収された装置は戻る</td><td><code>terminationGracePeriodSeconds</code></td><td>回収された装置を 301 秒</td></tr>
+            <tr><td>予算は使える側に行く</td><td>Pod がすべて拒否される Job</td><td>予算全体を無期限に</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#nothing-stopped-it">最初は何も止めなかった</a></li>
+            <li><a href="#ownerreference-is-a-claim">ownerReference は主張であって事実ではない</a></li>
+            <li><a href="#exemption-anyone-can-grant">誰でも与えられる免除は免除ではない</a></li>
+            <li><a href="#number-the-victim-chooses">回収の保証は被害者が選ぶ数値に縛られている</a></li>
+            <li><a href="#pods-that-cannot-exist">存在しえない Pod のための予約</a></li>
+            <li><a href="#why-fixes-differ">4 つの修理の形が違う理由</a></li>
+            <li><a href="#a-claim-was-false">この文書の 1 つの主張が偽で、ガードはその上に建てられた</a></li>
+            <li><a href="#what-this-does-not-claim">この記事が主張しないこと</a></li>
+          </ul>
+        </nav>
+
+        <h2 id="nothing-stopped-it">最初は何も止めなかった<a class="anchor" href="#nothing-stopped-it" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>設計はこうだ。テナントごとの GPU 予算の単一の権威は Kueue の ClusterQueue であり、コントローラは同じ装置が
+        二重に計上されないよう、名前空間の <code>ResourceQuota</code> が GPU を制限するのを<strong>意図的に</strong>
+        止める。</p>
+
+        <p>ところが<strong>Kueue は自分のキューに入ったものしか見ない。</strong>ではテナントが Pod を直接作るのを
+        何が止めるのか。</p>
+
+<pre><code>kubectl apply -f - &lt;&lt;'EOF'
+apiVersion: v1
+kind: Pod
+metadata: {name: bypass-probe, namespace: serving}
+spec:
+  containers:
+    - {name: c, image: busybox:1.36, command: ["sh","-c","sleep 30"],
+       resources: {limits: {"nvidia.com/gpu": "2"}}}
+EOF
+
+pod/bypass-probe created
+bypass-probe   Running   platform-worker2   2
+$ kubectl -n serving get workloads
+(none)</code></pre>
+
+        <p>作成され、スケジュールされ、実行中で、装置を 2 つ握っているのに、<strong>Kueue の Workload はどこにも
+        無い。</strong>何もアドミットしておらず、何も数えていない。</p>
+
+        <p>つまり「マルチテナント GPU クォータ」は<strong>境界ではなく、プラットフォーム自身のコントローラが
+        従っていた慣習</strong>だった。慣習は、従うつもりの無い相手を何も拘束しない。</p>
+
+        <h2 id="ownerreference-is-a-claim">ownerReference は主張であって事実ではない<a class="anchor" href="#ownerreference-is-a-claim" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>そこでアドミッション Webhook を書いた。最初のルールは自然なものだった —
+        <strong>Pod のコントローラがキューに入った Job ならアドミットする</strong>。ユニットスペック 10 個と
+        ライブケース 4 件を通過した。</p>
+
+<pre><code># 本物のキューに本物の Job を 1 つ作る
+kubectl apply -f (Job "decoy", labels: {kueue.x-k8s.io/queue-name: gpu-premium})
+
+# そしてその Job を自分の Pod のコントローラだと主張する
+kubectl apply -f (Pod, ownerReferences: [{kind: Job, name: decoy,
+                        uid: &lt;decoy の uid&gt;, controller: true}],
+                  limits: {"nvidia.com/gpu": "2"})
+
+pod/forged-owner created
+forged-owner   1/1   Running</code></pre>
+
+        <p><code>ownerReferences</code> は<strong>オブジェクトを作る側が書き込むフィールド</strong>であり、
+        Kubernetes はそこに書かれた所有者が実際にそのオブジェクトと関係があるかを検査しない。偽造に必要なのは
+        本物の Job の UID 1 つで、それは同じ名前空間で読める。</p>
+
+        <p><strong>修理。</strong>その参照を<strong>Job コントローラが提示したときだけ</strong>信じる。
+        <code>req.UserInfo.Username</code> — アドミッション要求の中で<strong>テナントが書けない唯一の
+        フィールド</strong> — を読む。</p>
+
+        <p>ここに実装上の帰結が 1 つ付く。型の付いた <code>Validator</code> インターフェースは
+        <strong>オブジェクトしか</strong>渡してこない。ところが信じられないのがまさにそのオブジェクトだ。だから
+        生の <code>admission.Handler</code> まで降りて要求そのものを受け取る必要があった。
+        <strong>便利な抽象が渡してくるものが信頼境界と噛み合わないなら、その抽象は使えない。</strong></p>
+
+        <h2 id="exemption-anyone-can-grant">誰でも与えられる免除は免除ではない<a class="anchor" href="#exemption-anyone-can-grant" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>同じガードが <code>quota-exempt</code> アノテーションを<strong>どの Pod でも</strong>尊重していた。</p>
+
+        <p>このアノテーションは必要があって存在する。device plugin のように、インフラがテナント予算の外で装置を
+        握らねばならない場合がある。ところが<strong>テナントも自分の Pod にアノテーションを付けられる。</strong>
+        それならこれは、迂回に手順を 1 つ足しただけだ。</p>
+
+        <p><strong>修理。</strong><code>kube-system</code> のサービスアカウントが要求したときだけ尊重する —
+        テナントが入れない集合である。そして免除で通った Pod は<strong>そのアノテーションを名指しする警告を
+        残す。</strong>予算の外へ出る装置が自分から知らせるようにした。</p>
+
+        <h2 id="number-the-victim-chooses">回収の保証は被害者が選ぶ数値に縛られている<a class="anchor" href="#number-the-victim-chooses" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>クォータ回収はプリエンプションで動き、プリエンプションは終了を待ち、終了は
+        <code>terminationGracePeriodSeconds</code> を待つ — <strong>プリエンプトされる Pod 自身が決める値</strong>
+        である。</p>
+
+        <p>直接測った。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
+        <table>
+          <caption class="sr-only">grace の設定と、装置を握っていた時間。</caption>
+          <thead><tr><th scope="col">grace</th><th scope="col">装置を握っていた時間</th></tr></thead>
+          <tbody>
+            <tr><td>30 秒</td><td>32 秒</td></tr>
+            <tr><td>300 秒</td><td><strong>301 秒</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>残作業を 43 秒に固定してパラメータを掃くとモデルが出て、予測どおりの位置に膝ができる —
+        <strong><code>占有 = min(残作業, grace)</code></strong>。</p>
+
+        <p>同じ境界を反対側からも測った。SIGTERM に反応しないワークロードは
+        <strong>残りのサービスが grace に収まる間は回収を完全に無効化</strong>し、収まらなくなった瞬間にちょうど
+        grace で切られる。</p>
+
+        <p><strong>修理 — そしてこれは前の 2 つと違う。</strong>grace は<strong>本当にワークロードのもの</strong>だ。
+        チェックポイントを書いて死ぬには時間が要り、その必要は正当である。だから信頼できる値に置き換えることも、
+        書ける側を制限することもできなかった。<strong>代わりに上限を置いた — 装置を握る Pod は 120 秒。</strong></p>
+
+        <p>なぜ 30 ではないのか。SIGTERM でチェックポイントを書く学習ステップには 30 秒では足りず、それを拒めば
+        テナントは<strong>SIGTERM を無視する方へ行く。</strong>そして測定が示したところでは、所有者にとって最も
+        高くつくのがまさにその場合である。</p>
+
+        <h2 id="pods-that-cannot-exist">存在しえない Pod のための予約<a class="anchor" href="#pods-that-cannot-exist" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>3 つ目の修理を試している最中に 4 つ目が出た。また同じ形である —
+        <strong>Pod を拒否するのでは遅い。</strong></p>
+
+        <p>Kueue は<strong>Job を見て</strong> Job をアドミットする。ところがその Job の Pod が後で拒否されても、
+        Job のアドミットは維持される。Job コントローラは再試行し、すべての Pod が拒否され、Workload は
+        アドミットされたままクォータを握って座っている。</p>
+
+<pre><code>t=20s    used=2  admitted=2  job.status.failed=0
+t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
+
+        <p><code>backoffLimit</code> はこれを終わらせられない。<strong>アドミッション拒否は Pod の失敗ではない</strong>
+        ので <code>failed</code> は 0 から動かず、再試行が止まらない。こういう Job を投げるテナントは
+        <strong>何も実行しないまま予算を無期限に握る。</strong></p>
+
+        <p><strong>修理。</strong>Pod の運命を決めるルールを<strong>その Pod を生み出すテンプレートに、予約が
+        起きる時点で</strong>適用する。装置を要求する Job は、テンプレートの grace が上限を超えるか、キューラベルが
+        無ければ拒否される。</p>
+
+        <p>ラベルは<strong>Job で</strong>検査する。Kueue がそのラベルを読むのがそこであり、Pod で拒否すると
+        <strong>利用者に、自分の Pod には無いフィールドを直せと言うこと</strong>になるからだ。</p>
+
+        <p>デプロイ後に再攻撃した — 両方の Job が <code>Forbidden</code>、<code>used</code> は 1 のまま変わらず、
+        grace 90 の普通のキュー Job はそのまま動いた。</p>
+
+        <h2 id="why-fixes-differ">4 つの修理の形が違う理由<a class="anchor" href="#why-fixes-differ" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>4 つの保証はいずれも<strong>攻撃者が供給する値で表現</strong>されていた。検査のバグではない —
+        <strong>検査は自分が読んだものについては正しかった。</strong>誤っていたのは、テナントが書くものを読んで、
+        それをテナントについての証拠として扱ったことだ。</p>
+
+        <p>そして修理が 4 つの異なる形で出たことが、この記事で最も役に立つ部分である。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
+        <table>
+          <caption class="sr-only">4 つの修理と、それぞれが取った形。</caption>
+          <thead><tr><th scope="col">件</th><th scope="col">形</th><th scope="col">何をしたか</th></tr></thead>
+          <tbody>
+            <tr><td>① ownerReference</td><td><strong>置換</strong></td><td>信頼できない入力を信頼できる入力に替えた — 要求者は認証され、オブジェクトはされない</td></tr>
+            <tr><td>② 免除アノテーション</td><td><strong>制限</strong></td><td>その入力を供給できる側を、テナントが入れない集合に狭めた</td></tr>
+            <tr><td>③ grace</td><td><strong>上限</strong></td><td>どちらもできず<em>被害を縛った</em>。最も弱く、最も正直な修理である</td></tr>
+            <tr><td>④ Job の予約</td><td><strong>位置の移動</strong></td><td>ルールはそのままに、約束が起きる地点へ検査を移した</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>③ を強調したい。回収は<strong>依然として即時ではなく</strong>、そうしてくれる Kubernetes の機構は無い。
+        上限は問題を解決したのではなく、<strong>どこまで悪くなりうるかを有限にした</strong>だけだ。解決と上限を
+        同じ欄に書けば、次の読み手はそれを解決済みと受け取る。</p>
+
+        <p>④ は別のことを言っている。<strong>ルールは最初から正しく、適用される時点が間違っていた。</strong>
+        防ごうとしていたことが既に起きた後に検査していた。この種の欠陥は、ルールをいくら精緻にしても消えない。</p>
+
+        <h2 id="a-claim-was-false">この文書の 1 つの主張が偽で、ガードはその上に建てられた<a class="anchor" href="#a-claim-was-false" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>この作業の元の文書にはこういう文があった — <em>「ここでは Kueue の pod・deployment 統合が有効に
+        なっていないので、管理対象になりうるのは Job だけで、サービング Pod はどうラベルを付けても Kueue には
+        見えない。」</em></p>
+
+        <p><strong>偽である。</strong>17 のフレームワークが有効で、その中に <code>pod</code>・
+        <code>deployment</code>・<code>statefulset</code> がある。この結論は<strong>切り詰められた
+        <code>grep</code> 出力の最初の 12 行を読んで</strong>出たもので、そのままガードの設計とコードコメントと
+        文書にまで生き残った。</p>
+
+        <p>これが変えるのはラベルの<strong>意味</strong>だ。キューラベルはテナントが自分に与える権限ではなく
+        <strong>請求書</strong>である — そのキューの予算に付けてくれという要求だ。すると「ラベルが付いているから
+        通す」というルールは、ガードが置き換えようとしていたまさにその文字列検査と同じものになる。</p>
+
+        <p>そしてここからこのプロジェクトの現状が出てくる。ガードはサービング Pod を拒否する。サービング Pod は
+        ReplicaSet が所有し、ガードは Job しか受け付けないからだ。そこで
+        <strong><code>serving</code> 名前空間のラベルを再び外した。</strong>いまこのリポジトリで
+        <strong>このガードの統制下にある名前空間は無い。</strong></p>
+
+        <p>正直な状態はこうだ — <strong>強制の機構は作られ、偽造に対して試験され、サービングが本当に請求される
+        クォータを持つまでは有効にできない。</strong>次の一手はガードを弱めることではなく、サービングをクォータの
+        経路に載せることである。</p>
+
+        <h2 id="what-this-does-not-claim">この記事が主張しないこと<a class="anchor" href="#what-this-does-not-claim" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>このガードが今何かを守っているという主張ではない。</strong>上に書いたとおり、現在どの名前空間も
+          このガードの統制下にない。</li>
+          <li><strong>GPU はシミュレーションである。</strong>偽の device plugin が <code>nvidia.com/gpu</code> を
+          広告しており、「装置 2 個」はその偽の装置だ。この記事の発見は<strong>アドミッションと信頼境界</strong>に
+          ついてであって、実際の装置がどう占有されるかについてではない。</li>
+          <li><strong>32 秒・301 秒はこのクラスタでの観測</strong>であり、モデルは残作業を 43 秒に固定した掃引から
+          出ている。別の作業長や別の kubelet 設定で同じ定数が出るという意味ではない。</li>
+          <li><strong>120 秒は測定から導いた値ではない。</strong>2 つの失敗の仕方(チェックポイントを書けなくする
+          ことと、装置を長く握ること)の間の判断であり、測定が支持するのは「SIGTERM を無視する方が所有者に最も
+          高くつく」という部分までである。</li>
+          <li><strong>4 件が全部という意味ではない。</strong>攻撃して見つかったのが 4 件で、攻撃していない表面は
+          そのまま残っている。最初のガードがユニットスペック 10 個とライブケース 4 件を通過したという事実がその
+          理由だ — <strong>テストは自分が考えたことしか試さない。</strong></li>
+        </ul>
+
+        <p>残る 1 行はこれである。<strong>保証を書くときは、その文がどの値に依存するのかを書き、その値を誰が
+        書くのかをその隣に書かねばならない。</strong>テナントが書く値の上に建てた保証は、検査がどれほど正確でも
+        そのフィールドで終わる。</p>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script src="../assets/lang.js?v=20260905"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/article.js?v=20260817-scroll"></script>
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>모든 보장은 테넌트가 쓸 수 있는 필드에서 끝난다 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/every-guarantee-ends-at-a-writable-field.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/every-guarantee-ends-at-a-writable-field.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/every-guarantee-ends-at-a-writable-field.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/every-guarantee-ends-at-a-writable-field.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="모든 보장은 테넌트가 쓸 수 있는 필드에서 끝난다 | Kwanghun Lee" />
+  <meta property="og:description" content="같은 방식으로 뚫린 방어 네 건. 전부 읽어서가 아니라 공격해서 찾았다. 검사는 자기가 읽은 것에 대해 옳았고, 틀린 것은 테넌트가 쓰는 값을 테넌트에 관한 증거로 읽은 쪽이었다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/every-guarantee-ends-at-a-writable-field.ko.html" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="모든 보장은 테넌트가 쓸 수 있는 필드에서 끝난다 | Kwanghun Lee" />
+  <meta name="twitter:description" content="검사는 자기가 읽은 것에 대해 옳았다. 틀린 것은 테넌트가 쓰는 값을 테넌트에 관한 증거로 읽은 쪽이었다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="같은 방식으로 뚫린 방어 네 건. 전부 읽어서가 아니라 공격해서 찾았다. 검사는 자기가 읽은 것에 대해 옳았고, 틀린 것은 테넌트가 쓰는 값을 테넌트에 관한 증거로 읽은 쪽이었다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language"
+                data-authored='{"en":"every-guarantee-ends-at-a-writable-field.html","ko":"every-guarantee-ends-at-a-writable-field.ko.html","ja":"every-guarantee-ends-at-a-writable-field.ja.html"}'>
+          <option value="ko" selected>Korean</option>
+          <option value="en">English</option>
+          <option value="ja">Japanese</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="zh-TW">Chinese (Traditional)</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="vi">Vietnamese</option>
+          <option value="id">Indonesian</option>
+          <option value="hi">Hindi</option>
+          <option value="ar">Arabic</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <section class="page-hero">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing 으로</a>
+        <h1>모든 보장은 테넌트가 쓸 수 있는 필드에서 끝난다</h1>
+        <div class="article-meta">Writing · 2026년 9월<span aria-hidden="true"> · </span><span class="read-time">10분</span></div>
+        <p class="lang-alts notranslate">다른 언어 <a href="every-guarantee-ends-at-a-writable-field.html" hreflang="en" lang="en">English</a> · <a href="every-guarantee-ends-at-a-writable-field.ja.html" hreflang="ja" lang="ja">日本語</a></p>
+      </section>
+      <article class="article-body">
+
+        <p><strong>범위.</strong> 개인 프로젝트인
+        <a href="../projects/gpuaas-control-plane.html">Kubernetes 네이티브 GPU 컨트롤 플레인</a>의 멀티테넌트
+        쿼터 강제를 공격하고 고친 기록이다. 여기의 GPU 는 <strong>가짜 device plugin 이 광고하는 시뮬레이션
+        장치</strong>다. 그러므로 이 글의 발견은 <strong>쿠버네티스 입장 제어와 신뢰 경계</strong>에 관한 것이지
+        장치 동작에 관한 것이 아니다. 그리고 마지막에 적겠지만, <strong>이 가드는 현재 어떤 네임스페이스에도
+        켜져 있지 않다.</strong></p>
+
+        <p>같은 방식으로 뚫린 방어가 네 건 나왔다. 전부 <strong>문서를 읽어서가 아니라 공격해서</strong> 찾았다.
+        네 건을 한자리에 모으는 이유는, <strong>발견은 각각이 아니라 그 패턴</strong>이기 때문이다.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+        <table>
+          <caption class="sr-only">뚫린 보장 네 건과, 각각에서 테넌트가 쓰는 필드.</caption>
+          <thead><tr><th scope="col">보장</th><th scope="col">테넌트가 쓰는 필드</th><th scope="col">공격자가 얻은 것</th></tr></thead>
+          <tbody>
+            <tr><td>GPU 쿼터가 강제된다</td><td><code>ownerReferences</code></td><td>계상되지 않은 장치 2개</td></tr>
+            <tr><td>GPU 쿼터가 강제된다</td><td><code>quota-exempt</code> 어노테이션</td><td>장치 수 제한 없음</td></tr>
+            <tr><td>회수된 장치는 돌아온다</td><td><code>terminationGracePeriodSeconds</code></td><td>회수된 장치를 301초</td></tr>
+            <tr><td>예산은 쓸 수 있는 쪽에 간다</td><td>Pod 이 전부 거부되는 Job</td><td>예산 전체를 무기한</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <nav class="article-toc" aria-label="목차">
+          <p class="toc-label">목차</p>
+          <ul>
+            <li><a href="#처음엔-아무것도-막지-않았다">처음엔 아무것도 막지 않았다</a></li>
+            <li><a href="#ownerreference는-주장이지-사실이-아니다">ownerReference 는 주장이지 사실이 아니다</a></li>
+            <li><a href="#아무나-줄-수-있는-면제">아무나 줄 수 있는 면제는 면제가 아니다</a></li>
+            <li><a href="#피해자가-고르는-숫자">회수 보장은 피해자가 고르는 숫자에 묶여 있다</a></li>
+            <li><a href="#존재할-수-없는-pod">존재할 수 없는 Pod 를 위한 예약</a></li>
+            <li><a href="#네-수리의-형태가-다르다">네 수리의 형태가 다른 이유</a></li>
+            <li><a href="#이-문서의-한-주장이-거짓이었다">이 문서의 한 주장이 거짓이었고, 가드는 그 위에 지어졌다</a></li>
+            <li><a href="#이-글이-주장하지-않는-것">이 글이 주장하지 않는 것</a></li>
+          </ul>
+        </nav>
+
+        <h2 id="처음엔-아무것도-막지-않았다">처음엔 아무것도 막지 않았다<a class="anchor" href="#처음엔-아무것도-막지-않았다" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>설계는 이렇다. 테넌트별 GPU 예산의 단일 권위는 Kueue 의 ClusterQueue 이고, 컨트롤러는 같은 장치가
+        두 번 계상되지 않도록 네임스페이스 <code>ResourceQuota</code> 가 GPU 를 막는 것을 <strong>일부러</strong>
+        중단시킨다.</p>
+
+        <p>그런데 <strong>Kueue 는 자기 큐에 들어온 것만 본다.</strong> 그러면 테넌트가 Pod 를 직접 만드는 것은
+        무엇이 막는가.</p>
+
+<pre><code>kubectl apply -f - &lt;&lt;'EOF'
+apiVersion: v1
+kind: Pod
+metadata: {name: bypass-probe, namespace: serving}
+spec:
+  containers:
+    - {name: c, image: busybox:1.36, command: ["sh","-c","sleep 30"],
+       resources: {limits: {"nvidia.com/gpu": "2"}}}
+EOF
+
+pod/bypass-probe created
+bypass-probe   Running   platform-worker2   2
+$ kubectl -n serving get workloads
+(none)</code></pre>
+
+        <p>생성됐고, 스케줄됐고, 실행 중이고, 장치 두 개를 쥐고 있는데, <strong>Kueue Workload 는 어디에도
+        없다.</strong> 아무것도 입장시키지 않았고 아무것도 세지 않고 있다.</p>
+
+        <p>즉 "멀티테넌트 GPU 쿼터"는 <strong>경계가 아니라, 플랫폼 자신의 컨트롤러가 따르던 관습</strong>이었다.
+        관습은 그것을 따를 생각이 없는 쪽에는 아무 구속력이 없다.</p>
+
+        <h2 id="ownerreference는-주장이지-사실이-아니다">ownerReference 는 주장이지 사실이 아니다<a class="anchor" href="#ownerreference는-주장이지-사실이-아니다" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>그래서 입장 웹훅을 만들었다. 첫 버전의 규칙은 자연스러웠다 — <strong>Pod 의 컨트롤러가 큐에 들어간
+        Job 이면 통과</strong>. 유닛 스펙 열 개와 라이브 케이스 네 개를 통과했다.</p>
+
+<pre><code># 진짜 큐에 진짜 Job 을 하나 만든다
+kubectl apply -f (Job "decoy", labels: {kueue.x-k8s.io/queue-name: gpu-premium})
+
+# 그리고 그 Job 을 내 Pod 의 컨트롤러라고 주장한다
+kubectl apply -f (Pod, ownerReferences: [{kind: Job, name: decoy,
+                        uid: &lt;decoy 의 uid&gt;, controller: true}],
+                  limits: {"nvidia.com/gpu": "2"})
+
+pod/forged-owner created
+forged-owner   1/1   Running</code></pre>
+
+        <p><code>ownerReferences</code> 는 <strong>객체를 만드는 쪽이 써 넣는 필드</strong>이고, 쿠버네티스는
+        거기 적힌 소유자가 실제로 그 객체와 관계가 있는지 검사하지 않는다. 위조에 필요한 것은 진짜 Job 의 UID
+        하나뿐인데, 그건 같은 네임스페이스에서 읽을 수 있다.</p>
+
+        <p><strong>수리.</strong> 그 참조를 <strong>Job 컨트롤러가 제시할 때만</strong> 믿는다.
+        <code>req.UserInfo.Username</code> — 입장 요청 안에서 <strong>테넌트가 쓸 수 없는 유일한 필드</strong> —
+        를 본다.</p>
+
+        <p>여기에 구현상의 결과가 하나 붙는다. 타입이 붙은 <code>Validator</code> 인터페이스는
+        <strong>객체만</strong> 넘겨준다. 그런데 믿을 수 없는 것이 바로 그 객체다. 그래서 원시
+        <code>admission.Handler</code> 로 내려가 요청 자체를 받아야 했다. <strong>편한 추상화가 넘겨주는 것이
+        신뢰 경계와 맞지 않으면, 그 추상화를 쓸 수 없다.</strong></p>
+
+        <h2 id="아무나-줄-수-있는-면제">아무나 줄 수 있는 면제는 면제가 아니다<a class="anchor" href="#아무나-줄-수-있는-면제" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>같은 가드가 <code>quota-exempt</code> 어노테이션을 <strong>어떤 Pod 에서든</strong> 존중했다.</p>
+
+        <p>이 어노테이션은 필요해서 있는 것이다. device plugin 처럼 인프라가 테넌트 예산 밖에서 장치를 쥐어야 하는
+        경우가 있다. 그런데 <strong>테넌트도 자기 Pod 에 어노테이션을 달 수 있다.</strong> 그러면 이건 우회에
+        단계를 하나 더한 것뿐이다.</p>
+
+        <p><strong>수리.</strong> <code>kube-system</code> 서비스 계정이 요청할 때만 존중한다 — 테넌트가 될 수
+        없는 집합이다. 그리고 면제로 통과한 Pod 는 <strong>그 어노테이션을 이름으로 지목하는 경고를 남긴다.</strong>
+        예산 밖으로 나가는 장치가 스스로를 알리게 한 것이다.</p>
+
+        <h2 id="피해자가-고르는-숫자">회수 보장은 피해자가 고르는 숫자에 묶여 있다<a class="anchor" href="#피해자가-고르는-숫자" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>쿼터 회수는 선점으로 동작하고, 선점은 종료를 기다린다. 그리고 종료는
+        <code>terminationGracePeriodSeconds</code> 를 기다린다 — <strong>선점당하는 Pod 가 스스로 정하는 값</strong>이다.</p>
+
+        <p>직접 쟀다.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+        <table>
+          <caption class="sr-only">grace 설정에 따른 장치 점유 시간.</caption>
+          <thead><tr><th scope="col">grace</th><th scope="col">장치를 쥐고 있던 시간</th></tr></thead>
+          <tbody>
+            <tr><td>30초</td><td>32초</td></tr>
+            <tr><td>300초</td><td><strong>301초</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>남은 작업량을 43초로 고정하고 파라미터를 훑으면 모델이 나오고, 예측한 자리에 무릎이 생긴다 —
+        <strong><code>점유 = min(남은 작업, grace)</code></strong>.</p>
+
+        <p>같은 경계를 반대쪽에서도 쟀다. SIGTERM 에 반응하지 않는 워크로드는 <strong>남은 작업이 grace 안에
+        들어가는 동안에는 회수를 완전히 무력화</strong>하고, 그 범위를 넘어서는 순간 정확히 grace 에서 잘린다.</p>
+
+        <p><strong>수리 — 그리고 이건 앞의 둘과 다르다.</strong> grace 는 <strong>진짜로 워크로드의 것</strong>이다.
+        체크포인트를 남기고 죽으려면 시간이 필요하고, 그 필요는 정당하다. 그래서 신뢰할 수 있는 값으로 바꿀 수도,
+        쓸 수 있는 쪽을 제한할 수도 없었다. <strong>대신 상한을 뒀다 — 장치를 쥔 Pod 은 120초.</strong></p>
+
+        <p>왜 30 이 아닌가. SIGTERM 에서 체크포인트를 쓰는 학습 스텝은 30초로 부족하고, 그걸 거부하면 테넌트는
+        <strong>SIGTERM 을 무시하는 쪽으로 간다.</strong> 그리고 측정이 보여준 바로는, 소유자에게 가장 비싼 것이
+        정확히 그 경우다.</p>
+
+        <h2 id="존재할-수-없는-pod">존재할 수 없는 Pod 를 위한 예약<a class="anchor" href="#존재할-수-없는-pod" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>세 번째 수리를 시험하다 네 번째가 나왔다. 같은 모양이다 — <strong>Pod 를 거부하는 것은 이미 늦다.</strong></p>
+
+        <p>Kueue 는 <strong>Job 을 보고</strong> Job 을 입장시킨다. 그런데 그 Job 의 Pod 이 이후에 거부되면,
+        Job 의 입장은 유지된다. Job 컨트롤러는 재시도하고, 모든 Pod 이 거부되고, Workload 는 입장된 채로 쿼터를
+        쥐고 앉아 있다.</p>
+
+<pre><code>t=20s    used=2  admitted=2  job.status.failed=0
+t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
+
+        <p><code>backoffLimit</code> 이 이걸 끝내지 못한다. <strong>입장 거부는 Pod 실패가 아니기 때문에</strong>
+        <code>failed</code> 가 0 을 벗어나지 않고, 그래서 재시도가 멈추지 않는다. 이런 Job 을 넣는 테넌트는
+        <strong>아무것도 실행하지 않으면서 예산을 무기한 쥔다.</strong></p>
+
+        <p><strong>수리.</strong> Pod 의 운명을 정하는 규칙을 <strong>그 Pod 를 만들어 낼 템플릿에, 예약이
+        일어나는 시점에</strong> 적용한다. 장치를 요구하는 Job 은 템플릿의 grace 가 상한을 넘거나 큐 라벨이
+        없으면 거부된다.</p>
+
+        <p>여기서 라벨은 <strong>Job 에서</strong> 검사한다. Kueue 가 그 라벨을 읽는 곳이 거기이고, Pod 에서
+        거부하면 <strong>사용자에게 자기 Pod 에 없는 필드를 고치라고 말하는 셈</strong>이 되기 때문이다.</p>
+
+        <p>배포 후 다시 공격했다 — 두 Job 모두 <code>Forbidden</code>, <code>used</code> 는 1에서 변하지 않았고,
+        grace 90 인 평범한 큐 Job 은 그대로 돌았다.</p>
+
+        <h2 id="네-수리의-형태가-다르다">네 수리의 형태가 다른 이유<a class="anchor" href="#네-수리의-형태가-다르다" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>네 보장 모두 <strong>공격자가 공급하는 값으로 표현</strong>돼 있었다. 검사의 버그가 아니다 —
+        검사는 <strong>자기가 읽은 것에 대해서는 옳았다.</strong> 틀린 것은 <strong>테넌트가 쓰는 것을 읽고,
+        그것을 테넌트에 관한 증거로 취급한 것</strong>이다.</p>
+
+        <p>그리고 수리가 네 가지 서로 다른 형태로 나왔다는 것이 이 글에서 제일 쓸모 있는 부분이다.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+        <table>
+          <caption class="sr-only">네 가지 수리와 각각이 취한 형태.</caption>
+          <thead><tr><th scope="col">건</th><th scope="col">형태</th><th scope="col">무엇을 했나</th></tr></thead>
+          <tbody>
+            <tr><td>① ownerReference</td><td><strong>대체</strong></td><td>믿을 수 없는 입력을 믿을 수 있는 입력으로 바꿨다 — 요청자는 인증되고 객체는 아니다</td></tr>
+            <tr><td>② 면제 어노테이션</td><td><strong>제한</strong></td><td>그 입력을 줄 수 있는 쪽을, 테넌트가 낄 수 없는 집합으로 좁혔다</td></tr>
+            <tr><td>③ grace</td><td><strong>상한</strong></td><td>둘 다 못 해서 <em>피해를 묶었다.</em> 가장 약하고 가장 정직한 수리다</td></tr>
+            <tr><td>④ Job 예약</td><td><strong>위치 이동</strong></td><td>규칙은 그대로 두고, 약속이 일어나는 지점으로 검사를 옮겼다</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>③ 을 강조하고 싶다. 회수는 <strong>여전히 즉시가 아니고</strong>, 그렇게 만들어 주는 쿠버네티스 기제는
+        없다. 상한은 문제를 해결한 것이 아니라 <strong>얼마나 나빠질 수 있는지를 유한하게 만든 것</strong>이다.
+        해결과 상한을 같은 칸에 적으면, 다음 사람은 해결된 줄 안다.</p>
+
+        <p>④ 는 다른 이야기를 한다. <strong>규칙은 처음부터 옳았고, 적용되는 시점이 틀렸다.</strong> 막으려던
+        일이 이미 벌어진 뒤에 검사하고 있었다. 이런 결함은 규칙을 아무리 정교하게 다듬어도 안 없어진다.</p>
+
+        <h2 id="이-문서의-한-주장이-거짓이었다">이 문서의 한 주장이 거짓이었고, 가드는 그 위에 지어졌다<a class="anchor" href="#이-문서의-한-주장이-거짓이었다" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>이 작업의 원본 문서에는 이런 문장이 있었다 — <em>"여기서는 Kueue 의 Pod·Deployment 통합이 켜져 있지
+        않으므로, 관리 대상이 될 수 있는 것은 Job 뿐이고 서빙 Pod 은 어떻게 라벨을 붙이든 Kueue 에게 보이지 않는다."</em></p>
+
+        <p><strong>거짓이다.</strong> 열일곱 개 프레임워크가 켜져 있고 그중에 <code>pod</code>,
+        <code>deployment</code>, <code>statefulset</code> 이 있다. 이 결론은 <strong>잘린
+        <code>grep</code> 출력의 첫 열두 줄을 읽고</strong> 나온 것이고, 그대로 가드의 설계와 코드 주석과 문서까지
+        살아남았다.</p>
+
+        <p>이게 바꾸는 것은 라벨의 <strong>의미</strong>다. 큐 라벨은 테넌트가 자기에게 주는 권한이 아니라
+        <strong>청구서</strong>다 — 그 큐의 예산에 달아 달라는 요청이다. 그러면 "라벨이 붙었으니 통과"라는 규칙은
+        가드가 대체하려던 바로 그 문자열 검사와 같은 것이 된다.</p>
+
+        <p>그리고 여기서 이 프로젝트의 현재 상태가 나온다. 가드는 서빙 Pod 을 거부하는데, 서빙 Pod 은 ReplicaSet 이
+        소유하고 가드는 Job 만 받기 때문이다. 그래서 <strong><code>serving</code> 네임스페이스의 라벨을 다시
+        떼어 냈다.</strong> 지금 이 리포에서 <strong>이 가드의 통제를 받는 네임스페이스는 없다.</strong></p>
+
+        <p>정직한 상태는 이렇다 — <strong>강제 기제는 만들어졌고, 위조에 대해 시험됐고, 서빙이 진짜로 청구될
+        쿼터를 갖기 전까지는 켤 수 없다.</strong> 다음 단계는 가드를 약하게 만드는 것이 아니라 서빙을 쿼터 경로에
+        올리는 것이다.</p>
+
+        <h2 id="이-글이-주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#이-글이-주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul>
+          <li><strong>이 가드가 지금 무언가를 지키고 있다는 주장이 아니다.</strong> 위에 적었듯 현재 어떤
+          네임스페이스도 이 가드의 통제를 받지 않는다.</li>
+          <li><strong>GPU 는 시뮬레이션이다.</strong> 가짜 device plugin 이 <code>nvidia.com/gpu</code> 를
+          광고하고, "장치 2개"는 그 가짜 장치다. 이 글의 발견은 <strong>입장 제어와 신뢰 경계</strong>에 관한
+          것이지, 실제 장치가 어떻게 점유되는지에 관한 것이 아니다.</li>
+          <li><strong>32초·301초는 이 클러스터에서의 관측</strong>이고, 모델은 남은 작업을 43초로 고정한 스윕에서
+          나왔다. 다른 작업 길이·다른 kubelet 설정에서 같은 상수가 나온다는 뜻이 아니다.</li>
+          <li><strong>120초는 측정에서 유도한 값이 아니다.</strong> 두 실패 방식(체크포인트를 못 쓰게 하는 것 대
+          장치를 오래 쥐는 것) 사이의 판단이고, 측정이 뒷받침하는 것은 "SIGTERM 을 무시하는 쪽이 소유자에게 가장
+          비싸다"는 부분까지다.</li>
+          <li><strong>네 건이 전부라는 뜻이 아니다.</strong> 공격해서 찾은 것이 넷이고, 공격하지 않은 표면은
+          그대로 남아 있다. 첫 가드가 유닛 스펙 열 개와 라이브 케이스 네 개를 통과했다는 사실이 그 이유다 —
+          <strong>테스트는 내가 생각한 것만 시험한다.</strong></li>
+        </ul>
+
+        <p>남는 한 줄은 이것이다. <strong>보장을 쓸 때는 그 문장이 어떤 값에 의존하는지를 적고, 그 값을 누가
+        쓰는지를 그 옆에 적어야 한다.</strong> 테넌트가 쓰는 값 위에 세운 보장은, 검사가 아무리 정확해도 그
+        필드에서 끝난다.</p>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script src="../assets/lang.js?v=20260905"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/article.js?v=20260817-scroll"></script>
+</body>
+</html>
