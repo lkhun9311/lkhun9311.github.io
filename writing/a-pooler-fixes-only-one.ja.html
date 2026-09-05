@@ -176,12 +176,12 @@
               </defs>
             </svg>
           </div>
-          <figcaption>モバイルアプリ → API サーバ → PostgreSQL というありふれた構成です。問題は下のほうです — 投稿やコメントを書くたびに外部モデレーション API を一回呼び出しており、その呼び出しがデータベーストランザクションの中で起きていました。</figcaption>
+          <figcaption>モバイルアプリ → API サーバ → PostgreSQL というありふれた構成です。この図でありふれていないのはピンクで示した下の一つだけで、それがこの記事のすべてです。</figcaption>
         </figure>
 
-        <p>注目していただきたいのは下のピンクの箱です。投稿やコメントを書くたびに
-        <strong>外部モデレーション API</strong>（有害な内容をふるい落としてくれる外部サービス）を一回ずつ
-        呼び出します。そしてこの呼び出しには read timeout が<strong>10秒</strong>で設定されています。</p>
+        <p><strong>外部モデレーション API</strong> は有害な内容をふるい落としてくれる外部サービスです。
+        投稿やコメントを書くたびに一回ずつ呼び出し、この呼び出しには read timeout が<strong>10秒</strong>で
+        設定されています。そしてこの呼び出しが<strong>データベーストランザクションの中で</strong>起きていました。</p>
 
 <pre data-lang="yaml"><code># application.yml
 read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
@@ -196,11 +196,11 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
         ような<strong>コネクションプーラー（connection pooler）</strong>を前に立てればいいのでは?</p></blockquote>
 
         <p>コネクションプーラーは、アプリケーションが開くコネクション数千本を DB コネクション数十本に
-        <strong>まとめてくれる</strong>ミドルウェアです。紹介図だけ見れば、まさに私たちに必要なものに
+        <strong>まとめてくれる</strong>ミドルウェアです。紹介図だけ見れば、まさに私に必要なものに
         見えました。</p>
 
         <p>ところがこの判断を下す前に確かめるべきことがありました。
-        <strong>「私たちがこれから迎えるコネクション不足は、本当にこの道具が直す種類の不足なのか」</strong>です。</p>
+        <strong>「私がこれから迎えるコネクション不足は、本当にこの道具が直す種類の不足なのか」</strong>です。</p>
 
         <h2 id="結論から">結論から申し上げると<a class="anchor" href="#結論から" aria-label="この節へのリンク">#</a></h2>
 
@@ -240,7 +240,7 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
         <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private</span> <code>services/api/…/comment/CommentService.kt</code> <code>create</code></p>
 
         <p>二つ目はコネクションの<strong>本数</strong>ではなく<strong>握っている時間</strong>が問題である
-        場合です。そして私たちのコードはこちらでした。</p>
+        場合です。そして私のコードはこちらでした。</p>
 
 <pre data-lang="kotlin"><code>// CommentService.kt — 修正前
 @Transactional

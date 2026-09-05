@@ -70,7 +70,7 @@
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing 으로</a>
         <h1>RDS Proxy 로는 못 고치는 커넥션 고갈<br><span class="h1-sub">트랜잭션 안에서 외부 API를 호출하고 있었습니다 — 출시 전 소셜 투표 플랫폼 점검</span></h1>
-        <div class="article-meta"><span class="source-tag commercial notranslate">사업화 프로젝트</span>Writing · 2026년 9월<span aria-hidden="true"> · </span><span class="read-time">13분</span></div>
+        <div class="article-meta"><span class="source-tag commercial notranslate">사업화 프로젝트</span>Writing · 2026년 9월<span aria-hidden="true"> · </span><span class="read-time">14분</span></div>
       </section>
       <article class="article-body">
 
@@ -178,12 +178,12 @@
               </defs>
             </svg>
           </div>
-          <figcaption>모바일 앱 → API 서버 → PostgreSQL 이라는 평범한 구조입니다. 문제는 아래쪽입니다 — 글이나 댓글을 쓸 때마다 외부 모더레이션 API 를 한 번씩 호출하는데, 이 호출이 데이터베이스 트랜잭션 안에서 일어나고 있었습니다.</figcaption>
+          <figcaption>모바일 앱 → API 서버 → PostgreSQL 이라는 평범한 구조입니다. 이 그림에서 평범하지 않은 것은 분홍색으로 표시한 아래쪽 하나뿐이고, 그것이 이 글의 전부입니다.</figcaption>
         </figure>
 
-        <p>여기서 눈여겨보실 곳은 아래쪽 분홍색 상자입니다. 글이나 댓글을 쓸 때마다
-        <strong>외부 모더레이션 API</strong>(유해한 내용을 걸러 주는 외부 서비스)를 한 번씩 호출합니다.
-        그리고 이 호출에는 read timeout 이 <strong>10초</strong>로 설정돼 있습니다.</p>
+        <p><strong>외부 모더레이션 API</strong>는 유해한 내용을 걸러 주는 외부 서비스입니다. 글이나 댓글을
+        쓸 때마다 한 번씩 호출하고, 이 호출에는 read timeout 이 <strong>10초</strong>로 설정돼 있습니다.
+        그리고 이 호출이 <strong>데이터베이스 트랜잭션 안에서</strong> 일어나고 있었습니다.</p>
 
 <pre data-lang="yaml"><code># application.yml
 read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
@@ -198,10 +198,10 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
         <strong>커넥션 풀러(connection pooler)</strong>를 앞에 세우면 되지 않을까?</p></blockquote>
 
         <p>커넥션 풀러는 애플리케이션이 여는 커넥션 수천 개를 DB 커넥션 수십 개로
-        <strong>묶어 주는</strong> 미들웨어입니다. 소개 그림만 보면 정확히 저희에게 필요한 물건처럼 보였습니다.</p>
+        <strong>묶어 주는</strong> 미들웨어입니다. 소개 그림만 보면 정확히 제게 필요한 물건처럼 보였습니다.</p>
 
         <p>그런데 이 판단을 내리기 전에 확인해야 할 것이 있었습니다.
-        <strong>“우리가 겪을 커넥션 부족이 정말 이 도구가 고치는 종류의 부족인가”</strong>입니다.</p>
+        <strong>“내가 겪을 커넥션 부족이 정말 이 도구가 고치는 종류의 부족인가”</strong>입니다.</p>
 
         <h2 id="결론부터">결론부터 말씀드리자면<a class="anchor" href="#결론부터" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -241,7 +241,7 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
         <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private</span> <code>services/api/…/comment/CommentService.kt</code> <code>create</code></p>
 
         <p>두 번째는 커넥션 <strong>개수</strong>가 아니라 <strong>붙잡고 있는 시간</strong>이 문제인 경우입니다.
-        그리고 저희 코드가 이쪽이었습니다.</p>
+        그리고 제 코드가 이쪽이었습니다.</p>
 
 <pre data-lang="kotlin"><code>// CommentService.kt — 수정 전
 @Transactional
@@ -529,7 +529,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         <p>②(유입 제어)에도 함정이 하나 있었습니다. <strong>블로킹 JDBC 에서는 커넥션 풀이 사실상 동시성
         상한</strong>입니다. 스레드가 아무리 많아도 커넥션을 못 받으면 일을 못 하니까요.</p>
 
-        <p>그런데 저희 설정을 열어 보니 이랬습니다.</p>
+        <p>그런데 설정을 열어 보니 이랬습니다.</p>
 
 <pre data-lang="yaml"><code># application.yml — 발견 당시
 spring:
