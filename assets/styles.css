@@ -2168,6 +2168,21 @@ body {
   .container.reading .article-body > .article-toc li {
     margin-bottom: 3px;
   }
+
+  /* 목차도 바깥 여백으로, 가운데는 글로.
+     목차를 컨테이너 **안**에 두면 본문이 그만큼 왼쪽으로 치우쳐서, 넓은 화면에서는 오른쪽에 큰
+     여백이 남는데 정작 읽는 열은 가운데에 있지 않게 된다. 그래서 목차+간격의 **절반**만큼
+     제목과 본문을 오른쪽으로 옮긴다. 본문 열이 화면 정중앙에 서고, 목차는 오른쪽 빈 곳으로 나간다.
+
+     섹션 인덱스의 `--rail-shift` 와 같은 방식이다. 민 거리는 실제로 남는 여백만큼만이라,
+     여백이 없으면 0 이 되어 예전 배치로 돌아간다. */
+  .container.reading { --toc-shift: clamp(0px, (100vw - 1400px) / 2 - 24px, 157px); }
+
+  .container.reading .page-hero,
+  .container.reading .article-body {
+    margin-left: var(--toc-shift);
+    margin-right: calc(-1 * var(--toc-shift));
+  }
 }
 
 /* The rail's current section. Heavier and a shade larger, with the accent bar carrying the
@@ -2624,6 +2639,30 @@ html[lang="ja"] .article-toc {
 
 /* 태그가 없는 섹션(News)에서는 레일을 지우고 결과가 폭을 다 쓴다. */
 .section-browse.no-facets { grid-template-columns: minmax(0, 1fr); gap: 0; }
+
+/* 레일은 바깥 여백으로, 가운데는 글로.
+   레일을 컨테이너 **안**에 두면 카드가 그만큼 오른쪽으로 밀려서, 넓은 화면에서는 양쪽에 큰 여백이
+   남는데 정작 본문은 가운데에 있지 않게 된다. 그래서 레일+간격의 **절반**만큼 격자를 왼쪽으로,
+   제목 블록을 오른쪽으로 옮긴다. 결과 열이 화면 정중앙에 서고, 레일은 왼쪽 빈 곳으로 나간다.
+   제목과 카드는 같은 왼쪽 모서리를 공유한다.
+
+   민 거리는 **실제로 남는 여백만큼만**이다. 여백이 없으면 0 이 되어 예전 배치로 돌아간다 —
+   좁은 화면에서 레일이 화면 밖으로 나가거나 가로 스크롤이 생기지 않게 하려는 것이다.
+   24px 은 스크롤바 폭(100vw 는 스크롤바를 포함한다)과 최소 숨 쉴 틈을 합친 여유다. */
+.container.browse { --rail-shift: clamp(0px, (100vw - 1100px) / 2 - 24px, 130px); }
+
+/* 레일이 숨은 섹션(News)에서는 밀지 않는다 — 밀 대상이 없다. */
+.container.browse.no-facets { --rail-shift: 0px; }
+
+.container.browse .page-hero {
+  margin-left: var(--rail-shift);
+  margin-right: calc(-1 * var(--rail-shift));
+}
+
+.container.browse .section-browse {
+  margin-left: calc(-1 * var(--rail-shift));
+  margin-right: var(--rail-shift);
+}
 
 .facets {
   position: sticky;
