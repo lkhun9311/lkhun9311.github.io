@@ -27,7 +27,7 @@
   <meta name="twitter:title" content="スレッドを増やしたらテールが伸びた | Kwanghun Lee" />
   <meta name="twitter:description" content="キャッシュを固定したまま並列化すると、p99 が 42.6 秒から 79.0 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンがロックされる。" />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="キャッシュなしで並列化したところ、p99 が 42 秒から 129 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンがロックされる。6 構成を同条件で測って初めて見えたこと。" />
+  <meta name="description" content="キャッシュ設定を固定したまま逐次を並列に変えると、p99 が 42.6 秒から 79.0 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンがロックされる。6 構成を同条件で測って初めて見えたこと。" />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
 </head>
@@ -268,7 +268,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         83.3% を 0% に、p99 を 10 分から 23ms に改善した。」</em></p>
 
         <p>すべての数値が真である。そして<strong>並列化が寄与したという含意は偽</strong>である。並列化は単独では
-        有害で、キャッシュと組み合わさって初めて値を持った。それを知らないまま他の画面に「ここも並列化しよう」と
+        有害だった。キャッシュを固定しても並列は逐次より悪かったので、この実験は並列化の正の寄与を示していない。それを知らないまま他の画面に「ここも並列化しよう」と
         処方していたら、同じ罠に再び入っていた。</p>
 
         <p>実際、この表は診断の根拠にもなった。キャッシュを固定したまま並列化が悪化するということは、
@@ -282,14 +282,15 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         遅かった。</p>
 
         <p><strong>「中央値 4ms はキャッシュヒットだから当然では?」</strong> — その通り。だから中央値だけを見ない。
-        同じ行の p99 が 23ms で、Apdex が 1.000 である。Apdex 1.000 は標本全体が満足しきい値の内側に入ったという
-        意味なので、テールに隠れた遅いリクエストが無いという言明になる。</p>
+        同じ行の p99 が 23ms で、Apdex が 1.000 である。Apdex は満足・許容・不満を重み付けして数えるので、
+        中央ではなく分布全体を読む — ただし表示された 1.000 が標本全体を証明するわけではない(後述の留保)。</p>
 
         <h2 id="what-this-does-not-claim">この記事が主張しないこと<a class="anchor" href="#what-this-does-not-claim" aria-label="このセクションへのリンク">#</a></h2>
 
         <ul>
           <li><strong>並列化が悪いという主張ではない。</strong>ロックの中で I/O を行うコードを並列化すると悪い。
-          ③→④ が示すように、その条件を無くせば並列化は値を持つ。</li>
+          ただしこの 6 構成の中に<strong>その条件を外した並列構成が無い</strong>ので、外したときに並列化が
+          値を持つかどうかはこの実験が示していない。③→④ はキャッシュだけが変わった対であり、その答えではない。</li>
           <li><strong>本番の測定ではない。</strong>社内試験環境での合成負荷である。実際のユーザー分布・データ規模・
           ネットワークは異なる。</li>
           <li><strong>② と ③ は互いの対照群ではない。</strong>キャッシュと実行方式が同時に変わるため、その差
