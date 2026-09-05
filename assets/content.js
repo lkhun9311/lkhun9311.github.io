@@ -420,6 +420,9 @@
       tagRowEl.hidden = true;
       var browse = tagRowEl.closest && tagRowEl.closest(".section-browse");
       if (browse) browse.classList.add("no-facets");
+      // 레일이 없으면 본문을 바깥으로 밀 이유도 없다 — 컨테이너에도 표시해 CSS 가 밀기를 끈다.
+      var page = tagRowEl.closest && tagRowEl.closest(".container");
+      if (page) page.classList.add("no-facets");
     } else if (tagRowEl) {
       // 섹션이 tagGroups 를 선언하면 그 순서·묶음대로, 아니면 한 덩어리로 그린다.
       var groups = sec.tagGroups || null;

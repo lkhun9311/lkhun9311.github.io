@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>pending</title>
+<style>body{font:14px/1.6 system-ui,sans-serif;margin:24px;max-width:760px}code{background:#f3f0f6;padding:1px 5px;border-radius:4px}</style>
+</head>
+<body>
+<h1>가로 넘침 검사</h1>
+<p><strong>수동 검사다.</strong> 사이트 루트에서 정적 서버를 띄우고 이 페이지를 열면 결과가
+<code>&lt;title&gt;</code> 에 들어간다. 헤드리스로는 이렇게 돌린다.</p>
+<pre><code>python3 -m http.server 8899
+google-chrome --headless=new --disable-gpu --no-sandbox --virtual-time-budget=20000 \
+  --dump-dom "http://127.0.0.1:8899/tools/check-overflow.html" | grep -o '&lt;title&gt;[^&lt;]*&lt;/title&gt;'</code></pre>
+<p>무엇을 보는가: 섹션 인덱스의 태그 레일과 기사의 목차는 컨테이너 <strong>바깥 여백</strong>으로
+밀려 나가 있다(<code>--rail-shift</code> · <code>--toc-shift</code>). 미는 거리를 남는 여백보다 크게 잡으면
+넓은 화면에서 <strong>가로 스크롤이 생기는데, 좁은 화면에서는 안 생겨서 눈으로는 잘 안 잡힌다.</strong>
+그래서 폭을 바꿔 가며 <code>scrollWidth &gt; clientWidth</code> 를 직접 잰다.</p>
+<p>iframe 안에서는 <code>100vw</code> 가 iframe 폭이므로, 폭만 바꿔 주면 뷰포트를 바꾼 것과 같다.</p>
+<p id="status">측정 중…</p>
+<script>
+var PAGES = ["../notes/index.html","../news/index.html","../projects/index.html","../writing/index.html",
+             "../writing/the-ceiling-was-not-in-the-code.ko.html","../writing/a-pooler-fixes-only-one.ko.html"];
+var WIDTHS = [1024,1120,1280,1440,1600,1920,2560];
+var frames = [];
+PAGES.forEach(function (p) {
+  WIDTHS.forEach(function (w) {
+    var f = document.createElement("iframe");
+    f.style.cssText = "width:" + w + "px;height:900px;border:0;position:absolute;left:-99999px";
+    f.src = p; f.dataset.page = p; f.dataset.w = w;
+    document.body.appendChild(f); frames.push(f);
+  });
+});
+window.addEventListener("load", function () {
+  var out = [], seen = 0;
+  frames.forEach(function (f) {
+    var d = f.contentDocument && f.contentDocument.documentElement;
+    if (!d) return;
+    seen++;
+    if (d.scrollWidth > d.clientWidth + 1) {
+      out.push(f.dataset.page + "@" + f.dataset.w + " sw=" + d.scrollWidth + " cw=" + d.clientWidth);
+    }
+  });
+  // 0 건 검사는 통과가 아니다 — 아무것도 못 읽었으면 그렇게 말한다.
+  var verdict = seen === 0 ? "FATAL 아무 프레임도 읽지 못했다"
+              : out.length ? ("OVERFLOW " + out.join(" | ")) : "NO-OVERFLOW";
+  document.title = "checked=" + seen + " " + verdict;
+  document.getElementById("status").textContent = document.title;
+});
+</script>
+</body>
+</html>
