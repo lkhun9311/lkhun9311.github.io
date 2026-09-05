@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>트랜잭션 풀링이란? | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <meta name="description" content="커넥션 풀러가 트랜잭션 단위로 커넥션을 빌려주고 돌려받는 방식." />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="트랜잭션 풀링이란? | Kwanghun Lee" />
+  <meta property="og:description" content="커넥션 풀러가 트랜잭션 단위로 커넥션을 빌려주고 돌려받는 방식." />
+  <meta property="og:locale" content="ko_KR" />
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language">
+          <option value="ko" selected>Korean</option>
+          <option value="en">English</option>
+          <option value="ja">Japanese</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="zh-TW">Chinese (Traditional)</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="vi">Vietnamese</option>
+          <option value="id">Indonesian</option>
+          <option value="hi">Hindi</option>
+          <option value="ar">Arabic</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing">Writing</a>
+        <a href="../index.html#notes" class="active">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <section class="page-hero">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>용어집으로</a>
+        <h1>트랜잭션 풀링이란?<br><span class="h1-sub">transaction pooling</span></h1>
+        <div class="article-meta"><span class="source-tag glossary notranslate">용어</span>Glossary · 데이터베이스</div>
+      </section>
+      <article class="article-body">
+
+        <p class="term-oneline">커넥션 풀러가 뒤쪽 커넥션을 재사용하는 방식 중 하나로, <strong>트랜잭션 단위로 빌려주고 돌려받습니다.</strong> 트랜잭션이 끝나야 그 커넥션이 다음 클라이언트에게 갑니다.</p>
+
+        <nav class="article-toc" aria-label="목차">
+          <p class="toc-label">목차</p>
+          <ul>
+            <li><a href="#모드">세 가지 모드</a></li>
+            <li><a href="#성질">핵심 성질 — 언제 묶이나</a></li>
+            <li><a href="#핀">핀(pin)이 걸리는 패턴</a></li>
+            <li><a href="#쓰인-곳">이 사이트에서 쓰인 곳</a></li>
+            <li><a href="#함께-볼-용어">함께 볼 용어</a></li>
+          </ul>
+        </nav>
+
+        <h2 id="모드">세 가지 모드<a class="anchor" href="#모드" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>PgBouncer 기준으로 세 가지가 있습니다. 뒤로 갈수록 재사용이 잘 되지만 쓸 수 있는 기능이 줄어듭니다.</p>
+
+        <ul>
+          <li><strong>세션 풀링</strong> — 클라이언트가 연결을 끊을 때까지 커넥션을 붙들고 있습니다. 재사용이 거의 없습니다.</li>
+          <li><strong>트랜잭션 풀링</strong> — 트랜잭션 단위. 실무에서 가장 많이 쓰는 모드입니다.</li>
+          <li><strong>스테이트먼트 풀링</strong> — 쿼리 하나 단위. 트랜잭션을 쓸 수 없습니다.</li>
+        </ul>
+        <h2 id="성질">핵심 성질 — 언제 묶이나<a class="anchor" href="#성질" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>이 한 줄이 전부입니다.</p>
+
+        <blockquote><p>커넥션 재사용은 트랜잭션과 트랜잭션 <strong>사이</strong>에서만 일어난다.
+        트랜잭션이 열려 있는 동안에는 그 커넥션이 그 클라이언트에 <strong>묶인다(pin)</strong>.</p></blockquote>
+
+        <p>당연한 이야기입니다. 트랜잭션은 <strong>상태</strong>이고, 열려 있는 중간에 다른 세션에 빌려주면 격리가 깨집니다.</p>
+
+        <p>그래서 이렇게 됩니다.</p>
+
+        <pre data-lang="text">트랜잭션이 10초 열려 있음
+  → 뒤쪽 커넥션도 10초 묶임
+  → 앱 커넥션 1개당 DB 커넥션 1개
+  → 풀러가 줄여 주는 게 없음</pre>
+
+        <p>즉 <strong>짧은 트랜잭션이 많을 때</strong> 값을 하는 도구입니다. 트랜잭션 안에서 외부 API 를 기다리는
+        코드에는 효과가 없습니다.</p>
+        <h2 id="핀">핀(pin)이 걸리는 패턴<a class="anchor" href="#핀" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>아래 패턴이 코드에 있으면 트랜잭션이 끝나도 커넥션이 계속 묶여, 풀러가 무력해집니다.</p>
+
+        <ul>
+          <li>세션 스코프 advisory lock (<code>pg_advisory_lock</code>) — <code>pg_advisory_xact_lock</code> 은 괜찮습니다(트랜잭션 종료 시 해제)</li>
+          <li>임시 테이블</li>
+          <li><code>SET</code> · <code>set search_path</code></li>
+          <li>서버 프리페어드 스테이트먼트 (풀러와 버전에 따라 다름)</li>
+        </ul>
+
+        <p>그래서 풀러를 <strong>도입하기 전에</strong> 이 넷이 코드에 있는지 먼저 확인해야 합니다. 도입한 뒤에 알면
+        돈은 이미 나갔고 효과는 없습니다.</p>
+
+        <h2 id="쓰인-곳">이 사이트에서 쓰인 곳<a class="anchor" href="#쓰인-곳" aria-label="이 절로 가는 링크">#</a></h2>
+        <ul>
+          <li><a href="../writing/a-pooler-fixes-only-one.ko.html">RDS Proxy 로는 못 고치는 커넥션 고갈</a></li>
+          </ul>
+
+        <h2 id="함께-볼-용어">함께 볼 용어<a class="anchor" href="#함께-볼-용어" aria-label="이 절로 가는 링크">#</a></h2>
+        <ul>
+          <li><a href="connection-pooler.html">커넥션 풀러</a> — 이 방식을 쓰는 미들웨어</li>
+          <li><a href="connection-pool.html">커넥션 풀</a> — 앱 안쪽의 그것</li>
+          </ul>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script src="../assets/lang.js?v=20260905b"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+</html>

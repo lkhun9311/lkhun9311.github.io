@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>p50 · p95 · p99 란? | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <meta name="description" content="응답시간을 줄 세웠을 때 특정 위치의 값. p95 는 5%가 그보다 느렸다는 뜻입니다." />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="p50 · p95 · p99 란? | Kwanghun Lee" />
+  <meta property="og:description" content="응답시간을 줄 세웠을 때 특정 위치의 값. p95 는 5%가 그보다 느렸다는 뜻입니다." />
+  <meta property="og:locale" content="ko_KR" />
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language">
+          <option value="ko" selected>Korean</option>
+          <option value="en">English</option>
+          <option value="ja">Japanese</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="zh-TW">Chinese (Traditional)</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="vi">Vietnamese</option>
+          <option value="id">Indonesian</option>
+          <option value="hi">Hindi</option>
+          <option value="ar">Arabic</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing">Writing</a>
+        <a href="../index.html#notes" class="active">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <section class="page-hero">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>용어집으로</a>
+        <h1>p50 · p95 · p99 란?<br><span class="h1-sub">percentile latency</span></h1>
+        <div class="article-meta"><span class="source-tag glossary notranslate">용어</span>Glossary · 성능 측정</div>
+      </section>
+      <article class="article-body">
+
+        <p class="term-oneline">응답시간을 <strong>느린 순으로 줄 세웠을 때 특정 위치의 값</strong>입니다. p95 = 100건 중 95번째로 빠른 요청의 시간, 즉 <strong>5%는 이보다 느렸다</strong>는 뜻입니다.</p>
+
+        <nav class="article-toc" aria-label="목차">
+          <p class="toc-label">목차</p>
+          <ul>
+            <li><a href="#평균">왜 평균을 안 쓰나</a></li>
+            <li><a href="#계산">계산 방식이 두 가지다</a></li>
+            <li><a href="#어디">어디를 봐야 하나</a></li>
+            <li><a href="#쓰인-곳">이 사이트에서 쓰인 곳</a></li>
+            <li><a href="#함께-볼-용어">함께 볼 용어</a></li>
+          </ul>
+        </nav>
+
+        <h2 id="평균">왜 평균을 안 쓰나<a class="anchor" href="#평균" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>평균은 <strong>소수의 아주 느린 요청을 숨깁니다.</strong> 100건 중 99건이 5ms 이고 1건이 6초면
+        평균은 65ms 입니다. "65ms 면 괜찮네"로 읽히지만, 실제로는 <strong>100명 중 한 명이 6초를 기다린</strong> 것입니다.</p>
+
+        <p>그 한 명은 매번 다른 사람이고, 요청을 여러 번 하는 사용자는 결국 그 구간을 만납니다. 그래서 사용자 경험은
+        평균이 아니라 <strong>꼬리(tail)</strong>가 정합니다.</p>
+        <h2 id="계산">계산 방식이 두 가지다<a class="anchor" href="#계산" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>같은 데이터로도 도구마다 p95 가 다르게 나옵니다. 정의가 다르기 때문입니다.</p>
+
+        <ul>
+          <li><strong>최근접 순위(nearest-rank)</strong> — 정렬된 표본에서 <code>ceil(0.95 × N)</code> 번째 값을 그냥 씁니다.
+          항상 <strong>실제로 관측된 값</strong>이 나옵니다.</li>
+          <li><strong>선형 보간</strong> — 이웃한 두 값 사이를 비례로 채웁니다. 관측되지 않은 값이 나올 수 있습니다.</li>
+        </ul>
+
+        <p>둘을 섞어 비교하면 정의가 다른 값을 견주게 됩니다. 그래서 요약기는 <strong>한 가지만 쓰고 그 사실을 출력에
+        같이 적습니다.</strong> 예: 표본이 1..20 일 때 최근접 순위 p95 는 <code>ceil(19) = 19</code> 번째 값 = 19 입니다.</p>
+        <h2 id="어디">어디를 봐야 하나<a class="anchor" href="#어디" aria-label="이 절로 가는 링크">#</a></h2>
+        <p><strong>p50 은 "보통 이렇다", p95·p99 는 "나쁠 때 이렇다"</strong> 입니다. 둘을 같이 봐야 합니다.</p>
+
+        <p>p50 과 p95 가 거의 같으면 시스템이 <strong>안정적</strong>입니다(모든 요청이 비슷하게 처리됨).
+        p50 은 낮은데 p95 가 훨씬 크면 <strong>대기열</strong>이 있다는 신호입니다 — 대부분은 빨리 처리되지만 일부가
+        줄을 서고 있는 것입니다.</p>
+
+        <p>실제 예: 커넥션 풀이 고갈된 실행에서 피드 조회 p50 이 4ms 에서 6,047ms 로 갔는데
+        <strong>오류율은 0%</strong> 였습니다. 실패가 아니라 <strong>대기</strong>였기 때문입니다. 오류율만 보면
+        아무 문제가 없어 보입니다.</p>
+
+        <h2 id="쓰인-곳">이 사이트에서 쓰인 곳<a class="anchor" href="#쓰인-곳" aria-label="이 절로 가는 링크">#</a></h2>
+        <ul>
+          <li><a href="../writing/a-pooler-fixes-only-one.ko.html">RDS Proxy 로는 못 고치는 커넥션 고갈</a></li>
+          </ul>
+
+        <h2 id="함께-볼-용어">함께 볼 용어<a class="anchor" href="#함께-볼-용어" aria-label="이 절로 가는 링크">#</a></h2>
+        <ul>
+          <li><a href="load-test-harness.html">하네스</a> — 이 값을 만들어 내는 도구</li>
+          <li><a href="warmup.html">워밍업</a> — 이 값을 왜곡하는 구간</li>
+          </ul>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script src="../assets/lang.js?v=20260905b"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+</html>

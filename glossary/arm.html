@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>arm(대조군)이란? | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <meta name="description" content="비교 실험에서 한 갈래의 실행. 한 변수만 다르고 나머지는 같아야 한다." />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="arm(대조군)이란? | Kwanghun Lee" />
+  <meta property="og:description" content="비교 실험에서 한 갈래의 실행. 한 변수만 다르고 나머지는 같아야 한다." />
+  <meta property="og:locale" content="ko_KR" />
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language">
+          <option value="ko" selected>Korean</option>
+          <option value="en">English</option>
+          <option value="ja">Japanese</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="zh-TW">Chinese (Traditional)</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="vi">Vietnamese</option>
+          <option value="id">Indonesian</option>
+          <option value="hi">Hindi</option>
+          <option value="ar">Arabic</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing">Writing</a>
+        <a href="../index.html#notes" class="active">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <section class="page-hero">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>용어집으로</a>
+        <h1>arm(대조군)이란?<br><span class="h1-sub">arm</span></h1>
+        <div class="article-meta"><span class="source-tag glossary notranslate">용어</span>Glossary · 성능 측정</div>
+      </section>
+      <article class="article-body">
+
+        <p class="term-oneline">비교 실험에서 <strong>한 갈래의 실행</strong>을 부르는 말입니다. 임상시험에서 온 단어로, arm A 와 arm B 는 <strong>한 가지만 다르고 나머지는 전부 같아야</strong> 합니다.</p>
+
+        <nav class="article-toc" aria-label="목차">
+          <p class="toc-label">목차</p>
+          <ul>
+            <li><a href="#어원">왜 이 말을 쓰나</a></li>
+            <li><a href="#단일변수">한 변수만 바꾼다</a></li>
+            <li><a href="#패치">코드 비교는 패치로 관리한다</a></li>
+            <li><a href="#쓰인-곳">이 사이트에서 쓰인 곳</a></li>
+            <li><a href="#함께-볼-용어">함께 볼 용어</a></li>
+          </ul>
+        </nav>
+
+        <h2 id="어원">왜 이 말을 쓰나<a class="anchor" href="#어원" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>임상시험에서 환자군을 나눌 때 각 갈래를 arm 이라고 부릅니다(치료군 arm, 위약군 arm).
+        성능 측정도 같은 구조입니다 — <strong>같은 조건에 한 가지만 다르게 해서 결과를 비교</strong>합니다.</p>
+        <h2 id="단일변수">한 변수만 바꾼다<a class="anchor" href="#단일변수" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>이걸 어기면 결과가 무엇 때문인지 알 수 없습니다. 실제로 겪은 오류: 두 실행을 비교했는데
+        한쪽은 <em>캐시 5초 + 순차</em>, 다른 쪽은 <em>캐시 없음 + 병렬</em> 이었습니다. 차이를 "병렬화 덕분"이라고
+        썼지만 <strong>두 변수가 교란</strong>돼 있었습니다.</p>
+
+        <p>그래서 arm 을 바꿀 때 풀 크기·스레드 수·외부 지연·데이터를 <strong>전부 고정</strong>합니다.</p>
+        <h2 id="패치">코드 비교는 패치로 관리한다<a class="anchor" href="#패치" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>arm 이 코드 차이일 때는 그 차이를 <strong>패치 파일 하나</strong>로 두고 실행 시 적용·복구합니다.
+        손으로 고쳤다 되돌리면 언젠가 되돌리는 것을 잊고, 그 실행의 결과는 전부 무효가 됩니다.</p>
+
+        <pre data-lang="text">perf/arms/inside-transaction.patch      arm B — @Transactional 복원
+perf/arms/sequential-classifiers.patch  arm SEQ — 분류기를 순차로 되돌림</pre>
+
+        <p>실행기는 종료 시 <strong>자동으로 되돌립니다.</strong> 중간에 실패해도 마찬가지입니다.</p>
+
+        <h2 id="쓰인-곳">이 사이트에서 쓰인 곳<a class="anchor" href="#쓰인-곳" aria-label="이 절로 가는 링크">#</a></h2>
+        <ul>
+          <li><a href="../writing/a-pooler-fixes-only-one.ko.html">RDS Proxy 로는 못 고치는 커넥션 고갈</a></li>
+          </ul>
+
+        <h2 id="함께-볼-용어">함께 볼 용어<a class="anchor" href="#함께-볼-용어" aria-label="이 절로 가는 링크">#</a></h2>
+        <ul>
+          <li><a href="load-test-harness.html">하네스</a> — arm 을 실행하는 도구</li>
+          <li><a href="warmup.html">워밍업</a> — arm 끼리 같아야 하는 조건 중 하나</li>
+          </ul>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script src="../assets/lang.js?v=20260905b"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+</html>

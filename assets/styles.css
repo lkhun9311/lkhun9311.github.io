@@ -2543,3 +2543,95 @@ html[lang="ja"] .article-toc {
     border-radius: 12px;
   }
 }
+
+/* ---- 용어집 ---------------------------------------------------------------------------------- */
+/* 글에 나오는 말 하나를 여러 각도로 적어 두는 곳. 목록에서 상세로 들어가고, 글 본문에서 그 단어를
+   만나면 여기로 연결된다. */
+
+.page-hero .source-tag.glossary { color: #0f766e; }
+
+.term-oneline {
+  margin: 0 0 26px;
+  padding: 16px 18px;
+  border-left: 3px solid var(--accent, #d62976);
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 0 10px 10px 0;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.term-group { margin: 0 0 44px; }
+
+.term-group > h2 {
+  margin: 0 0 16px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text, #18121d);
+}
+
+.term-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+
+.term-card {
+  display: block;
+  padding: 18px 20px;
+  border: 1px solid var(--line-soft, rgba(229, 222, 238, 0.9));
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 120ms ease, transform 120ms ease;
+}
+
+.term-card:hover,
+.term-card:focus-visible {
+  border-color: var(--accent, #d62976);
+  transform: translateY(-1px);
+}
+
+.term-card h3 {
+  margin: 0 0 2px;
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: var(--text, #18121d);
+}
+
+.term-card .term-en {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted, #7b7186);
+}
+
+.term-card p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--text-soft, #3b3344);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .term-card { transition: none; }
+  .term-card:hover { transform: none; }
+}
+
+/* 본문 안에서 용어집으로 나가는 링크. 밑줄 점선으로 "설명이 따로 있다"를 표시하되, 읽는 흐름을
+   끊지 않도록 색은 본문 그대로 둔다. */
+.article-body a.term {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px dotted var(--muted, #7b7186);
+}
+
+.article-body a.term:hover,
+.article-body a.term:focus-visible {
+  color: var(--accent, #d62976);
+  border-bottom-style: solid;
+  border-bottom-color: currentColor;
+}

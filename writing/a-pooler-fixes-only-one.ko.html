@@ -198,7 +198,7 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
         <p>점검의 출발점은 흔한 가설이었습니다.</p>
 
         <blockquote><p>트래픽이 늘면 DB 커넥션이 부족해질 텐데, RDS Proxy 나 PgBouncer 같은
-        <strong>커넥션 풀러(connection pooler)</strong>를 앞에 세우면 되지 않을까?</p></blockquote>
+        <strong><a class="term" href="../glossary/connection-pooler.html">커넥션 풀러(connection pooler)</a></strong>를 앞에 세우면 되지 않을까?</p></blockquote>
 
         <p>커넥션 풀러는 애플리케이션이 여는 커넥션 수천 개를 DB 커넥션 수십 개로
         <strong>묶어 주는</strong> 미들웨어입니다. 소개 그림만 보면 정확히 제게 필요한 물건처럼 보였습니다.</p>
@@ -215,7 +215,7 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
         <strong>증상은 같고 처방은 다릅니다.</strong> 커넥션 풀러는 앞쪽만 고칩니다.</p></blockquote>
 
         <p>그리고 이 결론의 근거는 RDS Proxy 나 PgBouncer 의 제품 문서가 아니라,
-        <strong>트랜잭션 풀링(transaction pooling)이라는 방식의 정의 자체</strong>에서 나왔습니다. 아래에서
+        <strong><a class="term" href="../glossary/transaction-pooling.html">트랜잭션 풀링(transaction pooling)</a>이라는 방식의 정의 자체</strong>에서 나왔습니다. 아래에서
         차례로 보겠습니다.</p>
 
         <p>먼저 증상부터 보겠습니다. 커넥션 풀이 고갈되면 겉으로 드러나는 모습은 대체로 하나입니다.
@@ -529,7 +529,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         <h2 id="두-숫자">아무도 고르지 않은 두 숫자<a class="anchor" href="#두-숫자" aria-label="이 절로 가는 링크">#</a></h2>
         <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private</span> <code>services/api/src/main/resources/application.yml</code> <code>spring.datasource.hikari</code></p>
 
-        <p>②(유입 제어)에도 함정이 하나 있었습니다. <strong>블로킹 JDBC 에서는 커넥션 풀이 사실상 동시성
+        <p>②(유입 제어)에도 함정이 하나 있었습니다. <strong>블로킹 JDBC 에서는 <a class="term" href="../glossary/connection-pool.html">커넥션 풀</a>이 사실상 동시성
         상한</strong>입니다. 스레드가 아무리 많아도 커넥션을 못 받으면 일을 못 하니까요.</p>
 
         <p>그런데 설정을 열어 보니 이랬습니다.</p>
@@ -643,7 +643,7 @@ assertThat(probe.sawTransaction).containsOnly(false)  // ② 그 호출은 트�
         <code>containsOnly</code> 는 빈 리스트에 대해 참이기 때문입니다. <strong>“~가 아니다”를 검사하는
         단언에는 항상 “호출이 있기는 했나”를 같이 붙여야 합니다.</strong></p>
 
-        <p>그리고 이 가드가 정말 겨누고 있는지는 <strong>뮤테이션</strong>으로 확인했습니다. 코드를 일부러
+        <p>그리고 이 가드가 정말 겨누고 있는지는 <strong><a class="term" href="../glossary/mutation-testing.html">뮤테이션</a></strong>으로 확인했습니다. 코드를 일부러
         되돌려 놓고 테스트를 돌려서, 빨간불이 나는지 보는 방법입니다.</p>
 
 <pre data-lang="shell"><code># 댓글 경로에 @Transactional 복원
@@ -662,7 +662,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
 
         <h2 id="재-봤습니다">세 주 뒤에 실제로 재 봤습니다<a class="anchor" href="#재-봤습니다" aria-label="이 절로 가는 링크">#</a></h2>
         <p>이 글은 원래 <em>“수치가 없습니다”</em>로 끝날 예정이었습니다. 그런데 그 문장을 쓰고 나니
-        <strong>수치를 만들 도구가 없다는 뜻</strong>이라는 게 분명해져서, 세 주 뒤에 JMeter 하네스를
+        <strong>수치를 만들 도구가 없다는 뜻</strong>이라는 게 분명해져서, 세 주 뒤에 JMeter <a class="term" href="../glossary/load-test-harness.html">하네스</a>를
         만들어 재 봤습니다.</p>
 
         <p>핵심은 <strong>한 변수만 바꾸는 것</strong>이었습니다. arm A 는 현재 코드, arm B 는
