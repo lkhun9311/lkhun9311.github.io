@@ -25,6 +25,11 @@
     },
 
     projects: {
+      /* Writing 과 같은 축으로 나눈다 — 섹션마다 기준이 달라지면 왼쪽 레일을 매번 다시 배운다. */
+      tagGroups: {
+        "영역": ["GPU", "Kubernetes", "Backend", "Postgres", "IaaS", "Control Plane"],
+        "관점": ["Operations", "Privacy"]
+      },
       items: [
         {
           label: "Commercial Project",
@@ -64,6 +69,13 @@
     },
 
     writing: {
+      /* 왼쪽 필터의 묶음. "무엇에 대한 글인가"(영역)와 "무엇을 다루는 글인가"(관점)는 고르는
+         이유가 다르다 — 한 줄에 섞어 두면 열다섯 개를 매번 처음부터 읽게 된다. */
+      tagGroups: {
+        "영역": ["GPU", "Kubernetes", "Backend", "Postgres", "IaaS", "Control Plane"],
+        "관점": ["Method", "Observability", "Reliability", "Performance",
+                "Security", "Privacy", "Cost", "Operations", "Migration"]
+      },
       items: [
         {
           title: "The Track Did Not End Until the Guarantee Was a Sentence",
@@ -395,7 +407,15 @@
       );
     }
 
-    if (tagRowEl && asFacets) {
+    // 아무것도 걸러내지 못하는 레일은 숨긴다. 태그가 없거나(항목에 tags 가 없음), 있어도 모든
+    // 태그가 전체 건수와 같으면(News 의 #2026 처럼 연도 하나뿐) 눌러도 목록이 그대로다 —
+    // 고를 것이 없는 필터는 자리만 차지하고 "여기서 뭘 고르지"를 매번 다시 묻게 만든다.
+    var narrows = tagList.some(function (t) { return countOf(t) < sec.items.length; });
+    if (tagRowEl && asFacets && !narrows) {
+      tagRowEl.hidden = true;
+      var browse = tagRowEl.closest && tagRowEl.closest(".section-browse");
+      if (browse) browse.classList.add("no-facets");
+    } else if (tagRowEl && asFacets) {
       // 섹션이 tagGroups 를 선언하면 그 순서·묶음대로, 아니면 한 덩어리로 그린다.
       var groups = sec.tagGroups || null;
       var html = hasAll ? facetRow(allLabel, true) : "";
