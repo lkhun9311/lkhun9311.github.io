@@ -29,7 +29,7 @@
   <meta name="twitter:title" content="Adding Threads Made the Tail Longer | Kwanghun Lee" />
   <meta name="twitter:description" content="Holding the cache fixed, parallelising took p99 from 42.6s to 79.0s. An external call inside computeIfAbsent holds the bin." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="Parallelising without a cache took p99 from 42s to 129s. An external call inside computeIfAbsent holds the bin, and only a six-configuration test made that visible." />
+  <meta name="description" content="Holding the cache setting fixed, going from sequential to parallel took p99 from 42.6s to 79.0s. An external call inside computeIfAbsent holds the bin, and only a six-configuration test made that visible." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
 </head>
@@ -278,7 +278,8 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         the error rate from 83.3% to 0% and p99 from 10 minutes to 23ms."</em></p>
 
         <p>Every number in that sentence is true. The <strong>implication that parallelism contributed is
-        false</strong>. On its own it was harmful; it paid only alongside the cache. Not knowing that, the
+        false</strong>. On its own it was harmful — with the cache held fixed, parallel was still worse than
+        sequential, so this experiment shows no positive contribution from parallelism at all. Not knowing that, the
         obvious next move — "let's parallelise this other screen too" — walks straight back into the same trap.</p>
 
         <p>The table also did diagnostic work. Parallelising with the cache held fixed being <em>worse</em> says
@@ -293,14 +294,17 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         was slower than sequential.</p>
 
         <p><strong>"A 4ms median is just a cache hit, isn't it?"</strong> — Yes. That is why the median is not
-        read alone. On the same row p99 is 23ms and Apdex is 1.000. An Apdex of 1.000 means the whole sample
-        landed inside the satisfied threshold, which is a statement about the tail, not the middle.</p>
+        read alone. On the same row p99 is 23ms and Apdex is 1.000. Apdex weighs satisfied, tolerating and frustrated
+        counts, so it reads the distribution rather than the middle — though the printed 1.000 does not by
+        itself prove the whole sample (see the caveats).</p>
 
         <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
         <ul>
           <li><strong>Not that parallelism is bad.</strong> Parallelising code that does I/O inside a lock is
-          bad. ③→④ shows that removing the condition lets parallelism pay.</li>
+          bad. But none of these six configurations removes that condition while staying parallel, so
+          whether parallelism pays once it is removed is not something this experiment shows. ③→④ changes only
+          the cache and does not answer it.</li>
           <li><strong>Not a production measurement.</strong> Synthetic load in an internal test environment.
           Real user distribution, data volume and network differ.</li>
           <li><strong>② and ③ are not controls for each other.</strong> Cache and execution mode change
