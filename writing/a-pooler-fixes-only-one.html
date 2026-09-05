@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>I Thought Adding RDS Proxy Would Fix It | Kwanghun Lee</title>
+  <title>We Were Calling an External API Inside the Transaction | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="I Thought Adding RDS Proxy Would Fix It | Kwanghun Lee" />
+  <meta property="og:title" content="We Were Calling an External API Inside the Transaction | Kwanghun Lee" />
   <meta property="og:description" content="While reviewing a social polling app before launch I went to put a connection pooler in front of the database. But connection exhaustion has two causes, and a pooler fixes only one of them. Why it cannot fix the other comes from the definition of transaction pooling, not from any vendor document." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
@@ -26,7 +26,7 @@
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="I Thought Adding RDS Proxy Would Fix It | Kwanghun Lee" />
+  <meta name="twitter:title" content="We Were Calling an External API Inside the Transaction | Kwanghun Lee" />
   <meta name="twitter:description" content="Connection exhaustion has two causes. A pooler fixes one of them and is structurally powerless against the other." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="While reviewing a social polling app before launch I went to put a connection pooler in front of the database. But connection exhaustion has two causes, and a pooler fixes only one of them. Why it cannot fix the other comes from the definition of transaction pooling, not from any vendor document." />
@@ -69,9 +69,8 @@
     <main>
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Writing</a>
-        <h1>I Thought Adding RDS Proxy Would Fix It<br><span class="h1-sub">An external API call inside a transaction, and connection exhaustion</span></h1>
-        <div class="article-meta">Writing · September 2026<span aria-hidden="true"> · </span><span class="read-time">14 min read</span></div>
-        <p class="lang-alts notranslate">Other languages <a href="a-pooler-fixes-only-one.ko.html" hreflang="ko" lang="ko">한국어</a> · <a href="a-pooler-fixes-only-one.ja.html" hreflang="ja" lang="ja">日本語</a></p>
+        <h1>We Were Calling an External API Inside the Transaction<br><span class="h1-sub">A pre-launch review of a social polling app — the kind of connection exhaustion RDS Proxy cannot fix</span></h1>
+        <div class="article-meta"><span class="source-tag side notranslate">Side project</span>Writing · September 2026<span aria-hidden="true"> · </span><span class="read-time">14 min read</span></div>
       </section>
       <article class="article-body">
 
@@ -126,6 +125,11 @@
           <li>The fix is the kind that one line of <code>@Transactional</code> undoes, so the regression guard
           went on <strong>the cause rather than the effect</strong>.</li>
         </ul>
+
+        <p><strong>The code is in a private repository.</strong> The app has not launched, so the
+        repository is not open. Each section therefore carries <strong>the file path and the symbol
+        name</strong> rather than a GitHub link. Package names are the anonymised ones from the original
+        notes.</p>
 
         <p><strong>⚠️ One thing up front.</strong> There are <strong>no load-test numbers</strong> in this
         article, and nothing ever broke in production. The “up to 10 seconds” below is a
@@ -183,7 +187,7 @@
         calls an <strong>external moderation API</strong> (a third-party service that screens harmful content)
         once. And that call has a read timeout of <strong>10 seconds</strong>.</p>
 
-<pre><code># application.yml
+<pre data-lang="yaml"><code># application.yml
 read-timeout: ${OXY_HTTP_READ_TIMEOUT:10s}</code></pre>
 
         <p>Hold on to that number. The rest of this article comes out of it.</p>
@@ -218,7 +222,7 @@ read-timeout: ${OXY_HTTP_READ_TIMEOUT:10s}</code></pre>
         requests wait for a connection and time out, and APIs with nothing to do with each other slow down
         together. The log carries this line.</p>
 
-<pre><code>Connection is not available, request timed out after 30000ms</code></pre>
+<pre data-lang="text"><code>Connection is not available, request timed out after 30000ms</code></pre>
 
         <p>Both causes look identical up to here. Which is why picking a tool from the symptom gets it wrong.</p>
 
@@ -226,7 +230,7 @@ read-timeout: ${OXY_HTTP_READ_TIMEOUT:10s}</code></pre>
 
         <p>The first is when the <strong>count</strong> itself is the problem.</p>
 
-<pre><code>100 app instances × pool size 20 = 2,000 connections
+<pre data-lang="text"><code>100 app instances × pool size 20 = 2,000 connections
 but only 50 are actually running a query right now
 the other 1,950 are simply open</code></pre>
 
@@ -237,11 +241,12 @@ the other 1,950 are simply open</code></pre>
         For type-A exhaustion a pooler is exactly the right tool.</p>
 
         <h2 id="cause-b">Cause B — connections held too long<a class="anchor" href="#cause-b" aria-label="Link to this section">#</a></h2>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="private">private repository</span> · <code>services/api/…/comment/CommentService.kt</code> <code>create</code></p>
 
         <p>The second is when the problem is not the <strong>number</strong> of connections but
         <strong>how long each one is held</strong>. Our code was this kind.</p>
 
-<pre><code>// CommentService.kt — before
+<pre data-lang="kotlin"><code>// CommentService.kt — before
 @Transactional
 fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentResponse {
     val user = activeUserGuard.requireActive(userId)                 // DB
@@ -442,7 +447,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
 
         <p>Which gives you this.</p>
 
-<pre><code>transaction open for 10s
+<pre data-lang="text"><code>transaction open for 10s
   → backend connection pinned for 10s
   → 1 app connection costs 1 database connection
   → the pooler folds nothing</code></pre>
@@ -475,13 +480,14 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         <p>A pooler is ③. Going straight to ③ without ① is what the previous section was about.</p>
 
         <h2 id="the-code-went-first">The code went first<a class="anchor" href="#the-code-went-first" aria-label="Link to this section">#</a></h2>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="private">private repository</span> · <code>services/api/…/comment/CommentService.kt</code> <code>create</code> · <code>services/api/…/post/PostService.kt</code> <code>createPost · addPoll</code></p>
 
         <p>So ① came first: narrowing the transaction boundary <strong>to the write</strong>. In Spring,
         <code>@Transactional</code> is proxy-based and does not apply to self-invocation, so I reused the
         <code>TransactionTemplate</code> pattern that was already in the codebase. Introducing no new mechanism
         mattered here.</p>
 
-<pre><code>// after — no @Transactional on the method
+<pre data-lang="kotlin"><code>// after — no @Transactional on the method
 fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentResponse {
     // ① validation (reads. each borrows a connection briefly and returns it)
     val user = activeUserGuard.requireActive(userId)
@@ -518,13 +524,14 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         keep.</p>
 
         <h2 id="two-numbers">Two numbers nobody chose<a class="anchor" href="#two-numbers" aria-label="Link to this section">#</a></h2>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="private">private repository</span> · <code>services/api/src/main/resources/application.yml</code> <code>spring.datasource.hikari</code></p>
 
         <p>Layer ② had a trap of its own. <strong>With blocking JDBC the connection pool is effectively the
         concurrency cap.</strong> However many threads there are, they cannot work without a connection.</p>
 
         <p>Opening our configuration, this is what was there.</p>
 
-<pre><code># application.yml — as found
+<pre data-lang="yaml"><code># application.yml — as found
 spring:
   datasource:
     url: ${DB_URL:...}
@@ -542,7 +549,7 @@ spring:
 
         <p>So they were made explicit.</p>
 
-<pre><code>hikari:
+<pre data-lang="yaml"><code>hikari:
   maximum-pool-size: ${DB_POOL_MAX:20}
   connection-timeout: ${DB_POOL_TIMEOUT_MS:5000}   # the 30s default is too long — failing fast keeps the rest alive
   max-lifetime: ${DB_POOL_MAX_LIFETIME_MS:1200000}</code></pre>
@@ -550,7 +557,7 @@ spring:
         <p>That said, <strong>growing the pool is relief, not repair</strong>, and there is a ceiling on growing
         it.</p>
 
-<pre><code>pool size × max instances ≤ database connection limit</code></pre>
+<pre data-lang="text"><code>pool size × max instances ≤ database connection limit</code></pre>
 
         <p>The app does not know how many instances of itself are running, so this invariant
         <strong>cannot be enforced in code.</strong> An IaC comment is the only defence, so that is where it
@@ -560,6 +567,7 @@ spring:
         deliberately</strong>. A concurrency policy produced by two defaults is not a policy.</p>
 
         <h2 id="is-this-code-poolable">I checked whether the code could take a pooler at all<a class="anchor" href="#is-this-code-poolable" aria-label="Link to this section">#</a></h2>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="private">private repository</span> · <code>services/api/…/vote/VoteRepository.kt</code> <code>pg_advisory_xact_lock</code></p>
 
         <p>Before moving to ③ there was one more thing to establish. Transaction pooling has
         <strong>pin-inducing patterns</strong>, and where the code has them the pooler is powerless — a pinned
@@ -574,7 +582,7 @@ spring:
 
         <p>So I went and looked.</p>
 
-<pre><code>$ grep -rn "pg_advisory_lock" src/main/kotlin/      # (none)
+<pre data-lang="shell"><code>$ grep -rn "pg_advisory_lock" src/main/kotlin/      # (none)
 $ grep -rn "advisory_xact" src/main/kotlin/
 ReportRepository.kt      pg_advisory_xact_lock(...)
 AuthAuditPurge.kt        pg_try_advisory_xact_lock(...)
@@ -609,6 +617,7 @@ VoteRepository.kt        pg_advisory_xact_lock(...)</code></pre>
         call holding a connection — stays exactly where it was.</p>
 
         <h2 id="the-guard">The fix is easy to undo, so the guard went on the cause<a class="anchor" href="#the-guard" aria-label="Link to this section">#</a></h2>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="private">private repository</span> · <code>services/api/src/test/…/ModerationOutsideTransactionTest.kt</code> <code>TransactionProbe</code></p>
 
         <p>This fix has a fragility of its own. <strong>One line of <code>@Transactional</code> puts it
         back.</strong> And once undone, <strong>the feature still works</strong> — the tests pass and the
@@ -618,7 +627,7 @@ VoteRepository.kt        pg_advisory_xact_lock(...)</code></pre>
         asserted the <strong>cause</strong>. A spy sits where the real HTTP client's interface goes and records
         <strong>whether a transaction is active at the moment of the call</strong>.</p>
 
-<pre><code>class TransactionProbe : ContentModerationApi {
+<pre data-lang="kotlin"><code>class TransactionProbe : ContentModerationApi {
     val sawTransaction = mutableListOf&lt;Boolean&gt;()
     override fun screen(text: String) {
         sawTransaction += TransactionSynchronizationManager.isActualTransactionActive()
@@ -636,7 +645,7 @@ assertThat(probe.sawTransaction).containsOnly(false)  // ② was it outside the 
         <p>Whether the guard is really aiming at anything was checked by <strong>mutation</strong> — putting the
         code back on purpose and running the tests to see whether they go red.</p>
 
-<pre><code># @Transactional restored on the comment path
+<pre data-lang="shell"><code># @Transactional restored on the comment path
 ModerationOutsideTransactionTest > the moderation call does not hold a database transaction() FAILED
 
 # @Transactional restored on the post path
@@ -703,6 +712,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
 
   <script src="../assets/lang.js?v=20260905b"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <script defer src="../assets/article.js?v=20260817-scroll"></script>
+  <script defer src="../assets/highlight.js?v=20260905"></script>
+  <script defer src="../assets/article.js?v=20260905b"></script>
 </body>
 </html>
