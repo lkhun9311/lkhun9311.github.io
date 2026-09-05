@@ -12,8 +12,41 @@
  * This script must run BEFORE translate_a/element.js. The widget reads the googtrans cookie at init and
  * translates immediately; the cookie has to be corrected while there is still time to correct it.
  */
+
+/* Given the page's own language, the hand-written variants of this page, and the googtrans cookie,
+ * return the variant this load should be replaced by — or null to leave the load alone.
+ *
+ * This is the rule "an authored page beats a machine translation", applied ON LOAD rather than only when
+ * the picker changes. Without it: choose Korean on a page that has no Korean variant (the home page, the
+ * section indexes, the CV) and the widget sets a site-wide googtrans cookie. Every English article opened
+ * afterwards is then machine-translated — including ones where a hand-written Korean page sits one URL
+ * away, which is the whole thing this file exists to prevent.
+ *
+ * Kept pure and outside the IIFE so tools/test-lang.js can drive it in node with no DOM.
+ */
+var LangRoute = {
+  authoredDestination: function (page, authored, cookie) {
+    if (!cookie || !authored) return null;
+    var parts = String(cookie).split("/");   // ["", source, target]
+    if (parts.length < 3) return null;
+    var source = parts[1], target = parts[2];
+    if (!target) return null;
+    // A cookie whose source is not this page's language was set elsewhere; the caller clears it instead.
+    if (source && source !== page) return null;
+    // Already the language this page is written in — nothing to route to.
+    if (target === page) return null;
+    if (!Object.prototype.hasOwnProperty.call(authored, target)) return null;
+    return authored[target];
+  }
+};
+
+if (typeof module !== "undefined" && module.exports) module.exports = LangRoute;
+
 (function () {
   "use strict";
+
+  // node loads this file for the pure function above; everything below needs a document.
+  if (typeof document === "undefined") return;
 
   // The source language is whatever the page declares. Hard-coding 'en' — which every page did until the
   // first Korean article shipped — tells Google that Korean text is English and it translates it as such.
@@ -80,6 +113,17 @@
       "google_translate_element"
     );
   };
+
+  /* A hand-written page beats a machine translation on load too, not only when the picker changes.
+     The cookie goes with it: its source is this page's language, which is about to stop being true.
+     The reader loses the "translate everything" preference here, and that is the right trade — they land
+     on a page a person wrote instead of a machine's version of a different one. */
+  var destination = LangRoute.authoredDestination(PAGE, authored, readCookie());
+  if (destination) {
+    clearCookie();
+    location.replace(destination);
+    return;
+  }
 
   if (!picker) return;
 
