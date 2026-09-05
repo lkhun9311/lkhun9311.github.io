@@ -79,8 +79,10 @@
         private cloud portal to a release <strong>2,255 commits ahead</strong> of the one they were running. I
         do not name the product, the version numbers, the customer, or ticket IDs. <strong>What I actually did
         was the isolated reproduction and the procedure and runbooks</strong> — this is not a record of me
-        performing the production cutover. Every number below is a result from the
-        <strong>isolated container</strong>.</p>
+        performing the production cutover. The numbers come from mixed sources — the migration results
+        (3 of 3, 0 failures) are from the <strong>isolated container</strong>; the commit counts, the release
+        comparison and the 48-table column check are <strong>repository and schema surveys</strong>; the
+        startup failure is <strong>local troubleshooting</strong>.</p>
 
         <p>The shape of the job: two breaking changes — the authentication model changed and reset every
         user's password, and two database schemas were merged into one. It is a production database, so there
@@ -89,9 +91,9 @@
         field.</strong></p>
 
         <p>The natural way to write a procedure here is to read the documents and reason. That is how I wrote
-        three of them. And <strong>the premise of all three was wrong.</strong> I did not learn that by reading
+        three of them. And <strong>the premise of all three was wrong.</strong> I did not learn that by reasoning
         more carefully. I learned it by standing the old version up in an isolated environment and running the
-        whole thing once.</p>
+        whole thing once — and, in the middle of that, by reading the guide again, properly this time.</p>
 
         <nav class="article-toc" aria-label="Contents">
           <p class="toc-label">Contents</p>
@@ -110,7 +112,7 @@
         <h2 id="are-they-even-the-same">Are they even the same?<a class="anchor" href="#are-they-even-the-same" aria-label="Link to this section">#</a></h2>
 
         <p>A reproduction needs a starting point. But the field had received <strong>two copies</strong> of the
-        old release build, downloaded more than six months apart. Before choosing which one to treat as the
+        old release build, downloaded more than five months apart (2025-10-31 and 2026-04-15, 166 days). Before choosing which one to treat as the
         baseline, I checked whether they were the same thing.</p>
 
 <pre><code>diff -rq  &lt;release A&gt;  &lt;release B&gt;      # no differences (exit 0)
@@ -355,23 +357,28 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
 
         <ul>
           <li><strong>Not a claim that I completed the production migration.</strong> What I did was verify the
-          whole path by reproduction and prepare the field procedure and installation runbooks.</li>
-          <li><strong>Zero migration failures is an isolated-environment result.</strong> I noted in the
+          reproducible part of the path and prepare the field procedure and installation runbooks. Not
+          <strong>the whole path</strong> — the authentication stretch was not reproduced, as below.</li>
+          <li><strong>Zero migration failures means "the script counted zero tables as failed"</strong>, in an
+          isolated environment. It does not mean the migration was correct or lossless. I noted in the
           document that reproducing against a real field dump would be the accurate test, and that was left as
           follow-up work. It was not done.</li>
           <li><strong>Copying the intersection of columns is not a correct migration method.</strong> It was
           built that way as a smoke test; a correct column mapping has to follow the guide's table.</li>
           <li><strong>The authentication stretch is unverified.</strong> No identity CLI locally, so it could
           not be reproduced, and the script leaves SKIP/WARN in its place.</li>
-          <li><strong>Zero column change is a fact about those two versions</strong>, not a claim that this
-          product's history tables never change.</li>
+          <li><strong>Zero column change means no columns were added or dropped</strong>, and is a fact about
+          those two versions. It does not mean types, lengths, ordering, nullability, defaults, keys, foreign
+          keys and triggers are identical, and how far the comparison went was not established from the
+          sources behind this article. Nor does it claim this product's history tables never change.</li>
         </ul>
 
-        <p>What is left is one line. <strong>Nothing here was learned by reading the documents more
-        carefully.</strong> That the two release copies were identical, that the baseline was a curation rather
-        than a date cut, that the method was different, that the procedure pointed at a file that did not exist
-        — every one of them turned up while actually running the thing. A production database is the most
-        expensive place to try something for the first time.</p>
+        <p>What is left is one line. <strong>Nothing here was learned by inference.</strong> That the two release
+        copies were identical, that the baseline was a curation rather than a date cut, that the procedure
+        pointed at a file that did not exist — each turned up from actually running or actually checking. The
+        one exception is the method, which came from <em>reading the guide properly</em> — and even that was
+        missed on the first skim. A production database is the most expensive place to try something for the
+        first time.</p>
 
       </article>
     </main>
