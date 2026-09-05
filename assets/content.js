@@ -55,6 +55,13 @@
     writing: {
       items: [
         {
+          title: "Parallelising It Made the Tail Three Times Worse",
+          url: "writing/parallelism-made-the-tail-worse.html",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "Parallelising without a cache took p99 from 42s to 129s. An external call inside computeIfAbsent, and the six-configuration test that made it visible. Also in Korean and Japanese.",
+          tags: ["Performance", "Method"]
+        },
+        {
           title: "Ten Bugs, Zero Failed Tests",
           url: "writing/bugs-that-return-exit-code-zero.html",
           date: "2026-08", dateLabel: "Aug 2026",

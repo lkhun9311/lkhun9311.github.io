@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>병렬로 바꾸자 꼬리가 세 배 길어졌다 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/parallelism-made-the-tail-worse.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/parallelism-made-the-tail-worse.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/parallelism-made-the-tail-worse.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/parallelism-made-the-tail-worse.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="병렬로 바꾸자 꼬리가 세 배 길어졌다 | Kwanghun Lee" />
+  <meta property="og:description" content="캐시 없이 병렬화했더니 P99가 42초에서 129초로 악화됐다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠긴다. 여섯 구성을 같은 조건으로 재고 나서야 보인 것." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/parallelism-made-the-tail-worse.ko.html" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="병렬로 바꾸자 꼬리가 세 배 길어졌다 | Kwanghun Lee" />
+  <meta name="twitter:description" content="캐시 없이 병렬화했더니 P99가 42초에서 129초로 악화됐다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠긴다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="캐시 없이 병렬화했더니 P99가 42초에서 129초로 악화됐다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠긴다. 여섯 구성을 같은 조건으로 재고 나서야 보인 것." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language"
+                data-authored='{"en":"parallelism-made-the-tail-worse.html","ko":"parallelism-made-the-tail-worse.ko.html","ja":"parallelism-made-the-tail-worse.ja.html"}'>
+          <option value="ko" selected>Korean</option>
+          <option value="en">English</option>
+          <option value="ja">Japanese</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="zh-TW">Chinese (Traditional)</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="vi">Vietnamese</option>
+          <option value="id">Indonesian</option>
+          <option value="hi">Hindi</option>
+          <option value="ar">Arabic</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <section class="page-hero">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing 으로</a>
+        <h1>병렬로 바꾸자 꼬리가 세 배 길어졌다</h1>
+        <div class="article-meta">Writing · 2026년 9월<span aria-hidden="true"> · </span><span class="read-time">9분</span></div>
+        <p class="lang-alts notranslate">다른 언어 <a href="parallelism-made-the-tail-worse.html" hreflang="en" lang="en">English</a> · <a href="parallelism-made-the-tail-worse.ja.html" hreflang="ja" lang="ja">日本語</a></p>
+      </section>
+      <article class="article-body">
+
+        <p><strong>범위.</strong> 2026년 5월, OpenStack 기반 프라이빗 클라우드 관리 콘솔의
+        <strong>볼륨 목록 화면</strong>을 고친 기록이다. 제품명·버전·고객사는 쓰지 않는다. 아래 숫자는 전부 <strong>사내 시험 환경에서 JMeter 로 잰
+        값</strong>이고, 프로덕션 트래픽이 아니다. 부하 조건은 여섯 구성 모두 동일하다 —
+        <strong>동시 사용자 50명 · Ramp-Up 2분 · 지속 10분 · Think Time 2~5초</strong>. 코드는 실제 코드를
+        인용하되 사내 식별자는 지웠다.</p>
+
+        <p>화면은 볼륨이 늘수록 선형으로 느려지다가 결국 10분 Timeout 으로 죽었다. 원인은 볼륨 하나마다 외부
+        API 를 순차로 부르는 루프였고, 처방은 뻔해 보였다. <strong>병렬로 돌리면 된다.</strong></p>
+
+        <p>병렬로 돌리자 <strong>더 느려졌다.</strong> P99 가 42초에서 129초가 됐다. 이 글은 그 한 칸이
+        무엇을 알려줬는지, 그리고 <strong>그 한 칸을 볼 수 있게 만든 시험 설계</strong>에 대한 것이다.</p>
+
+        <nav class="article-toc" aria-label="목차">
+          <p class="toc-label">목차</p>
+          <ul>
+            <li><a href="#여섯-줄">여섯 줄</a></li>
+            <li><a href="#왜-3이-2보다-나쁜가">왜 ③이 ②보다 나쁜가</a></li>
+            <li><a href="#없음을-캐시하지-않았다">두 번째 결함: "없음"을 캐시하지 않았다</a></li>
+            <li><a href="#무엇이-실제로-컸는가">고친 것 중 무엇이 실제로 컸는가</a></li>
+            <li><a href="#전후만-쟀다면">전후만 쟀다면 무엇을 잘못 보고했을까</a></li>
+            <li><a href="#이-글이-주장하지-않는-것">이 글이 주장하지 않는 것</a></li>
+          </ul>
+        </nav>
+
+        <h2 id="여섯-줄">여섯 줄<a class="anchor" href="#여섯-줄" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>조치를 한꺼번에 넣고 전후를 재면 "빨라졌다"는 사실 하나만 남는다. 무엇이 얼마나 기여했는지는
+        모른다. 그래서 구성을 여섯 단계로 나눠 <strong>같은 조건으로 각각</strong> 쟀다.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+        <table>
+          <caption class="sr-only">여섯 가지 구성을 동일 부하 조건에서 측정한 결과.</caption>
+          <thead><tr><th scope="col">#</th><th scope="col">구성</th><th scope="col">Samples</th><th scope="col">Error</th><th scope="col">Median</th><th scope="col">P99</th><th scope="col">TPS</th><th scope="col">Apdex</th></tr></thead>
+          <tbody>
+            <tr><td>①</td><td>캐시 없음, 순차</td><td>54</td><td><strong>83.3%</strong></td><td>600,002</td><td>600,017</td><td>0.06</td><td>0.000</td></tr>
+            <tr><td>②</td><td>캐시 5초, 순차</td><td>1,641</td><td>0%</td><td>10,974</td><td>42,644</td><td>2.69</td><td>0.014</td></tr>
+            <tr><td>③</td><td><strong>캐시 없음, 병렬</strong></td><td>541</td><td>0%</td><td>45,075</td><td><strong>129,880</strong></td><td>0.87</td><td>0.000</td></tr>
+            <tr><td>④</td><td>캐시 5초, 병렬</td><td>1,560</td><td>0%</td><td>508</td><td>78,997</td><td>2.46</td><td>0.526</td></tr>
+            <tr><td>⑤</td><td>④ + 부가정보 조회 최적화</td><td>5,991</td><td>0%</td><td>32</td><td>6,859</td><td>10.01</td><td>0.711</td></tr>
+            <tr><td>⑥</td><td><strong>⑤ + Caffeine refresh</strong></td><td>7,658</td><td><strong>0%</strong></td><td><strong>4</strong></td><td><strong>23</strong></td><td><strong>12.82</strong></td><td><strong>1.000</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>단위는 밀리초다. ①의 600,017ms 는 측정값이 아니라 <strong>10분 Timeout 상한에 붙은 값</strong>이다 —
+        그 구성은 요청의 83.3%가 끝나지 못했다. 끝나지 못한 요청의 지연은 "600초"가 아니라 <strong>모른다</strong>가
+        정답이고, 표의 그 칸은 그렇게 읽어야 한다.</p>
+
+        <p>여기서 눈에 걸리는 줄은 ③이다.</p>
+
+        <p><strong>③이 ②보다 나쁘다.</strong> 캐시를 빼고 병렬화만 하면 P99 가 <strong>42.6초 → 129.9초</strong>로
+        간다. 스레드를 늘렸는데 꼬리가 세 배가 됐다. 처리량도 2.69 TPS 에서 0.87 TPS 로 떨어졌다.</p>
+
+        <h2 id="왜-3이-2보다-나쁜가">왜 ③이 ②보다 나쁜가<a class="anchor" href="#왜-3이-2보다-나쁜가" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>병렬화한 코드는 이렇게 생겼다.</p>
+
+<pre><code>final Map&lt;String, VolumeGroup&gt; groupCache = new ConcurrentHashMap&lt;&gt;();
+
+final List&lt;VolumeDto&gt; dtos = volumes.stream()
+    .map(volume -&gt; CompletableFuture.supplyAsync(() -&gt; {
+
+        // 여러 스레드가 동시에 이 블록에 들어온다
+        final VolumeGroup group = groupCache.computeIfAbsent(
+            volume.getGroupId(),
+            gid -&gt; client.groups().get(gid)   // ← 외부 I/O 를 락 안에서 부른다
+        );
+        ...
+    }, executor))
+    .map(CompletableFuture::join)
+    .collect(Collectors.toList());</code></pre>
+
+        <p><code>ConcurrentHashMap</code> 을 썼으니 안전하다고 생각하기 쉽다. 안전한 것은 맞다. 문제는 안전성이
+        아니라 <strong>그 안전성을 무엇으로 사는가</strong>다.</p>
+
+        <p><code>computeIfAbsent</code> 는 매핑 함수를 <strong>해당 키가 속한 버킷을 잠근 채</strong> 실행한다.
+        매핑 함수가 맵을 읽고 끝나는 계산이면 그 구간은 나노초 단위다. 여기서는 그 자리에서
+        <strong>네트워크 왕복</strong>을 한다.</p>
+
+        <p>그러면 이런 일이 벌어진다. 같은 그룹에 속한 볼륨이 M 개면, executor 에 제출된 M 개의 스레드가
+        <strong>같은 키</strong>로 <code>computeIfAbsent</code> 에 들어온다. 하나가 외부 호출을 하는 동안 나머지
+        M−1 개는 그 버킷 앞에 줄을 선다. 순차 코드에서는 한 줄로 서서 기다리던 것이
+        <strong>병렬 코드에서도 한 줄로 서고, 스레드 풀 자리는 그동안 묶여 있다.</strong> 얻은 것은 없고
+        컨텍스트 스위칭과 풀 고갈만 늘었다.</p>
+
+        <p>그래서 ③은 ②보다 나쁘다. ②는 5초 캐시 덕분에 외부 호출 횟수 자체가 적었고, ③은 캐시가 없어
+        모든 요청이 그 잠긴 자리를 통과해야 했다.</p>
+
+        <blockquote><p><strong>용어 하나.</strong> 이 구조를 "세그먼트 락"이라고 부르는 문서를 자주 본다.
+        세그먼트는 <strong>Java 7 시절 용어</strong>다. Java 8 이후 <code>ConcurrentHashMap</code> 은 세그먼트를
+        없애고 <strong>버킷(bin) 단위</strong>로 잠근다. 잠김의 범위가 더 좁아졌을 뿐, <em>매핑 함수가 도는 동안
+        그 자리가 잠긴다</em>는 사실은 그대로다. 락 범위가 좁아진 것이 <strong>락 안에서 I/O 를 해도 된다는
+        뜻은 아니다.</strong></p></blockquote>
+
+        <p>고치는 방법은 락을 직접 다루는 걸 그만두는 것이다. Caffeine 의 <code>LoadingCache</code> 는
+        캐시 미스에서 <strong>키마다 로더를 정확히 한 번만</strong> 실행하고 나머지 호출자는 그 결과를 기다린다.
+        같은 "한 번만 부른다"를 보장하면서, 기다리는 쪽이 맵의 버킷을 붙들고 있지 않는다.</p>
+
+        <h2 id="없음을-캐시하지-않았다">두 번째 결함: "없음"을 캐시하지 않았다<a class="anchor" href="#없음을-캐시하지-않았다" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>같은 화면의 다른 경로에는 직접 만든 캐시가 하나 더 있었다.</p>
+
+<pre><code>public static List&lt;Message&gt; messages(final String resourceId) {
+    CacheManager manager = CacheManager.getInstance().init(Message.class, 10);
+    final List&lt;Message&gt; cached = manager.list(Message.class);
+
+    if (cached == null || cached.isEmpty()) {              // ← 여기를 여럿이 동시에 통과한다
+        client.messages().list(...)
+              .forEach(r -&gt; manager.set(Message.class, r.getResourceUuid(), r));
+    }
+    ...
+}</code></pre>
+
+        <p>결함이 두 겹이다.</p>
+
+        <p><strong>하나.</strong> 병렬화된 N 개 스레드가 <code>isEmpty()</code> 검사를 동시에 통과하면
+        <strong>N 개가 전부</strong> 외부 API 를 부른다. 흔한 cache stampede 다.</p>
+
+        <p><strong>둘.</strong> 조회 결과가 0건이면 <code>forEach</code> 가 한 번도 돌지 않는다. 그러면
+        <strong>캐시에 아무것도 저장되지 않는다.</strong> 다음 요청도 캐시를 비어 있다고 보고 또 부른다.
+        "없음"이라는 답을 캐시하지 않은 것이다. 그리고 이 경로에서는 0건이 흔한 답이었다 — 즉
+        <strong>가장 빈번한 경우에 캐시가 전혀 작동하지 않았다.</strong></p>
+
+        <p>여기서도 처방은 같다. Caffeine 은 로더가 빈 리스트를 돌려줘도 <strong>그 빈 리스트를 값으로 캐시</strong>한다.
+        "값이 없다"와 "아직 안 물어봤다"를 자료구조가 구분해 준다. 직접 만든 캐시는 그 둘을 같은
+        <code>isEmpty()</code> 로 뭉갰다.</p>
+
+        <p>이 두 결함은 성질이 다르다. 첫째는 <strong>정확성은 맞는데 느린</strong> 결함이고, 둘째는
+        <strong>캐시가 있다고 믿게 만드는</strong> 결함이다. 둘째가 더 오래 살아남았던 이유는 명백하다 —
+        코드에 캐시가 있었고, 아무도 그 캐시가 채워지는지 세어 보지 않았다.</p>
+
+        <h2 id="무엇이-실제로-컸는가">고친 것 중 무엇이 실제로 컸는가<a class="anchor" href="#무엇이-실제로-컸는가" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>여섯 줄을 인접한 쌍으로 읽으면 각 조치의 기여가 분리된다.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+        <table>
+          <caption class="sr-only">인접한 구성 쌍의 차이로 읽은 조치별 기여.</caption>
+          <thead><tr><th scope="col">전이</th><th scope="col">바뀐 것</th><th scope="col">효과</th></tr></thead>
+          <tbody>
+            <tr><td>① → ②</td><td>캐시 도입</td><td>오류율 <strong>83.3% → 0%</strong>. 완주하게 만든 것이 첫 조치의 성과다</td></tr>
+            <tr><td>② → ③</td><td>병렬화만</td><td><strong>악화.</strong> P99 42.6초 → 129.9초</td></tr>
+            <tr><td>③ → ④</td><td>병렬 + 캐시</td><td>P99 129.9초 → 79.0초. 캐시가 있어야 병렬화가 값을 한다</td></tr>
+            <tr><td>④ → ⑤</td><td>부가정보 조회 최적화</td><td>P99 79.0초 → <strong>6.9초</strong></td></tr>
+            <tr><td>⑤ → ⑥</td><td>Caffeine refresh</td><td>P99 6.9초 → <strong>23ms</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>마지막 한 단계가 가장 컸다. 그리고 그 단계는 <strong>맨 마지막에 넣은 것</strong>이라, 전후만 쟀다면
+        앞선 네 조치의 공으로 돌아갔을 것이다.</p>
+
+        <p>⑤→⑥ 이 왜 그렇게 큰가. ⑤까지는 만료된 캐시를 읽으려는 요청이 <strong>새로 채워질 때까지 기다린다.</strong>
+        Caffeine 의 refresh 는 만료 시점에 기존 값을 계속 돌려주면서 <strong>백그라운드에서 갱신</strong>한다.
+        즉 마지막 단계가 없앤 것은 조회 비용이 아니라 <strong>갱신을 기다리는 시간</strong>이었고, 그 시간이
+        꼬리 지연의 대부분이었다.</p>
+
+        <p>같은 처방을 나머지 세 화면에도 적용했다. 네 화면 모두 같은 부하 조건에서 잰 값이다.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+        <table>
+          <caption class="sr-only">개선 전후의 네 화면.</caption>
+          <thead><tr><th scope="col">화면</th><th scope="col">Error</th><th scope="col">P99</th><th scope="col">TPS</th><th scope="col">Apdex</th></tr></thead>
+          <tbody>
+            <tr><td>볼륨 (관리)</td><td>83.3% → 0%</td><td>10분 Timeout → <strong>23ms</strong></td><td>0.06 → 12.82</td><td>0.0 → 1.000</td></tr>
+            <tr><td>볼륨 (프로젝트)</td><td>0% → 0%</td><td>6분 → 345ms</td><td>0.38 → 12.89</td><td>0.0 → 0.996</td></tr>
+            <tr><td>스냅샷 (관리)</td><td>0% → 0%</td><td>7분 → 14ms</td><td>0.32 → 12.86</td><td>0.006 → 1.000</td></tr>
+            <tr><td>스냅샷 (프로젝트)</td><td>0% → 0%</td><td>8분 30초 → 97ms</td><td>0.19 → 12.85</td><td>0.000 → 0.998</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <h2 id="전후만-쟀다면">전후만 쟀다면 무엇을 잘못 보고했을까<a class="anchor" href="#전후만-쟀다면" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>①과 ⑥만 쟀다면 보고서는 이렇게 나왔을 것이다. <em>"캐시와 병렬화를 적용해 오류율 83.3%를 0%로,
+        P99 를 10분에서 23ms 로 개선했다."</em></p>
+
+        <p>모든 숫자가 참이다. 그리고 <strong>병렬화가 기여했다는 함의는 거짓</strong>이다. 병렬화는 단독으로는
+        해로웠고, 캐시와 함께일 때만 값을 했다. 그 사실을 모른 채 다른 화면에 "여기도 병렬화하자"를 처방했다면
+        같은 함정에 다시 들어갔을 것이다.</p>
+
+        <p>실제로 이 표는 진단 근거로도 쓰였다. 병렬화 단독이 악화라는 것은 <strong>병목이 CPU 나 처리량이 아니라
+        직렬화 지점</strong>이라는 뜻이고, 그래서 코드에서 락을 찾았고 <code>computeIfAbsent</code> 안의 외부
+        호출이 나왔다. 표가 코드를 가리켰다.</p>
+
+        <p>예상되는 반문 두 가지를 미리 적어 둔다.</p>
+
+        <p><strong>"그냥 스레드 풀을 키우면 되지 않나?"</strong> — 병목이 락이면 스레드를 늘려도 대기자만 늘어난다.
+        ③이 정확히 그 실험이다. 순차(②)보다 스레드가 많은 구성(③)이 더 느렸다.</p>
+
+        <p><strong>"Median 4ms 는 캐시 히트라 당연한 것 아닌가?"</strong> — 맞다. 그래서 Median 만 보지 않는다.
+        같은 줄의 P99 가 23ms 이고 Apdex 가 1.000 이다. Apdex 1.000 은 표본 전체가 만족 임계 안에 들어왔다는
+        뜻이므로, 꼬리에 숨은 느린 요청이 없다는 진술이 된다.</p>
+
+        <h2 id="이-글이-주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#이-글이-주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul>
+          <li><strong>병렬화가 나쁘다는 주장이 아니다.</strong> 락 안에서 I/O 를 하는 코드를 병렬화하면 나쁘다.
+          ③→④ 가 보여주듯, 그 조건을 없애면 병렬화는 값을 한다.</li>
+          <li><strong>프로덕션 측정이 아니다.</strong> 사내 시험 환경에서 합성 부하로 잰 값이다. 실제 사용자
+          분포·데이터 규모·네트워크는 다르다.</li>
+          <li><strong>구성마다 한 번씩만 쟀다.</strong> 반복 측정으로 분산을 낸 것이 아니라서, 인접한 두 구성의
+          차이가 작을 때는 그 차이를 근거로 삼지 않았다. 이 글이 근거로 쓰는 것은 ②↔③ 처럼
+          <strong>세 배 규모의 차이</strong>뿐이다.</li>
+          <li><strong>①의 600초는 지연이 아니다.</strong> Timeout 상한이다. ①의 P99 를 "600초"로 인용하면
+          측정하지 못한 것을 측정한 척하는 것이 된다.</li>
+          <li><strong>Apdex 임계는 도구 기본값</strong>을 그대로 썼다. 서비스 수준 목표를 별도로 정의해 맞춘 값이
+          아니다.</li>
+        </ul>
+
+        <p>남는 한 줄은 이것이다. <strong>고친 것이 여러 개면, 무엇이 고쳤는지는 따로 재야 나온다.</strong>
+        그리고 그렇게 재면 가끔, 좋아졌다고 믿었던 조치가 혼자서는 해로웠다는 게 나온다.</p>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script src="../assets/lang.js?v=20260905"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/article.js?v=20260817-scroll"></script>
+</body>
+</html>
