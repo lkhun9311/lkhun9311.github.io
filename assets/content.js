@@ -78,7 +78,7 @@
           url: "writing/a-pooler-fixes-only-one.html",
           date: "2026-09", dateLabel: "Sep 2026",
           source: "commercial", sourceLabel: "Commercial project",
-          desc: "A pre-launch review of a social polling platform. Connection exhaustion has two causes behind one symptom, and a pooler fixes only one of them \u2014 which follows from the definition of transaction pooling, not from any vendor document. Also in Korean and Japanese.",
+          desc: "A pre-launch review of a social polling platform. Connection exhaustion has two causes behind one symptom and a pooler fixes only one of them \u2014 then a JMeter harness put numbers on it: an unrelated read path at 4 ms against 6,047 ms, and a second fix that halved post-create latency. Also in Korean and Japanese.",
           tags: ["Postgres", "Backend", "Method"]
         },
         {

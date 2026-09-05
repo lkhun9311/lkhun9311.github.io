@@ -70,7 +70,7 @@
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing 으로</a>
         <h1>RDS Proxy 로는 못 고치는 커넥션 고갈<br><span class="h1-sub">트랜잭션 안에서 외부 API를 호출하고 있었습니다 — 출시 전 소셜 투표 플랫폼 점검</span></h1>
-        <div class="article-meta"><span class="source-tag commercial notranslate">사업화 프로젝트</span>Writing · 2026년 9월<span aria-hidden="true"> · </span><span class="read-time">15분</span></div>
+        <div class="article-meta"><span class="source-tag commercial notranslate">사업화 프로젝트</span>Writing · 2026년 9월<span aria-hidden="true"> · </span><span class="read-time">18분</span></div>
       </section>
       <article class="article-body">
 
@@ -98,6 +98,7 @@
             <li><a href="#비동기로-바꾸면">“비동기로 바꾸면 되지 않나요?”</a></li>
             <li><a href="#가드">되돌리기 쉬운 수정이라, 가드를 원인에 걸었습니다</a></li>
             <li><a href="#재-봤습니다">세 주 뒤에 실제로 재 봤습니다</a></li>
+            <li><a href="#겹쳐-부르기">재고 나니 고칠 것이 하나 더 보였습니다</a></li>
             <li><a href="#주장하지-않는-것">이 글이 주장하지 않는 것</a></li>
             <li><a href="#마치며">마치며</a></li>
           </ul>
@@ -740,6 +741,107 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         <p>그리고 처음 돌린 실행은 <strong>차이가 거의 없었습니다</strong>(p95 5ms 대 8ms). 쓰기 8개로는
         풀 10개가 고갈되지 않기 때문입니다. <strong>풀이 마르지 않으면 이 현상은 나타나지 않습니다</strong> —
         이 수치는 조건에 딸린 값이지 상수가 아닙니다.</p>
+
+        <h2 id="겹쳐-부르기">재고 나니 고칠 것이 하나 더 보였습니다<a class="anchor" href="#겹쳐-부르기" aria-label="이 절로 가는 링크">#</a></h2>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><span class="repo-private notranslate" translate="no">Private</span> <code>services/api/…/content/ModerationGate.kt</code> <code>screenPost</code></p>
+
+        <p>수치가 생기니 다음 질문이 자동으로 나왔습니다 — <strong>글 생성 p50 이 왜 스텁 지연의 정확히
+        두 배인가.</strong> 게이트를 열어 보니 외부 분류기를 <strong>순차로</strong> 부르고 있었습니다.</p>
+
+        <p>③ 유해분류와 ④ 저격판정은 <strong>같은 입력을 보는 독립 검사</strong>입니다. 앞의 결과가 뒤의
+        입력이 되지 않으니 순서가 필요 없습니다.</p>
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+            <svg viewBox="0 0 720 304" role="img" aria-labelledby="pc-t pc-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="pc-t">유해분류와 저격판정을 순차로 부를 때와 겹쳐 부를 때</title>
+              <desc id="pc-d">위쪽은 순차 호출입니다. 금칙어와 연락처 검사는 로컬이라 금방 끝나고, 그다음 유해분류가 800밀리초,
+              이어서 저격판정이 다시 800밀리초 걸려 외부 대기가 1,600밀리초로 쌓입니다. 아래쪽은 겹쳐 부르는 경우입니다.
+              두 분류기는 같은 입력을 보는 독립적인 검사이므로 동시에 보낼 수 있고, 전체 외부 대기가 둘 중 긴 쪽인
+              800밀리초로 줄어듭니다. 응답은 두 결과가 모두 도착한 뒤에 나가고, 둘 다 거부하면 유해분류 쪽 결과를
+              돌려줍니다.</desc>
+
+              <text x="8" y="24" font-size="15" fill="#7b7186">순차 — 외부 대기 1,600ms</text>
+              <rect x="104" y="38" width="42.0" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="125.0" y="56" font-size="11" fill="#18121d" text-anchor="middle">①②</text>
+              <rect x="149.5" y="38" width="280.0" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="289.5" y="56" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">③ 유해분류 800ms</text>
+              <rect x="433.0" y="38" width="280.0" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="573.0" y="56" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">④ 저격판정 800ms</text>
+              <path d="M149.5 72 V 80 H 713.0 V 72" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="149.5" y="98" font-size="14" fill="#d62976" font-weight="700">1,600 ms</text>
+              <text x="8" y="148" font-size="15" fill="#7b7186">겹쳐 부르기 — 외부 대기 800ms</text>
+              <rect x="104" y="162" width="42.0" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="125.0" y="180" font-size="11" fill="#18121d" text-anchor="middle">①②</text>
+              <rect x="149.5" y="162" width="280.0" height="26" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="289.5" y="180" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">③ 유해분류 800ms</text>
+              <rect x="149.5" y="192" width="280.0" height="26" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="289.5" y="210" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">④ 저격판정 800ms</text>
+              <path d="M149.5 226 V 234 H 429.5 V 226" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="149.5" y="252" font-size="14" fill="#4f5bd5" font-weight="700">800 ms</text>
+              <text x="8" y="292" font-size="14" fill="#3b3344">①② 는 로컬 검사라 외부 대기에 들어가지 않습니다. ③④ 는 <tspan font-weight="700" fill="#18121d">같은 입력을 보는 독립 검사</tspan>라 순서가 필요 없습니다.</text>
+            </svg>
+          </div>
+          <figcaption>순차로 부르면 외부 대기가 두 번 쌓이고, 겹쳐 부르면 둘 중 긴 쪽만 남습니다. ①②는 로컬 검사라 외부 대기에 들어가지 않습니다.</figcaption>
+        </figure>
+
+        <p>가상 스레드(Java 21)로 ④ 를 띄우고 ③ 을 호출 스레드에서 돌립니다.
+        <strong>고정 크기 풀을 두지 않은 것이 요점입니다</strong> — 풀 크기는 곧 새 동시성 상한이고,
+        이 글이 내내 이야기한 「아무도 고르지 않은 상한」을 모더레이션 경로에 다시 만들게 됩니다.</p>
+
+        <p><strong>동작은 그대로여야 합니다.</strong> 병렬화는 성능 변경이지 동작 변경이 아닙니다. 그래서
+        둘 다 끝날 때까지 기다리고(먼저 던졌다고 남은 호출을 버려두면 비용은 나가고 결과는 아무도 안 봅니다),
+        예외는 ③ 이 ④ 보다 우선합니다(순차와 같은 응답).</p>
+
+        <p>⚠️ <strong>대가가 있습니다.</strong> 순차일 때는 ③ 이 막으면 ④ 를 아예 안 불렀습니다. 이제는
+        ③ 이 막아도 ④ 가 돌아 게시글당 약 $0.0002 가 더 나갑니다. 지연을 절반으로 줄이는 대가로 이걸
+        받는 거래입니다.</p>
+        <div class="table-scroll">
+<p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+        <table>
+          <caption class="sr-only">순차 호출과 겹쳐 부르기의 응답시간·처리량 비교.</caption>
+          <thead><tr><th scope="col">지표</th><th scope="col">순차</th><th scope="col">겹쳐 부르기</th><th scope="col">배수</th></tr></thead>
+          <tbody>
+            <tr><td><strong>글 생성 p50</strong></td><td>1,611 ms</td><td><strong>811 ms</strong></td><td><strong>1.99× 빠름</strong></td></tr>
+            <tr><td>글 생성 p95</td><td>1,614 ms</td><td>814 ms</td><td>1.98×</td></tr>
+            <tr><td><strong>글 생성 처리량</strong></td><td>2.52 req/s</td><td><strong>5.01 req/s</strong></td><td><strong>1.99×</strong></td></tr>
+            <tr><td>피드 조회 p50</td><td>4 ms</td><td>4 ms</td><td>1.00×</td></tr>
+            <tr><td>오류율</td><td>0%</td><td>0%</td><td>—</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p><strong>정확히 2배입니다.</strong> 800ms 두 번을 더하던 것이 겹쳐서 한 번이 됐으니 예상대로이고,
+        피드 조회는 4ms 그대로입니다 — 건드리지 않은 경로는 안 움직여야 맞습니다.</p>
+
+        <h3>그런데 처음엔 개선이 안 보였습니다</h3>
+
+        <p>먼저 쓰기 16으로 돌렸더니 p50 이 <strong>2,577ms 대 2,598ms</strong>로 차이가 없었습니다.
+        병렬화가 안 먹은 줄 알았습니다.</p>
+
+        <p>원인은 코드가 아니라 <strong>측정 조건</strong>이었습니다. 쓰기 16에서는 부하기·앱·스텁·DB 가
+        한 기계의 CPU 를 나눠 쓰며 이미 포화라, 처리량이 두 쪽 모두 6.26 req/s 라는 같은 천장에 걸려
+        있었습니다. <strong>외부 호출이 그 시점엔 병목이 아니었으므로</strong> 그걸 절반으로 줄여도 총
+        처리량이 변하지 않습니다.</p>
+
+        <p>확인은 이 순서로 했습니다. ①스텁이 병목인지 직접 쟀습니다 — 동시 32건이 0.81초에 끝나니
+        아닙니다. ②소스와 jar 시각을 대조해 병렬 코드가 빌드에 들어간 것을 봤습니다. ③<strong>단건
+        요청</strong>을 쟀더니 0.817초 — 병렬화는 동작하고 있었습니다. ④포화되지 않는 쓰기 4에서 다시 재니
+        2배가 그대로 나왔습니다.</p>
+
+        <p>남는 교훈은 이겁니다. <strong>포화된 시스템에서는 병목이 아닌 것을 고쳐도 숫자가 안 움직입니다.</strong>
+        개선이 안 보이면 코드를 의심하기 전에 <strong>무엇이 천장을 만들고 있는지</strong>부터 재야 합니다.</p>
+
+        <h3>새 규칙에는 새 가드를</h3>
+
+        <p>이 변경은 <strong>예외 우선순위</strong>라는 규칙을 새로 만듭니다. 순차일 때는 ③ 이 던지면 ④ 를
+        안 불렀으니 우선순위라는 것 자체가 없었습니다.</p>
+
+        <p>그래서 일부러 뒤집어 봤더니 <strong>기존 테스트 8건이 전부 통과했습니다.</strong> 규칙을 만들면
+        그걸 지키는 단언도 만들어야 합니다. 2건을 추가하고 뮤테이션 3종으로 확인했습니다 —
+        <code>ExecutionException</code> 언랩 제거, 우선순위 뒤집기, ③ 이 막으면 ④ 건너뛰기. 셋 다
+        빨간불이 납니다.</p>
 
         <h2 id="주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
