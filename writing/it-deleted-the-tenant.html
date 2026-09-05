@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="It Did Not Protect the Tail. It Deleted the Tenant. | Kwanghun Lee" />
-  <meta property="og:description" content="A four-arm experiment on one GPU. The arm that rejected nothing completed exactly as many requests as the premium tenant sent. Every check the report made was a tail ratio, so four paid runs could not see it." />
+  <meta property="og:description" content="A four-arm experiment on one GPU. The arm that rejected nothing completed exactly as many requests as the premium tenant sent. Every verdict the report produced was a ratio, so four paid runs could not see it." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -27,9 +27,9 @@
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="It Did Not Protect the Tail. It Deleted the Tenant. | Kwanghun Lee" />
-  <meta name="twitter:description" content="The arm that rejected nothing completed exactly as many requests as the premium tenant sent. Every check the report made was a tail ratio." />
+  <meta name="twitter:description" content="The arm that rejected nothing completed exactly as many requests as the premium tenant sent. Every verdict the report produced was a ratio." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="A four-arm experiment on one GPU. The arm that rejected nothing completed exactly as many requests as the premium tenant sent. Every check the report made was a tail ratio, so four paid runs could not see it." />
+  <meta name="description" content="A four-arm experiment on one GPU. The arm that rejected nothing completed exactly as many requests as the premium tenant sent. Every verdict the report produced was a ratio, so four paid runs could not see it." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
 </head>
@@ -195,10 +195,13 @@
         <strong>it deleted the competing tenant</strong>. It did not protect the tail; it removed what was
         producing one.</p>
 
-        <p>And why it deleted all of it was not policy but <strong>a configuration error</strong>. The arm was
-        given the trace's <strong>request rate</strong> in a flag measured in <strong>tokens per second</strong>,
-        with no burst at all. Every eligible request therefore exceeded
-        <strong>a bucket that could never hold it</strong>, and the arm admitted nothing.</p>
+        <p>And why it deleted all of it was not policy but <strong>a configuration error</strong>, of two parts.
+        First, the runner passed the trace's <strong>request rate</strong> (1.568/s) to a flag measured in
+        <strong>tokens per second</strong>. Second, it <strong>never passed the burst flag at all</strong>, so
+        the burst stayed at the gateway's <strong>8,192 default</strong> while every noisy prompt in the trace
+        estimates at <strong>about 10,000 tokens</strong>. A request larger than the burst
+        <strong>can never fit any bucket</strong>, so the gateway refused all of them with 413, in all four
+        repetitions.</p>
 
         <p>So static-cap became <strong>a second isolation arm rather than a control</strong>. That is why the
         ratio against <code>kv-aware</code> (84.760) came out nearly equal to the ratio against isolation
@@ -277,8 +280,11 @@
         </div>
         </div>
 
-        <p>The interference the gateway could not hold below 83.7x <strong>drops to 1.57x in one cell here</strong>.
-        It was a different layer. Put a control plane on top of a misconfigured engine and what you measure is
+        <p><strong>Those two numbers need care side by side</strong> — 83.7x is a p99 over an arrival process with
+        many concurrent prefills; 1.57x is a median over ten repetitions of two requests. They are not the same
+        axis, so "83.7 dropped to 1.57" is the wrong reading. What can be said is this:
+        <strong>the interference the gateway did nothing about comes out small on a far simpler load once only
+        the engine settings change.</strong> It was a different layer. Put a control plane on top of a misconfigured engine and what you measure is
         the misconfiguration, not the control plane.</p>
 
         <p>The table has to be read precisely, though. <strong>This is not the effect of one budget; it is a
