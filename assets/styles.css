@@ -1703,9 +1703,20 @@ body {
 /* Diagrams. An SVG that carries labelled boxes cannot shrink to a phone and stay readable: at 360px a
    720-unit viewBox scales text to a third of its size. So the figure scrolls sideways the way a wide table
    does, and the drawing keeps a floor width rather than being squeezed under it. */
+/* The scroll lives on an inner element rather than on the figure itself: a figure needs its figcaption to
+   be its accessible name, and putting a region role and label on the figure would replace it. */
 .article-body figure.diagram {
+  margin: 24px 0;
+}
+
+.article-body .diagram-scroll {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+}
+
+.article-body .diagram-scroll:focus-visible {
+  outline: 2px solid var(--accent, #d62976);
+  outline-offset: 2px;
 }
 
 .article-body figure.diagram svg {
@@ -1715,9 +1726,12 @@ body {
   height: auto;
 }
 
-.article-body figure.diagram:focus-visible {
-  outline: 2px solid var(--accent, #d62976);
-  outline-offset: 2px;
+/* The drawing takes the wide column; its caption is prose and belongs in the prose measure, aligned with the
+   paragraphs around it rather than with the figure's edges. */
+.article-body figure.diagram figcaption {
+  max-width: 840px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .article-body figcaption {

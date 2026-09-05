@@ -175,6 +175,96 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         <strong>is still a queue in parallel code, and now it pins pool threads while it waits.</strong> The
         gain is nothing; the added cost is context switching and pool exhaustion.</p>
 
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
+            <svg viewBox="0 0 720 384" role="img" aria-labelledby="cia-t cia-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="cia-t">How an external call inside computeIfAbsent holds the bin</title>
+              <desc id="cia-d">Four tasks keyed by the same group ID are submitted in parallel to four executor threads. Because the key
+              is the same they all reach one bin. T1 holds that bin and calls the external API from inside the mapping
+              function, and the bin stays held until the network round trip completes. T2, T3 and T4 queue in front of it
+              while continuing to occupy their pool slots. Bins belonging to other keys are not held, so that work
+              proceeds. The mapping function runs exactly once, and the waiting ends when the value is published. What
+              grows is not the number of calls: the queue that was there in the sequential code remains, and pool
+              occupancy and context switching are added on top.</desc>
+
+              <g fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5">
+                <rect x="8" y="46" width="188" height="256" rx="8"/>
+                <rect x="278" y="46" width="202" height="256" rx="8"/>
+              </g>
+              <rect x="590" y="140" width="122" height="62" rx="8" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+
+              <g font-size="15" fill="#7b7186">
+                <text x="16" y="34">executor · 4 threads</text>
+                <text x="286" y="34">ConcurrentHashMap</text>
+                <text x="590" y="34">external API</text>
+              </g>
+
+              <!-- 스레드 넷. T1 만 실선 = 호출 중. 나머지는 점선 = 대기하면서 풀 자리를 쥔 상태 -->
+              <rect x="24" y="62" width="156" height="48" rx="6" fill="none" stroke="#3b3344" stroke-width="2"/>
+              <g fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4">
+                <rect x="24" y="122" width="156" height="48" rx="6"/>
+                <rect x="24" y="182" width="156" height="48" rx="6"/>
+                <rect x="24" y="242" width="156" height="48" rx="6"/>
+              </g>
+              <g font-size="15">
+                <text x="38" y="82" fill="#18121d" font-weight="700">T1 · gid=A</text>
+                <text x="38" y="101" fill="#3b3344" font-size="14">calling · slot held</text>
+                <text x="38" y="142" fill="#18121d">T2 · gid=A</text>
+                <text x="38" y="161" fill="#7b7186" font-size="14">waiting · slot held</text>
+                <text x="38" y="202" fill="#18121d">T3 · gid=A</text>
+                <text x="38" y="221" fill="#7b7186" font-size="14">waiting · slot held</text>
+                <text x="38" y="262" fill="#18121d">T4 · gid=A</text>
+                <text x="38" y="281" fill="#7b7186" font-size="14">waiting · slot held</text>
+              </g>
+
+              <!-- 버킷. 잠긴 것은 하나뿐이고, 다른 키의 버킷은 그대로 돌아간다 -->
+              <g font-size="14" fill="#7b7186">
+                <rect x="294" y="62" width="170" height="40" rx="6" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
+                <text x="306" y="87">other key · free</text>
+                <rect x="294" y="250" width="170" height="40" rx="6" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
+                <text x="306" y="275">other key · free</text>
+              </g>
+              <rect x="294" y="118" width="170" height="116" rx="6" fill="none" stroke="#d62976" stroke-width="3"/>
+              <text x="306" y="143" font-size="15" fill="#18121d" font-weight="700">bin for gid=A · held</text>
+              <rect x="310" y="156" width="138" height="40" rx="5" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="322" y="181" font-size="14" fill="#18121d">mapping fn runs</text>
+              <text x="316" y="224" font-size="14" fill="#7b7186">T2–T4 queue here</text>
+
+              <!-- T1 은 버킷을 잡고 들어간다 -->
+              <path d="M180 86 H 240 V 176 H 304" fill="none" stroke="#3b3344" stroke-width="2" marker-end="url(#cia-a)"/>
+              <!-- 나머지 셋은 같은 버킷 앞으로 모인다 -->
+              <g fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#cia-c)">
+                <path d="M180 146 H 220 V 214 H 286"/>
+                <path d="M180 206 H 236 V 214 H 286"/>
+                <path d="M180 266 H 252 V 214 H 286"/>
+              </g>
+
+              <!-- 잠긴 버킷에서 나가는 외부 호출. 강조색은 "잡혀 있는 것"에만 쓴다 -->
+              <path d="M464 176 H 582" fill="none" stroke="#d62976" stroke-width="3" marker-end="url(#cia-b)"/>
+              <text x="470" y="166" font-size="13" fill="#d62976" font-weight="700">network round trip</text>
+              <text x="602" y="178" font-size="15" fill="#18121d">group lookup</text>
+
+              <g font-size="15" fill="#3b3344">
+                <text x="16" y="332">The mapping function runs <tspan font-weight="700" fill="#18121d">once</tspan>; when the value is published, the waiting ends.</text>
+                <text x="16" y="358">What grew is <tspan font-weight="700" fill="#18121d">pool occupancy and context switching</tspan>, not the number of calls.</text>
+              </g>
+
+              <defs>
+                <marker id="cia-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
+                </marker>
+                <marker id="cia-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+                <marker id="cia-c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#7b7186"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>Requests sharing a key land in one bin. An external call inside the mapping function holds that bin for a round trip while the other threads wait, still occupying pool slots. Bins for other keys are not held.</figcaption>
+        </figure>
+
         <p>That is why ③ is worse than ②. In ②, the 5-second cache kept the number of external calls low. In
         ③, with no cache, every request had to pass through the held bin.</p>
 
