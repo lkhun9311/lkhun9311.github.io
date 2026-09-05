@@ -55,6 +55,13 @@
     writing: {
       items: [
         {
+          title: "Every Guarantee Ends at a Field the Tenant Can Write",
+          url: "writing/every-guarantee-ends-at-a-writable-field.html",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "Four quota defences broken the same way, each found by attacking it. Forged ownerReferences, a self-granted exemption, a grace period the victim sets, and a reservation for Pods that can never exist. Also in Korean and Japanese.",
+          tags: ["Kubernetes", "Security", "GPU"]
+        },
+        {
           title: "The Only Control That Has Ever Caught a Cost Error",
           url: "writing/the-only-control-that-caught-something.html",
           date: "2026-09", dateLabel: "Sep 2026",

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Every Guarantee Ends at a Field the Tenant Can Write | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/every-guarantee-ends-at-a-writable-field.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/every-guarantee-ends-at-a-writable-field.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/every-guarantee-ends-at-a-writable-field.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/every-guarantee-ends-at-a-writable-field.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="Every Guarantee Ends at a Field the Tenant Can Write | Kwanghun Lee" />
+  <meta property="og:description" content="Four defences broken the same way, each found by attacking it rather than reading it. The checks were correct about what they read; the mistake was reading something the tenant writes and treating it as evidence about the tenant." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/every-guarantee-ends-at-a-writable-field.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Every Guarantee Ends at a Field the Tenant Can Write | Kwanghun Lee" />
+  <meta name="twitter:description" content="The checks were correct about what they read. The mistake was reading something the tenant writes and treating it as evidence about the tenant." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="Four defences broken the same way, each found by attacking it rather than reading it. The checks were correct about what they read; the mistake was reading something the tenant writes and treating it as evidence about the tenant." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language"
+                data-authored='{"en":"every-guarantee-ends-at-a-writable-field.html","ko":"every-guarantee-ends-at-a-writable-field.ko.html","ja":"every-guarantee-ends-at-a-writable-field.ja.html"}'>
+          <option value="en" selected>English</option>
+          <option value="ko">Korean</option>
+          <option value="ja">Japanese</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="zh-TW">Chinese (Traditional)</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="vi">Vietnamese</option>
+          <option value="id">Indonesian</option>
+          <option value="hi">Hindi</option>
+          <option value="ar">Arabic</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <section class="page-hero">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Writing</a>
+        <h1>Every Guarantee Ends at a Field the Tenant Can Write</h1>
+        <div class="article-meta">Writing · Sep 2026<span aria-hidden="true"> · </span><span class="read-time">8 min read</span></div>
+        <p class="lang-alts notranslate">Also in <a href="every-guarantee-ends-at-a-writable-field.ko.html" hreflang="ko" lang="ko">한국어</a> · <a href="every-guarantee-ends-at-a-writable-field.ja.html" hreflang="ja" lang="ja">日本語</a></p>
+      </section>
+      <article class="article-body">
+
+        <p><strong>Scope.</strong> Attacking and repairing multi-tenant quota enforcement in a personal
+        project, a <a href="../projects/gpuaas-control-plane.html">Kubernetes-native GPU control plane</a>.
+        The GPUs here are <strong>simulated — advertised by a fake device plugin</strong>. So the findings are
+        about <strong>Kubernetes admission and trust boundaries</strong>, not about how devices behave. And, as
+        the end of this says, <strong>the guard is currently enabled on no namespace at all.</strong></p>
+
+        <p>Four defences turned out to be broken the same way. Every one was found
+        <strong>by attacking it rather than by reading it</strong>. They are collected here because
+        <strong>the pattern is the finding</strong>, not any one of them.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">The four broken guarantees and the tenant-written field behind each.</caption>
+          <thead><tr><th scope="col">the guarantee</th><th scope="col">the field the tenant writes</th><th scope="col">what it bought the attacker</th></tr></thead>
+          <tbody>
+            <tr><td>GPU quota is enforced</td><td><code>ownerReferences</code></td><td>2 devices, unaccounted</td></tr>
+            <tr><td>GPU quota is enforced</td><td><code>quota-exempt</code> annotation</td><td>any number of devices</td></tr>
+            <tr><td>a reclaimed device comes back</td><td><code>terminationGracePeriodSeconds</code></td><td>301s of a reclaimed device</td></tr>
+            <tr><td>the budget goes to those who can use it</td><td>a Job whose Pods are all refused</td><td>the whole budget, indefinitely</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <nav class="article-toc" aria-label="Contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#at-first-nothing-stopped-it">At first, nothing stopped it</a></li>
+            <li><a href="#an-ownerreference-is-a-claim">An ownerReference is a claim, not a fact</a></li>
+            <li><a href="#an-exemption-anyone-can-grant">An exemption anyone can grant is not an exemption</a></li>
+            <li><a href="#a-number-the-victim-chooses">The reclaim guarantee is bounded by a number the victim chooses</a></li>
+            <li><a href="#a-reservation-for-pods-that-cannot-exist">A reservation for Pods that can never exist</a></li>
+            <li><a href="#why-the-four-fixes-differ">Why the four fixes take different forms</a></li>
+            <li><a href="#a-claim-in-this-document-was-false">A claim in this document was false, and the guard was built on it</a></li>
+            <li><a href="#what-this-does-not-claim">What this does not claim</a></li>
+          </ul>
+        </nav>
+
+        <h2 id="at-first-nothing-stopped-it">At first, nothing stopped it<a class="anchor" href="#at-first-nothing-stopped-it" aria-label="Link to this section">#</a></h2>
+
+        <p>The design goes like this. Kueue's ClusterQueue is the single authority over a namespace's GPU
+        budget, and the controller <strong>deliberately</strong> stops the namespace
+        <code>ResourceQuota</code> from capping GPUs so the same device is not charged twice.</p>
+
+        <p>But <strong>Kueue only sees what enters its queues.</strong> So what stops a tenant from creating a
+        Pod directly?</p>
+
+<pre><code>kubectl apply -f - &lt;&lt;'EOF'
+apiVersion: v1
+kind: Pod
+metadata: {name: bypass-probe, namespace: serving}
+spec:
+  containers:
+    - {name: c, image: busybox:1.36, command: ["sh","-c","sleep 30"],
+       resources: {limits: {"nvidia.com/gpu": "2"}}}
+EOF
+
+pod/bypass-probe created
+bypass-probe   Running   platform-worker2   2
+$ kubectl -n serving get workloads
+(none)</code></pre>
+
+        <p>Created, scheduled, Running, holding two devices — and <strong>no Kueue Workload anywhere</strong>.
+        Nothing admitted it and nothing is counting it.</p>
+
+        <p>"Multi-tenant GPU quota" was <strong>not a boundary but a convention the platform's own controller
+        followed</strong>. A convention binds nobody who does not intend to follow it.</p>
+
+        <h2 id="an-ownerreference-is-a-claim">An ownerReference is a claim, not a fact<a class="anchor" href="#an-ownerreference-is-a-claim" aria-label="Link to this section">#</a></h2>
+
+        <p>So an admission webhook was written. The first rule was the natural one — <strong>admit a Pod whose
+        controller is a Job in a queue</strong>. It passed ten unit specs and four live cases.</p>
+
+<pre><code># create a real Job in a real queue
+kubectl apply -f (Job "decoy", labels: {kueue.x-k8s.io/queue-name: gpu-premium})
+
+# then claim that Job as your Pod's controller
+kubectl apply -f (Pod, ownerReferences: [{kind: Job, name: decoy,
+                        uid: &lt;decoy's uid&gt;, controller: true}],
+                  limits: {"nvidia.com/gpu": "2"})
+
+pod/forged-owner created
+forged-owner   1/1   Running</code></pre>
+
+        <p><code>ownerReferences</code> is <strong>supplied by whoever creates the object</strong>, and
+        Kubernetes does not check that the named owner had anything to do with it. Forging it needs one real
+        Job's UID, which is readable in the same namespace.</p>
+
+        <p><strong>Fix.</strong> Believe the reference only <strong>when the Job controller presents it</strong>
+        — read <code>req.UserInfo.Username</code>, <strong>the one field in an admission request a tenant
+        cannot write</strong>.</p>
+
+        <p>That has an implementation consequence. The typed <code>Validator</code> interface hands you
+        <strong>only the object</strong>, and the object is exactly what cannot be trusted. So this had to drop
+        to a raw <code>admission.Handler</code> and take the request itself. <strong>When a convenient
+        abstraction hands you something that does not line up with the trust boundary, you cannot use that
+        abstraction.</strong></p>
+
+        <h2 id="an-exemption-anyone-can-grant">An exemption anyone can grant is not an exemption<a class="anchor" href="#an-exemption-anyone-can-grant" aria-label="Link to this section">#</a></h2>
+
+        <p>The same guard honoured a <code>quota-exempt</code> annotation <strong>on any Pod</strong>.</p>
+
+        <p>The annotation exists for a reason: infrastructure sometimes must hold a device outside any tenant's
+        budget — a device plugin, for instance. But <strong>a tenant can annotate its own Pod</strong>. That
+        makes it the bypass with one extra step.</p>
+
+        <p><strong>Fix.</strong> Honour it only when the request comes from a <code>kube-system</code> service
+        account — a set a tenant cannot join. And a Pod admitted through it
+        <strong>emits a warning naming the annotation</strong>, so a device leaving the budget announces
+        itself.</p>
+
+        <h2 id="a-number-the-victim-chooses">The reclaim guarantee is bounded by a number the victim chooses<a class="anchor" href="#a-number-the-victim-chooses" aria-label="Link to this section">#</a></h2>
+
+        <p>Quota reclaim works by preemption, preemption waits for termination, and termination waits for
+        <code>terminationGracePeriodSeconds</code> — <strong>a value set by the Pod being preempted</strong>.</p>
+
+        <p>Measured directly:</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">How long the device was held, by grace period.</caption>
+          <thead><tr><th scope="col">grace</th><th scope="col">device held for</th></tr></thead>
+          <tbody>
+            <tr><td>30s</td><td>32s</td></tr>
+            <tr><td>300s</td><td><strong>301s</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>Sweeping the parameter against a fixed 43 seconds of remaining work gives the model, and the knee
+        lands where predicted — <strong><code>held = min(remaining, grace)</code></strong>.</p>
+
+        <p>The same boundary was measured from the other side: an unresponsive workload
+        <strong>defeats reclaim entirely while its remaining service fits inside grace</strong>, and is cut off
+        at exactly grace once it does not.</p>
+
+        <p><strong>Fix — and this one differs from the first two.</strong> The grace period
+        <strong>genuinely belongs to the workload</strong>. Checkpointing before you die takes time, and that
+        need is legitimate. So it could neither be replaced with something trusted nor restricted to a
+        privileged set. <strong>Instead it was capped: 120 seconds for device holders.</strong></p>
+
+        <p>Why not 30? A training step that checkpoints on SIGTERM needs longer, and refusing that
+        <strong>pushes tenants to ignore SIGTERM</strong> — which the measurement shows is exactly the case
+        that costs the owner most.</p>
+
+        <h2 id="a-reservation-for-pods-that-cannot-exist">A reservation for Pods that can never exist<a class="anchor" href="#a-reservation-for-pods-that-cannot-exist" aria-label="Link to this section">#</a></h2>
+
+        <p>The fourth turned up while testing the third, and it is the same shape again:
+        <strong>refusing the Pod is too late</strong>.</p>
+
+        <p>Kueue admits a Job <strong>by looking at the Job</strong>. If that Job's Pods are then rejected, the
+        Job keeps its admission. The Job controller retries, every Pod is refused, and the Workload sits
+        admitted, holding quota.</p>
+
+<pre><code>t=20s    used=2  admitted=2  job.status.failed=0
+t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
+
+        <p><code>backoffLimit</code> cannot end it. <strong>An admission rejection is not a Pod failure</strong>,
+        so <code>failed</code> never leaves 0 and the retry never stops. A tenant submitting such Jobs
+        <strong>holds a budget indefinitely while running nothing</strong>.</p>
+
+        <p><strong>Fix.</strong> Apply the rules that decide a Pod's fate <strong>to the template that would
+        produce it, at the point where the reservation is made</strong>. A Job asking for devices is refused if
+        its template's grace exceeds the cap, or if it carries no queue label.</p>
+
+        <p>The label is checked <strong>at the Job</strong> — that is where Kueue reads it, and refusing at the
+        Pod would <strong>tell a user to fix a field their Pod does not have</strong>.</p>
+
+        <p>Re-attacked after deploying: both Jobs <code>Forbidden</code>, <code>used</code> unchanged at 1, and
+        an ordinary queued Job with grace 90 still runs.</p>
+
+        <h2 id="why-the-four-fixes-differ">Why the four fixes take different forms<a class="anchor" href="#why-the-four-fixes-differ" aria-label="Link to this section">#</a></h2>
+
+        <p>Each guarantee was <strong>expressed in terms of a value the adversary supplies</strong>. Not a bug
+        in the check — <strong>the checks were correct about what they read</strong>. The mistake was reading
+        something the tenant writes and treating it as evidence about the tenant.</p>
+
+        <p>The most useful part of this is that the four repairs came out in four different shapes.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">The four fixes and the form each took.</caption>
+          <thead><tr><th scope="col">case</th><th scope="col">form</th><th scope="col">what it did</th></tr></thead>
+          <tbody>
+            <tr><td>① ownerReference</td><td><strong>replace</strong></td><td>swapped the untrusted input for a trusted one — the requester is authenticated, the object is not</td></tr>
+            <tr><td>② exemption annotation</td><td><strong>restrict</strong></td><td>narrowed who may supply the input to a set the tenant cannot join</td></tr>
+            <tr><td>③ grace period</td><td><strong>bound</strong></td><td>could do neither, so it <em>bounded the damage</em>. The weakest of them and the honest one</td></tr>
+            <tr><td>④ Job reservation</td><td><strong>relocate</strong></td><td>kept the rule and moved the check to where the commitment is made</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>③ is worth dwelling on. Reclaim is <strong>still not immediate</strong>, and no Kubernetes mechanism
+        makes it so. A cap did not solve the problem; it made <strong>how bad it can get finite</strong>. Write
+        a solution and a bound into the same column and the next reader takes it as solved.</p>
+
+        <p>④ says something different. <strong>The rule had been right all along; the moment it was applied was
+        wrong.</strong> It was checking after the thing it existed to prevent had already happened. No amount of
+        refining the rule removes that class of defect.</p>
+
+        <h2 id="a-claim-in-this-document-was-false">A claim in this document was false, and the guard was built on it<a class="anchor" href="#a-claim-in-this-document-was-false" aria-label="Link to this section">#</a></h2>
+
+        <p>The original write-up for this work contained a sentence: <em>"Kueue's pod and deployment
+        integrations are not enabled here, so only a Job can be governed and a serving Pod is invisible to
+        Kueue however it is labelled."</em></p>
+
+        <p><strong>That is wrong.</strong> Seventeen frameworks are enabled, including <code>pod</code>,
+        <code>deployment</code> and <code>statefulset</code>. The conclusion came from
+        <strong>reading the first twelve lines of a truncated <code>grep</code></strong>, and it survived into
+        the guard's design, its code comments, and the write-up.</p>
+
+        <p>What it changes is <strong>what the label means</strong>. A queue label is not a permission a tenant
+        grants itself; it is <strong>a bill</strong> — a request to charge that queue's budget. Which makes
+        "labelled, therefore admit" the same string check the guard existed to replace.</p>
+
+        <p>And that leads to the project's current state. The guard rejects serving Pods, because serving Pods
+        are owned by a ReplicaSet and the guard accepts only a Job. So
+        <strong>the <code>serving</code> namespace has been unlabelled again</strong>, and
+        <strong>no namespace in this repository is currently governed by it.</strong></p>
+
+        <p>The honest state is: <strong>the enforcement mechanism is built, tested against forgery, and cannot
+        be turned on until serving genuinely has a quota to be charged against.</strong> The next step is not to
+        weaken the guard; it is to put serving on the quota path.</p>
+
+        <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>Not a claim that this guard is protecting anything right now.</strong> As above, no
+          namespace is currently governed by it.</li>
+          <li><strong>The GPUs are simulated.</strong> A fake device plugin advertises
+          <code>nvidia.com/gpu</code>, and "2 devices" are those fake devices. The findings are about
+          <strong>admission and trust boundaries</strong>, not about how a real device is occupied.</li>
+          <li><strong>32s and 301s are observations in this cluster</strong>, and the model comes from a sweep
+          against a fixed 43 seconds of remaining work. It does not follow that the same constants appear at
+          other work lengths or other kubelet settings.</li>
+          <li><strong>120 seconds is not derived from measurement.</strong> It is a judgement between two
+          failure modes — denying a checkpoint versus holding a device longer — and what the measurement
+          supports is only the part that says ignoring SIGTERM costs the owner most.</li>
+          <li><strong>Four is not all of them.</strong> Four is what attacking found; the surfaces nobody
+          attacked are still there. That the first guard passed ten unit specs and four live cases is the
+          reason to expect more: <strong>tests only try what you thought of.</strong></li>
+        </ul>
+
+        <p>What is left is one line. <strong>When you write down a guarantee, write down which value it rests
+        on, and write who supplies that value beside it.</strong> A guarantee built on a value the tenant
+        writes ends at that field, however correct the check is.</p>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script src="../assets/lang.js?v=20260905"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/article.js?v=20260817-scroll"></script>
+</body>
+</html>
