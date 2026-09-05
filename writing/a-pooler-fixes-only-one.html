@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>A Pooler Fixes Only One of the Two Exhaustions | Kwanghun Lee</title>
+  <title>I Thought Adding RDS Proxy Would Fix It | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="A Pooler Fixes Only One of the Two Exhaustions | Kwanghun Lee" />
-  <meta property="og:description" content="Connection exhaustion comes in two kinds: too many connections, and connections held too long. The symptom is the same and the remedy is not. The definition of transaction pooling says why a pooler cannot fix the second one." />
+  <meta property="og:title" content="I Thought Adding RDS Proxy Would Fix It | Kwanghun Lee" />
+  <meta property="og:description" content="While reviewing a social polling app before launch I went to put a connection pooler in front of the database. But connection exhaustion has two causes, and a pooler fixes only one of them. Why it cannot fix the other comes from the definition of transaction pooling, not from any vendor document." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -26,10 +26,10 @@
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="A Pooler Fixes Only One of the Two Exhaustions | Kwanghun Lee" />
-  <meta name="twitter:description" content="The symptom is the same and the remedy is not. The definition of transaction pooling says why a pooler cannot fix the hold-time kind." />
+  <meta name="twitter:title" content="I Thought Adding RDS Proxy Would Fix It | Kwanghun Lee" />
+  <meta name="twitter:description" content="Connection exhaustion has two causes. A pooler fixes one of them and is structurally powerless against the other." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="Connection exhaustion comes in two kinds: too many connections, and connections held too long. The symptom is the same and the remedy is not. The definition of transaction pooling says why a pooler cannot fix the second one." />
+  <meta name="description" content="While reviewing a social polling app before launch I went to put a connection pooler in front of the database. But connection exhaustion has two causes, and a pooler fixes only one of them. Why it cannot fix the other comes from the definition of transaction pooling, not from any vendor document." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
 </head>
@@ -39,7 +39,7 @@
       <a class="site-name" href="../index.html#about">Kwanghun</a>
       <nav aria-label="Primary">
         <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language"
-                data-authored='{"en":"a-pooler-fixes-only-one.html","ko":"a-pooler-fixes-only-one.ko.html","ja":"a-pooler-fixes-only-one.ja.html"}'>
+                data-authored='{"en": "a-pooler-fixes-only-one.html", "ko": "a-pooler-fixes-only-one.ko.html", "ja": "a-pooler-fixes-only-one.ja.html"}'>
           <option value="en" selected>English</option>
           <option value="ko">Korean</option>
           <option value="ja">Japanese</option>
@@ -69,75 +69,315 @@
     <main>
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Writing</a>
-        <h1>A Pooler Fixes Only One of the Two Exhaustions</h1>
-        <div class="article-meta">Writing · September 2026<span aria-hidden="true"> · </span><span class="read-time">8 min read</span></div>
+        <h1>I Thought Adding RDS Proxy Would Fix It<br><span class="h1-sub">An external API call inside a transaction, and connection exhaustion</span></h1>
+        <div class="article-meta">Writing · September 2026<span aria-hidden="true"> · </span><span class="read-time">14 min read</span></div>
         <p class="lang-alts notranslate">Other languages <a href="a-pooler-fixes-only-one.ko.html" hreflang="ko" lang="ko">한국어</a> · <a href="a-pooler-fixes-only-one.ja.html" hreflang="ja" lang="ja">日本語</a></p>
       </section>
       <article class="article-body">
 
-        <p><strong>Scope.</strong> This is a record of a <strong>pre-launch structural review</strong> of a
-        personal project (Kotlin · Spring Boot · managed Postgres, a monolith). <strong>Nothing ever broke in
-        production, and there are no load-test numbers.</strong> The "up to 10 seconds" below is a
-        <strong>configured read timeout</strong> on an outbound call, not a measurement that each request
-        actually held a connection that long. The improvement is explained by a change in the properties of
-        the code; this article claims no measured figures.</p>
+        <p>I build a social polling app as a personal project. While reviewing the architecture before launch I
+        started from a very ordinary hypothesis — <em>“traffic will grow, database connections will run short, so
+        why not put a connection pooler in front?”</em> — and the answer turned out to be
+        <strong>“not in this codebase.”</strong></p>
 
-        <p>The review started from a common hypothesis — <em>connections could run dry, so shouldn't we put a
-        pooler (RDS Proxy, PgBouncer and the like) in front?</em></p>
-
-        <p>The answer was <strong>not in this codebase</strong>, and the reason came from the
-        <strong>definition of transaction pooling</strong> rather than from any vendor document.</p>
+        <p>This is why it was no, and what I based that judgement on.</p>
 
         <nav class="article-toc" aria-label="Table of contents">
           <p class="toc-label">Contents</p>
           <ul>
-            <li><a href="#one-symptom-two-causes">One symptom, two causes</a></li>
-            <li><a href="#why-a-pooler-cannot-fix-b">Why a pooler cannot fix B</a></li>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-is-in-here">What is in here</a></li>
+            <li><a href="#what-is-the-service">What is the service?</a></li>
+            <li><a href="#i-thought-a-pooler">At first I thought a pooler would do it</a></li>
+            <li><a href="#the-conclusion-first">The conclusion first</a></li>
+            <li><a href="#cause-a">Cause A — too many connections</a></li>
+            <li><a href="#cause-b">Cause B — connections held too long</a></li>
+            <li><a href="#why-a-pooler-cannot">Why can't a pooler fix B?</a></li>
             <li><a href="#so-there-is-an-order">So there is an order</a></li>
-            <li><a href="#two-numbers-nobody-chose">Two numbers nobody chose</a></li>
-            <li><a href="#is-this-code-poolable">Whether the code could take a pooler at all</a></li>
-            <li><a href="#threads-and-connections">Threads and connections are different resources</a></li>
-            <li><a href="#guard-on-the-cause">The guard went on the cause, not the effect</a></li>
+            <li><a href="#the-code-went-first">The code went first</a></li>
+            <li><a href="#two-numbers">Two numbers nobody chose</a></li>
+            <li><a href="#is-this-code-poolable">I checked whether the code could take a pooler at all</a></li>
+            <li><a href="#why-not-async">“Why not just go async?”</a></li>
+            <li><a href="#the-guard">The fix is easy to undo, so the guard went on the cause</a></li>
             <li><a href="#what-this-does-not-claim">What this article does not claim</a></li>
+            <li><a href="#wrapping-up">Wrapping up</a></li>
           </ul>
         </nav>
 
-        <h2 id="one-symptom-two-causes">One symptom, two causes<a class="anchor" href="#one-symptom-two-causes" aria-label="Link to this section">#</a></h2>
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
-        <p>When connections run dry, what you see is mostly one thing. Pool-wait timeouts, unrelated APIs
-        slowing down together, and <code>Connection is not available, request timed out</code> in the log.</p>
+        <ul>
+          <li>You are building a service on Spring Boot and have never touched the connection pool settings
+          directly.</li>
+          <li>You have thought <em>“if connections run short, can't we just put something like RDS Proxy in
+          front?”</em></li>
+          <li>You have seen code that calls an external API inside a transaction — or you are writing it right
+          now.</li>
+        </ul>
 
-        <p>Behind that single symptom there are two causes.</p>
+        <h2 id="what-is-in-here">What is in here<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
 
-        <p><strong>A — too many connections.</strong> As app instances multiply, you open instances × pool size
-        connections. Postgres forks a backend process per connection, and an idle one still costs memory. Only
-        some of them are running queries; the rest are just <strong>open</strong>.</p>
+        <ul>
+          <li>Connection exhaustion has <strong>two</strong> causes, and a pooler fixes <strong>one</strong> of
+          them.</li>
+          <li>Why it cannot fix the other comes from <strong>the definition of transaction pooling</strong>, not
+          from a vendor document.</li>
+          <li>So before adopting the tool I checked <strong>whether the tool works in this code</strong>.</li>
+          <li>The fix is the kind that one line of <code>@Transactional</code> undoes, so the regression guard
+          went on <strong>the cause rather than the effect</strong>.</li>
+        </ul>
 
-        <p><strong>This is why poolers exist.</strong> They fold thousands of client connections into dozens of
-        backend ones.</p>
+        <p><strong>⚠️ One thing up front.</strong> There are <strong>no load-test numbers</strong> in this
+        article, and nothing ever broke in production. The “up to 10 seconds” below is a
+        <strong>configured read timeout</strong> on the outbound call, not a measurement that each request
+        actually held a connection that long. The improvement is explained by a change in the properties of the
+        code; this article claims no measured figures.</p>
 
-        <p><strong>B — transactions stay open too long.</strong></p>
+        <h2 id="what-is-the-service">What is the service?<a class="anchor" href="#what-is-the-service" aria-label="Link to this section">#</a></h2>
 
-<pre><code>BEGIN → SELECT → [ outbound HTTP call ] → INSERT → COMMIT
-                  ↑ holds the connection and runs no query at all</code></pre>
+        <p>A <strong>social polling app</strong> I build as a personal project. A user posts a question, other
+        people vote on it, and the result chart gets shared outside the app. It is a single monolith in Kotlin
+        and Spring Boot with one managed PostgreSQL behind it. It has not launched yet.</p>
 
-        <p>Once concurrent requests exceed the pool size, it runs dry. Here the <strong>number</strong> of
-        connections is not the problem — <strong>hold time</strong> is.</p>
+        <p>The shape of it:</p>
 
-        <p>And it is not only that path that dries up. Voting, the feed and chart reads all draw from the
-        <strong>same pool</strong>, so they stall together. What made this particularly sharp in this app was
-        the timing — the growth engine is <em>sharing the result chart</em>, so <strong>the day sharing spikes
-        is the day the pool runs dry.</strong></p>
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
+            <svg viewBox="0 0 720 258" role="img" aria-labelledby="svc-t svc-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="svc-t">The service, and where the problem was</title>
+              <desc id="svc-d">A mobile app sends post, comment and vote requests to an API server, which queries a managed PostgreSQL
+              through a connection pool. Every time a post or a comment is written the API server also calls an external
+              moderation API once. That call has a read timeout set to 10 seconds, and the problem was that it happened
+              inside a database transaction.</desc>
 
-        <h2 id="why-a-pooler-cannot-fix-b">Why a pooler cannot fix B<a class="anchor" href="#why-a-pooler-cannot-fix-b" aria-label="Link to this section">#</a></h2>
+              <rect x="8" y="44" width="132" height="56" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="74" y="70" font-size="14" fill="#18121d" text-anchor="middle">mobile app</text>
+              <text x="74" y="89" font-size="12" fill="#7b7186" text-anchor="middle">posts · comments · votes</text>
+              <path d="M140 72 H 194" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#ar)"/>
+              <rect x="202" y="34" width="186" height="76" rx="6" fill="none" stroke="#18121d" stroke-width="2"/>
+              <text x="295" y="58" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">API server</text>
+              <text x="295" y="77" font-size="12" fill="#3b3344" text-anchor="middle">Kotlin · Spring Boot</text>
+              <text x="295" y="96" font-size="12" fill="#7b7186" text-anchor="middle">connection pool</text>
+              <path d="M388 72 H 494" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#ar)"/>
+              <text x="441" y="62" font-size="12" fill="#7b7186" text-anchor="middle">queries</text>
+              <rect x="502" y="44" width="206" height="56" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="605" y="70" font-size="14" fill="#18121d" text-anchor="middle">PostgreSQL</text>
+              <text x="605" y="89" font-size="12" fill="#7b7186" text-anchor="middle">managed · has a connection limit</text>
+              <path d="M295 110 V 158" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#arA)"/>
+              <text x="307" y="140" font-size="12" fill="#d62976" font-weight="700">once per post/comment</text>
+              <rect x="202" y="158" width="300" height="54" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="352" y="182" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">external moderation API</text>
+              <text x="352" y="201" font-size="12" fill="#d62976" text-anchor="middle">read timeout set to 10s</text>
+              <text x="8" y="244" font-size="15" fill="#3b3344">This call was happening <tspan font-weight="700" fill="#18121d">inside the transaction</tspan>.</text>
+              <defs>
+                <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/></marker>
+                <marker id="arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d62976"/></marker>
+                <marker id="arM" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#7b7186"/></marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>An ordinary mobile app → API server → PostgreSQL. The problem is at the bottom — every post and comment calls an external moderation API once, and that call was happening inside a database transaction.</figcaption>
+        </figure>
 
-        <p>The picture of "thousands of client connections folded into dozens of DB connections" is correct.
-        The question is <strong>when the folding happens</strong>, and that is already contained in the
-        definition of transaction pooling.</p>
+        <p>The part to look at is the pink box at the bottom. Every time a post or comment is written, the server
+        calls an <strong>external moderation API</strong> (a third-party service that screens harmful content)
+        once. And that call has a read timeout of <strong>10 seconds</strong>.</p>
 
-        <p><strong>Multiplexing happens <em>between</em> transactions.</strong> While a transaction is open,
-        the backend connection is <strong>pinned</strong> to that client. It has to be — a transaction is
-        state, and lending it out mid-flight would break isolation.</p>
+<pre><code># application.yml
+read-timeout: ${OXY_HTTP_READ_TIMEOUT:10s}</code></pre>
+
+        <p>Hold on to that number. The rest of this article comes out of it.</p>
+
+        <h2 id="i-thought-a-pooler">At first I thought a pooler would do it<a class="anchor" href="#i-thought-a-pooler" aria-label="Link to this section">#</a></h2>
+
+        <p>The review started from a common hypothesis.</p>
+
+        <blockquote><p>Traffic will grow and database connections will run short, so why not put a
+        <strong>connection pooler</strong> — RDS Proxy, PgBouncer and the like — in front?</p></blockquote>
+
+        <p>A connection pooler is middleware that <strong>folds</strong> thousands of application connections
+        into dozens of database connections. From the marketing diagram alone it looked like exactly what we
+        needed.</p>
+
+        <p>But there was something to establish before that decision:
+        <strong>is the connection shortage we are going to hit the kind this tool fixes?</strong></p>
+
+        <h2 id="the-conclusion-first">The conclusion first<a class="anchor" href="#the-conclusion-first" aria-label="Link to this section">#</a></h2>
+
+        <p>It was not. In one line:</p>
+
+        <blockquote><p>Connection exhaustion comes in two kinds — one caused by <strong>the number of
+        connections</strong>, one caused by <strong>holding connections too long</strong>.
+        <strong>The symptom is the same and the remedy is not.</strong> A pooler fixes the first
+        one.</p></blockquote>
+
+        <p>And the basis for that conclusion was not the product documentation for RDS Proxy or PgBouncer but
+        <strong>the definition of transaction pooling itself</strong>. We will get there.</p>
+
+        <p>Start with the symptom. When a connection pool runs dry, what surfaces is mostly one thing:
+        requests wait for a connection and time out, and APIs with nothing to do with each other slow down
+        together. The log carries this line.</p>
+
+<pre><code>Connection is not available, request timed out after 30000ms</code></pre>
+
+        <p>Both causes look identical up to here. Which is why picking a tool from the symptom gets it wrong.</p>
+
+        <h2 id="cause-a">Cause A — too many connections<a class="anchor" href="#cause-a" aria-label="Link to this section">#</a></h2>
+
+        <p>The first is when the <strong>count</strong> itself is the problem.</p>
+
+<pre><code>100 app instances × pool size 20 = 2,000 connections
+but only 50 are actually running a query right now
+the other 1,950 are simply open</code></pre>
+
+        <p>PostgreSQL forks one backend process per connection, and an idle one still costs memory. So the more
+        instances you add, the sooner the database side hits its ceiling.</p>
+
+        <p><strong>This is why poolers exist.</strong> They fold 2,000 app connections into 50 backend ones.
+        For type-A exhaustion a pooler is exactly the right tool.</p>
+
+        <h2 id="cause-b">Cause B — connections held too long<a class="anchor" href="#cause-b" aria-label="Link to this section">#</a></h2>
+
+        <p>The second is when the problem is not the <strong>number</strong> of connections but
+        <strong>how long each one is held</strong>. Our code was this kind.</p>
+
+<pre><code>// CommentService.kt — before
+@Transactional
+fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentResponse {
+    val user = activeUserGuard.requireActive(userId)                 // DB
+    val postWithAuthor = postQueryRepository.findActiveById(postId)  // DB
+    // ...
+    moderationGate.screenComment(body)   // ← outbound HTTP. read timeout 10s
+    // ...
+    val comment = commentRepository.insert(...)                      // DB
+}</code></pre>
+
+        <p><code>@Transactional</code> is on the whole method, so a connection stays held for as long as the
+        method runs. And sitting in the middle of that span is
+        <strong>an outbound call that waits up to ten seconds while running no query at all</strong>.</p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
+            <svg viewBox="0 0 720 244" role="img" aria-labelledby="hold-t hold-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="hold-t">Connection hold time, before and after</title>
+              <desc id="hold-d">The top row is before the fix. The transaction opens with BEGIN, runs a SELECT, and then waits on an
+              outbound HTTP call while running no query at all — holding the connection the whole time. The read timeout on
+              that call is 10 seconds, and the connection stays held across the entire span including INSERT and COMMIT.
+              The bottom row is after the fix. A short read borrows a connection and gives it back, the outbound HTTP call
+              happens with no connection held, and only the write is wrapped in a short transaction.</desc>
+
+              <text x="8" y="26" font-size="15" fill="#7b7186">Before — one connection is held for the whole request</text>
+              <rect x="104" y="40" width="74" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="141" y="58" font-size="13" fill="#18121d" text-anchor="middle">BEGIN</text>
+              <rect x="182" y="40" width="74" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="219" y="58" font-size="13" fill="#18121d" text-anchor="middle">SELECT</text>
+              <rect x="260" y="40" width="300" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2" stroke-dasharray="5 4"/>
+              <text x="410" y="58" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">outbound HTTP call · 0 queries · up to 10s</text>
+              <rect x="564" y="40" width="66" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="597" y="58" font-size="12" fill="#18121d" text-anchor="middle">INSERT</text>
+              <rect x="634" y="40" width="74" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="671" y="58" font-size="12" fill="#18121d" text-anchor="middle">COMMIT</text>
+              <path d="M104 76 V 84 H 708 V 76" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="104" y="104" font-size="14" fill="#18121d">1 connection held — <tspan font-weight="700" fill="#d62976">across all of this</tspan></text>
+              <text x="8" y="152" font-size="15" fill="#7b7186">After — the hold shrinks to actual query time</text>
+              <rect x="104" y="166" width="150" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="179" y="184" font-size="13" fill="#18121d" text-anchor="middle">validating reads</text>
+              <rect x="266" y="166" width="270" height="26" rx="4" fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4"/>
+              <text x="401" y="184" font-size="12" fill="#7b7186" text-anchor="middle">outbound HTTP call · no connection held</text>
+              <rect x="548" y="166" width="160" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="628" y="184" font-size="12" fill="#18121d" text-anchor="middle">BEGIN·INSERT·COMMIT</text>
+              <path d="M104 202 V 210 H 254 V 202" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <path d="M548 202 V 210 H 708 V 202" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="104" y="230" font-size="13" fill="#18121d">connection held</text>
+              <text x="548" y="230" font-size="13" fill="#18121d">connection held</text>
+              <text x="280" y="230" font-size="13" fill="#7b7186">the connection is back in the pool here</text>
+            </svg>
+          </div>
+          <figcaption>Above is before the fix: the connection stays held even while waiting on the outbound call. Below is after, where the hold shrinks to the actual query time.</figcaption>
+        </figure>
+
+        <p>Once concurrent writes exceed the pool size, there are no connections left. Raising the
+        <strong>count</strong> does not touch the root cause here — a slow outbound call is still holding a
+        connection.</p>
+
+        <p>And it is not only the write path that stops.</p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
+            <svg viewBox="0 0 720 250" role="img" aria-labelledby="spread-t spread-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="spread-t">How pool exhaustion spreads across the service</title>
+              <desc id="spread-d">On the left are the requests writing posts and comments. Each is waiting on an outbound call while
+              holding a connection. In the middle is the connection pool, which those requests have taken entirely, leaving
+              no free connection. On the right are requests that have nothing to do with writing: voting, the feed, the
+              result chart and profiles all draw from the same pool, so when the write path takes the pool they stall too.</desc>
+
+              <text x="8" y="26" font-size="15" fill="#7b7186">When the pool runs dry, it is not only the write path that stops</text>
+              <rect x="8" y="44" width="180" height="160" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="98" y="68" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">post / comment writes</text>
+              <rect x="24" y="84" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="98" y="99" font-size="11" fill="#d62976" text-anchor="middle">waiting on outbound call</text>
+              <rect x="24" y="110" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="98" y="125" font-size="11" fill="#d62976" text-anchor="middle">waiting on outbound call</text>
+              <rect x="24" y="136" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="98" y="151" font-size="11" fill="#d62976" text-anchor="middle">waiting on outbound call</text>
+              <rect x="24" y="162" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="98" y="177" font-size="11" fill="#d62976" text-anchor="middle">waiting on outbound call</text>
+              <text x="98" y="196" font-size="14" fill="#d62976" text-anchor="middle">…</text>
+              <path d="M188 124 H 250" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#arA)"/>
+              <rect x="258" y="44" width="180" height="160" rx="6" fill="none" stroke="#18121d" stroke-width="2"/>
+              <text x="348" y="68" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">connection pool</text>
+              <rect x="274" y="84" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="348" y="99" font-size="11" fill="#d62976" text-anchor="middle">in use</text>
+              <rect x="274" y="110" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="348" y="125" font-size="11" fill="#d62976" text-anchor="middle">in use</text>
+              <rect x="274" y="136" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="348" y="151" font-size="11" fill="#d62976" text-anchor="middle">in use</text>
+              <rect x="274" y="162" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="348" y="177" font-size="11" fill="#d62976" text-anchor="middle">in use</text>
+              <text x="348" y="196" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">0 free connections</text>
+              <path d="M438 124 H 500" fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arM)"/>
+              <rect x="508" y="44" width="200" height="160" rx="6" fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4"/>
+              <text x="608" y="68" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">unrelated requests</text>
+              <rect x="524" y="84" width="168" height="20" rx="4" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
+              <text x="608" y="99" font-size="11" fill="#7b7186" text-anchor="middle">voting — waiting</text>
+              <rect x="524" y="110" width="168" height="20" rx="4" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
+              <text x="608" y="125" font-size="11" fill="#7b7186" text-anchor="middle">feed — waiting</text>
+              <rect x="524" y="136" width="168" height="20" rx="4" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
+              <text x="608" y="151" font-size="11" fill="#7b7186" text-anchor="middle">result chart — waiting</text>
+              <rect x="524" y="162" width="168" height="20" rx="4" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
+              <text x="608" y="177" font-size="11" fill="#7b7186" text-anchor="middle">profile — waiting</text>
+              <text x="608" y="196" font-size="11" fill="#7b7186" text-anchor="middle">same pool, so they stall together</text>
+              <text x="8" y="236" font-size="15" fill="#3b3344">The growth engine is <tspan font-weight="700" fill="#18121d">“sharing the result chart”</tspan> — a spike in sharing is a spike in stalls.</text>
+              <defs>
+                <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/></marker>
+                <marker id="arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d62976"/></marker>
+                <marker id="arM" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#7b7186"/></marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>When write requests take the whole pool, voting, the feed and the result chart — which have nothing to do with writing — draw from the same pool and stall with it.</figcaption>
+        </figure>
+
+        <p>Voting, feed reads and result-chart reads all take connections from the <strong>same pool</strong>.
+        So when the write path consumes it, the whole service slows down together.</p>
+
+        <p>What made this particularly sharp was the <strong>timing</strong>. This service's growth engine is
+        “sharing the result chart”, which means <strong>the day sharing spikes is the day the service
+        stalls</strong>.</p>
+
+        <h2 id="why-a-pooler-cannot">Why can't a pooler fix B?<a class="anchor" href="#why-a-pooler-cannot" aria-label="Link to this section">#</a></h2>
+
+        <p>This is the heart of it.</p>
+
+        <p>“Thousands of app connections folded into dozens of database connections” is an accurate
+        description. The question is <strong>when the folding happens</strong>, and the answer is already
+        contained in the definition of transaction pooling.</p>
+
+        <blockquote><p><strong>Reusing a connection happens only <em>between</em> transactions.</strong> While a
+        transaction is open, that backend connection is <strong>pinned</strong> to that client.</p></blockquote>
+
+        <p>Which is not surprising. A transaction is state, and lending it out mid-flight would break
+        isolation.</p>
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
@@ -145,14 +385,14 @@
               <title id="pool-t">When transaction pooling folds, and when it does not</title>
               <desc id="pool-d">The top row shows short transactions. Two clients use the backend connection only between
               BEGIN and COMMIT and release it right away, so the pooler lays them alternately onto a single backend
-              connection. The folding ratio is two to one. The bottom row shows a transaction that waits on an outbound
+              connection. The ratio is two app connections to one backend connection. The bottom row shows a transaction that waits on an outbound
               HTTP call. While the transaction is open the backend connection is pinned to that client, and for most of
-              that time it runs no query at all. The other client can only wait, so the folding ratio becomes one to one
+              that time it runs no query at all. The other client can only wait, so the ratio becomes one to one
               and there is almost nothing left for the pooler to gain.</desc>
 
               <g font-size="15" fill="#7b7186">
-                <text x="8" y="34">Short transactions — they fold</text>
-                <text x="8" y="196">Waiting inside the transaction — it pins</text>
+                <text x="8" y="34">Short transactions — several share one connection</text>
+                <text x="8" y="196">Waiting inside the transaction — it pins to one</text>
               </g>
 
               <g font-size="14" fill="#3b3344">
@@ -180,7 +420,7 @@
               </g>
               <rect x="104" y="118" width="604" height="24" rx="4" fill="none" stroke="#3b3344" stroke-width="2"/>
               <text x="116" y="135" font-size="13" fill="#18121d">one backend connection, used by A and B in turn</text>
-              <text x="696" y="135" font-size="14" fill="#18121d" font-weight="700" text-anchor="end">folds 2:1</text>
+              <text x="696" y="135" font-size="14" fill="#18121d" font-weight="700" text-anchor="end">app 2 → DB 1</text>
 
               <!-- Bottom: waiting inside an open transaction holds the backend -->
               <rect x="104" y="216" width="604" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
@@ -194,114 +434,189 @@
 
               <rect x="104" y="280" width="604" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="116" y="297" font-size="13" fill="#18121d">pinned to A — for as long as the transaction is open</text>
-              <text x="696" y="297" font-size="14" fill="#d62976" font-weight="700" text-anchor="end">folds 1:1</text>
+              <text x="696" y="297" font-size="14" fill="#d62976" font-weight="700" text-anchor="end">app 1 → DB 1</text>
             </svg>
           </div>
-          <figcaption>Short transactions fold into each other's gaps. When a transaction stays open waiting on an outbound call, the backend connection is pinned to that client, the folding ratio becomes 1:1, and whatever the pooler was going to buy you disappears.</figcaption>
+          <figcaption>Top: with short transactions the pooler lays two clients alternately onto one backend connection. Bottom: waiting on an outbound call with the transaction open pins that connection to one client, so one app connection costs one database connection.</figcaption>
         </figure>
 
-        <p>Which gives you this — <strong>if a transaction stays open for 10 seconds, the backend connection is
-        pinned for 10 seconds, the folding ratio becomes 1:1, and the proxy's benefit approaches zero.</strong></p>
+        <p>Which gives you this.</p>
 
-        <p>A pooler earns its keep <strong>when there are many short transactions</strong>. Buying one while
-        suffering from B spends money and changes nothing, and the worse part comes next — <strong>you come to
-        believe you are now covered.</strong> That belief is what stops the next review.</p>
+<pre><code>transaction open for 10s
+  → backend connection pinned for 10s
+  → 1 app connection costs 1 database connection
+  → the pooler folds nothing</code></pre>
+
+        <p>A pooler earns its keep <strong>when there are many short transactions</strong>. Adopting one while
+        suffering from B spends money and changes nothing — and the worse part comes next:
+        <strong>you come to believe you are covered.</strong> That belief is what stops the next review.</p>
 
         <h2 id="so-there-is-an-order">So there is an order<a class="anchor" href="#so-there-is-an-order" aria-label="Link to this section">#</a></h2>
 
-        <p>The remedy is not one thing but layers, and the layers have an order.</p>
+        <p>The remedy is not one thing but several layers, and the layers have an order.</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">Scroll sideways to see the rest</p>
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
         <table>
           <caption class="sr-only">Five layers of remedy for connection exhaustion and what each one is.</caption>
-          <thead><tr><th scope="col">Layer</th><th scope="col">What</th><th scope="col">Nature</th></tr></thead>
+          <thead><tr><th scope="col">Layer</th><th scope="col">What</th><th scope="col">What kind of thing it is</th></tr></thead>
           <tbody>
             <tr><td>①</td><td><strong>Shorten the transaction</strong> — move the outbound call outside it</td><td>The only fundamental one. The premise of every other layer</td></tr>
-            <tr><td>②</td><td>Admission control — thread and pool caps chosen deliberately</td><td>Makes failure fast and predictable</td></tr>
-            <tr><td>③</td><td>Pooler</td><td>Only works once ① is done</td></tr>
+            <tr><td>②</td><td>Admission control — decide the concurrency cap deliberately</td><td>Makes failure fast and predictable</td></tr>
+            <tr><td>③</td><td>Connection pooler</td><td>Only works once ① is done</td></tr>
             <tr><td>④</td><td>Read splitting and caching</td><td>The only layer that makes you use <em>fewer</em> connections</td></tr>
-            <tr><td>⑤</td><td>Async offload (outbox)</td><td>Reduces DB work per request itself</td></tr>
+            <tr><td>⑤</td><td>Async offload (outbox)</td><td>Reduces the DB work per request itself</td></tr>
           </tbody>
         </table>
         </div>
         </div>
 
-        <p>So <strong>the code got fixed first.</strong> Moving the outbound moderation call out of the
-        transaction was done on three write paths. One of them was worse than the rest — the poll-attachment
-        path was making the outbound call <strong>while holding a row lock</strong> via <code>for update</code>.
-        It held <strong>two resources</strong> at once: the connection and the row lock. The post and comment
-        paths went first; the poll path takes its screening input <em>from the locked row</em>, so it needed a
-        staleness re-check and was <strong>deliberately deferred, then fixed four days later.</strong></p>
+        <p>A pooler is ③. Going straight to ③ without ① is what the previous section was about.</p>
+
+        <h2 id="the-code-went-first">The code went first<a class="anchor" href="#the-code-went-first" aria-label="Link to this section">#</a></h2>
+
+        <p>So ① came first: narrowing the transaction boundary <strong>to the write</strong>. In Spring,
+        <code>@Transactional</code> is proxy-based and does not apply to self-invocation, so I reused the
+        <code>TransactionTemplate</code> pattern that was already in the codebase. Introducing no new mechanism
+        mattered here.</p>
+
+<pre><code>// after — no @Transactional on the method
+fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentResponse {
+    // ① validation (reads. each borrows a connection briefly and returns it)
+    val user = activeUserGuard.requireActive(userId)
+    val postWithAuthor = postQueryRepository.findActiveById(postId) ?: throw ...
+
+    // ② the outbound call — outside the transaction. ten seconds here holds no connection
+    moderationGate.screenComment(body)
+
+    // ③ only the write is atomic
+    val written = writeTx.execute {
+        val identity = postAliasRepository.ensureIdentity(...)
+        val comment = commentRepository.insert(...)
+        Triple(comment, identity?.alias, ...)
+    }!!
+}</code></pre>
+
+        <p>The obvious question is <em>“doesn't splitting the transaction widen the race window?”</em> —
+        <strong>it did not widen.</strong> The moderation call already sat <em>between</em> the read and the
+        write before the change, and that path was not locking the post row (there was no
+        <code>for update</code>). Being inside a transaction did not stop other sessions from changing it. The
+        distance from read to write is <strong>identical.</strong></p>
+
+        <p>The same work was done on three write paths (post, comment, poll attachment). One of them was in
+        worse shape — the poll-attachment path was making the outbound call <strong>while holding a row
+        lock</strong> via <code>for update</code>, holding <strong>two resources</strong> at once: the
+        connection and the row lock.</p>
+
+        <p>The post and comment paths went first. The poll path takes its screening input <em>from the locked
+        row</em>, so it needed a staleness re-check and was <strong>deliberately deferred, then fixed four days
+        later.</strong></p>
 
         <p>The conclusion in one line: <strong>the code change was not an alternative to the pooler, it was its
-        precondition.</strong> Once it was fixed, the system was finally in a state where a pooler could earn
-        its keep.</p>
+        precondition.</strong> Once it was done, the system was finally in a state where a pooler could earn its
+        keep.</p>
 
-        <h2 id="two-numbers-nobody-chose">Two numbers nobody chose<a class="anchor" href="#two-numbers-nobody-chose" aria-label="Link to this section">#</a></h2>
+        <h2 id="two-numbers">Two numbers nobody chose<a class="anchor" href="#two-numbers" aria-label="Link to this section">#</a></h2>
 
-        <p>There is a trap in ②. <strong>With blocking JDBC, the connection pool is effectively the concurrency
-        cap.</strong> However many threads you have, they cannot work without a connection.</p>
+        <p>Layer ② had a trap of its own. <strong>With blocking JDBC the connection pool is effectively the
+        concurrency cap.</strong> However many threads there are, they cannot work without a connection.</p>
 
-        <p>This service ran Tomcat threads at the <strong>default 200</strong>, and the connection pool had
-        <strong>no configuration at all</strong> — the framework default was the service's capacity. So the
-        remaining requests wait for a connection and fail after a timeout. <strong>The direction is right</strong>
-        — failing fast is what keeps the rest alive. The problem was elsewhere.</p>
+        <p>Opening our configuration, this is what was there.</p>
 
-        <p><strong>Neither number had been chosen by anyone.</strong> Both were framework defaults, and what was
-        bad was not the numbers themselves but <strong>that they were written down nowhere.</strong> Admission
-        control is not about having a cap, it is about
-        <strong>deciding that cap deliberately</strong>, and a concurrency policy produced by two defaults is
-        not a policy.</p>
+<pre><code># application.yml — as found
+spring:
+  datasource:
+    url: ${DB_URL:...}
+    username: ${DB_USER:...}
+    password: ${DB_PASSWORD:...}
+    # that's it. no hikari block at all</code></pre>
 
-        <h2 id="is-this-code-poolable">Whether the code could take a pooler at all<a class="anchor" href="#is-this-code-poolable" aria-label="Link to this section">#</a></h2>
+        <p>Tomcat threads sat at the <strong>default of 200</strong>, and the connection pool had
+        <strong>no configuration at all</strong>, so the Spring Boot default was the service's capacity. The
+        remaining requests wait for a connection and fail after a timeout.</p>
 
-        <p>Before moving on to ③ there was one more thing to check. Transaction pooling has
-        <strong>pin-inducing patterns</strong>, and where they exist the pooler is powerless.</p>
+        <p><strong>The direction is right</strong> — failing fast is what keeps the rest alive. The problem was
+        elsewhere: <strong>neither number had been chosen by anyone.</strong> Both were framework defaults, and
+        what was bad was not the numbers but <strong>that they were written down nowhere.</strong></p>
+
+        <p>So they were made explicit.</p>
+
+<pre><code>hikari:
+  maximum-pool-size: ${DB_POOL_MAX:20}
+  connection-timeout: ${DB_POOL_TIMEOUT_MS:5000}   # the 30s default is too long — failing fast keeps the rest alive
+  max-lifetime: ${DB_POOL_MAX_LIFETIME_MS:1200000}</code></pre>
+
+        <p>That said, <strong>growing the pool is relief, not repair</strong>, and there is a ceiling on growing
+        it.</p>
+
+<pre><code>pool size × max instances ≤ database connection limit</code></pre>
+
+        <p>The app does not know how many instances of itself are running, so this invariant
+        <strong>cannot be enforced in code.</strong> An IaC comment is the only defence, so that is where it
+        was pinned.</p>
+
+        <p>Admission control is not about <em>having</em> a cap, it is about <strong>deciding that cap
+        deliberately</strong>. A concurrency policy produced by two defaults is not a policy.</p>
+
+        <h2 id="is-this-code-poolable">I checked whether the code could take a pooler at all<a class="anchor" href="#is-this-code-poolable" aria-label="Link to this section">#</a></h2>
+
+        <p>Before moving to ③ there was one more thing to establish. Transaction pooling has
+        <strong>pin-inducing patterns</strong>, and where the code has them the pooler is powerless — a pinned
+        connection stays bound to that client even after the transaction ends.</p>
 
         <ul>
           <li>Session-scoped advisory locks (<code>pg_advisory_lock</code>)</li>
           <li>Temporary tables</li>
           <li><code>SET</code> · <code>set search_path</code></li>
-          <li>Server-side prepared statements (depending on the pooler and version)</li>
+          <li>Server-side prepared statements (varies by pooler and version)</li>
         </ul>
 
-        <p>None of the four were present. Advisory locks are used in three places, and
-        <strong>all three are <code>xact</code>-scoped</strong> — they release at transaction end, so they ride
-        on transaction pooling as-is.</p>
+        <p>So I went and looked.</p>
+
+<pre><code>$ grep -rn "pg_advisory_lock" src/main/kotlin/      # (none)
+$ grep -rn "advisory_xact" src/main/kotlin/
+ReportRepository.kt      pg_advisory_xact_lock(...)
+AuthAuditPurge.kt        pg_try_advisory_xact_lock(...)
+VoteRepository.kt        pg_advisory_xact_lock(...)</code></pre>
+
+        <p>None of the four were present. Advisory locks are used in three places and
+        <strong>all three are <code>xact</code>-scoped</strong>, releasing at transaction end, so they ride on
+        transaction pooling as-is.</p>
 
         <p>Whether all three being <code>xact</code>-scoped was deliberate or accidental is not something the
         record can settle. What is certain is that <strong>a single session-scoped lock anywhere would have made
-        that path defeat the pooler</strong>, and that fact would only have surfaced after the pooler was already
-        in place. <strong>The procedure of checking whether a tool works
-        in this code before buying it</strong> is the most reusable thing this review produced.</p>
+        that path defeat the pooler</strong>, and that fact would only have surfaced after the pooler was
+        already in place.</p>
 
-        <h2 id="threads-and-connections">Threads and connections are different resources<a class="anchor" href="#threads-and-connections" aria-label="Link to this section">#</a></h2>
+        <p><strong>A procedure for checking that a tool actually works in this code before adopting it.</strong>
+        Of everything this review produced, that is the part that transfers best to another project.</p>
 
-        <p>There is another remedy that comes up often here — <em>why not just go async?</em></p>
+        <h2 id="why-not-async">“Why not just go async?”<a class="anchor" href="#why-not-async" aria-label="Link to this section">#</a></h2>
+
+        <p>There is one more remedy that comes up whenever this is discussed.</p>
 
         <p>Switching to WebFlux or coroutines saves <strong>threads</strong>. It still <strong>holds the
-        connection</strong>. JDBC is blocking, and as long as the transaction is open the connection is not
-        returned.</p>
+        connection</strong>, because JDBC is blocking and a connection is not returned while the transaction is
+        open.</p>
 
-        <p>When the axis of the problem is connections and you bring a remedy that saves threads,
-        <strong>the axes do not line up.</strong> R2DBC would be a different story, but that is a full rewrite
-        of the data access layer.</p>
+        <p><strong>Threads and connections are different resources.</strong> When the axis of the problem is
+        connections and the remedy saves threads, the axes do not line up. R2DBC would be a different story, but
+        that is a full rewrite of the data access layer.</p>
 
         <p>Growing the pool is the same kind of move. It relieves, it does not repair, and it hits
-        <code>pool size × instances ≤ DB connection limit</code> first. The root cause — a slow outbound call
-        holding a connection — stays exactly where it was.</p>
+        <code>pool size × instances ≤ database connection limit</code> first. The root cause — a slow outbound
+        call holding a connection — stays exactly where it was.</p>
 
-        <h2 id="guard-on-the-cause">The guard went on the cause, not the effect<a class="anchor" href="#guard-on-the-cause" aria-label="Link to this section">#</a></h2>
+        <h2 id="the-guard">The fix is easy to undo, so the guard went on the cause<a class="anchor" href="#the-guard" aria-label="Link to this section">#</a></h2>
 
-        <p>This fix has a fragility of its own. <strong>One line of <code>@Transactional</code> undoes it.</strong>
-        And once undone, <strong>the feature still works</strong> — the tests pass and the screens are fine. The
-        symptom shows up only on a day with load.</p>
+        <p>This fix has a fragility of its own. <strong>One line of <code>@Transactional</code> puts it
+        back.</strong> And once undone, <strong>the feature still works</strong> — the tests pass and the
+        screens are fine. The symptom only shows up on a day with load.</p>
 
-        <p>So the regression guard went on <strong>the cause rather than the effect</strong>. A spy sits where
-        the outbound client goes and asserts <strong>whether a transaction is active at the moment of the
-        call</strong>.</p>
+        <p>“The connection is not held for long” is hard to observe directly. So instead of the effect I
+        asserted the <strong>cause</strong>. A spy sits where the real HTTP client's interface goes and records
+        <strong>whether a transaction is active at the moment of the call</strong>.</p>
 
 <pre><code>class TransactionProbe : ContentModerationApi {
     val sawTransaction = mutableListOf&lt;Boolean&gt;()
@@ -310,22 +625,28 @@
     }
 }
 
+// the assertions
 assertThat(probe.sawTransaction).isNotEmpty()         // ① did the call actually happen
 assertThat(probe.sawTransaction).containsOnly(false)  // ② was it outside the transaction</code></pre>
 
         <p>Without ①, ② <strong>passes vacuously.</strong> If the gate falls out entirely and there are zero
-        calls, <code>containsOnly</code> is true of an empty list. A negative assertion always needs
-        <strong>"and the case was not empty" attached to it.</strong></p>
+        calls, <code>containsOnly</code> is true of an empty list. <strong>An assertion that checks “X is not
+        the case” always needs “and there was an X to check” next to it.</strong></p>
 
-        <p>This guard does not ask "is the response fast". It asks <strong>"is the outbound call inside a
-        transaction"</strong>. That is the actual cause, and the place where the revert happens.</p>
+        <p>Whether the guard is really aiming at anything was checked by <strong>mutation</strong> — putting the
+        code back on purpose and running the tests to see whether they go red.</p>
 
-        <p>Whether the guard is really aiming at anything was checked by mutation — I restored
-        <code>@Transactional</code> and actually ran it. On the post and comment paths <strong>only the matching
-        guard</strong> went red. The poll-attachment path was different — <strong>the mutation came back green
-        at first.</strong> The condition its staleness guard aims at was never constructed inside the test, and
-        red only appeared after an <code>onScreen</code> hook on the spy changed the row during the screening
-        window to build that condition.</p>
+<pre><code># @Transactional restored on the comment path
+ModerationOutsideTransactionTest > the moderation call does not hold a database transaction() FAILED
+
+# @Transactional restored on the post path
+ModerationOutsideTransactionTest > creating a post also screens outside a transaction() FAILED</code></pre>
+
+        <p>On the post and comment paths <strong>only the matching guard</strong> went red. The poll-attachment
+        path was different — <strong>the mutation came back green at first.</strong> The condition its staleness
+        guard aims at was never constructed inside the test, and red only appeared after an
+        <code>onScreen</code> hook on the spy changed the row during the screening window to build that
+        condition.</p>
 
         <p>That is the most portable thing in this article. <strong>A green mutation does not mean the code is
         safe; it means the guard is not aiming.</strong></p>
@@ -334,24 +655,43 @@ assertThat(probe.sawTransaction).containsOnly(false)  // ② was it outside the 
 
         <ul>
           <li><strong>There are no performance numbers.</strong> No load test was run, and there is no basis to
-          say "it got N times faster". What changed is <strong>a property of the code</strong> — the transaction
+          say “it got N times faster”. What changed is <strong>a property of the code</strong> — the transaction
           no longer waits on an outbound call — and how much that is worth in latency or throughput was never
           measured.</li>
-          <li><strong>"Up to 10 seconds" is a configured value.</strong> It is the read timeout set on the
+          <li><strong>“Up to 10 seconds” is a configured value.</strong> It is the read timeout set on the
           outbound call, not a measurement that each request actually held that long.</li>
           <li><strong>Nothing ever broke.</strong> This came out of a pre-launch structural review, and there is
           no record of observing this path actually run dry.</li>
           <li><strong>This is not a claim that poolers are useless.</strong> For type-A exhaustion a pooler is
-          exactly the right tool. All this article says is that <strong>while you are suffering from B the
-          folding ratio is 1:1, so it cannot earn its keep.</strong></li>
+          exactly the right tool. All this article says is that <strong>while you are suffering from B, one app
+          connection costs one database connection, so it cannot earn its keep.</strong></li>
           <li><strong>No per-vendor connection limits are quoted.</strong> Those are values I did not verify.</li>
           <li><strong>The list of pin-inducing patterns may not be complete.</strong> It varies by pooler and
           version; all that was established here is that those four are absent from this code.</li>
         </ul>
 
-        <p>The line that remains is this. <strong>The same symptom does not mean the same cause, and a tool
+        <h2 id="wrapping-up">Wrapping up<a class="anchor" href="#wrapping-up" aria-label="Link to this section">#</a></h2>
+
+        <p>To pull it together:</p>
+
+        <ul>
+          <li>Connection exhaustion has two causes — <strong>count</strong> and <strong>hold time</strong> — and
+          they are easy to confuse because the symptom is identical.</li>
+          <li>A pooler is the tool for the count problem. Against the hold-time problem, one app connection
+          costs one database connection and there is nothing left to fold. That is not a product limitation but
+          <strong>the definition of transaction pooling</strong>.</li>
+          <li>So there is an order. <strong>Shortening the transaction is the premise of everything
+          else.</strong></li>
+          <li>Adding a step that checks <strong>whether a tool works in this code</strong> before adopting it
+          tells you beforehand what you would otherwise learn afterwards.</li>
+        </ul>
+
+        <p>If one line survives, this one. <strong>The same symptom does not mean the same cause, and a tool
         fits exactly one cause.</strong> And the real cost of the wrong tool is not the money — it is
         <strong>the belief that you are covered.</strong></p>
+
+        <p>Thanks for reading.</p>
+
 
       </article>
     </main>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>プーラーは二つの枯渇のうち一つしか直さない | Kwanghun Lee</title>
+  <title>RDS Proxy を足せば直ると思っていました | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="プーラーは二つの枯渇のうち一つしか直さない | Kwanghun Lee" />
-  <meta property="og:description" content="コネクション枯渇には本数によるものと占有時間によるものがある。症状は同じで処方は違う。トランザクションプーリングの定義を見れば、プーラーがなぜ後者を直せないかが分かる。" />
+  <meta property="og:title" content="RDS Proxy を足せば直ると思っていました | Kwanghun Lee" />
+  <meta property="og:description" content="リリース前のソーシャル投票アプリを点検していて、コネクションプーラーを前に立てようとしました。ところがコネクション枯渇には原因が二つあり、プーラーはそのうち一つしか直しません。なぜ直せないのかは製品ドキュメントではなくトランザクションプーリングの定義から出てきます。" />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -26,10 +26,10 @@
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="プーラーは二つの枯渇のうち一つしか直さない | Kwanghun Lee" />
-  <meta name="twitter:description" content="症状は同じで処方は違う。トランザクションプーリングの定義を見れば、プーラーがなぜ占有時間の問題を直せないかが分かる。" />
+  <meta name="twitter:title" content="RDS Proxy を足せば直ると思っていました | Kwanghun Lee" />
+  <meta name="twitter:description" content="コネクション枯渇の原因は二つです。プーラーはそのうち一つを直し、もう一つには構造的に効きません。" />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="コネクション枯渇には本数によるものと占有時間によるものがある。症状は同じで処方は違う。トランザクションプーリングの定義を見れば、プーラーがなぜ後者を直せないかが分かる。" />
+  <meta name="description" content="リリース前のソーシャル投票アプリを点検していて、コネクションプーラーを前に立てようとしました。ところがコネクション枯渇には原因が二つあり、プーラーはそのうち一つしか直しません。なぜ直せないのかは製品ドキュメントではなくトランザクションプーリングの定義から出てきます。" />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
 </head>
@@ -39,7 +39,7 @@
       <a class="site-name" href="../index.html#about">Kwanghun</a>
       <nav aria-label="Primary">
         <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language"
-                data-authored='{"en":"a-pooler-fixes-only-one.html","ko":"a-pooler-fixes-only-one.ko.html","ja":"a-pooler-fixes-only-one.ja.html"}'>
+                data-authored='{"en": "a-pooler-fixes-only-one.html", "ko": "a-pooler-fixes-only-one.ko.html", "ja": "a-pooler-fixes-only-one.ja.html"}'>
           <option value="ja" selected>Japanese</option>
           <option value="en">English</option>
           <option value="ko">Korean</option>
@@ -69,72 +69,313 @@
     <main>
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ</a>
-        <h1>プーラーは二つの枯渇のうち一つしか直さない</h1>
-        <div class="article-meta">Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">8分</span></div>
+        <h1>RDS Proxy を足せば直ると思っていました<br><span class="h1-sub">トランザクションの中の外部 API 呼び出しとコネクション枯渇</span></h1>
+        <div class="article-meta">Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">16分</span></div>
         <p class="lang-alts notranslate">他の言語 <a href="a-pooler-fixes-only-one.html" hreflang="en" lang="en">English</a> · <a href="a-pooler-fixes-only-one.ko.html" hreflang="ko" lang="ko">한국어</a></p>
       </section>
       <article class="article-body">
 
-        <p><strong>範囲。</strong>個人プロジェクト（Kotlin · Spring Boot · マネージド Postgres、モノリス）の
-        <strong>リリース前の構造点検</strong>の記録である。障害が起きたことはなく、<strong>負荷試験で測った数値も
-        ない。</strong>以下に出てくる「最大10秒」は外部呼び出しに<strong>設定した read timeout</strong> であって、
-        リクエストごとに実際にそれだけ握っていたと測定した値ではない。改善はコードの性質の変化として説明される
-        ものであり、この記事は実測値を主張しない。</p>
+        <p>個人プロジェクトでソーシャル投票アプリを作っています。リリース前にアーキテクチャを点検していて、
+        <em>「トラフィックが増えれば DB コネクションが足りなくなるだろうから、コネクションプーラーを一つ前に
+        立てればいいのでは」</em>という、ごくありふれた仮説から出発しました。結論は
+        <strong>「このコードベースでは否」</strong>でした。</p>
 
-        <p>点検の出発点はよくある仮説だった — <em>コネクションが枯れる恐れがあるのだから、プーラー（RDS Proxy・
-        PgBouncer の類）を入れればいいのでは。</em></p>
-
-        <p>答えは<strong>このコードベースでは否</strong>であり、その理由は製品ドキュメントではなく
-        <strong>トランザクションプーリングの定義</strong>から出てきた。</p>
+        <p>なぜ否だったのか、そしてその判断を何を根拠に下したのかを共有します。</p>
 
         <nav class="article-toc" aria-label="目次">
           <p class="toc-label">目次</p>
           <ul>
-            <li><a href="#症状は一つ原因は二つ">症状は一つ、原因は二つ</a></li>
-            <li><a href="#なぜプーラーはbを直せないのか">なぜプーラーは B を直せないのか</a></li>
-            <li><a href="#だから順序がある">だから順序がある</a></li>
-            <li><a href="#誰も選んでいない二つの数字">誰も選んでいない二つの数字</a></li>
-            <li><a href="#プーラーが効くコードかを先に確認した">プーラーが効くコードかを先に確認した</a></li>
-            <li><a href="#スレッドとコネクションは別の資源">スレッドとコネクションは別の資源だ</a></li>
-            <li><a href="#ガードを結果ではなく原因に置いた">ガードを結果ではなく原因に置いた</a></li>
-            <li><a href="#この記事が主張しないこと">この記事が主張しないこと</a></li>
+            <li><a href="#想定読者">この記事の想定読者</a></li>
+            <li><a href="#どんな内容">どんな内容ですか?</a></li>
+            <li><a href="#どんなサービス">どんなサービスですか?</a></li>
+            <li><a href="#プーラーを足せば">最初はプーラーを足せば済むと思っていました</a></li>
+            <li><a href="#結論から">結論から申し上げると</a></li>
+            <li><a href="#原因a">原因 A — コネクションが多いから</a></li>
+            <li><a href="#原因b">原因 B — コネクションを長く握っているから</a></li>
+            <li><a href="#なぜ直せない">なぜプーラーは B を直せないのですか?</a></li>
+            <li><a href="#順序があります">だから順序があります</a></li>
+            <li><a href="#コードから">コードから直しました</a></li>
+            <li><a href="#二つの数字">誰も選んでいない二つの数字</a></li>
+            <li><a href="#使えるコードか">プーラーが使えるコードかを先に確認しました</a></li>
+            <li><a href="#非同期にすれば">「非同期にすればいいのでは?」</a></li>
+            <li><a href="#ガード">戻しやすい修正なので、ガードを原因に置きました</a></li>
+            <li><a href="#主張しないこと">この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
           </ul>
         </nav>
 
-        <h2 id="症状は一つ原因は二つ">症状は一つ、原因は二つ<a class="anchor" href="#症状は一つ原因は二つ" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="想定読者">この記事の想定読者<a class="anchor" href="#想定読者" aria-label="この節へのリンク">#</a></h2>
 
-        <p>コネクションが枯れたときに見えるものはたいてい一つだ。プール待ちのタイムアウト、互いに無関係な API が
-        同時に遅くなること、そしてログの <code>Connection is not available, request timed out</code>。</p>
+        <ul>
+          <li>Spring Boot でサービスを作っているが、コネクションプールの設定をまだ自分で触ったことがない方</li>
+          <li><em>「コネクションが足りないなら RDS Proxy のようなものを足せばいいのでは?」</em>と考えたことのある方</li>
+          <li>トランザクションの中で外部 API を呼び出すコードを見たことがある、あるいは今そう書いている方</li>
+        </ul>
 
-        <p>ところがその背後の原因は二種類ある。</p>
+        <h2 id="どんな内容">どんな内容ですか?<a class="anchor" href="#どんな内容" aria-label="この節へのリンク">#</a></h2>
 
-        <p><strong>A — コネクションが多いから。</strong>アプリのインスタンスが増えれば、インスタンス数 × プール
-        サイズだけコネクションが開く。Postgres はコネクションごとにバックエンドプロセスを作り、アイドルでも
-        メモリを使う。実際にクエリを走らせているのはそのうちの一部で、残りは<strong>開いているだけ</strong>だ。</p>
+        <ul>
+          <li>コネクション枯渇には原因が<strong>二つ</strong>あり、コネクションプーラーはそのうち
+          <strong>一つだけ</strong>を直します。</li>
+          <li>なぜ直せないのかは製品ドキュメントではなく<strong>トランザクションプーリングという方式の定義</strong>
+          から出てきます。</li>
+          <li>だから道具を導入する前に<strong>このコードでその道具が動くのか</strong>を先に確認しました。</li>
+          <li>修正が <code>@Transactional</code> 一行で戻ってしまう種類なので、回帰防御を
+          <strong>結果ではなく原因</strong>に置きました。</li>
+        </ul>
 
-        <p><strong>これがプーラーの存在理由である。</strong>アプリのコネクション数千本を、バックエンドの
-        コネクション数十本に畳んでくれる。</p>
+        <p><strong>⚠️ 先にお伝えすることがあります。</strong>この記事には<strong>負荷試験で測った数値が
+        ありません。</strong>障害が起きたこともありません。以下に出てくる「最大10秒」は外部呼び出しに
+        <strong>設定してある read timeout</strong> の値であって、リクエストごとに実際にそれだけ握っていたと
+        測定した値ではありません。改善はコードの性質の変化として説明されるものであり、この記事は実測値を
+        主張しません。</p>
 
-        <p><strong>B — トランザクションが長く開いているから。</strong></p>
+        <h2 id="どんなサービス">どんなサービスですか?<a class="anchor" href="#どんなサービス" aria-label="この節へのリンク">#</a></h2>
 
-<pre><code>BEGIN → SELECT → [ 外部 HTTP 呼び出し ] → INSERT → COMMIT
-                  ↑ コネクションを握ったままクエリを一本も出さない</code></pre>
+        <p>個人プロジェクトで作っている<strong>ソーシャル投票アプリ</strong>です。ユーザーが質問を投稿すると
+        他の人が投票し、その結果チャートをアプリの外へ共有するサービスです。Kotlin と Spring Boot で作った
+        単一のモノリスで、データベースはマネージド PostgreSQL を一つ使っています。まだリリース前です。</p>
 
-        <p>同時リクエストがプールサイズを超えれば枯れる。ここではコネクションの<strong>本数</strong>は問題では
-        ない — <strong>占有時間</strong>が問題だ。</p>
+        <p>構成を図にするとこうなります。</p>
 
-        <p>そして枯れるのはその経路だけではない。投票もフィードもチャート参照も<strong>同じプール</strong>から
-        コネクションを受け取るので、一緒に止まる。このアプリで特に痛かったのはタイミングだった — 成長エンジンが
-        「結果チャートを共有すること」なので、<strong>共有が跳ねる日がそのまま枯れる日</strong>になる。</p>
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロール可能な図解">
+            <svg viewBox="0 0 720 258" role="img" aria-labelledby="svc-t svc-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="svc-t">サービス構成と、問題があった箇所</title>
+              <desc id="svc-d">モバイルアプリが API サーバへ投稿・コメント・投票のリクエストを送り、API サーバはコネクションプールを
+              通してマネージド PostgreSQL にクエリを投げます。ところが投稿とコメントを書くたびに、API サーバが外部
+              モデレーション API を一回ずつ呼び出します。この呼び出しには read timeout が10秒に設定されており、問題は
+              この呼び出しがデータベーストランザクションの中で起きていたことです。</desc>
 
-        <h2 id="なぜプーラーはbを直せないのか">なぜプーラーは B を直せないのか<a class="anchor" href="#なぜプーラーはbを直せないのか" aria-label="この節へのリンク">#</a></h2>
+              <rect x="8" y="44" width="132" height="56" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="74" y="70" font-size="14" fill="#18121d" text-anchor="middle">モバイルアプリ</text>
+              <text x="74" y="89" font-size="12" fill="#7b7186" text-anchor="middle">投稿・コメント・投票</text>
+              <path d="M140 72 H 194" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#ar)"/>
+              <rect x="202" y="34" width="186" height="76" rx="6" fill="none" stroke="#18121d" stroke-width="2"/>
+              <text x="295" y="58" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">API サーバ</text>
+              <text x="295" y="77" font-size="12" fill="#3b3344" text-anchor="middle">Kotlin · Spring Boot</text>
+              <text x="295" y="96" font-size="12" fill="#7b7186" text-anchor="middle">コネクションプール</text>
+              <path d="M388 72 H 494" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#ar)"/>
+              <text x="441" y="62" font-size="12" fill="#7b7186" text-anchor="middle">クエリ</text>
+              <rect x="502" y="44" width="206" height="56" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="605" y="70" font-size="14" fill="#18121d" text-anchor="middle">PostgreSQL</text>
+              <text x="605" y="89" font-size="12" fill="#7b7186" text-anchor="middle">マネージド · コネクション上限あり</text>
+              <path d="M295 110 V 158" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#arA)"/>
+              <text x="307" y="140" font-size="12" fill="#d62976" font-weight="700">投稿・コメントごとに1回</text>
+              <rect x="202" y="158" width="300" height="54" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="352" y="182" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">外部モデレーション API</text>
+              <text x="352" y="201" font-size="12" fill="#d62976" text-anchor="middle">read timeout 10秒に設定</text>
+              <text x="8" y="244" font-size="15" fill="#3b3344">この呼び出しが<tspan font-weight="700" fill="#18121d">トランザクションの中で</tspan>起きていました。</text>
+              <defs>
+                <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/></marker>
+                <marker id="arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d62976"/></marker>
+                <marker id="arM" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#7b7186"/></marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>モバイルアプリ → API サーバ → PostgreSQL というありふれた構成です。問題は下のほうです — 投稿やコメントを書くたびに外部モデレーション API を一回呼び出しており、その呼び出しがデータベーストランザクションの中で起きていました。</figcaption>
+        </figure>
 
-        <p>「アプリのコネクション数千本を DB のコネクション数十本に畳む」という絵は正しい。問題は
-        <strong>いつ畳まれるのか</strong>であり、それはトランザクションプーリングの定義にすでに含まれている。</p>
+        <p>注目していただきたいのは下のピンクの箱です。投稿やコメントを書くたびに
+        <strong>外部モデレーション API</strong>（有害な内容をふるい落としてくれる外部サービス）を一回ずつ
+        呼び出します。そしてこの呼び出しには read timeout が<strong>10秒</strong>で設定されています。</p>
 
-        <p><strong>多重化はトランザクションの<em>間</em>で起きる。</strong>トランザクションが開いている間、その
-        バックエンドコネクションはそのクライアントに<strong>固定（pin）</strong>される。当然だ — トランザクション
-        は状態であり、途中で他のセッションに貸せば分離が壊れる。</p>
+<pre><code># application.yml
+read-timeout: ${OXY_HTTP_READ_TIMEOUT:10s}</code></pre>
+
+        <p>この数字を覚えておいてください。この記事の残りは全部ここから出てきます。</p>
+
+        <h2 id="プーラーを足せば">最初はプーラーを足せば済むと思っていました<a class="anchor" href="#プーラーを足せば" aria-label="この節へのリンク">#</a></h2>
+
+        <p>点検の出発点はありふれた仮説でした。</p>
+
+        <blockquote><p>トラフィックが増えれば DB コネクションが足りなくなるだろうから、RDS Proxy や PgBouncer の
+        ような<strong>コネクションプーラー（connection pooler）</strong>を前に立てればいいのでは?</p></blockquote>
+
+        <p>コネクションプーラーは、アプリケーションが開くコネクション数千本を DB コネクション数十本に
+        <strong>まとめてくれる</strong>ミドルウェアです。紹介図だけ見れば、まさに私たちに必要なものに
+        見えました。</p>
+
+        <p>ところがこの判断を下す前に確かめるべきことがありました。
+        <strong>「私たちがこれから迎えるコネクション不足は、本当にこの道具が直す種類の不足なのか」</strong>です。</p>
+
+        <h2 id="結論から">結論から申し上げると<a class="anchor" href="#結論から" aria-label="この節へのリンク">#</a></h2>
+
+        <p>違いました。一行にまとめるとこうです。</p>
+
+        <blockquote><p>コネクション枯渇には<strong>コネクションの本数が原因のもの</strong>と
+        <strong>コネクションを長く握っているのが原因のもの</strong>があります。
+        <strong>症状は同じで処方は違います。</strong>コネクションプーラーは前者だけを直します。</p></blockquote>
+
+        <p>そしてこの結論の根拠は RDS Proxy や PgBouncer の製品ドキュメントではなく、
+        <strong>トランザクションプーリング（transaction pooling）という方式の定義そのもの</strong>から
+        出てきました。順に見ていきます。</p>
+
+        <p>まず症状からです。コネクションプールが枯渇すると、表に出てくる姿はたいてい一つです。プールで
+        コネクションを待ってタイムアウトし、互いに何の関係もない API が同時に遅くなります。ログにはこの行が
+        出ます。</p>
+
+<pre><code>Connection is not available, request timed out after 30000ms</code></pre>
+
+        <p>ここまでは二つの原因がまったく同じ顔をしています。だから症状だけを見て道具を選ぶと外します。</p>
+
+        <h2 id="原因a">原因 A — コネクションが多いから<a class="anchor" href="#原因a" aria-label="この節へのリンク">#</a></h2>
+
+        <p>一つ目は<strong>コネクションの本数</strong>そのものが問題である場合です。</p>
+
+<pre><code>アプリ100台 × プールサイズ20 = コネクション2,000本
+ところが今実際にクエリを実行しているのは50本
+残りの1,950本はただ開いているだけです</code></pre>
+
+        <p>PostgreSQL はコネクション一本ごとにバックエンドプロセスを一つ作り、そのコネクションが何もして
+        いなくてもメモリを使います。だからインスタンスを増やすほど DB 側が先に限界にぶつかります。</p>
+
+        <p><strong>これがコネクションプーラーの存在理由です。</strong>アプリのコネクション2,000本を
+        バックエンドの50本にまとめてくれるのですから。A 型の枯渇にはまさに正しい道具です。</p>
+
+        <h2 id="原因b">原因 B — コネクションを長く握っているから<a class="anchor" href="#原因b" aria-label="この節へのリンク">#</a></h2>
+
+        <p>二つ目はコネクションの<strong>本数</strong>ではなく<strong>握っている時間</strong>が問題である
+        場合です。そして私たちのコードはこちらでした。</p>
+
+<pre><code>// CommentService.kt — 修正前
+@Transactional
+fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentResponse {
+    val user = activeUserGuard.requireActive(userId)                 // DB
+    val postWithAuthor = postQueryRepository.findActiveById(postId)  // DB
+    // ...
+    moderationGate.screenComment(body)   // ← 外部 HTTP 呼び出し。read timeout 10秒
+    // ...
+    val comment = commentRepository.insert(...)                      // DB
+}</code></pre>
+
+        <p><code>@Transactional</code> がメソッド全体に掛かっているので、このメソッドが回っている間ずっと
+        コネクションが一本占有されます。ところがその区間の真ん中に、
+        <strong>クエリを一本も実行しないまま最大10秒待つ外部呼び出し</strong>が入っています。</p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロール可能な図解">
+            <svg viewBox="0 0 720 244" role="img" aria-labelledby="hold-t hold-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="hold-t">修正前と修正後のコネクション占有区間</title>
+              <desc id="hold-d">上が修正前です。BEGIN でトランザクションを開いて SELECT を実行したあと、外部 HTTP 呼び出しを待つ間
+              クエリを一本も実行しないままコネクションを握り続けます。この呼び出しの read timeout は10秒で、INSERT と
+              COMMIT まで含めた区間全体でコネクションが一本占有されます。下が修正後です。検証のための読み取りで
+              コネクションを短く使って返し、外部 HTTP 呼び出しはコネクションを持たない状態で行い、書き込みだけを短い
+              トランザクションに包みます。</desc>
+
+              <text x="8" y="26" font-size="15" fill="#7b7186">修正前 — コネクション1本をリクエスト全体で握ります</text>
+              <rect x="104" y="40" width="74" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="141" y="58" font-size="13" fill="#18121d" text-anchor="middle">BEGIN</text>
+              <rect x="182" y="40" width="74" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="219" y="58" font-size="13" fill="#18121d" text-anchor="middle">SELECT</text>
+              <rect x="260" y="40" width="300" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2" stroke-dasharray="5 4"/>
+              <text x="410" y="58" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">外部 HTTP 呼び出し · クエリ0件 · 最大10秒</text>
+              <rect x="564" y="40" width="66" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="597" y="58" font-size="12" fill="#18121d" text-anchor="middle">INSERT</text>
+              <rect x="634" y="40" width="74" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="671" y="58" font-size="12" fill="#18121d" text-anchor="middle">COMMIT</text>
+              <path d="M104 76 V 84 H 708 V 76" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="104" y="104" font-size="14" fill="#18121d">コネクション1本を占有 — <tspan font-weight="700" fill="#d62976">この区間すべて</tspan></text>
+              <text x="8" y="152" font-size="15" fill="#7b7186">修正後 — 握る区間がクエリ時間まで縮みます</text>
+              <rect x="104" y="166" width="150" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="179" y="184" font-size="13" fill="#18121d" text-anchor="middle">検証の読み取り</text>
+              <rect x="266" y="166" width="270" height="26" rx="4" fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4"/>
+              <text x="401" y="184" font-size="12" fill="#7b7186" text-anchor="middle">外部 HTTP 呼び出し · コネクションなし</text>
+              <rect x="548" y="166" width="160" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="628" y="184" font-size="12" fill="#18121d" text-anchor="middle">BEGIN·INSERT·COMMIT</text>
+              <path d="M104 202 V 210 H 254 V 202" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <path d="M548 202 V 210 H 708 V 202" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="104" y="230" font-size="13" fill="#18121d">コネクション占有</text>
+              <text x="548" y="230" font-size="13" fill="#18121d">コネクション占有</text>
+              <text x="280" y="230" font-size="13" fill="#7b7186">この区間はコネクションを返した状態です</text>
+            </svg>
+          </div>
+          <figcaption>上が修正前です。外部呼び出しを待っている間もコネクションは占有されたままです。下が修正後で、コネクションを握る区間が実際のクエリ時間まで縮みます。</figcaption>
+        </figure>
+
+        <p>同時に書き込むリクエストがプールサイズを超えると、その時点からコネクションがありません。ここで
+        コネクションの<strong>本数</strong>を増やしても根本原因はそのままです。遅い外部呼び出しがコネクションを
+        握っているという事実は変わらないからです。</p>
+
+        <p>そして止まるのは書き込み経路だけではありません。</p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロール可能な図解">
+            <svg viewBox="0 0 720 250" role="img" aria-labelledby="spread-t spread-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="spread-t">コネクションプール枯渇がサービス全体に広がる構造</title>
+              <desc id="spread-d">左は投稿とコメントを書くリクエストです。それぞれが外部呼び出しを待ちながらコネクションを握っています。
+              中央はコネクションプールで、そのリクエストたちがコネクションを全部占めてしまい空きが一つもありません。
+              右は書き込みとは何の関係もないリクエストです。投票、フィード、結果チャート、プロフィールがすべて同じプール
+              からコネクションを受け取るため、書き込み経路がプールを使い切るとこちらも一緒に止まります。</desc>
+
+              <text x="8" y="26" font-size="15" fill="#7b7186">プールが枯渇すると、止まるのは書き込み経路だけではありません</text>
+              <rect x="8" y="44" width="180" height="160" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="98" y="68" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">投稿・コメント作成</text>
+              <rect x="24" y="84" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="98" y="99" font-size="11" fill="#d62976" text-anchor="middle">外部呼び出し待ち</text>
+              <rect x="24" y="110" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="98" y="125" font-size="11" fill="#d62976" text-anchor="middle">外部呼び出し待ち</text>
+              <rect x="24" y="136" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="98" y="151" font-size="11" fill="#d62976" text-anchor="middle">外部呼び出し待ち</text>
+              <rect x="24" y="162" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="98" y="177" font-size="11" fill="#d62976" text-anchor="middle">外部呼び出し待ち</text>
+              <text x="98" y="196" font-size="14" fill="#d62976" text-anchor="middle">…</text>
+              <path d="M188 124 H 250" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#arA)"/>
+              <rect x="258" y="44" width="180" height="160" rx="6" fill="none" stroke="#18121d" stroke-width="2"/>
+              <text x="348" y="68" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">コネクションプール</text>
+              <rect x="274" y="84" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="348" y="99" font-size="11" fill="#d62976" text-anchor="middle">使用中</text>
+              <rect x="274" y="110" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="348" y="125" font-size="11" fill="#d62976" text-anchor="middle">使用中</text>
+              <rect x="274" y="136" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="348" y="151" font-size="11" fill="#d62976" text-anchor="middle">使用中</text>
+              <rect x="274" y="162" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="348" y="177" font-size="11" fill="#d62976" text-anchor="middle">使用中</text>
+              <text x="348" y="196" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">空きコネクション0本</text>
+              <path d="M438 124 H 500" fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arM)"/>
+              <rect x="508" y="44" width="200" height="160" rx="6" fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4"/>
+              <text x="608" y="68" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">関係のない他のリクエスト</text>
+              <rect x="524" y="84" width="168" height="20" rx="4" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
+              <text x="608" y="99" font-size="11" fill="#7b7186" text-anchor="middle">投票 — 待機</text>
+              <rect x="524" y="110" width="168" height="20" rx="4" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
+              <text x="608" y="125" font-size="11" fill="#7b7186" text-anchor="middle">フィード — 待機</text>
+              <rect x="524" y="136" width="168" height="20" rx="4" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
+              <text x="608" y="151" font-size="11" fill="#7b7186" text-anchor="middle">結果チャート — 待機</text>
+              <rect x="524" y="162" width="168" height="20" rx="4" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
+              <text x="608" y="177" font-size="11" fill="#7b7186" text-anchor="middle">プロフィール — 待機</text>
+              <text x="608" y="196" font-size="11" fill="#7b7186" text-anchor="middle">同じプールなので一緒に止まります</text>
+              <text x="8" y="236" font-size="15" fill="#3b3344">成長エンジンが<tspan font-weight="700" fill="#18121d">「結果チャートを共有すること」</tspan>なので、共有が跳ねる日がそのまま止まる日になります。</text>
+              <defs>
+                <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/></marker>
+                <marker id="arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d62976"/></marker>
+                <marker id="arM" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#7b7186"/></marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>書き込みリクエストがプールを使い切ると、書き込みとは何の関係もない投票・フィード・結果チャートも同じプールからコネクションを受け取るため一緒に止まります。</figcaption>
+        </figure>
+
+        <p>投票も、フィード参照も、結果チャート参照も<strong>同じコネクションプール</strong>から
+        コネクションを受け取ります。だから書き込み経路がプールを使い切るとサービス全体が一緒に遅くなります。</p>
+
+        <p>このアプリで特に痛かったのは<strong>タイミング</strong>でした。このサービスの成長エンジンが
+        「投票結果チャートを共有すること」なので、<strong>共有がよく跳ねる日がそのままサービスが止まる日</strong>
+        になります。</p>
+
+        <h2 id="なぜ直せない">なぜプーラーは B を直せないのですか?<a class="anchor" href="#なぜ直せない" aria-label="この節へのリンク">#</a></h2>
+
+        <p>ここがこの記事の本題です。</p>
+
+        <p>「アプリのコネクション数千本を DB のコネクション数十本にまとめてくれる」という説明は正しいです。
+        問題は<strong>いつまとまるのか</strong>であり、その答えはトランザクションプーリングの定義にすでに
+        入っています。</p>
+
+        <blockquote><p><strong>コネクションを再利用することは、トランザクションとトランザクションの
+        <em>間</em>でしか起きません。</strong>トランザクションが開いている間は、そのバックエンドコネクションが
+        そのクライアントに<strong>固定されます（pin）。</strong></p></blockquote>
+
+        <p>当然の話でもあります。トランザクションは状態であり、開いている途中で他のセッションに貸せば分離が
+        壊れるからです。</p>
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロール可能な図解">
@@ -142,14 +383,14 @@
               <title id="pool-t">トランザクションプーリングが畳める場合と畳めない場合</title>
               <desc id="pool-d">上段は短いトランザクションである。二つのクライアントが BEGIN と COMMIT の間だけバックエンド
               コネクションを使ってすぐ手放すので、プーラーはその合間に二つのクライアントを一本のバックエンドコネクションへ
-              交互に載せる。畳み比は2対1になる。下段はトランザクションの中で外部 HTTP 呼び出しを待つ場合である。
+              交互に載せる。比はアプリ2本に対してバックエンド1本になります。下段はトランザクションの中で外部 HTTP 呼び出しを待つ場合である。
               トランザクションが開いている間バックエンドコネクションはそのクライアントに固定され、その時間のほとんどは
-              クエリを一本も実行しない。もう一方のクライアントはその間待つだけなので畳み比は1対1になり、プーラーが
-              生み出せる利得はほとんどなくなる。</desc>
+              クエリを一本も実行しない。もう一方のクライアントはその間待つだけなので比が1対1になり、コネクションプーラーが
+              生み出せる利得はほとんどなくなります。</desc>
 
               <g font-size="15" fill="#7b7186">
-                <text x="8" y="34">短いトランザクション — 畳める</text>
-                <text x="8" y="196">トランザクションの中で待つ — 固定される</text>
+                <text x="8" y="34">短いトランザクション — 複数が1本を共有します</text>
+                <text x="8" y="196">トランザクションの中で待つ — 1本に固定されます</text>
               </g>
 
               <g font-size="14" fill="#3b3344">
@@ -177,7 +418,7 @@
               </g>
               <rect x="104" y="118" width="604" height="24" rx="4" fill="none" stroke="#3b3344" stroke-width="2"/>
               <text x="116" y="135" font-size="13" fill="#18121d">一本のバックエンドコネクションを A・B が交互に使う</text>
-              <text x="696" y="135" font-size="14" fill="#18121d" font-weight="700" text-anchor="end">畳み 2:1</text>
+              <text x="696" y="135" font-size="14" fill="#18121d" font-weight="700" text-anchor="end">アプリ 2 → DB 1</text>
 
               <!-- 下段: トランザクションを開いたまま待つとバックエンドが掴まれる -->
               <rect x="104" y="216" width="604" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
@@ -191,107 +432,186 @@
 
               <rect x="104" y="280" width="604" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="116" y="297" font-size="13" fill="#18121d">A に固定（pin）— トランザクションが開いている間ずっと</text>
-              <text x="696" y="297" font-size="14" fill="#d62976" font-weight="700" text-anchor="end">畳み 1:1</text>
+              <text x="696" y="297" font-size="14" fill="#d62976" font-weight="700" text-anchor="end">アプリ 1 → DB 1</text>
             </svg>
           </div>
-          <figcaption>短いトランザクションは合間に畳まれる。トランザクションを開いたまま外部呼び出しを待つと、バックエンドコネクションはそのクライアントに固定され、畳み比が 1:1 になってプーラーが生み出すはずの利得は消える。</figcaption>
+          <figcaption>上: 短いトランザクションならプーラーが二つのクライアントをバックエンドコネクション1本に交互に載せます。下: トランザクションを開いたまま外部呼び出しを待つと、そのコネクションが一つのクライアントに固定され、アプリのコネクション1本につき DB のコネクション1本になります。</figcaption>
         </figure>
 
-        <p>だからこうなる — <strong>トランザクションが10秒開いていればバックエンドコネクションも10秒固定され、
-        畳み比は 1:1 になり、プロキシの利得はゼロに近づく。</strong></p>
+        <p>だからこうなります。</p>
 
-        <p>プーラーは<strong>短いトランザクションが多いとき</strong>に価値を出す道具だ。B を患ったまま買えば金を
-        使っても何も良くならないが、もっと悪いのはその次である — <strong>「これで備えた」と信じてしまう。</strong>
-        その信念が次の点検を止める。</p>
+<pre><code>トランザクションが10秒開いている
+  → バックエンドコネクションも10秒固定される
+  → アプリのコネクション1本につき DB のコネクション1本
+  → プーラーがまとめるものがない</code></pre>
 
-        <h2 id="だから順序がある">だから順序がある<a class="anchor" href="#だから順序がある" aria-label="この節へのリンク">#</a></h2>
+        <p>コネクションプーラーは<strong>短いトランザクションが多いとき</strong>に価値を出す道具です。B を
+        患ったまま導入すればお金を使っても何も良くならないのですが、実はもっと悪いのはその次です —
+        <strong>「これで備えた」と信じてしまいます。</strong>その信念が次の点検を止めます。</p>
 
-        <p>解法は一つではなく層であり、層には順序がある。</p>
+        <h2 id="順序があります">だから順序があります<a class="anchor" href="#順序があります" aria-label="この節へのリンク">#</a></h2>
+
+        <p>解法は一つではなくいくつもの層であり、層には順序があります。</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると残りが見えます">
         <table>
           <caption class="sr-only">コネクション枯渇に対する五つの層の解法と、それぞれの性格。</caption>
-          <thead><tr><th scope="col">層</th><th scope="col">何を</th><th scope="col">性格</th></tr></thead>
+          <thead><tr><th scope="col">層</th><th scope="col">何を</th><th scope="col">どういう性格か</th></tr></thead>
           <tbody>
-            <tr><td>①</td><td><strong>トランザクションを短く</strong> — 外部呼び出しを外へ</td><td>唯一根本的。残り全部の前提</td></tr>
-            <tr><td>②</td><td>流入制御 — スレッド・プールの上限を意図的に</td><td>失敗を速く予測可能に</td></tr>
-            <tr><td>③</td><td>プーラー</td><td>①が終わって初めて効く</td></tr>
-            <tr><td>④</td><td>読み取り分離・キャッシュ</td><td>コネクションを<em>使わなく</em>する唯一の層</td></tr>
-            <tr><td>⑤</td><td>非同期オフロード（outbox）</td><td>リクエストあたりの DB 作業そのものを減らす</td></tr>
+            <tr><td>①</td><td><strong>トランザクションを短く</strong> — 外部呼び出しをトランザクションの外へ</td><td>唯一根本的です。残り全部の前提です</td></tr>
+            <tr><td>②</td><td>流入制御 — 同時処理の上限を意図的に決める</td><td>失敗を速く予測可能にします</td></tr>
+            <tr><td>③</td><td>コネクションプーラー</td><td>①が終わってはじめて効きます</td></tr>
+            <tr><td>④</td><td>読み取り分離・キャッシュ</td><td>コネクションを<em>使わなく</em>する唯一の層です</td></tr>
+            <tr><td>⑤</td><td>非同期オフロード（outbox）</td><td>リクエストあたりの DB 作業そのものを減らします</td></tr>
           </tbody>
         </table>
         </div>
         </div>
 
-        <p>だから<strong>コードから直した。</strong>外部モデレーション呼び出しをトランザクションの外に出す作業を
-        書き込み経路三か所に施した。そのうち一つはもっと悪かった — 投票添付の経路は <code>for update</code> で
-        <strong>行までロックしたまま</strong>外部呼び出しをしていた。コネクションと行ロック、<strong>二つの資源</strong>
-        を同時に握っていたのである。記事とコメントの二経路を先に直し、投票添付は検閲の入力が<em>ロックした行から</em>
-        出てくるため staleness の再確認が必要で、<strong>意図的に後回しにして四日後に直した。</strong></p>
+        <p>コネクションプーラーは③です。①をやらずに③から行くと効かない、というのが前の節の内容でした。</p>
 
-        <p>結論を一行で書けばこうだ。<strong>コード修正はプーラーの代替ではなく前提条件だった。</strong>
-        直してみて初めて、プーラーが価値を出せる状態になった。</p>
+        <h2 id="コードから">コードから直しました<a class="anchor" href="#コードから" aria-label="この節へのリンク">#</a></h2>
 
-        <h2 id="誰も選んでいない二つの数字">誰も選んでいない二つの数字<a class="anchor" href="#誰も選んでいない二つの数字" aria-label="この節へのリンク">#</a></h2>
+        <p>そこで①からやりました。トランザクションの境界を<strong>書き込みの区間まで狭める</strong>作業です。
+        Spring では <code>@Transactional</code> はプロキシベースなので、同じクラスの中で自分のメソッドを呼ぶと
+        掛かりません。そこで、すでにコードベースにあった <code>TransactionTemplate</code> のパターンを
+        そのまま再利用しました。新しい仕組みを持ち込まなかった点が重要です。</p>
 
-        <p>②に罠が一つある。<strong>ブロッキング JDBC ではコネクションプールが事実上の同時実行上限だ。</strong>
-        スレッドがいくら多くてもコネクションを受け取れなければ仕事はできない。</p>
+<pre><code>// 修正後 — メソッドに @Transactional がありません
+fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentResponse {
+    // ① 検証（読み取り。それぞれ短くコネクションを使って返します）
+    val user = activeUserGuard.requireActive(userId)
+    val postWithAuthor = postQueryRepository.findActiveById(postId) ?: throw ...
 
-        <p>このサービスは Tomcat のスレッドが<strong>デフォルトの200</strong>で、コネクションプールは
-        <strong>設定が一行もなかった</strong> — フレームワークのデフォルトがそのままサービスの容量だった。すると
-        残りのリクエストはコネクションを待ってタイムアウト後に失敗する。<strong>方向は正しい</strong> —
-        速く失敗してこそ残りが生きる。問題は別のところにあった。</p>
+    // ② 外部呼び出し — トランザクションの外です。ここで10秒使ってもコネクションを掴みません
+    moderationGate.screenComment(body)
 
-        <p><strong>二つの値はどちらも誰かが選んだものではなかった。</strong>どちらもフレームワークのデフォルトで、
-        悪いのは数字そのものではなく<strong>その数字がどこにも書かれていないこと</strong>だった。流入制御とは上限を
-        置くことではなく<strong>その上限を意図して決めること</strong>であり、デフォルト二つが作り出した同時実行
-        ポリシーはポリシーではない。</p>
+    // ③ 書き込みだけを原子的にまとめます
+    val written = writeTx.execute {
+        val identity = postAliasRepository.ensureIdentity(...)
+        val comment = commentRepository.insert(...)
+        Triple(comment, identity?.alias, ...)
+    }!!
+}</code></pre>
 
-        <h2 id="プーラーが効くコードかを先に確認した">プーラーが効くコードかを先に確認した<a class="anchor" href="#プーラーが効くコードかを先に確認した" aria-label="この節へのリンク">#</a></h2>
+        <p>ここで<em>「トランザクションを割ったら競合が増えませんか?」</em>という質問が出そうですが、
+        <strong>競合の窓は広がっていません。</strong>修正前もモデレーション呼び出しが読み取りと書き込みの
+        <em>間</em>にあり、その経路は投稿の行にロックを掛けていなかったからです(<code>for update</code> が
+        ありませんでした)。トランザクションの中にあるからといって他のセッションの変更を防いでくれるわけでは
+        ありません。読み取りから書き込みまでの距離は<strong>同じです。</strong></p>
 
-        <p>③に進む前に確認することがもう一つある。トランザクションプーリングには<strong>ピン（pin）を誘発する
-        パターン</strong>があり、それがあるとプーラーは無力になる。</p>
+        <p>同じ作業を書き込み経路三か所（投稿・コメント・投票添付）に施しました。そのうち一つは状態がもっと
+        悪く、投票添付の経路は <code>for update</code> で<strong>行までロックしたまま</strong>外部呼び出しを
+        していました。コネクションと行ロック、<strong>二つの資源</strong>を同時に握っていたのです。</p>
+
+        <p>投稿とコメントの二経路を先に直し、投票添付は検閲に入れる入力が<em>ロックした行から</em>出てくるため
+        staleness（値が古くなっていないか）の再確認が必要で、<strong>意図的に後回しにして四日後に直しました。</strong></p>
+
+        <p>結論を一行で書けばこうです。<strong>コード修正はコネクションプーラーの代替ではなく前提条件でした。</strong>
+        直してみてはじめて、プーラーが価値を出せる状態になりました。</p>
+
+        <h2 id="二つの数字">誰も選んでいない二つの数字<a class="anchor" href="#二つの数字" aria-label="この節へのリンク">#</a></h2>
+
+        <p>②（流入制御）にも罠が一つありました。<strong>ブロッキング JDBC ではコネクションプールが事実上の
+        同時実行上限</strong>です。スレッドがいくら多くてもコネクションを受け取れなければ仕事ができません。</p>
+
+        <p>ところが設定を開いてみるとこうでした。</p>
+
+<pre><code># application.yml — 発見当時
+spring:
+  datasource:
+    url: ${DB_URL:...}
+    username: ${DB_USER:...}
+    password: ${DB_PASSWORD:...}
+    # 以上。hikari ブロック自体がありません</code></pre>
+
+        <p>Tomcat のスレッドは<strong>デフォルトの200</strong>、コネクションプールは<strong>設定が一行も
+        なくて</strong>Spring Boot のデフォルトがそのままサービスの容量になっていました。こうなると残りの
+        リクエストはコネクションを待ってタイムアウト後に失敗します。</p>
+
+        <p><strong>方向自体は正しいです。</strong>速く失敗してこそ残りが生きます。問題は別のところに
+        ありました — <strong>二つの値はどちらも誰かが選んだものではなかった</strong>のです。どちらも
+        フレームワークのデフォルトで、悪いのは数字そのものではなく<strong>その数字がどこにも書かれていない
+        こと</strong>でした。</p>
+
+        <p>そこで明記しました。</p>
+
+<pre><code>hikari:
+  maximum-pool-size: ${DB_POOL_MAX:20}
+  connection-timeout: ${DB_POOL_TIMEOUT_MS:5000}   # 30秒のデフォルトは長すぎます — 速く失敗してこそ残りが生きます
+  max-lifetime: ${DB_POOL_MAX_LIFETIME_MS:1200000}</code></pre>
+
+        <p>ただし<strong>プールを大きくしたのは修理ではなく緩和</strong>です。そして大きくするにも上限が
+        あります。</p>
+
+<pre><code>プールサイズ × 最大インスタンス数 ≤ DB コネクション上限</code></pre>
+
+        <p>アプリは自分のインスタンスが何台なのかを知らないので、この不変式を<strong>コードで強制できません。</strong>
+        IaC のコメントが唯一の防御なので、そこに書き留めておきました。</p>
+
+        <p>流入制御とは上限を<em>置く</em>ことではなく<strong>その上限を意図的に決めること</strong>です。
+        デフォルト二つが作り出した同時実行ポリシーはポリシーではありません。</p>
+
+        <h2 id="使えるコードか">プーラーが使えるコードかを先に確認しました<a class="anchor" href="#使えるコードか" aria-label="この節へのリンク">#</a></h2>
+
+        <p>③に進む前に確認することがもう一つありました。トランザクションプーリングには
+        <strong>ピン（pin）を誘発するパターン</strong>があり、コードにそれがあるとコネクションプーラーが
+        無力になります。ピンが掛かると、そのコネクションはトランザクションが終わってもそのクライアントに
+        固定されたままになります。</p>
 
         <ul>
-          <li>セッションスコープの advisory lock（<code>pg_advisory_lock</code>）</li>
+          <li>セッションスコープの advisory lock (<code>pg_advisory_lock</code>)</li>
           <li>一時テーブル</li>
           <li><code>SET</code> · <code>set search_path</code></li>
-          <li>サーバサイドのプリペアドステートメント（プーラーとバージョンによる）</li>
+          <li>サーバサイドのプリペアドステートメント（プーラーとバージョンによって異なります）</li>
         </ul>
 
-        <p>四つともなかった。advisory lock は三か所で使っているが<strong>すべて <code>xact</code> スコープ</strong>
-        だった — トランザクション終了時に自動で解放されるので、トランザクションプーリングにそのまま載る。</p>
+        <p>直接確認してみました。</p>
 
-        <p>この三つが <code>xact</code> スコープだったのが意図なのか偶然なのかは、記録からは判定できない。確かな
-        のは<strong>セッションスコープのロックを一か所でも使っていれば、その経路がプーラーを無力化していた</strong>
-        はずで、その事実はプーラーを導入した後にしか分からなかっただろう、ということだ。<strong>道具を買う前に、その道具がこのコードで働くかを先に見る手続き</strong>が、
-        この点検で得たもののうち最も再利用可能な部分である。</p>
+<pre><code>$ grep -rn "pg_advisory_lock" src/main/kotlin/      # (なし)
+$ grep -rn "advisory_xact" src/main/kotlin/
+ReportRepository.kt      pg_advisory_xact_lock(...)
+AuthAuditPurge.kt        pg_try_advisory_xact_lock(...)
+VoteRepository.kt        pg_advisory_xact_lock(...)</code></pre>
 
-        <h2 id="スレッドとコネクションは別の資源">スレッドとコネクションは別の資源だ<a class="anchor" href="#スレッドとコネクションは別の資源" aria-label="この節へのリンク">#</a></h2>
+        <p>四つともありませんでした。advisory lock は三か所で使っていますが<strong>すべて
+        <code>xact</code> スコープ</strong>でした。トランザクションが終わるときに自動で解放されるので、
+        トランザクションプーリングにそのまま載ります。</p>
 
-        <p>ここでよく出てくる処方がもう一つある — <em>非同期にすればいいのでは。</em></p>
+        <p>この三つが <code>xact</code> スコープだったのが意図なのか偶然なのかは、記録からは判定できません。
+        確かなのは<strong>セッションスコープのロックを一か所でも使っていれば、その経路がコネクションプーラーを
+        無力化していた</strong>はずで、その事実は導入した後にしか分からなかっただろう、ということです。</p>
 
-        <p>WebFlux やコルーチンに変えれば<strong>スレッドは</strong>節約できる。ところが<strong>コネクションは
-        そのまま握る。</strong>JDBC はブロッキングであり、トランザクションが開いている限りコネクションは返却
-        されない。</p>
+        <p><strong>道具を導入する前に、その道具がこのコードで実際に動くのかを先に確認する手続き。</strong>
+        この点検で得たもののうち、他のプロジェクトへ最もよく持ち出せる部分がこれでした。</p>
 
-        <p>問題の軸がコネクションなのにスレッドを節約する処方を持ってくると<strong>軸がずれる。</strong>
-        R2DBC なら話は別だが、それはデータアクセス層の全面書き換えである。</p>
+        <h2 id="非同期にすれば">「非同期にすればいいのでは?」<a class="anchor" href="#非同期にすれば" aria-label="この節へのリンク">#</a></h2>
 
-        <p>プールを大きくする処方も同種だ。緩和にはなるが修理ではなく、
-        <code>プールサイズ × インスタンス数 ≤ DB コネクション上限</code>に先に引っかかる。そして根本原因 —
-        遅い外部呼び出しがコネクションを握る — はそのまま残る。</p>
+        <p>この話をするとよく出てくる処方がもう一つあります。</p>
 
-        <h2 id="ガードを結果ではなく原因に置いた">ガードを結果ではなく原因に置いた<a class="anchor" href="#ガードを結果ではなく原因に置いた" aria-label="この節へのリンク">#</a></h2>
+        <p>WebFlux やコルーチンに変えれば<strong>スレッドは</strong>節約できます。ところが
+        <strong>コネクションはそのまま掴みます。</strong>JDBC はブロッキングであり、トランザクションが開いて
+        いる限りコネクションは返却されないからです。</p>
 
-        <p>この修正には固有の脆さがある。<strong><code>@Transactional</code> 一行で元に戻る。</strong>
-        しかも戻しても<strong>機能は正常だ</strong> — テストも通るし画面も問題ない。症状は負荷がかかる日にしか
-        出ない。</p>
+        <p><strong>スレッドとコネクションは別の資源です。</strong>問題の軸がコネクションなのにスレッドを
+        節約する処方を持ってくると軸がずれます。R2DBC なら話は別ですが、それはデータアクセス層の全面
+        書き換えです。</p>
 
-        <p>だから回帰防御を<strong>結果ではなく原因</strong>に置いた。外部クライアントの位置に spy を座らせ、
-        <strong>呼び出しが起きるその時点でトランザクションが活性かどうか</strong>を断言する。</p>
+        <p>プールを大きくする処方も同種です。緩和にはなりますが修理ではなく、先ほどの
+        <code>プールサイズ × インスタンス数 ≤ DB コネクション上限</code>に先に引っかかります。そして根本原因 —
+        遅い外部呼び出しがコネクションを握る — はそのまま残ります。</p>
+
+        <h2 id="ガード">戻しやすい修正なので、ガードを原因に置きました<a class="anchor" href="#ガード" aria-label="この節へのリンク">#</a></h2>
+
+        <p>この修正には固有の脆さがあります。<strong><code>@Transactional</code> 一行で元に戻ります。</strong>
+        しかも戻しても<strong>機能は正常です</strong> — テストも通りますし画面も問題ありません。症状は負荷が
+        かかる日にしか出ません。</p>
+
+        <p>「コネクションを長く握らない」ということは直接観測しにくいです。そこで結果の代わりに
+        <strong>原因</strong>を表明しました。実際の HTTP クライアントが座るインターフェースの位置に spy を
+        置き、<strong>呼び出しが起きるその時点でトランザクションが活性かどうか</strong>を記録します。</p>
 
 <pre><code>class TransactionProbe : ContentModerationApi {
     val sawTransaction = mutableListOf&lt;Boolean&gt;()
@@ -300,44 +620,70 @@
     }
 }
 
+// 表明
 assertThat(probe.sawTransaction).isNotEmpty()         // ① 呼び出しが実際に起きたか
 assertThat(probe.sawTransaction).containsOnly(false)  // ② その呼び出しはトランザクションの外だったか</code></pre>
 
-        <p>①がなければ②は<strong>空虚に通過する。</strong>ゲートが丸ごと抜けて呼び出しが0件なら、
-        <code>containsOnly</code> は空リストに対して真だからだ。否定の表明には必ず
-        <strong>「空でない場合」を添える。</strong></p>
+        <p>①がなければ②は<strong>空虚に通過します。</strong>ゲートが丸ごと抜けて呼び出しが0件なら、
+        <code>containsOnly</code> は空リストに対して真だからです。<strong>「〜ではない」を検査する表明には、
+        必ず「呼び出しがあったのか」を添えなければなりません。</strong></p>
 
-        <p>このガードは「応答が速いか」を問わない。<strong>「外部呼び出しがトランザクションの中にあるか」</strong>
-        を問う。それが実際の原因であり、巻き戻しが起きる場所だ。</p>
+        <p>そしてこのガードが本当に狙えているかは<strong>ミューテーション</strong>で確認しました。コードを
+        わざと戻しておいてテストを走らせ、赤信号が出るかを見る方法です。</p>
 
-        <p>そしてガードが本当に狙えているかはミューテーションで確認した — <code>@Transactional</code> を戻して
-        実際に走らせた。記事とコメントの経路では<strong>該当のガードだけ</strong>が red になった。投票添付の経路は
-        違った — <strong>ミューテーションが最初はグリーンだった。</strong>staleness ガードが狙う条件がテストの中で
-        作られていなかったためで、spy の <code>onScreen</code> フックで検閲の区間に行を変えて条件を作ってはじめて
-        red を見た。</p>
+<pre><code># コメント経路に @Transactional を復元
+ModerationOutsideTransactionTest > the moderation call does not hold a database transaction() FAILED
 
-        <p>ここで学んだことがこの記事で最も持ち出せるものだ。<strong>ミューテーションがグリーンならコードが安全
-        なのではなく、ガードが狙っていないのである。</strong></p>
+# 投稿経路に @Transactional を復元
+ModerationOutsideTransactionTest > creating a post also screens outside a transaction() FAILED</code></pre>
 
-        <h2 id="この記事が主張しないこと">この記事が主張しないこと<a class="anchor" href="#この記事が主張しないこと" aria-label="この節へのリンク">#</a></h2>
+        <p>投稿とコメントの経路では<strong>該当のガードだけ</strong>が赤信号になりました。ところが投票添付の
+        経路は違いました — <strong>ミューテーションが最初はグリーンでした。</strong>staleness ガードが狙う
+        条件がテストの中で作られていなかったためで、spy の <code>onScreen</code> フックで検閲の区間に行を
+        変えて条件を作ってはじめて赤信号を見ました。</p>
+
+        <p>ここで学んだことがこの記事で一番持ち出せるものです。
+        <strong>ミューテーションがグリーンならコードが安全なのではなく、ガードが狙っていないのです。</strong></p>
+
+        <h2 id="主張しないこと">この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="この節へのリンク">#</a></h2>
 
         <ul>
-          <li><strong>性能数値はない。</strong>負荷試験をしておらず、「何倍速くなった」と言う根拠がない。
-          変わったのは<strong>コードの性質</strong> — トランザクションが外部呼び出しを待たなくなったこと — であり、
-          それが遅延やスループットでいくらになるかは測っていない。</li>
-          <li><strong>「最大10秒」は設定値だ。</strong>外部呼び出しにかけた read timeout であって、リクエスト
-          ごとに実際にそれだけ占有したと測定した値ではない。</li>
-          <li><strong>障害が起きたことはない。</strong>リリース前の構造点検から出たものであり、この経路が実際に
-          枯れるのを観測した記録はない。</li>
-          <li><strong>プーラーが無用だという主張ではない。</strong>A 型の枯渇にはまさに正しい道具だ。この記事が
-          言っているのは<strong>B を患った状態では畳み比が 1:1 なので価値を出せない</strong>ということだけである。</li>
-          <li><strong>ベンダー別のコネクション上限の数値は書いていない。</strong>確認していない値だからだ。</li>
-          <li><strong>ピン誘発パターンの一覧は完全でないかもしれない。</strong>プーラーとバージョンによって
-          異なり、ここで確認したのはこのコードにその四つがないということだけである。</li>
+          <li><strong>性能数値がありません。</strong>負荷試験をしておらず、「何倍速くなった」と言う根拠が
+          ありません。変わったのは<strong>コードの性質</strong>（トランザクションが外部呼び出しを待たなくなった
+          こと）であり、それが遅延やスループットでいくらになるかは測っていません。</li>
+          <li><strong>「最大10秒」は設定値です。</strong>外部呼び出しに掛けた read timeout であって、
+          リクエストごとに実際にそれだけ占有したと測定した値ではありません。</li>
+          <li><strong>障害が起きたことはありません。</strong>リリース前の構造点検から出たものであり、この経路が
+          実際に枯渇するのを観測した記録はありません。</li>
+          <li><strong>コネクションプーラーが無用だという話ではありません。</strong>A 型の枯渇にはまさに正しい
+          道具です。この記事が言っているのは<strong>B を患った状態ではアプリのコネクション1本につき DB の
+          コネクション1本になり、価値を出せない</strong>ということだけです。</li>
+          <li><strong>ベンダー別のコネクション上限の数値は書いていません。</strong>確認していない値です。</li>
+          <li><strong>ピン誘発パターンの一覧は完全でないかもしれません。</strong>プーラーとバージョンによって
+          異なり、ここで確認したのはこのコードにその四つがないということだけです。</li>
         </ul>
 
-        <p>残る一行はこれだ。<strong>症状が同じでも原因は同じではなく、道具は原因一つにしか合わない。</strong>
-        そして誤って選んだ道具の本当の代償は金ではなく、<strong>備えたという信念</strong>である。</p>
+        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="この節へのリンク">#</a></h2>
+
+        <p>まとめるとこうです。</p>
+
+        <ul>
+          <li>コネクション枯渇の原因は<strong>本数</strong>と<strong>占有時間</strong>の二つで、症状が同じなので
+          紛らわしいです。</li>
+          <li>コネクションプーラーは本数の問題を直す道具です。占有時間の問題ではアプリのコネクション1本につき
+          DB のコネクション1本になり、まとめるものがありません。これは製品の限界ではなく
+          <strong>トランザクションプーリングという方式の定義</strong>から出てきます。</li>
+          <li>だから順序があります。<strong>トランザクションを短くすることが残り全部の前提</strong>です。</li>
+          <li>道具を導入する前に<strong>このコードでその道具が動くのか</strong>を確認する手続きを入れれば、
+          導入してから知ることになる事実を先に知ることができます。</li>
+        </ul>
+
+        <p>最後に一行だけ残すならこれです。<strong>症状が同じでも原因が同じとは限らず、道具は原因一つにしか
+        合いません。</strong>そして誤って選んだ道具の本当の代償はお金ではなく、
+        <strong>「これで備えた」という信念</strong>です。</p>
+
+        <p>お読みいただきありがとうございました。</p>
+
 
       </article>
     </main>
