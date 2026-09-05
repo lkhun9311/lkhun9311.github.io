@@ -1342,11 +1342,18 @@ footer a:hover {
   padding: 44px 32px 78px;
 }
 
-/* 섹션 인덱스는 레일이 바깥으로 나간 만큼 가운데를 넓게 쓴다.
-   상단 바(--topbar 1160px)보다 넓다 — 목록 페이지는 카드가 주인공이라 상단 바의 폭에 맞출
-   이유가 없고, 좁혀 두면 넓은 화면에서 양옆이 통째로 비어 버린다. 1920px 에서 카드 열은
-   316px 에서 시작해 로고(412px)보다 왼쪽까지 나간다. */
-.container.browse { --page-w: 1720px; }
+/* 섹션 인덱스는 **홈과 같은 자리에 같은 폭으로** 선다.
+   홈 → Notes 로 넘어갈 때 본문의 왼쪽 모서리가 움직이면 페이지가 바뀐 게 아니라 레이아웃이
+   바뀐 것처럼 읽힌다.
+
+   1100 으로 되돌리면 안 된다 — 레일이 260px(216+44)을 먼저 먹기 때문에 카드가 홈보다
+   오른쪽에서 시작한다. 결과 열이 홈 본문과 같아지려면 레일 폭만큼 더 넓어야 한다:
+
+       결과 열 = 폭 - 좌우 여백 64 - 레일 260  →  1360 - 64 - 260 = 1036 = 홈 본문 폭
+
+   이때 미는 거리가 상한(130 = 레일의 절반)에 딱 걸려서 왼쪽 모서리도 홈과 같아진다.
+   화면이 1668px 보다 좁으면 여백이 모자라 미는 거리가 줄고, 그만큼 오른쪽으로 밀린다. */
+.container.browse { --page-w: 1360px; }
 
 .page-hero {
   margin-bottom: 38px;
@@ -2151,8 +2158,14 @@ body {
    The shared 1100px container held a 760px article body flush left, so a post had 32px of margin on one side
    and roughly 300px on the other, and the title stretched far past the text under it. One column, centred,
    with the hero and the body sharing the same edges. */
+/* 읽기 페이지도 홈과 같은 자리·같은 폭에 선다. 목차 레일(222 + 간격 92 = 314)이 오른쪽을
+   먹으므로 홈보다 그만큼 넓어야 본문 열이 홈 본문과 같아진다:
+
+       본문 열 = 폭 - 좌우 여백 64 - 목차 314  →  1414 - 64 - 314 = 1036 = 홈 본문 폭
+
+   이때 미는 거리가 상한(157 = 목차의 절반)에 딱 걸려 왼쪽 모서리도 홈과 같아진다. */
 .container.reading {
-  --page-w: 1520px;
+  --page-w: 1414px;
 }
 
 /* One width for everything.
