@@ -313,12 +313,19 @@
     );
   }
 
+  /* 섹션 인덱스는 **행**으로 그린다.
+     카드 격자였을 때는 열세 장이 전부 같은 무게로 서 있고 카드마다 요약이 네댓 줄이라
+     "먼저 읽을 것"이 보이지 않았다. 행으로 바꾸면 제목이 왼쪽 한 줄로 정렬돼 훑는 축이 하나가
+     되고, 요약을 한 줄로 자르면 행 높이가 균일해져 눈이 흔들리지 않는다. 테두리도 사라진다.
+     날짜·배지는 왼쪽 칸에 따로 두어 제목 줄을 밀어내지 않게 한다. */
   function cardArticle(it) {
     return (
-      '<a class="article-card" href="' + BASE + esc(it.url) + '">' +
-      '<div class="date notranslate">' + esc(it.dateLabel) + "</div>" + sourceTag(it) +
-      '<h2 class="notranslate">' + esc(it.title) + "</h2>" +
-      "<p>" + esc(it.desc) + "</p></a>"
+      '<a class="entry-row" href="' + BASE + esc(it.url) + '">' +
+      '<div class="entry-meta"><span class="notranslate">' + esc(it.dateLabel) + "</span>" +
+      sourceTag(it) + "</div>" +
+      '<div class="entry-main">' +
+      '<h2 class="entry-title notranslate">' + esc(it.title) + "</h2>" +
+      '<p class="entry-desc">' + esc(it.desc) + "</p></div></a>"
     );
   }
 
