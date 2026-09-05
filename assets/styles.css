@@ -1336,11 +1336,18 @@ footer a:hover {
   text-decoration: none;
 }
 
+/* 페이지 폭은 변수 하나로 둔다. 레일을 바깥으로 미는 거리(--rail-shift · --toc-shift)가
+   이 값을 그대로 읽으므로, 폭을 넓히면 미는 계산도 같이 따라온다 — 두 숫자가 따로 놀면
+   넓은 화면에서만 가로 스크롤이 생기는데 그건 좁은 창에서는 안 보인다. */
 .container {
-  max-width: 1100px;
+  --page-w: 1100px;
+  max-width: var(--page-w);
   margin: 0 auto;
   padding: 44px 32px 78px;
 }
+
+/* 섹션 인덱스는 레일이 바깥으로 나간 만큼 가운데를 넓게 쓴다. */
+.container.browse { --page-w: 1340px; }
 
 .page-hero {
   margin-bottom: 38px;
@@ -1401,9 +1408,11 @@ footer a:hover {
   font-size: 1.12rem;
 }
 
+/* 320px 이면 넓어진 가운데 열에 세 칸이 들어가는데, 그 폭에서는 카드 제목이 매번 두세 줄로
+   접힌다. 최소 폭을 올려 두 칸 넓게 쓰는 쪽을 고른다 — 칸 수보다 한 칸의 읽기 폭이 먼저다. */
 .article-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   gap: 18px;
 }
 
@@ -2098,7 +2107,7 @@ body {
    and roughly 300px on the other, and the title stretched far past the text under it. One column, centred,
    with the hero and the body sharing the same edges. */
 .container.reading {
-  max-width: 1400px;
+  --page-w: 1520px;
 }
 
 /* One width for everything.
@@ -2176,7 +2185,7 @@ body {
 
      섹션 인덱스의 `--rail-shift` 와 같은 방식이다. 민 거리는 실제로 남는 여백만큼만이라,
      여백이 없으면 0 이 되어 예전 배치로 돌아간다. */
-  .container.reading { --toc-shift: clamp(0px, (100vw - 1400px) / 2 - 24px, 157px); }
+  .container.reading { --toc-shift: clamp(0px, (100vw - var(--page-w)) / 2 - 24px, 157px); }
 
   .container.reading .page-hero,
   .container.reading .article-body {
@@ -2649,7 +2658,7 @@ html[lang="ja"] .article-toc {
    민 거리는 **실제로 남는 여백만큼만**이다. 여백이 없으면 0 이 되어 예전 배치로 돌아간다 —
    좁은 화면에서 레일이 화면 밖으로 나가거나 가로 스크롤이 생기지 않게 하려는 것이다.
    24px 은 스크롤바 폭(100vw 는 스크롤바를 포함한다)과 최소 숨 쉴 틈을 합친 여유다. */
-.container.browse { --rail-shift: clamp(0px, (100vw - 1100px) / 2 - 24px, 130px); }
+.container.browse { --rail-shift: clamp(0px, (100vw - var(--page-w)) / 2 - 24px, 130px); }
 
 /* 레일이 숨은 섹션(News)에서는 밀지 않는다 — 밀 대상이 없다. */
 .container.browse.no-facets { --rail-shift: 0px; }
