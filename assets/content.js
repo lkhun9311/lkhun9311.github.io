@@ -62,10 +62,10 @@
           tags: ["Privacy", "Security", "Method"]
         },
         {
-          title: "A Pooler Fixes Only One of the Two Exhaustions",
+          title: "I Thought Adding RDS Proxy Would Fix It",
           url: "writing/a-pooler-fixes-only-one.html",
           date: "2026-09", dateLabel: "Sep 2026",
-          desc: "Connection exhaustion has two causes behind one symptom: too many connections, and connections held too long. Transaction pooling folds only between transactions, so a pooler cannot touch the second. Also in Korean and Japanese.",
+          desc: "An external moderation call was sitting inside the transaction of a social polling app. Connection exhaustion has two causes behind one symptom, and a pooler fixes only one of them \u2014 which follows from the definition of transaction pooling, not from any vendor document. Also in Korean and Japanese.",
           tags: ["Postgres", "Backend", "Method"]
         },
         {
