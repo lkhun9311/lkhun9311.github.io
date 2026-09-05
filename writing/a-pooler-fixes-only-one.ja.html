@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="トランザクションの中で外部 API を呼び出していました | Kwanghun Lee" />
-  <meta property="og:description" content="リリース前のソーシャル投票アプリを点検していて、コネクションプーラーを前に立てようとしました。ところがコネクション枯渇には原因が二つあり、プーラーはそのうち一つしか直しません。なぜ直せないのかは製品ドキュメントではなくトランザクションプーリングの定義から出てきます。" />
+  <meta property="og:description" content="リリース前のソーシャル投票プラットフォームを点検していて、コネクションプーラーを前に立てようとしました。ところがコネクション枯渇には原因が二つあり、プーラーはそのうち一つしか直しません。なぜ直せないのかは製品ドキュメントではなくトランザクションプーリングの定義から出てきます。" />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -29,7 +29,7 @@
   <meta name="twitter:title" content="トランザクションの中で外部 API を呼び出していました | Kwanghun Lee" />
   <meta name="twitter:description" content="コネクション枯渇の原因は二つです。プーラーはそのうち一つを直し、もう一つには構造的に効きません。" />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="リリース前のソーシャル投票アプリを点検していて、コネクションプーラーを前に立てようとしました。ところがコネクション枯渇には原因が二つあり、プーラーはそのうち一つしか直しません。なぜ直せないのかは製品ドキュメントではなくトランザクションプーリングの定義から出てきます。" />
+  <meta name="description" content="リリース前のソーシャル投票プラットフォームを点検していて、コネクションプーラーを前に立てようとしました。ところがコネクション枯渇には原因が二つあり、プーラーはそのうち一つしか直しません。なぜ直せないのかは製品ドキュメントではなくトランザクションプーリングの定義から出てきます。" />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
 </head>
@@ -69,12 +69,12 @@
     <main>
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ</a>
-        <h1>トランザクションの中で外部 API を呼び出していました<br><span class="h1-sub">リリース前のソーシャル投票アプリ点検 — RDS Proxy では直せないコネクション枯渇</span></h1>
-        <div class="article-meta"><span class="source-tag side notranslate">サイドプロジェクト</span>Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">16分</span></div>
+        <h1>トランザクションの中で外部 API を呼び出していました<br><span class="h1-sub">リリース前のソーシャル投票プラットフォーム点検 — RDS Proxy では直せないコネクション枯渇</span></h1>
+        <div class="article-meta"><span class="source-tag commercial notranslate">事業化プロジェクト</span>Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">16分</span></div>
       </section>
       <article class="article-body">
 
-        <p>個人プロジェクトでソーシャル投票アプリを作っています。リリース前にアーキテクチャを点検していて、
+        <p><strong>ソーシャル投票プラットフォーム</strong>を作っています。リリース前にアーキテクチャを点検していて、
         <em>「トラフィックが増えれば DB コネクションが足りなくなるだろうから、コネクションプーラーを一つ前に
         立てればいいのでは」</em>という、ごくありふれた仮説から出発しました。結論は
         <strong>「このコードベースでは否」</strong>でした。</p>
@@ -125,7 +125,7 @@
 
         <p><strong>コードは非公開リポジトリにあります。</strong>まだリリース前なのでリポジトリを
         公開していません。そのため各節には GitHub リンクではなく<strong>ファイルパスとシンボル名</strong>を
-        書いています。パッケージ名は元の記録ですでに匿名化されているものをそのまま使っています。</p>
+        書いています。パッケージ名と環境変数名は元の記録ですでに匿名化されているものをそのまま使っています。</p>
 
         <p><strong>⚠️ 先にお伝えすることがあります。</strong>この記事には<strong>負荷試験で測った数値が
         ありません。</strong>障害が起きたこともありません。以下に出てくる「最大10秒」は外部呼び出しに
@@ -135,7 +135,7 @@
 
         <h2 id="どんなサービス">どんなサービスですか?<a class="anchor" href="#どんなサービス" aria-label="この節へのリンク">#</a></h2>
 
-        <p>個人プロジェクトで作っている<strong>ソーシャル投票アプリ</strong>です。ユーザーが質問を投稿すると
+        <p>事業化を目標に作っている<strong>ソーシャル投票プラットフォーム</strong>です。ユーザーが質問を投稿すると
         他の人が投票し、その結果チャートをアプリの外へ共有するサービスです。Kotlin と Spring Boot で作った
         単一のモノリスで、データベースはマネージド PostgreSQL を一つ使っています。まだリリース前です。</p>
 
@@ -184,7 +184,7 @@
         呼び出します。そしてこの呼び出しには read timeout が<strong>10秒</strong>で設定されています。</p>
 
 <pre data-lang="yaml"><code># application.yml
-read-timeout: ${OXY_HTTP_READ_TIMEOUT:10s}</code></pre>
+read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
 
         <p>この数字を覚えておいてください。この記事の残りは全部ここから出てきます。</p>
 

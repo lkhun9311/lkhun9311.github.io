@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="트랜잭션 안에서 외부 API를 호출하고 있었습니다 | Kwanghun Lee" />
-  <meta property="og:description" content="출시 전 소셜 투표 앱을 점검하다가 커넥션 풀러를 붙이려고 했습니다. 그런데 커넥션 고갈에는 원인이 두 가지 있고, 커넥션 풀러는 그중 하나만 고칩니다. 왜 못 고치는지는 제품 문서가 아니라 트랜잭션 풀링의 정의에서 나옵니다." />
+  <meta property="og:description" content="출시 전 소셜 투표 플랫폼을 점검하다가 커넥션 풀러를 붙이려고 했습니다. 그런데 커넥션 고갈에는 원인이 두 가지 있고, 커넥션 풀러는 그중 하나만 고칩니다. 왜 못 고치는지는 제품 문서가 아니라 트랜잭션 풀링의 정의에서 나옵니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -29,7 +29,7 @@
   <meta name="twitter:title" content="트랜잭션 안에서 외부 API를 호출하고 있었습니다 | Kwanghun Lee" />
   <meta name="twitter:description" content="커넥션 고갈의 원인은 두 가지입니다. 커넥션 풀러는 그중 하나만 고치고, 나머지 하나에는 구조적으로 효과가 없습니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="출시 전 소셜 투표 앱을 점검하다가 커넥션 풀러를 붙이려고 했습니다. 그런데 커넥션 고갈에는 원인이 두 가지 있고, 커넥션 풀러는 그중 하나만 고칩니다. 왜 못 고치는지는 제품 문서가 아니라 트랜잭션 풀링의 정의에서 나옵니다." />
+  <meta name="description" content="출시 전 소셜 투표 플랫폼을 점검하다가 커넥션 풀러를 붙이려고 했습니다. 그런데 커넥션 고갈에는 원인이 두 가지 있고, 커넥션 풀러는 그중 하나만 고칩니다. 왜 못 고치는지는 제품 문서가 아니라 트랜잭션 풀링의 정의에서 나옵니다." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
 </head>
@@ -69,12 +69,12 @@
     <main>
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing 으로</a>
-        <h1>트랜잭션 안에서 외부 API를 호출하고 있었습니다<br><span class="h1-sub">출시 전 소셜 투표 앱 점검 — RDS Proxy 로는 못 고치는 커넥션 고갈</span></h1>
-        <div class="article-meta"><span class="source-tag side notranslate">사이드 프로젝트</span>Writing · 2026년 9월<span aria-hidden="true"> · </span><span class="read-time">13분</span></div>
+        <h1>트랜잭션 안에서 외부 API를 호출하고 있었습니다<br><span class="h1-sub">출시 전 소셜 투표 플랫폼 점검 — RDS Proxy 로는 못 고치는 커넥션 고갈</span></h1>
+        <div class="article-meta"><span class="source-tag commercial notranslate">사업화 프로젝트</span>Writing · 2026년 9월<span aria-hidden="true"> · </span><span class="read-time">13분</span></div>
       </section>
       <article class="article-body">
 
-        <p>안녕하세요. 개인 프로젝트로 소셜 투표 앱을 만들고 있습니다. 출시 전에 아키텍처를 점검하다가
+        <p>안녕하세요. <strong>소셜 투표 플랫폼</strong>을 만들고 있습니다. 출시 전에 아키텍처를 점검하다가
         <em>“트래픽이 늘면 DB 커넥션이 부족해질 텐데, 커넥션 풀러를 하나 붙이면 되지 않을까”</em>라는 아주 흔한
         가설에서 출발했는데, 결론은 <strong>“이 코드베이스에서는 아니오”</strong>였습니다.</p>
 
@@ -123,7 +123,7 @@
 
         <p><strong>코드는 비공개 저장소에 있습니다.</strong> 아직 출시 전이라 저장소를 열어 두지
         않았습니다. 그래서 절마다 GitHub 링크 대신 <strong>파일 경로와 심볼 이름</strong>을 적어 뒀습니다.
-        패키지 이름은 원본 기록에서 이미 익명화된 것을 그대로 씁니다.</p>
+        패키지 이름과 환경변수 이름은 원본 기록에서 이미 익명화된 것을 그대로 씁니다.</p>
 
         <p><strong>⚠️ 미리 말씀드릴 것이 있습니다.</strong> 이 글에는 <strong>부하 테스트로 측정한 수치가
         없습니다.</strong> 장애가 난 적도 없습니다. 아래에 나오는 “최대 10초”는 외부 호출에
@@ -132,7 +132,7 @@
 
         <h2 id="어떤-서비스">어떤 서비스인가요?<a class="anchor" href="#어떤-서비스" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>개인 프로젝트로 만들고 있는 <strong>소셜 투표 앱</strong>입니다. 사용자가 질문을 올리면 다른 사람들이
+        <p>사업화를 목표로 만들고 있는 <strong>소셜 투표 플랫폼</strong>입니다. 사용자가 질문을 올리면 다른 사람들이
         투표하고, 그 결과 차트를 앱 밖으로 공유하는 서비스입니다. Kotlin 과 Spring Boot 로 만든 단일
         모놀리스이고, 데이터베이스는 관리형 PostgreSQL 하나를 씁니다. 아직 출시 전입니다.</p>
 
@@ -186,7 +186,7 @@
         그리고 이 호출에는 read timeout 이 <strong>10초</strong>로 설정돼 있습니다.</p>
 
 <pre data-lang="yaml"><code># application.yml
-read-timeout: ${OXY_HTTP_READ_TIMEOUT:10s}</code></pre>
+read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
 
         <p>이 숫자를 기억해 주세요. 이 글의 나머지가 전부 여기서 나옵니다.</p>
 
