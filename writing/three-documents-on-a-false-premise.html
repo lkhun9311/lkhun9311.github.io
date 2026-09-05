@@ -92,8 +92,9 @@
 
         <p>The natural way to write a procedure here is to read the documents and reason. That is how I wrote
         three of them. And <strong>the premise of all three was wrong.</strong> I did not learn that by reasoning
-        more carefully. I learned it by standing the old version up in an isolated environment and running the
-        whole thing once — and, in the middle of that, by reading the guide again, properly this time.</p>
+        more carefully. I learned it by standing the old version up in an isolated environment and running
+        <strong>the part that could be reproduced</strong> end to end — and, in the middle of that, by reading
+        the guide again, properly this time.</p>
 
         <nav class="article-toc" aria-label="Contents">
           <p class="toc-label">Contents</p>
@@ -210,7 +211,10 @@ find . -type f -exec md5sum {} \;       # every file matches on both sides</code
         <p>This is not a correct migration. That was <strong>the point</strong>. The script's job is not to
         move data correctly; it is to <strong>expose which tables break</strong>. It absorbs schema drift and
         keeps going, and the tables that fail land in the log — so
-        <strong>the failure log is the actual schema-gap list</strong>.</p>
+        <strong>the failure log becomes a candidate list of schema gaps</strong>. Not a complete one — tables
+        absent from the target are skipped, and <code>INSERT IGNORE</code> absorbs missing columns and coercion
+        warnings without calling them failures. What surfaces is <em>what breaks</em>, not <em>everything that
+        differs</em>.</p>
 
         <p>To see whether data really moved, something recognisable has to move. I planted three kinds of test
         data first, each proving a different thing.</p>
@@ -341,10 +345,11 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
         </div>
         </div>
 
-        <p><strong>Zero column changes across 48 tables.</strong> Identical structure means they move with
-        <code>INSERT ... SELECT</code> and no transformation. The only difference is that the billing and
-        metering tables <strong>change which schema they live in</strong>; the table structure itself is the
-        same. As migrations go, that is the easy end.</p>
+        <p><strong>Zero columns added or dropped across 48 tables.</strong> An identical column set makes an
+        <code>INSERT ... SELECT</code> path plausible — but this compared the set of column names and nothing
+        else. Whether types, lengths, ordering, nullability, defaults, keys, foreign keys and triggers match is
+        a question this comparison does not answer. The one confirmed difference is that the billing and
+        metering tables <strong>change which schema they live in</strong>.</p>
 
         <p>A vague worry — "migrating is hard" — was <strong>settled by one number</strong>, and the direction
         was decided: migrate, do not reinstall.</p>
@@ -373,9 +378,11 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
           sources behind this article. Nor does it claim this product's history tables never change.</li>
         </ul>
 
-        <p>What is left is one line. <strong>Nothing here was learned by inference.</strong> That the two release
-        copies were identical, that the baseline was a curation rather than a date cut, that the procedure
-        pointed at a file that did not exist — each turned up from actually running or actually checking. The
+        <p>What is left is one line. <strong>Nothing here was learned from the documents alone.</strong> That the
+        two release copies were identical, that the baseline was a curation rather than a date cut, that the
+        procedure pointed at a file that did not exist — each turned up from actually checking something. The
+        curation conclusion is an inference drawn on top of those observations, but
+        <strong>what it was drawn from was a check, not a document.</strong> The
         one exception is the method, which came from <em>reading the guide properly</em> — and even that was
         missed on the first skim. A production database is the most expensive place to try something for the
         first time.</p>
