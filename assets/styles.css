@@ -2428,8 +2428,20 @@ html[lang="ja"] .container.reading .article-body figure.diagram figcaption::befo
 
 .article-body .h2-src svg { flex: none; }
 
-.article-body .h2-src .private {
-  font-style: italic;
+/* Red, outline only, no fill. It is a status, not a link, and it should read as one at a glance
+   without competing with the accent colour the rest of the page uses for emphasis. */
+.article-body .h2-src .repo-private {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px;
+  border: 1px solid #d0342c;
+  border-radius: 999px;
+  background: none;
+  color: #d0342c;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.6;
 }
 
 /* The same distinction on the cards. Deliberately translatable — "Side project" is a phrase, not a name,
