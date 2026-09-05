@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Only Control That Has Ever Caught a Cost Error | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/the-only-control-that-caught-something.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/the-only-control-that-caught-something.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/the-only-control-that-caught-something.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/the-only-control-that-caught-something.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="The Only Control That Has Ever Caught a Cost Error | Kwanghun Lee" />
+  <meta property="og:description" content="Cost and account operations on a personal GPU lab account. One hand-made budget alert found a line item my estimates had omitted entirely — and Terraform nearly deleted that alert as a side effect of an unrelated change." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/the-only-control-that-caught-something.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="The Only Control That Has Ever Caught a Cost Error | Kwanghun Lee" />
+  <meta name="twitter:description" content="One budget alert found a line item my estimates had omitted entirely, and Terraform nearly deleted it as a side effect of an unrelated change." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="Cost and account operations on a personal GPU lab account. One hand-made budget alert found a line item my estimates had omitted entirely — and Terraform nearly deleted that alert as a side effect of an unrelated change." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language"
+                data-authored='{"en":"the-only-control-that-caught-something.html","ko":"the-only-control-that-caught-something.ko.html","ja":"the-only-control-that-caught-something.ja.html"}'>
+          <option value="en" selected>English</option>
+          <option value="ko">Korean</option>
+          <option value="ja">Japanese</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="zh-TW">Chinese (Traditional)</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="vi">Vietnamese</option>
+          <option value="id">Indonesian</option>
+          <option value="hi">Hindi</option>
+          <option value="ar">Arabic</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <section class="page-hero">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Writing</a>
+        <h1>The Only Control That Has Ever Caught a Cost Error</h1>
+        <div class="article-meta">Writing · Sep 2026<span aria-hidden="true"> · </span><span class="read-time">8 min read</span></div>
+        <p class="lang-alts notranslate">Also in <a href="the-only-control-that-caught-something.ko.html" hreflang="ko" lang="ko">한국어</a> · <a href="the-only-control-that-caught-something.ja.html" hreflang="ja" lang="ja">日本語</a></p>
+      </section>
+      <article class="article-body">
+
+        <p><strong>Scope.</strong> Cost and account operations on the AWS lab account behind a personal
+        project, a <a href="../projects/gpuaas-control-plane.html">Kubernetes-native GPU control plane</a>.
+        The figures are <strong>real billing and measurement on a personal lab account</strong>, not
+        production scale. Account and policy identifiers are omitted.</p>
+
+        <p>On a personal project that rents GPUs, the frightening failure is not a wrong experiment. It is
+        <strong>leaving something switched on</strong>. So I built several layers of control: a service
+        control policy, a TTL scale-down schedule, a monthly budget, ephemeral apply and destroy.</p>
+
+        <p>After a month of running it, <strong>exactly one of them had ever caught anything.</strong> And
+        that one was not in the code.</p>
+
+        <nav class="article-toc" aria-label="Contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#eighty-percent-is-not-early">80% is not an early warning</a></li>
+            <li><a href="#the-line-item-i-had-omitted">The line item my estimate had omitted</a></li>
+            <li><a href="#terraform-nearly-deleted-it">And Terraform nearly deleted it</a></li>
+            <li><a href="#the-same-bytes-for-free">Moving the same 15.6GB for free</a></li>
+            <li><a href="#the-rehearsal-that-failed">The rehearsal that failed, twenty minutes and five cents</a></li>
+            <li><a href="#the-alarm-nobody-had-heard">The alarm nobody had heard ring</a></li>
+            <li><a href="#the-only-way-in-was-root">The only way in was root</a></li>
+            <li><a href="#what-this-does-not-claim">What this does not claim</a></li>
+          </ul>
+        </nav>
+
+        <h2 id="eighty-percent-is-not-early">80% is not an early warning<a class="anchor" href="#eighty-percent-is-not-early" aria-label="Link to this section">#</a></h2>
+
+        <p>The monthly budget ceiling is thirty dollars. The threshold a budget notification defaults to is
+        80% of that. But this project's spend <strong>arrives in three-hour bursts</strong>. A paid GPU session
+        starts and finishes within an afternoon, and a month-scale threshold says something only
+        <strong>after that session is already over</strong>.</p>
+
+        <p>So the early warning sits at <strong>10%</strong>. On a thirty dollar budget that fires at three
+        dollars, roughly the price of one paid session. Then <strong>the first session of a month reports what
+        it cost while the next one can still be reconsidered.</strong></p>
+
+        <p>The question when choosing a threshold is not "what percentage is reasonable" but
+        <strong>"when this fires, is there still a decision left to change?"</strong> At this spend shape, 80%
+        does not satisfy that.</p>
+
+        <h2 id="the-line-item-i-had-omitted">The line item my estimate had omitted<a class="anchor" href="#the-line-item-i-had-omitted" aria-label="Link to this section">#</a></h2>
+
+        <p>On 2026-09-03, after the third paid session, that alert fired.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">The month's total as the alert reported it, against my running estimate.</caption>
+          <thead><tr><th scope="col"></th><th scope="col">amount</th></tr></thead>
+          <tbody>
+            <tr><td>the month, as the alert reported it</td><td><strong>$14.56</strong></td></tr>
+            <tr><td>my own running estimate</td><td>about $8</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>Chasing the gap led to <strong>NAT gateway data-processing charges</strong>. I had been counting
+        instance hours and the EKS charge, but <strong>the cost of bytes crossing the NAT was not in my
+        estimate at all</strong>.</p>
+
+        <p>Why it was invisible is clear enough. My estimate was a list of <strong>what I had switched
+        on</strong> — the GPU instance, the EKS control plane, the NAT gateway — things with an hourly rate.
+        But a NAT gateway bills an hourly rate <em>and</em> a rate per byte processed, and that second line
+        grows every time an image is pulled. <strong>A list of what you switched on does not count what the
+        things you switched on are doing.</strong></p>
+
+        <h2 id="terraform-nearly-deleted-it">And Terraform nearly deleted it<a class="anchor" href="#terraform-nearly-deleted-it" aria-label="Link to this section">#</a></h2>
+
+        <p>That alert was created <strong>by hand</strong> in the console on 2026-08-31 and never written into
+        the configuration.</p>
+
+        <p>Days later, running a <code>plan</code> before adding image mirror repositories, the notification
+        block showed up as <strong>absent from the configuration and present in the account</strong>. Applying
+        that plan would have removed it <strong>silently, as a side effect of an unrelated change</strong>.</p>
+
+        <p>What was about to be deleted happened to be <strong>the only control that has ever caught a cost
+        error in this account</strong>.</p>
+
+        <p>This is a shape the project keeps producing: <strong>a value living in one place and not the other,
+        with nothing comparing them.</strong> Something made quickly in a console is not in the code, and a
+        tool that treats the code as the truth sees anything absent from it as something to remove. So when the
+        alert was moved into Terraform, <strong>the reason it exists and the fact that it was nearly deleted
+        went in as a comment beside it</strong> — for whoever next considers removing that block.</p>
+
+        <h2 id="the-same-bytes-for-free">Moving the same 15.6GB for free<a class="anchor" href="#the-same-bytes-for-free" aria-label="Link to this section">#</a></h2>
+
+        <p>Once the NAT line was visible, the shape of the next experiment changed.</p>
+
+        <p>The question on 2026-09-04 was about vLLM scheduler settings. No gateway, no Kubernetes —
+        <strong>one instance is enough</strong>. And then a single fact decides most of the cost.</p>
+
+        <blockquote><p>An instance in a default subnet talks through the internet gateway on a public IP, and
+        <strong>inbound transfer is free.</strong></p></blockquote>
+
+        <p>Until then every paid run had pulled <strong>the same 15.6GB</strong> — container images and model
+        weights — across a NAT at <strong>$0.059 per GB</strong>. Moving to one instance in a public subnet
+        removed that line entirely, and that day's experiment finished at <strong>about $0.40</strong>.</p>
+
+        <p>What changed was not an algorithm but <strong>the path the bytes take</strong>. And that path only
+        became visible because an alert forced me to read the bill by line item.</p>
+
+        <h2 id="the-rehearsal-that-failed">The rehearsal that failed, twenty minutes and five cents<a class="anchor" href="#the-rehearsal-that-failed" aria-label="Link to this section">#</a></h2>
+
+        <p>Before the first paid GPU session I ran a rehearsal <strong>with no GPU switched on</strong>: apply
+        the cluster and immediately destroy it. The point was not performance but
+        <strong>whether the procedure reaches the end</strong>.</p>
+
+        <p><strong>The apply failed</strong>, on a service control policy I had attached the day before.</p>
+
+<pre><code>Error: creating EC2 Launch Template: UnauthorizedOperation
+  ec2:CreateLaunchTemplate ... explicit deny in a service control policy</code></pre>
+
+        <p>The offending statement was meant to restrict instance types to an allow list.</p>
+
+<pre><code>{
+  "Effect": "Deny",
+  "Action": ["ec2:CreateLaunchTemplate", "ec2:CreateLaunchTemplateVersion"],
+  "Condition": { "StringNotLike": { "ec2:InstanceType": ["t3.*", "g4dn.*", "g5.*"] } }
+}</code></pre>
+
+        <p>Two things stacked.</p>
+
+        <p><strong>One. A negated IAM condition operator is true when the key is absent.</strong>
+        <code>StringNotLike</code> does not only mean "this value differs from the list"; it is also satisfied
+        when the key is not there at all.</p>
+
+        <p><strong>Two. An EKS managed node group carries the instance type on the node group, not in the
+        launch template.</strong> So <code>ec2:InstanceType</code> was absent.</p>
+
+        <p>Together, the statement did not restrict instance families — <strong>it blocked the service</strong>.
+        <code>g5.*</code> was in the allow list and a g5 node group still could not be created.</p>
+
+        <p>Meeting that in a rehearsal cost this:</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">Both rehearsals, their outcome and residue.</caption>
+          <thead><tr><th scope="col">run</th><th scope="col">outcome</th><th scope="col">teardown</th><th scope="col">residue</th></tr></thead>
+          <tbody>
+            <tr><td>first</td><td>apply failed (denied by the SCP)</td><td>destroyed 85</td><td><strong>0</strong></td></tr>
+            <tr><td>second (policy fixed)</td><td>apply succeeded, 96 resources, 0 errors</td><td>destroyed 96</td><td><strong>0</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>About forty billed minutes across both, <strong>roughly $0.18</strong>; the first alone was twenty
+        minutes at about <strong>$0.05</strong>. (Both are billed time multiplied by the hourly rate, not
+        reconciled against the bill's line items.)</p>
+
+        <p>Had that policy defect first appeared <strong>during a paid GPU session</strong>, I would have been
+        debugging it with the card running. The value of a rehearsal is not that it succeeded; it is that
+        <strong>the failure happened somewhere cheap</strong>.</p>
+
+        <h2 id="the-alarm-nobody-had-heard">The alarm nobody had heard ring<a class="anchor" href="#the-alarm-nobody-had-heard" aria-label="Link to this section">#</a></h2>
+
+        <p>The same week I created a schedule that scales GPU nodes to zero after a fixed interval, and wrote
+        down "there is a backstop now".</p>
+
+        <p>The next day I traced what that sentence rested on and found <strong>nothing</strong>. All I had
+        checked was that the schedule read <code>ENABLED</code>. That means AWS <strong>accepted</strong> it —
+        not that it <strong>emits a call</strong> when the time comes. Whether the role assumption works,
+        whether the policy permits the call, what shape the payload has: none of it verified.</p>
+
+        <p>But verifying it properly means renting a GPU and waiting for the interval to pass.
+        <strong>Spending money to verify the thing that exists to control spending.</strong></p>
+
+        <p>The way out was in where the failure lands. What I want to know is <strong>whether a call goes
+        out</strong>, not whether it succeeds. Which means <strong>the target does not have to exist.</strong></p>
+
+        <p>I scheduled it two minutes out against a cluster and node group name that do not exist, with zero
+        retries and delete-on-completion.</p>
+
+        <p><strong>The first piece of evidence was the schedule disappearing.</strong> Delete-on-completion
+        happens only after the call has run; a schedule that never fired stays.</p>
+
+        <p><strong>The second was the audit log.</strong></p>
+
+<pre><code>principal : assumed-role/gpu-platform-ttl-scaledown/...
+request   : {"scalingConfig": {"minSize": 0, "desiredSize": 0}, ...}
+error     : ResourceNotFoundException</code></pre>
+
+        <p>The role was assumed, the policy let the call through, and the payload matched what the script
+        writes. <strong>The only thing that failed was the target</strong>, and the target was deliberately a
+        name that does not exist so that nothing would be spent. <strong>The cost was zero dollars.</strong></p>
+
+        <p>Stating the verified boundary exactly: <strong>the schedule assumes its role on time and emits a
+        call of that shape</strong>. That a real node group then goes to zero is not something this experiment
+        showed.</p>
+
+        <h2 id="the-only-way-in-was-root">The only way in was root<a class="anchor" href="#the-only-way-in-was-root" aria-label="Link to this section">#</a></h2>
+
+        <p>Two days after creating the organisation, signing in to the management account to open a credits
+        support case, root MFA did not match. For those few minutes there was
+        <strong>no way at all to touch the organisation, the SCPs, or Identity Center.</strong></p>
+
+        <p>Not because the configuration was wrong. Because <strong>I had built exactly one way in.</strong>
+        Setting up Identity Center, I assigned the permission set <strong>to the lab account only</strong>.</p>
+
+        <p>Not assigning the management account was an omission rather than a decision. I had thought "no
+        workloads live there, so there is nothing to do there" — but <strong>managing the organisation, the
+        SCPs and Identity Center is exactly what happens there</strong>. An account with no workloads is not an
+        account that needs no access.</p>
+
+        <p>Fixing it took three minutes. Noticing took two days, and what made me notice was
+        <strong>an MFA code happening not to match</strong>.</p>
+
+        <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>Not a claim that the TTL prevented a cost incident.</strong> What was verified is that
+          the schedule emits a call on time; the target was deliberately a name that does not exist. And the
+          control's scope is <strong>scaling a node group to zero</strong>, not capping account-wide spend.</li>
+          <li><strong>$0.05 and $0.18 are not bill line items.</strong> They are billed time multiplied by the
+          hourly rate. $14.56 and $0.40 come from billing and accounting.</li>
+          <li><strong>The SCP defect is specific to this organisation's setup.</strong> That an absent
+          condition key satisfies a negated operator is general; which key is absent depends on the service
+          and the call path.</li>
+          <li><strong>This is personal-lab scale.</strong> Half the reason the controls were useful here is
+          that the spend is small enough for a single line item's error to stand out.</li>
+          <li><strong>A budget alert is a detective control.</strong> It does not prevent spend; it reports it.
+          The claim here is not that it is powerful, but the observation that
+          <strong>of several layers, it was the one that caught something</strong>.</li>
+        </ul>
+
+        <p>What is left is one line. <strong>Building a control and confirming that the control fires are
+        different pieces of work, and most controls get onto the list without the second one.</strong> And the
+        one on my list that caught something was the simplest — <strong>an alert that put my estimate and the
+        real bill side by side</strong>.</p>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script src="../assets/lang.js?v=20260905"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/article.js?v=20260817-scroll"></script>
+</body>
+</html>
