@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>워밍업이란? | Kwanghun Lee</title>
+  <title>커넥션 풀이란? | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
   <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
-  <meta name="description" content="측정 앞부분을 버리는 구간. 그 구간은 정상 상태가 아니다." />
+  <meta name="description" content="앱이 DB 커넥션을 재사용하려고 들고 있는 목록. Spring Boot 기본은 HikariCP." />
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="워밍업이란? | Kwanghun Lee" />
-  <meta property="og:description" content="측정 앞부분을 버리는 구간. 그 구간은 정상 상태가 아니다." />
+  <meta property="og:title" content="커넥션 풀이란? | Kwanghun Lee" />
+  <meta property="og:description" content="앱이 DB 커넥션을 재사용하려고 들고 있는 목록. Spring Boot 기본은 HikariCP." />
   <meta property="og:locale" content="ko_KR" />
   <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
 </head>
@@ -51,37 +51,43 @@
   <div class="container reading">
     <main>
       <section class="page-hero">
-        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>용어집으로</a>
-        <h1>워밍업이란?<br><span class="h1-sub">warm-up</span></h1>
-        <div class="article-meta"><span class="source-tag glossary notranslate">용어</span>Glossary · 성능 측정</div>
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Notes 로</a>
+        <h1>Connection Pool: 커넥션 풀이란?</h1>
+        <div class="article-meta"><span class="source-tag glossary notranslate">용어</span>Notes · 데이터베이스<span aria-hidden="true"> · </span><span class="notranslate">#Connection Pool</span></div>
       </section>
       <article class="article-body">
 
-        <p class="term-oneline">측정 <strong>앞부분을 버리는 구간</strong>입니다. JIT 컴파일·커넥션 풀 채움·캐시가 비어 있는 상태는 정상 상태가 아니므로, 그 구간을 섞으면 두 실행의 차이가 워밍업 길이의 차이로 나타납니다.</p>
+        <p class="term-oneline">앱이 DB 커넥션을 <strong>매번 새로 만들지 않고 재사용하려고 들고 있는 목록</strong>입니다. Spring Boot 기본은 HikariCP 입니다.</p>
 
         <nav class="article-toc" aria-label="목차">
           <p class="toc-label">목차</p>
           <ul>
-            <li><a href="#원인">무엇이 앞부분을 다르게 만드나</a></li>
-            <li><a href="#길이">얼마나 버리나</a></li>
+            <li><a href="#왜">왜 재사용하나</a></li>
+            <li><a href="#상한">블로킹 JDBC 에서는 이것이 동시성 상한이다</a></li>
+            <li><a href="#불변식">불변식 하나</a></li>
             <li><a href="#쓰인-곳">이 사이트에서 쓰인 곳</a></li>
             <li><a href="#함께-볼-용어">함께 볼 용어</a></li>
           </ul>
         </nav>
 
-        <h2 id="원인">무엇이 앞부분을 다르게 만드나<a class="anchor" href="#원인" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>JVM 기준으로 최소 세 가지입니다.</p>
+        <h2 id="왜">왜 재사용하나<a class="anchor" href="#왜" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>DB 커넥션을 새로 여는 것은 비쌉니다 — TCP 연결, 인증, 세션 초기화가 매번 일어납니다. 요청마다 이걸 하면
+        쿼리 시간보다 연결 시간이 더 걸립니다. 그래서 미리 몇 개를 열어 두고 <strong>빌려주고 돌려받습니다.</strong></p>
+        <h2 id="상한">블로킹 JDBC 에서는 이것이 동시성 상한이다<a class="anchor" href="#상한" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>이게 자주 놓치는 부분입니다. <strong>스레드가 아무리 많아도 커넥션을 못 받으면 일을 못 합니다.</strong></p>
 
-        <ul>
-          <li><strong>JIT 컴파일</strong> — 처음엔 인터프리터로 돌다가 자주 호출되는 코드부터 기계어로 컴파일됩니다. 초반은 느립니다.</li>
-          <li><strong>커넥션 풀 채움</strong> — 풀이 최소 크기에서 시작하면 초반 요청이 커넥션을 새로 여는 비용을 냅니다.</li>
-          <li><strong>캐시·버퍼</strong> — DB 버퍼 캐시가 비어 있으면 초반 쿼리는 디스크를 읽습니다.</li>
-        </ul>
-        <h2 id="길이">얼마나 버리나<a class="anchor" href="#길이" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>정답은 없고, <strong>지표가 평평해질 때까지</strong>가 원칙입니다. 짧은 실행에서는 30초 정도가 흔한 출발점입니다.</p>
+        <p>톰캣 스레드가 200이고 커넥션 풀이 20이면, 동시에 실제로 DB 작업을 할 수 있는 요청은 <strong>20개</strong>입니다.
+        나머지 180개는 커넥션을 기다리다 타임아웃 뒤에 실패합니다.</p>
 
-        <p>주의: 워밍업이 실행보다 길면 표본이 0건이 됩니다. 요약기가 그걸 조용히 통과시키면
-        "결과 없음"이 "이상 없음"으로 보이므로, <strong>표본 0건은 실패로 다뤄야 합니다.</strong></p>
+        <p>방향 자체는 맞습니다 — 빨리 실패해야 나머지가 삽니다. 문제는 그 두 숫자가 <strong>누가 고른 값인가</strong>입니다.
+        둘 다 프레임워크 기본값이면, 그 둘이 만들어 낸 동시성 정책은 <strong>정책이 아닙니다.</strong></p>
+        <h2 id="불변식">불변식 하나<a class="anchor" href="#불변식" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>풀을 키우는 것은 완화이지 수리가 아니고, 키우는 데에도 상한이 있습니다.</p>
+
+        <pre data-lang="text">풀 크기 × 최대 인스턴스 수 ≤ DB 커넥션 상한</pre>
+
+        <p>앱은 자기 인스턴스가 몇 대인지 모르기 때문에 이 불변식을 <strong>코드로 강제할 수 없습니다.</strong>
+        인프라 코드의 주석이 유일한 방어인 경우가 많습니다.</p>
 
         <h2 id="쓰인-곳">이 사이트에서 쓰인 곳<a class="anchor" href="#쓰인-곳" aria-label="이 절로 가는 링크">#</a></h2>
         <ul>
@@ -90,8 +96,8 @@
 
         <h2 id="함께-볼-용어">함께 볼 용어<a class="anchor" href="#함께-볼-용어" aria-label="이 절로 가는 링크">#</a></h2>
         <ul>
-          <li><a href="load-test-harness.html">하네스</a> — 워밍업을 인자로 받는 쪽</li>
-          <li><a href="percentile.html">p50 · p95 · p99</a> — 워밍업이 왜곡하는 값</li>
+          <li><a href="connection-pooler.html">커넥션 풀러</a> — 앱 밖의 그것</li>
+          <li><a href="percentile.html">p50 · p95 · p99</a> — 풀 고갈은 오류가 아니라 꼬리로 나타난다</li>
           </ul>
 
       </article>

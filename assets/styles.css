@@ -2121,7 +2121,7 @@ body {
    and roughly 300px on the other, and the title stretched far past the text under it. One column, centred,
    with the hero and the body sharing the same edges. */
 .container.reading {
-  max-width: 1280px;
+  max-width: 1400px;
 }
 
 /* One width for everything.
@@ -2151,8 +2151,10 @@ body {
   .container.reading .page-hero,
   .container.reading .article-body {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 260px;
-    column-gap: 56px;
+    /* 본문을 넓히고 목차는 오른쪽 끝으로 민다. 사이 간격(gap)이 목차를 얼마나 떼어 놓느냐를
+       정하므로, 폭을 넓히면서 간격도 같이 키워야 목차가 본문에 달라붙지 않는다. */
+    grid-template-columns: minmax(0, 1fr) 222px;
+    column-gap: 92px;
     align-items: start;
   }
 
@@ -2178,7 +2180,7 @@ body {
     border: 0;
     border-left: 1px solid var(--line-soft, rgba(229,222,238,0.9));
     border-radius: 0;
-    padding: 2px 0 2px 18px;
+    padding: 2px 0 2px 12px;
   }
 
   .container.reading .article-body > .article-toc ul {
@@ -2187,7 +2189,7 @@ body {
   }
 
   .container.reading .article-body > .article-toc li {
-    margin-bottom: 9px;
+    margin-bottom: 3px;
   }
 }
 
@@ -2196,30 +2198,25 @@ body {
 .article-toc a {
   display: block;
   position: relative;
-  font-size: 0.92rem;
+  padding: 5px 8px 5px 10px;
+  border-radius: 4px;
+  font-size: 0.9rem;
   line-height: 1.4;
   color: var(--muted, #7b7186);
-  transition: color 120ms ease;
+  transition: background-color 120ms ease, color 120ms ease;
 }
 
+/* 현재 읽고 있는 절은 **배경으로 채운다.** 굵기만으로는 목록이 길어질수록 어디인지 찾기 어렵고,
+   채워 두면 다음 절로 넘어갈 때까지 그대로 유지되므로 "지금 여기"가 계속 보인다. */
 .article-toc a.is-current {
   font-weight: 700;
-  font-size: 1rem;
   color: var(--text, #18121d);
+  background: rgba(214, 41, 118, 0.10);
+  box-shadow: inset 2px 0 0 var(--accent, #d62976);
+  border-radius: 4px;
 }
 
-@media (min-width: 1120px) {
-  .container.reading .article-toc a.is-current::before {
-    content: "";
-    position: absolute;
-    left: -19px;
-    top: 2px;
-    bottom: 2px;
-    width: 2px;
-    border-radius: 2px;
-    background: var(--accent, #d62976);
-  }
-}
+
 
 @media (prefers-reduced-motion: reduce) {
   .article-toc a { transition: none; }
@@ -2228,8 +2225,8 @@ body {
 /* ---- type scale ---------------------------------------------------------------------------- */
 
 .container.reading .article-body {
-  font-size: 1.075rem;
-  line-height: 1.78;
+  font-size: 1.1rem;
+  line-height: 1.8;
 }
 
 .container.reading .article-body h2 {

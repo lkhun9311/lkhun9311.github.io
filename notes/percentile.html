@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>fail-closed 란? | Kwanghun Lee</title>
+  <title>p50 · p95 · p99 란? | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
   <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
-  <meta name="description" content="고장 났을 때 막는 쪽으로 넘어지는 설계. 반대는 fail-open." />
+  <meta name="description" content="응답시간을 줄 세웠을 때 특정 위치의 값. p95 는 5%가 그보다 느렸다는 뜻입니다." />
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="fail-closed 란? | Kwanghun Lee" />
-  <meta property="og:description" content="고장 났을 때 막는 쪽으로 넘어지는 설계. 반대는 fail-open." />
+  <meta property="og:title" content="p50 · p95 · p99 란? | Kwanghun Lee" />
+  <meta property="og:description" content="응답시간을 줄 세웠을 때 특정 위치의 값. p95 는 5%가 그보다 느렸다는 뜻입니다." />
   <meta property="og:locale" content="ko_KR" />
   <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
 </head>
@@ -51,49 +51,52 @@
   <div class="container reading">
     <main>
       <section class="page-hero">
-        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>용어집으로</a>
-        <h1>fail-closed 란?<br><span class="h1-sub">fail-closed</span></h1>
-        <div class="article-meta"><span class="source-tag glossary notranslate">용어</span>Glossary · 설계</div>
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Notes 로</a>
+        <h1>Percentile: p50 · p95 · p99 란?</h1>
+        <div class="article-meta"><span class="source-tag glossary notranslate">용어</span>Notes · 성능 측정<span aria-hidden="true"> · </span><span class="notranslate">#Percentile</span></div>
       </section>
       <article class="article-body">
 
-        <p class="term-oneline">무언가 <strong>고장 났을 때 막는 쪽으로 넘어지는</strong> 설계입니다. 반대는 fail-open — 고장 나면 통과시킵니다.</p>
+        <p class="term-oneline">응답시간을 <strong>느린 순으로 줄 세웠을 때 특정 위치의 값</strong>입니다. p95 = 100건 중 95번째로 빠른 요청의 시간, 즉 <strong>5%는 이보다 느렸다</strong>는 뜻입니다.</p>
 
         <nav class="article-toc" aria-label="목차">
           <p class="toc-label">목차</p>
           <ul>
-            <li><a href="#방향">어느 쪽으로 넘어질 것인가</a></li>
-            <li><a href="#대가">대가</a></li>
-            <li><a href="#조용함">조용한 fail-open 이 제일 위험하다</a></li>
+            <li><a href="#평균">왜 평균을 안 쓰나</a></li>
+            <li><a href="#계산">계산 방식이 두 가지다</a></li>
+            <li><a href="#어디">어디를 봐야 하나</a></li>
             <li><a href="#쓰인-곳">이 사이트에서 쓰인 곳</a></li>
             <li><a href="#함께-볼-용어">함께 볼 용어</a></li>
           </ul>
         </nav>
 
-        <h2 id="방향">어느 쪽으로 넘어질 것인가<a class="anchor" href="#방향" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>콘텐츠 검열 API 가 응답하지 않을 때 두 가지 선택이 있습니다.</p>
+        <h2 id="평균">왜 평균을 안 쓰나<a class="anchor" href="#평균" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>평균은 <strong>소수의 아주 느린 요청을 숨깁니다.</strong> 100건 중 99건이 5ms 이고 1건이 6초면
+        평균은 65ms 입니다. "65ms 면 괜찮네"로 읽히지만, 실제로는 <strong>100명 중 한 명이 6초를 기다린</strong> 것입니다.</p>
+
+        <p>그 한 명은 매번 다른 사람이고, 요청을 여러 번 하는 사용자는 결국 그 구간을 만납니다. 그래서 사용자 경험은
+        평균이 아니라 <strong>꼬리(tail)</strong>가 정합니다.</p>
+        <h2 id="계산">계산 방식이 두 가지다<a class="anchor" href="#계산" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>같은 데이터로도 도구마다 p95 가 다르게 나옵니다. 정의가 다르기 때문입니다.</p>
 
         <ul>
-          <li><strong>fail-closed</strong> — 게시를 막는다. 사용자는 "잠시 후 다시 시도해 주세요"를 봅니다.</li>
-          <li><strong>fail-open</strong> — 그냥 게시한다. 검열되지 않은 콘텐츠가 나갑니다.</li>
+          <li><strong>최근접 순위(nearest-rank)</strong> — 정렬된 표본에서 <code>ceil(0.95 × N)</code> 번째 값을 그냥 씁니다.
+          항상 <strong>실제로 관측된 값</strong>이 나옵니다.</li>
+          <li><strong>선형 보간</strong> — 이웃한 두 값 사이를 비례로 채웁니다. 관측되지 않은 값이 나올 수 있습니다.</li>
         </ul>
 
-        <p>안전이 걸린 곳은 fail-closed 가 기본이어야 합니다. 검열기가 죽었을 때 유해 콘텐츠가 통과하는 쪽이,
-        정상 글이 잠깐 막히는 쪽보다 훨씬 비쌉니다.</p>
-        <h2 id="대가">대가<a class="anchor" href="#대가" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>fail-closed 는 <strong>외부 의존성의 장애가 곧 우리 기능의 장애</strong>가 된다는 뜻입니다.
-        검열 API 가 느려지면 글쓰기가 느려지고, 죽으면 글쓰기가 죽습니다.</p>
+        <p>둘을 섞어 비교하면 정의가 다른 값을 견주게 됩니다. 그래서 요약기는 <strong>한 가지만 쓰고 그 사실을 출력에
+        같이 적습니다.</strong> 예: 표본이 1..20 일 때 최근접 순위 p95 는 <code>ceil(19) = 19</code> 번째 값 = 19 입니다.</p>
+        <h2 id="어디">어디를 봐야 하나<a class="anchor" href="#어디" aria-label="이 절로 가는 링크">#</a></h2>
+        <p><strong>p50 은 "보통 이렇다", p95·p99 는 "나쁠 때 이렇다"</strong> 입니다. 둘을 같이 봐야 합니다.</p>
 
-        <p>그래서 fail-closed 를 고른 순간 그 외부 호출의 <strong>타임아웃·동시 실행 상한·재시도</strong>가
-        전부 제품 문제가 됩니다. "안전하니까 괜찮다"로 끝나지 않습니다.</p>
-        <h2 id="조용함">조용한 fail-open 이 제일 위험하다<a class="anchor" href="#조용함" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>의도한 fail-open 보다 나쁜 것은 <strong>fail-closed 인 줄 알았는데 실제로는 열려 있는</strong> 경우입니다.</p>
+        <p>p50 과 p95 가 거의 같으면 시스템이 <strong>안정적</strong>입니다(모든 요청이 비슷하게 처리됨).
+        p50 은 낮은데 p95 가 훨씬 크면 <strong>대기열</strong>이 있다는 신호입니다 — 대부분은 빨리 처리되지만 일부가
+        줄을 서고 있는 것입니다.</p>
 
-        <p>전형적인 형태: 예외를 잡아서 로그도 안 남기고 삼키는 코드입니다. 겉보기엔 게이트가 있고, 통과율도
-        정상이고, 아무도 이상을 못 느낍니다. 실제로 이 리포에서 검열 클라이언트의
-        <code>catch (e: Exception)</code> 이 원인을 통째로 삼켜, 장애 진단이 크게 늦어진 일이 있었습니다.</p>
-
-        <p><strong>fail-closed 는 맞지만 원인은 남겨야 합니다.</strong> 막는 것과 조용한 것은 다른 결정입니다.</p>
+        <p>실제 예: 커넥션 풀이 고갈된 실행에서 피드 조회 p50 이 4ms 에서 6,047ms 로 갔는데
+        <strong>오류율은 0%</strong> 였습니다. 실패가 아니라 <strong>대기</strong>였기 때문입니다. 오류율만 보면
+        아무 문제가 없어 보입니다.</p>
 
         <h2 id="쓰인-곳">이 사이트에서 쓰인 곳<a class="anchor" href="#쓰인-곳" aria-label="이 절로 가는 링크">#</a></h2>
         <ul>
@@ -102,7 +105,8 @@
 
         <h2 id="함께-볼-용어">함께 볼 용어<a class="anchor" href="#함께-볼-용어" aria-label="이 절로 가는 링크">#</a></h2>
         <ul>
-          <li><a href="mutation-testing.html">뮤테이션 테스트</a> — 가드가 실제로 막는지 확인하는 법</li>
+          <li><a href="load-test-harness.html">하네스</a> — 이 값을 만들어 내는 도구</li>
+          <li><a href="warmup.html">워밍업</a> — 이 값을 왜곡하는 구간</li>
           </ul>
 
       </article>
