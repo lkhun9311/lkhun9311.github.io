@@ -55,6 +55,13 @@
     writing: {
       items: [
         {
+          title: "Seven of Eight Failures Should Not Be Recovered",
+          url: "writing/seven-of-eight-should-not-recover.html",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "A switch failure made live compute nodes look dead and recovery ran at scale. Grading what each signal is entitled to testify to left seven of eight scenarios on hold. Also in Korean and Japanese.",
+          tags: ["Reliability", "Method"]
+        },
+        {
           title: "Parallelising It Made the Tail Three Times Worse",
           url: "writing/parallelism-made-the-tail-worse.html",
           date: "2026-09", dateLabel: "Sep 2026",

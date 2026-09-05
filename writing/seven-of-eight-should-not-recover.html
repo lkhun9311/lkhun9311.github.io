@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seven of Eight Failures Should Not Be Recovered | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/seven-of-eight-should-not-recover.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/seven-of-eight-should-not-recover.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/seven-of-eight-should-not-recover.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/seven-of-eight-should-not-recover.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="Seven of Eight Failures Should Not Be Recovered | Kwanghun Lee" />
+  <meta property="og:description" content="A switch failure made live compute nodes look dead and mass recovery ran. The fix was not sharper detection but deciding which signal is entitled to testify to what — and seven of eight scenarios came out as hold." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/seven-of-eight-should-not-recover.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Seven of Eight Failures Should Not Be Recovered | Kwanghun Lee" />
+  <meta name="twitter:description" content="Not sharper detection — deciding which signal is entitled to testify to what. Only the compute node can say whether the compute node is alive." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="A switch failure made live compute nodes look dead and mass recovery ran. The fix was not sharper detection but deciding which signal is entitled to testify to what — and seven of eight scenarios came out as hold." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language"
+                data-authored='{"en":"seven-of-eight-should-not-recover.html","ko":"seven-of-eight-should-not-recover.ko.html","ja":"seven-of-eight-should-not-recover.ja.html"}'>
+          <option value="en" selected>English</option>
+          <option value="ko">Korean</option>
+          <option value="ja">Japanese</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="zh-TW">Chinese (Traditional)</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="vi">Vietnamese</option>
+          <option value="id">Indonesian</option>
+          <option value="hi">Hindi</option>
+          <option value="ar">Arabic</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <section class="page-hero">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Writing</a>
+        <h1>Seven of Eight Failures Should Not Be Recovered</h1>
+        <div class="article-meta">Writing · Sep 2026<span aria-hidden="true"> · </span><span class="read-time">9 min read</span></div>
+        <p class="lang-alts notranslate">Also in <a href="seven-of-eight-should-not-recover.ko.html" hreflang="ko" lang="ko">한국어</a> · <a href="seven-of-eight-should-not-recover.ja.html" hreflang="ja" lang="ja">日本語</a></p>
+      </section>
+      <article class="article-body">
+
+        <p><strong>Scope.</strong> In March 2026 I redesigned instance-HA failure handling for an
+        OpenStack-based private cloud product. I do not name the product, its version, the customer, or ticket
+        numbers. <strong>The deliverable was a design document; another engineer took the implementation.</strong>
+        So there is no "we shipped this and misjudgements fell by N" measurement here. What there is is a
+        decision procedure, and the result of running every scenario through it.</p>
+
+        <p>The incident is one sentence. <strong>An L2/L3 switch failed, compute nodes that were running
+        perfectly well were judged dead, and recovery ran at scale.</strong> Recovery in instance HA means a
+        Nova evacuate — bringing the same VM up on another node. If the original is still alive when the copy
+        attaches to the same volume, both write to it.</p>
+
+        <p>The redesign did not make detection sharper. It decided <strong>which signal is entitled to testify
+        to what</strong> — and once eight scenarios were judged against that, exactly one of them was safe to
+        recover.</p>
+
+        <nav class="article-toc" aria-label="Contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#the-observer-was-the-one-isolated">The observer's isolation was read as the subject's failure</a></li>
+            <li><a href="#entitlement-not-accuracy">Not accuracy — entitlement</a></li>
+            <li><a href="#two-different-questions">"Is it broken" and "is it safe to act" are different questions</a></li>
+            <li><a href="#seven-of-eight">Seven of eight</a></li>
+            <li><a href="#no-fencing-no-recovery">No fencing, no recovery — and the five seconds</a></li>
+            <li><a href="#a-db-lock-is-not-consensus">A DB lock is not distributed consensus</a></li>
+            <li><a href="#what-this-does-not-claim">What this does not claim</a></li>
+          </ul>
+        </nav>
+
+        <h2 id="the-observer-was-the-one-isolated">The observer's isolation was read as the subject's failure<a class="anchor" href="#the-observer-was-the-one-isolated" aria-label="Link to this section">#</a></h2>
+
+        <p>Flatten a switch failure into "the network went down" and this incident is impossible to
+        understand. The product runs several networks with different jobs, and during the failure
+        <strong>each of them was in a different state</strong>.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">State of each network during the switch failure.</caption>
+          <thead><tr><th scope="col">network</th><th scope="col">purpose</th><th scope="col">during the failure</th></tr></thead>
+          <tbody>
+            <tr><td>MGMT</td><td>controller ↔ compute management traffic</td><td><strong>up</strong></td></tr>
+            <tr><td>DATA</td><td>VM data traffic</td><td>cut</td></tr>
+            <tr><td>Controller</td><td>controller ↔ controller traffic</td><td>cut</td></tr>
+            <tr><td>BMC</td><td>fencing (IPMI)</td><td><strong>did not exist</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>When controllers cannot reach each other, quorum collapses, and some controller decides
+        <strong>on its own</strong> that a compute node is dead. Meanwhile MGMT was up, so
+        <strong>that compute node's agent heartbeat was arriving normally the whole time.</strong></p>
+
+        <p>Two contradictory statements existed in the system simultaneously. The compute node was saying "I am
+        alive." An isolated controller concluded "it is dead." The existing logic took the second one.</p>
+
+        <p>Call that a detection failure and the prescription comes out wrong. Detection did not fail — the
+        heartbeat arrived. What failed was that <strong>nobody had decided whose word counts</strong>.</p>
+
+        <h2 id="entitlement-not-accuracy">Not accuracy — entitlement<a class="anchor" href="#entitlement-not-accuracy" aria-label="Link to this section">#</a></h2>
+
+        <p>Four signals were given a confidence grade and, more importantly, a <strong>role</strong>.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">The four signals, their confidence, and what each can testify to.</caption>
+          <thead><tr><th scope="col">signal</th><th scope="col">confidence</th><th scope="col">what it can testify to</th></tr></thead>
+          <tbody>
+            <tr><td>agent heartbeat</td><td><strong>highest</strong></td><td>the compute node's <strong>actual state</strong></td></tr>
+            <tr><td>controller quorum</td><td>high</td><td>whether the controller cluster can agree at all</td></tr>
+            <tr><td>network heartbeat</td><td>medium</td><td>connectivity between controller and compute</td></tr>
+            <tr><td>external reachability probe</td><td><strong>low</strong></td><td><strong>whether the controller is isolated</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>The last row is the whole design. The external probe only checks reachability outward from the
+        controller. <strong>It never verifies the compute node.</strong> Judge a compute node's liveness with
+        it and you read the observer's isolation as the subject's failure. That is precisely what happened.</p>
+
+        <p>So the principle was written down: <strong>only the compute node can say whether the compute node is
+        alive.</strong> Every other signal either corroborates that statement, or explains <em>why the statement
+        did not arrive</em>.</p>
+
+        <h2 id="two-different-questions">"Is it broken" and "is it safe to act" are different questions<a class="anchor" href="#two-different-questions" aria-label="Link to this section">#</a></h2>
+
+        <p>The old judgement mixed two kinds of condition: <em>has a failure actually occurred</em>, and
+        <em>is it safe to run recovery right now</em>. Put both in one decision and they contaminate each other.</p>
+
+        <p>They were split.</p>
+
+<pre><code>[Phase 1 — failure detection]
+1. Check quorum
+   Controller quorum lost → the judgement cannot be trusted → HOLD
+
+2. Check agent heartbeat
+   TTL healthy (within 30s) → compute is alive → HOLD
+
+3. TTL exceeded → additional checks
+   external probe result / nova-compute service state / storage session state
+   → if the judgement still cannot be trusted → HOLD (notify an operator)
+
+[Phase 2 — execution readiness]
+1. Storage unreachable → HOLD  (the evacuated VM could not attach anyway)
+2. Message queue unhealthy → HOLD  (the command would not arrive)
+3. Nova API unhealthy → HOLD  (the call itself would fail)
+4. All clear → fence</code></pre>
+
+        <p><strong>The default is HOLD.</strong> When it cannot be sure, it does nothing.</p>
+
+        <p>The split immediately removed one class of misjudgement: <strong>reading a storage-path failure as a
+        compute failure</strong>. Storage conditions live in Phase 2, so they never pollute detection. Losing
+        sight of storage is not evidence that the compute node died; it is evidence that
+        <em>now is not the time to recover</em>.</p>
+
+        <h2 id="seven-of-eight">Seven of eight<a class="anchor" href="#seven-of-eight" aria-label="Link to this section">#</a></h2>
+
+        <p>Eight scenarios that can actually occur were then judged one at a time.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: eight failure scenarios and the decision for each. Tick means healthy, cross means not.">
+        <table>
+          <caption class="sr-only">Eight failure scenarios and the decision for each. ✓ healthy, ✗ not.</caption>
+          <thead><tr><th scope="col">scenario</th><th scope="col">quorum</th><th scope="col">heartbeat</th><th scope="col">ext probe</th><th scope="col">storage</th><th scope="col">Phase 1 verdict</th><th scope="col">action</th></tr></thead>
+          <tbody>
+            <tr><td><strong>compute genuinely crashed</strong></td><td>✓</td><td>✗</td><td>✓</td><td>✓</td><td>failure confirmed</td><td><strong>fence, then recover</strong></td></tr>
+            <tr><td>controller network down</td><td>✗</td><td>✓</td><td>✓</td><td>✓</td><td>cannot judge</td><td>HOLD</td></tr>
+            <tr><td>DATA network down</td><td>✗</td><td>✓</td><td>✗</td><td>✓</td><td>partition suspected</td><td>HOLD</td></tr>
+            <tr><td>MGMT network down</td><td>✗</td><td>✗</td><td>✓</td><td>✓</td><td>cannot judge</td><td>HOLD</td></tr>
+            <tr><td>storage path down</td><td>✓</td><td>✓</td><td>✓</td><td>✗</td><td>compute is fine</td><td>HOLD (Phase 2 fails)</td></tr>
+            <tr><td>external reachability only</td><td>✓</td><td>✓</td><td>✗</td><td>✓</td><td>compute is fine</td><td>HOLD</td></tr>
+            <tr><td>heartbeat TTL + probe both fail</td><td>✓</td><td>✗</td><td>✗</td><td>✓</td><td>partition suspected</td><td>HOLD → further checks</td></tr>
+            <tr><td>controllers split, heartbeat arriving</td><td>✗</td><td>✓</td><td>✓</td><td>✓</td><td>cannot judge</td><td><strong>HOLD (no unilateral decision)</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>The bottom row is the incident. Its action is now HOLD.</p>
+
+        <p>Seven of eight comes out of <strong>an asymmetry in cost</strong>. Skip a recovery and the service
+        stays down while a human gets time to intervene. Run a recovery wrongly and the original and the copy
+        write to the same volume, which cannot be undone. When the two mistakes are not worth the same, the
+        decision boundary should not sit in the middle.</p>
+
+        <p>The obvious objection: <em>"if seven of eight hold, doesn't real recovery get slower?"</em> It does.
+        Slower is the price this design chose to pay. In exchange, HOLD is not a state where nothing happens —
+        <strong>it raises an operator alert</strong>. Automation gives up the decision and hands it to a person;
+        it does not drop it.</p>
+
+        <h2 id="no-fencing-no-recovery">No fencing, no recovery — and the five seconds<a class="anchor" href="#no-fencing-no-recovery" aria-label="Link to this section">#</a></h2>
+
+        <p>Even in the one scenario where recovery is allowed, you have to confirm the original is
+        <strong>definitely powered off</strong> before moving anything. Skip that and you get this.</p>
+
+<pre><code>Compute-01 → VM-A still running   → writes /dev/vdb   (original attachment held)
+Compute-02 → VM-A evacuated       → writes /dev/vdb   (new attachment)</code></pre>
+
+        <p>Two writers on one block device corrupts the filesystem — and <strong>how badly depends on the
+        storage type</strong>.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">Concurrent-write risk by storage type.</caption>
+          <thead><tr><th scope="col">storage</th><th scope="col">risk</th></tr></thead>
+          <tbody>
+            <tr><td>iSCSI</td><td>SCSI-3 PR exists, but new access arriving before the original attachment is torn down can still collide</td></tr>
+            <tr><td><strong>LVM</strong></td><td><strong>no SCSI PR.</strong> Concurrent writes carry a high risk of VG/LV metadata corruption</td></tr>
+            <tr><td>NFS</td><td>file-lock based, so consistency cannot be guaranteed under concurrent mount and write</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>Hence the principle: <strong>no fencing, no recovery.</strong> Four stages — detect, verify, fence,
+        recover. The fencing stage on its own reads:</p>
+
+<pre><code>1. IPMI chassis power off
+2. wait at least 5s               ← do not query immediately
+3. IPMI power status → must read off
+4. confirm residual storage attachments are cleared (varies by type)
+5. run the recovery</code></pre>
+
+        <p>Step 2 exists for a plain reason. <strong>Query the power state right after cutting it and it is not
+        off yet.</strong> Without the wait, the check reads "not off" and is taken as a fencing failure — or
+        waved through optimistically. Five seconds is the floor; the ceiling is a separate fencing timeout.</p>
+
+        <p>And one precondition invalidates the entire procedure. <strong>Fencing goes over IPMI, so if the BMC
+        sits on the same physical switch as MGMT, the switch failure takes IPMI down with it.</strong> Fencing
+        becomes impossible at exactly the moment fencing is needed.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">Whether fencing survives a switch failure, by BMC network topology.</caption>
+          <thead><tr><th scope="col">topology</th><th scope="col">during a switch failure</th><th scope="col">result</th></tr></thead>
+          <tbody>
+            <tr><td>BMC and MGMT on the same physical switch</td><td>MGMT and IPMI cut together</td><td><strong>fencing impossible</strong></td></tr>
+            <tr><td>BMC separated by VLAN only</td><td>the switch dies and the VLANs on it go with it</td><td>fencing unreliable</td></tr>
+            <tr><td><strong>BMC on a dedicated physical switch</strong></td><td>MGMT cut, IPMI survives</td><td>fencing possible</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p><strong>A VLAN is not enough.</strong> When the switch itself dies, every VLAN on it disappears. At
+        the time of the incident there was no BMC network at all. So this was written not as a section of the
+        design but as a <strong>precondition</strong>: without it, even the one recoverable cell of the matrix
+        cannot be executed.</p>
+
+        <h2 id="a-db-lock-is-not-consensus">A DB lock is not distributed consensus<a class="anchor" href="#a-db-lock-is-not-consensus" aria-label="Link to this section">#</a></h2>
+
+        <p>With the decision procedure settled, the remaining question was who executes it and where. Galera
+        was already in house, so there was momentum behind putting a DB lock on top of it. Three approaches
+        were compared on the same axes.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">Three execution-control approaches compared.</caption>
+          <thead><tr><th scope="col">axis</th><th scope="col">Galera + DB lock</th><th scope="col">etcd + fencing</th><th scope="col">Pacemaker + Corosync</th></tr></thead>
+          <tbody>
+            <tr><td>agreement</td><td>DB lock</td><td><strong>Raft</strong></td><td><strong>Totem</strong></td></tr>
+            <tr><td>split-brain prevention</td><td>low</td><td>medium</td><td><strong>high</strong></td></tr>
+            <tr><td>detection time</td><td>~30s</td><td>~10s</td><td><strong>~5s</strong></td></tr>
+            <tr><td>STONITH</td><td>none</td><td>none</td><td><strong>built in</strong></td></tr>
+            <tr><td>OpenStack integration</td><td>non-standard</td><td>non-standard</td><td><strong>Masakari, standard</strong></td></tr>
+            <tr><td>extra infrastructure</td><td>two proxies</td><td>none</td><td>Pacemaker setup</td></tr>
+            <tr><td>implementation difficulty</td><td>low</td><td>medium</td><td>high</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>The first row decided it. <strong>A DB lock is not distributed consensus.</strong> A lock reduces
+        duplicate execution, but under a network partition it does not stop
+        <strong>both sides from each taking their own lock</strong>. The entire point of this work was
+        preventing split-brain; an option that cannot prevent it structurally does not achieve the goal, however
+        cheap it is. It stayed on the table as a stopgap.</p>
+
+        <p>The primary recommendation was Pacemaker + Corosync, and not because of detection time.
+        <strong>STONITH is built in, so "no fencing, no recovery" is enforced by the structure</strong> rather
+        than by everyone remembering it. etcd was the fallback if the operational cost proved too high.</p>
+
+        <p>That has its own objection: <em>"Pacemaker freezes the minority side of a partition — doesn't the
+        service stop?"</em> It does. That is <strong>an intended safe failure</strong>. Stopping and calling a
+        human beats moving without certainty, which is the posture of the whole design, so the execution layer
+        was chosen with the same posture.</p>
+
+        <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>Not a claim that I implemented it.</strong> My scope ended at the design document;
+          another engineer took the implementation.</li>
+          <li><strong>There is no after-measurement.</strong> I do not have a number for how many
+          misjudgements this removed. What exists is a verdict for eight scenarios, not a record of those
+          verdicts being confirmed in the field.</li>
+          <li><strong>The logic that misjudged was not mine.</strong> The existing recovery logic misjudged;
+          the decision procedure came afterwards.</li>
+          <li><strong>~5s / ~10s / ~30s are general properties</strong> of each approach, not measurements
+          taken in this environment. The rest of that comparison is likewise a reading of documentation and
+          standards, not a benchmark.</li>
+          <li><strong>The recovery time objective was an estimate.</strong> The design carries a staged
+          calculation, but it was never measured and remained pending team agreement, which is why no such
+          number appears in this article.</li>
+          <li><strong>Eight is not every case.</strong> They are the combinations observed or foreseeable at
+          design time; anything else falls through to the default, which is HOLD — the second reason the
+          default is HOLD.</li>
+        </ul>
+
+        <p>What is left is one line. <strong>In a high-availability system the hard part is not the code that
+        performs recovery; it is the judgement that declines to.</strong> And that judgement does not come from
+        sharper detection. It comes from first deciding which signal is entitled to testify to what.</p>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script src="../assets/lang.js?v=20260905"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/article.js?v=20260817-scroll"></script>
+</body>
+</html>

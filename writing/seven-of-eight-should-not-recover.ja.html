@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8つの障害のうち7つは復旧しないと決めた | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/seven-of-eight-should-not-recover.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/seven-of-eight-should-not-recover.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/seven-of-eight-should-not-recover.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/seven-of-eight-should-not-recover.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="8つの障害のうち7つは復旧しないと決めた | Kwanghun Lee" />
+  <meta property="og:description" content="スイッチ障害で生きているコンピュートノードが障害と判定され、復旧が大量に実行された。検知を精緻にする代わりに、どの信号が何を証言できるかを決めた。8 シナリオのうち 7 つが保留になった。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/seven-of-eight-should-not-recover.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="8つの障害のうち7つは復旧しないと決めた | Kwanghun Lee" />
+  <meta name="twitter:description" content="検知を精緻にする代わりに、どの信号が何を証言できるかを決めた。コンピュートが生きているかは、そのノードだけが言える。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="スイッチ障害で生きているコンピュートノードが障害と判定され、復旧が大量に実行された。検知を精緻にする代わりに、どの信号が何を証言できるかを決めた。8 シナリオのうち 7 つが保留になった。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language"
+                data-authored='{"en":"seven-of-eight-should-not-recover.html","ko":"seven-of-eight-should-not-recover.ko.html","ja":"seven-of-eight-should-not-recover.ja.html"}'>
+          <option value="ja" selected>Japanese</option>
+          <option value="en">English</option>
+          <option value="ko">Korean</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="zh-TW">Chinese (Traditional)</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="vi">Vietnamese</option>
+          <option value="id">Indonesian</option>
+          <option value="hi">Hindi</option>
+          <option value="ar">Arabic</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <section class="page-hero">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ戻る</a>
+        <h1>8つの障害のうち7つは復旧しないと決めた</h1>
+        <div class="article-meta">Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">10分</span></div>
+        <p class="lang-alts notranslate">他の言語 <a href="seven-of-eight-should-not-recover.html" hreflang="en" lang="en">English</a> · <a href="seven-of-eight-should-not-recover.ko.html" hreflang="ko" lang="ko">한국어</a></p>
+      </section>
+      <article class="article-body">
+
+        <p><strong>範囲.</strong> 2026年3月、OpenStack ベースのプライベートクラウド製品のインスタンス HA(高可用性)
+        障害対応を設計し直した記録である。製品名・バージョン・顧客名・チケット番号は書かない。
+        <strong>成果物は設計書であり、実装は別のメンバーが引き継いだ。</strong>したがってこの記事に
+        「これで誤判定が N 件減った」という事後測定は無い。あるのは判定体系と、その体系でシナリオを 1 つずつ
+        判定した結果である。</p>
+
+        <p>事象は一文である。<strong>L2/L3 スイッチが落ちたとき、正常に動いていたコンピュートノードが障害と判定され、
+        復旧が大量に実行された。</strong>インスタンス HA における復旧とは Nova Evacuate — 別のノードで同じ VM を
+        立ち上げ直すことだ。オリジナルが生きたままコピーが同じボリュームに接続すれば、両方が書き込む。</p>
+
+        <p>再設計の結論は、検知精度を上げることではなかった。<strong>どの信号が何を証言する資格を持つかを決める
+        こと</strong>であり、その基準で 8 つのシナリオを判定したところ、復旧してよいものは 1 つだった。</p>
+
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#observer-isolation">観測者の孤立を対象の障害として読んだ</a></li>
+            <li><a href="#entitlement">検知を精緻にする代わりに、信号に資格を与えた</a></li>
+            <li><a href="#two-questions">「障害か」と「いま実行してよいか」は別の問いである</a></li>
+            <li><a href="#seven-of-eight">8 つのうち 7 つ</a></li>
+            <li><a href="#no-fencing-no-recovery">フェンシングなくして復旧なし、そして 5 秒</a></li>
+            <li><a href="#db-lock">DB ロックは分散合意ではない</a></li>
+            <li><a href="#what-this-does-not-claim">この記事が主張しないこと</a></li>
+          </ul>
+        </nav>
+
+        <h2 id="observer-isolation">観測者の孤立を対象の障害として読んだ<a class="anchor" href="#observer-isolation" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>スイッチ障害を「ネットワークが切れた」とひとまとめにすると、この事象は理解できない。この製品には用途の
+        異なるネットワークが複数あり、<strong>障害時にそれぞれの状態が違っていた。</strong></p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
+        <table>
+          <caption class="sr-only">スイッチ障害時のネットワーク別の状態。</caption>
+          <thead><tr><th scope="col">ネットワーク</th><th scope="col">用途</th><th scope="col">障害時</th></tr></thead>
+          <tbody>
+            <tr><td>MGMT</td><td>コントローラ ↔ コンピュート管理通信</td><td><strong>正常</strong></td></tr>
+            <tr><td>DATA</td><td>VM データトラフィック</td><td>遮断</td></tr>
+            <tr><td>Controller</td><td>コントローラ ↔ コントローラ通信</td><td>遮断</td></tr>
+            <tr><td>BMC</td><td>フェンシング(IPMI)</td><td><strong>不在</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>コントローラ同士の通信が切れるとクォーラムが崩れる。すると一部のコントローラが<strong>単独で</strong>
+        コンピュートが死んだと判断する。ところが同じ時刻に<strong>MGMT は生きていて、コンピュートのエージェント
+        ハートビートは正常に届いていた。</strong></p>
+
+        <p>システムの中に相反する 2 つの証言が同時に存在していた。コンピュートは「自分は生きている」と言っており、
+        孤立したコントローラは「あれは死んだ」と判断した。既存ロジックは後者を採った。</p>
+
+        <p>これを検知の失敗と呼ぶと処方を誤る。検知は失敗していない — ハートビートは届いていた。失敗していたのは
+        <strong>誰の言葉を信じるかを決めていなかったこと</strong>である。</p>
+
+        <h2 id="entitlement">検知を精緻にする代わりに、信号に資格を与えた<a class="anchor" href="#entitlement" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>4 種類の信号に信頼度の等級と、より重要な<strong>役割</strong>を与えた。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
+        <table>
+          <caption class="sr-only">4 種類の信号の信頼度と役割。</caption>
+          <thead><tr><th scope="col">信号</th><th scope="col">信頼度</th><th scope="col">この信号が証言できること</th></tr></thead>
+          <tbody>
+            <tr><td>エージェントハートビート</td><td><strong>最高</strong></td><td>コンピュートノードの<strong>実際の状態</strong></td></tr>
+            <tr><td>コントローラクォーラム</td><td>高</td><td>コントローラクラスタが合意できる状態にあるか</td></tr>
+            <tr><td>ネットワークハートビート</td><td>中</td><td>コントローラ ↔ コンピュート間の接続</td></tr>
+            <tr><td>外部到達性プローブ</td><td><strong>低</strong></td><td><strong>コントローラが孤立しているか</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>最後の行がこの設計のすべてである。外部到達性プローブはコントローラから外へ向かう到達性しか見ない。
+        <strong>コンピュートを直接検証しない。</strong>それでコンピュートの生死を判定すると、観測者の孤立を対象の
+        障害として読むことになる。事象はまさにそれだった。</p>
+
+        <p>そこで原則をこう書いた。<strong>コンピュートが生きているかは、そのコンピュートだけが言える。</strong>
+        他の信号はその証言を補強するか、証言が届かなかったときに<em>なぜ届かなかったのか</em>を説明するために使う。</p>
+
+        <h2 id="two-questions">「障害か」と「いま実行してよいか」は別の問いである<a class="anchor" href="#two-questions" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>既存の判定には 2 種類の条件が混ざっていた。<em>本当に障害が起きたのか</em>と、<em>いま復旧を実行しても
+        安全か</em>である。両方を 1 つの判定に入れると互いを汚染する。</p>
+
+        <p>2 つに分けた。</p>
+
+<pre><code>[Phase 1 — 障害検知]
+1. クォーラム確認
+   コントローラクォーラム喪失 → 判定を信頼できない → HOLD
+
+2. エージェントハートビート確認
+   TTL 正常(30 秒以内) → コンピュート正常 → HOLD
+
+3. TTL 超過時の追加検証
+   外部プローブ結果 / nova-compute サービス状態 / ストレージセッション状態
+   → 判定を信頼できなければ HOLD(運用者へ通知)
+
+[Phase 2 — 実行可能性]
+1. ストレージ到達不可   → HOLD(移しても VM がボリュームに接続できない)
+2. メッセージキュー異常 → HOLD(コマンドが届かない)
+3. Nova API 異常        → HOLD(呼び出し自体ができない)
+4. すべて正常           → フェンシング実行</code></pre>
+
+        <p><strong>既定値が HOLD である。</strong>確信できなければ何もしない。</p>
+
+        <p>この分離が即座に消した誤判定がひとつある。<strong>ストレージ経路の障害を「コンピュートの障害」として
+        読んでいたもの</strong>だ。ストレージ条件は Phase 2 にあるので障害検知を汚染しない。ストレージが見えない
+        ことはコンピュートが死んだ証拠ではなく、<em>いま復旧してはいけない</em>という証拠である。</p>
+
+        <h2 id="seven-of-eight">8 つのうち 7 つ<a class="anchor" href="#seven-of-eight" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>この基準で、実際に起こりうる 8 つのシナリオを 1 つずつ判定した。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
+        <table>
+          <caption class="sr-only">障害シナリオ 8 種の判定マトリクス。✓ は正常、✗ は異常。</caption>
+          <thead><tr><th scope="col">シナリオ</th><th scope="col">クォーラム</th><th scope="col">ハートビート</th><th scope="col">外部プローブ</th><th scope="col">ストレージ</th><th scope="col">Phase 1 判定</th><th scope="col">処置</th></tr></thead>
+          <tbody>
+            <tr><td><strong>コンピュートが実際にクラッシュ</strong></td><td>✓</td><td>✗</td><td>✓</td><td>✓</td><td>障害確定</td><td><strong>フェンシング後に復旧</strong></td></tr>
+            <tr><td>コントローラネットワーク断</td><td>✗</td><td>✓</td><td>✓</td><td>✓</td><td>判定不能</td><td>HOLD</td></tr>
+            <tr><td>DATA ネットワーク断</td><td>✗</td><td>✓</td><td>✗</td><td>✓</td><td>分断の疑い</td><td>HOLD</td></tr>
+            <tr><td>MGMT ネットワーク断</td><td>✗</td><td>✗</td><td>✓</td><td>✓</td><td>判定不能</td><td>HOLD</td></tr>
+            <tr><td>ストレージ経路障害</td><td>✓</td><td>✓</td><td>✓</td><td>✗</td><td>コンピュート正常</td><td>HOLD(Phase 2 不成立)</td></tr>
+            <tr><td>外部到達性のみ喪失</td><td>✓</td><td>✓</td><td>✗</td><td>✓</td><td>コンピュート正常</td><td>HOLD</td></tr>
+            <tr><td>ハートビート超過 + プローブ失敗</td><td>✓</td><td>✗</td><td>✗</td><td>✓</td><td>分断の疑い</td><td>HOLD → 追加判断</td></tr>
+            <tr><td>コントローラ分断 + ハートビート受信</td><td>✗</td><td>✓</td><td>✓</td><td>✓</td><td>判定不能</td><td><strong>HOLD(単独判断の禁止)</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>最下行が事象当時の状況である。そしていま、その行の処置は HOLD だ。</p>
+
+        <p>8 つのうち 7 つが HOLD という結果は<strong>非対称なコスト</strong>から出ている。復旧しなければサービスは
+        落ちたまま残り、人が介入する時間ができる。復旧を誤って実行すればオリジナルとコピーが同じボリュームに同時に
+        書き込み、それは取り返しがつかない。2 つの誤りの値段が違うなら、判定線も真ん中にあってはならない。</p>
+
+        <p>ここで最もよく出る反論 — <em>「7 つを保留にすると、本当の障害のときに復旧が遅れないか?」</em>遅れる。
+        遅れることがこの設計の支払うと決めた代価である。その代わり HOLD は黙って何もしない状態ではなく、
+        <strong>運用者への通知を伴う状態</strong>だ。自動復旧を諦めた場所に人を置くのであって、何も置かないのでは
+        ない。</p>
+
+        <h2 id="no-fencing-no-recovery">フェンシングなくして復旧なし、そして 5 秒<a class="anchor" href="#no-fencing-no-recovery" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>復旧してよい唯一のシナリオでも、移す前に<strong>オリジナルの電源が確実に落ちたか</strong>を確認しなければ
+        ならない。確認せずに移すとこうなる。</p>
+
+<pre><code>Compute-01 → VM-A はまだ実行中   → /dev/vdb へ書き込む   (オリジナルの接続が残る)
+Compute-02 → VM-A の復旧完了     → /dev/vdb へ書き込む   (新規 attach)</code></pre>
+
+        <p>同じブロックデバイスに 2 者が同時に書き込むとファイルシステムが壊れる。そして<strong>壊れ方は
+        ストレージの種類によって違う。</strong></p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
+        <table>
+          <caption class="sr-only">ストレージ種別ごとの同時書き込みリスク。</caption>
+          <thead><tr><th scope="col">ストレージ</th><th scope="col">リスク</th></tr></thead>
+          <tbody>
+            <tr><td>iSCSI</td><td>SCSI-3 PR はあるが、オリジナルの接続が整理される前に新規アクセスが入ると衝突しうる</td></tr>
+            <tr><td><strong>LVM</strong></td><td><strong>SCSI PR 非対応。</strong>同時書き込み時に VG/LV メタデータ破損のリスクが高い</td></tr>
+            <tr><td>NFS</td><td>ファイルロック方式のため、同時 mount/write では一貫性を保証できない</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>そこで原則は<strong>フェンシングなくして復旧なし</strong>になった。手順は 4 段階 —
+        検知 → 検証 → フェンシング → 復旧。フェンシング段階だけを取り出すとこうなる。</p>
+
+<pre><code>1. IPMI 電源 off コマンド
+2. 最低 5 秒待機               ← 即時の状態照会を禁止
+3. IPMI 電源状態を照会 → 必ず off を確認
+4. ストレージの残存接続が解消されたか確認(種別ごとに異なる)
+5. 復旧を実行</code></pre>
+
+        <p>2 番がある理由は単純だ。<strong>電源を落とした直後に状態を照会すると、まだ off ではない。</strong>
+        待機なしで確認すると「off ではない」と読まれてフェンシング失敗と誤判定されるか、逆に楽観的に通過して
+        しまう。5 秒は下限であり、上限は別途フェンシングタイムアウトとして置く。</p>
+
+        <p>そしてこの手順全体を無効化する前提条件がひとつあった。<strong>フェンシングは IPMI で行うが、BMC が
+        MGMT と同じ物理スイッチにあると、スイッチ障害で IPMI も一緒に落ちる。</strong>フェンシングが必要な
+        まさにその瞬間にフェンシングが不可能になる。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
+        <table>
+          <caption class="sr-only">BMC ネットワーク構成別のフェンシング可否。</caption>
+          <thead><tr><th scope="col">構成</th><th scope="col">スイッチ障害時</th><th scope="col">結果</th></tr></thead>
+          <tbody>
+            <tr><td>BMC と MGMT が同一物理スイッチ</td><td>MGMT と IPMI が同時に遮断</td><td><strong>フェンシング不可</strong></td></tr>
+            <tr><td>BMC を VLAN でのみ分離</td><td>スイッチ自体が落ちれば VLAN も消える</td><td>フェンシング不安定</td></tr>
+            <tr><td><strong>BMC 専用の物理スイッチ</strong></td><td>MGMT 遮断、IPMI は維持</td><td>フェンシング可能</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p><strong>VLAN 分離だけでは足りない。</strong>スイッチが丸ごと落ちれば、その上の VLAN もすべて消える。
+        事象当時、BMC ネットワークはそもそも存在しなかった。だからこの項目は設計の一節ではなく
+        <strong>前提条件</strong>として明記した — これが無ければ、上の判定マトリクスの唯一の復旧可能セルすら
+        実行できない。</p>
+
+        <h2 id="db-lock">DB ロックは分散合意ではない<a class="anchor" href="#db-lock" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>判定体系を決めたあとに残った問いは「その判定を誰が、どこで実行するのか」だった。社内には既に Galera が
+        あり、その上に DB ロックを載せようという流れがあった。3 つの方式を同じ軸で比較した。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
+        <table>
+          <caption class="sr-only">実行制御方式 3 つの比較。</caption>
+          <thead><tr><th scope="col">軸</th><th scope="col">Galera + DB ロック</th><th scope="col">etcd + フェンシング</th><th scope="col">Pacemaker + Corosync</th></tr></thead>
+          <tbody>
+            <tr><td>合意方式</td><td>DB ロック</td><td><strong>Raft</strong></td><td><strong>Totem</strong></td></tr>
+            <tr><td>Split-Brain 防止</td><td>低</td><td>中</td><td><strong>高</strong></td></tr>
+            <tr><td>検知時間</td><td>~30 秒</td><td>~10 秒</td><td><strong>~5 秒</strong></td></tr>
+            <tr><td>STONITH</td><td>なし</td><td>なし</td><td><strong>内蔵</strong></td></tr>
+            <tr><td>OpenStack 連携</td><td>非標準</td><td>非標準</td><td><strong>Masakari 標準</strong></td></tr>
+            <tr><td>追加インフラ</td><td>プロキシ 2 台</td><td>なし</td><td>Pacemaker 構成</td></tr>
+            <tr><td>実装難易度</td><td>低</td><td>中</td><td>高</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>結論を決めたのは 1 行目である。<strong>DB ロックは分散合意ではない。</strong>ロックは重複実行を減らすが、
+        ネットワークが分断されたときに<strong>両側がそれぞれロックを取ること</strong>を防げない。この問題の目的は
+        Split-Brain の防止であり、それを構造的に防げないなら、安いという理由だけでは目的を達成しない。だから
+        評価表には「暫定対応」として残した。</p>
+
+        <p>第一推奨は Pacemaker + Corosync だった。理由は検知時間ではなく、<strong>STONITH が内蔵で
+        「フェンシングなくして復旧なし」を構造的に強制する</strong>点である。人が守ると決めた原則をシステムが
+        代わりに守ってくれる。導入難易度が高くて難しい場合は etcd を次善とした。</p>
+
+        <p>ここにも反論がある — <em>「Pacemaker は分断時に少数側を freeze させるが、それではサービスが止まるの
+        では?」</em>止まる。それが<strong>意図された安全な失敗</strong>である。確信なく移すより、止めて人を呼ぶ
+        ほうがよい、というのがこの設計全体の姿勢であり、実行制御方式も同じ姿勢で選んだ。</p>
+
+        <h2 id="what-this-does-not-claim">この記事が主張しないこと<a class="anchor" href="#what-this-does-not-claim" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>実装したという主張ではない。</strong>私の範囲は設計書までで、実装は別のメンバーが引き継いだ。</li>
+          <li><strong>事後測定が無い。</strong>この判定体系を入れて誤判定が何件減ったという数字を私は持っていない。
+          あるのは 8 シナリオに対する判定であって、その判定が現場で確認されたという記録ではない。</li>
+          <li><strong>誤判定したロジックは私が作ったものではない。</strong>既存の復旧ロジックが誤判定し、その後に
+          判定体系を設計した。</li>
+          <li><strong>検知時間 ~5 秒・~10 秒・~30 秒は各方式の一般的特性</strong>であり、この環境で測った値では
+          ない。比較表の他のセルも同様に文献・標準に基づく比較であってベンチマークではない。</li>
+          <li><strong>復旧目標時間(RTO)は見積り値である。</strong>設計書に段階別の算定はあるが実測ではなく、
+          チーム合意が必要な状態で残った。だからこの記事には数字を持ち込んでいない。</li>
+          <li><strong>8 つがすべてのケースではない。</strong>実際に観測された、あるいは設計時点で予見できた組み合わせ
+          であり、それ以外は既定値の HOLD に落ちる — それが既定値を HOLD にした 2 つ目の理由である。</li>
+        </ul>
+
+        <p>残る 1 行はこれである。<strong>高可用性システムで難しいのは復旧を実行するコードではなく、実行しないと
+        決める判定である。</strong>そしてその判定は検知を精緻にして出てくるのではなく、どの信号が何を証言する資格を
+        持つかを先に決めて初めて出てくる。</p>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script src="../assets/lang.js?v=20260905"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/article.js?v=20260817-scroll"></script>
+</body>
+</html>
