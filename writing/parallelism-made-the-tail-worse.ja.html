@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>並列化したらテールが3倍になった | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/parallelism-made-the-tail-worse.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/parallelism-made-the-tail-worse.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/parallelism-made-the-tail-worse.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/parallelism-made-the-tail-worse.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="並列化したらテールが3倍になった | Kwanghun Lee" />
+  <meta property="og:description" content="キャッシュなしで並列化したところ、p99 が 42 秒から 129 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンがロックされる。6 構成を同条件で測って初めて見えたこと。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/parallelism-made-the-tail-worse.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="並列化したらテールが3倍になった | Kwanghun Lee" />
+  <meta name="twitter:description" content="キャッシュなしで並列化したところ、p99 が 42 秒から 129 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンがロックされる。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="キャッシュなしで並列化したところ、p99 が 42 秒から 129 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンがロックされる。6 構成を同条件で測って初めて見えたこと。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language"
+                data-authored='{"en":"parallelism-made-the-tail-worse.html","ko":"parallelism-made-the-tail-worse.ko.html","ja":"parallelism-made-the-tail-worse.ja.html"}'>
+          <option value="ja" selected>Japanese</option>
+          <option value="en">English</option>
+          <option value="ko">Korean</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="zh-TW">Chinese (Traditional)</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="vi">Vietnamese</option>
+          <option value="id">Indonesian</option>
+          <option value="hi">Hindi</option>
+          <option value="ar">Arabic</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <section class="page-hero">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ戻る</a>
+        <h1>並列化したらテールが3倍になった</h1>
+        <div class="article-meta">Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">10分</span></div>
+        <p class="lang-alts notranslate">他の言語 <a href="parallelism-made-the-tail-worse.html" hreflang="en" lang="en">English</a> · <a href="parallelism-made-the-tail-worse.ko.html" hreflang="ko" lang="ko">한국어</a></p>
+      </section>
+      <article class="article-body">
+
+        <p><strong>範囲.</strong> 2026年5月、OpenStack ベースのプライベートクラウド管理コンソールの
+        <strong>ボリューム一覧画面</strong>を改善した記録である。製品名・バージョン・顧客名は書かない。以下の数値は
+        すべて<strong>社内試験環境で JMeter により測定した値</strong>であり、本番トラフィックではない。負荷条件は
+        6 構成すべて同一である —
+        <strong>同時ユーザー 50 名 · ランプアップ 2 分 · 継続 10 分 · シンクタイム 2〜5 秒</strong>。コードは実際の
+        ソースから引用し、社内固有の識別子は削除した。</p>
+
+        <p>この画面はボリュームが増えるほど線形に遅くなり、最終的に 10 分のタイムアウトで落ちた。原因はボリューム
+        1 件ごとに外部 API を逐次で呼ぶループであり、処方は自明に見えた。<strong>並列にすればよい。</strong></p>
+
+        <p>並列にしたら<strong>さらに遅くなった。</strong>p99 が 42 秒から 129 秒になった。この記事は、その 1 マスが
+        何を教えたか、そして<strong>その 1 マスを見えるようにした試験設計</strong>についてである。</p>
+
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#six-rows">6 行</a></li>
+            <li><a href="#why-3-is-worse-than-2">なぜ ③ は ② より悪いのか</a></li>
+            <li><a href="#not-caching-absence">2 つ目の欠陥: 「無い」をキャッシュしていなかった</a></li>
+            <li><a href="#which-fix-actually-mattered">どの修正が実際に効いたのか</a></li>
+            <li><a href="#before-and-after-only">前後だけを測っていたら何を誤って報告したか</a></li>
+            <li><a href="#what-this-does-not-claim">この記事が主張しないこと</a></li>
+          </ul>
+        </nav>
+
+        <h2 id="six-rows">6 行<a class="anchor" href="#six-rows" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>対策をまとめて入れて前後を測ると、「速くなった」という事実だけが残る。何がどれだけ寄与したかは分から
+        ない。そこで構成を 6 段階に分け、<strong>同じ条件でそれぞれ</strong>測定した。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
+        <table>
+          <caption class="sr-only">6 つの構成を同一の負荷条件で測定した結果。</caption>
+          <thead><tr><th scope="col">#</th><th scope="col">構成</th><th scope="col">サンプル</th><th scope="col">エラー</th><th scope="col">中央値</th><th scope="col">p99</th><th scope="col">TPS</th><th scope="col">Apdex</th></tr></thead>
+          <tbody>
+            <tr><td>①</td><td>キャッシュなし・逐次</td><td>54</td><td><strong>83.3%</strong></td><td>600,002</td><td>600,017</td><td>0.06</td><td>0.000</td></tr>
+            <tr><td>②</td><td>キャッシュ 5 秒・逐次</td><td>1,641</td><td>0%</td><td>10,974</td><td>42,644</td><td>2.69</td><td>0.014</td></tr>
+            <tr><td>③</td><td><strong>キャッシュなし・並列</strong></td><td>541</td><td>0%</td><td>45,075</td><td><strong>129,880</strong></td><td>0.87</td><td>0.000</td></tr>
+            <tr><td>④</td><td>キャッシュ 5 秒・並列</td><td>1,560</td><td>0%</td><td>508</td><td>78,997</td><td>2.46</td><td>0.526</td></tr>
+            <tr><td>⑤</td><td>④ + 付随情報取得の最適化</td><td>5,991</td><td>0%</td><td>32</td><td>6,859</td><td>10.01</td><td>0.711</td></tr>
+            <tr><td>⑥</td><td><strong>⑤ + Caffeine refresh</strong></td><td>7,658</td><td><strong>0%</strong></td><td><strong>4</strong></td><td><strong>23</strong></td><td><strong>12.82</strong></td><td><strong>1.000</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>単位はミリ秒である。① の 600,017ms は測定値ではなく、<strong>10 分のタイムアウト上限に張り付いた値</strong>
+        だ。この構成ではリクエストの 83.3% が完了していない。完了しなかったリクエストの遅延は「600 秒」ではなく
+        <strong>不明</strong>が正しく、表のそのマスはそう読まなければならない。</p>
+
+        <p>目に留まる行は ③ である。</p>
+
+        <p><strong>③ は ② より悪い。</strong>キャッシュを外して並列化だけを行うと、p99 は
+        <strong>42.6 秒 → 129.9 秒</strong>になる。スレッドを増やしたのにテールが 3 倍になった。スループットも
+        2.69 TPS から 0.87 TPS へ落ちた。</p>
+
+        <h2 id="why-3-is-worse-than-2">なぜ ③ は ② より悪いのか<a class="anchor" href="#why-3-is-worse-than-2" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>並列化したコードはこうなっていた。</p>
+
+<pre><code>final Map&lt;String, VolumeGroup&gt; groupCache = new ConcurrentHashMap&lt;&gt;();
+
+final List&lt;VolumeDto&gt; dtos = volumes.stream()
+    .map(volume -&gt; CompletableFuture.supplyAsync(() -&gt; {
+
+        // 複数のスレッドが同時にこのブロックへ入る
+        final VolumeGroup group = groupCache.computeIfAbsent(
+            volume.getGroupId(),
+            gid -&gt; client.groups().get(gid)   // ← ロックの中で外部 I/O を呼んでいる
+        );
+        ...
+    }, executor))
+    .map(CompletableFuture::join)
+    .collect(Collectors.toList());</code></pre>
+
+        <p><code>ConcurrentHashMap</code> を使っているのだから安全だ、と読みたくなる。安全ではある。問題は安全性
+        ではなく、<strong>その安全性を何で買っているか</strong>である。</p>
+
+        <p><code>computeIfAbsent</code> は、マッピング関数を<strong>そのキーが属するビンをロックしたまま</strong>
+        実行する。マッピング関数がマップを読んで返るだけの計算なら、その区間はナノ秒である。ここではその場で
+        <strong>ネットワーク往復</strong>を行っている。</p>
+
+        <p>結果としてこうなる。同じグループに属するボリュームが M 件あれば、executor に投入された M 個のスレッドが
+        <strong>同じキー</strong>で <code>computeIfAbsent</code> に入る。1 つが外部呼び出しを行っている間、残りの
+        M−1 個はそのビンの前に並ぶ。逐次コードで並んでいたものが
+        <strong>並列コードでも並び、しかもその間スレッドプールの枠を占有している。</strong>得たものは無く、増えた
+        のはコンテキストスイッチとプール枯渇だけである。</p>
+
+        <p>だから ③ は ② より悪い。② は 5 秒キャッシュのおかげで外部呼び出しの回数自体が少なく、③ はキャッシュが
+        無いためすべてのリクエストがロックされた場所を通らなければならなかった。</p>
+
+        <blockquote><p><strong>用語をひとつ.</strong> この構造を「セグメントロック」と呼ぶ文書をよく見る。セグメント
+        は<strong>Java 7 時代の用語</strong>である。Java 8 以降の <code>ConcurrentHashMap</code> はセグメントを廃し、
+        <strong>ビン(bin)単位</strong>でロックする。ロックの範囲が狭くなっただけで、<em>マッピング関数が走る間その
+        場所がロックされる</em>という事実は変わらない。ロック範囲が狭くなったことは、
+        <strong>ロックの中で I/O をしてよいという意味ではない。</strong></p></blockquote>
+
+        <p>直し方は、ロックを自前で扱うのをやめることである。Caffeine の <code>LoadingCache</code> は、キャッシュ
+        ミス時に<strong>キーごとにローダーをちょうど 1 回だけ</strong>実行し、他の呼び出し側はその結果を待つ。同じ
+        「1 回だけ呼ぶ」保証でありながら、待つ側がマップのビンを掴んでいない。</p>
+
+        <h2 id="not-caching-absence">2 つ目の欠陥: 「無い」をキャッシュしていなかった<a class="anchor" href="#not-caching-absence" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>同じ画面の別経路には、自前のキャッシュがもう 1 つあった。</p>
+
+<pre><code>public static List&lt;Message&gt; messages(final String resourceId) {
+    CacheManager manager = CacheManager.getInstance().init(Message.class, 10);
+    final List&lt;Message&gt; cached = manager.list(Message.class);
+
+    if (cached == null || cached.isEmpty()) {              // ← ここを複数が同時に通過する
+        client.messages().list(...)
+              .forEach(r -&gt; manager.set(Message.class, r.getResourceUuid(), r));
+    }
+    ...
+}</code></pre>
+
+        <p>欠陥が二重になっている。</p>
+
+        <p><strong>ひとつ。</strong>並列化された N 個のスレッドが <code>isEmpty()</code> の判定を同時に通過すると、
+        <strong>N 個すべて</strong>が外部 API を呼ぶ。よくあるキャッシュスタンピードである。</p>
+
+        <p><strong>ふたつ。</strong>取得結果が 0 件だと <code>forEach</code> が一度も回らない。すると
+        <strong>キャッシュには何も保存されない。</strong>次のリクエストもキャッシュが空だと判断してまた呼ぶ。
+        「無い」という答えをキャッシュしていないのだ。そしてこの経路では 0 件がよくある答えだった — つまり
+        <strong>最も頻度の高いケースでキャッシュがまったく機能していなかった。</strong></p>
+
+        <p>ここでも処方は同じである。Caffeine はローダーが空リストを返しても<strong>その空リストを値として
+        キャッシュする</strong>。「値が無い」と「まだ訊いていない」をデータ構造が区別してくれる。自前のキャッシュは
+        その 2 つを同じ <code>isEmpty()</code> で潰していた。</p>
+
+        <p>この 2 つの欠陥は性質が違う。1 つ目は<strong>正しいが遅い</strong>欠陥であり、2 つ目は
+        <strong>キャッシュがあると信じ込ませる</strong>欠陥である。2 つ目のほうが長く生き延びた理由は明白だ —
+        コードにキャッシュがあり、そのキャッシュが埋まっているかを誰も数えなかった。</p>
+
+        <h2 id="which-fix-actually-mattered">どの修正が実際に効いたのか<a class="anchor" href="#which-fix-actually-mattered" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>6 行を隣り合う対として読むと、各対策の寄与が分離される。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
+        <table>
+          <caption class="sr-only">隣接する構成の差から読んだ対策ごとの寄与。</caption>
+          <thead><tr><th scope="col">遷移</th><th scope="col">変えたもの</th><th scope="col">効果</th></tr></thead>
+          <tbody>
+            <tr><td>① → ②</td><td>キャッシュ導入</td><td>エラー率 <strong>83.3% → 0%</strong>。最初の対策が買ったのは速度ではなく完走である</td></tr>
+            <tr><td>② → ③</td><td>並列化のみ</td><td><strong>悪化。</strong>p99 42.6 秒 → 129.9 秒</td></tr>
+            <tr><td>③ → ④</td><td>並列 + キャッシュ</td><td>p99 129.9 秒 → 79.0 秒。キャッシュがあって初めて並列化が値を持つ</td></tr>
+            <tr><td>④ → ⑤</td><td>付随情報取得の最適化</td><td>p99 79.0 秒 → <strong>6.9 秒</strong></td></tr>
+            <tr><td>⑤ → ⑥</td><td>Caffeine refresh</td><td>p99 6.9 秒 → <strong>23ms</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>最後の 1 段が最も大きかった。そしてそれは<strong>最後に入れたもの</strong>なので、前後だけを測っていたら
+        先行する 4 つの対策の手柄になっていただろう。</p>
+
+        <p>なぜ ⑤→⑥ がこれほど大きいのか。⑤ までは、期限切れのキャッシュを読もうとしたリクエストが
+        <strong>新しく埋まるまで待つ。</strong>Caffeine の refresh は期限切れの時点で既存の値を返し続けながら、
+        <strong>バックグラウンドで更新する</strong>。つまり最後の段が消したのは取得コストではなく
+        <strong>更新を待つ時間</strong>であり、それがテール遅延の大部分だった。</p>
+
+        <p>同じ処方を残り 3 画面にも適用した。4 画面とも同じ負荷条件で測った値である。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
+        <table>
+          <caption class="sr-only">改善前後の 4 画面。</caption>
+          <thead><tr><th scope="col">画面</th><th scope="col">エラー</th><th scope="col">p99</th><th scope="col">TPS</th><th scope="col">Apdex</th></tr></thead>
+          <tbody>
+            <tr><td>ボリューム(管理)</td><td>83.3% → 0%</td><td>10 分タイムアウト → <strong>23ms</strong></td><td>0.06 → 12.82</td><td>0.0 → 1.000</td></tr>
+            <tr><td>ボリューム(プロジェクト)</td><td>0% → 0%</td><td>6 分 → 345ms</td><td>0.38 → 12.89</td><td>0.0 → 0.996</td></tr>
+            <tr><td>スナップショット(管理)</td><td>0% → 0%</td><td>7 分 → 14ms</td><td>0.32 → 12.86</td><td>0.006 → 1.000</td></tr>
+            <tr><td>スナップショット(プロジェクト)</td><td>0% → 0%</td><td>8 分 30 秒 → 97ms</td><td>0.19 → 12.85</td><td>0.000 → 0.998</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <h2 id="before-and-after-only">前後だけを測っていたら何を誤って報告したか<a class="anchor" href="#before-and-after-only" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>① と ⑥ だけを測っていたら、報告書はこう書かれただろう。<em>「キャッシュと並列化を適用し、エラー率
+        83.3% を 0% に、p99 を 10 分から 23ms に改善した。」</em></p>
+
+        <p>すべての数値が真である。そして<strong>並列化が寄与したという含意は偽</strong>である。並列化は単独では
+        有害で、キャッシュと組み合わさって初めて値を持った。それを知らないまま他の画面に「ここも並列化しよう」と
+        処方していたら、同じ罠に再び入っていた。</p>
+
+        <p>実際、この表は診断の根拠にもなった。並列化単独が悪化するということは、<strong>ボトルネックが CPU や
+        スループットではなく直列化点である</strong>という意味であり、だからコードの中にロックを探し、
+        <code>computeIfAbsent</code> の中の外部呼び出しが出てきた。表がコードを指した。</p>
+
+        <p>予想される反論を 2 つ先に書いておく。</p>
+
+        <p><strong>「スレッドプールを大きくすればよいのでは?」</strong> — ボトルネックがロックなら、スレッドを
+        増やしても待つ側が増えるだけである。③ がまさにその実験だ。逐次(②)よりスレッドの多い構成(③)のほうが
+        遅かった。</p>
+
+        <p><strong>「中央値 4ms はキャッシュヒットだから当然では?」</strong> — その通り。だから中央値だけを見ない。
+        同じ行の p99 が 23ms で、Apdex が 1.000 である。Apdex 1.000 は標本全体が満足しきい値の内側に入ったという
+        意味なので、テールに隠れた遅いリクエストが無いという言明になる。</p>
+
+        <h2 id="what-this-does-not-claim">この記事が主張しないこと<a class="anchor" href="#what-this-does-not-claim" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>並列化が悪いという主張ではない。</strong>ロックの中で I/O を行うコードを並列化すると悪い。
+          ③→④ が示すように、その条件を無くせば並列化は値を持つ。</li>
+          <li><strong>本番の測定ではない。</strong>社内試験環境での合成負荷である。実際のユーザー分布・データ規模・
+          ネットワークは異なる。</li>
+          <li><strong>構成ごとに 1 回ずつしか測っていない。</strong>反復測定による分散が無いので、隣接する 2 構成の
+          差が小さいときはその差を根拠にしていない。この記事が根拠に使うのは ②↔③ のような
+          <strong>3 倍規模の差</strong>だけである。</li>
+          <li><strong>① の 600 秒は遅延ではない。</strong>タイムアウト上限である。① の p99 を「600 秒」として
+          引用すると、測定できなかったものを測定したふりをすることになる。</li>
+          <li><strong>Apdex のしきい値はツールの既定値</strong>をそのまま使った。サービス水準目標から定義した値では
+          ない。</li>
+        </ul>
+
+        <p>残る 1 行はこれである。<strong>直したものが複数あるなら、何が直したのかは別々に測らないと出てこない。</strong>
+        そしてそう測ると、ときどき、良くなったと信じていた対策が単独では有害だったと分かる。</p>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script src="../assets/lang.js?v=20260905"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/article.js?v=20260817-scroll"></script>
+</body>
+</html>

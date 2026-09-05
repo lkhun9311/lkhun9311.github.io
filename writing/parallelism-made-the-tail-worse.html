@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parallelising It Made the Tail Three Times Worse | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/parallelism-made-the-tail-worse.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/parallelism-made-the-tail-worse.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/parallelism-made-the-tail-worse.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/parallelism-made-the-tail-worse.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="Parallelising It Made the Tail Three Times Worse | Kwanghun Lee" />
+  <meta property="og:description" content="Parallelising without a cache took p99 from 42s to 129s. An external call inside computeIfAbsent holds the bin, and only a six-configuration test made that visible." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/parallelism-made-the-tail-worse.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Parallelising It Made the Tail Three Times Worse | Kwanghun Lee" />
+  <meta name="twitter:description" content="Parallelising without a cache took p99 from 42s to 129s. An external call inside computeIfAbsent holds the bin." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="Parallelising without a cache took p99 from 42s to 129s. An external call inside computeIfAbsent holds the bin, and only a six-configuration test made that visible." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language"
+                data-authored='{"en":"parallelism-made-the-tail-worse.html","ko":"parallelism-made-the-tail-worse.ko.html","ja":"parallelism-made-the-tail-worse.ja.html"}'>
+          <option value="en" selected>English</option>
+          <option value="ko">Korean</option>
+          <option value="ja">Japanese</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="zh-TW">Chinese (Traditional)</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="vi">Vietnamese</option>
+          <option value="id">Indonesian</option>
+          <option value="hi">Hindi</option>
+          <option value="ar">Arabic</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <section class="page-hero">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Writing</a>
+        <h1>Parallelising It Made the Tail Three Times Worse</h1>
+        <div class="article-meta">Writing · Sep 2026<span aria-hidden="true"> · </span><span class="read-time">8 min read</span></div>
+        <p class="lang-alts notranslate">Also in <a href="parallelism-made-the-tail-worse.ko.html" hreflang="ko" lang="ko">한국어</a> · <a href="parallelism-made-the-tail-worse.ja.html" hreflang="ja" lang="ja">日本語</a></p>
+      </section>
+      <article class="article-body">
+
+        <p><strong>Scope.</strong> In May 2026 I fixed the <strong>volume list screen</strong> of an
+        OpenStack-based private cloud management console. I do not name the product, its version, or any
+        customer. Every number below was measured with JMeter <strong>in an internal test environment</strong>,
+        not against production traffic. The load profile is identical across all six configurations —
+        <strong>50 concurrent users, 2-minute ramp-up, 10-minute duration, 2–5s think time</strong>. Code is
+        quoted from the real source with internal identifiers removed.</p>
+
+        <p>The screen degraded linearly as volumes accumulated and eventually died on a 10-minute timeout.
+        The cause was a loop calling an external API once per volume, sequentially, and the prescription
+        looked obvious. <strong>Run it in parallel.</strong></p>
+
+        <p>Running it in parallel made it <strong>slower</strong>. p99 went from 42s to 129s. This is about
+        what that one cell told me, and about <strong>the test design that made the cell visible at all</strong>.</p>
+
+        <nav class="article-toc" aria-label="Contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#six-rows">Six rows</a></li>
+            <li><a href="#why-3-is-worse-than-2">Why ③ is worse than ②</a></li>
+            <li><a href="#not-caching-absence">The second defect: absence was never cached</a></li>
+            <li><a href="#which-fix-actually-mattered">Which fix actually mattered</a></li>
+            <li><a href="#before-and-after-only">What a before-and-after would have reported</a></li>
+            <li><a href="#what-this-does-not-claim">What this does not claim</a></li>
+          </ul>
+        </nav>
+
+        <h2 id="six-rows">Six rows<a class="anchor" href="#six-rows" aria-label="Link to this section">#</a></h2>
+
+        <p>Land every fix at once, measure before and after, and one fact survives: it got faster. Which
+        change bought how much of that is gone. So I split the configuration into six steps and measured each
+        one <strong>under identical conditions</strong>.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">Six configurations measured under the same load profile.</caption>
+          <thead><tr><th scope="col">#</th><th scope="col">configuration</th><th scope="col">samples</th><th scope="col">error</th><th scope="col">median</th><th scope="col">p99</th><th scope="col">TPS</th><th scope="col">Apdex</th></tr></thead>
+          <tbody>
+            <tr><td>①</td><td>no cache, sequential</td><td>54</td><td><strong>83.3%</strong></td><td>600,002</td><td>600,017</td><td>0.06</td><td>0.000</td></tr>
+            <tr><td>②</td><td>5s cache, sequential</td><td>1,641</td><td>0%</td><td>10,974</td><td>42,644</td><td>2.69</td><td>0.014</td></tr>
+            <tr><td>③</td><td><strong>no cache, parallel</strong></td><td>541</td><td>0%</td><td>45,075</td><td><strong>129,880</strong></td><td>0.87</td><td>0.000</td></tr>
+            <tr><td>④</td><td>5s cache, parallel</td><td>1,560</td><td>0%</td><td>508</td><td>78,997</td><td>2.46</td><td>0.526</td></tr>
+            <tr><td>⑤</td><td>④ + side-lookup optimisation</td><td>5,991</td><td>0%</td><td>32</td><td>6,859</td><td>10.01</td><td>0.711</td></tr>
+            <tr><td>⑥</td><td><strong>⑤ + Caffeine refresh</strong></td><td>7,658</td><td><strong>0%</strong></td><td><strong>4</strong></td><td><strong>23</strong></td><td><strong>12.82</strong></td><td><strong>1.000</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>Units are milliseconds. The 600,017 in row ① is not a measurement — it is <strong>the 10-minute
+        timeout ceiling</strong>, and 83.3% of that configuration's requests never finished. The latency of a
+        request that never finished is not "600 seconds"; it is <strong>unknown</strong>, and that cell has to
+        be read that way.</p>
+
+        <p>The row that catches the eye is ③.</p>
+
+        <p><strong>③ is worse than ②.</strong> Drop the cache and parallelise, and p99 moves from
+        <strong>42.6s to 129.9s</strong>. More threads, a tail three times longer. Throughput fell too, from
+        2.69 TPS to 0.87.</p>
+
+        <h2 id="why-3-is-worse-than-2">Why ③ is worse than ②<a class="anchor" href="#why-3-is-worse-than-2" aria-label="Link to this section">#</a></h2>
+
+        <p>The parallel code looked like this.</p>
+
+<pre><code>final Map&lt;String, VolumeGroup&gt; groupCache = new ConcurrentHashMap&lt;&gt;();
+
+final List&lt;VolumeDto&gt; dtos = volumes.stream()
+    .map(volume -&gt; CompletableFuture.supplyAsync(() -&gt; {
+
+        // many threads enter this block at once
+        final VolumeGroup group = groupCache.computeIfAbsent(
+            volume.getGroupId(),
+            gid -&gt; client.groups().get(gid)   // ← external I/O inside the lock
+        );
+        ...
+    }, executor))
+    .map(CompletableFuture::join)
+    .collect(Collectors.toList());</code></pre>
+
+        <p>It is easy to read <code>ConcurrentHashMap</code> and conclude this is safe. It is safe. The
+        question is not safety but <strong>what the safety is bought with</strong>.</p>
+
+        <p><code>computeIfAbsent</code> runs the mapping function <strong>while holding the bin that the key
+        hashes to</strong>. If the mapping function reads a map and returns, that window is nanoseconds. Here
+        it performs a <strong>network round trip</strong> inside it.</p>
+
+        <p>So: if M volumes belong to the same group, M threads from the executor arrive at
+        <code>computeIfAbsent</code> with <strong>the same key</strong>. One makes the external call; the
+        other M−1 queue behind that bin. What used to be a queue in sequential code
+        <strong>is still a queue in parallel code, and now it pins pool threads while it waits.</strong> The
+        gain is nothing; the added cost is context switching and pool exhaustion.</p>
+
+        <p>That is why ③ is worse than ②. In ②, the 5-second cache kept the number of external calls low. In
+        ③, with no cache, every request had to pass through the held bin.</p>
+
+        <blockquote><p><strong>One term.</strong> Documents often call this a "segment lock". Segments are
+        <strong>Java 7 vocabulary</strong>. Since Java 8, <code>ConcurrentHashMap</code> has no segments and
+        locks at <strong>bin</strong> granularity. The lock got narrower; the fact that <em>the bin is held
+        for as long as the mapping function runs</em> did not change. A narrower lock is not a licence to do
+        I/O inside it.</p></blockquote>
+
+        <p>The fix is to stop hand-rolling the lock. Caffeine's <code>LoadingCache</code> guarantees that on a
+        miss the loader runs <strong>exactly once per key</strong> while the other callers wait for its
+        result. Same "call it once" guarantee, except the waiters are not holding a bin of the map.</p>
+
+        <h2 id="not-caching-absence">The second defect: absence was never cached<a class="anchor" href="#not-caching-absence" aria-label="Link to this section">#</a></h2>
+
+        <p>Another path on the same screen had a second hand-written cache.</p>
+
+<pre><code>public static List&lt;Message&gt; messages(final String resourceId) {
+    CacheManager manager = CacheManager.getInstance().init(Message.class, 10);
+    final List&lt;Message&gt; cached = manager.list(Message.class);
+
+    if (cached == null || cached.isEmpty()) {              // ← many threads pass this at once
+        client.messages().list(...)
+              .forEach(r -&gt; manager.set(Message.class, r.getResourceUuid(), r));
+    }
+    ...
+}</code></pre>
+
+        <p>Two defects, stacked.</p>
+
+        <p><strong>One.</strong> When N parallel threads clear the <code>isEmpty()</code> check together,
+        <strong>all N</strong> call the external API. An ordinary cache stampede.</p>
+
+        <p><strong>Two.</strong> If the lookup returns zero rows, <code>forEach</code> never runs, so
+        <strong>nothing is written to the cache</strong>. The next request sees an empty cache and calls
+        again. Absence was never cached. And on this path zero rows was the common answer — meaning
+        <strong>the cache did nothing at all in the most frequent case</strong>.</p>
+
+        <p>The prescription is the same. Caffeine caches an empty list as a value like any other, so the data
+        structure distinguishes "the answer is nothing" from "nobody has asked yet". The hand-written cache
+        collapsed both into one <code>isEmpty()</code>.</p>
+
+        <p>The two defects differ in kind. The first is <strong>correct but slow</strong>. The second
+        <strong>makes you believe there is a cache</strong>. The second survived longer for an obvious reason:
+        there was a cache in the code, and nobody ever counted whether it was being filled.</p>
+
+        <h2 id="which-fix-actually-mattered">Which fix actually mattered<a class="anchor" href="#which-fix-actually-mattered" aria-label="Link to this section">#</a></h2>
+
+        <p>Read the six rows as adjacent pairs and each change separates out.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">Contribution of each change, read from adjacent configuration pairs.</caption>
+          <thead><tr><th scope="col">step</th><th scope="col">what changed</th><th scope="col">effect</th></tr></thead>
+          <tbody>
+            <tr><td>① → ②</td><td>introduce cache</td><td>error rate <strong>83.3% → 0%</strong>. The first fix bought completion, not speed</td></tr>
+            <tr><td>② → ③</td><td>parallelise only</td><td><strong>worse.</strong> p99 42.6s → 129.9s</td></tr>
+            <tr><td>③ → ④</td><td>parallel + cache</td><td>p99 129.9s → 79.0s. Parallelism pays only once the cache is there</td></tr>
+            <tr><td>④ → ⑤</td><td>side-lookup optimisation</td><td>p99 79.0s → <strong>6.9s</strong></td></tr>
+            <tr><td>⑤ → ⑥</td><td>Caffeine refresh</td><td>p99 6.9s → <strong>23ms</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>The last step was the largest. And because it was the last one added, a before-and-after would have
+        credited it to the four changes ahead of it.</p>
+
+        <p>Why is ⑤→⑥ that large? Up to ⑤, a request that finds an expired entry <strong>waits for it to be
+        refilled</strong>. Caffeine's refresh keeps serving the previous value at expiry and
+        <strong>reloads in the background</strong>. What the last step removed was not lookup cost but
+        <strong>time spent waiting for a refresh</strong> — and that was most of the tail.</p>
+
+        <p>The same prescription went to the other three screens. All four were measured under the same load
+        profile.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">The four screens, before and after.</caption>
+          <thead><tr><th scope="col">screen</th><th scope="col">error</th><th scope="col">p99</th><th scope="col">TPS</th><th scope="col">Apdex</th></tr></thead>
+          <tbody>
+            <tr><td>volumes (admin)</td><td>83.3% → 0%</td><td>10 min timeout → <strong>23ms</strong></td><td>0.06 → 12.82</td><td>0.0 → 1.000</td></tr>
+            <tr><td>volumes (project)</td><td>0% → 0%</td><td>6 min → 345ms</td><td>0.38 → 12.89</td><td>0.0 → 0.996</td></tr>
+            <tr><td>snapshots (admin)</td><td>0% → 0%</td><td>7 min → 14ms</td><td>0.32 → 12.86</td><td>0.006 → 1.000</td></tr>
+            <tr><td>snapshots (project)</td><td>0% → 0%</td><td>8 min 30s → 97ms</td><td>0.19 → 12.85</td><td>0.000 → 0.998</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <h2 id="before-and-after-only">What a before-and-after would have reported<a class="anchor" href="#before-and-after-only" aria-label="Link to this section">#</a></h2>
+
+        <p>Measure only ① and ⑥ and the report writes itself. <em>"Applying caching and parallelism reduced
+        the error rate from 83.3% to 0% and p99 from 10 minutes to 23ms."</em></p>
+
+        <p>Every number in that sentence is true. The <strong>implication that parallelism contributed is
+        false</strong>. On its own it was harmful; it paid only alongside the cache. Not knowing that, the
+        obvious next move — "let's parallelise this other screen too" — walks straight back into the same trap.</p>
+
+        <p>The table also did diagnostic work. Parallelism alone being <em>worse</em> says the bottleneck is
+        <strong>not CPU or throughput but a serialisation point</strong>. That is what sent me looking for a
+        lock, and the external call inside <code>computeIfAbsent</code> is what came back. The table pointed at
+        the code.</p>
+
+        <p>Two objections worth answering up front.</p>
+
+        <p><strong>"Why not just enlarge the thread pool?"</strong> — When the bottleneck is a lock, more
+        threads only add more waiters. ③ is exactly that experiment: the configuration with more threads was
+        slower than the sequential one.</p>
+
+        <p><strong>"A 4ms median is just a cache hit, isn't it?"</strong> — Yes. That is why the median is not
+        read alone. On the same row p99 is 23ms and Apdex is 1.000. An Apdex of 1.000 means the whole sample
+        landed inside the satisfied threshold, which is a statement about the tail, not the middle.</p>
+
+        <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>Not that parallelism is bad.</strong> Parallelising code that does I/O inside a lock is
+          bad. ③→④ shows that removing the condition lets parallelism pay.</li>
+          <li><strong>Not a production measurement.</strong> Synthetic load in an internal test environment.
+          Real user distribution, data volume and network differ.</li>
+          <li><strong>One run per configuration.</strong> There is no repeated measurement and therefore no
+          variance estimate, so where two adjacent configurations differ narrowly I do not lean on the
+          difference. The only differences this article argues from are the threefold ones, like ②↔③.</li>
+          <li><strong>The 600s in ① is not a latency.</strong> It is the timeout ceiling. Quoting it as a p99
+          would be reporting something that was never measured.</li>
+          <li><strong>Apdex uses the tool's default threshold</strong>, not one derived from a service level
+          objective.</li>
+        </ul>
+
+        <p>What is left is one line. <strong>If you changed several things, which one changed the outcome has
+        to be measured separately.</strong> And when you do measure it, occasionally the change you were
+        proudest of turns out to have been harmful on its own.</p>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script src="../assets/lang.js?v=20260905"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/article.js?v=20260817-scroll"></script>
+</body>
+</html>
