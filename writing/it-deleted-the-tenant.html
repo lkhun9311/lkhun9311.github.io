@@ -115,7 +115,7 @@
           <tbody>
             <tr><td>R1</td><td>premium alone, same arrival schedule</td><td>how fast is this with no competition</td></tr>
             <tr><td>off</td><td>both tenants, no admission control</td><td>what does contention cost</td></tr>
-            <tr><td><strong>static-cap</strong></td><td>pressure-blind token bucket, tuned to admit the same work as kv-aware</td><td><strong>is the guard doing anything a rate limit could not</strong></td></tr>
+            <tr><td><strong>static-cap</strong></td><td>pressure-blind token bucket. <strong>Meant to be tuned to admit the same work as kv-aware</strong></td><td><strong>is the guard doing anything a rate limit could not</strong></td></tr>
             <tr><td>kv-aware</td><td>the KV-cache-aware guard</td><td>the arm under test</td></tr>
           </tbody>
         </table>
@@ -162,11 +162,16 @@
         </div>
         </div>
 
-        <p><strong>All three pre-registered checks failed.</strong> Absolute protection came in at
-        <strong>83.7x</strong> against a bar of 1.25x. The claim this milestone was built to make was
+        <p><strong>The report printed FAIL for all three pre-registered checks.</strong> Absolute protection came
+        in at <strong>83.7x</strong> against a bar of 1.25x. The claim this milestone was built to make was
         withdrawn.</p>
 
-        <p>So far this is just a negative result. The interesting column is the third one.</p>
+        <p>But <strong>two of the three are void rather than failed.</strong> Incremental value and admission
+        match are both computed against <code>static-cap</code> as the control — and that arm was not a
+        control. <strong>Only absolute protection compared what it was meant to compare, and it failed by a
+        factor of 67.</strong></p>
+
+        <p>Why it was not a control is the rest of this article.</p>
 
         <h2 id="three-sentences">Three sentences that cannot all be true<a class="anchor" href="#three-sentences" aria-label="Link to this section">#</a></h2>
 
@@ -190,6 +195,15 @@
         <strong>it deleted the competing tenant</strong>. It did not protect the tail; it removed what was
         producing one.</p>
 
+        <p>And why it deleted all of it was not policy but <strong>a configuration error</strong>. The arm was
+        given the trace's <strong>request rate</strong> in a flag measured in <strong>tokens per second</strong>,
+        with no burst at all. Every eligible request therefore exceeded
+        <strong>a bucket that could never hold it</strong>, and the arm admitted nothing.</p>
+
+        <p>So static-cap became <strong>a second isolation arm rather than a control</strong>. That is why the
+        ratio against <code>kv-aware</code> (84.760) came out nearly equal to the ratio against isolation
+        (83.747) — the two were measuring the same thing.</p>
+
         <h2 id="why-the-report-could-not-see-it">Why the report could not see it<a class="anchor" href="#why-the-report-could-not-see-it" aria-label="Link to this section">#</a></h2>
 
         <p>Two things stacked.</p>
@@ -203,10 +217,12 @@
         were 413, so the row read "0 requests shed". A correct distinction
         <strong>dropped one whole side out of the accounting</strong>.</p>
 
-        <p><strong>Second, every check the report made was a tail ratio.</strong> Absolute protection is a
-        ratio, incremental value is a ratio, admission match is a ratio. Look only at ratios and "went faster
+        <p><strong>Second, every verdict the report produced was a ratio.</strong> Absolute protection and
+        incremental value are ratios of tail latency; admission match is a ratio of admitted work. But even
+        admission match only asks <em>how close the two arms are to each other</em> — it
+        <strong>never names the fact that one of them is zero</strong>. Look only at ratios and "went faster
         while doing less" reads identically to "went faster while doing the same".
-        <strong>You cannot see a vanished denominator from the numerator alone.</strong></p>
+        <strong>A vanished denominator is not visible from a ratio.</strong></p>
 
         <p>Between them, this stayed invisible for <strong>four paid runs</strong>.</p>
 
@@ -250,20 +266,30 @@
 <p class="table-scroll-hint">scroll sideways for the rest</p>
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
         <table>
-          <caption class="sr-only">Interference multiple on the short request, by batch budget.</caption>
-          <thead><tr><th scope="col">batch budget</th><th scope="col">interference on the short request</th></tr></thead>
+          <caption class="sr-only">Interference multiple on the short request, by batch budget and scheduling policy.</caption>
+          <thead><tr><th scope="col">batch budget</th><th scope="col">fcfs</th><th scope="col">priority</th></tr></thead>
           <tbody>
-            <tr><td>512</td><td><strong>1.57x</strong></td></tr>
-            <tr><td>2,048</td><td>4.85x</td></tr>
-            <tr><td>8,192</td><td>11.83x</td></tr>
+            <tr><td>512</td><td>13.790x</td><td><strong>1.566x</strong></td></tr>
+            <tr><td>2,048</td><td>12.485x</td><td>4.846x</td></tr>
+            <tr><td>8,192</td><td>11.812x</td><td>11.826x</td></tr>
           </tbody>
         </table>
         </div>
         </div>
 
-        <p>The interference the gateway could not hold below 83.7x, <strong>one engine setting held at
-        1.57x</strong>. It was a different layer. Put a control plane on top of a misconfigured engine and what
-        you measure is the misconfiguration, not the control plane.</p>
+        <p>The interference the gateway could not hold below 83.7x <strong>drops to 1.57x in one cell here</strong>.
+        It was a different layer. Put a control plane on top of a misconfigured engine and what you measure is
+        the misconfiguration, not the control plane.</p>
+
+        <p>The table has to be read precisely, though. <strong>This is not the effect of one budget; it is a
+        budget × policy interaction.</strong> Read the <code>priority</code> column alone and larger budgets get
+        worse; the <code>fcfs</code> column moves the other way. They meet at 8,192. And
+        <strong>only one of the six cells clears the bar</strong>, with the pattern still unexplained.</p>
+
+        <p>This microtest had its own pre-registered readings, and <strong>none of them held.</strong> The
+        reading table could not express an interaction between two factors. Pre-registration stops a result
+        being fitted after the fact; it does not stop
+        <strong>the registered reading table from failing to contain the result</strong>.</p>
 
         <p>The cost, written down: <strong>three paid sessions, roughly ten dollars of GPU and cluster time,
         and the first two produced no valid measurement.</strong> Everything after that — the mechanism, the
@@ -291,6 +317,12 @@
         <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
         <ul>
+          <li><strong>One comparison arm was void.</strong> <code>static-cap</code> admitted nothing because
+          of a configuration error, making it a second isolation arm rather than a control. So two of the three
+          pre-registered checks — incremental value and admission match — are <strong>void, not failed</strong>.
+          The one that failed validly is absolute protection.</li>
+          <li><strong>The microtest is not the effect of a budget alone.</strong> It is a budget × scheduling
+          policy interaction, one of six cells clears the bar, and none of the pre-registered readings held.</li>
           <li><strong>Not a general claim that admission control cannot protect a tail.</strong> What was
           falsified is <strong>one signal</strong> — reactive KV occupancy, a 0.85 engage threshold, a
           30-second release — on one workload, one model and one card.</li>
