@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>뮤테이션 테스트란? | Kwanghun Lee</title>
+  <title>fail-closed 란? | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
   <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
-  <meta name="description" content="코드를 일부러 망가뜨린 뒤 테스트가 빨간불이 되는지 보는 방법." />
+  <meta name="description" content="고장 났을 때 막는 쪽으로 넘어지는 설계. 반대는 fail-open." />
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="뮤테이션 테스트란? | Kwanghun Lee" />
-  <meta property="og:description" content="코드를 일부러 망가뜨린 뒤 테스트가 빨간불이 되는지 보는 방법." />
+  <meta property="og:title" content="fail-closed 란? | Kwanghun Lee" />
+  <meta property="og:description" content="고장 났을 때 막는 쪽으로 넘어지는 설계. 반대는 fail-open." />
   <meta property="og:locale" content="ko_KR" />
   <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
 </head>
@@ -51,66 +51,58 @@
   <div class="container reading">
     <main>
       <section class="page-hero">
-        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>용어집으로</a>
-        <h1>뮤테이션 테스트란?<br><span class="h1-sub">mutation testing</span></h1>
-        <div class="article-meta"><span class="source-tag glossary notranslate">용어</span>Glossary · 검증</div>
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Notes 로</a>
+        <h1>Fail-closed: fail-closed 란?</h1>
+        <div class="article-meta"><span class="source-tag glossary notranslate">용어</span>Notes · 설계<span aria-hidden="true"> · </span><span class="notranslate">#Fail-closed</span></div>
       </section>
       <article class="article-body">
 
-        <p class="term-oneline">코드를 <strong>일부러 망가뜨린 뒤 테스트가 빨간불이 되는지</strong> 보는 방법입니다. 테스트가 초록불이면 코드가 안전한 게 아니라 <strong>가드가 겨누고 있지 않은 것</strong>입니다.</p>
+        <p class="term-oneline">무언가 <strong>고장 났을 때 막는 쪽으로 넘어지는</strong> 설계입니다. 반대는 fail-open — 고장 나면 통과시킵니다.</p>
 
         <nav class="article-toc" aria-label="목차">
           <p class="toc-label">목차</p>
           <ul>
-            <li><a href="#왜">왜 필요한가</a></li>
-            <li><a href="#방법">어떻게 하나</a></li>
-            <li><a href="#경로">경로마다 따로 걸어야 한다</a></li>
+            <li><a href="#방향">어느 쪽으로 넘어질 것인가</a></li>
+            <li><a href="#대가">대가</a></li>
+            <li><a href="#조용함">조용한 fail-open 이 제일 위험하다</a></li>
             <li><a href="#쓰인-곳">이 사이트에서 쓰인 곳</a></li>
             <li><a href="#함께-볼-용어">함께 볼 용어</a></li>
           </ul>
         </nav>
 
-        <h2 id="왜">왜 필요한가<a class="anchor" href="#왜" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>테스트가 초록불이라는 것은 두 가지를 뜻할 수 있습니다.</p>
+        <h2 id="방향">어느 쪽으로 넘어질 것인가<a class="anchor" href="#방향" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>콘텐츠 검열 API 가 응답하지 않을 때 두 가지 선택이 있습니다.</p>
 
-        <ol>
-          <li>코드가 올바르다</li>
-          <li><strong>테스트가 그 코드를 안 보고 있다</strong></li>
-        </ol>
+        <ul>
+          <li><strong>fail-closed</strong> — 게시를 막는다. 사용자는 "잠시 후 다시 시도해 주세요"를 봅니다.</li>
+          <li><strong>fail-open</strong> — 그냥 게시한다. 검열되지 않은 콘텐츠가 나갑니다.</li>
+        </ul>
 
-        <p>초록불만으로는 둘을 구별할 수 없습니다. 구별하는 유일한 방법이 <strong>고친 것을 되돌렸을 때 빨간불이
-        나는지 보는 것</strong>입니다.</p>
+        <p>안전이 걸린 곳은 fail-closed 가 기본이어야 합니다. 검열기가 죽었을 때 유해 콘텐츠가 통과하는 쪽이,
+        정상 글이 잠깐 막히는 쪽보다 훨씬 비쌉니다.</p>
+        <h2 id="대가">대가<a class="anchor" href="#대가" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>fail-closed 는 <strong>외부 의존성의 장애가 곧 우리 기능의 장애</strong>가 된다는 뜻입니다.
+        검열 API 가 느려지면 글쓰기가 느려지고, 죽으면 글쓰기가 죽습니다.</p>
 
-        <p>흔한 형태: 단언은 멀쩡히 있고 값도 맞게 검사하는데, 그 단언이 <strong>이번에 막은 것을 안 겨누고</strong>
-        있습니다. 예를 들어 "호출이 트랜잭션 밖인가"를 검사하는데 호출이 0건이면
-        <code>containsOnly(false)</code> 는 빈 리스트에 대해 참이라 <strong>공허하게 통과</strong>합니다.</p>
-        <h2 id="방법">어떻게 하나<a class="anchor" href="#방법" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>도구를 쓸 수도 있지만(PIT 등), 실무에서 가장 값이 큰 것은 <strong>손으로 한 번 되돌려 보는 것</strong>입니다.</p>
+        <p>그래서 fail-closed 를 고른 순간 그 외부 호출의 <strong>타임아웃·동시 실행 상한·재시도</strong>가
+        전부 제품 문제가 됩니다. "안전하니까 괜찮다"로 끝나지 않습니다.</p>
+        <h2 id="조용함">조용한 fail-open 이 제일 위험하다<a class="anchor" href="#조용함" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>의도한 fail-open 보다 나쁜 것은 <strong>fail-closed 인 줄 알았는데 실제로는 열려 있는</strong> 경우입니다.</p>
 
-        <pre data-lang="text">① 방금 한 수리를 되돌린다 (한 줄이면 한 줄)
-② 테스트를 돌린다
-③ 빨간불이 나면  → 가드가 그 수리를 지키고 있다
-   초록불이 나면  → 지키는 가드가 없다. 지금 만든다.</pre>
+        <p>전형적인 형태: 예외를 잡아서 로그도 안 남기고 삼키는 코드입니다. 겉보기엔 게이트가 있고, 통과율도
+        정상이고, 아무도 이상을 못 느낍니다. 실제로 이 리포에서 검열 클라이언트의
+        <code>catch (e: Exception)</code> 이 원인을 통째로 삼켜, 장애 진단이 크게 늦어진 일이 있었습니다.</p>
 
-        <p>순서를 바꿔 <strong>뮤테이션을 먼저 걸고</strong> 빨간불을 확인한 뒤 원복해 초록불을 보는 방법도 있습니다.
-        가드를 새로 쓸 때 특히 좋습니다 — 처음부터 "이 가드가 무엇을 잡는지"를 눈으로 보게 됩니다.</p>
-        <h2 id="경로">경로마다 따로 걸어야 한다<a class="anchor" href="#경로" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>한 번에 다 망가뜨리면 "빨간불 났으니 됐다"로 넘어가게 됩니다. <strong>하나씩 빼야</strong>
-        어느 가드가 무엇을 지키는지 드러납니다.</p>
-
-        <p>실제 사례: 세 경로를 고치고 뮤테이션을 걸었더니 두 경로는 해당 가드만 빨간불이 됐는데, 세 번째 경로는
-        <strong>초록불</strong>이었습니다. 그 가드가 겨누는 조건이 테스트 안에서 만들어지지 않았기 때문이고,
-        조건을 만들어 준 뒤에야 빨간불을 봤습니다.</p>
+        <p><strong>fail-closed 는 맞지만 원인은 남겨야 합니다.</strong> 막는 것과 조용한 것은 다른 결정입니다.</p>
 
         <h2 id="쓰인-곳">이 사이트에서 쓰인 곳<a class="anchor" href="#쓰인-곳" aria-label="이 절로 가는 링크">#</a></h2>
         <ul>
-          <li><a href="../writing/a-pooler-fixes-only-one.ko.html">RDS Proxy 로는 못 고치는 커넥션 고갈 — 가드 절</a></li>
+          <li><a href="../writing/a-pooler-fixes-only-one.ko.html">RDS Proxy 로는 못 고치는 커넥션 고갈</a></li>
           </ul>
 
         <h2 id="함께-볼-용어">함께 볼 용어<a class="anchor" href="#함께-볼-용어" aria-label="이 절로 가는 링크">#</a></h2>
         <ul>
-          <li><a href="fail-closed.html">fail-closed</a> — 되돌려도 증상이 안 보이는 종류의 결함</li>
-          <li><a href="load-test-harness.html">하네스</a> — 측정 도구에도 같은 규율이 필요하다</li>
+          <li><a href="mutation-testing.html">뮤테이션 테스트</a> — 가드가 실제로 막는지 확인하는 법</li>
           </ul>
 
       </article>
