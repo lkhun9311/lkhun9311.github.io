@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>テールを守ったのではなく、テナントを消していた | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/it-deleted-the-tenant.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/it-deleted-the-tenant.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/it-deleted-the-tenant.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/it-deleted-the-tenant.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="テールを守ったのではなく、テナントを消していた | Kwanghun Lee" />
+  <meta property="og:description" content="GPU 1 枚の上での 4-arm 実験。拒否 0 件だという arm の完了数が、プレミアムの要求数とぴったり同じだった。レポートの検査がすべてテール比だったため、4 回の有料実行の間それは見えなかった。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/it-deleted-the-tenant.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="テールを守ったのではなく、テナントを消していた | Kwanghun Lee" />
+  <meta name="twitter:description" content="拒否 0 件だという arm の完了数が、プレミアムの要求数とぴったり同じだった。レポートの検査はすべてテール比だった。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="GPU 1 枚の上での 4-arm 実験。拒否 0 件だという arm の完了数が、プレミアムの要求数とぴったり同じだった。レポートの検査がすべてテール比だったため、4 回の有料実行の間それは見えなかった。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language"
+                data-authored='{"en":"it-deleted-the-tenant.html","ko":"it-deleted-the-tenant.ko.html","ja":"it-deleted-the-tenant.ja.html"}'>
+          <option value="ja" selected>Japanese</option>
+          <option value="en">English</option>
+          <option value="ko">Korean</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="zh-TW">Chinese (Traditional)</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="vi">Vietnamese</option>
+          <option value="id">Indonesian</option>
+          <option value="hi">Hindi</option>
+          <option value="ar">Arabic</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <section class="page-hero">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ戻る</a>
+        <h1>テールを守ったのではなく、テナントを消していた</h1>
+        <div class="article-meta">Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">9分</span></div>
+        <p class="lang-alts notranslate">他の言語 <a href="it-deleted-the-tenant.html" hreflang="en" lang="en">English</a> · <a href="it-deleted-the-tenant.ko.html" hreflang="ko" lang="ko">한국어</a></p>
+      </section>
+      <article class="article-body">
+
+        <p><strong>範囲.</strong> 個人プロジェクトである
+        <a href="../projects/gpuaas-control-plane.html">Kubernetes ネイティブ GPU コントロールプレーン</a>の
+        マイルストーン M5-b の記録である。数値は<strong>2026-09-03 に実 GPU(A10G 1 枚)の上で回した実行</strong>と、
+        <strong>2026-09-04 のエンジンレベルのマイクロテスト</strong>から出ている。両方の生データはリポジトリにある。
+        <strong>このプロジェクトは進行中であり、この記事は 2026-09-05 時点で確定したものだけを書く。</strong>
+        まだ購入していない実行が 1 つあり、その結果は最終節を変える。</p>
+
+        <p>測ろうとしたのはこれだ。プレミアムテナントと長コンテキストの騒がしい隣人が GPU 1 枚を共有するとき、
+        <strong>ゲートウェイの KV キャッシュ認識アドミッション制御はプレミアムのテール遅延を守るのか。</strong></p>
+
+        <p>答えは<strong>いいえ</strong>だった。そしてそれより価値があったのは、
+        <strong>なぜ 4 回の有料実行の間その事実が見えなかったのか</strong>である。</p>
+
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#falsifiable-arm">反証可能にする arm</a></li>
+            <li><a href="#the-numbers">数値</a></li>
+            <li><a href="#three-sentences">3 つの文が同時に真ではありえない</a></li>
+            <li><a href="#why-invisible">レポートがそれを見られなかった理由</a></li>
+            <li><a href="#forty-cents">40 セントが 3 回の有料実行にできなかった答えを出した</a></li>
+            <li><a href="#not-yet-bought">まだ購入していない実行</a></li>
+            <li><a href="#what-this-does-not-claim">この記事が主張しないこと</a></li>
+          </ul>
+        </nav>
+
+        <h2 id="falsifiable-arm">反証可能にする arm<a class="anchor" href="#falsifiable-arm" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>arm は 4 つ。記録された 1 本の open-loop トレースを 4 通りの条件で再生する。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
+        <table>
+          <caption class="sr-only">4 つの arm と、それぞれが答える問い。</caption>
+          <thead><tr><th scope="col">arm</th><th scope="col">何か</th><th scope="col">何に答えるか</th></tr></thead>
+          <tbody>
+            <tr><td>R1</td><td>プレミアム単独、同じ到着スケジュール</td><td>競合がいなければどれだけ速いか</td></tr>
+            <tr><td>off</td><td>両テナント、アドミッション制御なし</td><td>競合のコストはいくらか</td></tr>
+            <tr><td><strong>static-cap</strong></td><td>圧力を見ないトークンバケット、kv-aware と同量を通すよう調整</td><td><strong>このガードはレートリミットにできないことをしているか</strong></td></tr>
+            <tr><td>kv-aware</td><td>KV キャッシュ認識ガード</td><td>試験対象</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>3 行目がこの実験を<strong>反証可能</strong>にする。static-cap が無ければ「ガードが p99 を下げた」は
+        「ガードが負荷を捨てた」と区別できない。そして<strong>負荷を捨てればどんな方針でも p99 は下がる。</strong></p>
+
+        <p>検査は実行前にコードとして登録した。結果を見てから基準を動かせないようにするためである。</p>
+
+        <ul>
+          <li><strong>絶対保護</strong>: kv-aware の p99 が R1 の 1.25 倍以下</li>
+          <li><strong>増分価値</strong>: kv-aware の p99 が static-cap の 0.90 倍以下(ブートストラップ信頼区間の上限も 1.0 未満)</li>
+          <li><strong>アドミッション一致</strong>: 競合する 2 arm の通過作業比率が凍結した許容範囲内</li>
+        </ul>
+
+        <p>さらに、検査を読む<em>前に</em>実行を失格にする規則を別に置いた。比較対象の arm のいずれかでプレミアム完了が
+        0 件、テールが打ち切られている(プレミアムのタイムアウトが 1% 超)、または完了数が最小標本未満なら失格である。
+        最後の下限は選んだ値ではなく導いた値だ — パーセンタイルが nearest-rank なので、
+        <code>ceil(0.99n)-1</code> は 100 未満のすべての <code>n</code> で <code>n-1</code> に張り付く。その下では
+        報告される p99 は<strong>単に最も遅い 1 リクエスト</strong>である。</p>
+
+        <h2 id="the-numbers">数値<a class="anchor" href="#the-numbers" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>2026-09-03 の実行。arm 4 つ、各 4 回反復、トレース 1 本、arm あたりプレミアム完了 1,840 件。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
+        <table>
+          <caption class="sr-only">2026-09-03 の実行の arm 別結果。</caption>
+          <thead><tr><th scope="col"></th><th scope="col">R1</th><th scope="col">off</th><th scope="col">static-cap</th><th scope="col">kv-aware</th></tr></thead>
+          <tbody>
+            <tr><td>TTFT p99 (ms)</td><td>82.2</td><td>10,595.3</td><td>81.2</td><td><strong>6,882.0</strong></td></tr>
+            <tr><td>TTFT p50 (ms)</td><td>47.3</td><td>940.6</td><td>48.1</td><td>499.8</td></tr>
+            <tr><td>プレミアム完了</td><td>1,840</td><td>1,840</td><td><strong>1,840</strong></td><td>1,840</td></tr>
+            <tr><td>捨てた要求</td><td>—</td><td>0</td><td><strong>1,788 (413)</strong></td><td>274 (429)</td></tr>
+            <tr><td>通した作業の比率</td><td>—</td><td>100.0%</td><td><strong>0.0%</strong></td><td>84.7%</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>事前登録した検査は<strong>3 つとも失敗した。</strong>絶対保護は 1.25 倍の基準に対し
+        <strong>83.7 倍</strong>だった。このマイルストーンが立てようとしていた主張は撤回した。</p>
+
+        <p>ここまではただの否定的結果である。面白いのは表の 3 列目だ。</p>
+
+        <h2 id="three-sentences">3 つの文が同時に真ではありえない<a class="anchor" href="#three-sentences" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>static-cap を 3 つの文として読むとこうなる。</p>
+
+        <ol>
+          <li>拒否は<strong>0 件</strong>だった(429 = 0)。</li>
+          <li>なのに完了は <code>off</code> の半分である。</li>
+          <li>そしてテールは<strong>隔離基準(R1)と同じ</strong> — 81.2ms 対 82.2ms。</li>
+        </ol>
+
+        <p>制御をかけたのに何も拒否せず、結果は隔離と同じ。3 つが同時に真ではありえない。</p>
+
+        <p>答えは完了数にある。<strong>1,840 はこの実行のプレミアム要求数とぴったり同じだ。</strong>そして
+        <code>off</code> の 200 応答はプレミアム 1,840 と騒がしい隣人 1,788 に分かれる。つまり static-cap は
+        <strong>その 1,788 件を 1 件残らず拒否した。</strong></p>
+
+        <p>通した作業の比率<strong>0.0%</strong> がその言明である。static-cap が隔離と同じ遅延を出したのは、
+        エンジンを効率的にしたからではなく、<strong>競合するテナントを消したから</strong>だ。テールを守ったのではなく、
+        テールを作る側を無くしたのである。</p>
+
+        <h2 id="why-invisible">レポートがそれを見られなかった理由<a class="anchor" href="#why-invisible" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>2 つが重なった。</p>
+
+        <p><strong>1 つめ、ゲートウェイは拒否を 2 種類に分ける。</strong><code>429</code> は「後で来い」、
+        <code>413</code> は「もっと小さく送れ」である。この区別は意図的に入れた — バケットが決して収められない
+        サイズの要求に 429 を返すと、クライアントが<strong>算術的に不可能な要求を永遠に再試行する</strong>からだ。
+        設計としては正しい。</p>
+
+        <p>ところがレポートは<strong>429 だけを「捨てたもの」として数えていた。</strong>static-cap の 1,788 件は
+        すべて 413 で、そのため「捨てた要求 0 件」と表示された。正しい区別が
+        <strong>集計から片側を丸ごと落とした。</strong></p>
+
+        <p><strong>2 つめ、レポートが作る検査がすべてテール比だった。</strong>絶対保護も比、増分価値も比、
+        アドミッション一致も比である。比だけを見ると「少なく処理して速くなった」と「同じだけ処理して速くなった」が
+        同じ値になる。<strong>消えた分母は分子だけでは見えない。</strong></p>
+
+        <p>この 2 つが重なって、この事実は<strong>4 回の有料実行の間見えなかった。</strong></p>
+
+        <p>見えるようにしたのは新しい実行ではない。<strong>既に購入した証拠を別の軸で採点し直したこと</strong>である。
+        同じ 2026-09-03 の生データにスループットとテナント別のシェアを付けた。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
+        <table>
+          <caption class="sr-only">既に購入した証拠をスループット軸で採点し直した結果。</caption>
+          <thead><tr><th scope="col">arm</th><th scope="col">プレミアム TTFT p99</th><th scope="col">出力 tok/s</th><th scope="col">プレミアムのシェア</th><th scope="col">隣人のシェア</th></tr></thead>
+          <tbody>
+            <tr><td>R1(隔離)</td><td>82.2 ms</td><td>46.4</td><td>100%</td><td>—</td></tr>
+            <tr><td>off</td><td>10,595.3 ms</td><td><strong>57.3</strong></td><td>80%</td><td>20%</td></tr>
+            <tr><td>static-cap</td><td>81.2 ms</td><td>46.3</td><td>100%</td><td><strong>0%</strong></td></tr>
+            <tr><td>kv-aware</td><td>6,882.0 ms</td><td>55.7</td><td>83%</td><td>17%</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>この軸で見ると、<strong>制御を何もかけていない <code>off</code> が「テールで勝った」arm より 24% 多く
+        トークンを出していた。</strong>そして static-cap は隔離の遅延<em>と</em>隔離のスループットを同時に一致させた
+        が、それは隔離を再現したのであって競合を管理したのではない。</p>
+
+        <p>ここで学んだのは KV キャッシュについてではない。<strong>守ろうとしているものだけを見る測定は、それを守る
+        ために何を消したのかを見せない。</strong></p>
+
+        <h2 id="forty-cents">40 セントが 3 回の有料実行にできなかった答えを出した<a class="anchor" href="#forty-cents" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>ガードが失敗したなら、次の問いは「ガードをどう直すか」ではなく<strong>「直す層はここで合っているか」</strong>
+        である。ゲートウェイはエンジンの外にあり、エンジンが要求をどうバッチに詰めるかは見えない。</p>
+
+        <p>そこでゲートウェイを完全に外し、<strong>エンジン設定だけ</strong>を変える最小の実験をした。長い要求 1 つと
+        短い要求 1 つ、セルごとに 10 回反復。クラスタではなくインスタンス 1 台で、インバウンド転送が無料のパブリック
+        サブネットで回した。<strong>約 $0.40 かかった。</strong></p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
+        <table>
+          <caption class="sr-only">バッチ予算の設定と、短い要求への干渉倍率。</caption>
+          <thead><tr><th scope="col">バッチ予算</th><th scope="col">短い要求への干渉倍率</th></tr></thead>
+          <tbody>
+            <tr><td>512</td><td><strong>1.57 倍</strong></td></tr>
+            <tr><td>2,048</td><td>4.85 倍</td></tr>
+            <tr><td>8,192</td><td>11.83 倍</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>ゲートウェイが 83.7 倍を抑えられなかったその干渉を、<strong>エンジン設定 1 つが 1.57 倍に抑えた。</strong>
+        層が違っていたのだ。誤設定のエンジンの上にコントロールプレーンを載せれば、測っているのはコントロールプレーン
+        ではなく誤設定である。</p>
+
+        <p>コストを書いておく。<strong>有料セッション 3 回で GPU・クラスタ時間がおよそ 10 ドル</strong>、そして
+        <strong>最初の 2 回は有効な測定を出さなかった。</strong>その後のすべて — メカニズム、再採点、私自身の説明 2 つが
+        反証されたこと — は<strong>既に購入した証拠の中から</strong>出てきた。そして層を見つけた実験は 40 セントだった。
+        問いを、要求 2 つで答えられるところまで絞ったからである。</p>
+
+        <h2 id="not-yet-bought">まだ購入していない実行<a class="anchor" href="#not-yet-bought" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>ここまでが<strong>2026-09-05 時点で確定したもの</strong>である。残る問いはこう事前登録してあり、まだ
+        購入していない。</p>
+
+        <blockquote><p>競合するテナントの作業を消さずにプレミアムのテールを守る設定はあるのか、そしてそれは守られる
+        テナントに何をコストとして課すのか?</p></blockquote>
+
+        <p>この形をしているのは上の表のためだ。「テールを守れるか」は既に 2 つの arm が答えており、うち 1 つは競合作業を
+        すべて捨てる方法で答えた。したがって残るのは<strong>保護の値段</strong>である。</p>
+
+        <p>事前登録は実行を買う前に書く。結果を見てから基準を決めれば、どんな結果も成功として読めるからだ。この
+        プロジェクトは既に一度その代価を払っている — 公開した結果を撤回したことがあり、その撤回は
+        <strong>数値を手にした後</strong>だった。測る対象を間違えたと気づくのに最も高くつく時点である。</p>
+
+        <h2 id="what-this-does-not-claim">この記事が主張しないこと<a class="anchor" href="#what-this-does-not-claim" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>アドミッション制御ではテールを守れないという一般的主張ではない。</strong>反証されたのは
+          <strong>1 つの信号</strong> — 反応的 KV 占有、0.85 のエンゲージしきい値、30 秒の解除 — であり、1 つの
+          ワークロード、1 つのモデル、1 枚のカードの上での話である。</li>
+          <li><strong>エンジン設定がこれを解決するという主張でもない。</strong>マイクロテストは長い要求 1 つと短い
+          要求 1 つをセルあたり 10 回反復した中央値である。上の 4-arm 実行は同時プリフィルが多数ある到着過程で、
+          指標は p99 だ。同じ軸ではない。</li>
+          <li><strong>シリコンの異なるマイルストーン間の比較ではない。</strong>比較はカードクラス・モデル・dtype が
+          同一の範囲内に留めており、後ろの 2 つは契約テストが強制する。</li>
+          <li><strong>コールドスタートについては何も言っていない。</strong>すべての arm が温まったエンジンを使う。</li>
+          <li><strong>このプロジェクトの他の部分は依然として偽の device plugin の上で動く。</strong>この記事の数値は
+          実 GPU 実行から出たものであり、リポジトリの他の実行記録(キュー方針の実験、学習ジョブのアドミッション制御、
+          障害の証跡)はそうではない。リポジトリは行ごとにそれを表記している。</li>
+          <li><strong>進行中である。</strong>上で事前登録した実行が終われば最終節が変わる。</li>
+        </ul>
+
+        <p>残る 1 行はこれである。<strong>保護を測る指標は、何を消したかも一緒に数えなければ、消したことを成功として
+        読む。</strong>そしてそれを突き止めるのに新しい金はかからず、既に購入した証拠を別の軸で読み直すだけで足りた。</p>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script src="../assets/lang.js?v=20260905"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/article.js?v=20260817-scroll"></script>
+</body>
+</html>

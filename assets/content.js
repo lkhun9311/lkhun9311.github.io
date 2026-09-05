@@ -55,6 +55,13 @@
     writing: {
       items: [
         {
+          title: "It Did Not Protect the Tail. It Deleted the Tenant.",
+          url: "writing/it-deleted-the-tenant.html",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "A four-arm experiment on one A10G. The arm that rejected nothing completed exactly the premium request count, and every check was a tail ratio. Also in Korean and Japanese.",
+          tags: ["GPU", "Method", "Observability"]
+        },
+        {
           title: "Three Documents I Wrote Rested on a False Premise",
           url: "writing/three-documents-on-a-false-premise.html",
           date: "2026-09", dateLabel: "Sep 2026",

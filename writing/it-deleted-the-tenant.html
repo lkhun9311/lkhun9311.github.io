@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>It Did Not Protect the Tail. It Deleted the Tenant. | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/it-deleted-the-tenant.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/it-deleted-the-tenant.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/it-deleted-the-tenant.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/it-deleted-the-tenant.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="It Did Not Protect the Tail. It Deleted the Tenant. | Kwanghun Lee" />
+  <meta property="og:description" content="A four-arm experiment on one GPU. The arm that rejected nothing completed exactly as many requests as the premium tenant sent. Every check the report made was a tail ratio, so four paid runs could not see it." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/it-deleted-the-tenant.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="It Did Not Protect the Tail. It Deleted the Tenant. | Kwanghun Lee" />
+  <meta name="twitter:description" content="The arm that rejected nothing completed exactly as many requests as the premium tenant sent. Every check the report made was a tail ratio." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="A four-arm experiment on one GPU. The arm that rejected nothing completed exactly as many requests as the premium tenant sent. Every check the report made was a tail ratio, so four paid runs could not see it." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language"
+                data-authored='{"en":"it-deleted-the-tenant.html","ko":"it-deleted-the-tenant.ko.html","ja":"it-deleted-the-tenant.ja.html"}'>
+          <option value="en" selected>English</option>
+          <option value="ko">Korean</option>
+          <option value="ja">Japanese</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="zh-TW">Chinese (Traditional)</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="vi">Vietnamese</option>
+          <option value="id">Indonesian</option>
+          <option value="hi">Hindi</option>
+          <option value="ar">Arabic</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <section class="page-hero">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Writing</a>
+        <h1>It Did Not Protect the Tail. It Deleted the Tenant.</h1>
+        <div class="article-meta">Writing · Sep 2026<span aria-hidden="true"> · </span><span class="read-time">7 min read</span></div>
+        <p class="lang-alts notranslate">Also in <a href="it-deleted-the-tenant.ko.html" hreflang="ko" lang="ko">한국어</a> · <a href="it-deleted-the-tenant.ja.html" hreflang="ja" lang="ja">日本語</a></p>
+      </section>
+      <article class="article-body">
+
+        <p><strong>Scope.</strong> This is milestone M5-b of a personal project, a
+        <a href="../projects/gpuaas-control-plane.html">Kubernetes-native GPU control plane</a>. The numbers
+        come from a run <strong>on a real GPU — one A10G — on 2026-09-03</strong> and an engine-level
+        microtest on <strong>2026-09-04</strong>. The raw evidence for both is in the repository.
+        <strong>The project is in progress, and this article covers only what is settled as of
+        2026-09-05.</strong> One run has been pre-registered and not yet bought; its result changes the last
+        section.</p>
+
+        <p>What was being measured: when a premium tenant shares one GPU with a long-context noisy neighbour,
+        <strong>does the gateway's KV-cache-aware admission guard protect the premium tail?</strong></p>
+
+        <p>The answer was <strong>no</strong>. The more valuable finding was
+        <strong>why four paid runs could not see that</strong>.</p>
+
+        <nav class="article-toc" aria-label="Contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#the-arm-that-makes-it-falsifiable">The arm that makes it falsifiable</a></li>
+            <li><a href="#the-numbers">The numbers</a></li>
+            <li><a href="#three-sentences">Three sentences that cannot all be true</a></li>
+            <li><a href="#why-the-report-could-not-see-it">Why the report could not see it</a></li>
+            <li><a href="#forty-cents">Forty cents answered what three paid runs could not</a></li>
+            <li><a href="#the-run-not-yet-bought">The run not yet bought</a></li>
+            <li><a href="#what-this-does-not-claim">What this does not claim</a></li>
+          </ul>
+        </nav>
+
+        <h2 id="the-arm-that-makes-it-falsifiable">The arm that makes it falsifiable<a class="anchor" href="#the-arm-that-makes-it-falsifiable" aria-label="Link to this section">#</a></h2>
+
+        <p>Four arms, replaying one recorded open-loop trace under four conditions.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">The four arms and the question each answers.</caption>
+          <thead><tr><th scope="col">arm</th><th scope="col">what it is</th><th scope="col">what it answers</th></tr></thead>
+          <tbody>
+            <tr><td>R1</td><td>premium alone, same arrival schedule</td><td>how fast is this with no competition</td></tr>
+            <tr><td>off</td><td>both tenants, no admission control</td><td>what does contention cost</td></tr>
+            <tr><td><strong>static-cap</strong></td><td>pressure-blind token bucket, tuned to admit the same work as kv-aware</td><td><strong>is the guard doing anything a rate limit could not</strong></td></tr>
+            <tr><td>kv-aware</td><td>the KV-cache-aware guard</td><td>the arm under test</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>The third row is what makes the experiment <strong>falsifiable</strong>. Without static-cap, "the
+        guard lowered p99" is indistinguishable from "the guard shed load" — and
+        <strong>shedding load lowers p99 under any policy whatsoever</strong>.</p>
+
+        <p>The checks were registered in code before the run, so that the bar could not be moved after seeing
+        the result.</p>
+
+        <ul>
+          <li><strong>absolute protection</strong>: kv-aware p99 at most 1.25x R1's</li>
+          <li><strong>incremental value</strong>: kv-aware p99 at most 0.90x static-cap's, with the bootstrap CI's upper bound below 1.0</li>
+          <li><strong>admission match</strong>: the two contended arms' admitted-work fractions within a frozen tolerance</li>
+        </ul>
+
+        <p>A separate rule disqualifies a run <em>before</em> any check is read: if a compared arm completed no
+        premium requests, has a censored tail (over 1% premium timeouts), or has too few completions. That last
+        bound is derived rather than chosen — the percentile is nearest-rank, and
+        <code>ceil(0.99n)-1</code> clamps to <code>n-1</code> for every <code>n</code> below 100. Under it the
+        reported p99 <em>is</em> simply the slowest request.</p>
+
+        <h2 id="the-numbers">The numbers<a class="anchor" href="#the-numbers" aria-label="Link to this section">#</a></h2>
+
+        <p>Run of 2026-09-03. Four arms, four repetitions each, one trace, 1,840 premium completions per arm.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">Per-arm results from the run of 2026-09-03.</caption>
+          <thead><tr><th scope="col"></th><th scope="col">R1</th><th scope="col">off</th><th scope="col">static-cap</th><th scope="col">kv-aware</th></tr></thead>
+          <tbody>
+            <tr><td>TTFT p99 (ms)</td><td>82.2</td><td>10,595.3</td><td>81.2</td><td><strong>6,882.0</strong></td></tr>
+            <tr><td>TTFT p50 (ms)</td><td>47.3</td><td>940.6</td><td>48.1</td><td>499.8</td></tr>
+            <tr><td>premium completions</td><td>1,840</td><td>1,840</td><td><strong>1,840</strong></td><td>1,840</td></tr>
+            <tr><td>requests shed</td><td>—</td><td>0</td><td><strong>1,788 (413)</strong></td><td>274 (429)</td></tr>
+            <tr><td>admitted-work fraction</td><td>—</td><td>100.0%</td><td><strong>0.0%</strong></td><td>84.7%</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p><strong>All three pre-registered checks failed.</strong> Absolute protection came in at
+        <strong>83.7x</strong> against a bar of 1.25x. The claim this milestone was built to make was
+        withdrawn.</p>
+
+        <p>So far this is just a negative result. The interesting column is the third one.</p>
+
+        <h2 id="three-sentences">Three sentences that cannot all be true<a class="anchor" href="#three-sentences" aria-label="Link to this section">#</a></h2>
+
+        <p>Read static-cap as three statements:</p>
+
+        <ol>
+          <li>It rejected <strong>nothing</strong> (429 = 0).</li>
+          <li>Yet it completed half as much as <code>off</code>.</li>
+          <li>And its tail matches the <strong>isolation baseline</strong> — 81.2ms against 82.2ms.</li>
+        </ol>
+
+        <p>A control was applied, it rejected nothing, and the outcome equals isolation. Those three cannot all
+        be true at once.</p>
+
+        <p>The completion count gives it away. <strong>1,840 is exactly the number of premium requests in this
+        run.</strong> And <code>off</code>'s 200 responses split into 1,840 premium plus 1,788 noisy. So
+        static-cap <strong>rejected all 1,788 of them, without exception.</strong></p>
+
+        <p>The admitted-work fraction of <strong>0.0%</strong> is that statement in one number. static-cap
+        matched isolation's latency not because it made the engine efficient, but because
+        <strong>it deleted the competing tenant</strong>. It did not protect the tail; it removed what was
+        producing one.</p>
+
+        <h2 id="why-the-report-could-not-see-it">Why the report could not see it<a class="anchor" href="#why-the-report-could-not-see-it" aria-label="Link to this section">#</a></h2>
+
+        <p>Two things stacked.</p>
+
+        <p><strong>First, the gateway splits rejection into two kinds.</strong> <code>429</code> means "come
+        back later"; <code>413</code> means "send something smaller". The distinction was deliberate — answering
+        a request the bucket can never hold with a 429 makes the client
+        <strong>retry an arithmetically impossible request forever</strong>. As a design decision it is right.</p>
+
+        <p>But the report counted <strong>only 429 as shedding</strong>. All 1,788 of static-cap's rejections
+        were 413, so the row read "0 requests shed". A correct distinction
+        <strong>dropped one whole side out of the accounting</strong>.</p>
+
+        <p><strong>Second, every check the report made was a tail ratio.</strong> Absolute protection is a
+        ratio, incremental value is a ratio, admission match is a ratio. Look only at ratios and "went faster
+        while doing less" reads identically to "went faster while doing the same".
+        <strong>You cannot see a vanished denominator from the numerator alone.</strong></p>
+
+        <p>Between them, this stayed invisible for <strong>four paid runs</strong>.</p>
+
+        <p>What made it visible was not a new run. It was <strong>re-scoring evidence already bought</strong> —
+        attaching throughput and per-tenant share to the same 2026-09-03 raw data.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">The already-purchased evidence, re-scored on throughput.</caption>
+          <thead><tr><th scope="col">arm</th><th scope="col">premium TTFT p99</th><th scope="col">output tok/s</th><th scope="col">premium share</th><th scope="col">noisy share</th></tr></thead>
+          <tbody>
+            <tr><td>R1 (isolated)</td><td>82.2 ms</td><td>46.4</td><td>100%</td><td>—</td></tr>
+            <tr><td>off</td><td>10,595.3 ms</td><td><strong>57.3</strong></td><td>80%</td><td>20%</td></tr>
+            <tr><td>static-cap</td><td>81.2 ms</td><td>46.3</td><td>100%</td><td><strong>0%</strong></td></tr>
+            <tr><td>kv-aware</td><td>6,882.0 ms</td><td>55.7</td><td>83%</td><td>17%</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>On this axis, <strong>the arm with no control at all served 24% more tokens than the arm that "won"
+        on tail</strong>. And static-cap matched isolation's latency <em>and</em> isolation's throughput, which
+        is reproducing isolation rather than managing contention.</p>
+
+        <p>The lesson here is not about KV caches. <strong>A measurement that watches only the thing being
+        protected cannot show you what was removed to protect it.</strong></p>
+
+        <h2 id="forty-cents">Forty cents answered what three paid runs could not<a class="anchor" href="#forty-cents" aria-label="Link to this section">#</a></h2>
+
+        <p>Once the guard has failed, the next question is not "how do I fix the guard" but
+        <strong>"is this the layer to fix?"</strong> The gateway sits outside the engine and cannot see how the
+        engine packs requests into batches.</p>
+
+        <p>So the next test removed the gateway entirely and changed <strong>only engine settings</strong>. One
+        long request and one short one, ten repetitions per cell, on a single instance rather than a cluster,
+        in a public subnet where inbound transfer is free. <strong>It cost about $0.40.</strong></p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">Interference multiple on the short request, by batch budget.</caption>
+          <thead><tr><th scope="col">batch budget</th><th scope="col">interference on the short request</th></tr></thead>
+          <tbody>
+            <tr><td>512</td><td><strong>1.57x</strong></td></tr>
+            <tr><td>2,048</td><td>4.85x</td></tr>
+            <tr><td>8,192</td><td>11.83x</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>The interference the gateway could not hold below 83.7x, <strong>one engine setting held at
+        1.57x</strong>. It was a different layer. Put a control plane on top of a misconfigured engine and what
+        you measure is the misconfiguration, not the control plane.</p>
+
+        <p>The cost, written down: <strong>three paid sessions, roughly ten dollars of GPU and cluster time,
+        and the first two produced no valid measurement.</strong> Everything after that — the mechanism, the
+        re-scoring, two of my own explanations being falsified — came out of
+        <strong>evidence already bought</strong>. And the experiment that located the layer cost forty cents,
+        because the question had been narrowed to one that two requests could answer.</p>
+
+        <h2 id="the-run-not-yet-bought">The run not yet bought<a class="anchor" href="#the-run-not-yet-bought" aria-label="Link to this section">#</a></h2>
+
+        <p>That is everything <strong>settled as of 2026-09-05</strong>. The remaining question is
+        pre-registered and has not been bought:</p>
+
+        <blockquote><p>Is there a configuration that protects the premium tail without deleting the contending
+        tenant's work, and what does it cost the tenant it protects?</p></blockquote>
+
+        <p>It has that shape because of the table above. "Can the tail be protected" was already answered by two
+        arms, one of which answered it by discarding all contending work. What is left is
+        <strong>the price of protection</strong>.</p>
+
+        <p>The pre-registration is written before the run is bought, because a bar set after seeing the result
+        can make any result a success. This project has already paid for that lesson once — a published result
+        was withdrawn, and the withdrawal came <strong>after the numbers were in hand</strong>, which is the
+        most expensive moment to discover you were measuring the wrong thing.</p>
+
+        <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>Not a general claim that admission control cannot protect a tail.</strong> What was
+          falsified is <strong>one signal</strong> — reactive KV occupancy, a 0.85 engage threshold, a
+          30-second release — on one workload, one model and one card.</li>
+          <li><strong>Not a claim that engine settings fix this.</strong> The microtest is a median over ten
+          repetitions of one long request and one short one. The four-arm run is an arrival process with many
+          concurrent prefills, reported at p99. They are not the same axis.</li>
+          <li><strong>Not a comparison across milestones on different silicon.</strong> Comparisons stay within
+          one card class, model and dtype; a contract test enforces the last two.</li>
+          <li><strong>It says nothing about cold starts.</strong> Every arm serves a warm engine.</li>
+          <li><strong>The rest of this project still runs on a fake device plugin.</strong> These numbers come
+          from real-GPU runs; the repository's other run records — the queue-policy lab, training admission,
+          the failure evidence trail — do not, and the repository marks that per row.</li>
+          <li><strong>It is in progress.</strong> When the pre-registered run above completes, the last section
+          changes.</li>
+        </ul>
+
+        <p>What is left is one line. <strong>A metric that measures protection, without also counting what was
+        deleted, will read the deletion as a success.</strong> And finding that out cost no new money — it took
+        re-reading evidence already bought along a different axis.</p>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script src="../assets/lang.js?v=20260905"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/article.js?v=20260817-scroll"></script>
+</body>
+</html>
