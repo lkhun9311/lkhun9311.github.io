@@ -27,6 +27,17 @@
     projects: {
       items: [
         {
+          label: "Commercial Project",
+          title: "Social Polling Platform: Anonymous Voting and Published Aggregates",
+          authors: "Solo",
+          date: "2026-09-05",
+          dateLabel: "Sep 5, 2026",
+          private: true,
+          desc: "A Kotlin and Spring Boot service where people post a question, others vote anonymously, and the results are published as aggregates \u2014 totals, per-option counts, demographic axes and a trend over time \u2014 with min-n suppression and rounded shares so that a published change cannot be traced back to one person. Pre-launch work covered transaction boundaries and the connection budget, an aggregate-privacy track closed by writing the guarantee down as a sentence, and a moderation gate that runs outside the transaction.",
+          tags: ["Backend", "Privacy", "Postgres"],
+          stacks: [["Kotlin", "kotlin"], ["Spring Boot", "spring"], ["PostgreSQL", "postgres"], ["Flyway", "flyway"], ["Operations", "operations"]]
+        },
+        {
           label: "Main Project",
           title: "GPUaaS Platform Control Plane: Kubernetes-native AI Infrastructure",
           authors: "Solo",
@@ -63,7 +74,7 @@
           tags: ["Privacy", "Security", "Method"]
         },
         {
-          title: "We Were Calling an External API Inside the Transaction",
+          title: "The Connection Exhaustion RDS Proxy Cannot Fix",
           url: "writing/a-pooler-fixes-only-one.html",
           date: "2026-09", dateLabel: "Sep 2026",
           source: "commercial", sourceLabel: "Commercial project",
@@ -253,6 +264,12 @@
     if (it.url) {
       title = '<a class="card-link" href="' + BASE + esc(it.url) + '">' + title + "</a>";
     }
+    /* A private repository gets a Private badge where the GitHub link would be. Linking anyway would
+       hand every reader a 404, and leaving the slot empty would read as "no code exists". */
+    var repo = it.private
+      ? '<span class="repo-private notranslate" translate="no">Private</span>'
+      : githubLink(it.github, esc(it.title) + " on GitHub");
+
     return (
       '<div class="dated-card"><article class="content-card' + (it.url ? " is-linked" : "") + '">' +
       '<div class="project-image" aria-hidden="true"></div>' +
@@ -261,9 +278,7 @@
       '<h3 class="card-title notranslate">' + title + "</h3>" +
       '<p class="authors notranslate">' + esc(it.authors) + "</p>" +
       '<span class="card-date notranslate">' + esc(it.dateLabel) + "</span>" +
-      '</div><div class="project-actions notranslate">' +
-      githubLink(it.github, esc(it.title) + " on GitHub") +
-      "</div></div>" +
+      '</div><div class="project-actions notranslate">' + repo + "</div></div>" +
       '<div class="detail-block"><p>' + esc(it.desc) + "</p>" +
       '<div class="stack-list notranslate">' + stacks + "</div></div>" +
       "</div></article></div>"
