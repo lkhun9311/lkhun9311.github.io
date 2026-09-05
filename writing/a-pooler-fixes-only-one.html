@@ -70,7 +70,7 @@
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Writing</a>
         <h1>The Connection Exhaustion RDS Proxy Cannot Fix<br><span class="h1-sub">I was calling an external API inside the transaction — a pre-launch review of a social polling platform</span></h1>
-        <div class="article-meta"><span class="source-tag commercial notranslate">Commercial project</span>Writing · September 2026<span aria-hidden="true"> · </span><span class="read-time">14 min read</span></div>
+        <div class="article-meta"><span class="source-tag commercial notranslate">Commercial project</span>Writing · September 2026<span aria-hidden="true"> · </span><span class="read-time">16 min read</span></div>
       </section>
       <article class="article-body">
 
@@ -98,6 +98,7 @@
             <li><a href="#is-this-code-poolable">I checked whether the code could take a pooler at all</a></li>
             <li><a href="#why-not-async">“Why not just go async?”</a></li>
             <li><a href="#the-guard">The fix is easy to undo, so the guard went on the cause</a></li>
+            <li><a href="#i-measured-it">Three weeks later I actually measured it</a></li>
             <li><a href="#what-this-does-not-claim">What this article does not claim</a></li>
             <li><a href="#wrapping-up">Wrapping up</a></li>
           </ul>
@@ -131,11 +132,11 @@
         name</strong> rather than a GitHub link. Package and environment-variable names are the anonymised ones from the
         original notes.</p>
 
-        <p><strong>⚠️ One thing up front.</strong> There are <strong>no load-test numbers</strong> in this
-        article, and nothing ever broke in production. The “up to 10 seconds” below is a
+        <p><strong>⚠️ One thing up front.</strong> The numbers here come from a <strong>local harness</strong>,
+        not from production, and the outbound latency is a value configured on a stub.
+        <strong>Nothing ever broke in production.</strong> The “up to 10 seconds” below is a
         <strong>configured read timeout</strong> on the outbound call, not a measurement that each request
-        actually held a connection that long. The improvement is explained by a change in the properties of the
-        code; this article claims no measured figures.</p>
+        actually held a connection that long.</p>
 
         <h2 id="what-is-the-service">What is the service?<a class="anchor" href="#what-is-the-service" aria-label="Link to this section">#</a></h2>
 
@@ -660,13 +661,99 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         <p>That is the most portable thing in this article. <strong>A green mutation does not mean the code is
         safe; it means the guard is not aiming.</strong></p>
 
+        <h2 id="i-measured-it">Three weeks later I actually measured it<a class="anchor" href="#i-measured-it" aria-label="Link to this section">#</a></h2>
+        <p>This article was going to end with <em>“there are no numbers.”</em> Writing that sentence made it
+        obvious that what it really meant was <strong>there is no tool to produce them</strong>, so three weeks
+        later I built a JMeter harness and measured.</p>
+
+        <p>The point was to <strong>change one variable</strong>. arm A is the current code; arm B restores a
+        single line of <code>@Transactional</code>. Pool size, thread counts, outbound latency and data are
+        identical. The outbound latency does not live in the app — a <strong>local stub</strong> serves it and
+        <code>base-url</code> points at the stub. Put a "run slowly" mode in the app and it eventually gets
+        switched on in production.</p>
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">Response time and throughput in arm A and arm B.</caption>
+          <thead><tr><th scope="col">Metric</th><th scope="col">arm A — outside</th><th scope="col">arm B — back inside</th><th scope="col">Ratio</th></tr></thead>
+          <tbody>
+            <tr><td><strong>feed read p50</strong></td><td><strong>4 ms</strong></td><td><strong>6,047 ms</strong></td><td><strong>1,512×</strong></td></tr>
+            <tr><td>feed read p95</td><td>6 ms</td><td>6,405 ms</td><td>1,068×</td></tr>
+            <tr><td>feed read throughput</td><td>39.22 req/s</td><td>1.35 req/s</td><td>1/29</td></tr>
+            <tr><td>post create p50</td><td>2,577 ms</td><td>2,584 ms</td><td>1.00×</td></tr>
+            <tr><td>post create throughput</td><td>6.26 req/s</td><td>6.22 req/s</td><td>0.99×</td></tr>
+            <tr><td>error rate</td><td>0%</td><td>0%</td><td>—</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
+            <svg viewBox="0 0 720 320" role="img" aria-labelledby="ab-t ab-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="ab-t">Response time in arm A and arm B under the same load</title>
+              <desc id="ab-d">The horizontal axis is response time on a log scale, one tick per tenfold. The top pair is the median
+              for feed reads, which have nothing to do with writing: 4 milliseconds with the outbound call outside the
+              transaction (arm A) against 6,047 milliseconds with it back inside (arm B), a gap of more than fifteen
+              hundred times. The bottom pair is the median for post creation, 2,577 against 2,584 milliseconds, which is
+              effectively the same. The path that was changed does not differ between the arms; the difference appears
+              only on the unrelated read path.</desc>
+
+              <text x="8" y="22" font-size="14" fill="#7b7186">median response time · log scale (16 writers · pool 10 · 800ms outbound)</text>
+              <path d="M150.0 38 V 214" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
+              <text x="150.0" y="232" font-size="12" fill="#7b7186" text-anchor="middle">1ms</text>
+              <path d="M282.0 38 V 214" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
+              <text x="282.0" y="232" font-size="12" fill="#7b7186" text-anchor="middle">10ms</text>
+              <path d="M414.0 38 V 214" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
+              <text x="414.0" y="232" font-size="12" fill="#7b7186" text-anchor="middle">100ms</text>
+              <path d="M546.0 38 V 214" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
+              <text x="546.0" y="232" font-size="12" fill="#7b7186" text-anchor="middle">1s</text>
+              <path d="M678.0 38 V 214" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
+              <text x="678.0" y="232" font-size="12" fill="#7b7186" text-anchor="middle">10s</text>
+              <text x="8" y="66" font-size="14" fill="#18121d" font-weight="700">feed read</text>
+              <text x="8" y="83" font-size="11" fill="#7b7186">unrelated to writing</text>
+              <rect x="150" y="52" width="79.5" height="18" rx="3" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="238.5" y="66" font-size="13" fill="#4f5bd5" font-weight="700">4 ms</text>
+              <rect x="150" y="78" width="499.2" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="658.2" y="92" font-size="13" fill="#d62976" font-weight="700">6,047 ms</text>
+              <text x="8" y="142" font-size="14" fill="#18121d" font-weight="700">post create</text>
+              <rect x="150" y="128" width="450.3" height="18" rx="3" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="609.3" y="142" font-size="13" fill="#4f5bd5" font-weight="700">2,577 ms</text>
+              <rect x="150" y="154" width="450.4" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="609.4" y="168" font-size="13" fill="#d62976" font-weight="700">2,584 ms</text>
+              <rect x="8" y="252" width="16" height="10" rx="2" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="30" y="262" font-size="12" fill="#3b3344">arm A — outbound call outside the transaction</text>
+              <rect x="8" y="270" width="16" height="10" rx="2" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="30" y="280" font-size="12" fill="#3b3344">arm B — @Transactional restored</text>
+              <text x="8" y="308" font-size="15" fill="#3b3344">The repaired path is the same in both. What collapses is the <tspan font-weight="700" fill="#18121d">unrelated read</tspan>.</text>
+            </svg>
+          </div>
+          <figcaption>The write path is effectively identical in both arms. The difference appears only on feed reads, which have nothing to do with writing. The axis is logarithmic.</figcaption>
+        </figure>
+
+        <p>How to read it: <strong>the write path is the same in both arms</strong> (2,577 against 2,584 ms),
+        because 1.6 seconds of outbound call dominates it either way. Which means
+        <strong>measuring only the write path shows nothing.</strong></p>
+
+        <p>The effect lands on <strong>feed reads, which have nothing to do with writing</strong>. In arm B the
+        16 writers each hold a connection for 1.6 seconds, exhaust the pool of 10, and a read that took 4 ms
+        takes 6 seconds. <strong>It is waiting, not failing, so the error rate stays at 0%</strong> while the
+        service slows down. That is why this defect is quiet.</p>
+
+        <p>And the first run I did showed <strong>almost no difference</strong> (p95 5 ms against 8 ms), because
+        8 writers do not exhaust a pool of 10. <strong>Without pool exhaustion the phenomenon does not
+        appear</strong> — this number belongs to its conditions, it is not a constant.</p>
+
         <h2 id="what-this-does-not-claim">What this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
         <ul>
-          <li><strong>There are no performance numbers.</strong> No load test was run, and there is no basis to
-          say “it got N times faster”. What changed is <strong>a property of the code</strong> — the transaction
-          no longer waits on an outbound call — and how much that is worth in latency or throughput was never
-          measured.</li>
+          <li><strong>These are not production numbers.</strong> They come from a local harness where the
+          load generator and the app share a machine's CPU. Absolute throughput means nothing here; only the
+          comparison does. The 800 ms outbound latency is a value <strong>configured on a stub</strong>, not a
+          real latency distribution.</li>
+          <li><strong>One run per arm.</strong> No repeats, so no variance.</li>
+          <li><strong>1,512× belongs to its conditions.</strong> It appears when write concurrency exceeds the
+          pool size. At 8 writers against a pool of 10 it was p95 5 ms against 8 ms.</li>
           <li><strong>“Up to 10 seconds” is a configured value.</strong> It is the read timeout set on the
           outbound call, not a measurement that each request actually held that long.</li>
           <li><strong>Nothing ever broke.</strong> This came out of a pre-launch structural review, and there is

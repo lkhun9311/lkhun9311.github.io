@@ -70,7 +70,7 @@
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ</a>
         <h1>RDS Proxy では直せないコネクション枯渇<br><span class="h1-sub">トランザクションの中で外部 API を呼び出していました — リリース前のソーシャル投票プラットフォーム点検</span></h1>
-        <div class="article-meta"><span class="source-tag commercial notranslate">事業化プロジェクト</span>Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">16分</span></div>
+        <div class="article-meta"><span class="source-tag commercial notranslate">事業化プロジェクト</span>Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">18分</span></div>
       </section>
       <article class="article-body">
 
@@ -98,6 +98,7 @@
             <li><a href="#使えるコードか">プーラーが使えるコードかを先に確認しました</a></li>
             <li><a href="#非同期にすれば">「非同期にすればいいのでは?」</a></li>
             <li><a href="#ガード">戻しやすい修正なので、ガードを原因に置きました</a></li>
+            <li><a href="#測ってみました">三週間後に実際に測ってみました</a></li>
             <li><a href="#主張しないこと">この記事が主張しないこと</a></li>
             <li><a href="#おわりに">おわりに</a></li>
           </ul>
@@ -127,11 +128,11 @@
         公開していません。そのため各節には GitHub リンクではなく<strong>ファイルパスとシンボル名</strong>を
         書いています。パッケージ名と環境変数名は元の記録ですでに匿名化されているものをそのまま使っています。</p>
 
-        <p><strong>⚠️ 先にお伝えすることがあります。</strong>この記事には<strong>負荷試験で測った数値が
-        ありません。</strong>障害が起きたこともありません。以下に出てくる「最大10秒」は外部呼び出しに
+        <p><strong>⚠️ 先にお伝えすることがあります。</strong>この記事の数値は<strong>ローカルのハーネスで
+        測ったもの</strong>で、本番の数値ではありません。外部呼び出しの遅延はスタブに設定した値です。
+        <strong>障害が起きたこともありません</strong>。以下に出てくる「最大10秒」は外部呼び出しに
         <strong>設定してある read timeout</strong> の値であって、リクエストごとに実際にそれだけ握っていたと
-        測定した値ではありません。改善はコードの性質の変化として説明されるものであり、この記事は実測値を
-        主張しません。</p>
+        測定した値ではありません。</p>
 
         <h2 id="どんなサービス">どんなサービスですか?<a class="anchor" href="#どんなサービス" aria-label="この節へのリンク">#</a></h2>
 
@@ -653,12 +654,96 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         <p>ここで学んだことがこの記事で一番持ち出せるものです。
         <strong>ミューテーションがグリーンならコードが安全なのではなく、ガードが狙っていないのです。</strong></p>
 
+        <h2 id="測ってみました">三週間後に実際に測ってみました<a class="anchor" href="#測ってみました" aria-label="この節へのリンク">#</a></h2>
+        <p>この記事はもともと<em>「数値がありません」</em>で終わる予定でした。ところがその一文を書いてみて、
+        それが<strong>数値を作る道具がないという意味</strong>だと分かったので、三週間後に JMeter の
+        ハーネスを作って測りました。</p>
+
+        <p>要点は<strong>一つの変数だけを変えること</strong>でした。arm A は現在のコード、arm B は
+        <code>@Transactional</code> 一行だけを戻したコードです。プールサイズ・スレッド数・外部呼び出しの
+        遅延・データはすべて同じです。遅延はアプリに仕込まず<strong>ローカルのスタブ</strong>を立てて
+        <code>base-url</code> をそちらへ向けました — アプリに「遅く回るモード」を入れると、それはいつか
+        本番で有効になります。</p>
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると残りが見えます">
+        <table>
+          <caption class="sr-only">arm A と arm B の応答時間・スループット比較。</caption>
+          <thead><tr><th scope="col">指標</th><th scope="col">arm A — 外</th><th scope="col">arm B — 中に戻す</th><th scope="col">倍率</th></tr></thead>
+          <tbody>
+            <tr><td><strong>フィード参照 p50</strong></td><td><strong>4 ms</strong></td><td><strong>6,047 ms</strong></td><td><strong>1,512×</strong></td></tr>
+            <tr><td>フィード参照 p95</td><td>6 ms</td><td>6,405 ms</td><td>1,068×</td></tr>
+            <tr><td>フィード参照 スループット</td><td>39.22 req/s</td><td>1.35 req/s</td><td>1/29</td></tr>
+            <tr><td>投稿作成 p50</td><td>2,577 ms</td><td>2,584 ms</td><td>1.00×</td></tr>
+            <tr><td>投稿作成 スループット</td><td>6.26 req/s</td><td>6.22 req/s</td><td>0.99×</td></tr>
+            <tr><td>エラー率</td><td>0%</td><td>0%</td><td>—</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロール可能な図解">
+            <svg viewBox="0 0 720 320" role="img" aria-labelledby="ab-t ab-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="ab-t">同じ負荷での arm A と arm B の応答時間</title>
+              <desc id="ab-d">横軸は応答時間で、10倍ごとに目盛りが一つある対数軸である。上の二本は書き込みとは無関係なフィード
+              参照の中央値で、外部呼び出しをトランザクションの外に置いた arm A が4ミリ秒、中に戻した arm B が
+              6,047ミリ秒と、千五百倍以上開く。下の二本は投稿作成の中央値で、2,577ミリ秒と2,584ミリ秒とほぼ同じである。
+              つまり直した経路自体は二つの arm で変わらず、差は何の関係もない読み取り経路にだけ現れる。</desc>
+
+              <text x="8" y="22" font-size="14" fill="#7b7186">応答時間の中央値 · 対数軸 (書き込み16 · プール10 · 外部呼び出し800ms)</text>
+              <path d="M150.0 38 V 214" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
+              <text x="150.0" y="232" font-size="12" fill="#7b7186" text-anchor="middle">1ms</text>
+              <path d="M282.0 38 V 214" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
+              <text x="282.0" y="232" font-size="12" fill="#7b7186" text-anchor="middle">10ms</text>
+              <path d="M414.0 38 V 214" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
+              <text x="414.0" y="232" font-size="12" fill="#7b7186" text-anchor="middle">100ms</text>
+              <path d="M546.0 38 V 214" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
+              <text x="546.0" y="232" font-size="12" fill="#7b7186" text-anchor="middle">1s</text>
+              <path d="M678.0 38 V 214" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
+              <text x="678.0" y="232" font-size="12" fill="#7b7186" text-anchor="middle">10s</text>
+              <text x="8" y="66" font-size="14" fill="#18121d" font-weight="700">フィード参照</text>
+              <text x="8" y="83" font-size="11" fill="#7b7186">書き込みと無関係</text>
+              <rect x="150" y="52" width="79.5" height="18" rx="3" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="238.5" y="66" font-size="13" fill="#4f5bd5" font-weight="700">4 ms</text>
+              <rect x="150" y="78" width="499.2" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="658.2" y="92" font-size="13" fill="#d62976" font-weight="700">6,047 ms</text>
+              <text x="8" y="142" font-size="14" fill="#18121d" font-weight="700">投稿作成</text>
+              <rect x="150" y="128" width="450.3" height="18" rx="3" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="609.3" y="142" font-size="13" fill="#4f5bd5" font-weight="700">2,577 ms</text>
+              <rect x="150" y="154" width="450.4" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="609.4" y="168" font-size="13" fill="#d62976" font-weight="700">2,584 ms</text>
+              <rect x="8" y="252" width="16" height="10" rx="2" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="30" y="262" font-size="12" fill="#3b3344">arm A — 外部呼び出しがトランザクションの外</text>
+              <rect x="8" y="270" width="16" height="10" rx="2" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="30" y="280" font-size="12" fill="#3b3344">arm B — @Transactional を復元</text>
+              <text x="8" y="308" font-size="15" fill="#3b3344">直した経路は両者同じだ。崩れるのは<tspan font-weight="700" fill="#18121d">無関係な読み取り</tspan>のほうである。</text>
+            </svg>
+          </div>
+          <figcaption>書き込み経路は二つの arm でほぼ同じです。差は書き込みと何の関係もないフィード参照にだけ現れます。横軸は対数軸です。</figcaption>
+        </figure>
+
+        <p>読み方はこうです。<strong>書き込み経路は二つの arm で同じです</strong>（2,577 対 2,584ms）。
+        外部呼び出しの1.6秒がどちらでも支配するからです。つまり<strong>書き込みだけ測ってもこの修正の効果は
+        見えません。</strong></p>
+
+        <p>効果は<strong>書き込みと何の関係もないフィード参照</strong>に現れます。arm B では書き込み16個が
+        それぞれ1.6秒ずつコネクションを握ってプール10個を使い切り、4ms で終わっていた参照が6秒になります。
+        <strong>エラーではなく待機なのでエラー率は0%のまま</strong>サービスが遅くなります。これがこの欠陥が
+        静かな理由です。</p>
+
+        <p>そして最初に回した実行では<strong>差がほとんどありませんでした</strong>（p95 5ms 対 8ms）。
+        書き込み8個ではプール10個が枯渇しないからです。<strong>プールが枯れなければこの現象は現れません</strong> —
+        この数値は条件に付いた値であって定数ではありません。</p>
+
         <h2 id="主張しないこと">この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="この節へのリンク">#</a></h2>
 
         <ul>
-          <li><strong>性能数値がありません。</strong>負荷試験をしておらず、「何倍速くなった」と言う根拠が
-          ありません。変わったのは<strong>コードの性質</strong>（トランザクションが外部呼び出しを待たなくなった
-          こと）であり、それが遅延やスループットでいくらになるかは測っていません。</li>
+          <li><strong>本番の数値ではありません。</strong>測ったのはローカルのハーネスで、負荷生成器と
+          アプリが同じ機械で CPU を分け合っています。絶対スループットに意味はなく、比較にだけ意味があります。
+          外部呼び出しの800msはスタブに<strong>設定した値</strong>で、実際の遅延分布ではありません。</li>
+          <li><strong>arm ごとに1回の実行です。</strong>繰り返して分散を見ていません。</li>
+          <li><strong>1,512倍は条件に付いた数字です。</strong>書き込みの同時実行がプールサイズを超えたときに
+          現れます。書き込み8・プール10ではp95が5ms対8msでした。</li>
           <li><strong>「最大10秒」は設定値です。</strong>外部呼び出しに掛けた read timeout であって、
           リクエストごとに実際にそれだけ占有したと測定した値ではありません。</li>
           <li><strong>障害が起きたことはありません。</strong>リリース前の構造点検から出たものであり、この経路が
