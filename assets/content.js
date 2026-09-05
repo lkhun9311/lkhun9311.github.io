@@ -385,14 +385,11 @@
     var allLabel = hasAll ? (opts.allLabel || "Recent") : null;
 
     var tagList = tagsOf(sec.items);
-    var buttons = hasAll ? [allLabel].concat(tagList) : tagList;
     var initial = hasAll ? allLabel : (tagList[0] || null);
 
-    /* 태그를 두 가지로 그린다.
-       - 홈처럼 미리보기만 하는 곳: 칩 한 줄(원래 모습)
-       - 섹션 인덱스: **왼쪽 목록**. 18개가 세 줄로 감기면 고르는 게 아니라 읽는 일이 된다.
-         왼쪽에 세로로 세우면 묶어서 나눌 수 있고 개수도 붙일 수 있다(AWS 문서의 좌측 내비와 같은 형태). */
-    var asFacets = !!(tagRowEl && tagRowEl.classList.contains("facets"));
+    /* 태그는 **왼쪽 세로 목록**으로만 그린다. 18개가 칩 한 줄로 세 줄씩 감기면 고르는 게 아니라
+       읽는 일이 된다. 세로로 세우면 묶어서 나눌 수 있고 개수도 붙일 수 있다(AWS 문서의 좌측 내비와
+       같은 형태). 홈에는 태그 줄 자체가 없다 — 미리보기 5건에 필터는 번잡하기만 하다. */
 
     function countOf(tag) {
       if (tag === allLabel) return sec.items.length;
@@ -411,11 +408,11 @@
     // 태그가 전체 건수와 같으면(News 의 #2026 처럼 연도 하나뿐) 눌러도 목록이 그대로다 —
     // 고를 것이 없는 필터는 자리만 차지하고 "여기서 뭘 고르지"를 매번 다시 묻게 만든다.
     var narrows = tagList.some(function (t) { return countOf(t) < sec.items.length; });
-    if (tagRowEl && asFacets && !narrows) {
+    if (tagRowEl && !narrows) {
       tagRowEl.hidden = true;
       var browse = tagRowEl.closest && tagRowEl.closest(".section-browse");
       if (browse) browse.classList.add("no-facets");
-    } else if (tagRowEl && asFacets) {
+    } else if (tagRowEl) {
       // 섹션이 tagGroups 를 선언하면 그 순서·묶음대로, 아니면 한 덩어리로 그린다.
       var groups = sec.tagGroups || null;
       var html = hasAll ? facetRow(allLabel, true) : "";
@@ -445,13 +442,6 @@
                   .map(function (t) { return facetRow(t, false); }).join("") + "</div>";
       }
       tagRowEl.innerHTML = html;
-    } else if (tagRowEl) {
-      tagRowEl.innerHTML = buttons.map(function (t, i) {
-        return (
-          '<button type="button" class="text-border-link tag' + (i === 0 ? " active" : "") +
-          '" data-tag="' + esc(t) + '">#' + esc(t) + "</button>"
-        );
-      }).join("");
     }
 
     function draw(tag) {
@@ -467,7 +457,7 @@
       tagRowEl.addEventListener("click", function (e) {
         var btn = e.target.closest("[data-tag]");
         if (!btn) return;
-        var bs = tagRowEl.querySelectorAll(asFacets ? ".facet" : ".tag");
+        var bs = tagRowEl.querySelectorAll(".facet");
         for (var i = 0; i < bs.length; i++) bs[i].classList.remove("active");
         btn.classList.add("active");
         draw(btn.getAttribute("data-tag"));
@@ -480,8 +470,8 @@
   window.renderSection = render;
 
   /* Convenience wrappers (Home uses #Recent, index pages use #All). */
-  window.renderHomeSection = function (key, tagRowEl, cardsEl, limit) {
-    render(key, cardsEl, { card: "mini", limit: limit || 5, tagRow: tagRowEl, allLabel: "Recent" });
+  window.renderHomeSection = function (key, cardsEl, limit) {
+    render(key, cardsEl, { card: "mini", limit: limit || 5, allLabel: "Recent" });
   };
   window.renderGrid = function (key, gridEl, tagRowEl) {
     render(key, gridEl, { card: "article", limit: 0, tagRow: tagRowEl, allLabel: "All" });

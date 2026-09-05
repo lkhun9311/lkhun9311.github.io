@@ -140,7 +140,6 @@
           </a>
         </div>
 
-        <div class="topic-row notranslate" data-tagrow="news"></div>
         <div class="entry-list" data-cards="news"></div>
       </section>
 
@@ -156,7 +155,6 @@
           </a>
         </div>
 
-        <div class="topic-row notranslate" data-tagrow="projects"></div>
         <div class="entry-list" data-cards="projects"></div>
       </section>
 
@@ -172,7 +170,6 @@
           </a>
         </div>
 
-        <div class="topic-row notranslate" data-tagrow="writing"></div>
         <div class="entry-list" data-cards="writing"></div>
       </section>
 
@@ -188,7 +185,6 @@
           </a>
         </div>
 
-        <div class="topic-row notranslate" data-tagrow="notes"></div>
         <div class="entry-list" data-cards="notes"></div>
       </section>
 
@@ -279,19 +275,15 @@
   <script>
     // News: simple list (no tags), max 5
     renderSection("news", document.querySelector('[data-cards="news"]'),
-      { card: "news", limit: 0, tagRow: document.querySelector('[data-tagrow="news"]'), allLabel: null });
+      { card: "news", limit: 0, allLabel: null });
 
-    // Projects: rich cards + tag filter, max 5
+    // Projects: rich cards, max 5
     renderSection("projects", document.querySelector('[data-cards="projects"]'),
-      { card: "project", limit: 5, tagRow: document.querySelector('[data-tagrow="projects"]'), allLabel: "Main Project" });
+      { card: "project", limit: 5, allLabel: "Main Project" });
 
-    // Writing / Notes: compact line cards + tag filter, max 5
-    renderHomeSection("writing",
-      document.querySelector('[data-tagrow="writing"]'),
-      document.querySelector('[data-cards="writing"]'), 5);
-    renderHomeSection("notes",
-      document.querySelector('[data-tagrow="notes"]'),
-      document.querySelector('[data-cards="notes"]'), 5);
+    // Writing / Notes: compact line cards, max 5
+    renderHomeSection("writing", document.querySelector('[data-cards="writing"]'), 5);
+    renderHomeSection("notes", document.querySelector('[data-cards="notes"]'), 5);
 
     setCount(document.getElementById("countNews"), "news");
     setCount(document.getElementById("countProjects"), "projects");
