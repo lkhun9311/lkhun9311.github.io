@@ -62,10 +62,11 @@
           tags: ["Privacy", "Security", "Method"]
         },
         {
-          title: "I Thought Adding RDS Proxy Would Fix It",
+          title: "We Were Calling an External API Inside the Transaction",
           url: "writing/a-pooler-fixes-only-one.html",
           date: "2026-09", dateLabel: "Sep 2026",
-          desc: "An external moderation call was sitting inside the transaction of a social polling app. Connection exhaustion has two causes behind one symptom, and a pooler fixes only one of them \u2014 which follows from the definition of transaction pooling, not from any vendor document. Also in Korean and Japanese.",
+          source: "side", sourceLabel: "Side project",
+          desc: "A pre-launch review of a social polling app. Connection exhaustion has two causes behind one symptom, and a pooler fixes only one of them \u2014 which follows from the definition of transaction pooling, not from any vendor document. Also in Korean and Japanese.",
           tags: ["Postgres", "Backend", "Method"]
         },
         {
@@ -192,11 +193,19 @@
     });
   }
 
+  /* "이건 사이드 프로젝트인가 회사 일인가"는 독자가 주장의 무게를 정할 때 먼저 묻는 것이다.
+     source 가 없는 항목에는 아무것도 그리지 않는다: 확인하지 않은 분류를 붙이면 배지 전체가
+     못 믿을 것이 된다. */
+  function sourceTag(it) {
+    if (!it.source || !it.sourceLabel) return "";
+    return '<span class="card-source ' + esc(it.source) + '">' + esc(it.sourceLabel) + "</span>";
+  }
+
   function cardMini(it) {
     return (
       '<div class="dated-card"><a class="mini-line-card" href="' + BASE + esc(it.url) + '">' +
       '<h3 class="notranslate">' + esc(it.title) + "</h3>" +
-      '<span class="card-date notranslate">' + esc(it.dateLabel) + "</span>" +
+      '<span class="card-date notranslate">' + esc(it.dateLabel) + "</span>" + sourceTag(it) +
       "<p>" + esc(it.desc) + "</p></a></div>"
     );
   }
@@ -204,7 +213,7 @@
   function cardArticle(it) {
     return (
       '<a class="article-card" href="' + BASE + esc(it.url) + '">' +
-      '<div class="date notranslate">' + esc(it.dateLabel) + "</div>" +
+      '<div class="date notranslate">' + esc(it.dateLabel) + "</div>" + sourceTag(it) +
       '<h2 class="notranslate">' + esc(it.title) + "</h2>" +
       "<p>" + esc(it.desc) + "</p></a>"
     );

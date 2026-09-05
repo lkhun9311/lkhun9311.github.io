@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RDS Proxy を足せば直ると思っていました | Kwanghun Lee</title>
+  <title>トランザクションの中で外部 API を呼び出していました | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="RDS Proxy を足せば直ると思っていました | Kwanghun Lee" />
+  <meta property="og:title" content="トランザクションの中で外部 API を呼び出していました | Kwanghun Lee" />
   <meta property="og:description" content="リリース前のソーシャル投票アプリを点検していて、コネクションプーラーを前に立てようとしました。ところがコネクション枯渇には原因が二つあり、プーラーはそのうち一つしか直しません。なぜ直せないのかは製品ドキュメントではなくトランザクションプーリングの定義から出てきます。" />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
@@ -26,7 +26,7 @@
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="RDS Proxy を足せば直ると思っていました | Kwanghun Lee" />
+  <meta name="twitter:title" content="トランザクションの中で外部 API を呼び出していました | Kwanghun Lee" />
   <meta name="twitter:description" content="コネクション枯渇の原因は二つです。プーラーはそのうち一つを直し、もう一つには構造的に効きません。" />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="リリース前のソーシャル投票アプリを点検していて、コネクションプーラーを前に立てようとしました。ところがコネクション枯渇には原因が二つあり、プーラーはそのうち一つしか直しません。なぜ直せないのかは製品ドキュメントではなくトランザクションプーリングの定義から出てきます。" />
@@ -69,9 +69,8 @@
     <main>
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ</a>
-        <h1>RDS Proxy を足せば直ると思っていました<br><span class="h1-sub">トランザクションの中の外部 API 呼び出しとコネクション枯渇</span></h1>
-        <div class="article-meta">Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">16分</span></div>
-        <p class="lang-alts notranslate">他の言語 <a href="a-pooler-fixes-only-one.html" hreflang="en" lang="en">English</a> · <a href="a-pooler-fixes-only-one.ko.html" hreflang="ko" lang="ko">한국어</a></p>
+        <h1>トランザクションの中で外部 API を呼び出していました<br><span class="h1-sub">リリース前のソーシャル投票アプリ点検 — RDS Proxy では直せないコネクション枯渇</span></h1>
+        <div class="article-meta"><span class="source-tag side notranslate">サイドプロジェクト</span>Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">16分</span></div>
       </section>
       <article class="article-body">
 
@@ -123,6 +122,10 @@
           <li>修正が <code>@Transactional</code> 一行で戻ってしまう種類なので、回帰防御を
           <strong>結果ではなく原因</strong>に置きました。</li>
         </ul>
+
+        <p><strong>コードは非公開リポジトリにあります。</strong>まだリリース前なのでリポジトリを
+        公開していません。そのため各節には GitHub リンクではなく<strong>ファイルパスとシンボル名</strong>を
+        書いています。パッケージ名は元の記録ですでに匿名化されているものをそのまま使っています。</p>
 
         <p><strong>⚠️ 先にお伝えすることがあります。</strong>この記事には<strong>負荷試験で測った数値が
         ありません。</strong>障害が起きたこともありません。以下に出てくる「最大10秒」は外部呼び出しに
@@ -180,7 +183,7 @@
         <strong>外部モデレーション API</strong>（有害な内容をふるい落としてくれる外部サービス）を一回ずつ
         呼び出します。そしてこの呼び出しには read timeout が<strong>10秒</strong>で設定されています。</p>
 
-<pre><code># application.yml
+<pre data-lang="yaml"><code># application.yml
 read-timeout: ${OXY_HTTP_READ_TIMEOUT:10s}</code></pre>
 
         <p>この数字を覚えておいてください。この記事の残りは全部ここから出てきます。</p>
@@ -215,7 +218,7 @@ read-timeout: ${OXY_HTTP_READ_TIMEOUT:10s}</code></pre>
         コネクションを待ってタイムアウトし、互いに何の関係もない API が同時に遅くなります。ログにはこの行が
         出ます。</p>
 
-<pre><code>Connection is not available, request timed out after 30000ms</code></pre>
+<pre data-lang="text"><code>Connection is not available, request timed out after 30000ms</code></pre>
 
         <p>ここまでは二つの原因がまったく同じ顔をしています。だから症状だけを見て道具を選ぶと外します。</p>
 
@@ -223,7 +226,7 @@ read-timeout: ${OXY_HTTP_READ_TIMEOUT:10s}</code></pre>
 
         <p>一つ目は<strong>コネクションの本数</strong>そのものが問題である場合です。</p>
 
-<pre><code>アプリ100台 × プールサイズ20 = コネクション2,000本
+<pre data-lang="text"><code>アプリ100台 × プールサイズ20 = コネクション2,000本
 ところが今実際にクエリを実行しているのは50本
 残りの1,950本はただ開いているだけです</code></pre>
 
@@ -234,11 +237,12 @@ read-timeout: ${OXY_HTTP_READ_TIMEOUT:10s}</code></pre>
         バックエンドの50本にまとめてくれるのですから。A 型の枯渇にはまさに正しい道具です。</p>
 
         <h2 id="原因b">原因 B — コネクションを長く握っているから<a class="anchor" href="#原因b" aria-label="この節へのリンク">#</a></h2>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="private">非公開リポジトリ</span> · <code>services/api/…/comment/CommentService.kt</code> <code>create</code></p>
 
         <p>二つ目はコネクションの<strong>本数</strong>ではなく<strong>握っている時間</strong>が問題である
         場合です。そして私たちのコードはこちらでした。</p>
 
-<pre><code>// CommentService.kt — 修正前
+<pre data-lang="kotlin"><code>// CommentService.kt — 修正前
 @Transactional
 fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentResponse {
     val user = activeUserGuard.requireActive(userId)                 // DB
@@ -440,7 +444,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
 
         <p>だからこうなります。</p>
 
-<pre><code>トランザクションが10秒開いている
+<pre data-lang="text"><code>トランザクションが10秒開いている
   → バックエンドコネクションも10秒固定される
   → アプリのコネクション1本につき DB のコネクション1本
   → プーラーがまとめるものがない</code></pre>
@@ -473,13 +477,14 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         <p>コネクションプーラーは③です。①をやらずに③から行くと効かない、というのが前の節の内容でした。</p>
 
         <h2 id="コードから">コードから直しました<a class="anchor" href="#コードから" aria-label="この節へのリンク">#</a></h2>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="private">非公開リポジトリ</span> · <code>services/api/…/comment/CommentService.kt</code> <code>create</code> · <code>services/api/…/post/PostService.kt</code> <code>createPost · addPoll</code></p>
 
         <p>そこで①からやりました。トランザクションの境界を<strong>書き込みの区間まで狭める</strong>作業です。
         Spring では <code>@Transactional</code> はプロキシベースなので、同じクラスの中で自分のメソッドを呼ぶと
         掛かりません。そこで、すでにコードベースにあった <code>TransactionTemplate</code> のパターンを
         そのまま再利用しました。新しい仕組みを持ち込まなかった点が重要です。</p>
 
-<pre><code>// 修正後 — メソッドに @Transactional がありません
+<pre data-lang="kotlin"><code>// 修正後 — メソッドに @Transactional がありません
 fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentResponse {
     // ① 検証（読み取り。それぞれ短くコネクションを使って返します）
     val user = activeUserGuard.requireActive(userId)
@@ -513,13 +518,14 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         直してみてはじめて、プーラーが価値を出せる状態になりました。</p>
 
         <h2 id="二つの数字">誰も選んでいない二つの数字<a class="anchor" href="#二つの数字" aria-label="この節へのリンク">#</a></h2>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="private">非公開リポジトリ</span> · <code>services/api/src/main/resources/application.yml</code> <code>spring.datasource.hikari</code></p>
 
         <p>②（流入制御）にも罠が一つありました。<strong>ブロッキング JDBC ではコネクションプールが事実上の
         同時実行上限</strong>です。スレッドがいくら多くてもコネクションを受け取れなければ仕事ができません。</p>
 
         <p>ところが設定を開いてみるとこうでした。</p>
 
-<pre><code># application.yml — 発見当時
+<pre data-lang="yaml"><code># application.yml — 発見当時
 spring:
   datasource:
     url: ${DB_URL:...}
@@ -538,7 +544,7 @@ spring:
 
         <p>そこで明記しました。</p>
 
-<pre><code>hikari:
+<pre data-lang="yaml"><code>hikari:
   maximum-pool-size: ${DB_POOL_MAX:20}
   connection-timeout: ${DB_POOL_TIMEOUT_MS:5000}   # 30秒のデフォルトは長すぎます — 速く失敗してこそ残りが生きます
   max-lifetime: ${DB_POOL_MAX_LIFETIME_MS:1200000}</code></pre>
@@ -546,7 +552,7 @@ spring:
         <p>ただし<strong>プールを大きくしたのは修理ではなく緩和</strong>です。そして大きくするにも上限が
         あります。</p>
 
-<pre><code>プールサイズ × 最大インスタンス数 ≤ DB コネクション上限</code></pre>
+<pre data-lang="text"><code>プールサイズ × 最大インスタンス数 ≤ DB コネクション上限</code></pre>
 
         <p>アプリは自分のインスタンスが何台なのかを知らないので、この不変式を<strong>コードで強制できません。</strong>
         IaC のコメントが唯一の防御なので、そこに書き留めておきました。</p>
@@ -555,6 +561,7 @@ spring:
         デフォルト二つが作り出した同時実行ポリシーはポリシーではありません。</p>
 
         <h2 id="使えるコードか">プーラーが使えるコードかを先に確認しました<a class="anchor" href="#使えるコードか" aria-label="この節へのリンク">#</a></h2>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="private">非公開リポジトリ</span> · <code>services/api/…/vote/VoteRepository.kt</code> <code>pg_advisory_xact_lock</code></p>
 
         <p>③に進む前に確認することがもう一つありました。トランザクションプーリングには
         <strong>ピン（pin）を誘発するパターン</strong>があり、コードにそれがあるとコネクションプーラーが
@@ -570,7 +577,7 @@ spring:
 
         <p>直接確認してみました。</p>
 
-<pre><code>$ grep -rn "pg_advisory_lock" src/main/kotlin/      # (なし)
+<pre data-lang="shell"><code>$ grep -rn "pg_advisory_lock" src/main/kotlin/      # (なし)
 $ grep -rn "advisory_xact" src/main/kotlin/
 ReportRepository.kt      pg_advisory_xact_lock(...)
 AuthAuditPurge.kt        pg_try_advisory_xact_lock(...)
@@ -604,6 +611,7 @@ VoteRepository.kt        pg_advisory_xact_lock(...)</code></pre>
         遅い外部呼び出しがコネクションを握る — はそのまま残ります。</p>
 
         <h2 id="ガード">戻しやすい修正なので、ガードを原因に置きました<a class="anchor" href="#ガード" aria-label="この節へのリンク">#</a></h2>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="private">非公開リポジトリ</span> · <code>services/api/src/test/…/ModerationOutsideTransactionTest.kt</code> <code>TransactionProbe</code></p>
 
         <p>この修正には固有の脆さがあります。<strong><code>@Transactional</code> 一行で元に戻ります。</strong>
         しかも戻しても<strong>機能は正常です</strong> — テストも通りますし画面も問題ありません。症状は負荷が
@@ -613,7 +621,7 @@ VoteRepository.kt        pg_advisory_xact_lock(...)</code></pre>
         <strong>原因</strong>を表明しました。実際の HTTP クライアントが座るインターフェースの位置に spy を
         置き、<strong>呼び出しが起きるその時点でトランザクションが活性かどうか</strong>を記録します。</p>
 
-<pre><code>class TransactionProbe : ContentModerationApi {
+<pre data-lang="kotlin"><code>class TransactionProbe : ContentModerationApi {
     val sawTransaction = mutableListOf&lt;Boolean&gt;()
     override fun screen(text: String) {
         sawTransaction += TransactionSynchronizationManager.isActualTransactionActive()
@@ -631,7 +639,7 @@ assertThat(probe.sawTransaction).containsOnly(false)  // ② その呼び出し�
         <p>そしてこのガードが本当に狙えているかは<strong>ミューテーション</strong>で確認しました。コードを
         わざと戻しておいてテストを走らせ、赤信号が出るかを見る方法です。</p>
 
-<pre><code># コメント経路に @Transactional を復元
+<pre data-lang="shell"><code># コメント経路に @Transactional を復元
 ModerationOutsideTransactionTest > the moderation call does not hold a database transaction() FAILED
 
 # 投稿経路に @Transactional を復元
@@ -695,6 +703,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
 
   <script src="../assets/lang.js?v=20260905b"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <script defer src="../assets/article.js?v=20260817-scroll"></script>
+  <script defer src="../assets/highlight.js?v=20260905"></script>
+  <script defer src="../assets/article.js?v=20260905b"></script>
 </body>
 </html>
