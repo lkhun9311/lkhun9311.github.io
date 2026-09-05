@@ -69,7 +69,7 @@
     <main>
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Writing</a>
-        <h1>The Connection Exhaustion RDS Proxy Cannot Fix<br><span class="h1-sub">We were calling an external API inside the transaction — a pre-launch review of a social polling platform</span></h1>
+        <h1>The Connection Exhaustion RDS Proxy Cannot Fix<br><span class="h1-sub">I was calling an external API inside the transaction — a pre-launch review of a social polling platform</span></h1>
         <div class="article-meta"><span class="source-tag commercial notranslate">Commercial project</span>Writing · September 2026<span aria-hidden="true"> · </span><span class="read-time">14 min read</span></div>
       </section>
       <article class="article-body">
@@ -180,12 +180,12 @@
               </defs>
             </svg>
           </div>
-          <figcaption>An ordinary mobile app → API server → PostgreSQL. The problem is at the bottom — every post and comment calls an external moderation API once, and that call was happening inside a database transaction.</figcaption>
+          <figcaption>An ordinary mobile app → API server → PostgreSQL. Exactly one thing in this diagram is not ordinary — the pink box at the bottom — and it is the whole article.</figcaption>
         </figure>
 
-        <p>The part to look at is the pink box at the bottom. Every time a post or comment is written, the server
-        calls an <strong>external moderation API</strong> (a third-party service that screens harmful content)
-        once. And that call has a read timeout of <strong>10 seconds</strong>.</p>
+        <p>The <strong>external moderation API</strong> is a third-party service that screens harmful content.
+        Every post and comment calls it once, and that call has a read timeout of <strong>10 seconds</strong>.
+        And it was happening <strong>inside a database transaction</strong>.</p>
 
 <pre data-lang="yaml"><code># application.yml
 read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
@@ -200,11 +200,11 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
         <strong>connection pooler</strong> — RDS Proxy, PgBouncer and the like — in front?</p></blockquote>
 
         <p>A connection pooler is middleware that <strong>folds</strong> thousands of application connections
-        into dozens of database connections. From the marketing diagram alone it looked like exactly what we
+        into dozens of database connections. From the marketing diagram alone it looked like exactly what I
         needed.</p>
 
         <p>But there was something to establish before that decision:
-        <strong>is the connection shortage we are going to hit the kind this tool fixes?</strong></p>
+        <strong>is the connection shortage I am going to hit the kind this tool fixes?</strong></p>
 
         <h2 id="the-conclusion-first">The conclusion first<a class="anchor" href="#the-conclusion-first" aria-label="Link to this section">#</a></h2>
 
@@ -216,7 +216,7 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
         one.</p></blockquote>
 
         <p>And the basis for that conclusion was not the product documentation for RDS Proxy or PgBouncer but
-        <strong>the definition of transaction pooling itself</strong>. We will get there.</p>
+        <strong>the definition of transaction pooling itself</strong>. I will get there.</p>
 
         <p>Start with the symptom. When a connection pool runs dry, what surfaces is mostly one thing:
         requests wait for a connection and time out, and APIs with nothing to do with each other slow down
@@ -244,7 +244,7 @@ the other 1,950 are simply open</code></pre>
         <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private</span> <code>services/api/…/comment/CommentService.kt</code> <code>create</code></p>
 
         <p>The second is when the problem is not the <strong>number</strong> of connections but
-        <strong>how long each one is held</strong>. Our code was this kind.</p>
+        <strong>how long each one is held</strong>. My code was this kind.</p>
 
 <pre data-lang="kotlin"><code>// CommentService.kt — before
 @Transactional
@@ -529,7 +529,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         <p>Layer ② had a trap of its own. <strong>With blocking JDBC the connection pool is effectively the
         concurrency cap.</strong> However many threads there are, they cannot work without a connection.</p>
 
-        <p>Opening our configuration, this is what was there.</p>
+        <p>Opening the configuration, this is what was there.</p>
 
 <pre data-lang="yaml"><code># application.yml — as found
 spring:
