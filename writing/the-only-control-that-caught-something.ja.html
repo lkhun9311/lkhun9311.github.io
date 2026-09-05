@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>これまで実際に何かを捕まえた統制は、予算アラート1つだけだった | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/the-only-control-that-caught-something.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/the-only-control-that-caught-something.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/the-only-control-that-caught-something.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/the-only-control-that-caught-something.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="これまで実際に何かを捕まえた統制は、予算アラート1つだけだった | Kwanghun Lee" />
+  <meta property="og:description" content="個人の GPU ラボアカウントにおけるコストとアカウント運用の記録。手で作った予算アラート 1 つが、私の見積りから丸ごと抜けていた項目を見つけた。そして Terraform がそのアラートを静かに消すところだった。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/the-only-control-that-caught-something.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="これまで実際に何かを捕まえた統制は、予算アラート1つだけだった | Kwanghun Lee" />
+  <meta name="twitter:description" content="予算アラート 1 つが見積りから抜けていた項目を見つけ、Terraform がそのアラートを静かに消すところだった。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="個人の GPU ラボアカウントにおけるコストとアカウント運用の記録。手で作った予算アラート 1 つが、私の見積りから丸ごと抜けていた項目を見つけた。そして Terraform がそのアラートを静かに消すところだった。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language"
+                data-authored='{"en":"the-only-control-that-caught-something.html","ko":"the-only-control-that-caught-something.ko.html","ja":"the-only-control-that-caught-something.ja.html"}'>
+          <option value="ja" selected>Japanese</option>
+          <option value="en">English</option>
+          <option value="ko">Korean</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="zh-TW">Chinese (Traditional)</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="vi">Vietnamese</option>
+          <option value="id">Indonesian</option>
+          <option value="hi">Hindi</option>
+          <option value="ar">Arabic</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <section class="page-hero">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ戻る</a>
+        <h1>これまで実際に何かを捕まえた統制は、予算アラート1つだけだった</h1>
+        <div class="article-meta">Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">9分</span></div>
+        <p class="lang-alts notranslate">他の言語 <a href="the-only-control-that-caught-something.html" hreflang="en" lang="en">English</a> · <a href="the-only-control-that-caught-something.ko.html" hreflang="ko" lang="ko">한국어</a></p>
+      </section>
+      <article class="article-body">
+
+        <p><strong>範囲.</strong> 個人プロジェクトである
+        <a href="../projects/gpuaas-control-plane.html">Kubernetes ネイティブ GPU コントロールプレーン</a>のために
+        作った AWS ラボアカウントの、コストとアカウント運用の記録である。金額は
+        <strong>個人ラボアカウントの実際の請求・実測</strong>であり、本番規模ではない。アカウント ID・ポリシー ID は
+        書かない。</p>
+
+        <p>GPU を借りて実験する個人プロジェクトで一番怖いのは、実験が外れることではなく
+        <strong>点けたものを忘れること</strong>である。だから統制を何層か作った — サービスコントロールポリシー、
+        TTL のスケールダウン予約、月次予算、一時的な apply と destroy。</p>
+
+        <p>1 か月回してみると、<strong>実際に何かを捕まえたのはそのうち 1 つだけ</strong>だった。そしてその 1 つは
+        コードに無かった。</p>
+
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#eighty-percent">80% は早期警告ではない</a></li>
+            <li><a href="#omitted-line-item">見積りから丸ごと抜けていた項目</a></li>
+            <li><a href="#terraform-nearly-deleted">そして Terraform がそれを消すところだった</a></li>
+            <li><a href="#same-bytes-free">同じ 15.6GB を無料で運ぶ方法</a></li>
+            <li><a href="#rehearsal-that-failed">わざと失敗したリハーサル、20 分 5 セント</a></li>
+            <li><a href="#alarm-never-heard">鳴るか確かめていなかった警報</a></li>
+            <li><a href="#only-way-in-root">入口がルート 1 つしか無かった</a></li>
+            <li><a href="#what-this-does-not-claim">この記事が主張しないこと</a></li>
+          </ul>
+        </nav>
+
+        <h2 id="eighty-percent">80% は早期警告ではない<a class="anchor" href="#eighty-percent" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>月次予算の上限は 30 ドルにした。通知のしきい値として既定で付くのは予算の 80% である。ところがこの
+        プロジェクトの支出は<strong>3 時間のバーストで到着する。</strong>有料 GPU セッションは半日で始まって終わり、
+        月単位のしきい値はそのセッションが<strong>既に終わった後</strong>にしか何も言わない。</p>
+
+        <p>そこで早期警告を <strong>10%</strong> に置いた。30 ドルの予算なら 3 ドル、おおよそ有料セッション 1 回分だ。
+        そうすれば<strong>その月の最初のセッションがいくら使ったかを報告し、次のセッションはまだ考え直せる。</strong></p>
+
+        <p>しきい値を選ぶ基準は「何パーセントが妥当か」ではなく、<strong>「これが鳴ったとき、まだ変えられる決定が
+        残っているか」</strong>である。この支出の形では 80% はその条件を満たさない。</p>
+
+        <h2 id="omitted-line-item">見積りから丸ごと抜けていた項目<a class="anchor" href="#omitted-line-item" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>2026-09-03、3 回目の有料セッションの後にそのアラートが鳴った。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
+        <table>
+          <caption class="sr-only">アラートが報告した月次累計と、私の見積りの差。</caption>
+          <thead><tr><th scope="col"></th><th scope="col">金額</th></tr></thead>
+          <tbody>
+            <tr><td>アラートが報告したその月の累計</td><td><strong>$14.56</strong></td></tr>
+            <tr><td>私が持っていた概算</td><td>約 $8</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>差額を追うと <strong>NAT ゲートウェイのデータ処理料金</strong>だった。インスタンス時間と EKS の料金は
+        数えていたが、<strong>バイトが NAT を通る費用は見積りに存在すらしていなかった。</strong></p>
+
+        <p>なぜ見えなかったかは明確だ。私の見積りは<strong>自分が点けたもの</strong>の一覧だった。GPU インスタンス、
+        EKS コントロールプレーン、NAT ゲートウェイ — 時間単価があるものだ。ところが NAT は時間料金<em>と</em>
+        処理したバイトあたりの料金を別に取り、コンテナイメージを引くたびにその行が伸びる。
+        <strong>点けたものを数える一覧は、点けたものが何をしているかを数えない。</strong></p>
+
+        <h2 id="terraform-nearly-deleted">そして Terraform がそれを消すところだった<a class="anchor" href="#terraform-nearly-deleted" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>そのアラートは 2026-08-31 にコンソールで<strong>手作業</strong>で作り、設定には書かなかった。</p>
+
+        <p>数日後、イメージのミラーリポジトリを追加しようと <code>plan</code> を回したところ、この通知ブロックが
+        <strong>設定には無くアカウントには有る</strong>状態で現れた。そのまま apply していれば、
+        <strong>無関係な変更の副作用として、静かに</strong>消えていた。</p>
+
+        <p>消えるところだったのが、よりによって<strong>このアカウントでこれまで唯一コストの誤りを捕まえた統制</strong>
+        だった。</p>
+
+        <p>これはこのプロジェクトが繰り返し作り出す形である。<strong>値が片方にしか無く、両者を比べるものが何も
+        無い。</strong>コンソールで急いで作ったものはコードに無く、コードを真実とみなすツールはコードに無いものを
+        削除対象として見る。だからアラートを Terraform に移す際、<strong>なぜこのブロックが存在するのかと、一度
+        消えるところだったという事実をコメントとして併記した。</strong>次にこのブロックを消そうとする人が読めるように。</p>
+
+        <h2 id="same-bytes-free">同じ 15.6GB を無料で運ぶ方法<a class="anchor" href="#same-bytes-free" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>NAT の行が見えた途端、次の実験の形が変わった。</p>
+
+        <p>2026-09-04 の問いは vLLM のスケジューラ設定に関するものだった。ゲートウェイも Kubernetes も要らず、
+        <strong>インスタンス 1 台で足りる。</strong>すると 1 つの事実がコストの大部分を分ける。</p>
+
+        <blockquote><p>デフォルトサブネットのインスタンスはパブリック IP でインターネットゲートウェイを通じて
+        通信し、<strong>インバウンド転送は無料である。</strong></p></blockquote>
+
+        <p>それまでのすべての有料実行は<strong>同じ 15.6GB</strong> — コンテナイメージとモデルの重み — を
+        GB あたり <strong>$0.059</strong> の NAT でダウンロードしていた。パブリックサブネットのインスタンス 1 台に
+        移すとその行は消え、その日の実験は<strong>約 $0.40</strong> で終わった。</p>
+
+        <p>変えたのはアルゴリズムではなく<strong>バイトが通る経路</strong>である。そしてその経路が見えるように
+        なったのは、アラートが請求書を項目別に読ませたからだ。</p>
+
+        <h2 id="rehearsal-that-failed">わざと失敗したリハーサル、20 分 5 セント<a class="anchor" href="#rehearsal-that-failed" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>最初の有料 GPU セッションの前に、<strong>GPU を点けないリハーサル</strong>を回した。クラスタを apply して
+        すぐ destroy する。目的は性能ではなく<strong>手順が最後まで通るか</strong>である。</p>
+
+        <p><strong>apply が失敗した。</strong>原因は前日に私が付けたサービスコントロールポリシーだった。</p>
+
+<pre><code>Error: creating EC2 Launch Template: UnauthorizedOperation
+  ec2:CreateLaunchTemplate ... explicit deny in a service control policy</code></pre>
+
+        <p>問題の文はインスタンスタイプを許可リストで制限しようとするものだった。</p>
+
+<pre><code>{
+  "Effect": "Deny",
+  "Action": ["ec2:CreateLaunchTemplate", "ec2:CreateLaunchTemplateVersion"],
+  "Condition": { "StringNotLike": { "ec2:InstanceType": ["t3.*", "g4dn.*", "g5.*"] } }
+}</code></pre>
+
+        <p>ここに 2 つが重なった。</p>
+
+        <p><strong>1 つ。IAM の否定条件演算子はキーが無ければ真になる。</strong><code>StringNotLike</code> は
+        「この値がリストと異なれば」だけでなく、キーがそもそも無い場合にも満たされる。</p>
+
+        <p><strong>2 つ。EKS マネージドノードグループはインスタンスタイプをノードグループに持ち、起動テンプレートには
+        入れない。</strong>そのため <code>ec2:InstanceType</code> キーが不在だった。</p>
+
+        <p>2 つが重なって、この文はインスタンスファミリーを制限したのではなく<strong>サービスを丸ごと遮断</strong>した。
+        許可リストに <code>g5.*</code> と書いてあるのに g5 のノードグループを作れなかった。</p>
+
+        <p>これをリハーサルで踏んだ値はこうだ。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
+        <table>
+          <caption class="sr-only">2 回のリハーサルの結果と残留物。</caption>
+          <thead><tr><th scope="col">回</th><th scope="col">結果</th><th scope="col">後片付け</th><th scope="col">残留物</th></tr></thead>
+          <tbody>
+            <tr><td>1 回目</td><td>apply 失敗(SCP が拒否)</td><td>destroy 85 個</td><td><strong>0</strong></td></tr>
+            <tr><td>2 回目(ポリシー修正後)</td><td>apply 成功 96 個、エラー 0</td><td>destroy 96 個</td><td><strong>0</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>2 回合わせて課金約 40 分、<strong>約 $0.18</strong>。1 回目だけなら 20 分で約 <strong>$0.05</strong> だ。
+        (どちらも課金時間 × 時間単価で計算した値であり、請求書の項目と突き合わせた値ではない。)</p>
+
+        <p>このポリシー欠陥に<strong>有料 GPU セッションで初めて出会っていたら</strong>、カードを点けたまま
+        デバッグしていた。リハーサルの価値は成功したことではなく、<strong>失敗を安い場所で踏んだこと</strong>にある。</p>
+
+        <h2 id="alarm-never-heard">鳴るか確かめていなかった警報<a class="anchor" href="#alarm-never-heard" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>同じ週に、GPU ノードを一定時間後に 0 へ下げる予約を作り、「これでバックストップができた」と書いた。</p>
+
+        <p>翌日その文の根拠をたどると<strong>根拠が無かった。</strong>確認したのは予約が <code>ENABLED</code> と
+        表示されることだけだ。それは AWS がその予約を<strong>受理した</strong>という意味であって、時間になったら
+        <strong>実際に呼び出しを出す</strong>という意味ではない。ロールの引き受けが通るのか、ポリシーがその呼び出しを
+        許すのか、ペイロードがどんな形か — 何も確認していなかった。</p>
+
+        <p>ところが本当に確認するには GPU を借りて時間が経つのを待つ必要がある。
+        <strong>支出を抑えるための仕組みを検証するために支出する</strong>ことになる。</p>
+
+        <p>抜け道は失敗の位置にあった。知りたいのは<strong>呼び出しが出るか</strong>であって、呼び出しが成功するか
+        ではない。ならば<strong>対象は存在しなくてよい。</strong></p>
+
+        <p>存在しないクラスタとノードグループの名前を入れて 2 分後に予約した。リトライ 0 回、完了後は自動削除。</p>
+
+        <p><strong>1 つ目の証拠は予約が消えたこと</strong>である。自動削除は呼び出しが実行された後にしか起きない。
+        発火しなかった予約はそのまま残る。</p>
+
+        <p><strong>2 つ目は監査ログ</strong>だった。</p>
+
+<pre><code>プリンシパル : assumed-role/gpu-platform-ttl-scaledown/...
+リクエスト   : {"scalingConfig": {"minSize": 0, "desiredSize": 0}, ...}
+エラー       : ResourceNotFoundException</code></pre>
+
+        <p>ロールが引き受けられ、ポリシーが呼び出しを通し、ペイロードはスクリプトが書いたものと同じだった。
+        失敗したのは<strong>対象だけ</strong>で、その対象は金を使わないためにわざと存在しない名前にしたものだ。
+        <strong>費用は 0 ドルだった。</strong></p>
+
+        <p>確認された範囲を正確に書けばこうなる — <strong>予約が時刻どおりにロールを引き受け、その形の呼び出しを
+        出す</strong>までである。実際のノードグループがその呼び出しで 0 に下がることは、この実験が示したことではない。</p>
+
+        <h2 id="only-way-in-root">入口がルート 1 つしか無かった<a class="anchor" href="#only-way-in-root" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>組織を作って 2 日目、クレジットの支援ケースを開こうと管理アカウントにログインしたところ、ルートの MFA が
+        合わなかった。その数分間、<strong>組織管理・SCP・Identity Center に触る方法が 1 つも無かった。</strong></p>
+
+        <p>構成が間違っていたからではない。<strong>入口を 1 つしか作っていなかったから</strong>だ。Identity Center を
+        立てる際、権限セットを<strong>ラボアカウントにだけ</strong>割り当てていた。</p>
+
+        <p>管理アカウントに割り当てなかったのは判断ではなく漏れだった。「管理アカウントにはワークロードを置かないから
+        そこですることは無い」と考えていたが、<strong>組織・SCP・Identity Center を管理する仕事がまさにそこで
+        起きる。</strong>ワークロードが無いアカウントは、アクセス経路が要らないアカウントではない。</p>
+
+        <p>直すのに 3 分。気づくのに 2 日かかり、気づいた契機は<strong>MFA がたまたま合わなかったこと</strong>だった。</p>
+
+        <h2 id="what-this-does-not-claim">この記事が主張しないこと<a class="anchor" href="#what-this-does-not-claim" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>TTL が実際にコスト事故を防いだという主張ではない。</strong>確認されたのは予約が時刻どおりに
+          呼び出しを出すところまでで、対象はわざと存在しない名前だった。そしてその統制の範囲は
+          <strong>ノードグループを 0 に下げること</strong>であって、アカウント全体の支出を止めることではない。</li>
+          <li><strong>$0.05・$0.18 は請求書の項目ではない。</strong>課金時間に時間単価を掛けた計算値である。
+          $14.56 と $0.40 は請求・集計から出た値だ。</li>
+          <li><strong>SCP の欠陥はこの組織構成でのもの</strong>である。条件キーの不在が否定演算子を真にすることは
+          一般的だが、どのキーが不在になるかはサービスと呼び出し経路によって違う。</li>
+          <li><strong>規模は個人ラボである。</strong>ここで統制が有用だった理由の半分は、支出が小さく単一項目の
+          誤差が目立ったからだ。</li>
+          <li><strong>予算アラートは発見的統制である。</strong>支出を止めるのではなく報告するだけだ。この記事が言うのは
+          それが強力だということではなく、<strong>何層かのうち実際に何かを捕まえたのがそれ 1 つだった</strong>という
+          観測である。</li>
+        </ul>
+
+        <p>残る 1 行はこれである。<strong>統制を作ったことと、その統制が発火するのを確認したことは別の仕事であり、
+        ほとんどの統制は後者をしないまま一覧に載る。</strong>そして私の一覧で唯一何かを捕まえたのは最も単純なもの —
+        <strong>私の見積りと実際の請求を並べてくれたアラート</strong> — だった。</p>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script src="../assets/lang.js?v=20260905"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/article.js?v=20260817-scroll"></script>
+</body>
+</html>
