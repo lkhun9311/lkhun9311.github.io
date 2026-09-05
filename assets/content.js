@@ -65,7 +65,7 @@
           title: "The Only Control That Has Ever Caught a Cost Error",
           url: "writing/the-only-control-that-caught-something.html",
           date: "2026-09", dateLabel: "Sep 2026",
-          desc: "Several layers of cost control on a GPU lab account, and the one that caught something was a hand-made budget alert Terraform nearly deleted. Also in Korean and Japanese.",
+          desc: "Several layers of cost control on a GPU lab account, and the one that caught an error in the cost itself was a hand-made budget alert Terraform nearly deleted. Also in Korean and Japanese.",
           tags: ["Cost", "Operations", "Method"]
         },
         {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>これまで実際に何かを捕まえた統制は、予算アラート1つだけだった | Kwanghun Lee</title>
+  <title>コストの誤りを捕まえた統制は、予算アラート1つだけだった | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="これまで実際に何かを捕まえた統制は、予算アラート1つだけだった | Kwanghun Lee" />
+  <meta property="og:title" content="コストの誤りを捕まえた統制は、予算アラート1つだけだった | Kwanghun Lee" />
   <meta property="og:description" content="個人の GPU ラボアカウントにおけるコストとアカウント運用の記録。手で作った予算アラート 1 つが、私の見積りから丸ごと抜けていた項目を見つけた。そして Terraform がそのアラートを静かに消すところだった。" />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
@@ -26,7 +26,7 @@
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="これまで実際に何かを捕まえた統制は、予算アラート1つだけだった | Kwanghun Lee" />
+  <meta name="twitter:title" content="コストの誤りを捕まえた統制は、予算アラート1つだけだった | Kwanghun Lee" />
   <meta name="twitter:description" content="予算アラート 1 つが見積りから抜けていた項目を見つけ、Terraform がそのアラートを静かに消すところだった。" />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="個人の GPU ラボアカウントにおけるコストとアカウント運用の記録。手で作った予算アラート 1 つが、私の見積りから丸ごと抜けていた項目を見つけた。そして Terraform がそのアラートを静かに消すところだった。" />
@@ -69,7 +69,7 @@
     <main>
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ戻る</a>
-        <h1>これまで実際に何かを捕まえた統制は、予算アラート1つだけだった</h1>
+        <h1>コストの誤りを捕まえた統制は、予算アラート1つだけだった</h1>
         <div class="article-meta">Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">9分</span></div>
         <p class="lang-alts notranslate">他の言語 <a href="the-only-control-that-caught-something.html" hreflang="en" lang="en">English</a> · <a href="the-only-control-that-caught-something.ko.html" hreflang="ko" lang="ko">한국어</a></p>
       </section>
@@ -85,8 +85,9 @@
         <strong>点けたものを忘れること</strong>である。だから統制を何層か作った — サービスコントロールポリシー、
         TTL のスケールダウン予約、月次予算、一時的な apply と destroy。</p>
 
-        <p>1 か月回してみると、<strong>実際に何かを捕まえたのはそのうち 1 つだけ</strong>だった。そしてその 1 つは
-        コードに無かった。</p>
+        <p>1 か月回してみると、リハーサルはポリシーの欠陥を捕まえ、TTL は発火を証明した。ところが
+        <strong>コストそのものの誤りを捕まえたのはそのうち 1 つだけ</strong>だった。そしてその 1 つはコードに
+        無かった。</p>
 
         <nav class="article-toc" aria-label="目次">
           <p class="toc-label">目次</p>
@@ -166,8 +167,10 @@
         <blockquote><p>デフォルトサブネットのインスタンスはパブリック IP でインターネットゲートウェイを通じて
         通信し、<strong>インバウンド転送は無料である。</strong></p></blockquote>
 
-        <p>それまでのすべての有料実行は<strong>同じ 15.6GB</strong> — コンテナイメージとモデルの重み — を
-        GB あたり <strong>$0.059</strong> の NAT でダウンロードしていた。パブリックサブネットのインスタンス 1 台に
+        <p>それまでの有料実行は、コンテナイメージとモデルの重み — コールドなノード 1 台あたり
+        <strong>約 15.6GB</strong> — を GB あたり <strong>$0.059</strong> の NAT でダウンロードしていた。
+        (最初の 3 セッションの NAT データ処理の請求は合計<strong>約 92GB・$5.43</strong> である。1 セッション
+        15.6GB を 3 回ではその総量を説明できず、私はその差を突き合わせていない。)パブリックサブネットのインスタンス 1 台に
         移すとその行は消え、その日の実験は<strong>約 $0.40</strong> で終わった。</p>
 
         <p>変えたのはアルゴリズムではなく<strong>バイトが通る経路</strong>である。そしてその経路が見えるように
@@ -297,7 +300,7 @@
         </ul>
 
         <p>残る 1 行はこれである。<strong>統制を作ったことと、その統制が発火するのを確認したことは別の仕事であり、
-        ほとんどの統制は後者をしないまま一覧に載る。</strong>そして私の一覧で唯一何かを捕まえたのは最も単純なもの —
+        ほとんどの統制は後者をしないまま一覧に載る。</strong>そして私の一覧でコストの誤りを捕まえたのは最も単純なもの —
         <strong>私の見積りと実際の請求を並べてくれたアラート</strong> — だった。</p>
 
       </article>
