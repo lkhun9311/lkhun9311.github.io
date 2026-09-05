@@ -81,6 +81,15 @@ def main():
                     if not (f.parent / t).exists():
                         fail.append(f"{rel}: lang-alts → {t} 없음")
 
+            # table-scroll 은 래퍼·힌트·뷰포트가 1:1:1 이어야 한다. 손으로 쓰다 뷰포트를 두 번 연
+            # 실수가 두 번 나왔고, 그때 HTML 균형 검사는 통과했다(속성 안에 </div> 가 들어가 파서가
+            # 텍스트로 읽었다). 개수 비교는 그 형태를 잡는다.
+            n_wrap = len(re.findall(r'class="table-scroll"', s))
+            n_hint = len(re.findall(r'class="table-scroll-hint"', s))
+            n_view = len(re.findall(r'class="table-scroll-viewport"', s))
+            if not (n_wrap == n_hint == n_view):
+                fail.append(f"{rel}: table-scroll 짝이 안 맞는다 — 래퍼 {n_wrap} · 힌트 {n_hint} · 뷰포트 {n_view}")
+
             i_lang, i_el = s.find('assets/lang.js'), s.find('translate_a/element.js')
             if not (0 <= i_lang < i_el):
                 fail.append(f"{rel}: lang.js 가 element.js 보다 앞이 아니다")
