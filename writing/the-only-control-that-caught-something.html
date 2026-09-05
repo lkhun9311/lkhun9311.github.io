@@ -86,8 +86,9 @@
         <strong>leaving something switched on</strong>. So I built several layers of control: a service
         control policy, a TTL scale-down schedule, a monthly budget, ephemeral apply and destroy.</p>
 
-        <p>After a month of running it, <strong>exactly one of them had ever caught anything.</strong> And
-        that one was not in the code.</p>
+        <p>After a month of running it, the rehearsal had caught a policy defect and the TTL had proved it fires.
+        But <strong>exactly one of them had ever caught an error in the cost itself.</strong> And that one was
+        not in the code.</p>
 
         <nav class="article-toc" aria-label="Contents">
           <p class="toc-label">Contents</p>
@@ -174,8 +175,11 @@
         <blockquote><p>An instance in a default subnet talks through the internet gateway on a public IP, and
         <strong>inbound transfer is free.</strong></p></blockquote>
 
-        <p>Until then every paid run had pulled <strong>the same 15.6GB</strong> — container images and model
-        weights — across a NAT at <strong>$0.059 per GB</strong>. Moving to one instance in a public subnet
+        <p>Until then paid runs had been pulling container images and model weights —
+        <strong>about 15.6GB</strong> for one cold node — across a NAT at <strong>$0.059 per GB</strong>.
+        (The NAT data-processing charge for the first three sessions came to
+        <strong>roughly 92GB and $5.43</strong> in total. Three runs of 15.6GB does not account for that, and I
+        did not reconcile the gap.) Moving to one instance in a public subnet
         removed that line entirely, and that day's experiment finished at <strong>about $0.40</strong>.</p>
 
         <p>What changed was not an algorithm but <strong>the path the bytes take</strong>. And that path only
@@ -319,7 +323,7 @@ error     : ResourceNotFoundException</code></pre>
 
         <p>What is left is one line. <strong>Building a control and confirming that the control fires are
         different pieces of work, and most controls get onto the list without the second one.</strong> And the
-        one on my list that caught something was the simplest — <strong>an alert that put my estimate and the
+        one on my list that caught a cost error was the simplest — <strong>an alert that put my estimate and the
         real bill side by side</strong>.</p>
 
       </article>
