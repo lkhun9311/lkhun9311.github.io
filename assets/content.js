@@ -55,6 +55,13 @@
     writing: {
       items: [
         {
+          title: "A Pooler Fixes Only One of the Two Exhaustions",
+          url: "writing/a-pooler-fixes-only-one.html",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "Connection exhaustion has two causes behind one symptom: too many connections, and connections held too long. Transaction pooling folds only between transactions, so a pooler cannot touch the second. Also in Korean and Japanese.",
+          tags: ["Postgres", "Backend", "Method"]
+        },
+        {
           title: "Every Guarantee Ends at a Field the Tenant Can Write",
           url: "writing/every-guarantee-ends-at-a-writable-field.html",
           date: "2026-09", dateLabel: "Sep 2026",

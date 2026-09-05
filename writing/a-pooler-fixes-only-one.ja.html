@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>プーラーは二つの枯渇のうち一つしか直さない | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/a-pooler-fixes-only-one.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/a-pooler-fixes-only-one.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/a-pooler-fixes-only-one.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/a-pooler-fixes-only-one.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="プーラーは二つの枯渇のうち一つしか直さない | Kwanghun Lee" />
+  <meta property="og:description" content="コネクション枯渇には本数によるものと占有時間によるものがある。症状は同じで処方は違う。トランザクションプーリングの定義を見れば、プーラーがなぜ後者を直せないかが分かる。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/a-pooler-fixes-only-one.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="プーラーは二つの枯渇のうち一つしか直さない | Kwanghun Lee" />
+  <meta name="twitter:description" content="症状は同じで処方は違う。トランザクションプーリングの定義を見れば、プーラーがなぜ占有時間の問題を直せないかが分かる。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="コネクション枯渇には本数によるものと占有時間によるものがある。症状は同じで処方は違う。トランザクションプーリングの定義を見れば、プーラーがなぜ後者を直せないかが分かる。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language"
+                data-authored='{"en":"a-pooler-fixes-only-one.html","ko":"a-pooler-fixes-only-one.ko.html","ja":"a-pooler-fixes-only-one.ja.html"}'>
+          <option value="ja" selected>Japanese</option>
+          <option value="en">English</option>
+          <option value="ko">Korean</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="zh-TW">Chinese (Traditional)</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="vi">Vietnamese</option>
+          <option value="id">Indonesian</option>
+          <option value="hi">Hindi</option>
+          <option value="ar">Arabic</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <section class="page-hero">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ</a>
+        <h1>プーラーは二つの枯渇のうち一つしか直さない</h1>
+        <div class="article-meta">Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">7分</span></div>
+        <p class="lang-alts notranslate">他の言語 <a href="a-pooler-fixes-only-one.html" hreflang="en" lang="en">English</a> · <a href="a-pooler-fixes-only-one.ko.html" hreflang="ko" lang="ko">한국어</a></p>
+      </section>
+      <article class="article-body">
+
+        <p><strong>範囲。</strong>個人プロジェクト（Kotlin · Spring Boot · マネージド Postgres、モノリス）の
+        <strong>リリース前の構造点検</strong>の記録である。障害が起きたことはなく、<strong>負荷試験で測った数値も
+        ない。</strong>以下に出てくる「最大10秒」は外部呼び出しに<strong>設定した read timeout</strong> であって、
+        リクエストごとに実際にそれだけ握っていたと測定した値ではない。改善はコードの性質の変化として説明される
+        ものであり、この記事は実測値を主張しない。</p>
+
+        <p>点検の出発点はよくある仮説だった — <em>コネクションが枯れる恐れがあるのだから、プーラー（RDS Proxy・
+        PgBouncer の類）を入れればいいのでは。</em></p>
+
+        <p>答えは<strong>このコードベースでは否</strong>であり、その理由は製品ドキュメントではなく
+        <strong>トランザクションプーリングの定義</strong>から出てきた。</p>
+
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#症状は一つ原因は二つ">症状は一つ、原因は二つ</a></li>
+            <li><a href="#なぜプーラーはbを直せないのか">なぜプーラーは B を直せないのか</a></li>
+            <li><a href="#だから順序がある">だから順序がある</a></li>
+            <li><a href="#誰も選んでいない二つの数字">誰も選んでいない二つの数字</a></li>
+            <li><a href="#プーラーが効くコードかを先に確認した">プーラーが効くコードかを先に確認した</a></li>
+            <li><a href="#スレッドとコネクションは別の資源">スレッドとコネクションは別の資源だ</a></li>
+            <li><a href="#ガードを結果ではなく原因に置いた">ガードを結果ではなく原因に置いた</a></li>
+            <li><a href="#この記事が主張しないこと">この記事が主張しないこと</a></li>
+          </ul>
+        </nav>
+
+        <h2 id="症状は一つ原因は二つ">症状は一つ、原因は二つ<a class="anchor" href="#症状は一つ原因は二つ" aria-label="この節へのリンク">#</a></h2>
+
+        <p>コネクションが枯れたときに見えるものはたいてい一つだ。プール待ちのタイムアウト、互いに無関係な API が
+        同時に遅くなること、そしてログの <code>Connection is not available, request timed out</code>。</p>
+
+        <p>ところがその背後の原因は二種類ある。</p>
+
+        <p><strong>A — コネクションが多いから。</strong>アプリのインスタンスが増えれば、インスタンス数 × プール
+        サイズだけコネクションが開く。Postgres はコネクションごとにバックエンドプロセスを作り、アイドルでも
+        メモリを使う。実際にクエリを走らせているのはそのうちの一部で、残りは<strong>開いているだけ</strong>だ。</p>
+
+        <p><strong>これがプーラーの存在理由である。</strong>アプリのコネクション数千本を、バックエンドの
+        コネクション数十本に畳んでくれる。</p>
+
+        <p><strong>B — トランザクションが長く開いているから。</strong></p>
+
+<pre><code>BEGIN → SELECT → [ 外部 HTTP 呼び出し ] → INSERT → COMMIT
+                  ↑ コネクションを握ったままクエリを一本も出さない</code></pre>
+
+        <p>同時リクエストがプールサイズを超えれば枯れる。ここではコネクションの<strong>本数</strong>は問題では
+        ない — <strong>占有時間</strong>が問題だ。</p>
+
+        <p>そして枯れるのはその経路だけではない。投票もフィードもチャート参照も<strong>同じプール</strong>から
+        コネクションを受け取るので、一緒に止まる。このアプリで特に痛かったのはタイミングだった — 成長エンジンが
+        「結果チャートを共有すること」なので、<strong>共有が跳ねる日がそのまま枯れる日</strong>になる。</p>
+
+        <h2 id="なぜプーラーはbを直せないのか">なぜプーラーは B を直せないのか<a class="anchor" href="#なぜプーラーはbを直せないのか" aria-label="この節へのリンク">#</a></h2>
+
+        <p>「アプリのコネクション数千本を DB のコネクション数十本に畳む」という絵は正しい。問題は
+        <strong>いつ畳まれるのか</strong>であり、それはトランザクションプーリングの定義にすでに含まれている。</p>
+
+        <p><strong>多重化はトランザクションの<em>間</em>で起きる。</strong>トランザクションが開いている間、その
+        バックエンドコネクションはそのクライアントに<strong>固定（pin）</strong>される。当然だ — トランザクション
+        は状態であり、途中で他のセッションに貸せば分離が壊れる。</p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロール可能な図解">
+            <svg viewBox="0 0 720 322" role="img" aria-labelledby="pool-t pool-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="pool-t">トランザクションプーリングが畳める場合と畳めない場合</title>
+              <desc id="pool-d">上段は短いトランザクションである。二つのクライアントが BEGIN と COMMIT の間だけバックエンド
+              コネクションを使ってすぐ手放すので、プーラーはその合間に二つのクライアントを一本のバックエンドコネクションへ
+              交互に載せる。畳み比は2対1になる。下段はトランザクションの中で外部 HTTP 呼び出しを待つ場合である。
+              トランザクションが開いている間バックエンドコネクションはそのクライアントに固定され、その時間のほとんどは
+              クエリを一本も実行しない。もう一方のクライアントはその間待つだけなので畳み比は1対1になり、プーラーが
+              生み出せる利得はほとんどなくなる。</desc>
+
+              <g font-size="15" fill="#7b7186">
+                <text x="8" y="34">短いトランザクション — 畳める</text>
+                <text x="8" y="196">トランザクションの中で待つ — 固定される</text>
+              </g>
+
+              <g font-size="14" fill="#3b3344">
+                <text x="8" y="70">クラ A</text>
+                <text x="8" y="100">クラ B</text>
+                <text x="8" y="136">バックエンド</text>
+                <text x="8" y="232">クラ A</text>
+                <text x="8" y="262">クラ B</text>
+                <text x="8" y="298">バックエンド</text>
+              </g>
+
+              <!-- 上段: 短いトランザクションが交互に載る -->
+              <g fill="none" stroke="#3b3344" stroke-width="1.5">
+                <rect x="104" y="54" width="194" height="24" rx="4"/>
+                <rect x="514" y="54" width="194" height="24" rx="4"/>
+                <rect x="309" y="84" width="194" height="24" rx="4"/>
+              </g>
+              <g font-size="13" fill="#3b3344">
+                <text x="116" y="71">BEGIN · クエリ · COMMIT</text>
+                <text x="526" y="71">BEGIN · クエリ · COMMIT</text>
+                <text x="321" y="101">BEGIN · クエリ · COMMIT</text>
+              </g>
+              <g fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="4 3">
+                <path d="M201 78 V 118"/><path d="M406 108 V 118"/><path d="M611 78 V 118"/>
+              </g>
+              <rect x="104" y="118" width="604" height="24" rx="4" fill="none" stroke="#3b3344" stroke-width="2"/>
+              <text x="116" y="135" font-size="13" fill="#18121d">一本のバックエンドコネクションを A・B が交互に使う</text>
+              <text x="696" y="135" font-size="14" fill="#18121d" font-weight="700" text-anchor="end">畳み 2:1</text>
+
+              <!-- 下段: トランザクションを開いたまま待つとバックエンドが掴まれる -->
+              <rect x="104" y="216" width="604" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="114" y="233" font-size="13" fill="#18121d">BEGIN</text>
+              <rect x="172" y="219" width="420" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="1.5" stroke-dasharray="4 3"/>
+              <text x="184" y="233" font-size="13" fill="#d62976" font-weight="700">外部 HTTP 呼び出しを待つ · クエリ0件</text>
+              <text x="604" y="233" font-size="13" fill="#18121d">COMMIT</text>
+
+              <rect x="104" y="246" width="604" height="24" rx="4" fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4"/>
+              <text x="116" y="263" font-size="13" fill="#7b7186">待機 — 載る隙間ができない</text>
+
+              <rect x="104" y="280" width="604" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="116" y="297" font-size="13" fill="#18121d">A に固定（pin）— トランザクションが開いている間ずっと</text>
+              <text x="696" y="297" font-size="14" fill="#d62976" font-weight="700" text-anchor="end">畳み 1:1</text>
+            </svg>
+          </div>
+          <figcaption>短いトランザクションは合間に畳まれる。トランザクションを開いたまま外部呼び出しを待つと、バックエンドコネクションはそのクライアントに固定され、畳み比が 1:1 になってプーラーが生み出すはずの利得は消える。</figcaption>
+        </figure>
+
+        <p>だからこうなる — <strong>トランザクションが10秒開いていればバックエンドコネクションも10秒固定され、
+        畳み比は 1:1 になり、プロキシの利得はゼロに近づく。</strong></p>
+
+        <p>プーラーは<strong>短いトランザクションが多いとき</strong>に価値を出す道具だ。B を患ったまま買えば金を
+        使っても何も良くならないが、もっと悪いのはその次である — <strong>「これで備えた」と信じてしまう。</strong>
+        その信念が次の点検を止める。</p>
+
+        <h2 id="だから順序がある">だから順序がある<a class="anchor" href="#だから順序がある" aria-label="この節へのリンク">#</a></h2>
+
+        <p>解法は一つではなく層であり、層には順序がある。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると残りが見えます">
+        <table>
+          <caption class="sr-only">コネクション枯渇に対する五つの層の解法と、それぞれの性格。</caption>
+          <thead><tr><th scope="col">層</th><th scope="col">何を</th><th scope="col">性格</th></tr></thead>
+          <tbody>
+            <tr><td>①</td><td><strong>トランザクションを短く</strong> — 外部呼び出しを外へ</td><td>唯一根本的。残り全部の前提</td></tr>
+            <tr><td>②</td><td>流入制御 — スレッド・プールの上限を意図的に</td><td>失敗を速く予測可能に</td></tr>
+            <tr><td>③</td><td>プーラー</td><td>①が終わって初めて効く</td></tr>
+            <tr><td>④</td><td>読み取り分離・キャッシュ</td><td>コネクションを<em>使わなく</em>する唯一の層</td></tr>
+            <tr><td>⑤</td><td>非同期オフロード（outbox）</td><td>リクエストあたりの DB 作業そのものを減らす</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>だから<strong>コードから直した。</strong>外部モデレーション呼び出しをトランザクションの外に出す作業を
+        書き込み経路三か所に施した。そのうち一つはもっと悪かった — 投票添付の経路は <code>for update</code> で
+        <strong>行までロックしたまま</strong>外部呼び出しをしていた。コネクションと行ロック、<strong>二つの資源</strong>
+        を同時に握っていたのである。</p>
+
+        <p>結論を一行で書けばこうだ。<strong>コード修正はプーラーの代替ではなく前提条件だった。</strong>
+        直してみて初めて、プーラーが価値を出せる状態になった。</p>
+
+        <h2 id="誰も選んでいない二つの数字">誰も選んでいない二つの数字<a class="anchor" href="#誰も選んでいない二つの数字" aria-label="この節へのリンク">#</a></h2>
+
+        <p>②に罠が一つある。<strong>ブロッキング JDBC ではコネクションプールが事実上の同時実行上限だ。</strong>
+        スレッドがいくら多くてもコネクションを受け取れなければ仕事はできない。</p>
+
+        <p>このサービスは Tomcat のスレッドが<strong>デフォルトの200</strong>、コネクションプールはその十分の一
+        だった。すると残りのリクエストはコネクションを待ってタイムアウト後に失敗する。<strong>方向は正しい</strong> —
+        速く失敗してこそ残りが生きる。問題は別のところにあった。</p>
+
+        <p><strong>二つの値はどちらも誰かが選んだものではなかった。</strong>一方はフレームワークのデフォルトで、
+        もう一方はただそうなっていた。流入制御とは上限を置くことではなく<strong>その上限を意図して決めること</strong>
+        であり、デフォルト二つが作り出した同時実行ポリシーはポリシーではない。</p>
+
+        <h2 id="プーラーが効くコードかを先に確認した">プーラーが効くコードかを先に確認した<a class="anchor" href="#プーラーが効くコードかを先に確認した" aria-label="この節へのリンク">#</a></h2>
+
+        <p>③に進む前に確認することがもう一つある。トランザクションプーリングには<strong>ピン（pin）を誘発する
+        パターン</strong>があり、それがあるとプーラーは無力になる。</p>
+
+        <ul>
+          <li>セッションスコープの advisory lock（<code>pg_advisory_lock</code>）</li>
+          <li>一時テーブル</li>
+          <li><code>SET</code> · <code>set search_path</code></li>
+          <li>サーバサイドのプリペアドステートメント（プーラーとバージョンによる）</li>
+        </ul>
+
+        <p>四つともなかった。advisory lock は三か所で使っているが<strong>すべて <code>xact</code> スコープ</strong>
+        だった — トランザクション終了時に自動で解放されるので、トランザクションプーリングにそのまま載る。</p>
+
+        <p>これは運だった。そして<strong>運だったと書いておくほうがいい</strong> — セッションスコープのロックを
+        一か所でも使っていれば、その経路がプーラーを無力化していたはずで、その事実はプーラーを導入した後にしか
+        分からなかっただろう。<strong>道具を買う前に、その道具がこのコードで働くかを先に見る手続き</strong>が、
+        この点検で得たもののうち最も再利用可能な部分である。</p>
+
+        <h2 id="スレッドとコネクションは別の資源">スレッドとコネクションは別の資源だ<a class="anchor" href="#スレッドとコネクションは別の資源" aria-label="この節へのリンク">#</a></h2>
+
+        <p>ここでよく出てくる処方がもう一つある — <em>非同期にすればいいのでは。</em></p>
+
+        <p>WebFlux やコルーチンに変えれば<strong>スレッドは</strong>節約できる。ところが<strong>コネクションは
+        そのまま握る。</strong>JDBC はブロッキングであり、トランザクションが開いている限りコネクションは返却
+        されない。</p>
+
+        <p>問題の軸がコネクションなのにスレッドを節約する処方を持ってくると<strong>軸がずれる。</strong>
+        R2DBC なら話は別だが、それはデータアクセス層の全面書き換えである。</p>
+
+        <p>プールを大きくする処方も同種だ。緩和にはなるが修理ではなく、
+        <code>プールサイズ × インスタンス数 ≤ DB コネクション上限</code>に先に引っかかる。そして根本原因 —
+        遅い外部呼び出しがコネクションを握る — はそのまま残る。</p>
+
+        <h2 id="ガードを結果ではなく原因に置いた">ガードを結果ではなく原因に置いた<a class="anchor" href="#ガードを結果ではなく原因に置いた" aria-label="この節へのリンク">#</a></h2>
+
+        <p>この修正には固有の脆さがある。<strong><code>@Transactional</code> 一行で元に戻る。</strong>
+        しかも戻しても<strong>機能は正常だ</strong> — テストも通るし画面も問題ない。症状は負荷がかかる日にしか
+        出ない。</p>
+
+        <p>だから回帰防御を<strong>結果ではなく原因</strong>に置いた。外部クライアントの位置に spy を座らせ、
+        <strong>呼び出しが起きるその時点でトランザクションが活性かどうか</strong>を断言する。</p>
+
+<pre><code>// 外部呼び出しの位置の spy が呼び出し時点の状態を見る
+whenever(moderationClient.screen(any())).thenAnswer {
+    assertThat(TransactionSynchronizationManager.isActualTransactionActive())
+        .isFalse()   // ← この呼び出しはトランザクションの外であるべきだ
+    ...
+}</code></pre>
+
+        <p>このガードは「応答が速いか」を問わない。<strong>「外部呼び出しがトランザクションの中にあるか」</strong>
+        を問う。それが実際の原因であり、巻き戻しが起きる場所だ。</p>
+
+        <p>そしてガードが本当に狙えているかはミューテーションで確認した — <strong>経路ごとにそれぞれ</strong>
+        red を見た。ガード一つが三経路を守っていると信じることと、三経路それぞれで赤を見たことは別のことである。</p>
+
+        <h2 id="この記事が主張しないこと">この記事が主張しないこと<a class="anchor" href="#この記事が主張しないこと" aria-label="この節へのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>性能数値はない。</strong>負荷試験をしておらず、「何倍速くなった」と言う根拠がない。
+          変わったのは<strong>コードの性質</strong> — トランザクションが外部呼び出しを待たなくなったこと — であり、
+          それが遅延やスループットでいくらになるかは測っていない。</li>
+          <li><strong>「最大10秒」は設定値だ。</strong>外部呼び出しにかけた read timeout であって、リクエスト
+          ごとに実際にそれだけ占有したと測定した値ではない。</li>
+          <li><strong>障害が起きたことはない。</strong>リリース前の構造点検から出たものであり、この経路が実際に
+          枯れるのを観測した記録はない。</li>
+          <li><strong>プーラーが無用だという主張ではない。</strong>A 型の枯渇にはまさに正しい道具だ。この記事が
+          言っているのは<strong>B を患った状態では畳み比が 1:1 なので価値を出せない</strong>ということだけである。</li>
+          <li><strong>ベンダー別のコネクション上限の数値は書いていない。</strong>確認していない値だからだ。</li>
+          <li><strong>ピン誘発パターンの一覧は完全でないかもしれない。</strong>プーラーとバージョンによって
+          異なり、ここで確認したのはこのコードにその四つがないということだけである。</li>
+        </ul>
+
+        <p>残る一行はこれだ。<strong>症状が同じでも原因は同じではなく、道具は原因一つにしか合わない。</strong>
+        そして誤って選んだ道具の本当の代償は金ではなく、<strong>備えたという信念</strong>である。</p>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script src="../assets/lang.js?v=20260905"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/article.js?v=20260817-scroll"></script>
+</body>
+</html>
