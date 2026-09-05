@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Throughput Ceiling Was Not in the Code | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/the-ceiling-was-not-in-the-code.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/the-ceiling-was-not-in-the-code.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/the-ceiling-was-not-in-the-code.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/the-ceiling-was-not-in-the-code.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="The Throughput Ceiling Was Not in the Code | Kwanghun Lee" />
+  <meta property="og:description" content="Post creation would not go past 6.27 req/s. Four times the write threads did nothing. Three times the database pool did nothing. The limit was a default of five connections per host, inside an HTTP client that came in as a transitive dependency of the AWS SDK I added for S3 — a layer that is only on the runtime classpath, so reading the code could never have found it." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/the-ceiling-was-not-in-the-code.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="The Throughput Ceiling Was Not in the Code | Kwanghun Lee" />
+  <meta name="twitter:description" content="A default nobody chose was the throughput ceiling of the moderation path. A layer you cannot find by reading, only by measuring." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="Post creation would not go past 6.27 req/s. Four times the write threads did nothing. Three times the database pool did nothing. The limit was a default of five connections per host, inside an HTTP client that came in as a transitive dependency of the AWS SDK I added for S3 — a layer that is only on the runtime classpath, so reading the code could never have found it." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language"
+                data-authored='{"en": "the-ceiling-was-not-in-the-code.html", "ko": "the-ceiling-was-not-in-the-code.ko.html", "ja": "the-ceiling-was-not-in-the-code.ja.html"}'>
+          <option value="en" selected>English</option>
+          <option value="ko">Korean</option>
+          <option value="ja">Japanese</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="zh-TW">Chinese (Traditional)</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="vi">Vietnamese</option>
+          <option value="id">Indonesian</option>
+          <option value="hi">Hindi</option>
+          <option value="ar">Arabic</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <section class="page-hero">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Writing</a>
+        <h1>The Throughput Ceiling Was Not in the Code<br><span class="h1-sub">A default of five from a library S3 pulled in — the moderation path of a social polling platform</span></h1>
+        <div class="article-meta"><span class="source-tag commercial notranslate">Commercial project</span>Writing · September 2026<span aria-hidden="true"> · </span><span class="read-time">16 min read</span></div>
+      </section>
+      <article class="article-body">
+
+        <p>I am building a <strong>social polling platform</strong>. In the previous article I moved an
+        external call out of a database transaction and stood up a
+        <a class="term" href="../notes/load-test-harness.html">load-test harness</a> to put numbers on it.
+        The harness immediately asked the next question — <em>why does post creation stop at 6.27 req/s?</em></p>
+
+        <p>Four times the write threads did nothing. Three times the database pool did nothing. The culprit
+        was <strong>a default inside a library I never added, never chose, and had never seen the name of</strong>.</p>
+
+        <nav class="article-toc" aria-label="Table of contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-is-in-here">What is in here</a></li>
+            <li><a href="#which-path">Which path is this about?</a></li>
+            <li><a href="#i-thought-the-database">At first I thought the database was the bottleneck</a></li>
+            <li><a href="#the-conclusion-first">The conclusion first</a></li>
+            <li><a href="#writes-are-cheap">Writes were not heavy</a></li>
+            <li><a href="#stuck-at-ten">Nothing I changed moved it off ten</a></li>
+            <li><a href="#thread-dump">A thread dump showed where it was stopping</a></li>
+            <li><a href="#the-chain">Follow the chain back and you arrive at S3</a></li>
+            <li><a href="#one-line">One line of configuration confirmed it</a></li>
+            <li><a href="#but-not-like-this">But it must not stay like that</a></li>
+            <li><a href="#i-set-the-limit">So I set the limit</a></li>
+            <li><a href="#the-timeouts">My first attempt threw the timeouts away</a></li>
+            <li><a href="#config-fails-nothing">Configuration does not fail anything by itself</a></li>
+            <li><a href="#why-not-redis">“Why not Redis, or a queue?”</a></li>
+            <li><a href="#what-this-does-not-claim">What this article does not claim</a></li>
+            <li><a href="#wrapping-up">Wrapping up</a></li>
+          </ul>
+        </nav>
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li>Anyone calling an external API from Spring Boot through <code>RestClient</code> or <code>RestTemplate</code></li>
+          <li>Anyone whose throughput sits on one number and will not move, even after raising threads and the database pool</li>
+          <li>Anyone who has wondered <em>“is a library I never added deciding how my service behaves?”</em></li>
+        </ul>
+
+        <h2 id="what-is-in-here">What is in here<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li>Throughput on the content moderation path sat at <strong>6.27 req/s</strong>. Four times the
+          write threads, three times the database pool — no change.</li>
+          <li>The cause was the <strong>HTTP client the AWS SDK pulled in when I added S3</strong>, and its
+          default of <strong>five connections per target host</strong>.</li>
+          <li>That library is <strong>only on the runtime classpath</strong>. Its name appears nowhere in my
+          code, so <strong>reading could not find it — only measuring could.</strong></li>
+          <li>The fix was <strong>setting the limit, not removing it</strong>. Removing it raises throughput
+          by exactly the same amount, but it only swaps <strong>a five nobody chose</strong> for
+          <strong>an infinity nobody chose</strong>.</li>
+          <li>Result: outbound concurrency <strong>10 → 32</strong>, post creation p50
+          <strong>2,592 → 805 ms</strong>, throughput <strong>6.27 → 19.89 req/s</strong> (3.17×), errors
+          <strong>0%</strong>.</li>
+        </ul>
+
+        <p><strong>The code is in a private repository.</strong> The product has not launched, so the
+        repository is not open yet. Each section therefore carries <strong>a file path and a symbol name</strong>
+        instead of a GitHub link.</p>
+
+        <p><strong>⚠️ One thing up front.</strong> Every number here comes from a <strong>local harness</strong>.
+        The load generator, the application, the external-API stub and PostgreSQL all share one machine's CPU.
+        <strong>Absolute throughput is meaningless; only the comparison means anything.</strong> The 800 ms
+        external latency is a <strong>value I configured in the stub</strong>, not a real latency distribution,
+        and each condition was <strong>run once</strong>.</p>
+
+        <h2 id="which-path">Which path is this about?<a class="anchor" href="#which-path" aria-label="Link to this section">#</a></h2>
+
+        <p>A <strong>social polling platform</strong> I am building toward commercial launch. Someone posts a
+        question, other people vote anonymously, and the resulting chart gets shared outside the app. It is a
+        single Kotlin and Spring Boot monolith on one managed PostgreSQL database.</p>
+
+        <p>A post has to clear the <strong>moderation gate</strong> before it is published. The gate has four
+        layers, and two of them — <strong>③ harmful-content classification</strong> and
+        <strong>④ targeted-harassment classification</strong> — call an external API. The gate is
+        <a class="term" href="../notes/fail-closed.html">fail-closed</a>: if those calls fail, the post is not
+        published.</p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
+            <svg viewBox="0 0 720 268" role="img" aria-labelledby="gate-t gate-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="gate-t">The four layers a post passes through in the moderation gate</title>
+              <desc id="gate-d">When a user submits a post, the moderation gate in the API server runs four checks.
+              The first, a banned-word check, and the second, a contact-details check, finish inside the application and are fast.
+              The third, harmful-content classification, and the fourth, targeted-harassment classification, call an external API,
+              and because the two are independent they are sent overlapping. So every post produces two outbound calls.
+              Only after all four layers pass is the post stored in PostgreSQL and published.</desc>
+
+              <rect x="8" y="52" width="120" height="52" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="68" y="76" font-size="14" fill="#18121d" text-anchor="middle">Mobile app</text>
+              <text x="68" y="94" font-size="13" fill="#7b7186" text-anchor="middle">writes a post</text>
+              <path d="M128 78 H 174" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#g-ar)"/>
+
+              <rect x="182" y="30" width="212" height="96" rx="6" fill="none" stroke="#18121d" stroke-width="2"/>
+              <text x="288" y="52" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">Moderation gate</text>
+              <text x="196" y="76" font-size="13" fill="#3b3344">① banned words · ② contacts</text>
+              <text x="196" y="94" font-size="12" fill="#7b7186">finish inside the app</text>
+              <text x="196" y="115" font-size="13" fill="#d62976" font-weight="700">③ harmful · ④ harassment</text>
+
+              <path d="M394 100 H 470" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#g-arA)"/>
+              <text x="432" y="92" font-size="12" fill="#d62976" text-anchor="middle">2 calls</text>
+              <rect x="478" y="66" width="234" height="68" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="595" y="90" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">External moderation API</text>
+              <text x="595" y="110" font-size="13" fill="#d62976" text-anchor="middle">1 post = 2 calls</text>
+              <text x="595" y="127" font-size="12" fill="#7b7186" text-anchor="middle">800 ms stub in the harness</text>
+
+              <path d="M288 126 V 176" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#g-ar)"/>
+              <text x="300" y="158" font-size="12" fill="#7b7186">all four pass</text>
+              <rect x="182" y="176" width="212" height="52" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="288" y="200" font-size="14" fill="#18121d" text-anchor="middle">PostgreSQL</text>
+              <text x="288" y="218" font-size="13" fill="#7b7186" text-anchor="middle">stored · published</text>
+
+              <text x="8" y="256" font-size="15" fill="#3b3344">If it blocks, the post is <tspan font-weight="700" fill="#18121d">not published</tspan> — the gate is fail-closed.</text>
+              <defs>
+                <marker id="g-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
+                </marker>
+                <marker id="g-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>The first two layers finish inside the application; only the last two leave it. What matters in this article is the label on the pink arrow: <strong>two calls</strong>. One post produces two outbound requests.</figcaption>
+        </figure>
+
+        <p>One thing the diagram does not say: <strong>③ and ④ go to the same host.</strong> Later, that fact
+        meets a default that reads “five per host,” and the two together are the whole problem.</p>
+
+        <h2 id="i-thought-the-database">At first I thought the database was the bottleneck<a class="anchor" href="#i-thought-the-database" aria-label="Link to this section">#</a></h2>
+
+        <p>The harness's first numbers looked like this. Sixteen write threads, a database pool of ten, an
+        800 ms external stub.</p>
+
+        <div class="table-scroll"><div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table"><table>
+          <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Post creation throughput</td><td><strong>6.27 req/s</strong></td></tr>
+            <tr><td>Post creation p50</td><td>2,592 ms</td></tr>
+            <tr><td>Feed read p50</td><td>4 ms</td></tr>
+            <tr><td>Error rate</td><td>0%</td></tr>
+          </tbody>
+        </table></div><p class="table-scroll-hint" aria-hidden="true">→ the table scrolls sideways</p></div>
+
+        <p>The first hypothesis was the ordinary one.</p>
+
+        <blockquote><p>There are sixteen writers and only ten database connections, so they must be queueing
+        for a connection. Or the INSERT itself is heavy. Should the writes go through a queue? Should I add
+        Redis?</p></blockquote>
+
+        <p>All three were <strong>wrong</strong>. And I did not reason my way to that — the harness told me.</p>
+
+        <h2 id="the-conclusion-first">The conclusion first<a class="anchor" href="#the-conclusion-first" aria-label="Link to this section">#</a></h2>
+
+        <p>The bottleneck was not the database, not the INSERT, and not application threads.
+        <strong>Outbound HTTP concurrency was pinned at ten.</strong></p>
+
+        <p>And the ten was assembled like this.</p>
+
+<pre data-lang="text"><code>AWS SDK, added so I could use S3
+  → software.amazon.awssdk:apache5-client
+     → org.apache.httpcomponents.client5:httpclient5      ← transitive
+        → Spring's RestClient picks it up off the classpath
+           → connection pool default: 5 per target host
+              → 2 RestClients on the same host × 5 = 10 concurrent</code></pre>
+
+        <p><strong>The only line in that chain I chose is the first one.</strong> I added S3 to upload files,
+        and by way of the HTTP client it dragged along, it was setting
+        <strong>the throughput ceiling of content moderation</strong>.</p>
+
+        <h2 id="writes-are-cheap">Writes were not heavy<a class="anchor" href="#writes-are-cheap" aria-label="Link to this section">#</a></h2>
+
+        <p>“Are writes heavy?” is a question the harness answers directly. Set the stub's latency to
+        <strong>0 ms</strong>, hold everything else constant, and what is left is the pure application and
+        database cost of a write.</p>
+
+        <div class="table-scroll"><div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table"><table>
+          <thead><tr><th>Condition</th><th>Post creation p50</th><th>Post creation throughput</th></tr></thead>
+          <tbody>
+            <tr><td>External latency 800 ms</td><td>2,592 ms</td><td>6.27 req/s</td></tr>
+            <tr><td><strong>External latency 0 ms</strong></td><td><strong>8 ms</strong></td><td><strong>1,398 req/s</strong></td></tr>
+          </tbody>
+        </table></div><p class="table-scroll-hint" aria-hidden="true">→ the table scrolls sideways</p></div>
+
+        <p><strong>The INSERT path costs eight milliseconds</strong> and takes 1,398 requests a second. Writes
+        are not this system's problem, which means moving writes onto a queue would be
+        <strong>repairing something that is not broken</strong>.</p>
+
+        <p><strong>⚠️ This measurement was wrong the first time.</strong> I asked for zero latency, but
+        <strong>the previous run's 800 ms stub was still alive on the port</strong>. The harness had a
+        round-trip check for “is the stub really answering with that latency,” and its condition was
+        <code>round trip &lt; requested latency × 0.8</code> — which is <strong>always false when the requested
+        latency is zero</strong>. The check <strong>passed vacuously</strong>, so I recorded an 800 ms run as a
+        0 ms run and drew a conclusion from it.</p>
+
+        <p>The fix was to check <strong>identity</strong> rather than timing. The stub now reports its own
+        configuration, and the run compares that against what was asked for.</p>
+
+<pre data-lang="shell"><code>$ curl -s localhost:18080/__stub/health
+{"ok": true, "delay_ms": 800, "jitter_ms": 0, "max_in_flight": 10}
+#            ↑ if this differs from the requested value, abort the run</code></pre>
+
+        <p>Then I <strong>deliberately started the wrong stub</strong> and confirmed the run actually stops.
+        The most frequent defect class in this repository is <strong>“a check that failed but looked like it
+        passed,”</strong> so breaking a new check on purpose is a standing rule here.</p>
+
+        <h2 id="stuck-at-ten">Nothing I changed moved it off ten<a class="anchor" href="#stuck-at-ten" aria-label="Link to this section">#</a></h2>
+
+        <p>Next I <strong>instrumented the stub</strong>: count on the way in, decrement on the way out, and
+        record the <strong>peak number of external calls in flight</strong>. That single number explains
+        everything else.</p>
+
+        <div class="table-scroll"><div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table"><table>
+          <thead><tr><th>Write threads</th><th>DB pool</th><th>Peak outbound concurrency</th><th>Post throughput</th><th>Post p50</th></tr></thead>
+          <tbody>
+            <tr><td>16</td><td>10</td><td><strong>10</strong></td><td>6.27 req/s</td><td>2,592 ms</td></tr>
+            <tr><td>16</td><td><strong>30</strong></td><td><strong>10</strong></td><td>6.27 req/s</td><td>2,595 ms</td></tr>
+            <tr><td><strong>32</strong></td><td>30</td><td><strong>10</strong></td><td>6.26 req/s</td><td>5,119 ms</td></tr>
+          </tbody>
+        </table></div><p class="table-scroll-hint" aria-hidden="true">→ the table scrolls sideways</p></div>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
+            <svg viewBox="0 0 720 300" role="img" aria-labelledby="cap-t cap-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="cap-t">Outbound concurrency stays at ten no matter what changes</title>
+              <desc id="cap-d">Three conditions are compared: sixteen writers with a pool of ten, sixteen writers with a pool of thirty,
+              and thirty-two writers with a pool of thirty. In all three the peak outbound concurrency is ten and throughput is
+              6.27, 6.27 and 6.26 requests per second. Only latency changes: at thirty-two writers the median rises from
+              2,592 milliseconds to 5,119 milliseconds. That means no extra work is getting done — only the queue got longer.</desc>
+
+              <text x="8" y="22" font-size="14" fill="#7b7186">Peak outbound concurrency (measured in the stub)</text>
+
+              <text x="8" y="60" font-size="13" fill="#3b3344">16 writers · pool 10</text>
+              <rect x="170" y="46" width="120" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="300" y="60" font-size="13" fill="#d62976" font-weight="700">10</text>
+              <text x="342" y="60" font-size="13" fill="#3b3344">6.27 req/s · p50 2,592 ms</text>
+
+              <text x="8" y="96" font-size="13" fill="#3b3344">16 writers · pool 30</text>
+              <rect x="170" y="82" width="120" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="300" y="96" font-size="13" fill="#d62976" font-weight="700">10</text>
+              <text x="342" y="96" font-size="13" fill="#3b3344">6.27 req/s · p50 2,595 ms</text>
+
+              <text x="8" y="132" font-size="13" fill="#3b3344">32 writers · pool 30</text>
+              <rect x="170" y="118" width="120" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="300" y="132" font-size="13" fill="#d62976" font-weight="700">10</text>
+              <text x="342" y="132" font-size="13" fill="#3b3344">6.26 req/s · p50 5,119 ms</text>
+
+              <path d="M8 154 H 712" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
+
+              <text x="8" y="180" font-size="14" fill="#7b7186">For reference · hitting the stub directly with 32 workers</text>
+              <text x="8" y="216" font-size="13" fill="#3b3344">stub alone</text>
+              <rect x="170" y="202" width="384" height="18" rx="3" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="564" y="216" font-size="13" fill="#4f5bd5" font-weight="700">32</text>
+              <text x="600" y="216" font-size="13" fill="#3b3344">40 req/s</text>
+
+              <text x="8" y="254" font-size="15" fill="#3b3344">The stub takes 32. So the limit is on <tspan font-weight="700" fill="#18121d">the application side</tspan>.</text>
+              <text x="8" y="284" font-size="15" fill="#3b3344">What grew was not throughput but <tspan font-weight="700" fill="#d62976">waiting</tspan>.</text>
+            </svg>
+          </div>
+          <figcaption>All three conditions sit at ten. The blue bar below is the same stub hit directly, without the application: on its own it accepts thirty-two.</figcaption>
+        </figure>
+
+        <p>Here is how to read the table. <strong>Four times the writers and three times the pool leave
+        concurrency at ten.</strong> The only thing that grows is latency (2,592 → 5,119 ms), which is the
+        classic <strong>queueing signal</strong> — no extra work, just a longer line.</p>
+
+        <p>I ruled out the stub separately. Hit the same stub with 32 workers for twenty seconds, without the
+        application in the way, and it delivers <strong>32 concurrent · 40 req/s</strong>. So the ten is not
+        the stub's limit; it is the limit of <strong>the application's way out</strong>.</p>
+
+        <p>And the arithmetic closes. One post makes two calls, so ten in flight is
+        <strong>five posts being moderated at once</strong>. Each call takes 800 ms, so
+        5 ÷ 0.8 s ≈ <strong>6.3 req/s</strong> — the 6.27 that was measured.</p>
+
+        <h2 id="thread-dump">A thread dump showed where it was stopping<a class="anchor" href="#thread-dump" aria-label="Link to this section">#</a></h2>
+
+        <p>“There is a ten somewhere in the application” was as far as reading got me, because
+        <strong>neither ten nor five appears anywhere in my code.</strong></p>
+
+        <p>So I took a <strong>thread dump</strong> under load. Of sixteen Tomcat workers,
+        <strong>five were RUNNABLE in socket I/O</strong> and <strong>eleven were parked</strong>. The parked
+        stack was the answer.</p>
+
+<pre data-lang="text"><code>at org.apache.hc.core5.pool.StrictConnPool$1.get(StrictConnPool.java:183)
+at org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager$3.get(...)
+at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.acquireEndpoint(...)</code></pre>
+
+        <p>They were <strong>waiting on Apache HttpClient 5's connection pool</strong>. I had no memory of
+        adding that library.</p>
+
+        <h2 id="the-chain">Follow the chain back and you arrive at S3<a class="anchor" href="#the-chain" aria-label="Link to this section">#</a></h2>
+
+        <p>The dependency tree laid the chain out.</p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
+            <svg viewBox="0 0 720 356" role="img" aria-labelledby="chain-t chain-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="chain-t">The chain from an S3 dependency to ten concurrent outbound calls</title>
+              <desc id="chain-d">The AWS SDK's S3 module was added for file uploads. It pulls in apache5-client, which in turn pulls in
+              httpclient5. That last library is only on the runtime classpath, so its name never appears in the code. Spring's RestClient,
+              however, picks Apache HttpClient whenever it is on the classpath, and that pool defaults to five connections per target host.
+              Because two RestClients pointing at the same host each hold their own pool, outbound concurrency becomes five plus five, or ten.</desc>
+
+              <rect x="8" y="16" width="330" height="44" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="24" y="43" font-size="14" fill="#18121d">Added for file uploads: <tspan font-weight="700">AWS SDK · S3</tspan></text>
+              <text x="352" y="43" font-size="13" fill="#4f5bd5" font-weight="700">← this is all I chose</text>
+
+              <path d="M40 60 V 84" fill="none" stroke="#7b7186" stroke-width="1.5" marker-end="url(#c-ar)"/>
+              <rect x="8" y="84" width="330" height="40" rx="6" fill="none" stroke="#7b7186" stroke-width="1.5"/>
+              <text x="24" y="109" font-size="13" fill="#3b3344">software.amazon.awssdk:apache5-client</text>
+
+              <path d="M40 124 V 148" fill="none" stroke="#7b7186" stroke-width="1.5" marker-end="url(#c-ar)"/>
+              <rect x="8" y="148" width="330" height="40" rx="6" fill="none" stroke="#7b7186" stroke-width="1.5"/>
+              <text x="24" y="173" font-size="13" fill="#3b3344">org.apache.httpcomponents.client5:httpclient5</text>
+              <text x="352" y="173" font-size="13" fill="#7b7186">← runtime classpath only</text>
+
+              <path d="M40 188 V 212" fill="none" stroke="#7b7186" stroke-width="1.5" marker-end="url(#c-ar)"/>
+              <rect x="8" y="212" width="330" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="24" y="237" font-size="13" fill="#3b3344">Spring's RestClient selects this implementation</text>
+
+              <path d="M40 252 V 276" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#c-arA)"/>
+              <rect x="8" y="276" width="330" height="44" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="24" y="303" font-size="14" fill="#18121d" font-weight="700">Pool default · 5 per target host</text>
+
+              <path d="M338 298 H 396" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#c-arA)"/>
+              <rect x="404" y="270" width="308" height="56" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="558" y="294" font-size="14" fill="#d62976" font-weight="700" text-anchor="middle">2 RestClients × 5 = 10 concurrent</text>
+              <text x="558" y="313" font-size="13" fill="#7b7186" text-anchor="middle">③ harmful · ④ harassment</text>
+
+              <text x="8" y="346" font-size="15" fill="#3b3344">The four boxes in between were <tspan font-weight="700" fill="#18121d">chosen by nobody.</tspan></text>
+              <defs>
+                <marker id="c-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#7b7186"/>
+                </marker>
+                <marker id="c-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>Only the top box was a decision; the four below it arrived on their own. The “2” in the last box is ③ and ④ from the first diagram.</figcaption>
+        </figure>
+
+        <p>Here is what the diagram does not say. <strong><code>httpclient5</code> is on the runtime classpath
+        only.</strong> It is absent from the compile classpath, so I cannot even name it in my own code. I
+        found this out by trying to write the configuration first and hitting
+        <code>Unresolved reference 'hc'</code>.</p>
+
+        <p>Which is why this layer <strong>cannot be found by reading</strong>. Not by code search, not by
+        review. <strong>Only by measuring.</strong></p>
+
+        <h2 id="one-line">One line of configuration confirmed it<a class="anchor" href="#one-line" aria-label="Link to this section">#</a></h2>
+
+        <p>Confirming the hypothesis took one line: tell Spring to use <strong>the JDK client rather than
+        Apache</strong>, and hold every other condition fixed.</p>
+
+<pre data-lang="yaml"><code># application.yml — one line, for diagnosis
+spring:
+  http:
+    client:
+      factory: jdk</code></pre>
+
+        <div class="table-scroll"><div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table"><table>
+          <thead><tr><th>Metric</th><th>Default (transitive)</th><th><code>factory=jdk</code></th><th>Ratio</th></tr></thead>
+          <tbody>
+            <tr><td>Peak outbound concurrency</td><td>10</td><td><strong>32</strong></td><td>3.2×</td></tr>
+            <tr><td>Post creation p50</td><td>2,592 ms</td><td><strong>806 ms</strong></td><td>3.2× faster</td></tr>
+            <tr><td>Post creation throughput</td><td>6.27 req/s</td><td><strong>19.89 req/s</strong></td><td><strong>3.17×</strong></td></tr>
+            <tr><td>Feed read p50</td><td>4 ms</td><td>5 ms</td><td>—</td></tr>
+            <tr><td>Error rate</td><td>0%</td><td>0.09% (1 of 1,093)</td><td>—</td></tr>
+          </tbody>
+        </table></div><p class="table-scroll-hint" aria-hidden="true">→ the table scrolls sideways</p></div>
+
+        <p>806 ms is now <strong>the external call itself</strong>. The waiting in front of it is gone. The
+        hypothesis held.</p>
+
+        <h2 id="but-not-like-this">But it must not stay like that<a class="anchor" href="#but-not-like-this" aria-label="Link to this section">#</a></h2>
+
+        <p>There was a temptation to stop there — one line, 3.17×. Except that <strong>the JDK client has no
+        per-host limit at all.</strong></p>
+
+        <p>So what that line actually did was swap <strong>a five nobody chose for an infinity nobody
+        chose</strong>. That is the exact opposite of what this article has been about.</p>
+
+        <p>With no limit, a burst sends unbounded concurrent calls at the external API. That is
+        <strong>load on somebody else's service</strong> and <strong>my bill</strong>. Admission control is not
+        the absence of a limit; it is <strong>a limit somebody decided on</strong>.</p>
+
+        <p>Worth adding: this repository has already had the same shape of defect once. Tomcat's 200 threads
+        and the connection pool were both framework defaults, and the concurrency policy those two produced
+        <strong>was not a policy</strong>. The same thing was true on the outbound side, and this time
+        <strong>nobody was looking at that layer at all.</strong></p>
+
+        <h2 id="i-set-the-limit">So I set the limit<a class="anchor" href="#i-set-the-limit" aria-label="Link to this section">#</a></h2>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private</span> <code>services/api/…/config/OutboundHttpConfig.kt</code></p>
+
+        <p>Two decisions.</p>
+
+        <ol>
+          <li><strong>Promote <code>httpclient5</code> to an explicit dependency.</strong> It is a library the
+          application already used at runtime; declaring it by <em>name</em> is what makes configuration code
+          possible at all.</li>
+          <li><strong>Build one connection pool and let every <code>RestClient</code> share it.</strong> When
+          each client holds its own pool, “N per host” is really “number of clients × N.” That is exactly how
+          five had become ten.</li>
+        </ol>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
+            <svg viewBox="0 0 720 300" role="img" aria-labelledby="pool-t pool-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="pool-t">A pool per client versus one shared pool</title>
+              <desc id="pool-d">The top half is the state before the fix. The RestClient for harmful-content classification and the one
+              for harassment classification each hold their own connection pool, and each pool defaults to five, so real concurrency is
+              five plus five, or ten. The written number is five while the effective limit is ten, so the two disagree. The bottom half is
+              after the fix: one connection manager is shared by both clients, so the per-host limit of fifty is also the real limit.</desc>
+
+              <text x="8" y="22" font-size="14" fill="#7b7186">Before · one pool per client</text>
+              <rect x="8" y="34" width="164" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="90" y="59" font-size="13" fill="#18121d" text-anchor="middle">③ harmful client</text>
+              <rect x="8" y="82" width="164" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="90" y="107" font-size="13" fill="#18121d" text-anchor="middle">④ harassment client</text>
+              <path d="M172 54 H 216" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
+              <path d="M172 102 H 216" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
+              <rect x="224" y="34" width="150" height="40" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="299" y="59" font-size="13" fill="#d62976" text-anchor="middle">own pool · limit 5</text>
+              <rect x="224" y="82" width="150" height="40" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="299" y="107" font-size="13" fill="#d62976" text-anchor="middle">own pool · limit 5</text>
+              <path d="M374 78 H 424" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#p-arA)"/>
+              <rect x="432" y="52" width="280" height="52" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="572" y="74" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">real limit = 5 + 5 = 10</text>
+              <text x="572" y="93" font-size="13" fill="#7b7186" text-anchor="middle">disagrees with the written number</text>
+
+              <path d="M8 144 H 712" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
+
+              <text x="8" y="176" font-size="14" fill="#7b7186">After · one shared pool</text>
+              <rect x="8" y="188" width="164" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="90" y="213" font-size="13" fill="#18121d" text-anchor="middle">③ harmful client</text>
+              <rect x="8" y="236" width="164" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="90" y="261" font-size="13" fill="#18121d" text-anchor="middle">④ harassment client</text>
+              <path d="M172 208 H 216" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
+              <path d="M172 256 H 216" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
+              <rect x="224" y="204" width="150" height="56" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="299" y="228" font-size="13" fill="#4f5bd5" text-anchor="middle">one shared pool</text>
+              <text x="299" y="248" font-size="13" fill="#4f5bd5" text-anchor="middle">50 per host</text>
+              <path d="M374 232 H 424" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#p-arB)"/>
+              <rect x="432" y="206" width="280" height="52" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="572" y="228" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">real limit = 50</text>
+              <text x="572" y="247" font-size="13" fill="#7b7186" text-anchor="middle">same as the written number</text>
+              <defs>
+                <marker id="p-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
+                </marker>
+                <marker id="p-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+                <marker id="p-arB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>The same “five per host” behaves as ten across two clients. Collapse the pools into one and the written number and the effective limit finally agree.</figcaption>
+        </figure>
+
+<pre data-lang="kotlin"><code>@Configuration
+class OutboundHttpConfig {
+    @Bean
+    fun outboundConnectionManager(
+        @Value("\${oxy.http.outbound.max-per-route:50}") maxPerRoute: Int,
+        @Value("\${oxy.http.outbound.max-total:100}") maxTotal: Int,
+        // Re-attach the timeouts Spring used to supply — by reading the same property keys.
+        @Value("\${spring.http.client.connect-timeout:3s}") connectTimeout: Duration,
+        @Value("\${spring.http.client.read-timeout:10s}") readTimeout: Duration,
+    ): PoolingHttpClientConnectionManager = ...
+
+    @Bean
+    fun outboundHttpCustomizer(cm: PoolingHttpClientConnectionManager): RestClientCustomizer {
+        // One factory too, so every builder ends up on the same pool.
+        val factory = HttpComponentsClientHttpRequestFactory(
+            HttpClients.custom().setConnectionManager(cm).build())
+        return RestClientCustomizer { builder -&gt; builder.requestFactory(factory) }
+    }
+}</code></pre>
+
+        <p><strong>The reasoning behind 50</strong> is written into the comment. One post makes two calls, so
+        fifty is <strong>twenty-five posts under moderation at once</strong>; at 800 ms per call that accepts
+        roughly thirty-one posts a second. Larger than any traffic assumption I currently hold, and not
+        infinite.</p>
+
+        <p>Then I measured again, under identical conditions.</p>
+
+        <div class="table-scroll"><div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table"><table>
+          <thead><tr><th>Metric</th><th>Before (transitive default)</th><th>After (shared pool · explicit limit)</th><th>Ratio</th></tr></thead>
+          <tbody>
+            <tr><td>Peak outbound concurrency</td><td>10</td><td><strong>32</strong></td><td>3.2×</td></tr>
+            <tr><td>Post creation p50</td><td>2,592 ms</td><td><strong>805 ms</strong></td><td>3.22× faster</td></tr>
+            <tr><td>Post creation p95</td><td>2,637 ms</td><td>809 ms</td><td>3.26×</td></tr>
+            <tr><td>Post creation p99</td><td>2,640 ms</td><td>811 ms</td><td>3.26×</td></tr>
+            <tr><td><strong>Post creation throughput</strong></td><td>6.27 req/s</td><td><strong>19.89 req/s</strong></td><td><strong>3.17×</strong></td></tr>
+            <tr><td>Feed read p50</td><td>4 ms</td><td>5 ms</td><td>—</td></tr>
+            <tr><td>Error rate</td><td>0%</td><td><strong>0%</strong></td><td>—</td></tr>
+          </tbody>
+        </table></div><p class="table-scroll-hint" aria-hidden="true">→ the table scrolls sideways</p></div>
+
+        <p><strong>⚠️ The 32 is not a new limit.</strong> The written limit is fifty; the observed peak is
+        thirty-two. <strong>Thirty-two is the shape of the load, not a ceiling</strong> — sixteen write threads
+        making two calls per post is 16 × 2 = 32. In other words the ceiling has <strong>left the outbound
+        pool</strong>, and what sets throughput now is inbound concurrency. Whether fifty ever binds would
+        take twenty-five or more write threads to see, and <strong>I did not measure that.</strong></p>
+
+        <p>Also worth stating plainly: <code>factory=jdk</code> (19.89 req/s) and this fix (19.89 req/s)
+        <strong>have the same throughput</strong>. What separates them is not performance. It is
+        <strong>whether a number is written down.</strong></p>
+
+        <h2 id="the-timeouts">My first attempt threw the timeouts away<a class="anchor" href="#the-timeouts" aria-label="Link to this section">#</a></h2>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private</span> <code>services/api/src/test/…/HttpClientTimeoutTest.kt</code></p>
+
+        <p>My first attempt replaced the whole <code>requestFactory</code>. Doing that also
+        <strong>removed the <code>spring.http.client.*</code> timeouts</strong> that autoconfiguration had been
+        applying.</p>
+
+        <p>This is the kind of accident that can pass quietly. Without a timeout, normal responses still come
+        back normally. It only shows up <strong>when you meet a server that never answers.</strong></p>
+
+        <p>Fortunately a test aimed at exactly that already existed. The guard —
+        <strong>“does not hang on a server that never responds”</strong> — <strong>failed after forty
+        seconds</strong>. Without it, an unbounded wait would have quietly returned.</p>
+
+        <p>The repair was to avoid duplicating the values: <strong>read the same property keys.</strong>
+        Duplicate them and a day comes when only one side is updated.</p>
+
+        <h2 id="config-fails-nothing">Configuration does not fail anything by itself<a class="anchor" href="#config-fails-nothing" aria-label="Link to this section">#</a></h2>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private</span> <code>services/api/src/test/…/config/OutboundHttpConfigTest.kt</code></p>
+
+        <p>This change had one property that sets it apart from most: <strong>the deliverable is a
+        setting</strong>. Break a piece of logic and the test aimed at that logic goes red.
+        <strong>Delete a setting and nothing fails at all</strong> — it just falls back to the default,
+        quietly.</p>
+
+        <p>And that quiet fallback to a default is the cause of this entire article. So I added two tests that
+        assert the values <strong>actually took effect</strong>.</p>
+
+<pre data-lang="kotlin"><code>// ① The value must be ours, not the default of 5.
+assertThat(manager.defaultMaxPerRoute).isEqualTo(37)
+assertThat(manager.maxTotal).isEqualTo(91)
+// Per-route lookup must agree — if they diverge, the effective limit differs.
+assertThat(manager.getMaxPerRoute(route)).isEqualTo(37)
+
+// ② A pool per client turns "N per host" into "clients × N".
+//    That is how 5 became 10, so assert the factory is shared.
+assertThat(factories[0]).isSameAs(factories[1])</code></pre>
+
+        <p>Whether those assertions actually aim at anything I checked with
+        <a class="term" href="../notes/mutation-testing.html">mutation testing</a>. Remove
+        <code>setMaxConnPerRoute</code> and the first one sees 5 and goes red; build a new factory per builder
+        and the second goes red. <strong>I ran both.</strong></p>
+
+        <h2 id="why-not-redis">“Why not Redis, or a queue?”<a class="anchor" href="#why-not-redis" aria-label="Link to this section">#</a></h2>
+
+        <p>This is a question I actually got while doing the work — shouldn't this be solved by changing the
+        architecture? Because the harness existed, I could <strong>measure before choosing</strong>.</p>
+
+        <div class="table-scroll"><div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table"><table>
+          <thead><tr><th>Candidate</th><th>Does it touch the bottleneck (outbound 10)?</th><th>Verdict</th></tr></thead>
+          <tbody>
+            <tr><td>Redis cache (feed, stats)</td><td>✗ reads are already 4 ms at p50</td><td>no basis</td></tr>
+            <tr><td>Redis cache (moderation verdicts)</td><td>△ only when the same body repeats; user posts are mostly unique</td><td>measure the duplicate rate first</td></tr>
+            <tr><td>Queueing (Redis · Kafka)</td><td>✗ a queue <strong>moves</strong> the wait; it does not raise the outbound limit</td><td>invalid on its own</td></tr>
+            <tr><td>Writes onto a queue</td><td>✗ writes cost 8 ms</td><td>nothing to fix</td></tr>
+            <tr><td><strong>State the outbound limit</strong></td><td>✓ raises the ceiling directly</td><td><strong>first</strong></td></tr>
+          </tbody>
+        </table></div><p class="table-scroll-hint" aria-hidden="true">→ the table scrolls sideways</p></div>
+
+        <p>One more note on queueing. <strong>Moving moderation onto a queue does change something.</strong>
+        What it changes, though, is not performance but <strong>the product's promise</strong>.</p>
+
+        <p>The gate is fail-closed, so a post must not be visible before it is screened. The only available
+        shape is therefore not <em>“publish now, screen later”</em> but <em>“an asynchronous job that does not
+        publish until screening finishes.”</em> That does not <strong>remove</strong> the latency; it
+        <strong>detaches</strong> it from the request thread, and the outbound limit is unchanged. In exchange,
+        status display, retries, deduplication and failure notification all become new work.</p>
+
+        <p>So I wrote down <strong>when that design becomes justified</strong>, ahead of time, to avoid adopting
+        it later on a feeling: if post creation p95 still misses the target <em>after</em> the limit has been
+        deliberately raised, or if the external API's p99 approaches our own timeout, then it goes
+        asynchronous.</p>
+
+        <h2 id="what-this-does-not-claim">What this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>These are not production numbers.</strong> The load generator, the application, the stub
+          and the database share one machine's CPU. Absolute throughput is meaningless; only the comparison
+          means anything.</li>
+          <li><strong>800 ms is a value configured in the stub</strong>, not the real API's latency
+          distribution. The real gain depends on that distribution.</li>
+          <li><strong>Each condition was run once.</strong> I did not repeat runs to see variance.</li>
+          <li><strong>3.17× belongs to these conditions.</strong> Change the external latency or the inbound
+          concurrency and the ratio changes with it.</li>
+          <li><strong><code>max-per-route = 50</code> was not measured against real traffic.</strong> It swaps
+          “a five nobody chose” for “a fifty with a stated reason,” and it gets set again when real numbers
+          exist.</li>
+          <li><strong>I never observed 50 binding.</strong> Under this load, inbound concurrency caps first at
+          thirty-two.</li>
+          <li><strong>There was no incident.</strong> This came out of a pre-launch review; nothing in
+          production has ever hit this limit.</li>
+          <li><strong>This is not a complaint about the AWS SDK or Apache HttpClient.</strong> A library is
+          entitled to its own defaults. The problem is that <strong>its default had become my service's policy
+          and nobody knew.</strong></li>
+          <li><strong>It is not merged yet.</strong> The path touches the security gate, so the repository's
+          rules require a written review first.</li>
+        </ul>
+
+        <h2 id="wrapping-up">Wrapping up<a class="anchor" href="#wrapping-up" aria-label="Link to this section">#</a></h2>
+
+        <p>To summarise.</p>
+
+        <ul>
+          <li>When throughput sticks to a number, find <strong>the layer that produced that number</strong>
+          first. Raising threads and database pools comes after.</li>
+          <li>A library I never chose was setting <strong>my service's concurrency policy</strong>. It lives on
+          the runtime classpath only, so <strong>reading cannot find it — measuring can.</strong></li>
+          <li><strong>Removing a limit and setting one</strong> are different acts. Throughput rises the same
+          either way, but one of them has a number written down and the other does not.</li>
+          <li>A fix made of configuration <strong>fails nothing when deleted</strong>. So the fact that the
+          value took effect is itself what has to be asserted.</li>
+        </ul>
+
+        <p>If one line survives, let it be this.
+        <strong>A default nobody chose still behaves like a policy.</strong>
+        It is just a policy nobody owns — and usually one you do not know exists until you measure.</p>
+
+        <p>Thank you for reading.</p>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script src="../assets/lang.js?v=20260905b"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=20260905"></script>
+  <script defer src="../assets/article.js?v=20260905b"></script>
+</body>
+</html>
