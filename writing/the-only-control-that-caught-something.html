@@ -77,8 +77,10 @@
 
         <p><strong>Scope.</strong> Cost and account operations on the AWS lab account behind a personal
         project, a <a href="../projects/gpuaas-control-plane.html">Kubernetes-native GPU control plane</a>.
-        The figures are <strong>real billing and measurement on a personal lab account</strong>, not
-        production scale. Account and policy identifiers are omitted.</p>
+        The figures come from mixed sources — <strong>$14.56 and $0.40 come from billing and
+        accounting</strong>, <strong>the ~$8 is my own estimate</strong>, and <strong>$0.05 and $0.18 are
+        billed time multiplied by the hourly rate</strong>. Either way this is personal-lab scale, not
+        production. Account and policy identifiers are omitted.</p>
 
         <p>On a personal project that rents GPUs, the frightening failure is not a wrong experiment. It is
         <strong>leaving something switched on</strong>. So I built several layers of control: a service
@@ -274,10 +276,17 @@ error     : ResourceNotFoundException</code></pre>
 
         <p>Two days after creating the organisation, signing in to the management account to open a credits
         support case, root MFA did not match. For those few minutes there was
-        <strong>no way at all to touch the organisation, the SCPs, or Identity Center.</strong></p>
+        <strong>no way through the administrative path I had built</strong> to the organisation, the SCPs, or
+        Identity Center.</p>
 
-        <p>Not because the configuration was wrong. Because <strong>I had built exactly one way in.</strong>
-        Setting up Identity Center, I assigned the permission set <strong>to the lab account only</strong>.</p>
+        <p>To be exact: AWS does have an <strong>alternative verification path</strong> using the registered
+        email and phone, and I knew it existed. But <strong>I never confirmed that it works</strong> — the
+        sign-in eventually succeeded, so it was never needed. An emergency path you have not tested is hard to
+        count as one you have.</p>
+
+        <p>Not because the configuration was wrong. Because <strong>the way in I had built was exactly
+        one.</strong> Setting up Identity Center, I assigned the permission set
+        <strong>to the lab account only</strong>.</p>
 
         <p>Not assigning the management account was an omission rather than a decision. I had thought "no
         workloads live there, so there is nothing to do there" — but <strong>managing the organisation, the
@@ -294,7 +303,10 @@ error     : ResourceNotFoundException</code></pre>
           the schedule emits a call on time; the target was deliberately a name that does not exist. And the
           control's scope is <strong>scaling a node group to zero</strong>, not capping account-wide spend.</li>
           <li><strong>$0.05 and $0.18 are not bill line items.</strong> They are billed time multiplied by the
-          hourly rate. $14.56 and $0.40 come from billing and accounting.</li>
+          hourly rate. $14.56 and $0.40 come from billing and accounting, but this article
+          <strong>did not reconcile either against the billing ledger separately</strong>.</li>
+          <li><strong>The SCP defect was not fixed by patching the condition.</strong> That call cannot be
+          restricted to instance families through that condition key, so the statement itself was removed.</li>
           <li><strong>The SCP defect is specific to this organisation's setup.</strong> That an absent
           condition key satisfies a negated operator is general; which key is absent depends on the service
           and the call path.</li>
