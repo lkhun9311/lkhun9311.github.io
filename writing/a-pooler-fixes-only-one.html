@@ -70,7 +70,7 @@
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Writing</a>
         <h1>A Pooler Fixes Only One of the Two Exhaustions</h1>
-        <div class="article-meta">Writing · September 2026<span aria-hidden="true"> · </span><span class="read-time">7 min read</span></div>
+        <div class="article-meta">Writing · September 2026<span aria-hidden="true"> · </span><span class="read-time">8 min read</span></div>
         <p class="lang-alts notranslate">Other languages <a href="a-pooler-fixes-only-one.ko.html" hreflang="ko" lang="ko">한국어</a> · <a href="a-pooler-fixes-only-one.ja.html" hreflang="ja" lang="ja">日本語</a></p>
       </section>
       <article class="article-body">
@@ -231,7 +231,9 @@
         <p>So <strong>the code got fixed first.</strong> Moving the outbound moderation call out of the
         transaction was done on three write paths. One of them was worse than the rest — the poll-attachment
         path was making the outbound call <strong>while holding a row lock</strong> via <code>for update</code>.
-        It held <strong>two resources</strong> at once: the connection and the row lock.</p>
+        It held <strong>two resources</strong> at once: the connection and the row lock. The post and comment
+        paths went first; the poll path takes its screening input <em>from the locked row</em>, so it needed a
+        staleness re-check and was <strong>deliberately deferred, then fixed four days later.</strong></p>
 
         <p>The conclusion in one line: <strong>the code change was not an alternative to the pooler, it was its
         precondition.</strong> Once it was fixed, the system was finally in a state where a pooler could earn
@@ -242,13 +244,14 @@
         <p>There is a trap in ②. <strong>With blocking JDBC, the connection pool is effectively the concurrency
         cap.</strong> However many threads you have, they cannot work without a connection.</p>
 
-        <p>This service ran Tomcat threads at the <strong>default 200</strong>, with a connection pool ten times
-        smaller. So the remaining requests wait for a connection and fail after a timeout.
-        <strong>The direction is right</strong> — failing fast is what keeps the rest alive. The problem was
-        elsewhere.</p>
+        <p>This service ran Tomcat threads at the <strong>default 200</strong>, and the connection pool had
+        <strong>no configuration at all</strong> — the framework default was the service's capacity. So the
+        remaining requests wait for a connection and fail after a timeout. <strong>The direction is right</strong>
+        — failing fast is what keeps the rest alive. The problem was elsewhere.</p>
 
-        <p><strong>Neither number had been chosen by anyone.</strong> One was a framework default and the other
-        just happened to be that way. Admission control is not about having a cap, it is about
+        <p><strong>Neither number had been chosen by anyone.</strong> Both were framework defaults, and what was
+        bad was not the numbers themselves but <strong>that they were written down nowhere.</strong> Admission
+        control is not about having a cap, it is about
         <strong>deciding that cap deliberately</strong>, and a concurrency policy produced by two defaults is
         not a policy.</p>
 
@@ -268,9 +271,10 @@
         <strong>all three are <code>xact</code>-scoped</strong> — they release at transaction end, so they ride
         on transaction pooling as-is.</p>
 
-        <p>That was luck. And <strong>it is better to write down that it was luck</strong> — a single
-        session-scoped lock anywhere would have made that path defeat the pooler, and that fact would only have
-        surfaced after the pooler was already in place. <strong>The procedure of checking whether a tool works
+        <p>Whether all three being <code>xact</code>-scoped was deliberate or accidental is not something the
+        record can settle. What is certain is that <strong>a single session-scoped lock anywhere would have made
+        that path defeat the pooler</strong>, and that fact would only have surfaced after the pooler was already
+        in place. <strong>The procedure of checking whether a tool works
         in this code before buying it</strong> is the most reusable thing this review produced.</p>
 
         <h2 id="threads-and-connections">Threads and connections are different resources<a class="anchor" href="#threads-and-connections" aria-label="Link to this section">#</a></h2>
@@ -299,19 +303,32 @@
         the outbound client goes and asserts <strong>whether a transaction is active at the moment of the
         call</strong>.</p>
 
-<pre><code>// the spy in the outbound client's place looks at the state at call time
-whenever(moderationClient.screen(any())).thenAnswer {
-    assertThat(TransactionSynchronizationManager.isActualTransactionActive())
-        .isFalse()   // ← this call must be outside the transaction
-    ...
-}</code></pre>
+<pre><code>class TransactionProbe : ContentModerationApi {
+    val sawTransaction = mutableListOf&lt;Boolean&gt;()
+    override fun screen(text: String) {
+        sawTransaction += TransactionSynchronizationManager.isActualTransactionActive()
+    }
+}
+
+assertThat(probe.sawTransaction).isNotEmpty()         // ① did the call actually happen
+assertThat(probe.sawTransaction).containsOnly(false)  // ② was it outside the transaction</code></pre>
+
+        <p>Without ①, ② <strong>passes vacuously.</strong> If the gate falls out entirely and there are zero
+        calls, <code>containsOnly</code> is true of an empty list. A negative assertion always needs
+        <strong>"and the case was not empty" attached to it.</strong></p>
 
         <p>This guard does not ask "is the response fast". It asks <strong>"is the outbound call inside a
         transaction"</strong>. That is the actual cause, and the place where the revert happens.</p>
 
-        <p>Whether the guard is really aiming at anything was checked by mutation — I saw red
-        <strong>on each path separately</strong>. Believing that one guard covers three paths and having seen
-        red on three paths are different things.</p>
+        <p>Whether the guard is really aiming at anything was checked by mutation — I restored
+        <code>@Transactional</code> and actually ran it. On the post and comment paths <strong>only the matching
+        guard</strong> went red. The poll-attachment path was different — <strong>the mutation came back green
+        at first.</strong> The condition its staleness guard aims at was never constructed inside the test, and
+        red only appeared after an <code>onScreen</code> hook on the spy changed the row during the screening
+        window to build that condition.</p>
+
+        <p>That is the most portable thing in this article. <strong>A green mutation does not mean the code is
+        safe; it means the guard is not aiming.</strong></p>
 
         <h2 id="what-this-does-not-claim">What this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
