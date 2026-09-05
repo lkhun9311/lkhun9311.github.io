@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>私が書いた手順書3本は誤った前提の上にあった | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/three-documents-on-a-false-premise.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/three-documents-on-a-false-premise.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/three-documents-on-a-false-premise.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/three-documents-on-a-false-premise.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="私が書いた手順書3本は誤った前提の上にあった | Kwanghun Lee" />
+  <meta property="og:description" content="2,255 コミットを飛び越えるバージョン移行。文書からの推論ではどこで壊れるか分からないので、隔離環境に旧バージョンを立てて一度壊してみた。すると私が先に書いた文書 3 本の前提が誤りだと分かった。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/three-documents-on-a-false-premise.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="私が書いた手順書3本は誤った前提の上にあった | Kwanghun Lee" />
+  <meta name="twitter:description" content="文書からの推論ではどこで壊れるか分からない。本番 DB は初めて試すのに最も高くつく場所である。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="2,255 コミットを飛び越えるバージョン移行。文書からの推論ではどこで壊れるか分からないので、隔離環境に旧バージョンを立てて一度壊してみた。すると私が先に書いた文書 3 本の前提が誤りだと分かった。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language"
+                data-authored='{"en":"three-documents-on-a-false-premise.html","ko":"three-documents-on-a-false-premise.ko.html","ja":"three-documents-on-a-false-premise.ja.html"}'>
+          <option value="ja" selected>Japanese</option>
+          <option value="en">English</option>
+          <option value="ko">Korean</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="zh-TW">Chinese (Traditional)</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="vi">Vietnamese</option>
+          <option value="id">Indonesian</option>
+          <option value="hi">Hindi</option>
+          <option value="ar">Arabic</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <section class="page-hero">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ戻る</a>
+        <h1>私が書いた手順書3本は誤った前提の上にあった</h1>
+        <div class="article-meta">Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">11分</span></div>
+        <p class="lang-alts notranslate">他の言語 <a href="three-documents-on-a-false-premise.html" hreflang="en" lang="en">English</a> · <a href="three-documents-on-a-false-premise.ko.html" hreflang="ko" lang="ko">한국어</a></p>
+      </section>
+      <article class="article-body">
+
+        <p><strong>範囲.</strong> 2026年7月、稼働中の顧客現場にある OpenStack ベースのプライベートクラウドポータルを、
+        <strong>2,255 コミット先のバージョン</strong>へ上げるために準備した記録である。製品名・バージョン番号・顧客名・
+        チケット番号は書かない。<strong>実際に行ったのは隔離環境での再現と、手順書・ランブックの準備まで</strong>で
+        あり、本番切り替えを私が実施した記録ではない。以下の数値はすべて<strong>隔離コンテナでの再現</strong>の結果
+        である。</p>
+
+        <p>作業の形はこうだ。破壊的変更が 2 つ — 認証方式が変わって全ユーザーのパスワードが初期化され、スキーマ 2 つが
+        1 つに統合される。本番 DB なので無停止は不可能で、ロールバック経路が必須。そして
+        <strong>公式移行ガイドは現場より 1 段上のバージョンを基準に書かれていた。</strong></p>
+
+        <p>この状況で手順書を書く自然な方法は、文書を読んで推論することだ。私もそうやって 3 本書いた。そして
+        <strong>その 3 本の前提が誤っていた。</strong>それが分かったのは、より丁寧に読んだからではない。隔離環境に
+        旧バージョンを立てて、一度最後まで通してみたからだ。</p>
+
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#are-they-same">そもそも同じものか</a></li>
+            <li><a href="#date-order">日付順を信じなかった</a></li>
+            <li><a href="#method-differs">方式そのものが違っていた</a></li>
+            <li><a href="#deliberately-imprecise">わざと不正確にした部分</a></li>
+            <li><a href="#not-reproducible">再現できない領域を隠さなかった</a></li>
+            <li><a href="#one-blew-up">そして実際に 1 つ壊れた</a></li>
+            <li><a href="#answered-by-counting">「新規インストールのほうが楽では」に数えて答えた</a></li>
+            <li><a href="#what-this-does-not-claim">この記事が主張しないこと</a></li>
+          </ul>
+        </nav>
+
+        <h2 id="are-they-same">そもそも同じものか<a class="anchor" href="#are-they-same" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>再現には出発点が要る。ところが現場に渡された旧バージョンのリリース版が<strong>2 部</strong>あった。受領時期が
+        半年以上違う。どちらを基準にするかを選ぶ前に、2 つが同じものかを確認した。</p>
+
+<pre><code>diff -rq  &lt;リリース版 A&gt;  &lt;リリース版 B&gt;   # 差分なし (exit 0)
+find . -type f -exec md5sum {} \;          # 両方の全ファイルで md5 が一致</code></pre>
+
+        <p>中身は 100% 同じで、違いはファイルの mtime — つまり再ダウンロードした時刻だけだった。どちらを使っても
+        差し支えないと確定して先へ進んだ。</p>
+
+        <p>この段階は些細に見えるが、飛ばすと後で高くつく。再現が失敗したときに
+        <strong>「私のスクリプトが間違っているのか、出発点が違ったのか」を切り分けられなくなる</strong>からだ。再現の
+        第一条件は出発点が固定されていることであり、それは確認して知ることであって仮定することではない。</p>
+
+        <h2 id="date-order">日付順を信じなかった<a class="anchor" href="#date-order" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>次はデルタの特定である。旧バージョンの baseline にどのパッチが既に入っていて何が抜けているかを知る必要が
+        ある。baseline スキーマでマーカーテーブルの有無を 1 つずつ確認した。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
+        <table>
+          <caption class="sr-only">旧 baseline に存在するマーカーテーブルとその意味。</caption>
+          <thead><tr><th scope="col">マーカー</th><th scope="col">baseline</th><th scope="col">意味</th></tr></thead>
+          <tbody>
+            <tr><td>設定テーブル</td><td>あり</td><td>—</td></tr>
+            <tr><td>ブロックリスト</td><td>あり</td><td>10 月のパッチが baseline に含まれている</td></tr>
+            <tr><td>スケジューラ関連</td><td><strong>なし</strong></td><td>7 月のバッチパッチが未適用</td></tr>
+            <tr><td>バッチジョブ情報</td><td><strong>なし</strong></td><td>新しいパッチがこれを参照する — <strong>先行なしでは失敗する</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>ここで引っかかったものがある。baseline に<strong>10 月のパッチはあるのに、その前の 7・8 月のものが
+        なかった。</strong></p>
+
+        <p>つまり baseline はある日付で切ったスナップショットではなく<strong>キュレーション</strong>だ。誰かがその
+        ラインに必要だと判断したものだけを選んで入れている。すると「日付順に並べてその後のものを順に適用する」という
+        方針は<strong>安全を何も保証しない。</strong>既に入っているものを再度入れるか、先に入るべきだったものを
+        飛ばすことになる。</p>
+
+        <p>そこでデルタの正確な一覧・順序・冪等性は<strong>推論ではなく再現で確定すべきだ</strong>と結論した。これが
+        再現スクリプトを作った直接の理由である。</p>
+
+        <p>併せて、実査の過程で以前の文書が「要確認」として残していた項目が 1 つ解消した。旧リリース版のパッチ
+        フォルダに中間バージョンの移行 SQL が<strong>そもそも無かった</strong> — つまりその移行は未適用であり、
+        上位バージョンへ上げる際にデルタへ必ず含める必要があり、日付上いちばん前なので
+        <strong>最優先で先に適用</strong>しなければならなかった。</p>
+
+        <h2 id="method-differs">方式そのものが違っていた<a class="anchor" href="#method-differs" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>その次に公式移行ガイドを精読した。そしてこの一文に出会った。</p>
+
+        <blockquote><p>このガイドは<strong>パッチの順次適用ではなく、新規 DB を再構築してデータを移行する</strong>
+        方式である。</p></blockquote>
+
+        <p>私が先に書いた文書 3 本はすべて<strong>「パッチを順に適用する」</strong>を前提にしていた。デルタ一覧を作り、
+        順序を決め、冪等性を検討していた。その作業全体が<strong>別の方式の手順</strong>だった。</p>
+
+        <p>デルタの実査が無意味になったわけではない。どのパッチが baseline に入っているかは、再構築と移行でも必要な
+        情報である。無意味になったのは<strong>「パッチを順に適用すれば到達する」という結論</strong>のほうだ。</p>
+
+        <p>3 本は消さずに<strong>それぞれに訂正の注記を付けた。</strong>消すとなぜそう考えたのかが失われ、次に同じ
+        分岐で同じ推論をすることになる。残しておけば「この前提はこういう理由で誤りだった」が文書に残る。</p>
+
+        <p>ここで得た教訓は「ガイドを先に読め」ではない。ガイドは最初からあったし、私も見た。正確に言えば
+        <strong>ざっと見た。</strong>方式が違うという一文は手順一覧の中ではなく概要にあり、私は手順一覧から読んだ。
+        <strong>文書に何を探しに行ったかと、文書が何を伝えようとしているかは違うことがある。</strong></p>
+
+        <h2 id="deliberately-imprecise">わざと不正確にした部分<a class="anchor" href="#deliberately-imprecise" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>再現はワンショットのスクリプトにした。隔離したポートに DB を立て、旧バージョンを構築し、バックアップし、
+        新バージョンを再構築し、データを移行し、バージョンを更新し、検証する。</p>
+
+<pre><code>隔離 DB 起動
+  → 旧バージョン構築(スキーマ 2 種) + テストデータ投入
+  → バックアップ
+  → 新バージョン再構築
+  → データ移行
+  → VERSION 更新
+  → 検証</code></pre>
+
+        <p>移行部分では意図的に不正確な選択をした。ガイドはカラムのマッピングを表で明示しているが、その表を当時は
+        入手できていなかった。そこでスクリプトは<strong>元と新の共通カラムの積集合だけを
+        <code>INSERT IGNORE</code> でコピー</strong>するようにした。</p>
+
+        <p>これは正確な移行ではない。それが<strong>意図</strong>だった。このスクリプトの目的は正確に移すことではなく、
+        <strong>どのテーブルが壊れるかを露出させること</strong>である。スキーマドリフトを吸収して進み、失敗した
+        テーブルはログに残る。すると<strong>FAIL ログがそのまま実際のスキーマギャップ一覧</strong>になる。</p>
+
+        <p>移行が本当に行われたかを見るには、移ったものが確認できなければならない。そこで性質の異なるテストデータを
+        3 種類、あらかじめ仕込んだ。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
+        <table>
+          <caption class="sr-only">仕込んだテストデータ 3 種と、それぞれが検証するもの。</caption>
+          <thead><tr><th scope="col">仕込んだもの</th><th scope="col">検証対象</th></tr></thead>
+          <tbody>
+            <tr><td>一方のスキーマのアラーム行 1 件を、もう一方へ</td><td><strong>スキーマ間の移行</strong>が起きるか</td></tr>
+            <tr><td>設定値を既定と違う値に</td><td><strong>値</strong>が付いてくるか</td></tr>
+            <tr><td>メニュー説明フィールドに目印の文字列</td><td><strong>フィールド</strong>が付いてくるか</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>結果はこうだった。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
+        <table>
+          <caption class="sr-only">隔離環境での再現の結果。</caption>
+          <thead><tr><th scope="col">指標</th><th scope="col">値</th></tr></thead>
+          <tbody>
+            <tr><td>テストデータの移行</td><td><strong>3/3 通過</strong></td></tr>
+            <tr><td>データ移行の失敗</td><td><strong>0 件</strong>(2 スキーマ合計 92 テーブル)</td></tr>
+            <tr><td>バージョン</td><td>目標バージョンへ更新</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <h2 id="not-reproducible">再現できない領域を隠さなかった<a class="anchor" href="#not-reproducible" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>ローカルには OpenStack もその認証 CLI も無い。したがって認証方式の変更に絡む部分 — アカウント・ロール
+        テーブルの生成、ユーザー識別子を UUID から名前へ変換する処理、サービスアカウントの点検 — は
+        <strong>再現できなかった。</strong></p>
+
+        <p>選択肢は 2 つ。その段階をスクリプトから外して「全区間成功」と書くか、残して実施できなかったと言うか。</p>
+
+        <p>スクリプトがその段階ごとに明示的に <code>SKIP</code> または <code>WARN</code> をログに出すようにした。
+        そうすれば実行ログを読む人が、何が検証され何が検証されていないかを<strong>同じ画面で</strong>見る。検証されて
+        いない区間がログから消えると、次の人はその区間も検証済みだと読む。</p>
+
+        <p>これは「<a href="bugs-that-return-exit-code-zero.html">Ten Bugs, Zero Failed Tests</a>」で扱った問題と
+        同じ種類だ。<strong>「実行されなかった」と「通過した」を区別できない検証は、無いよりも悪い</strong> —
+        あると信じ込ませるからである。</p>
+
+        <h2 id="one-blew-up">そして実際に 1 つ壊れた<a class="anchor" href="#one-blew-up" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>準備期間にカスタマイズ用ブランチをリモート最新へ上げた。39 コミットが一度に入り、
+        <strong>アプリが起動直後に終了した。</strong>Tomcat のコンテキスト初期化でキャッシュ Bean の生成に失敗し、
+        プロセスが <code>exit 1</code> で落ちた。</p>
+
+<pre><code>No enum constant ConfigureKey.FEATURE_SETTINGS
+  ↑
+BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → configures findAll</code></pre>
+
+        <p>スタックトレースから呼び出し経路を逆にたどって enum 変換の地点を突き止め、git 履歴から原因コミットを
+        特定した。ある機能をロールバックする際に<strong>enum 定数とパッチ SQL と初期データ行をまとめて削除した</strong>
+        コミットだった。</p>
+
+        <p>コードは enum を消した。ところが<strong>既存 DB にはその値を持つ行が残っていた。</strong>起動時に ORM が
+        その行を enum へマッピングしようとして失敗し、コンテキストのロードに失敗すれば起動自体ができない。</p>
+
+        <p>重要なのはその次だ。この種の欠陥は<strong>再起動のたびに 1 つずつ</strong>現れる。最初の地雷を除去すると
+        次の地雷が出る。そこでローカル DB 3 つをコードの enum 定数と<strong>全数照合</strong>し、残っている stale
+        キーがそれ 1 つだけであることを先に確定してから削除した。</p>
+
+        <p>この件の価値は <code>DELETE</code> 1 行ではない。これを追跡する過程で
+        <strong>現場配備手順書の欠陥 3 件</strong>が明らかになった。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
+        <table>
+          <caption class="sr-only">現場配備手順書で発見し訂正した欠陥 3 件。</caption>
+          <thead><tr><th scope="col">欠陥</th><th scope="col">現場でそのまま進めていたら</th></tr></thead>
+          <tbody>
+            <tr><td><strong>存在しないパッチファイルの適用</strong>を指示(ロールバックされて対象リリースに無い)</td><td>ファイルが見つからずその場で止まる</td></tr>
+            <tr><td>残存行を削除する手順が無い</td><td>同じ起動失敗を今度は現場で経験する</td></tr>
+            <tr><td>ロールバック時のコンテナ再生成コマンドが無い</td><td>ロールバックが半分しか完了しない</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>3 件とも文書を読んで出てきたのではなく、<strong>実際に一度失敗して</strong>出てきた。手順書はそれまで内部的に
+        は一貫して見えていた。存在しないファイルを指示していることは、そのファイルを探しに行ったときに分かる。</p>
+
+        <h2 id="answered-by-counting">「新規インストールのほうが楽では」に数えて答えた<a class="anchor" href="#answered-by-counting" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>準備中にもっともな意見が出た。<em>移行がこれほど複雑なら、いっそ新規インストールのほうがよいのでは?</em>
+        もっともらしかった — この現場のカスタムアカウントは<strong>1 つだけ</strong>だったからだ。移行でいちばん
+        面倒なアカウント・権限の部分が些細だという意味になる。</p>
+
+        <p>答え方は<strong>消えるものを先に数えること</strong>だった。</p>
+
+        <p>消えるのは課金・メータリングの累積履歴と、監査・作業履歴である。どちらも<strong>再計算が不可能だ。</strong>
+        元となるイベントが残っていないので、バックアップから移す経路以外に取り戻す方法がない。一方で VM・ボリューム・
+        ネットワークといった実資源はこのポータルではなく OpenStack が所有し、ポータルは API から再同期するので
+        <strong>そもそも心配の対象ではなかった。</strong></p>
+
+        <p>残る反論は「それでも移行は大変では」だった。それは実測で答えた。保存すべきテーブル全部について、
+        <code>information_schema</code> で旧版と新版のカラムを比較した。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
+        <table>
+          <caption class="sr-only">保存対象テーブルのバージョン間カラム変化の実測結果。</caption>
+          <thead><tr><th scope="col">まとまり</th><th scope="col">テーブル数</th><th scope="col">カラムの追加・削除</th></tr></thead>
+          <tbody>
+            <tr><td>課金・メータリング</td><td>40</td><td><strong>0</strong></td></tr>
+            <tr><td>監査・作業履歴</td><td>8</td><td><strong>0</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p><strong>48 テーブルのカラム変化が 0 だった。</strong>構造が同じなので、変換なしに
+        <code>INSERT ... SELECT</code> でそのまま移る。唯一の違いは課金・メータリングのテーブルが属する
+        <strong>スキーマの位置が変わること</strong>だけで、テーブル構造そのものは同一だった。移行の中では易しい部類に
+        入る。</p>
+
+        <p>「移行は大変だ」という漠然とした懸念が<strong>数値 1 つで解消</strong>され、方向が決まった —
+        新規インストールではなく移行。</p>
+
+        <p>この節で実際にやったことは技術的に大したものではない。<code>information_schema</code> のクエリ数行だ。
+        要点は<strong>意見が割れたときに、数えて答えられる対象が何かを見極めたこと</strong>である。「移行が大変だ」は
+        数えにくいが、「カラムがいくつ変わったか」は数えられる。</p>
+
+        <h2 id="what-this-does-not-claim">この記事が主張しないこと<a class="anchor" href="#what-this-does-not-claim" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>現場の移行を完了したという主張ではない。</strong>私がやったのは隔離環境での再現による全区間の
+          検証と、現場手順書・インストールランブックの準備までである。</li>
+          <li><strong>移行失敗 0 件は隔離環境の結果である。</strong>現場の実データダンプで再現するのが最も正確だと
+          文書に後続課題として残しており、それは実施していない。</li>
+          <li><strong>共通カラムの積集合コピーは正確な移行方法ではない。</strong>スモークテスト用にわざとそうした
+          もので、正確なカラム対応はガイドの表に従う必要がある。</li>
+          <li><strong>認証まわりの区間は検証されていない。</strong>ローカルに認証 CLI が無く再現できず、スクリプトが
+          その場所に SKIP/WARN を残す。</li>
+          <li><strong>カラム変化 0 はその 2 バージョン間の事実</strong>であって、この製品の履歴テーブルが元々変わらない
+          という意味ではない。</li>
+        </ul>
+
+        <p>残る 1 行はこれである。<strong>文書をより丁寧に読んで分かったことは 1 つも無かった。</strong>リリース版が
+        同一であることも、baseline が日付で切ったものではないことも、方式そのものが違うことも、手順書が存在しない
+        ファイルを指していることも — すべて実際に一度動かしている途中で引っかかった。本番 DB は、初めて試すのに
+        最も高くつく場所である。</p>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script src="../assets/lang.js?v=20260905"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/article.js?v=20260817-scroll"></script>
+</body>
+</html>
