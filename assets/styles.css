@@ -1700,6 +1700,26 @@ body {
   border: 1px solid var(--border, rgba(0,0,0,0.08));
 }
 
+/* Diagrams. An SVG that carries labelled boxes cannot shrink to a phone and stay readable: at 360px a
+   720-unit viewBox scales text to a third of its size. So the figure scrolls sideways the way a wide table
+   does, and the drawing keeps a floor width rather than being squeezed under it. */
+.article-body figure.diagram {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.article-body figure.diagram svg {
+  display: block;
+  width: 100%;
+  min-width: 660px;
+  height: auto;
+}
+
+.article-body figure.diagram:focus-visible {
+  outline: 2px solid var(--accent, #d62976);
+  outline-offset: 2px;
+}
+
 .article-body figcaption {
   margin-top: 10px;
   font-size: 0.9rem;
@@ -2056,9 +2076,30 @@ body {
    and roughly 300px on the other, and the title stretched far past the text under it. One column, centred,
    with the hero and the body sharing the same edges. */
 .container.reading {
-  max-width: 840px;
+  max-width: 1120px;
 }
 
+/* Two widths, not one. Prose keeps a measure a person can read a line of without losing the next; tables,
+   code and figures do not want that measure and were being squeezed into it — a nine-column table scrolled
+   sideways at 776px of usable width when the window had room for all of it.
+   The hero shares the prose column so the title still sits over the text it belongs to. */
+.container.reading .page-hero,
 .container.reading .article-body {
-  max-width: 100%;
+  max-width: 840px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* The breakout. width is measured against the viewport rather than the parent, because the parent is the
+   840px column this is escaping; margin-left plus the translate re-centres it on that column's centre,
+   which is also the page's. Only above 900px, where there is room to escape into — below it the element
+   would come out narrower than the prose. */
+@media (min-width: 900px) {
+  .container.reading .article-body > .table-scroll,
+  .container.reading .article-body > pre,
+  .container.reading .article-body > figure {
+    width: min(1056px, calc(100vw - 64px));
+    margin-left: 50%;
+    transform: translateX(-50%);
+  }
 }
