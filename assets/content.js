@@ -86,6 +86,14 @@
           tags: ["Privacy", "Security", "Method"]
         },
         {
+          title: "The Throughput Ceiling Was Not in the Code",
+          url: "writing/the-ceiling-was-not-in-the-code.html",
+          date: "2026-09", dateLabel: "Sep 2026",
+          source: "commercial", sourceLabel: "Commercial project",
+          desc: "Post creation would not go past 6.27 req/s. Four times the write threads did nothing, three times the database pool did nothing. The limit was a default of five connections per host, inside an HTTP client the AWS SDK pulled in for S3 — a layer only on the runtime classpath, which reading could never have found. Also in Korean and Japanese.",
+          tags: ["Performance", "Backend", "Method"]
+        },
+        {
           title: "The Connection Exhaustion RDS Proxy Cannot Fix",
           url: "writing/a-pooler-fixes-only-one.html",
           date: "2026-09", dateLabel: "Sep 2026",

@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>スループットの上限はコードになかった | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/the-ceiling-was-not-in-the-code.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/the-ceiling-was-not-in-the-code.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/the-ceiling-was-not-in-the-code.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/the-ceiling-was-not-in-the-code.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="スループットの上限はコードになかった | Kwanghun Lee" />
+  <meta property="og:description" content="投稿作成のスループットが 6.27 req/s から動きませんでした。書き込みスレッドを4倍にしても、DB プールを3倍にしても同じです。原因は S3 を使うために入れた AWS SDK が連れてきた HTTP クライアントの既定値「ホストあたり5」でした。この層はランタイムのクラスパスにしかなく、コードを読んでも見つかりません。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/the-ceiling-was-not-in-the-code.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="スループットの上限はコードになかった | Kwanghun Lee" />
+  <meta name="twitter:description" content="誰も選んでいない既定値が、コンテンツ検閲のスループット上限でした。読んでも見つからず、測ってはじめて出てくる層の話です。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="投稿作成のスループットが 6.27 req/s から動きませんでした。書き込みスレッドを4倍にしても、DB プールを3倍にしても同じです。原因は S3 を使うために入れた AWS SDK が連れてきた HTTP クライアントの既定値「ホストあたり5」でした。この層はランタイムのクラスパスにしかなく、コードを読んでも見つかりません。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=20260817-icons" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language"
+                data-authored='{"en": "the-ceiling-was-not-in-the-code.html", "ko": "the-ceiling-was-not-in-the-code.ko.html", "ja": "the-ceiling-was-not-in-the-code.ja.html"}'>
+          <option value="ja" selected>Japanese</option>
+          <option value="en">English</option>
+          <option value="ko">Korean</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="zh-TW">Chinese (Traditional)</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="vi">Vietnamese</option>
+          <option value="id">Indonesian</option>
+          <option value="hi">Hindi</option>
+          <option value="ar">Arabic</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <section class="page-hero">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ</a>
+        <h1>スループットの上限はコードになかった<br><span class="h1-sub">S3 のために入った ライブラリの既定値 5 — ソーシャル投票プラットフォームのコンテンツ検閲経路</span></h1>
+        <div class="article-meta"><span class="source-tag commercial notranslate">事業化プロジェクト</span>Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">17分</span></div>
+      </section>
+      <article class="article-body">
+
+        <p>こんにちは。<strong>ソーシャル投票プラットフォーム</strong>を作っています。前回の記事でトランザクション境界を
+        直し、<a class="term" href="../notes/load-test-harness.html">負荷試験ハーネス</a>を立てて数値を作りました。
+        そのハーネスがすぐに次の問いを投げてきました —
+        <em>「投稿作成のスループットは、なぜ 6.27 req/s から上がらないのか」</em>。</p>
+
+        <p>書き込みスレッドを4倍にしても、DB コネクションプールを3倍にしても、その数字は動きませんでした。
+        犯人は<strong>私が入れた覚えも、選んだ覚えも、名前を見た覚えもないライブラリの既定値</strong>でした。</p>
+
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#想定読者">この記事の想定読者</a></li>
+            <li><a href="#どんな内容">どんな内容ですか?</a></li>
+            <li><a href="#どの経路">どの経路の話ですか?</a></li>
+            <li><a href="#dbだと思った">最初は DB がボトルネックだと思っていました</a></li>
+            <li><a href="#結論から">結論から申し上げると</a></li>
+            <li><a href="#書き込みは軽い">書き込みは重くありませんでした</a></li>
+            <li><a href="#10から動かない">何を変えても 10 から動きませんでした</a></li>
+            <li><a href="#スレッドダンプ">スレッドダンプがどこで止まっているか教えてくれました</a></li>
+            <li><a href="#連鎖">連鎖をさかのぼると S3 に着きます</a></li>
+            <li><a href="#一行で確認">一行の設定で確認しました</a></li>
+            <li><a href="#このままではだめ">ただし、このままにしてはいけません</a></li>
+            <li><a href="#上限を決めた">そこで上限を決めました</a></li>
+            <li><a href="#タイムアウト">最初の実装はタイムアウトを消してしまいました</a></li>
+            <li><a href="#設定は失敗しない">設定はそれ自体では何も失敗させません</a></li>
+            <li><a href="#redisはどうか">「Redis やキューを使えばいいのでは?」</a></li>
+            <li><a href="#主張しないこと">この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
+          </ul>
+        </nav>
+
+        <h2 id="想定読者">この記事の想定読者<a class="anchor" href="#想定読者" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li>Spring Boot の <code>RestClient</code> や <code>RestTemplate</code> で外部 API を呼んでいる方</li>
+          <li>スループットがある数字で止まっていて、スレッドも DB プールも増やしたのに動かない方</li>
+          <li><em>「自分が入れていないライブラリが、自分のサービスの挙動を決めているのでは?」</em>が気になる方</li>
+        </ul>
+
+        <h2 id="どんな内容">どんな内容ですか?<a class="anchor" href="#どんな内容" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li>コンテンツ検閲経路のスループットが <strong>6.27 req/s</strong> で止まっていました。書き込みスレッドを
+          4倍にしても、DB プールを3倍にしても同じでした。</li>
+          <li>原因は <strong>S3 を使うために入れた AWS SDK が連れてきた HTTP クライアント</strong>の既定値
+          <strong>「対象ホストあたりコネクション5本」</strong>でした。</li>
+          <li>このライブラリは<strong>ランタイムのクラスパスにしかありません。</strong>コードのどこにも名前が出ないので、
+          <strong>読んでも見つからず、測ってはじめて出てきます。</strong></li>
+          <li>直し方は<strong>上限をなくすことではなく、決めること</strong>でした。上限を消してもスループットは同じだけ
+          上がりますが、それは<strong>誰も選んでいない 5</strong> を <strong>誰も選んでいない無限大</strong>に
+          替えるだけです。</li>
+          <li>結果は外部呼び出しの同時実行 <strong>10 → 32</strong>、投稿作成 p50 <strong>2,592 → 805ms</strong>、
+          スループット <strong>6.27 → 19.89 req/s</strong>(3.17倍)、エラー率 <strong>0%</strong> でした。</li>
+        </ul>
+
+        <p><strong>コードは非公開リポジトリにあります。</strong>まだリリース前なのでリポジトリを開けていません。
+        そのため各セクションには GitHub リンクの代わりに<strong>ファイルパスとシンボル名</strong>を書いてあります。</p>
+
+        <p><strong>⚠️ 先にお伝えすることがあります。</strong>この記事の数値はすべて<strong>ローカルのハーネスで
+        測ったもの</strong>です。負荷ツール・アプリケーション・外部 API のスタブ・PostgreSQL が
+        <strong>すべて同じマシン</strong>で CPU を分け合っています。ですから
+        <strong>絶対スループットには意味がなく、比較にだけ意味があります。</strong>外部呼び出しの 800ms は
+        スタブに<strong>設定した値</strong>であって実際の遅延分布ではなく、<strong>条件ごとに1回の実行</strong>です。</p>
+
+        <h2 id="どの経路">どの経路の話ですか?<a class="anchor" href="#どの経路" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>事業化を目指して作っている<strong>ソーシャル投票プラットフォーム</strong>です。ユーザーが質問を投稿すると
+        他の人が匿名で投票し、その結果のチャートをアプリの外へ共有します。Kotlin と Spring Boot で作った単一の
+        モノリスで、データベースはマネージドの PostgreSQL 一つです。</p>
+
+        <p>投稿は<strong>モデレーションゲート</strong>を通らないと公開されません。ゲートは四層あり、そのうち
+        <strong>③ 有害分類</strong>と<strong>④ 攻撃判定</strong>の二層が外部 API を呼びます。ゲートは
+        <a class="term" href="../notes/fail-closed.html">fail-closed</a> なので、この呼び出しが失敗すると投稿は
+        公開されません。</p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロールできる図">
+            <svg viewBox="0 0 720 268" role="img" aria-labelledby="gate-t gate-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="gate-t">投稿一件が通るモデレーションゲートの四層</title>
+              <desc id="gate-d">ユーザーが投稿すると、API サーバーのモデレーションゲートが四つの検査を行います。
+              一つ目の禁止語検査と二つ目の連絡先検査はアプリケーションの中で完結するので高速です。三つ目の有害分類と
+              四つ目の攻撃判定は外部 API を呼び、この二つは互いに独立なので重ねて送ります。つまり投稿一件ごとに外部
+              呼び出しが二つ出ます。四層すべてを通過してはじめて投稿が PostgreSQL に保存され、公開されます。</desc>
+
+              <rect x="8" y="52" width="128" height="52" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="72" y="76" font-size="14" fill="#18121d" text-anchor="middle">モバイルアプリ</text>
+              <text x="72" y="94" font-size="13" fill="#7b7186" text-anchor="middle">投稿</text>
+              <path d="M136 78 H 180" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#g-ar)"/>
+
+              <rect x="188" y="30" width="222" height="96" rx="6" fill="none" stroke="#18121d" stroke-width="2"/>
+              <text x="299" y="52" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">モデレーションゲート</text>
+              <text x="202" y="76" font-size="13" fill="#3b3344">① 禁止語 · ② 連絡先</text>
+              <text x="202" y="94" font-size="12" fill="#7b7186">アプリ内で完結します</text>
+              <text x="202" y="115" font-size="13" fill="#d62976" font-weight="700">③ 有害分類 · ④ 攻撃判定</text>
+
+              <path d="M410 100 H 470" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#g-arA)"/>
+              <text x="440" y="92" font-size="12" fill="#d62976" text-anchor="middle">呼び出し2つ</text>
+              <rect x="478" y="66" width="234" height="68" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="595" y="90" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">外部検閲 API</text>
+              <text x="595" y="110" font-size="13" fill="#d62976" text-anchor="middle">投稿1件 = 呼び出し2つ</text>
+              <text x="595" y="127" font-size="12" fill="#7b7186" text-anchor="middle">ハーネスでは 800ms のスタブ</text>
+
+              <path d="M299 126 V 176" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#g-ar)"/>
+              <text x="311" y="158" font-size="12" fill="#7b7186">四層を通過すると</text>
+              <rect x="188" y="176" width="222" height="52" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="299" y="200" font-size="14" fill="#18121d" text-anchor="middle">PostgreSQL</text>
+              <text x="299" y="218" font-size="13" fill="#7b7186" text-anchor="middle">保存 · 公開</text>
+
+              <text x="8" y="256" font-size="15" fill="#3b3344">止まれば投稿は<tspan font-weight="700" fill="#18121d">公開されません</tspan> — fail-closed です。</text>
+              <defs>
+                <marker id="g-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
+                </marker>
+                <marker id="g-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>四層のうち前の二つはアプリ内で完結し、後ろの二つだけが外へ出ます。この記事で重要なのはピンクの矢印に書かれた<strong>「呼び出し2つ」</strong>です。投稿一件が外部呼び出しを二つ作ります。</figcaption>
+        </figure>
+
+        <p>図が語っていないことを一つ添えると、<strong>③ と ④ は同じホストへ出ます。</strong>この事実が後で
+        「ホストあたり5」という既定値と出会って問題になります。</p>
+
+        <h2 id="dbだと思った">最初は DB がボトルネックだと思っていました<a class="anchor" href="#dbだと思った" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>ハーネスが最初に出した数値はこうでした。書き込み16スレッド、DB コネクションプール10、外部スタブの遅延 800ms。</p>
+
+        <div class="table-scroll"><div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表"><table>
+          <thead><tr><th>指標</th><th>値</th></tr></thead>
+          <tbody>
+            <tr><td>投稿作成スループット</td><td><strong>6.27 req/s</strong></td></tr>
+            <tr><td>投稿作成 p50</td><td>2,592 ms</td></tr>
+            <tr><td>フィード取得 p50</td><td>4 ms</td></tr>
+            <tr><td>エラー率</td><td>0%</td></tr>
+          </tbody>
+        </table></div><p class="table-scroll-hint" aria-hidden="true">→ 表は横にスクロールできます</p></div>
+
+        <p>まず浮かんだ仮説はありふれたものでした。</p>
+
+        <blockquote><p>書き込みが16なのに DB コネクションプールは10だから、コネクション待ちで遅いのでは。
+        あるいは INSERT 自体が重いのでは。だとしたら書き込みをキューに逃がすか、Redis を足すべきでは。</p></blockquote>
+
+        <p>三つとも<strong>外れでした。</strong>そして外れだと分かったのは推論ではなく、ハーネスが教えてくれたからです。</p>
+
+        <h2 id="結論から">結論から申し上げると<a class="anchor" href="#結論から" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>ボトルネックは DB でも INSERT でもアプリケーションスレッドでもありませんでした。
+        <strong>外へ出る HTTP 呼び出しの同時実行が10で縛られていました。</strong></p>
+
+        <p>そしてその10は、こうやって出来ていました。</p>
+
+<pre data-lang="text"><code>S3 を使うために入れた AWS SDK
+  → software.amazon.awssdk:apache5-client
+     → org.apache.httpcomponents.client5:httpclient5      ← 推移的依存
+        → Spring の RestClient がクラスパスからこれを選ぶ
+           → コネクションプールの既定値: 対象ホストあたり5
+              → 同じホストを見る RestClient 2つ × 5 = 同時10</code></pre>
+
+        <p><strong>この連鎖で私が選んだのは一行目だけです。</strong>ファイルアップロードのために S3 を足しただけなのに、
+        それが連れてきた HTTP クライアントを通じて<strong>コンテンツ検閲のスループット上限</strong>を決めていました。</p>
+
+        <h2 id="書き込みは軽い">書き込みは重くありませんでした<a class="anchor" href="#書き込みは軽い" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>「書き込みは重いのか」はハーネスがそのまま答えられる問いでした。外部スタブの遅延を <strong>0ms</strong> に
+        置いて他の条件をそのままにすれば、残るのはアプリケーションと DB の純粋な書き込みコストだけです。</p>
+
+        <div class="table-scroll"><div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表"><table>
+          <thead><tr><th>条件</th><th>投稿作成 p50</th><th>投稿作成スループット</th></tr></thead>
+          <tbody>
+            <tr><td>外部遅延 800ms</td><td>2,592 ms</td><td>6.27 req/s</td></tr>
+            <tr><td><strong>外部遅延 0ms</strong></td><td><strong>8 ms</strong></td><td><strong>1,398 req/s</strong></td></tr>
+          </tbody>
+        </table></div><p class="table-scroll-hint" aria-hidden="true">→ 表は横にスクロールできます</p></div>
+
+        <p><strong>INSERT の経路そのものは8ミリ秒です。</strong>毎秒1,398件を受けます。書き込みはこのシステムの問題では
+        ありませんでしたし、したがって書き込みをキューに逃がす設計は<strong>壊れていないところを直す作業</strong>に
+        なります。</p>
+
+        <p><strong>⚠️ この測定は最初、間違っていました。</strong>遅延0を要求したのに、
+        <strong>前の実行の 800ms スタブがポートに生きたまま残っていました。</strong>ハーネスには「スタブは本当に
+        その遅延で応答しているか」を見る往復検査があったのですが、条件が
+        <code>往復時間 &lt; 要求遅延 × 0.8</code> だったので、<strong>要求遅延が0なら常に偽</strong>になります。
+        検査が<strong>空虚に通過</strong>したわけです。そのせいで 800ms の実行を 0ms の実行として記録し、
+        そこから結論を出していました。</p>
+
+        <p>直し方は時間ではなく<strong>身元</strong>を見ることでした。スタブに自分の設定値を報告させ、それを要求値と
+        突き合わせます。</p>
+
+<pre data-lang="shell"><code>$ curl -s localhost:18080/__stub/health
+{"ok": true, "delay_ms": 800, "jitter_ms": 0, "max_in_flight": 10}
+#            ↑ 要求した値と違えば実行を中止する</code></pre>
+
+        <p>そのうえで<strong>わざと違うスタブを立てて回し</strong>、実行が実際に止まることを確認してから測り直しました。
+        このリポジトリで最も多い欠陥は<strong>「失敗したのに通過に見える検査」</strong>なので、検査を入れたらわざと
+        失敗させてみる、というのを規則にしています。</p>
+
+        <h2 id="10から動かない">何を変えても 10 から動きませんでした<a class="anchor" href="#10から動かない" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>次に<strong>スタブに計測を入れました。</strong>リクエストが入るときに数え、出るときに引いて、
+        <strong>同時に処理中の外部呼び出しの最大値</strong>を記録させます。この数字ひとつが残り全部を説明します。</p>
+
+        <div class="table-scroll"><div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表"><table>
+          <thead><tr><th>書き込みスレッド</th><th>DB プール</th><th>外部呼び出しの最大同時実行</th><th>投稿スループット</th><th>投稿 p50</th></tr></thead>
+          <tbody>
+            <tr><td>16</td><td>10</td><td><strong>10</strong></td><td>6.27 req/s</td><td>2,592 ms</td></tr>
+            <tr><td>16</td><td><strong>30</strong></td><td><strong>10</strong></td><td>6.27 req/s</td><td>2,595 ms</td></tr>
+            <tr><td><strong>32</strong></td><td>30</td><td><strong>10</strong></td><td>6.26 req/s</td><td>5,119 ms</td></tr>
+          </tbody>
+        </table></div><p class="table-scroll-hint" aria-hidden="true">→ 表は横にスクロールできます</p></div>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロールできる図">
+            <svg viewBox="0 0 720 300" role="img" aria-labelledby="cap-t cap-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="cap-t">条件を変えても外部呼び出しの同時実行は 10 から動かない</title>
+              <desc id="cap-d">三つの条件を比べます。書き込み16に DB プール10、書き込み16に DB プール30、書き込み32に DB プール30 です。
+              三つとも外部呼び出しの最大同時実行は10で同じ、スループットも毎秒 6.27、6.27、6.26 件で同じです。変わるのは応答時間だけで、
+              書き込みを32にすると中央値が 2,592 ミリ秒から 5,119 ミリ秒に伸びます。仕事が増えたのではなく待ち行列が長くなっただけです。</desc>
+
+              <text x="8" y="22" font-size="14" fill="#7b7186">外部呼び出しの最大同時実行(スタブ計測)</text>
+
+              <text x="8" y="60" font-size="13" fill="#3b3344">書き込み16 · プール10</text>
+              <rect x="180" y="46" width="120" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="310" y="60" font-size="13" fill="#d62976" font-weight="700">10</text>
+              <text x="352" y="60" font-size="13" fill="#3b3344">6.27 req/s · p50 2,592 ms</text>
+
+              <text x="8" y="96" font-size="13" fill="#3b3344">書き込み16 · プール30</text>
+              <rect x="180" y="82" width="120" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="310" y="96" font-size="13" fill="#d62976" font-weight="700">10</text>
+              <text x="352" y="96" font-size="13" fill="#3b3344">6.27 req/s · p50 2,595 ms</text>
+
+              <text x="8" y="132" font-size="13" fill="#3b3344">書き込み32 · プール30</text>
+              <rect x="180" y="118" width="120" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="310" y="132" font-size="13" fill="#d62976" font-weight="700">10</text>
+              <text x="352" y="132" font-size="13" fill="#3b3344">6.26 req/s · p50 5,119 ms</text>
+
+              <path d="M8 154 H 712" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
+
+              <text x="8" y="180" font-size="14" fill="#7b7186">参考 · スタブを32ワーカーで直接叩くと</text>
+              <text x="8" y="216" font-size="13" fill="#3b3344">スタブ単体</text>
+              <rect x="180" y="202" width="374" height="18" rx="3" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="564" y="216" font-size="13" fill="#4f5bd5" font-weight="700">32</text>
+              <text x="600" y="216" font-size="13" fill="#3b3344">40 req/s</text>
+
+              <text x="8" y="254" font-size="15" fill="#3b3344">スタブは32まで受けます。ですから上限は<tspan font-weight="700" fill="#18121d">アプリ側</tspan>にあります。</text>
+              <text x="8" y="284" font-size="15" fill="#3b3344">増えたのはスループットではなく<tspan font-weight="700" fill="#d62976">待ち時間</tspan>だけです。</text>
+            </svg>
+          </div>
+          <figcaption>三条件とも同時実行は10で同じです。下の青い棒は同じスタブをアプリ抜きで直接叩いた値で、スタブ自体は32まで受けます。</figcaption>
+        </figure>
+
+        <p>表の読み方はこうです。<strong>書き込みを4倍にしても、DB プールを3倍にしても同時実行は10から動きません。</strong>
+        伸びるのは応答時間だけです(2,592 → 5,119ms)。これは典型的な<strong>待ち行列の兆候</strong>です —
+        仕事が増えたのではなく、列が長くなっただけです。</p>
+
+        <p>スタブが犯人である可能性は別に消しました。同じスタブをアプリ抜きで32ワーカー・20秒叩くと
+        <strong>同時32 · 40 req/s</strong> を出します。ですから10はスタブの限界ではなく、
+        <strong>アプリが外へ出る道</strong>の限界です。</p>
+
+        <p>ここで算数が合います。投稿1件が呼び出し2つを出すので、同時10は<strong>同時に検閲中の投稿5件</strong>です。
+        呼び出し1回が 800ms なので 5 ÷ 0.8秒 = <strong>約 6.3 req/s</strong>。観測された 6.27 と一致します。</p>
+
+        <h2 id="スレッドダンプ">スレッドダンプがどこで止まっているか教えてくれました<a class="anchor" href="#スレッドダンプ" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>「アプリのどこかに10がある」ところまでは来たものの、それがどこかはコードを読んでも見つかりませんでした。
+        <strong>私のコードには10も5も書かれていないからです。</strong></p>
+
+        <p>そこで負荷がかかった状態で<strong>スレッドダンプ</strong>を取りました。Tomcat ワーカー16のうち
+        <strong>5つはソケット入出力中(RUNNABLE)</strong>、<strong>11は park</strong> でした。park 側のスタックが
+        答えでした。</p>
+
+<pre data-lang="text"><code>at org.apache.hc.core5.pool.StrictConnPool$1.get(StrictConnPool.java:183)
+at org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager$3.get(...)
+at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.acquireEndpoint(...)</code></pre>
+
+        <p><strong>Apache HttpClient 5 のコネクションプールで待って</strong>いました。私はこのライブラリを入れた
+        覚えがありませんでした。</p>
+
+        <h2 id="連鎖">連鎖をさかのぼると S3 に着きます<a class="anchor" href="#連鎖" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>依存ツリーを出すと、連鎖はこうでした。</p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロールできる図">
+            <svg viewBox="0 0 720 356" role="img" aria-labelledby="chain-t chain-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="chain-t">S3 の依存から外部呼び出し同時10に至る連鎖</title>
+              <desc id="chain-d">ファイルアップロードのために AWS SDK の S3 モジュールを入れました。そのモジュールが apache5-client を連れてきて、
+              apache5-client がさらに httpclient5 を連れてきます。この最後のライブラリはランタイムのクラスパスにしかないので、コードでは名前すら
+              見えません。ところが Spring の RestClient はクラスパスに Apache HttpClient があればそれを選び、そのコネクションプールの既定値は
+              対象ホストあたり5です。同じホストを見る RestClient 二つがそれぞれ自分のプールを持つため、外部呼び出しの同時実行は5足す5で10になります。</desc>
+
+              <rect x="8" y="16" width="340" height="44" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="24" y="43" font-size="14" fill="#18121d">アップロードのために入れた <tspan font-weight="700">AWS SDK · S3</tspan></text>
+              <text x="362" y="43" font-size="13" fill="#4f5bd5" font-weight="700">← 私が選んだのはここまで</text>
+
+              <path d="M40 60 V 84" fill="none" stroke="#7b7186" stroke-width="1.5" marker-end="url(#c-ar)"/>
+              <rect x="8" y="84" width="340" height="40" rx="6" fill="none" stroke="#7b7186" stroke-width="1.5"/>
+              <text x="24" y="109" font-size="13" fill="#3b3344">software.amazon.awssdk:apache5-client</text>
+
+              <path d="M40 124 V 148" fill="none" stroke="#7b7186" stroke-width="1.5" marker-end="url(#c-ar)"/>
+              <rect x="8" y="148" width="340" height="40" rx="6" fill="none" stroke="#7b7186" stroke-width="1.5"/>
+              <text x="24" y="173" font-size="13" fill="#3b3344">org.apache.httpcomponents.client5:httpclient5</text>
+              <text x="362" y="173" font-size="13" fill="#7b7186">← ランタイムのみ</text>
+
+              <path d="M40 188 V 212" fill="none" stroke="#7b7186" stroke-width="1.5" marker-end="url(#c-ar)"/>
+              <rect x="8" y="212" width="340" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="24" y="237" font-size="13" fill="#3b3344">Spring の RestClient がこの実装を選びます</text>
+
+              <path d="M40 252 V 276" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#c-arA)"/>
+              <rect x="8" y="276" width="340" height="44" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="24" y="303" font-size="14" fill="#18121d" font-weight="700">プール既定値 · ホストあたり5</text>
+
+              <path d="M348 298 H 400" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#c-arA)"/>
+              <rect x="408" y="270" width="304" height="56" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="560" y="294" font-size="14" fill="#d62976" font-weight="700" text-anchor="middle">RestClient 2つ × 5 = 同時10</text>
+              <text x="560" y="313" font-size="13" fill="#7b7186" text-anchor="middle">③ 有害分類 · ④ 攻撃判定</text>
+
+              <text x="8" y="346" font-size="15" fill="#3b3344">間の四つの箱は<tspan font-weight="700" fill="#18121d">誰も選んでいません。</tspan></text>
+              <defs>
+                <marker id="c-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#7b7186"/>
+                </marker>
+                <marker id="c-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>一番上の箱だけが私の選択で、下の四つはすべて付いてきたものです。最後の箱の「2つ」は最初の図の ③④ です。</figcaption>
+        </figure>
+
+        <p>図が語っていないことを一つ。<strong><code>httpclient5</code> はランタイムのクラスパスにしかありません。</strong>
+        コンパイルのクラスパスにないので、自分のコードでは名前すら書けません。実際、先に設定コードを書こうとして
+        <code>Unresolved reference 'hc'</code> で止まりました。</p>
+
+        <p>ですからこの層は<strong>読んでも見つかりません。</strong>コード検索でもレビューでも出てきません。
+        <strong>測ってはじめて出てきます。</strong></p>
+
+        <h2 id="一行で確認">一行の設定で確認しました<a class="anchor" href="#一行で確認" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>仮説が正しいかは一行で確認できました。Spring に<strong>Apache ではなく JDK クライアントを使え</strong>と
+        指定し、他の条件はすべてそのままにします。</p>
+
+<pre data-lang="yaml"><code># application.yml — 診断のための一行
+spring:
+  http:
+    client:
+      factory: jdk</code></pre>
+
+        <div class="table-scroll"><div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表"><table>
+          <thead><tr><th>指標</th><th>既定(推移的依存)</th><th><code>factory=jdk</code></th><th>倍率</th></tr></thead>
+          <tbody>
+            <tr><td>外部呼び出しの最大同時実行</td><td>10</td><td><strong>32</strong></td><td>3.2×</td></tr>
+            <tr><td>投稿作成 p50</td><td>2,592 ms</td><td><strong>806 ms</strong></td><td>3.2倍速い</td></tr>
+            <tr><td>投稿作成スループット</td><td>6.27 req/s</td><td><strong>19.89 req/s</strong></td><td><strong>3.17×</strong></td></tr>
+            <tr><td>フィード取得 p50</td><td>4 ms</td><td>5 ms</td><td>—</td></tr>
+            <tr><td>エラー率</td><td>0%</td><td>0.09%(1,093件中1件)</td><td>—</td></tr>
+          </tbody>
+        </table></div><p class="table-scroll-hint" aria-hidden="true">→ 表は横にスクロールできます</p></div>
+
+        <p>806ms はもう<strong>外部呼び出しそのもの</strong>です。手前にあった待ちが消えました。仮説は当たっていました。</p>
+
+        <h2 id="このままではだめ">ただし、このままにしてはいけません<a class="anchor" href="#このままではだめ" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>ここで止めたい誘惑がありました。一行で 3.17 倍ですから。ところが
+        <strong><code>jdk</code> クライアントにはホストあたりの上限がありません。</strong></p>
+
+        <p>つまりこの一行がしたことは、<strong>誰も選んでいない 5 を誰も選んでいない無限大に替えた</strong>だけです。
+        この記事がずっと言ってきたことと正反対です。</p>
+
+        <p>上限がなければ、負荷が集中したとき外部 API へ無制限の同時呼び出しが出ます。それは
+        <strong>相手のサービスへの負荷</strong>であり<strong>私の費用</strong>です。流入制御は上限をなくすことではなく、
+        <strong>意図して決めること</strong>です。</p>
+
+        <p>付け加えると、このリポジトリは同じ形の欠陥をすでに一度経験しています。Tomcat スレッド200とコネクションプールが
+        どちらもフレームワークの既定値で、その二つが作った並行性の方針は<strong>方針ではありませんでした。</strong>
+        アウトバウンドにも同じことがあり、今回は<strong>誰もその層を見ていませんでした。</strong></p>
+
+        <h2 id="上限を決めた">そこで上限を決めました<a class="anchor" href="#上限を決めた" aria-label="このセクションへのリンク">#</a></h2>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private</span> <code>services/api/…/config/OutboundHttpConfig.kt</code></p>
+
+        <p>選んだ方法は二つです。</p>
+
+        <ol>
+          <li><strong><code>httpclient5</code> を明示的な依存に格上げします。</strong>すでにランタイムで使っていた
+          ライブラリを<em>名前で</em>書くということで、そうしてはじめて設定コードが書けます。</li>
+          <li><strong>コネクションプールを一つだけ作り、すべての <code>RestClient</code> で共有します。</strong>
+          クライアントごとに自分のプールを持つと「ホストあたり N」が実際には「クライアント数 × N」になります。
+          それが5が10になっていた理由です。</li>
+        </ol>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロールできる図">
+            <svg viewBox="0 0 720 300" role="img" aria-labelledby="pool-t pool-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="pool-t">クライアントごとにプールを持つ場合と、プール一つを共有する場合</title>
+              <desc id="pool-d">上が修正前です。有害分類用の RestClient と攻撃判定用の RestClient がそれぞれ自分のコネクションプールを持ち、
+              各プールの既定上限が5なので実際の同時実行は5足す5で10になります。書いてある数字は5なのに実際に効く上限は10で、両者が食い違います。
+              下が修正後です。コネクションマネージャを一つだけ作って二つのクライアントで共有するので、ホストあたり上限50がそのまま実際の上限になります。</desc>
+
+              <text x="8" y="22" font-size="14" fill="#7b7186">修正前 · クライアントごとにプール</text>
+              <rect x="8" y="34" width="170" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="93" y="59" font-size="13" fill="#18121d" text-anchor="middle">③ 有害分類クライアント</text>
+              <rect x="8" y="82" width="170" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="93" y="107" font-size="13" fill="#18121d" text-anchor="middle">④ 攻撃判定クライアント</text>
+              <path d="M178 54 H 220" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
+              <path d="M178 102 H 220" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
+              <rect x="228" y="34" width="150" height="40" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="303" y="59" font-size="13" fill="#d62976" text-anchor="middle">自分のプール · 上限5</text>
+              <rect x="228" y="82" width="150" height="40" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="303" y="107" font-size="13" fill="#d62976" text-anchor="middle">自分のプール · 上限5</text>
+              <path d="M378 78 H 424" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#p-arA)"/>
+              <rect x="432" y="52" width="280" height="52" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="572" y="74" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">実際の上限 = 5 + 5 = 10</text>
+              <text x="572" y="93" font-size="13" fill="#7b7186" text-anchor="middle">書いた数字と食い違います</text>
+
+              <path d="M8 144 H 712" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
+
+              <text x="8" y="176" font-size="14" fill="#7b7186">修正後 · プール一つを共有</text>
+              <rect x="8" y="188" width="170" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="93" y="213" font-size="13" fill="#18121d" text-anchor="middle">③ 有害分類クライアント</text>
+              <rect x="8" y="236" width="170" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="93" y="261" font-size="13" fill="#18121d" text-anchor="middle">④ 攻撃判定クライアント</text>
+              <path d="M178 208 H 220" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
+              <path d="M178 256 H 220" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
+              <rect x="228" y="204" width="150" height="56" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="303" y="228" font-size="13" fill="#4f5bd5" text-anchor="middle">共有プール一つ</text>
+              <text x="303" y="248" font-size="13" fill="#4f5bd5" text-anchor="middle">ホストあたり50</text>
+              <path d="M378 232 H 424" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#p-arB)"/>
+              <rect x="432" y="206" width="280" height="52" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="572" y="228" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">実際の上限 = 50</text>
+              <text x="572" y="247" font-size="13" fill="#7b7186" text-anchor="middle">書いた数字と同じです</text>
+              <defs>
+                <marker id="p-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
+                </marker>
+                <marker id="p-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+                <marker id="p-arB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>同じ「ホストあたり5」がクライアント二つでは10として動きます。プールを一つにまとめると、書いた数字と実際の上限が一致します。</figcaption>
+        </figure>
+
+<pre data-lang="kotlin"><code>@Configuration
+class OutboundHttpConfig {
+    @Bean
+    fun outboundConnectionManager(
+        @Value("\${oxy.http.outbound.max-per-route:50}") maxPerRoute: Int,
+        @Value("\${oxy.http.outbound.max-total:100}") maxTotal: Int,
+        // Spring が付けてくれていたタイムアウトをここで付け直す — 同じプロパティキーを読む。
+        @Value("\${spring.http.client.connect-timeout:3s}") connectTimeout: Duration,
+        @Value("\${spring.http.client.read-timeout:10s}") readTimeout: Duration,
+    ): PoolingHttpClientConnectionManager = ...
+
+    @Bean
+    fun outboundHttpCustomizer(cm: PoolingHttpClientConnectionManager): RestClientCustomizer {
+        // ファクトリも一つだけ作り、すべてのビルダーが同じプールを使うようにする。
+        val factory = HttpComponentsClientHttpRequestFactory(
+            HttpClients.custom().setConnectionManager(cm).build())
+        return RestClientCustomizer { builder -&gt; builder.requestFactory(factory) }
+    }
+}</code></pre>
+
+        <p><strong>50 という数字の根拠</strong>もコメントに書きました。投稿1件が呼び出し2つを出すので50は
+        <strong>同時に検閲中の投稿25件</strong>にあたり、外部呼び出しが 800ms なら毎秒およそ31件まで受けます。
+        いま立てているどのトラフィック想定よりも大きく、しかし無限ではありません。</p>
+
+        <p>もう一度測りました。条件は前と同一です。</p>
+
+        <div class="table-scroll"><div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表"><table>
+          <thead><tr><th>指標</th><th>前(推移的依存の既定値)</th><th>後(共有プール · 明示上限)</th><th>倍率</th></tr></thead>
+          <tbody>
+            <tr><td>外部呼び出しの最大同時実行</td><td>10</td><td><strong>32</strong></td><td>3.2×</td></tr>
+            <tr><td>投稿作成 p50</td><td>2,592 ms</td><td><strong>805 ms</strong></td><td>3.22倍速い</td></tr>
+            <tr><td>投稿作成 p95</td><td>2,637 ms</td><td>809 ms</td><td>3.26×</td></tr>
+            <tr><td>投稿作成 p99</td><td>2,640 ms</td><td>811 ms</td><td>3.26×</td></tr>
+            <tr><td><strong>投稿作成スループット</strong></td><td>6.27 req/s</td><td><strong>19.89 req/s</strong></td><td><strong>3.17×</strong></td></tr>
+            <tr><td>フィード取得 p50</td><td>4 ms</td><td>5 ms</td><td>—</td></tr>
+            <tr><td>エラー率</td><td>0%</td><td><strong>0%</strong></td><td>—</td></tr>
+          </tbody>
+        </table></div><p class="table-scroll-hint" aria-hidden="true">→ 表は横にスクロールできます</p></div>
+
+        <p><strong>⚠️ 32 は新しい上限ではありません。</strong>書いた上限は50なのに観測された最大同時実行は32です。
+        <strong>32 は負荷の形であって上限ではありません</strong> — 書き込みスレッド16が投稿1件あたり呼び出し2つを
+        出すので 16 × 2 = 32 です。つまりこの実行で天井は<strong>アウトバウンドのプールから離れており</strong>、
+        いまスループットを決めているのは流入の並行度です。50 が実際に効くかは書き込みスレッドを25以上に上げないと
+        見えませんが、<strong>測っていません。</strong></p>
+
+        <p>そして <code>factory=jdk</code>(19.89 req/s)とこの処方(19.89 req/s)は<strong>スループットが同じです。</strong>
+        二つを分けるのは性能ではなく、<strong>上限が書かれているかどうか</strong>です。</p>
+
+        <h2 id="タイムアウト">最初の実装はタイムアウトを消してしまいました<a class="anchor" href="#タイムアウト" aria-label="このセクションへのリンク">#</a></h2>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private</span> <code>services/api/src/test/…/HttpClientTimeoutTest.kt</code></p>
+
+        <p>最初の実装は <code>requestFactory</code> を丸ごと入れ替えました。すると Spring の自動設定が付けてくれていた
+        <code>spring.http.client.*</code> のタイムアウトも<strong>一緒に消えました。</strong></p>
+
+        <p>これは静かに通り過ぎうる種類の事故です。タイムアウトがなくても正常な応答は正常に返ってきます。
+        問題は<strong>応答が返らないサーバーに出会ったとき</strong>だけ現れます。</p>
+
+        <p>幸い、このリポジトリにはそれを狙うテストがすでにありました。
+        <strong>「応答のないサーバーにぶら下がらない」</strong>というガードが<strong>40秒で失敗しました。</strong>
+        そのガードがなければ、無限待ちが静かに戻ってきていたはずです。</p>
+
+        <p>直し方は値を複製しないことでした。<strong>同じプロパティキーを読みます。</strong>複製すれば、いつか片方だけが
+        変わる日が来ます。</p>
+
+        <h2 id="設定は失敗しない">設定はそれ自体では何も失敗させません<a class="anchor" href="#設定は失敗しない" aria-label="このセクションへのリンク">#</a></h2>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private</span> <code>services/api/src/test/…/config/OutboundHttpConfigTest.kt</code></p>
+
+        <p>この修正には他と違う性質が一つありました。<strong>成果物が設定値</strong>だということです。ロジックを壊せば
+        そのロジックを狙うテストが赤くなりますが、<strong>設定は消しても何も失敗しません。</strong>ただ静かに既定値へ
+        戻るだけです。</p>
+
+        <p>そしてその「静かに戻った既定値」こそが、この記事全体の原因でした。ですから値が
+        <strong>実際に付いたか</strong>を断言するテストを二つ入れました。</p>
+
+<pre data-lang="kotlin"><code>// ① 既定値(5)ではなく、こちらが与えた値が付かなければならない。
+assertThat(manager.defaultMaxPerRoute).isEqualTo(37)
+assertThat(manager.maxTotal).isEqualTo(91)
+// ルート別の取得も同じ値であること — 食い違えば実際の上限が変わる。
+assertThat(manager.getMaxPerRoute(route)).isEqualTo(37)
+
+// ② クライアントごとにプールを持つと「ホストあたり N」が「クライアント数 × N」になる。
+//    それが 5 が 10 になっていた理由なので、同じファクトリを共有しているかを断言する。
+assertThat(factories[0]).isSameAs(factories[1])</code></pre>
+
+        <p>この断言が本当に狙っているかは
+        <a class="term" href="../notes/mutation-testing.html">ミューテーション</a>で確認しました。
+        <code>setMaxConnPerRoute</code> を消すと一つ目が5を見て赤くなり、ファクトリをビルダーごとに作り直すと
+        二つ目が赤くなります。<strong>どちらも実際に確認しました。</strong></p>
+
+        <h2 id="redisはどうか">「Redis やキューを使えばいいのでは?」<a class="anchor" href="#redisはどうか" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>この作業中に実際に受けた質問です。アーキテクチャを変えて解くべきではないか、という話でした。ハーネスが
+        あったので<strong>答えを選ぶ前に測る</strong>順序で進められました。</p>
+
+        <div class="table-scroll"><div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表"><table>
+          <thead><tr><th>候補</th><th>いまのボトルネック(外部同時10)に触れるか</th><th>判定</th></tr></thead>
+          <tbody>
+            <tr><td>Redis キャッシュ(フィード · 統計)</td><td>✗ 読み取りは p50 4ms ですでに速い</td><td>根拠なし</td></tr>
+            <tr><td>Redis キャッシュ(検閲判定)</td><td>△ 同じ本文が繰り返されるときだけ。ユーザー投稿はたいてい一意</td><td>まず重複率を測る</td></tr>
+            <tr><td>キューイング(Redis · Kafka)</td><td>✗ キューは待ちを<strong>移すだけ</strong>で外部上限は上げない</td><td>それ自体では無効</td></tr>
+            <tr><td>書き込みをキューへ</td><td>✗ 書き込みは 8ms</td><td>直すものがない</td></tr>
+            <tr><td><strong>アウトバウンドの同時実行を明示</strong></td><td>✓ 天井を直接上げる</td><td><strong>最優先</strong></td></tr>
+          </tbody>
+        </table></div><p class="table-scroll-hint" aria-hidden="true">→ 表は横にスクロールできます</p></div>
+
+        <p>キューイングについてだけもう一つ書きます。<strong>検閲をキューに逃がすことは実際に何かを変えます。</strong>
+        ただし変わるのは性能ではなく<strong>プロダクトの約束</strong>です。</p>
+
+        <p>ゲートは fail-closed なので、検閲前に投稿が見えてはいけません。ですから取りうる形は
+        <em>「先に公開して後から検閲」</em>ではなく<em>「検閲が終わるまで公開されない非同期ジョブ」</em>です。
+        遅延を<strong>なくす</strong>のではなくリクエストスレッドから<strong>切り離す</strong>だけで、アウトバウンドの
+        上限はそのままです。代わりに状態表示・再試行・重複防止・失敗通知がすべて新しく必要になります。</p>
+
+        <p>そこで<strong>いつその設計が正当になるか</strong>を先に書いておきました。あとで「感覚」で導入しないためです —
+        上限を意図的に上げたあとでも投稿作成 p95 が目標を超えるか、外部 API の p99 が自前のタイムアウトに近づいたら、
+        そのとき非同期にします。</p>
+
+        <h2 id="主張しないこと">この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>本番の数値ではありません。</strong>負荷ツール・アプリ・スタブ・DB が一台で CPU を分け合っています。
+          絶対スループットに意味はなく、比較にだけ意味があります。</li>
+          <li><strong>800ms はスタブに設定した値です。</strong>実際の外部 API の遅延分布ではありません。実際の利得は
+          その分布次第です。</li>
+          <li><strong>条件ごとに1回の実行です。</strong>繰り返して分散を見ていません。</li>
+          <li><strong>3.17倍はこの条件に付随する数字です。</strong>外部呼び出しの遅延と流入の並行度が変われば同じ倍率には
+          なりません。</li>
+          <li><strong><code>max-per-route = 50</code> は実トラフィックで測った値ではありません。</strong>
+          「誰も選んでいない5」を「根拠を書いた50」に替えたもので、実測ができたら決め直します。</li>
+          <li><strong>50 が実際に効くところは見ていません。</strong>この負荷では流入が先に32で縛られます。</li>
+          <li><strong>障害は起きていません。</strong>リリース前の点検で出たもので、運用でこの上限に当たった記録は
+          ありません。</li>
+          <li><strong>AWS SDK や Apache HttpClient を責める記事ではありません。</strong>ライブラリは自分の既定値を
+          持つ自由があります。問題は<strong>その既定値が私のサービスの方針になっていて、誰も知らなかった</strong>という
+          点にあります。</li>
+          <li><strong>まだマージしていません。</strong>セキュリティゲートに触れる経路なので、リポジトリの規約どおり
+          書面レビューが先です。</li>
+        </ul>
+
+        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>まとめるとこうです。</p>
+
+        <ul>
+          <li>スループットがある数字に張り付いて動かないなら、まず<strong>その数字を作った層</strong>を探します。
+          スレッドや DB プールを増やすのはその次です。</li>
+          <li>私が選んでいないライブラリが<strong>私のサービスの並行性の方針</strong>を決めていました。その層は
+          ランタイムのクラスパスにしかないので、<strong>読んでも見つからず、測ってはじめて出てきます。</strong></li>
+          <li>上限を<strong>なくすこと</strong>と<strong>決めること</strong>は違います。スループットは同じだけ上がりますが、
+          一方には数字が書かれていて、もう一方にはありません。</li>
+          <li>設定で直したものは<strong>消しても何も失敗しません。</strong>だからこそ値が付いたということ自体を
+          断言する必要があります。</li>
+        </ul>
+
+        <p>最後に一行だけ残すなら、これです。
+        <strong>誰も選んでいない既定値も、方針のように振る舞います。</strong>
+        ただしそれは誰も責任を負わない方針で、たいていは<strong>測るまで存在にすら気づきません。</strong></p>
+
+        <p>お読みいただきありがとうございました。</p>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script src="../assets/lang.js?v=20260905b"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=20260905"></script>
+  <script defer src="../assets/article.js?v=20260905b"></script>
+</body>
+</html>
