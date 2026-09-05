@@ -168,6 +168,95 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         <strong>병렬 코드에서도 한 줄로 서고, 스레드 풀 자리는 그동안 묶여 있다.</strong> 얻은 것은 없고
         컨텍스트 스위칭과 풀 고갈만 늘었다.</p>
 
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+            <svg viewBox="0 0 720 384" role="img" aria-labelledby="cia-t cia-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="cia-t">computeIfAbsent 안의 외부 호출이 버킷을 잠그는 구조</title>
+              <desc id="cia-d">같은 그룹 ID 를 키로 쓰는 작업 넷이 executor 스레드 넷으로 병렬 제출된다. 네 스레드는 같은 키이므로
+              같은 버킷 하나로 모인다. T1 이 그 버킷을 잡은 채 매핑 함수 안에서 외부 API 를 호출하고, 네트워크 왕복이 끝날
+              때까지 버킷은 잠겨 있다. T2·T3·T4 는 그 앞에서 줄을 서며 그동안 스레드 풀 자리를 계속 점유한다. 다른 키가 속한
+              버킷은 잠기지 않으므로 그쪽 작업은 진행할 수 있다. 매핑 함수는 한 번만 실행되고, 값이 게시되면 대기가 풀린다.
+              즉 호출 횟수가 늘어나는 것이 아니라, 순차 코드에 있던 줄서기가 그대로 남은 채 풀 점유와 컨텍스트 스위칭만
+              추가된다.</desc>
+
+              <g fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5">
+                <rect x="8" y="46" width="188" height="256" rx="8"/>
+                <rect x="278" y="46" width="202" height="256" rx="8"/>
+              </g>
+              <rect x="590" y="140" width="122" height="62" rx="8" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+
+              <g font-size="15" fill="#7b7186">
+                <text x="16" y="34">executor · 스레드 4</text>
+                <text x="286" y="34">ConcurrentHashMap</text>
+                <text x="590" y="34">외부 API</text>
+              </g>
+
+              <!-- 스레드 넷. T1 만 실선 = 호출 중. 나머지는 점선 = 대기하면서 풀 자리를 쥔 상태 -->
+              <rect x="24" y="62" width="156" height="48" rx="6" fill="none" stroke="#3b3344" stroke-width="2"/>
+              <g fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4">
+                <rect x="24" y="122" width="156" height="48" rx="6"/>
+                <rect x="24" y="182" width="156" height="48" rx="6"/>
+                <rect x="24" y="242" width="156" height="48" rx="6"/>
+              </g>
+              <g font-size="15">
+                <text x="38" y="82" fill="#18121d" font-weight="700">T1 · gid=A</text>
+                <text x="38" y="101" fill="#3b3344" font-size="14">호출 중 · 풀 점유</text>
+                <text x="38" y="142" fill="#18121d">T2 · gid=A</text>
+                <text x="38" y="161" fill="#7b7186" font-size="14">대기 · 풀 점유</text>
+                <text x="38" y="202" fill="#18121d">T3 · gid=A</text>
+                <text x="38" y="221" fill="#7b7186" font-size="14">대기 · 풀 점유</text>
+                <text x="38" y="262" fill="#18121d">T4 · gid=A</text>
+                <text x="38" y="281" fill="#7b7186" font-size="14">대기 · 풀 점유</text>
+              </g>
+
+              <!-- 버킷. 잠긴 것은 하나뿐이고, 다른 키의 버킷은 그대로 돌아간다 -->
+              <g font-size="14" fill="#7b7186">
+                <rect x="294" y="62" width="170" height="40" rx="6" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
+                <text x="306" y="87">다른 키 · 진행 가능</text>
+                <rect x="294" y="250" width="170" height="40" rx="6" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
+                <text x="306" y="275">다른 키 · 진행 가능</text>
+              </g>
+              <rect x="294" y="118" width="170" height="116" rx="6" fill="none" stroke="#d62976" stroke-width="3"/>
+              <text x="306" y="143" font-size="15" fill="#18121d" font-weight="700">gid=A 의 버킷 · 잠김</text>
+              <rect x="310" y="156" width="138" height="40" rx="5" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="322" y="181" font-size="14" fill="#18121d">매핑 함수 실행</text>
+              <text x="316" y="224" font-size="14" fill="#7b7186">T2·T3·T4 는 여기서 줄을 선다</text>
+
+              <!-- T1 은 버킷을 잡고 들어간다 -->
+              <path d="M180 86 H 240 V 176 H 304" fill="none" stroke="#3b3344" stroke-width="2" marker-end="url(#cia-a)"/>
+              <!-- 나머지 셋은 같은 버킷 앞으로 모인다 -->
+              <g fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#cia-c)">
+                <path d="M180 146 H 220 V 214 H 286"/>
+                <path d="M180 206 H 236 V 214 H 286"/>
+                <path d="M180 266 H 252 V 214 H 286"/>
+              </g>
+
+              <!-- 잠긴 버킷에서 나가는 외부 호출. 강조색은 "잡혀 있는 것"에만 쓴다 -->
+              <path d="M464 176 H 582" fill="none" stroke="#d62976" stroke-width="3" marker-end="url(#cia-b)"/>
+              <text x="474" y="166" font-size="14" fill="#d62976" font-weight="700">네트워크 왕복</text>
+              <text x="602" y="178" font-size="15" fill="#18121d">그룹 조회</text>
+
+              <g font-size="15" fill="#3b3344">
+                <text x="16" y="332">매핑 함수는 <tspan font-weight="700" fill="#18121d">한 번만</tspan> 실행된다. 값이 게시되면 대기가 풀린다.</text>
+                <text x="16" y="358">늘어난 것은 호출 횟수가 아니라 <tspan font-weight="700" fill="#18121d">풀 점유와 컨텍스트 스위칭</tspan>이고, 줄서기는 그대로 남는다.</text>
+              </g>
+
+              <defs>
+                <marker id="cia-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
+                </marker>
+                <marker id="cia-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+                <marker id="cia-c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#7b7186"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>같은 키의 요청은 버킷 하나에 모인다. 매핑 함수 안의 외부 호출이 그 버킷을 왕복 시간만큼 잡고 있고, 나머지 스레드는 풀 자리를 쥔 채 기다린다. 다른 키의 버킷은 잠기지 않는다.</figcaption>
+        </figure>
+
         <p>그래서 ③은 ②보다 나쁘다. ②는 5초 캐시 덕분에 외부 호출 횟수 자체가 적었고, ③은 캐시가 없어
         모든 요청이 그 잠긴 자리를 통과해야 했다.</p>
 
