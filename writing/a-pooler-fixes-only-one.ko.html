@@ -265,45 +265,58 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
-            <svg viewBox="0 0 720 226" role="img" aria-labelledby="hold-t hold-d" xmlns="http://www.w3.org/2000/svg">
-              <title id="hold-t">수정 전과 수정 후의 커넥션 점유 구간</title>
-              <desc id="hold-d">두 줄 모두 같은 요청의 시간축이고, 아래 괄호가 커넥션을 붙잡고 있는 구간입니다.
-              위는 수정 전입니다. BEGIN 으로 트랜잭션을 열고 SELECT 를 한 뒤, 외부 HTTP 호출을 기다리는 동안 쿼리를 하나도
-              실행하지 않으면서 커넥션을 계속 붙잡습니다. 괄호가 INSERT·COMMIT 까지 요청 전체를 덮습니다.
-              아래는 수정 후입니다. 검증 읽기에서 커넥션을 잠깐 쓰고 반납한 뒤 외부 호출은 커넥션 없이 하고, 쓰기만 짧은
-              트랜잭션으로 묶습니다. 괄호가 양 끝 두 토막으로 나뉘고 가운데는 커넥션을 반납한 상태입니다.</desc>
+            <svg viewBox="0 0 720 256" role="img" aria-labelledby="hold-t hold-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="hold-t">수정 전과 수정 후의 DB 커넥션 점유 구간</title>
+              <desc id="hold-d">두 묶음 모두 같은 요청을 두 줄로 나눠 그린 것입니다. 위 줄은 요청이 하는 일이고 아래 띠는 그동안
+              DB 커넥션을 붙잡고 있는 구간입니다. 수정 전에는 BEGIN·SELECT·외부 HTTP 호출·INSERT·COMMIT 전체에 걸쳐 띠가
+              끊기지 않고 이어집니다. 외부 호출 구간에서는 쿼리를 하나도 실행하지 않는데도 커넥션을 쥐고 있습니다.
+              수정 후에는 띠가 양 끝 두 토막으로 나뉩니다. 검증 읽기에서 한 번, 쓰기 트랜잭션에서 한 번만 커넥션을 쓰고,
+              그 사이 외부 호출 구간에서는 커넥션을 반납한 상태입니다. 가로 폭은 시간에 비례하지 않습니다.</desc>
 
-              <rect x="8" y="36" width="76" height="26" rx="13" fill="none" stroke="#d62976" stroke-width="1.5"/>
-              <text x="46" y="54" font-size="13" fill="#d62976" font-weight="700" text-anchor="middle">수정 전</text>
-              <rect x="100" y="36" width="70" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="135" y="54" font-size="13" fill="#18121d" text-anchor="middle">BEGIN</text>
-              <rect x="174" y="36" width="70" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="209" y="54" font-size="13" fill="#18121d" text-anchor="middle">SELECT</text>
-              <rect x="248" y="36" width="308" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2" stroke-dasharray="5 4"/>
-              <text x="402" y="54" font-size="13" fill="#d62976" font-weight="700" text-anchor="middle">외부 HTTP 호출 · 쿼리 0건 · 최대 10초</text>
-              <rect x="560" y="36" width="68" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="594" y="54" font-size="13" fill="#18121d" text-anchor="middle">INSERT</text>
-              <rect x="632" y="36" width="80" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="672" y="54" font-size="13" fill="#18121d" text-anchor="middle">COMMIT</text>
-              <path d="M100 72 V 80 H 712 V 72" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="100" y="100" font-size="13" fill="#d62976" font-weight="700">커넥션 점유 · 요청 내내</text>
+              <rect x="8" y="42" width="76" height="26" rx="13" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="46" y="60" font-size="13" fill="#d62976" font-weight="700" text-anchor="middle">수정 전</text>
+              <text x="168" y="60" font-size="12" fill="#7b7186" text-anchor="end">요청 처리</text>
+              <rect x="176" y="42" width="64" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="208" y="60" font-size="13" fill="#18121d" text-anchor="middle">BEGIN</text>
+              <rect x="244" y="42" width="68" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="278" y="60" font-size="13" fill="#18121d" text-anchor="middle">SELECT</text>
+              <rect x="316" y="42" width="252" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2" stroke-dasharray="5 4"/>
+              <text x="442" y="60" font-size="13" fill="#d62976" font-weight="700" text-anchor="middle">외부 HTTP 호출 · 쿼리 0건</text>
+              <rect x="572" y="42" width="64" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="604" y="60" font-size="13" fill="#18121d" text-anchor="middle">INSERT</text>
+              <rect x="640" y="42" width="72" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="676" y="60" font-size="13" fill="#18121d" text-anchor="middle">COMMIT</text>
+              <text x="168" y="93" font-size="12" fill="#7b7186" text-anchor="end">DB 커넥션</text>
+              <rect x="176" y="80" width="536" height="16" rx="3" fill="rgba(214,41,118,0.20)" stroke="#d62976" stroke-width="1.5"/>
+              <text x="444" y="93" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">요청이 끝날 때까지 계속 점유</text>
 
-              <rect x="8" y="146" width="76" height="26" rx="13" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
-              <text x="46" y="164" font-size="13" fill="#4f5bd5" font-weight="700" text-anchor="middle">수정 후</text>
-              <rect x="100" y="146" width="150" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="175" y="164" font-size="13" fill="#18121d" text-anchor="middle">검증 읽기</text>
-              <rect x="254" y="146" width="290" height="26" rx="4" fill="none" stroke="#a99fb4" stroke-width="1.5" stroke-dasharray="5 4"/>
-              <text x="399" y="164" font-size="13" fill="#7b7186" text-anchor="middle">외부 HTTP 호출 · 커넥션 없음</text>
-              <rect x="548" y="146" width="164" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="630" y="164" font-size="13" fill="#18121d" text-anchor="middle">BEGIN·INSERT·COMMIT</text>
-              <path d="M100 182 V 190 H 250 V 182" fill="none" stroke="#4f5bd5" stroke-width="2"/>
-              <path d="M548 182 V 190 H 712 V 182" fill="none" stroke="#4f5bd5" stroke-width="2"/>
-              <text x="100" y="210" font-size="13" fill="#4f5bd5" font-weight="700">커넥션 점유</text>
-              <text x="272" y="210" font-size="13" fill="#7b7186">반납한 상태</text>
-              <text x="548" y="210" font-size="13" fill="#4f5bd5" font-weight="700">커넥션 점유</text>
+              <path d="M8 122 H 712" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
+
+              <rect x="8" y="152" width="76" height="26" rx="13" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="46" y="170" font-size="13" fill="#4f5bd5" font-weight="700" text-anchor="middle">수정 후</text>
+              <text x="168" y="170" font-size="12" fill="#7b7186" text-anchor="end">요청 처리</text>
+              <rect x="176" y="152" width="124" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="238" y="170" font-size="13" fill="#18121d" text-anchor="middle">검증 읽기</text>
+              <rect x="304" y="152" width="232" height="26" rx="4" fill="none" stroke="#a99fb4" stroke-width="1.5" stroke-dasharray="5 4"/>
+              <text x="420" y="170" font-size="13" fill="#7b7186" text-anchor="middle">외부 HTTP 호출</text>
+              <rect x="540" y="152" width="172" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="626" y="170" font-size="13" fill="#18121d" text-anchor="middle">BEGIN·INSERT·COMMIT</text>
+              <text x="168" y="203" font-size="12" fill="#7b7186" text-anchor="end">DB 커넥션</text>
+              <rect x="176" y="190" width="124" height="16" rx="3" fill="rgba(79,91,213,0.20)" stroke="#4f5bd5" stroke-width="1.5"/>
+              <rect x="304" y="190" width="232" height="16" rx="3" fill="none" stroke="#a99fb4" stroke-width="1.5" stroke-dasharray="4 4"/>
+              <text x="420" y="203" font-size="12" fill="#7b7186" text-anchor="middle">반납한 상태</text>
+              <rect x="540" y="190" width="172" height="16" rx="3" fill="rgba(79,91,213,0.20)" stroke="#4f5bd5" stroke-width="1.5"/>
+
+              <path d="M176 232 H 706" stroke="#a99fb4" stroke-width="1.2" marker-end="url(#t-ar)"/>
+              <text x="168" y="236" font-size="12" fill="#7b7186" text-anchor="end">시간</text>
+              <defs>
+                <marker id="t-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#a99fb4"/>
+                </marker>
+              </defs>
             </svg>
           </div>
-          <figcaption>두 줄 모두 같은 요청의 시간축입니다. 아래 괄호가 커넥션을 붙잡고 있는 구간이고, 분홍이 수정 전·파랑이 수정 후입니다.</figcaption>
+          <figcaption>묶음마다 위 줄은 요청이 하는 일, 아래 띠는 그동안 DB 커넥션을 붙잡고 있는 구간입니다. 채워진 띠가 점유, 점선이 반납입니다. 가로 폭은 시간에 비례하지 않습니다.</figcaption>
         </figure>
 
         <p>동시에 글을 쓰는 요청이 pool 크기를 넘으면 그 시점부터 커넥션이 없습니다. 여기서 커넥션
