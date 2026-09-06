@@ -2752,6 +2752,7 @@ html[lang="ja"] .container.reading .article-body figure.diagram figcaption::befo
      .callout          참고 상자   본문 흐름에서 빼도 되는 것(예상 독자·점검 목록)  중립 분홍
      .note-card.warn   경고 카드   ⚠️ 로 시작하는 유보·조건                          주황
      .note-card.lock   결정 카드   🔒 로 시작하는 「바꾸면 안 되는 선택」            분홍
+     .wrapup           마무리 상자 「마치며」 한 절. 글 한 편에 하나만                남색
      blockquote        인용        남의 말·가정. 상자가 아니라 왼쪽 세로선만
      .code-window      코드 창     코드와 출력. 검정 창 + 언어 라벨
      그 외 목록·표     상자 없음   본문의 일부다
@@ -2768,6 +2769,34 @@ html[lang="ja"] .container.reading .article-body figure.diagram figcaption::befo
 .article-body .callout > :first-child { margin-top: 0; }
 .article-body .callout > :last-child { margin-bottom: 0; }
 .article-body ul.callout { padding-left: 22px; }
+
+/* ---- 마무리 상자 ---------------------------------------------------------------------------- */
+/* 「마치며」는 한 편에 딱 하나뿐이라 종류를 늘려도 상자가 번식하지 않는다. 색은 남색(#4f5bd5)으로
+   따로 둔다 — 분홍(현재 위치·목차)·보라(레일)·주황(경고)이 이미 뜻을 갖고 있어서, 끝을 알리는
+   자리에 그중 하나를 다시 쓰면 그 색의 뜻이 흐려진다. 도해 안의 남색과는 층이 다르다
+   (그림 안의 색은 그림 안에서만 읽힌다). */
+.article-body .wrapup {
+  --wrap: #4f5bd5;
+  margin: 52px 0 8px;
+  padding: 26px 30px 22px;
+  border-radius: 16px;
+  border: 1px solid rgba(79, 91, 213, 0.24);
+  background: rgba(79, 91, 213, 0.05);
+}
+
+.article-body .wrapup > :first-child { margin-top: 0; }
+.article-body .wrapup > :last-child { margin-bottom: 0; }
+
+/* 상자 안에서는 제목이 상자의 이름 역할을 하므로 위 여백을 상자가 대신 낸다. */
+.container.reading .article-body .wrapup > h2 {
+  margin: 0 0 12px;
+  color: var(--wrap);
+}
+
+/* 글머리 삼각형도 상자 색을 따른다. 상자 안에서 분홍이 남으면 그 분홍만 다른 뜻처럼 보인다. */
+.article-body .wrapup ul:not(.callout):not(.facets) > li::before,
+.article-body .wrapup ul.callout > li::before { border-left-color: var(--wrap); }
+
 
 /* ---- 왼쪽 레일: 관련된 것들 -------------------------------------------------------------- */
 .article-aside .aside-label,

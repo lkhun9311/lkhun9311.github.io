@@ -15,7 +15,7 @@
   <meta property="og:title" content="워밍업이란? | Kwanghun Lee" />
   <meta property="og:description" content="측정 앞부분을 버리는 구간. 그 구간은 정상 상태가 아니다." />
   <meta property="og:locale" content="ko_KR" />
-  <link rel="stylesheet" href="../assets/styles.css?v=855b1948be" />
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
 </head>
 <body>
   <div class="topbar">
@@ -70,7 +70,7 @@
         </nav>
       <article class="article-body">
 
-        <p class="term-oneline">측정 <strong>앞부분을 버리는 구간</strong>입니다. JIT 컴파일·커넥션 풀 채움·캐시가 비어 있는 상태는 정상 상태가 아니므로, 그 구간을 섞으면 두 실행의 차이가 워밍업 길이의 차이로 나타납니다.</p>
+        <p class="term-oneline">측정 <strong>앞부분을 버리는 구간</strong>입니다. JIT 컴파일·connection pool 채움·cache가 비어 있는 상태는 정상 상태가 아니므로, 그 구간을 섞으면 두 실행의 차이가 워밍업 길이의 차이로 나타납니다.</p>
 
 
         <h2 id="원인">무엇이 앞부분을 다르게 만드나<a class="anchor" href="#원인" aria-label="이 절로 가는 링크">#</a></h2>
@@ -78,8 +78,8 @@
 
         <ul>
           <li><strong>JIT 컴파일</strong> — 처음엔 인터프리터로 돌다가 자주 호출되는 코드부터 기계어로 컴파일됩니다. 초반은 느립니다.</li>
-          <li><strong>커넥션 풀 채움</strong> — 풀이 최소 크기에서 시작하면 초반 요청이 커넥션을 새로 여는 비용을 냅니다.</li>
-          <li><strong>캐시·버퍼</strong> — DB 버퍼 캐시가 비어 있으면 초반 쿼리는 디스크를 읽습니다.</li>
+          <li><strong>connection pool 채움</strong> — pool이 최소 크기에서 시작하면 초반 요청이 connection을 새로 여는 비용을 냅니다.</li>
+          <li><strong>cache·버퍼</strong> — DB 버퍼 cache가 비어 있으면 초반 쿼리는 디스크를 읽습니다.</li>
         </ul>
         <h2 id="길이">얼마나 버리나<a class="anchor" href="#길이" aria-label="이 절로 가는 링크">#</a></h2>
         <p>정답은 없고, <strong>지표가 평평해질 때까지</strong>가 원칙입니다. 짧은 실행에서는 30초 정도가 흔한 출발점입니다.</p>
@@ -89,12 +89,12 @@
 
         <h2 id="쓰인-곳">이 사이트에서 쓰인 곳<a class="anchor" href="#쓰인-곳" aria-label="이 절로 가는 링크">#</a></h2>
         <ul>
-          <li><a href="../writing/a-pooler-fixes-only-one.ko.html">RDS Proxy 로는 못 고치는 커넥션 고갈</a></li>
+          <li><a href="../writing/a-pooler-fixes-only-one.ko.html">RDS Proxy 로는 못 고치는 connection 고갈</a></li>
           </ul>
 
         <h2 id="함께-볼-용어">함께 볼 용어<a class="anchor" href="#함께-볼-용어" aria-label="이 절로 가는 링크">#</a></h2>
         <ul>
-          <li><a href="load-test-harness.html">하네스</a> — 워밍업을 인자로 받는 쪽</li>
+          <li><a href="load-test-harness.html">harness</a> — 워밍업을 인자로 받는 쪽</li>
           <li><a href="percentile.html">p50 · p95 · p99</a> — 워밍업이 왜곡하는 값</li>
           </ul>
 
@@ -107,7 +107,7 @@
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/content.js?v=b5b22e76cb"></script>
+  <script src="../assets/content.js?v=6a34c005d2"></script>
   <script src="../assets/lang.js?v=2d9c133fc2"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

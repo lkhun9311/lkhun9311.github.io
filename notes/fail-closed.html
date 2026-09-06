@@ -15,7 +15,7 @@
   <meta property="og:title" content="fail-closed 란? | Kwanghun Lee" />
   <meta property="og:description" content="고장 났을 때 막는 쪽으로 넘어지는 설계. 반대는 fail-open." />
   <meta property="og:locale" content="ko_KR" />
-  <link rel="stylesheet" href="../assets/styles.css?v=855b1948be" />
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
 </head>
 <body>
   <div class="topbar">
@@ -64,7 +64,7 @@
           <ul>
             <li><a href="#방향">어느 쪽으로 넘어질 것인가</a></li>
             <li><a href="#대가">대가</a></li>
-            <li><a href="#조용함">조용한 fail-open 이 제일 위험하다</a></li>
+            <li><a href="#조용함">조용한 fail-open이 제일 위험하다</a></li>
             <li><a href="#쓰인-곳">이 사이트에서 쓰인 곳</a></li>
             <li><a href="#함께-볼-용어">함께 볼 용어</a></li>
           </ul>
@@ -75,33 +75,33 @@
 
 
         <h2 id="방향">어느 쪽으로 넘어질 것인가<a class="anchor" href="#방향" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>콘텐츠 검열 API 가 응답하지 않을 때 두 가지 선택이 있습니다.</p>
+        <p>콘텐츠 검열 API가 응답하지 않을 때 두 가지 선택이 있습니다.</p>
 
         <ul>
           <li><strong>fail-closed</strong> — 게시를 막는다. 사용자는 "잠시 후 다시 시도해 주세요"를 봅니다.</li>
           <li><strong>fail-open</strong> — 그냥 게시한다. 검열되지 않은 콘텐츠가 나갑니다.</li>
         </ul>
 
-        <p>안전이 걸린 곳은 fail-closed 가 기본이어야 합니다. 검열기가 죽었을 때 유해 콘텐츠가 통과하는 쪽이,
+        <p>안전이 걸린 곳은 fail-closed가 기본이어야 합니다. 검열기가 죽었을 때 유해 콘텐츠가 통과하는 쪽이,
         정상 글이 잠깐 막히는 쪽보다 훨씬 비쌉니다.</p>
         <h2 id="대가">대가<a class="anchor" href="#대가" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>fail-closed 는 <strong>외부 의존성의 장애가 곧 우리 기능의 장애</strong>가 된다는 뜻입니다.
-        검열 API 가 느려지면 글쓰기가 느려지고, 죽으면 글쓰기가 죽습니다.</p>
+        <p>fail-closed는 <strong>외부 의존성의 장애가 곧 우리 기능의 장애</strong>가 된다는 뜻입니다.
+        검열 API가 느려지면 글쓰기가 느려지고, 죽으면 글쓰기가 죽습니다.</p>
 
-        <p>그래서 fail-closed 를 고른 순간 그 외부 호출의 <strong>타임아웃·동시 실행 상한·재시도</strong>가
+        <p>그래서 fail-closed를 고른 순간 그 외부 호출의 <strong>timeout·동시 실행 상한·재시도</strong>가
         전부 제품 문제가 됩니다. "안전하니까 괜찮다"로 끝나지 않습니다.</p>
-        <h2 id="조용함">조용한 fail-open 이 제일 위험하다<a class="anchor" href="#조용함" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>의도한 fail-open 보다 나쁜 것은 <strong>fail-closed 인 줄 알았는데 실제로는 열려 있는</strong> 경우입니다.</p>
+        <h2 id="조용함">조용한 fail-open이 제일 위험하다<a class="anchor" href="#조용함" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>의도한 fail-open보다 나쁜 것은 <strong>fail-closed 인 줄 알았는데 실제로는 열려 있는</strong> 경우입니다.</p>
 
         <p>전형적인 형태: 예외를 잡아서 로그도 안 남기고 삼키는 코드입니다. 겉보기엔 게이트가 있고, 통과율도
         정상이고, 아무도 이상을 못 느낍니다. 실제로 이 리포에서 검열 클라이언트의
         <code>catch (e: Exception)</code> 이 원인을 통째로 삼켜, 장애 진단이 크게 늦어진 일이 있었습니다.</p>
 
-        <p><strong>fail-closed 는 맞지만 원인은 남겨야 합니다.</strong> 막는 것과 조용한 것은 다른 결정입니다.</p>
+        <p><strong>fail-closed는 맞지만 원인은 남겨야 합니다.</strong> 막는 것과 조용한 것은 다른 결정입니다.</p>
 
         <h2 id="쓰인-곳">이 사이트에서 쓰인 곳<a class="anchor" href="#쓰인-곳" aria-label="이 절로 가는 링크">#</a></h2>
         <ul>
-          <li><a href="../writing/a-pooler-fixes-only-one.ko.html">RDS Proxy 로는 못 고치는 커넥션 고갈</a></li>
+          <li><a href="../writing/a-pooler-fixes-only-one.ko.html">RDS Proxy 로는 못 고치는 connection 고갈</a></li>
           </ul>
 
         <h2 id="함께-볼-용어">함께 볼 용어<a class="anchor" href="#함께-볼-용어" aria-label="이 절로 가는 링크">#</a></h2>
@@ -118,7 +118,7 @@
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/content.js?v=b5b22e76cb"></script>
+  <script src="../assets/content.js?v=6a34c005d2"></script>
   <script src="../assets/lang.js?v=2d9c133fc2"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

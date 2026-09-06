@@ -185,66 +185,66 @@
       },
       items: [
         {
-          title: "Harness: 하네스란?",
+          title: "Harness",
           url: "notes/load-test-harness.html",
           date: "2026-09", dateLabel: "Sep 2026",
-          desc: "하네스는 부하를 만들어 걸고 결과를 같은 방식으로 반복 측정할 수 있게 묶어 둔 도구 모음입니다.",
+          desc: "부하를 만들어 걸고 결과를 같은 방식으로 반복 측정할 수 있게 묶어 둔 도구 모음.",
           tags: ["Harness", "Performance"]
         },
         {
-          title: "Percentile: p50 · p95 · p99 란?",
+          title: "Percentile",
           url: "notes/percentile.html",
           date: "2026-09", dateLabel: "Sep 2026",
-          desc: "응답시간을 줄 세웠을 때 특정 위치의 값. p95 는 5%가 그보다 느렸다는 뜻입니다.",
+          desc: "p50 · p95 · p99. 응답시간을 줄 세웠을 때 특정 위치의 값. p95는 5%가 그보다 느렸다는 뜻.",
           tags: ["Percentile", "Performance"]
         },
         {
-          title: "Connection Pooler: 커넥션 풀러란?",
+          title: "Connection Pooler",
           url: "notes/connection-pooler.html",
           date: "2026-09", dateLabel: "Sep 2026",
-          desc: "앱 커넥션 수천 개를 DB 커넥션 수십 개로 묶어 주는 중간 서버. RDS Proxy·PgBouncer 등.",
+          desc: "앱 connection 수천 개를 DB connection 수십 개로 묶어 주는 중간 서버. RDS Proxy·PgBouncer 등.",
           tags: ["Connection Pooler", "Database"]
         },
         {
-          title: "Transaction Pooling: 트랜잭션 풀링이란?",
+          title: "Transaction Pooling",
           url: "notes/transaction-pooling.html",
           date: "2026-09", dateLabel: "Sep 2026",
-          desc: "커넥션 풀러가 트랜잭션 단위로 커넥션을 빌려주고 돌려받는 방식.",
+          desc: "connection pooler가 transaction 단위로 connection을 빌려주고 돌려받는 방식.",
           tags: ["Transaction Pooling", "Database"]
         },
         {
-          title: "Connection Pool: 커넥션 풀이란?",
+          title: "Connection Pool",
           url: "notes/connection-pool.html",
           date: "2026-09", dateLabel: "Sep 2026",
-          desc: "앱이 DB 커넥션을 재사용하려고 들고 있는 목록. Spring Boot 기본은 HikariCP.",
+          desc: "앱이 DB connection을 재사용하려고 들고 있는 목록. Spring Boot 기본은 HikariCP.",
           tags: ["Connection Pool", "Database"]
         },
         {
-          title: "Mutation Testing: 뮤테이션 테스트란?",
+          title: "Mutation Testing",
           url: "notes/mutation-testing.html",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "코드를 일부러 망가뜨린 뒤 테스트가 빨간불이 되는지 보는 방법.",
           tags: ["Mutation Testing", "Verification"]
         },
         {
-          title: "Fail-closed: fail-closed 란?",
+          title: "Fail-closed",
           url: "notes/fail-closed.html",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "고장 났을 때 막는 쪽으로 넘어지는 설계. 반대는 fail-open.",
           tags: ["Fail-closed", "Design"]
         },
         {
-          title: "Warm-up: 워밍업이란?",
+          title: "Warm-up",
           url: "notes/warmup.html",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "측정 앞부분을 버리는 구간. 그 구간은 정상 상태가 아니다.",
           tags: ["Warm-up", "Performance"]
         },
         {
-          title: "Arm: arm(대조군)이란?",
+          title: "Arm",
           url: "notes/arm.html",
           date: "2026-09", dateLabel: "Sep 2026",
-          desc: "비교 실험에서 한 갈래의 실행. 한 변수만 다르고 나머지는 같아야 한다.",
+          desc: "대조군. 비교 실험에서 한 갈래의 실행. 한 변수만 다르고 나머지는 같아야 한다.",
           tags: ["Arm", "Performance"]
         },
         {

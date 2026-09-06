@@ -9,13 +9,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
   <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
-  <meta name="description" content="응답시간을 줄 세웠을 때 특정 위치의 값. p95 는 5%가 그보다 느렸다는 뜻입니다." />
+  <meta name="description" content="응답시간을 줄 세웠을 때 특정 위치의 값. p95는 5%가 그보다 느렸다는 뜻입니다." />
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="p50 · p95 · p99 란? | Kwanghun Lee" />
-  <meta property="og:description" content="응답시간을 줄 세웠을 때 특정 위치의 값. p95 는 5%가 그보다 느렸다는 뜻입니다." />
+  <meta property="og:description" content="응답시간을 줄 세웠을 때 특정 위치의 값. p95는 5%가 그보다 느렸다는 뜻입니다." />
   <meta property="og:locale" content="ko_KR" />
-  <link rel="stylesheet" href="../assets/styles.css?v=855b1948be" />
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
 </head>
 <body>
   <div class="topbar">
@@ -81,7 +81,7 @@
         <p>그 한 명은 매번 다른 사람이고, 요청을 여러 번 하는 사용자는 결국 그 구간을 만납니다. 그래서 사용자 경험은
         평균이 아니라 <strong>꼬리(tail)</strong>가 정합니다.</p>
         <h2 id="계산">계산 방식이 두 가지다<a class="anchor" href="#계산" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>같은 데이터로도 도구마다 p95 가 다르게 나옵니다. 정의가 다르기 때문입니다.</p>
+        <p>같은 데이터로도 도구마다 p95가 다르게 나옵니다. 정의가 다르기 때문입니다.</p>
 
         <ul>
           <li><strong>최근접 순위(nearest-rank)</strong> — 정렬된 표본에서 <code>ceil(0.95 × N)</code> 번째 값을 그냥 씁니다.
@@ -90,26 +90,26 @@
         </ul>
 
         <p>둘을 섞어 비교하면 정의가 다른 값을 견주게 됩니다. 그래서 요약기는 <strong>한 가지만 쓰고 그 사실을 출력에
-        같이 적습니다.</strong> 예: 표본이 1..20 일 때 최근접 순위 p95 는 <code>ceil(19) = 19</code> 번째 값 = 19 입니다.</p>
+        같이 적습니다.</strong> 예: 표본이 1..20 일 때 최근접 순위 p95는 <code>ceil(19) = 19</code> 번째 값 = 19 입니다.</p>
         <h2 id="어디">어디를 봐야 하나<a class="anchor" href="#어디" aria-label="이 절로 가는 링크">#</a></h2>
-        <p><strong>p50 은 "보통 이렇다", p95·p99 는 "나쁠 때 이렇다"</strong> 입니다. 둘을 같이 봐야 합니다.</p>
+        <p><strong>p50은 "보통 이렇다", p95·p99는 "나쁠 때 이렇다"</strong> 입니다. 둘을 같이 봐야 합니다.</p>
 
-        <p>p50 과 p95 가 거의 같으면 시스템이 <strong>안정적</strong>입니다(모든 요청이 비슷하게 처리됨).
-        p50 은 낮은데 p95 가 훨씬 크면 <strong>대기열</strong>이 있다는 신호입니다 — 대부분은 빨리 처리되지만 일부가
+        <p>p50과 p95가 거의 같으면 시스템이 <strong>안정적</strong>입니다(모든 요청이 비슷하게 처리됨).
+        p50은 낮은데 p95가 훨씬 크면 <strong>대기열</strong>이 있다는 신호입니다 — 대부분은 빨리 처리되지만 일부가
         줄을 서고 있는 것입니다.</p>
 
-        <p>실제 예: 커넥션 풀이 고갈된 실행에서 피드 조회 p50 이 4ms 에서 6,047ms 로 갔는데
+        <p>실제 예: connection pool이 고갈된 실행에서 피드 조회 p50이 4ms에서 6,047ms 로 갔는데
         <strong>오류율은 0%</strong> 였습니다. 실패가 아니라 <strong>대기</strong>였기 때문입니다. 오류율만 보면
         아무 문제가 없어 보입니다.</p>
 
         <h2 id="쓰인-곳">이 사이트에서 쓰인 곳<a class="anchor" href="#쓰인-곳" aria-label="이 절로 가는 링크">#</a></h2>
         <ul>
-          <li><a href="../writing/a-pooler-fixes-only-one.ko.html">RDS Proxy 로는 못 고치는 커넥션 고갈</a></li>
+          <li><a href="../writing/a-pooler-fixes-only-one.ko.html">RDS Proxy 로는 못 고치는 connection 고갈</a></li>
           </ul>
 
         <h2 id="함께-볼-용어">함께 볼 용어<a class="anchor" href="#함께-볼-용어" aria-label="이 절로 가는 링크">#</a></h2>
         <ul>
-          <li><a href="load-test-harness.html">하네스</a> — 이 값을 만들어 내는 도구</li>
+          <li><a href="load-test-harness.html">harness</a> — 이 값을 만들어 내는 도구</li>
           <li><a href="warmup.html">워밍업</a> — 이 값을 왜곡하는 구간</li>
           </ul>
 
@@ -122,7 +122,7 @@
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/content.js?v=b5b22e76cb"></script>
+  <script src="../assets/content.js?v=6a34c005d2"></script>
   <script src="../assets/lang.js?v=2d9c133fc2"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="2,255 커밋을 건너뛰는 버전 이관. 문서 추론으로는 어디서 깨질지 알 수 없어 격리 환경에 옛 버전을 세우고 한 번 깨뜨려 봤다. 그러자 내 앞선 문서 세 편의 전제가 틀렸다는 게 나왔다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=855b1948be" />
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
 </head>
 <body>
   <div class="topbar">
@@ -111,7 +111,7 @@
         <h2 id="같은-것인지부터">같은 것인지부터 확인했다<a class="anchor" href="#같은-것인지부터" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>재현을 하려면 출발점이 있어야 한다. 그런데 현장에 전달된 구버전 릴리스본이 <strong>두 벌</strong>이었다.
-        받은 시점이 다섯 달 넘게 차이 났다(2025-10-31 과 2026-04-15, 166일). 어느 쪽을 기준선으로 쓸지 고르기 전에, 두 벌이 같은 것인지부터 봤다.</p>
+        받은 시점이 다섯 달 넘게 차이 났다(2025-10-31과 2026-04-15, 166일). 어느 쪽을 기준선으로 쓸지 고르기 전에, 두 벌이 같은 것인지부터 봤다.</p>
 
 <pre><code>diff -rq  &lt;릴리스본 A&gt;  &lt;릴리스본 B&gt;      # 차이 없음 (exit 0)
 find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</code></pre>
@@ -125,18 +125,18 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
 
         <h2 id="날짜순을-믿지-않았다">날짜순 정렬을 믿지 않았다<a class="anchor" href="#날짜순을-믿지-않았다" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>다음은 델타를 특정하는 일이다. 구버전 baseline 에 어떤 패치가 이미 들어 있고 무엇이 빠져 있는지를 알아야
+        <p>다음은 델타를 특정하는 일이다. 구버전 baseline에 어떤 패치가 이미 들어 있고 무엇이 빠져 있는지를 알아야
         한다. baseline 스키마에서 마커 테이블의 존재 여부를 하나씩 확인했다.</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
         <table>
-          <caption class="sr-only">구버전 baseline 에 존재하는 마커 테이블과 그 의미.</caption>
+          <caption class="sr-only">구버전 baseline에 존재하는 마커 테이블과 그 의미.</caption>
           <thead><tr><th scope="col">마커</th><th scope="col">baseline</th><th scope="col">의미</th></tr></thead>
           <tbody>
             <tr><td>설정 테이블</td><td>있음</td><td>—</td></tr>
-            <tr><td>차단 목록</td><td>있음</td><td>10월 패치가 baseline 에 포함돼 있다</td></tr>
+            <tr><td>차단 목록</td><td>있음</td><td>10월 패치가 baseline에 포함돼 있다</td></tr>
             <tr><td>스케줄러 테이블</td><td><strong>없음</strong></td><td>7월 배치 패치가 미적용</td></tr>
             <tr><td>배치 잡 정보</td><td><strong>없음</strong></td><td>신규 패치 하나가 이걸 참조한다 — <strong>선행 없이는 실패</strong></td></tr>
           </tbody>
@@ -144,9 +144,9 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
         </div>
         </div>
 
-        <p>여기서 걸린 것이 하나 있다. baseline 에 <strong>10월 패치는 있는데 그 앞의 7·8월 패치는 없었다.</strong></p>
+        <p>여기서 걸린 것이 하나 있다. baseline에 <strong>10월 패치는 있는데 그 앞의 7·8월 패치는 없었다.</strong></p>
 
-        <p>즉 baseline 은 어느 날짜까지 자른 스냅숏이 아니라 <strong>큐레이션</strong>이다. 누군가가 그 라인에
+        <p>즉 baseline은 어느 날짜까지 자른 스냅숏이 아니라 <strong>큐레이션</strong>이다. 누군가가 그 라인에
         필요하다고 판단한 것만 골라 담은 것이다. 그러면 "날짜순으로 정렬해서 그 뒤 것을 순서대로 적용한다"는
         방침은 <strong>안전을 전혀 보장하지 않는다.</strong> 이미 들어간 것을 다시 넣거나, 앞서 들어갔어야 할 것을
         건너뛰게 된다.</p>
@@ -155,7 +155,7 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
         결론냈다. 이것이 재현 스크립트를 만든 직접적인 이유다.</p>
 
         <p>덧붙여, 실사 과정에서 이전 문서가 "확인 필요"로 남겨둔 항목 하나가 해소됐다. 구버전 릴리스본의 패치
-        폴더에 중간 버전 마이그레이션 SQL 이 <strong>아예 없었다</strong> — 즉 그 마이그레이션은 미포함이고,
+        폴더에 중간 버전 마이그레이션 SQL이 <strong>아예 없었다</strong> — 즉 그 마이그레이션은 미포함이고,
         상위 버전으로 올릴 때 델타에 반드시 들어가야 하며, 날짜상 가장 앞서므로 <strong>최우선으로
         선적용</strong>해야 했다.</p>
 
@@ -163,14 +163,14 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
 
         <p>그다음에 공식 마이그레이션 가이드를 정독했다. 그리고 이 문장을 만났다.</p>
 
-        <blockquote><p>이 가이드는 <strong>패치를 순차 적용하는 것이 아니라, 신규 DB 를 재구축하고 데이터를
+        <blockquote><p>이 가이드는 <strong>패치를 순차 적용하는 것이 아니라, 신규 DB를 재구축하고 데이터를
         이관하는</strong> 방식이다.</p></blockquote>
 
         <p>내가 앞서 쓴 문서 세 편은 전부 <strong>"패치를 순서대로 적용한다"</strong>를 전제로 하고 있었다.
         델타 목록을 만들고, 순서를 정하고, 멱등성을 따지고 있었다. 그 작업 전체가 <strong>다른 방식의 절차</strong>
         였다.</p>
 
-        <p>델타 실사가 무의미해진 것은 아니다. 어느 패치가 baseline 에 들어 있는지는 재구축 후 이관에서도 필요한
+        <p>델타 실사가 무의미해진 것은 아니다. 어느 패치가 baseline에 들어 있는지는 재구축 후 이관에서도 필요한
         정보다. 무의미해진 것은 <strong>"패치를 순서대로 적용하면 도착한다"는 결론</strong> 쪽이다.</p>
 
         <p>세 편을 지우지 않고 <strong>각각에 정정 표기를 달았다.</strong> 지우면 왜 그렇게 생각했는지가 사라지고,
@@ -182,7 +182,7 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
 
         <h2 id="일부러-부정확하게">일부러 부정확하게 만든 부분<a class="anchor" href="#일부러-부정확하게" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>재현은 원샷 스크립트로 만들었다. 격리된 포트에 DB 를 띄우고 옛 버전을 세운 뒤, 백업하고, 신규 버전을
+        <p>재현은 원샷 스크립트로 만들었다. 격리된 포트에 DB를 띄우고 옛 버전을 세운 뒤, 백업하고, 신규 버전을
         재구축하고, 데이터를 이관하고, 버전을 갱신하고, 검증한다.</p>
 
 <pre><code>격리 DB 기동
@@ -200,7 +200,7 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
         <p>이건 정확한 이관이 아니다. 그게 <strong>의도</strong>였다. 이 스크립트의 목적은 정확히 옮기는 것이 아니라
         <strong>어느 테이블이 깨지는지 드러내는 것</strong>이다. 스키마 드리프트를 흡수하고 넘어가되, 실패한
         테이블은 로그에 남는다. 그러면 <strong>FAIL 로그가 스키마 갭의 후보 목록</strong>이 된다.
-        완전한 목록은 아니다 — 대상에 없는 테이블은 SKIP 으로 지나가고, <code>INSERT IGNORE</code> 는 컬럼 누락과
+        완전한 목록은 아니다 — 대상에 없는 테이블은 SKIP으로 지나가고, <code>INSERT IGNORE</code> 는 컬럼 누락과
         형 변환 경고를 실패로 만들지 않고 흡수한다. 드러나는 것은 <em>깨지는 것</em>이지 <em>다른 것 전부</em>가
         아니다.</p>
 
@@ -241,8 +241,8 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
 
         <h2 id="재현할-수-없는-영역">재현할 수 없는 영역을 숨기지 않았다<a class="anchor" href="#재현할-수-없는-영역" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>로컬에는 OpenStack 과 그 인증 CLI 가 없다. 그래서 인증 개편과 얽힌 부분 — 계정·역할 테이블 생성,
-        사용자 식별자를 UUID 에서 이름으로 바꾸는 변환, 서비스 계정 점검 — 은 <strong>재현할 수 없었다.</strong></p>
+        <p>로컬에는 OpenStack과 그 인증 CLI가 없다. 그래서 인증 개편과 얽힌 부분 — 계정·역할 테이블 생성,
+        사용자 식별자를 UUID에서 이름으로 바꾸는 변환, 서비스 계정 점검 — 은 <strong>재현할 수 없었다.</strong></p>
 
         <p>여기서 선택지가 둘이다. 그 단계를 스크립트에서 빼고 "전 구간 성공"이라고 쓰거나, 남겨 두고 못 했다고
         말하거나.</p>
@@ -258,7 +258,7 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
         <h2 id="그리고-하나가-터졌다">그리고 실제로 하나가 터졌다<a class="anchor" href="#그리고-하나가-터졌다" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>준비 기간에 커스터마이징 브랜치를 원격 최신으로 올렸다. 39 커밋이 한꺼번에 들어왔고,
-        <strong>WAS 가 기동 즉시 종료됐다.</strong> Tomcat 컨텍스트 초기화에서 캐시 빈 생성에 실패하며 프로세스가
+        <strong>WAS가 기동 즉시 종료됐다.</strong> Tomcat 컨텍스트 초기화에서 cache 빈 생성에 실패하며 프로세스가
         <code>exit 1</code> 로 죽었다.</p>
 
 <pre><code>No enum constant ConfigureKey.FEATURE_SETTINGS
@@ -266,23 +266,23 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
 BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → configures findAll</code></pre>
 
         <p>스택트레이스에서 호출 경로를 역추적해 enum 변환 지점을 찾고, git 이력에서 원인 커밋을 특정했다.
-        어떤 기능을 롤백하면서 <strong>enum 상수와 패치 SQL 과 초기 데이터 행을 전부 지운</strong> 커밋이었다.</p>
+        어떤 기능을 롤백하면서 <strong>enum 상수와 패치 SQL과 초기 데이터 행을 전부 지운</strong> 커밋이었다.</p>
 
-        <p>코드는 enum 을 지웠다. 그런데 <strong>기존 DB 에는 그 값을 가진 행이 남아 있었다.</strong> 부팅 시
-        ORM 이 그 행을 enum 으로 매핑하려다 실패하고, 컨텍스트 로드가 실패하면 기동 자체가 불가능하다.</p>
+        <p>코드는 enum을 지웠다. 그런데 <strong>기존 DB에는 그 값을 가진 행이 남아 있었다.</strong> 부팅 시
+        ORM이 그 행을 enum으로 매핑하려다 실패하고, 컨텍스트 로드가 실패하면 기동 자체가 불가능하다.</p>
 
         <p>중요한 것은 그다음이다. 이런 결함은 <strong>재기동마다 하나씩</strong> 터진다. 첫 지뢰를 제거하면 다음
         지뢰가 나온다. 그래서 로컬 DB 세 개를 코드의 enum 상수와 <strong>전수 대조</strong>해서, 남아 있는 stale
         키가 그 하나뿐임을 먼저 확정하고 지웠다.</p>
 
         <p>이 사건의 값어치는 <code>DELETE</code> 한 줄이 아니다. 이걸 추적하는 과정에서
-        <strong>현장 배포 절차서의 결함 세 건</strong>이 드러났다.</p>
+        <strong>현장 배포 절차서의 결함 3건</strong>이 드러났다.</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
         <table>
-          <caption class="sr-only">현장 배포 절차서에서 발견해 정정한 결함 세 건.</caption>
+          <caption class="sr-only">현장 배포 절차서에서 발견해 정정한 결함 3건.</caption>
           <thead><tr><th scope="col">결함</th><th scope="col">현장에서 그대로 했다면</th></tr></thead>
           <tbody>
             <tr><td><strong>존재하지 않는 패치 파일을 적용하라</strong>고 지시 (롤백돼서 타깃 릴리스에 없다)</td><td>파일을 못 찾아 그 자리에서 멈춘다</td></tr>
@@ -293,7 +293,7 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
         </div>
         </div>
 
-        <p>세 건 모두 문서를 읽어서가 아니라 <strong>실제로 한 번 실패해 봐서</strong> 나왔다. 절차서는 그때까지
+        <p>3건 모두 문서를 읽어서가 아니라 <strong>실제로 한 번 실패해 봐서</strong> 나왔다. 절차서는 그때까지
         내부적으로 일관돼 보였다. 존재하지 않는 파일을 지시하고 있다는 것은 그 파일을 찾으러 갈 때 알게 된다.</p>
 
         <h2 id="세어서-답했다">"신규 설치가 편하지 않나"에 세어서 답했다<a class="anchor" href="#세어서-답했다" aria-label="이 절로 가는 링크">#</a></h2>
@@ -306,7 +306,7 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
 
         <p>지워지는 것은 과금·미터링 누적 이력과 감사·작업 이력이다. 둘 다 <strong>재계산이 불가능하다.</strong>
         원천 이벤트가 남아 있지 않으므로 백업본에서 옮기는 경로 말고는 되살릴 방법이 없다. 반면 VM·볼륨·네트워크
-        같은 실제 자원은 이 포털이 아니라 OpenStack 이 소유하고, 포털은 그것을 API 로 다시 동기화하므로
+        같은 실제 자원은 이 포털이 아니라 OpenStack이 소유하고, 포털은 그것을 API 로 다시 동기화하므로
         <strong>애초에 걱정 대상이 아니었다.</strong></p>
 
         <p>남은 반론은 "그래도 이관이 어렵지 않나"였다. 그건 실측으로 답했다. 보존해야 할 테이블 전부에 대해
@@ -349,8 +349,8 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
           후속 과제로 문서에 남겼고, 그건 하지 않았다.</li>
           <li><strong>공통 컬럼 교집합 복사는 정확한 이관 방법이 아니다.</strong> 스모크 테스트용으로 일부러
           그렇게 만든 것이고, 정확한 컬럼 매핑은 가이드의 표를 따라야 한다.</li>
-          <li><strong>인증 개편 구간은 검증되지 않았다.</strong> 로컬에 OpenStack 인증 CLI 가 없어 재현할 수
-          없었고, 스크립트가 그 자리에 SKIP/WARN 을 남긴다.</li>
+          <li><strong>인증 개편 구간은 검증되지 않았다.</strong> 로컬에 OpenStack 인증 CLI가 없어 재현할 수
+          없었고, 스크립트가 그 자리에 SKIP/WARN을 남긴다.</li>
           <li><strong>컬럼 변화 0은 컬럼의 추가·삭제가 없었다는 뜻</strong>이고, 그 두 버전 사이의 사실이다.
           타입·길이·순서·nullability·기본값·키·FK·트리거까지 같다는 뜻이 아니며, 어디까지 비교했는지는
           이 글의 근거로 확인하지 않았다. 이 제품의 이력 테이블이 원래 안 변한다는 뜻도 아니다.</li>
@@ -358,9 +358,9 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
 
         <p>남는 한 줄은 이것이다. <strong>문서만 읽어서 알게 된 것은 하나뿐이었다</strong> — 방식이 패치 적용이
         아니라 재구축과 이관이라는 것. 그리고 그것조차 처음 훑을 때는 놓쳤고, 절차 목록이 아니라 개요를 읽고서야
-        걸렸다. 나머지는 전부 — 릴리스본이 같다는 것도, baseline 이 날짜 컷이 아니라는 것도, 절차서가 없는 파일을
+        걸렸다. 나머지는 전부 — 릴리스본이 같다는 것도, baseline이 날짜 컷이 아니라는 것도, 절차서가 없는 파일을
         가리킨다는 것도 — 실제로 무언가를 확인하다가 나왔다. 방식이 다르다는 것 하나는 문서를 <em>정독해서</em> 알았는데, 그것도 처음 훑을 때는
-        놓쳤던 것이다. 운영 DB 는 처음 시도하기에 가장 비싼 장소다.</p>
+        놓쳤던 것이다. 운영 DB는 처음 시도하기에 가장 비싼 장소다.</p>
 
       </article>
     </main>
@@ -371,7 +371,7 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/content.js?v=b5b22e76cb"></script>
+  <script src="../assets/content.js?v=6a34c005d2"></script>
   <script src="../assets/lang.js?v=2d9c133fc2"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=44326158d4"></script>
