@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="콘텐츠 검열 경로의 처리량이 6.27 req/s 에서 안 올라갔습니다. 쓰기를 4배로 올려도 DB 풀을 3배로 키워도 그대로였습니다. 원인은 S3 를 쓰려고 넣은 AWS SDK 가 끌고 들어온 HTTP 클라이언트의 기본값 5 였고, 그 층은 컴파일 클래스패스에 없어서 읽어서는 찾을 수 없었습니다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=bd26161b1e" />
+  <link rel="stylesheet" href="../assets/styles.css?v=feb953573a" />
 </head>
 <body>
   <div class="topbar">
@@ -69,10 +69,11 @@
     <main>
       <div class="hero-top">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
-        <div class="article-meta">2026년 9월<span class="source-tag commercial notranslate">사업화 프로젝트</span></div>
+        <div class="article-meta"><span class="source-tag commercial notranslate">사업화 프로젝트</span><span class="repo-private notranslate" translate="no">Private</span></div>
       </div>
       <section class="page-hero">
         <h1>처리량 상한은 코드에 없었습니다<br><span class="h1-sub">S3 때문에 들어온 라이브러리의 기본값 5 — 소셜 투표 플랫폼 콘텐츠 검열 경로</span></h1>
+        <p class="article-date">2026년 9월</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="the-ceiling-was-not-in-the-code"></aside>
         <nav class="article-toc" aria-label="목차">
@@ -461,7 +462,6 @@ spring:
         아웃바운드에도 같은 일이 있었고, 이번에는 <strong>아무도 그 층을 보고 있지 않았습니다.</strong></p>
 
         <h2 id="상한을-정했습니다">그래서 상한을 정했습니다<a class="anchor" href="#상한을-정했습니다" aria-label="이 절로 가는 링크">#</a></h2>
-        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private repo</span></p>
 
         <p>택한 방식은 두 가지였습니다.</p>
 
@@ -579,7 +579,6 @@ class OutboundHttpConfig {
         둘을 가르는 것은 성능이 아니라 <strong>상한이 적혀 있는가</strong>입니다.</p>
 
         <h2 id="타임아웃">첫 구현이 타임아웃을 날렸습니다<a class="anchor" href="#타임아웃" aria-label="이 절로 가는 링크">#</a></h2>
-        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private repo</span></p>
 
         <p>첫 구현은 <code>requestFactory</code> 를 통째로 갈아치웠습니다. 그랬더니 스프링 자동설정이
         붙여 주던 <code>spring.http.client.*</code> 타임아웃이 <strong>같이 사라졌습니다.</strong></p>
@@ -595,7 +594,6 @@ class OutboundHttpConfig {
         복제하면 언젠가 한쪽만 바뀌는 날이 옵니다.</p>
 
         <h2 id="설정은-실패하지-않는다">설정은 그 자체로 아무것도 실패시키지 않습니다<a class="anchor" href="#설정은-실패하지-않는다" aria-label="이 절로 가는 링크">#</a></h2>
-        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private repo</span></p>
 
         <p>이번 수정에는 다른 수정과 구별되는 성질이 하나 있었습니다. <strong>결과물이 설정값</strong>이라는
         겁니다. 로직을 고치면 그 로직을 겨누는 테스트가 빨간불이 나지만,
