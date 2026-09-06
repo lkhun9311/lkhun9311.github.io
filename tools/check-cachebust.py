@@ -17,6 +17,10 @@ import hashlib, pathlib, re, sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 REF = re.compile(r'((?:\.{1,2}/)*assets/[A-Za-z0-9_.-]+\.(?:css|js))\?v=([A-Za-z0-9_.-]+)')
+# 토큰이 **아예 없는** 참조. 이게 이 검사의 구멍이었다 — 42개 기사가 `content.js` 를 토큰 없이
+# 싣고 있었는데, 위 정규식이 `?v=` 를 요구해서 검사가 그 42건을 보지도 않고 「181건 일치」라고
+# 말했다. 없는 것을 못 보는 검사는 통과와 미적용을 구분하지 못한다.
+BARE = re.compile(r'((?:\.{1,2}/)*assets/[A-Za-z0-9_.-]+\.(?:css|js))(?=["\'])')
 
 
 def digest(path):
@@ -35,6 +39,20 @@ def main(fix=False):
         out = []
         last = 0
         dirty = False
+        # 토큰 없는 참조부터 채운다 — 그래야 아래 대조가 전부를 본다.
+        bare = [m for m in BARE.finditer(text) if text[m.end():m.end() + 3] != '?v=']
+        if bare:
+            if fix:
+                for m in reversed(bare):
+                    target = (page.parent / m.group(1)).resolve()
+                    if target.exists():
+                        text = text[:m.end()] + '?v=' + digest(target) + text[m.end():]
+                page.write_text(text, encoding='utf-8')
+                changed_files += 1
+            else:
+                for m in bare:
+                    stale.append(f"{page.relative_to(ROOT)}: {m.group(1)} 에 ?v= 토큰이 없다")
+
         for m in REF.finditer(text):
             rel, token = m.group(1), m.group(2)
             target = (page.parent / rel).resolve()
@@ -54,7 +72,6 @@ def main(fix=False):
         if fix and dirty:
             out.append(text[last:])
             page.write_text(''.join(out), encoding='utf-8')
-            changed_files += 1
 
     if checked == 0:
         print("FATAL: 검사한 자산 참조가 0 개다. 검사가 아무것도 안 봤다.", file=sys.stderr)
