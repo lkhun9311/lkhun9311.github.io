@@ -55,9 +55,12 @@ var CodeHighlight = (function () {
     text: []
   };
 
+  /* 코드 창의 라벨은 세 언어 모두 영어로 둔다. Kotlin·YAML·Shell 은 원래 고유명사이고,
+     나머지 하나만 「출력」·「出力」로 번역해 두면 그 창만 성격이 다른 것처럼 보인다.
+     라벨이 가리키는 것은 화면에 찍힌 글이지 한국어 낱말이 아니다. */
   var LABELS = { kotlin: "Kotlin", yaml: "YAML", shell: "Shell", text: "Output" };
-  var LABELS_KO = { kotlin: "Kotlin", yaml: "YAML", shell: "Shell", text: "출력" };
-  var LABELS_JA = { kotlin: "Kotlin", yaml: "YAML", shell: "Shell", text: "出力" };
+  var LABELS_KO = LABELS;
+  var LABELS_JA = LABELS;
 
   function span(cls, text) {
     return '<span class="tok-' + cls + '">' + esc(text) + "</span>";
