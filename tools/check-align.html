@@ -39,7 +39,9 @@ window.addEventListener("load", function () {
     var d = f.contentDocument; if (!d) return;
     var el = d.querySelector(f.dataset.sel); if (!el) return;
     // 기사 본문은 [본문 | 목차] 격자다. 컨테이너를 재면 목차 폭까지 들어가므로 첫 자식 문단을 잰다.
-    if (f.dataset.name === "article") el = el.querySelector("p") || el;
+    // 왼쪽 레일이 생기면서 querySelector("p") 가 레일 안의 라벨을 먼저 집었다(폭 209px).
+    // 본문 열을 재려면 **직계 자식** 문단이어야 한다.
+    if (f.dataset.name === "article") el = el.querySelector(":scope > p") || el;
     var r = el.getBoundingClientRect();
     seen++;
     (byW[f.dataset.w] = byW[f.dataset.w] || {})[f.dataset.name] =

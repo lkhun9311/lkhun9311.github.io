@@ -126,8 +126,10 @@ check("plain output falls back to text",
 
 /* ---- labels --------------------------------------------------------------------------------- */
 
-check("label follows the page language for output", H.label("text", "ko"), "출력");
-check("label for Japanese output", H.label("text", "ja"), "出力");
+/* 라벨은 세 언어 모두 영어다. 「출력」로 번역해 두면 그 창만 성격이 다른 것처럼 보인다.
+   페이지 언어를 넘겨도 값이 안 바뀌는지를 단언한다 — 번역이 되돌아오면 여기서 잡힌다. */
+check("the output label stays English on a Korean page", H.label("text", "ko"), "Output");
+check("the output label stays English on a Japanese page", H.label("text", "ja"), "Output");
 check("language names are not translated", H.label("kotlin", "ko"), "Kotlin");
 check("an unknown language falls back to the output label", H.label("nope", "en"), "Output");
 
