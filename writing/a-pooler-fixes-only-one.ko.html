@@ -171,7 +171,6 @@
               <rect x="202" y="158" width="506" height="54" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="455" y="182" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">외부 모더레이션 API</text>
               <text x="455" y="201" font-size="13" fill="#d62976" text-anchor="middle">read timeout 10초로 설정</text>
-              <text x="8" y="244" font-size="15" fill="#3b3344">이 호출이 <tspan font-weight="700" fill="#18121d">트랜잭션 안에서</tspan> 일어나고 있었습니다.</text>
               <defs>
                 <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                   <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
@@ -185,7 +184,7 @@
               </defs>
             </svg>
           </div>
-          <figcaption>모바일 앱 → API 서버 → PostgreSQL이라는 평범한 구조입니다. 이 그림에서 평범하지 않은 것은 분홍색으로 표시한 아래쪽 하나뿐이고 그것이 이 글의 전부입니다.</figcaption>
+          <figcaption>모바일 앱 → API 서버 → PostgreSQL 구조입니다. 분홍색으로 표시한 아래쪽이 이 글에서 문제가 되는 지점입니다.</figcaption>
         </figure>
 
         <p><strong>외부 모더레이션 API</strong>는 유해한 내용을 걸러 주는 외부 서비스입니다. 글이나 댓글을
@@ -266,42 +265,45 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
-            <svg viewBox="0 0 720 244" role="img" aria-labelledby="hold-t hold-d" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 720 226" role="img" aria-labelledby="hold-t hold-d" xmlns="http://www.w3.org/2000/svg">
               <title id="hold-t">수정 전과 수정 후의 커넥션 점유 구간</title>
-              <desc id="hold-d">위쪽이 수정 전입니다. BEGIN으로 트랜잭션을 열고 SELECT를 한 뒤, 외부 HTTP 호출을 기다리는 동안 쿼리를
-              하나도 실행하지 않으면서 커넥션을 계속 붙잡고 있습니다. 이 호출에는 read timeout이 10초로 설정돼 있고 INSERT와 COMMIT 까지
-              포함한 구간 전체에서 커넥션 하나가 점유됩니다. 아래쪽이 수정 후입니다. 검증을 위한 읽기에서 커넥션을 잠깐 쓰고 반납한 뒤,
-              외부 HTTP 호출은 커넥션을 잡지 않은 상태에서 하고 그다음 쓰기만 짧은 트랜잭션으로 묶습니다. 커넥션을 붙잡는 시간이 실제
-              쿼리 시간으로 줄어듭니다.</desc>
+              <desc id="hold-d">두 줄 모두 같은 요청의 시간축이고, 아래 괄호가 커넥션을 붙잡고 있는 구간입니다.
+              위는 수정 전입니다. BEGIN 으로 트랜잭션을 열고 SELECT 를 한 뒤, 외부 HTTP 호출을 기다리는 동안 쿼리를 하나도
+              실행하지 않으면서 커넥션을 계속 붙잡습니다. 괄호가 INSERT·COMMIT 까지 요청 전체를 덮습니다.
+              아래는 수정 후입니다. 검증 읽기에서 커넥션을 잠깐 쓰고 반납한 뒤 외부 호출은 커넥션 없이 하고, 쓰기만 짧은
+              트랜잭션으로 묶습니다. 괄호가 양 끝 두 토막으로 나뉘고 가운데는 커넥션을 반납한 상태입니다.</desc>
 
-              <text x="8" y="26" font-size="15" fill="#7b7186">수정 전 · 커넥션 1개를 요청 내내 붙잡습니다</text>
-              <rect x="104" y="40" width="74" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="141" y="58" font-size="13" fill="#18121d" text-anchor="middle">BEGIN</text>
-              <rect x="182" y="40" width="74" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="219" y="58" font-size="13" fill="#18121d" text-anchor="middle">SELECT</text>
-              <rect x="260" y="40" width="300" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2" stroke-dasharray="5 4"/>
-              <text x="410" y="58" font-size="13" fill="#d62976" font-weight="700" text-anchor="middle">외부 HTTP 호출 · 쿼리 0건 · 최대 10초</text>
-              <rect x="564" y="40" width="66" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="597" y="58" font-size="13" fill="#18121d" text-anchor="middle">INSERT</text>
-              <rect x="634" y="40" width="74" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="671" y="58" font-size="13" fill="#18121d" text-anchor="middle">COMMIT</text>
-              <path d="M104 76 V 84 H 708 V 76" fill="none" stroke="#d62976" stroke-width="1.5"/>
-              <text x="104" y="104" font-size="14" fill="#18121d">커넥션 1개 점유 · <tspan font-weight="700" fill="#d62976">이 구간 전체</tspan></text>
-              <text x="8" y="152" font-size="15" fill="#7b7186">수정 후 · 커넥션을 잡는 구간이 쿼리 시간으로 줄어듭니다</text>
-              <rect x="104" y="166" width="150" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="179" y="184" font-size="13" fill="#18121d" text-anchor="middle">검증 읽기</text>
-              <rect x="266" y="166" width="270" height="26" rx="4" fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4"/>
-              <text x="401" y="184" font-size="13" fill="#7b7186" text-anchor="middle">외부 HTTP 호출 · 커넥션 없음</text>
-              <rect x="548" y="166" width="160" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="628" y="184" font-size="13" fill="#18121d" text-anchor="middle">BEGIN·INSERT·COMMIT</text>
-              <path d="M104 202 V 210 H 254 V 202" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <path d="M548 202 V 210 H 708 V 202" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="104" y="230" font-size="13" fill="#18121d">커넥션 점유</text>
-              <text x="548" y="230" font-size="13" fill="#18121d">커넥션 점유</text>
-              <text x="280" y="230" font-size="13" fill="#7b7186">이 구간에는 커넥션을 반납한 상태입니다</text>
+              <rect x="8" y="36" width="76" height="26" rx="13" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="46" y="54" font-size="13" fill="#d62976" font-weight="700" text-anchor="middle">수정 전</text>
+              <rect x="100" y="36" width="70" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="135" y="54" font-size="13" fill="#18121d" text-anchor="middle">BEGIN</text>
+              <rect x="174" y="36" width="70" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="209" y="54" font-size="13" fill="#18121d" text-anchor="middle">SELECT</text>
+              <rect x="248" y="36" width="308" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2" stroke-dasharray="5 4"/>
+              <text x="402" y="54" font-size="13" fill="#d62976" font-weight="700" text-anchor="middle">외부 HTTP 호출 · 쿼리 0건 · 최대 10초</text>
+              <rect x="560" y="36" width="68" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="594" y="54" font-size="13" fill="#18121d" text-anchor="middle">INSERT</text>
+              <rect x="632" y="36" width="80" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="672" y="54" font-size="13" fill="#18121d" text-anchor="middle">COMMIT</text>
+              <path d="M100 72 V 80 H 712 V 72" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="100" y="100" font-size="13" fill="#d62976" font-weight="700">커넥션 점유 · 요청 내내</text>
+
+              <rect x="8" y="146" width="76" height="26" rx="13" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="46" y="164" font-size="13" fill="#4f5bd5" font-weight="700" text-anchor="middle">수정 후</text>
+              <rect x="100" y="146" width="150" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="175" y="164" font-size="13" fill="#18121d" text-anchor="middle">검증 읽기</text>
+              <rect x="254" y="146" width="290" height="26" rx="4" fill="none" stroke="#a99fb4" stroke-width="1.5" stroke-dasharray="5 4"/>
+              <text x="399" y="164" font-size="13" fill="#7b7186" text-anchor="middle">외부 HTTP 호출 · 커넥션 없음</text>
+              <rect x="548" y="146" width="164" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="630" y="164" font-size="13" fill="#18121d" text-anchor="middle">BEGIN·INSERT·COMMIT</text>
+              <path d="M100 182 V 190 H 250 V 182" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <path d="M548 182 V 190 H 712 V 182" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="100" y="210" font-size="13" fill="#4f5bd5" font-weight="700">커넥션 점유</text>
+              <text x="272" y="210" font-size="13" fill="#7b7186">반납한 상태</text>
+              <text x="548" y="210" font-size="13" fill="#4f5bd5" font-weight="700">커넥션 점유</text>
             </svg>
           </div>
-          <figcaption>위가 수정 전입니다. 외부 호출을 기다리는 동안에도 커넥션은 계속 점유 상태입니다. 아래가 수정 후로, 커넥션을 붙잡는 구간이 실제 쿼리 시간으로 줄어듭니다.</figcaption>
+          <figcaption>두 줄 모두 같은 요청의 시간축입니다. 아래 괄호가 커넥션을 붙잡고 있는 구간이고, 분홍이 수정 전·파랑이 수정 후입니다.</figcaption>
         </figure>
 
         <p>동시에 글을 쓰는 요청이 pool 크기를 넘으면 그 시점부터 커넥션이 없습니다. 여기서 커넥션
@@ -312,7 +314,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
-            <svg viewBox="0 0 720 250" role="img" aria-labelledby="spread-t spread-d" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 720 218" role="img" aria-labelledby="spread-t spread-d" xmlns="http://www.w3.org/2000/svg">
               <title id="spread-t">connection pool 고갈이 서비스 전체로 번지는 구조</title>
               <desc id="spread-d">왼쪽은 글과 댓글을 쓰는 요청들입니다. 이 요청들이 각각 외부 호출을 기다리면서 커넥션을 붙잡고 있습니다.
               가운데는 connection pool인데 그 요청들이 커넥션을 전부 차지해서 빈 커넥션이 하나도 남지 않았습니다. 오른쪽은 글쓰기와
@@ -354,8 +356,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
               <text x="608" y="151" font-size="12" fill="#7b7186" text-anchor="middle">결과 차트 · 대기</text>
               <rect x="524" y="162" width="168" height="20" rx="4" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
               <text x="608" y="177" font-size="12" fill="#7b7186" text-anchor="middle">프로필 · 대기</text>
-              <text x="608" y="196" font-size="12" fill="#7b7186" text-anchor="middle">같은 pool에서 받으므로 함께 멈춥니다</text>
-              <text x="8" y="236" font-size="15" fill="#3b3344">성장 엔진이 <tspan font-weight="700" fill="#18121d">“결과 차트를 공유하는 것”</tspan>이라 공유가 터지는 날이 곧 멈추는 날이 됩니다.</text>
+              <text x="608" y="196" font-size="12" fill="#7b7186" text-anchor="middle">같은 pool 에서 받습니다</text>
               <defs>
                 <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                   <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
@@ -369,7 +370,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
               </defs>
             </svg>
           </div>
-          <figcaption>글쓰기 요청이 pool을 다 차지하면 글쓰기와 아무 상관 없는 투표·피드·차트 조회도 같은 pool에서 커넥션을 받기 때문에 함께 멈춥니다.</figcaption>
+          <figcaption>왼쪽이 글쓰기 요청, 가운데가 connection pool, 오른쪽이 글쓰기와 무관한 요청들입니다. 가운데가 다 차면 오른쪽이 대기로 바뀝니다.</figcaption>
         </figure>
 
         <p>투표도, 피드 조회도, 결과 차트 조회도 <strong>같은 connection pool</strong>에서 커넥션을 받습니다.
@@ -450,7 +451,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
               <text x="696" y="297" font-size="14" fill="#d62976" font-weight="700" text-anchor="end">앱 1 → DB 1</text>
             </svg>
           </div>
-          <figcaption>위: 짧은 트랜잭션이면 connection pooler가 두 클라이언트를 백엔드 커넥션 1개에 번갈아 얹습니다. 아래: 트랜잭션을 연 채로 외부 호출을 기다리면 그 커넥션이 한 클라이언트에 묶여 버려서 앱 커넥션 1개당 DB 커넥션 1개가 됩니다.</figcaption>
+          <figcaption>가로축은 시간이고 세 줄은 각각 클라이언트 A·B 와 백엔드 커넥션입니다. 위가 짧은 트랜잭션, 아래가 트랜잭션 안에서 기다리는 경우입니다.</figcaption>
         </figure>
 
         <p>그래서 이렇게 됩니다.</p>
@@ -690,7 +691,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         <p class="table-note">고친 경로(글 생성)는 두 arm 이 거의 같습니다. 벌어지는 곳은 <strong>글쓰기와 아무 상관 없는 피드 조회</strong>뿐입니다.</p>
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
-            <svg viewBox="0 0 720 320" role="img" aria-labelledby="ab-t ab-d" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 720 292" role="img" aria-labelledby="ab-t ab-d" xmlns="http://www.w3.org/2000/svg">
               <title id="ab-t">같은 부하에서 arm A와 arm B의 응답시간</title>
               <desc id="ab-d">가로축은 응답시간이고 10배마다 눈금이 하나씩 있는 로그 축입니다. 위쪽 두 막대는 글쓰기와 무관한 피드
               조회의 중앙값입니다. 외부 호출을 트랜잭션 밖에 둔 arm A는 4밀리초, 트랜잭션 안으로 되돌린 arm B는
@@ -724,10 +725,9 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
               <text x="30" y="262" font-size="12" fill="#3b3344">arm A · 외부 호출이 트랜잭션 밖</text>
               <rect x="8" y="270" width="16" height="10" rx="2" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="30" y="280" font-size="12" fill="#3b3344">arm B · @Transactional 복원</text>
-              <text x="8" y="308" font-size="15" fill="#3b3344">고친 경로는 두 arm이 같습니다. 무너지는 것은 <tspan font-weight="700" fill="#18121d">아무 상관 없는 읽기</tspan> 쪽입니다.</text>
             </svg>
           </div>
-          <figcaption>쓰기 경로(글 생성)는 두 arm이 사실상 같습니다. 차이는 글쓰기와 아무 상관 없는 피드 조회에서만 나타납니다. 가로축은 로그 축입니다.</figcaption>
+          <figcaption>가로축은 응답시간이고 10배마다 눈금이 하나씩 있습니다. 위 두 막대가 피드 조회, 아래 두 막대가 글 생성입니다.</figcaption>
         </figure>
 
         <p>읽는 법은 이렇습니다. <strong>쓰기 경로는 두 arm이 같습니다</strong>(2,577 대 2,584ms).
@@ -752,7 +752,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         입력이 되지 않으니 순서가 필요 없습니다.</p>
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
-            <svg viewBox="0 0 720 304" role="img" aria-labelledby="pc-t pc-d" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 720 262" role="img" aria-labelledby="pc-t pc-d" xmlns="http://www.w3.org/2000/svg">
               <title id="pc-t">유해분류와 저격판정을 순차로 부를 때와 겹쳐 부를 때</title>
               <desc id="pc-d">위쪽은 순차 호출입니다. 금칙어와 연락처 검사는 로컬이라 금방 끝나고 그다음 유해분류가 800밀리초,
               이어서 저격판정이 다시 800밀리초 걸려 외부 대기가 1,600밀리초로 쌓입니다. 아래쪽은 겹쳐 부르는 경우입니다.
@@ -778,10 +778,9 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
               <text x="289.5" y="210" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">④ 저격판정 800ms</text>
               <path d="M149.5 226 V 234 H 429.5 V 226" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
               <text x="149.5" y="252" font-size="14" fill="#4f5bd5" font-weight="700">800 ms</text>
-              <text x="8" y="292" font-size="14" fill="#3b3344">①② 는 로컬 검사라 외부 대기에 들어가지 않습니다. ③④ 는 <tspan font-weight="700" fill="#18121d">같은 입력을 보는 독립 검사</tspan>라 순서가 필요 없습니다.</text>
             </svg>
           </div>
-          <figcaption>순차로 부르면 외부 대기가 두 번 쌓이고 겹쳐 부르면 둘 중 긴 쪽만 남습니다. ①②는 로컬 검사라 외부 대기에 들어가지 않습니다.</figcaption>
+          <figcaption>위가 순차 호출, 아래가 겹쳐 부르기입니다. 막대의 가로 길이가 외부 대기 시간이고, ①② 는 앱 안에서 끝나는 검사입니다.</figcaption>
         </figure>
 
         <p>가상 스레드(Java 21)로 ④ 를 띄우고 ③ 을 호출 스레드에서 돌립니다.
