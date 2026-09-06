@@ -117,7 +117,10 @@
   /* Marks the section the reader is in. The rail is a list of links until this runs, which is why the
      highlight is added here and not baked into the markup: without JS the contents still work. */
   function initToc() {
-    var toc = document.querySelector(".article-body .article-toc");
+    /* ⚠️ 예전에는 `.article-body .article-toc` 로 찾았다. 목차를 <article> 밖 레일로 옮기면서
+       이 선택자가 아무것도 못 찾게 됐고, **현재 절 형광펜이 조용히 죽었다** — 오류도 없고
+       목차는 그대로 보이니 눈에 띄지 않는다. 위치에 기대지 않고 클래스로 찾는다. */
+    var toc = document.querySelector(".article-toc");
     if (!toc) return;
 
     var links = toc.querySelectorAll('a[href^="#"]');
