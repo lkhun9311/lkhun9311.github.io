@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="콘텐츠 검열 경로의 처리량이 6.27 req/s 에서 안 올라갔습니다. 쓰기를 4배로 올려도 DB 풀을 3배로 키워도 그대로였습니다. 원인은 S3 를 쓰려고 넣은 AWS SDK 가 끌고 들어온 HTTP 클라이언트의 기본값 5 였고, 그 층은 컴파일 클래스패스에 없어서 읽어서는 찾을 수 없었습니다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=045774ba45" />
+  <link rel="stylesheet" href="../assets/styles.css?v=0c90792fe5" />
 </head>
 <body>
   <div class="topbar">
@@ -69,10 +69,11 @@
     <main>
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing 으로</a>
-        <h1>처리량 상한은 코드에 없었습니다<br><span class="h1-sub">S3 때문에 들어온 라이브러리의 기본값 5 — 소셜 투표 플랫폼 콘텐츠 검열 경로</span></h1>
         <div class="article-meta"><span class="source-tag commercial notranslate">사업화 프로젝트</span>Writing · 2026년 9월<span aria-hidden="true"> · </span><span class="read-time">15분</span></div>
+        <h1>처리량 상한은 코드에 없었습니다<br><span class="h1-sub">S3 때문에 들어온 라이브러리의 기본값 5 — 소셜 투표 플랫폼 콘텐츠 검열 경로</span></h1>
       </section>
       <article class="article-body">
+        <aside class="article-aside" data-aside="writing" data-slug="the-ceiling-was-not-in-the-code"></aside>
 
         <p>안녕하세요. <strong>소셜 투표 플랫폼</strong>을 만들고 있습니다. 지난 글에서 트랜잭션 경계를 고치고
         <a class="term" href="../notes/load-test-harness.html">하네스</a>를 세워 수치를 만들었는데, 그 하네스가
@@ -106,7 +107,7 @@
 
         <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <ul>
+        <ul class="callout">
           <li>Spring Boot 에서 <code>RestClient</code> 나 <code>RestTemplate</code> 으로 외부 API 를 부르고 있는 분</li>
           <li>처리량이 어떤 숫자에서 딱 멈춰 있는데, 스레드도 DB 풀도 늘려 봤지만 안 움직이는 분</li>
           <li><em>“내가 안 넣은 라이브러리가 내 서비스 동작을 정하고 있나?”</em>가 궁금하신 분</li>
@@ -696,9 +697,19 @@ assertThat(factories[0]).isSameAs(factories[1])</code></pre>
     </footer>
   </div>
 
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/content.js"></script>
   <script src="../assets/lang.js?v=8eac554c24"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=49e7bee9c8"></script>
   <script defer src="../assets/article.js?v=b40b9e4b99"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
 </body>
 </html>

@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="2,255 コミットを飛び越えるバージョン移行。文書からの推論ではどこで壊れるか分からないので、隔離環境に旧バージョンを立てて一度壊してみた。すると私が先に書いた文書 3 本の前提が誤りだと分かった。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=045774ba45" />
+  <link rel="stylesheet" href="../assets/styles.css?v=0c90792fe5" />
 </head>
 <body>
   <div class="topbar">
@@ -69,10 +69,11 @@
     <main>
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ戻る</a>
-        <h1>私が書いた手順書3本は誤った前提の上にあった</h1>
         <div class="article-meta">Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">11分</span></div>
+        <h1>私が書いた手順書3本は誤った前提の上にあった</h1>
       </section>
       <article class="article-body">
+        <aside class="article-aside" data-aside="writing" data-slug="three-documents-on-a-false-premise"></aside>
 
         <p><strong>範囲.</strong> 2026年7月、稼働中の顧客現場にある OpenStack ベースのプライベートクラウドポータルを、
         <strong>2,255 コミット先のバージョン</strong>へ上げるために準備した記録である。製品名・バージョン番号・顧客名・
@@ -367,9 +368,19 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
     </footer>
   </div>
 
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/content.js"></script>
   <script src="../assets/lang.js?v=8eac554c24"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=49e7bee9c8"></script>
   <script defer src="../assets/article.js?v=b40b9e4b99"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
 </body>
 </html>
