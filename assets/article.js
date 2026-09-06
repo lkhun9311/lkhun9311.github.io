@@ -58,6 +58,28 @@
 
      The language comes from data-lang when the author set one. Detection is only a fallback: a wrong guess
      colours the wrong tokens and the reader has no way to tell it guessed. */
+  /* 경고·결정 문단을 카드로.
+     「⚠️ …」로 시작하는 문단은 본문의 흐름이 아니라 **읽는 사람이 조건을 알고 있어야 하는
+     대목**이다. 다른 문단과 모양이 같으면 그냥 지나치기 쉬워서, Confluence 의 패널처럼 왼쪽에
+     색 띠를 둔 카드로 뗀다. 표시는 글 안에 이미 이모지로 있으므로 클래스만 붙인다. */
+  var NOTE_KINDS = [
+    { mark: "⚠️", cls: "warn" },
+    { mark: "🔒", cls: "lock" }
+  ];
+
+  function decorateNotes() {
+    var ps = document.querySelectorAll(".article-body p");
+    for (var i = 0; i < ps.length; i++) {
+      var text = (ps[i].textContent || "").trim();
+      for (var k = 0; k < NOTE_KINDS.length; k++) {
+        if (text.indexOf(NOTE_KINDS[k].mark) === 0) {
+          ps[i].classList.add("note-card", NOTE_KINDS[k].cls);
+          break;
+        }
+      }
+    }
+  }
+
   function decorateCode() {
     if (typeof CodeHighlight === "undefined") return;   // the script failed to load; plain <pre> still reads
 
@@ -137,6 +159,7 @@
   }
 
   decorateCode();
+  decorateNotes();
   initToc();
 
   // Google Translate replaces the text of every cell in place, which can turn a table that fit into one that

@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="リリース前のソーシャル投票プラットフォームを点検していて、コネクションプーラーを前に立てようとしました。ところがコネクション枯渇には原因が二つあり、プーラーはそのうち一つしか直しません。なぜ直せないのかは製品ドキュメントではなくトランザクションプーリングの定義から出てきます。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=0c90792fe5" />
+  <link rel="stylesheet" href="../assets/styles.css?v=0553051533" />
 </head>
 <body>
   <div class="topbar">
@@ -67,21 +67,14 @@
   </div>
   <div class="container reading">
     <main>
-      <section class="page-hero">
-        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ</a>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>一覧</a>
         <div class="article-meta"><span class="source-tag commercial notranslate">事業化プロジェクト</span>Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">21分</span></div>
+      </div>
+      <section class="page-hero">
         <h1>RDS Proxy では直せないコネクション枯渇<br><span class="h1-sub">トランザクションの中で外部 API を呼び出していました — リリース前のソーシャル投票プラットフォーム点検</span></h1>
       </section>
-      <article class="article-body">
-        <aside class="article-aside" data-aside="writing" data-slug="a-pooler-fixes-only-one"></aside>
-
-        <p><strong>ソーシャル投票プラットフォーム</strong>を作っています。リリース前にアーキテクチャを点検していて、
-        <em>「トラフィックが増えれば DB コネクションが足りなくなるだろうから、コネクションプーラーを一つ前に
-        立てればいいのでは」</em>という、ごくありふれた仮説から出発しました。結論は
-        <strong>「このコードベースでは否」</strong>でした。</p>
-
-        <p>なぜ否だったのか、そしてその判断を何を根拠に下したのかを共有します。</p>
-
+      <aside class="article-aside" data-aside="writing" data-slug="a-pooler-fixes-only-one"></aside>
         <nav class="article-toc" aria-label="目次">
           <p class="toc-label">目次</p>
           <ul>
@@ -105,6 +98,15 @@
             <li><a href="#おわりに">おわりに</a></li>
           </ul>
         </nav>
+      <article class="article-body">
+
+        <p><strong>ソーシャル投票プラットフォーム</strong>を作っています。リリース前にアーキテクチャを点検していて、
+        <em>「トラフィックが増えれば DB コネクションが足りなくなるだろうから、コネクションプーラーを一つ前に
+        立てればいいのでは」</em>という、ごくありふれた仮説から出発しました。結論は
+        <strong>「このコードベースでは否」</strong>でした。</p>
+
+        <p>なぜ否だったのか、そしてその判断を何を根拠に下したのかを共有します。</p>
+
 
         <h2 id="想定読者">この記事の想定読者<a class="anchor" href="#想定読者" aria-label="この節へのリンク">#</a></h2>
 
@@ -240,7 +242,7 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
         バックエンドの50本にまとめてくれるのですから。A 型の枯渇にはまさに正しい道具です。</p>
 
         <h2 id="原因b">原因 B — コネクションを長く握っているから<a class="anchor" href="#原因b" aria-label="この節へのリンク">#</a></h2>
-        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private</span> <code>services/api/…/comment/CommentService.kt</code> <code>create</code></p>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private repo</span></p>
 
         <p>二つ目はコネクションの<strong>本数</strong>ではなく<strong>握っている時間</strong>が問題である
         場合です。そして私のコードはこちらでした。</p>
@@ -480,7 +482,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         <p>コネクションプーラーは③です。①をやらずに③から行くと効かない、というのが前の節の内容でした。</p>
 
         <h2 id="コードから">コードから直しました<a class="anchor" href="#コードから" aria-label="この節へのリンク">#</a></h2>
-        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private</span> <code>services/api/…/comment/CommentService.kt</code> <code>create</code> · <code>services/api/…/post/PostService.kt</code> <code>createPost · addPoll</code></p>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private repo</span></p>
 
         <p>そこで①からやりました。トランザクションの境界を<strong>書き込みの区間まで狭める</strong>作業です。
         Spring では <code>@Transactional</code> はプロキシベースなので、同じクラスの中で自分のメソッドを呼ぶと
@@ -521,7 +523,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         直してみてはじめて、プーラーが価値を出せる状態になりました。</p>
 
         <h2 id="二つの数字">誰も選んでいない二つの数字<a class="anchor" href="#二つの数字" aria-label="この節へのリンク">#</a></h2>
-        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private</span> <code>services/api/src/main/resources/application.yml</code> <code>spring.datasource.hikari</code></p>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private repo</span></p>
 
         <p>②（流入制御）にも罠が一つありました。<strong>ブロッキング JDBC ではコネクションプールが事実上の
         同時実行上限</strong>です。スレッドがいくら多くてもコネクションを受け取れなければ仕事ができません。</p>
@@ -564,7 +566,7 @@ spring:
         デフォルト二つが作り出した同時実行ポリシーはポリシーではありません。</p>
 
         <h2 id="使えるコードか">プーラーが使えるコードかを先に確認しました<a class="anchor" href="#使えるコードか" aria-label="この節へのリンク">#</a></h2>
-        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private</span> <code>services/api/…/vote/VoteRepository.kt</code> <code>pg_advisory_xact_lock</code></p>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private repo</span></p>
 
         <p>③に進む前に確認することがもう一つありました。トランザクションプーリングには
         <strong>ピン（pin）を誘発するパターン</strong>があり、コードにそれがあるとコネクションプーラーが
@@ -614,7 +616,7 @@ VoteRepository.kt        pg_advisory_xact_lock(...)</code></pre>
         遅い外部呼び出しがコネクションを握る — はそのまま残ります。</p>
 
         <h2 id="ガード">戻しやすい修正なので、ガードを原因に置きました<a class="anchor" href="#ガード" aria-label="この節へのリンク">#</a></h2>
-        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private</span> <code>services/api/src/test/…/ModerationOutsideTransactionTest.kt</code> <code>TransactionProbe</code></p>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private repo</span></p>
 
         <p>この修正には固有の脆さがあります。<strong><code>@Transactional</code> 一行で元に戻ります。</strong>
         しかも戻しても<strong>機能は正常です</strong> — テストも通りますし画面も問題ありません。症状は負荷が
@@ -738,7 +740,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         この数値は条件に付いた値であって定数ではありません。</p>
 
         <h2 id="重ねて呼ぶ">測ってみたら、直すところがもう一つ見えました<a class="anchor" href="#重ねて呼ぶ" aria-label="この節へのリンク">#</a></h2>
-        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><span class="repo-private notranslate" translate="no">Private</span> <code>services/api/…/content/ModerationGate.kt</code> <code>screenPost</code></p>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private repo</span></p>
 
         <p>数値ができると次の問いが自動的に出ました — <strong>投稿作成の p50 がなぜスタブ遅延のちょうど
         二倍なのか。</strong>ゲートを開けてみると、外部分類器を<strong>順次</strong>呼んでいました。</p>
@@ -891,7 +893,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
   <script src="../assets/lang.js?v=8eac554c24"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=44326158d4"></script>
-  <script defer src="../assets/article.js?v=b40b9e4b99"></script>
+  <script defer src="../assets/article.js?v=21c4e69745"></script>
   <script>
     (function () {
       var el = document.querySelector(".article-aside");

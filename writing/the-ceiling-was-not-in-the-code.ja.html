@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="投稿作成のスループットが 6.27 req/s から動きませんでした。書き込みスレッドを4倍にしても、DB プールを3倍にしても同じです。原因は S3 を使うために入れた AWS SDK が連れてきた HTTP クライアントの既定値「ホストあたり5」でした。この層はランタイムのクラスパスにしかなく、コードを読んでも見つかりません。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=0c90792fe5" />
+  <link rel="stylesheet" href="../assets/styles.css?v=0553051533" />
 </head>
 <body>
   <div class="topbar">
@@ -67,22 +67,14 @@
   </div>
   <div class="container reading">
     <main>
-      <section class="page-hero">
-        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ</a>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>一覧</a>
         <div class="article-meta"><span class="source-tag commercial notranslate">事業化プロジェクト</span>Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">17分</span></div>
+      </div>
+      <section class="page-hero">
         <h1>スループットの上限はコードになかった<br><span class="h1-sub">S3 のために入った ライブラリの既定値 5 — ソーシャル投票プラットフォームのコンテンツ検閲経路</span></h1>
       </section>
-      <article class="article-body">
-        <aside class="article-aside" data-aside="writing" data-slug="the-ceiling-was-not-in-the-code"></aside>
-
-        <p>こんにちは。<strong>ソーシャル投票プラットフォーム</strong>を作っています。前回の記事でトランザクション境界を
-        直し、<a class="term" href="../notes/load-test-harness.html">負荷試験ハーネス</a>を立てて数値を作りました。
-        そのハーネスがすぐに次の問いを投げてきました —
-        <em>「投稿作成のスループットは、なぜ 6.27 req/s から上がらないのか」</em>。</p>
-
-        <p>書き込みスレッドを4倍にしても、DB コネクションプールを3倍にしても、その数字は動きませんでした。
-        犯人は<strong>私が入れた覚えも、選んだ覚えも、名前を見た覚えもないライブラリの既定値</strong>でした。</p>
-
+      <aside class="article-aside" data-aside="writing" data-slug="the-ceiling-was-not-in-the-code"></aside>
         <nav class="article-toc" aria-label="目次">
           <p class="toc-label">目次</p>
           <ul>
@@ -105,6 +97,16 @@
             <li><a href="#おわりに">おわりに</a></li>
           </ul>
         </nav>
+      <article class="article-body">
+
+        <p>こんにちは。<strong>ソーシャル投票プラットフォーム</strong>を作っています。前回の記事でトランザクション境界を
+        直し、<a class="term" href="../notes/load-test-harness.html">負荷試験ハーネス</a>を立てて数値を作りました。
+        そのハーネスがすぐに次の問いを投げてきました —
+        <em>「投稿作成のスループットは、なぜ 6.27 req/s から上がらないのか」</em>。</p>
+
+        <p>書き込みスレッドを4倍にしても、DB コネクションプールを3倍にしても、その数字は動きませんでした。
+        犯人は<strong>私が入れた覚えも、選んだ覚えも、名前を見た覚えもないライブラリの既定値</strong>でした。</p>
+
 
         <h2 id="想定読者">この記事の想定読者<a class="anchor" href="#想定読者" aria-label="このセクションへのリンク">#</a></h2>
 
@@ -455,7 +457,7 @@ spring:
         アウトバウンドにも同じことがあり、今回は<strong>誰もその層を見ていませんでした。</strong></p>
 
         <h2 id="上限を決めた">そこで上限を決めました<a class="anchor" href="#上限を決めた" aria-label="このセクションへのリンク">#</a></h2>
-        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private</span> <code>services/api/…/config/OutboundHttpConfig.kt</code></p>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private repo</span></p>
 
         <p>選んだ方法は二つです。</p>
 
@@ -572,7 +574,7 @@ class OutboundHttpConfig {
         二つを分けるのは性能ではなく、<strong>上限が書かれているかどうか</strong>です。</p>
 
         <h2 id="タイムアウト">最初の実装はタイムアウトを消してしまいました<a class="anchor" href="#タイムアウト" aria-label="このセクションへのリンク">#</a></h2>
-        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private</span> <code>services/api/src/test/…/HttpClientTimeoutTest.kt</code></p>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private repo</span></p>
 
         <p>最初の実装は <code>requestFactory</code> を丸ごと入れ替えました。すると Spring の自動設定が付けてくれていた
         <code>spring.http.client.*</code> のタイムアウトも<strong>一緒に消えました。</strong></p>
@@ -588,7 +590,7 @@ class OutboundHttpConfig {
         変わる日が来ます。</p>
 
         <h2 id="設定は失敗しない">設定はそれ自体では何も失敗させません<a class="anchor" href="#設定は失敗しない" aria-label="このセクションへのリンク">#</a></h2>
-        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private</span> <code>services/api/src/test/…/config/OutboundHttpConfigTest.kt</code></p>
+        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private repo</span></p>
 
         <p>この修正には他と違う性質が一つありました。<strong>成果物が設定値</strong>だということです。ロジックを壊せば
         そのロジックを狙うテストが赤くなりますが、<strong>設定は消しても何も失敗しません。</strong>ただ静かに既定値へ
@@ -696,7 +698,7 @@ assertThat(factories[0]).isSameAs(factories[1])</code></pre>
   <script src="../assets/lang.js?v=8eac554c24"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=44326158d4"></script>
-  <script defer src="../assets/article.js?v=b40b9e4b99"></script>
+  <script defer src="../assets/article.js?v=21c4e69745"></script>
   <script>
     (function () {
       var el = document.querySelector(".article-aside");

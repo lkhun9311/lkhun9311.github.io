@@ -29,7 +29,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="キャッシュ設定を固定したまま逐次を並列に変えると、p99 が 42.6 秒から 79.0 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンがロックされる。6 構成を同条件で測って初めて見えたこと。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=0c90792fe5" />
+  <link rel="stylesheet" href="../assets/styles.css?v=0553051533" />
 </head>
 <body>
   <div class="topbar">
@@ -65,13 +65,26 @@
   </div>
   <div class="container reading">
     <main>
-      <section class="page-hero">
+      <div class="hero-top">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ戻る</a>
         <div class="article-meta">Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">10分</span></div>
+      </div>
+      <section class="page-hero">
         <h1>スレッドを増やしたらテールが伸びた</h1>
       </section>
+      <aside class="article-aside" data-aside="writing" data-slug="parallelism-made-the-tail-worse"></aside>
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#six-rows">6 行</a></li>
+            <li><a href="#why-3-is-worse-than-2">なぜ ③ は ② より悪いのか</a></li>
+            <li><a href="#not-caching-absence">2 つ目の欠陥: 「無い」をキャッシュしていなかった</a></li>
+            <li><a href="#which-fix-actually-mattered">どの修正が実際に効いたのか</a></li>
+            <li><a href="#before-and-after-only">前後だけを測っていたら何を誤って報告したか</a></li>
+            <li><a href="#what-this-does-not-claim">この記事が主張しないこと</a></li>
+          </ul>
+        </nav>
       <article class="article-body">
-        <aside class="article-aside" data-aside="writing" data-slug="parallelism-made-the-tail-worse"></aside>
 
         <p><strong>範囲.</strong> 2026年5月、OpenStack ベースのプライベートクラウド管理コンソールの
         <strong>ボリューム一覧画面</strong>を改善した記録である。製品名・バージョン・顧客名は書かない。以下の数値は
@@ -87,17 +100,6 @@
         <strong>42.6 秒から 79.0 秒</strong>になった。この記事は、その 1 マスが何を教えたか、そして
         <strong>その 1 マスを見えるようにした試験設計</strong>についてである。</p>
 
-        <nav class="article-toc" aria-label="目次">
-          <p class="toc-label">目次</p>
-          <ul>
-            <li><a href="#six-rows">6 行</a></li>
-            <li><a href="#why-3-is-worse-than-2">なぜ ③ は ② より悪いのか</a></li>
-            <li><a href="#not-caching-absence">2 つ目の欠陥: 「無い」をキャッシュしていなかった</a></li>
-            <li><a href="#which-fix-actually-mattered">どの修正が実際に効いたのか</a></li>
-            <li><a href="#before-and-after-only">前後だけを測っていたら何を誤って報告したか</a></li>
-            <li><a href="#what-this-does-not-claim">この記事が主張しないこと</a></li>
-          </ul>
-        </nav>
 
         <h2 id="six-rows">6 行<a class="anchor" href="#six-rows" aria-label="このセクションへのリンク">#</a></h2>
 
@@ -412,7 +414,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
   <script src="../assets/lang.js?v=8eac554c24"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=44326158d4"></script>
-  <script defer src="../assets/article.js?v=b40b9e4b99"></script>
+  <script defer src="../assets/article.js?v=21c4e69745"></script>
   <script>
     (function () {
       var el = document.querySelector(".article-aside");

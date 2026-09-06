@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="A switch failure made live compute nodes look dead and mass recovery ran. The fix was not sharper detection but deciding which signal is entitled to testify to what — and seven of eight scenarios came out as hold." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=0c90792fe5" />
+  <link rel="stylesheet" href="../assets/styles.css?v=0553051533" />
 </head>
 <body>
   <div class="topbar">
@@ -67,13 +67,27 @@
   </div>
   <div class="container reading">
     <main>
-      <section class="page-hero">
-        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Writing</a>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>All posts</a>
         <div class="article-meta">Writing · Sep 2026<span aria-hidden="true"> · </span><span class="read-time">9 min read</span></div>
+      </div>
+      <section class="page-hero">
         <h1>Seven of Eight Failures Should Not Be Recovered</h1>
       </section>
+      <aside class="article-aside" data-aside="writing" data-slug="seven-of-eight-should-not-recover"></aside>
+        <nav class="article-toc" aria-label="Contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#the-observer-was-the-one-isolated">The observer's isolation was read as the subject's failure</a></li>
+            <li><a href="#entitlement-not-accuracy">Not accuracy — entitlement</a></li>
+            <li><a href="#two-different-questions">"Is it broken" and "is it safe to act" are different questions</a></li>
+            <li><a href="#seven-of-eight">Seven of eight</a></li>
+            <li><a href="#no-fencing-no-recovery">No fencing, no recovery — and the five seconds</a></li>
+            <li><a href="#a-db-lock-is-not-consensus">A DB lock is not distributed consensus</a></li>
+            <li><a href="#what-this-does-not-claim">What this does not claim</a></li>
+          </ul>
+        </nav>
       <article class="article-body">
-        <aside class="article-aside" data-aside="writing" data-slug="seven-of-eight-should-not-recover"></aside>
 
         <p><strong>Scope.</strong> In March 2026 I redesigned instance-HA failure handling for an
         OpenStack-based private cloud product. I do not name the product, its version, the customer, or ticket
@@ -90,18 +104,6 @@
         to what</strong> — and once eight scenarios were judged against that, exactly one of them was safe to
         recover.</p>
 
-        <nav class="article-toc" aria-label="Contents">
-          <p class="toc-label">Contents</p>
-          <ul>
-            <li><a href="#the-observer-was-the-one-isolated">The observer's isolation was read as the subject's failure</a></li>
-            <li><a href="#entitlement-not-accuracy">Not accuracy — entitlement</a></li>
-            <li><a href="#two-different-questions">"Is it broken" and "is it safe to act" are different questions</a></li>
-            <li><a href="#seven-of-eight">Seven of eight</a></li>
-            <li><a href="#no-fencing-no-recovery">No fencing, no recovery — and the five seconds</a></li>
-            <li><a href="#a-db-lock-is-not-consensus">A DB lock is not distributed consensus</a></li>
-            <li><a href="#what-this-does-not-claim">What this does not claim</a></li>
-          </ul>
-        </nav>
 
         <h2 id="the-observer-was-the-one-isolated">The observer's isolation was read as the subject's failure<a class="anchor" href="#the-observer-was-the-one-isolated" aria-label="Link to this section">#</a></h2>
 
@@ -374,7 +376,7 @@ Compute-02 → VM-A evacuated       → writes /dev/vdb   (new attachment)</code
   <script src="../assets/lang.js?v=8eac554c24"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=44326158d4"></script>
-  <script defer src="../assets/article.js?v=b40b9e4b99"></script>
+  <script defer src="../assets/article.js?v=21c4e69745"></script>
   <script>
     (function () {
       var el = document.querySelector(".article-aside");
