@@ -25,7 +25,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="Ten defects found in a Kubernetes GPU control plane. Control-plane verification on a Kubernetes GPU operator: what each defect broke, how it was found, and what guards it now." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=0c90792fe5" />
+  <link rel="stylesheet" href="../assets/styles.css?v=0553051533" />
 </head>
 <body>
   <div class="topbar">
@@ -60,25 +60,14 @@
   </div>
   <div class="container reading">
     <main>
-      <section class="page-hero">
-        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Writing</a>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>All posts</a>
           <div class="article-meta">Writing · Aug 2026<span aria-hidden="true"> · </span><span class="read-time">11 min read</span></div>
+      </div>
+      <section class="page-hero">
         <h1>Ten Bugs, Zero Failed Tests</h1>
         </section>
-        <article class="article-body">
-        <aside class="article-aside" data-aside="writing" data-slug="bugs-that-return-exit-code-zero"></aside>
-
-        <p><strong>Scope.</strong> This is control-plane verification work on a Kubernetes operator and
-        gateway for multi-tenant GPU scheduling
-        (<a href="../projects/gpuaas-control-plane.html">what the system is and why</a>). Everything below runs on a local three-node
-        <code>kind</code> cluster against simulated <code>nvidia.com/gpu</code> capacity. No GPU here is
-        real, no production traffic has touched it, and the inference backend is a stub rather than vLLM.
-        What the experiments measure is how the control plane behaves, not how devices behave.</p>
-
-        <p>Over a week of that work I found ten defects. None failed a test, crashed a process, or returned
-        a non-zero exit code. Nine were found by reading a result that looked correct; one was found by an
-        artifact contradicting itself.</p>
-
+      <aside class="article-aside" data-aside="writing" data-slug="bugs-that-return-exit-code-zero"></aside>
         <nav class="article-toc" aria-label="Contents">
           <p class="toc-label">Contents</p>
           <ul>
@@ -93,6 +82,19 @@
             <li><a href="#what-this-establishes-and-what-it-does-not">What this establishes, and what it does not</a></li>
           </ul>
         </nav>
+        <article class="article-body">
+
+        <p><strong>Scope.</strong> This is control-plane verification work on a Kubernetes operator and
+        gateway for multi-tenant GPU scheduling
+        (<a href="../projects/gpuaas-control-plane.html">what the system is and why</a>). Everything below runs on a local three-node
+        <code>kind</code> cluster against simulated <code>nvidia.com/gpu</code> capacity. No GPU here is
+        real, no production traffic has touched it, and the inference backend is a stub rather than vLLM.
+        What the experiments measure is how the control plane behaves, not how devices behave.</p>
+
+        <p>Over a week of that work I found ten defects. None failed a test, crashed a process, or returned
+        a non-zero exit code. Nine were found by reading a result that looked correct; one was found by an
+        artifact contradicting itself.</p>
+
 
         <h2 id="the-ten">The ten<a class="anchor" href="#the-ten" aria-label="Link to this section">#</a></h2>
 
@@ -461,7 +463,7 @@ OUT=./ex/fr002.json ./hack/chaos-fr002-serving-pod-killed.sh
   <script src="../assets/lang.js?v=8eac554c24"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=44326158d4"></script>
-  <script defer src="../assets/article.js?v=b40b9e4b99"></script>
+  <script defer src="../assets/article.js?v=21c4e69745"></script>
   <script>
     (function () {
       var el = document.querySelector(".article-aside");

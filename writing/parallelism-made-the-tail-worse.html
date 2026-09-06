@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="Holding the cache setting fixed, going from sequential to parallel took p99 from 42.6s to 79.0s. An external call inside computeIfAbsent holds the bin, and only a six-configuration test made that visible." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=0c90792fe5" />
+  <link rel="stylesheet" href="../assets/styles.css?v=0553051533" />
 </head>
 <body>
   <div class="topbar">
@@ -67,13 +67,26 @@
   </div>
   <div class="container reading">
     <main>
-      <section class="page-hero">
-        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Writing</a>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>All posts</a>
         <div class="article-meta">Writing · Sep 2026<span aria-hidden="true"> · </span><span class="read-time">8 min read</span></div>
+      </div>
+      <section class="page-hero">
         <h1>Adding Threads Made the Tail Longer</h1>
       </section>
+      <aside class="article-aside" data-aside="writing" data-slug="parallelism-made-the-tail-worse"></aside>
+        <nav class="article-toc" aria-label="Contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#six-rows">Six rows</a></li>
+            <li><a href="#why-3-is-worse-than-2">Why ③ is worse than ②</a></li>
+            <li><a href="#not-caching-absence">The second defect: absence was never cached</a></li>
+            <li><a href="#which-fix-actually-mattered">Which fix actually mattered</a></li>
+            <li><a href="#before-and-after-only">What a before-and-after would have reported</a></li>
+            <li><a href="#what-this-does-not-claim">What this does not claim</a></li>
+          </ul>
+        </nav>
       <article class="article-body">
-        <aside class="article-aside" data-aside="writing" data-slug="parallelism-made-the-tail-worse"></aside>
 
         <p><strong>Scope.</strong> In May 2026 I fixed the <strong>volume list screen</strong> of an
         OpenStack-based private cloud management console. I do not name the product, its version, or any
@@ -90,17 +103,6 @@
         sequential to parallel took p99 from <strong>42.6s to 79.0s</strong>. This is about what that one cell
         told me, and about <strong>the test design that made the cell visible at all</strong>.</p>
 
-        <nav class="article-toc" aria-label="Contents">
-          <p class="toc-label">Contents</p>
-          <ul>
-            <li><a href="#six-rows">Six rows</a></li>
-            <li><a href="#why-3-is-worse-than-2">Why ③ is worse than ②</a></li>
-            <li><a href="#not-caching-absence">The second defect: absence was never cached</a></li>
-            <li><a href="#which-fix-actually-mattered">Which fix actually mattered</a></li>
-            <li><a href="#before-and-after-only">What a before-and-after would have reported</a></li>
-            <li><a href="#what-this-does-not-claim">What this does not claim</a></li>
-          </ul>
-        </nav>
 
         <h2 id="six-rows">Six rows<a class="anchor" href="#six-rows" aria-label="Link to this section">#</a></h2>
 
@@ -429,7 +431,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
   <script src="../assets/lang.js?v=8eac554c24"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=44326158d4"></script>
-  <script defer src="../assets/article.js?v=b40b9e4b99"></script>
+  <script defer src="../assets/article.js?v=21c4e69745"></script>
   <script>
     (function () {
       var el = document.querySelector(".article-aside");
