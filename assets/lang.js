@@ -29,6 +29,13 @@
 var LangRoute = {
   /* What language does the reader want? The stored preference is the durable answer; the googtrans cookie
      is a fallback so that a choice made before the preference existed is still honoured. */
+  /* 저장된 선호가 없으면 지금 읽고 있는 페이지의 언어가 곧 선호다. 이미 있으면 그대로 둔다 —
+     덮어쓰면 「영어 전용 페이지를 한 번 들렀다」는 이유로 한국어 선호가 날아간다. */
+  seedPreference: function (page, storedPref) {
+    if (storedPref) return String(storedPref).toLowerCase();
+    return page ? String(page).toLowerCase() : null;
+  },
+
   wantedLanguage: function (page, cookie, pref) {
     if (pref) return String(pref).toLowerCase();
     var parts = String(cookie || "").split("/");   // ["", source, target]
@@ -143,6 +150,16 @@ if (typeof module !== "undefined" && module.exports) module.exports = LangRoute;
       else localStorage.removeItem(PREF_KEY);
     } catch (e) { /* the site still works, it just forgets */ }
   }
+
+  /* 손으로 쓴 한국어판을 링크로 열어 읽고 있어도, 선호가 **한 번도 기록된 적이 없으면**
+     그 페이지를 떠나는 순간 언어 의도가 사라진다. 실제로 한국어 기사에서 「목록」을 누르면
+     목록 페이지(영어)가 영어 그대로 나왔다 — 선호가 비어 있어 위젯을 켤 근거가 없었기 때문이다.
+
+     그래서 선호가 비어 있을 때 **지금 읽고 있는 페이지의 언어**를 선호로 적어 둔다.
+     이미 기록이 있으면 건드리지 않는다. 덮어쓰면 「영어 전용 페이지를 한 번 들렀다」는 이유로
+     한국어 선호가 날아간다. */
+  var seeded = LangRoute.seedPreference(PAGE, readPref());
+  if (seeded && seeded !== readPref()) writePref(seeded);
 
   var wanted = LangRoute.wantedLanguage(PAGE, readCookie(), readPref());
 

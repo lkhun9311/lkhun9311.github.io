@@ -5,6 +5,21 @@
   --brand-soft: #a8447e;
   --brand-faint: rgba(214, 41, 118, 0.10);
   --rail-line: rgba(214, 41, 118, 0.20);
+
+  /* 두 레일은 하는 일이 다르므로 색도 다르다.
+       왼쪽(태그·관련 글) = 이 글 **밖으로** 나가는 길  → 보라
+       오른쪽(목차)       = 이 글 **안을** 오가는 길    → 분홍(본문 강조색과 같음)
+     둘 다 로고 그라디언트에 있는 색이라 사이트 안에서 새 색이 아니다. 같은 색으로 두면
+     「왼쪽과 오른쪽이 같은 성격인가」를 매번 다시 판단하게 된다. */
+  --aside: #962fbf;
+  --aside-soft: #7f4aa8;
+  --aside-faint: rgba(150, 47, 191, 0.10);
+  --aside-line: rgba(150, 47, 191, 0.20);
+
+  --toc: #d62976;
+  --toc-soft: #a8447e;
+  --toc-faint: rgba(214, 41, 118, 0.10);
+  --toc-line: rgba(214, 41, 118, 0.20);
   --ivory: #fffaf1;
   --ivory-soft: #fffdf8;
   --purple-soft: #f3ecff;
@@ -1956,7 +1971,9 @@ body {
 
 .article-toc a:hover,
 .article-toc a:focus-visible {
-  text-decoration: underline;
+  background: var(--toc-faint);
+  color: var(--toc);
+  text-decoration: none;
 }
 
 /* Anchors sit to the left of the heading and only appear on hover, so the reading experience is unchanged
@@ -2252,8 +2269,10 @@ body {
 
   .container.reading main > .article-aside {
     grid-column: 1;
-    padding: 2px 14px 2px 0;
-    border-right: 1px solid var(--rail-line);
+    /* 제목은 글자가 커서 줄 상자 위쪽에 여백이 생긴다. 레일을 상자 맨 위에 붙이면 제목보다
+       눈에 띄게 위로 뜨므로, 첫 줄끼리 맞도록 그만큼 내린다. */
+    padding: 48px 14px 2px 0;
+    border-right: 1px solid var(--aside-line);
     text-align: right;
   }
 
@@ -2268,12 +2287,12 @@ body {
   .container.reading main > .article-toc {
     grid-column: 3;
     border: 0;
-    border-left: 1px solid var(--rail-line);
+    border-left: 1px solid var(--toc-line);
     border-radius: 0;
     background: none;
     width: clamp(var(--rail), calc(50vw - 584px), 560px);
-    padding: 2px 0 2px 16px;
-    border-left: 1px solid var(--rail-line);
+    padding: 48px 0 2px 16px;
+    border-left: 1px solid var(--toc-line);
   }
 
   .article-toc ul,
@@ -2298,7 +2317,7 @@ body {
   border-radius: 6px;
   font-size: 1rem;
   line-height: 1.45;
-  color: var(--brand-soft);
+  color: var(--toc-soft);
   transition: background-color 120ms ease, color 120ms ease;
 }
 
@@ -2306,8 +2325,8 @@ body {
    채워 두면 다음 절로 넘어갈 때까지 그대로 유지되므로 "지금 여기"가 계속 보인다. */
 .article-toc a.is-current {
   font-weight: 700;
-  color: var(--brand);
-  background: var(--brand-faint);
+  color: var(--toc);
+  background: var(--toc-faint);
   border-radius: 6px;
   /* 형광펜 하나로 끝낸다. 채운 배경 옆에 색 막대를 하나 더 두면 표시가 두 겹이 되고,
      둘의 색이 미묘하게 달라 "이건 또 뭘 뜻하나"를 묻게 된다. */
@@ -2630,8 +2649,10 @@ html[lang="ja"] .container.reading .article-body figure.diagram figcaption::befo
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: none;
-  color: var(--brand);
 }
+
+.article-aside .aside-label { color: var(--aside); }
+.article-toc > .toc-label { color: var(--toc); }
 
 .article-aside .aside-group { margin: 0 0 20px; }
 
@@ -2643,15 +2664,15 @@ html[lang="ja"] .container.reading .article-body figure.diagram figcaption::befo
   border-radius: 6px;
   font-size: 1rem;
   line-height: 1.45;
-  color: var(--brand-soft);
+  color: var(--aside-soft);
   text-decoration: none;
   transition: background-color 120ms ease, color 120ms ease;
 }
 
 .article-aside a:hover,
 .article-aside a:focus-visible {
-  background: var(--brand-faint);
-  color: var(--brand);
+  background: var(--aside-faint);
+  color: var(--aside);
   text-decoration: none;
 }
 

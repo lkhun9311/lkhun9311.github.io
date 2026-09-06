@@ -77,6 +77,23 @@ eq("never route to the file already open",
 eq("an authored entry that is present but empty is not a destination",
   authoredDestination("en", { ko: "" }, "ko", "post.html"), null);
 
+/* ---- seeding the preference from the page ---------------------------------------------------- */
+/* 한국어 기사에서 「목록」을 누르면 목록 페이지가 영어로 나왔다. 선호가 한 번도 기록된 적이
+   없어서 위젯을 켤 근거가 없었기 때문이다. 읽고 있는 페이지의 언어를 선호의 씨앗으로 쓴다. */
+var seedPreference = LangRoute.seedPreference;
+
+eq("a Korean page with no stored preference seeds Korean",
+  seedPreference("ko", null), "ko");
+eq("an English page with no stored preference seeds English",
+  seedPreference("en", null), "en");
+/* 이게 없으면 영어 전용 페이지를 한 번 들르는 것만으로 한국어 선호가 날아간다. */
+eq("a stored preference is never overwritten by the page language",
+  seedPreference("en", "ko"), "ko");
+eq("an empty stored preference is treated as absent",
+  seedPreference("ja", ""), "ja");
+eq("a stored preference is lower-cased",
+  seedPreference("en", "KO"), "ko");
+
 /* ---- the two together, as a page actually uses them ------------------------------------------ */
 
 function decide(page, authored, cookie, pref, file) {
