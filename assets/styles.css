@@ -1708,19 +1708,48 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+/* 머리행은 「제목」이 아니라 「이 칸이 무엇인가」를 알려 주는 라벨이다. 본문과 같은 검정 굵은
+   글씨로 두면 첫 데이터 행처럼 보인다. 작게·흐리게·자간을 벌려 라벨로 읽히게 한다. */
 .article-body thead th {
   text-align: left;
-  padding: 9px 12px 9px 0;
-  border-bottom: 2px solid var(--border, rgba(0,0,0,0.14));
+  padding: 6px 14px 8px 0;
+  border-bottom: 1px solid var(--border, rgba(0, 0, 0, 0.14));
+  font-size: 0.82rem;
   font-weight: 700;
-  color: var(--text);
+  letter-spacing: 0.04em;
+  color: var(--muted);
   white-space: nowrap;
 }
 
 .article-body tbody td {
-  padding: 9px 12px 9px 0;
-  border-bottom: 1px solid var(--border, rgba(0,0,0,0.08));
+  padding: 11px 14px 11px 0;
+  border-bottom: 1px solid var(--border, rgba(0, 0, 0, 0.07));
   vertical-align: top;
+}
+
+/* 첫 칸은 그 행이 무엇에 대한 줄인지를 말한다. 굵게 두면 눈이 왼쪽을 따라 내려갈 수 있다. */
+.article-body tbody th[scope="row"],
+.article-body tbody td:first-child {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* 강조는 굵기 하나로 하지 않는다. 표가 커지면 굵은 글씨가 여기저기 흩어져서
+   「무엇이 결론인가」가 안 보인다. 결론 칸에는 형광펜을 칠한다. */
+.article-body table strong {
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: var(--brand-faint);
+  color: var(--brand);
+  font-weight: 700;
+}
+
+/* 표 아래 한 줄. 「이 표에서 무엇을 봐야 하나」는 표가 스스로 말하지 못한다. */
+.article-body .table-note {
+  margin: -8px 0 24px;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
 .article-body tbody tr:last-child td {
@@ -2335,7 +2364,7 @@ body {
   position: relative;
   padding: 6px 10px 6px 6px;
   border-radius: 6px;
-  font-size: 1.1rem;
+  font-size: 1.02rem;
   line-height: 1.5;
   color: var(--muted);
   transition: background-color 120ms ease, color 120ms ease;
@@ -2377,13 +2406,13 @@ body {
 
 .container.reading .article-body h2 {
   margin: 52px 0 14px;
-  font-size: 1.72rem;
+  font-size: 1.62rem;
   line-height: 1.25;
 }
 
 .container.reading .article-body h3 {
   margin: 32px 0 10px;
-  font-size: 1.28rem;
+  font-size: 1.3rem;
   line-height: 1.3;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -2392,7 +2421,7 @@ body {
 
 .container.reading .article-body h4 {
   margin: 24px 0 8px;
-  font-size: 1.06rem;
+  font-size: 1.12rem;
   font-weight: 700;
   color: var(--text, #18121d);
 }
@@ -2400,7 +2429,7 @@ body {
 .container.reading .article-body p { margin: 0 0 18px; }
 .container.reading .article-body ul,
 .container.reading .article-body ol { margin: 0 0 18px; }
-.container.reading .article-body li { margin-bottom: 10px; }
+.container.reading .article-body li { margin-bottom: 14px; }
 
 /* The first heading after the hero should not push a 52px gap on top of the hero's own margin. */
 .container.reading .article-body > h2:first-of-type { margin-top: 34px; }
@@ -2548,10 +2577,10 @@ html[lang="ja"] .container.reading .article-body figure.diagram figcaption::befo
   margin: 0;
   padding: 5px 14px;
   border-radius: 999px;
-  border: 1px solid rgba(200, 42, 42, 0.55);
+  border: 1px solid rgba(214, 41, 118, 0.55);
   background-color: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 8px 20px rgba(200, 42, 42, 0.20);
-  color: #c82a2a;
+  box-shadow: 0 8px 20px rgba(214, 41, 118, 0.20);
+  color: var(--ig-pink);
   font-size: 0.84rem;
   font-weight: 800;
   letter-spacing: 0.01em;
@@ -2620,8 +2649,8 @@ html[lang="ja"] .container.reading .article-body figure.diagram figcaption::befo
 
 .container.reading .page-hero h1 .h1-sub {
   margin-top: 12px;
-  color: var(--text-soft);   /* 제목보다 한 단계 낮춘다. 색 계열은 같고 명도만 다르다 */
-  font-weight: 500;
+  color: var(--muted);       /* 회색 — 제목과 같은 검정이면 두 줄이 한 덩어리로 읽힌다 */
+  font-weight: 600;          /* 제목(700)보다 한 단계 약한 굵기 */
 }
 
 /* ---- 본문 안의 코드 조각 ---------------------------------------------------------------- */
@@ -2682,15 +2711,17 @@ html[lang="ja"] .container.reading .article-body figure.diagram figcaption::befo
 
 .article-body ul:not(.callout):not(.facets) > li::before,
 .article-body ul.callout > li::before {
-  /* 짧은 선은 줄표처럼 읽혀서 글머리로 안 보인다. 점으로 둔다. */
+  /* 점(·)은 본문에서 구분자로 이미 쓰고 있고, 짧은 선(–)은 줄표로 읽힌다. 둘 다 아닌
+     작은 삼각형을 쓴다 — 「여기서 항목이 시작한다」는 방향이 기호 자체에 있다. */
   content: "";
   position: absolute;
-  left: 3px;
-  top: 0.72em;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--muted);
+  left: 2px;
+  top: 0.62em;
+  width: 0;
+  height: 0;
+  border-left: 5px solid var(--brand-soft);
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
 }
 
 /* ---- 상자의 종류 --------------------------------------------------------------------------- */
@@ -2744,7 +2775,7 @@ html[lang="ja"] .container.reading .article-body figure.diagram figcaption::befo
   border-radius: 6px;
   /* 목차와 같은 16px 인데도 더 작아 보였다. 이 칸은 대부분 로마자(#Postgres·영문 제목)이고
      로마자는 같은 크기에서 한글보다 x-높이가 낮기 때문이다. 보이는 크기를 맞춘다. */
-  font-size: 1.15rem;
+  font-size: 1.08rem;
   line-height: 1.5;
   color: var(--muted);
   text-decoration: none;
