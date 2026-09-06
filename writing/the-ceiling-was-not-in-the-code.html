@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="Post creation would not go past 6.27 req/s. Four times the write threads did nothing. Three times the database pool did nothing. The limit was a default of five connections per host, inside an HTTP client that came in as a transitive dependency of the AWS SDK I added for S3 — a layer that is only on the runtime classpath, so reading the code could never have found it." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=045774ba45" />
+  <link rel="stylesheet" href="../assets/styles.css?v=0c90792fe5" />
 </head>
 <body>
   <div class="topbar">
@@ -69,10 +69,11 @@
     <main>
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to Writing</a>
-        <h1>The Throughput Ceiling Was Not in the Code<br><span class="h1-sub">A default of five from a library S3 pulled in — the moderation path of a social polling platform</span></h1>
         <div class="article-meta"><span class="source-tag commercial notranslate">Commercial project</span>Writing · September 2026<span aria-hidden="true"> · </span><span class="read-time">16 min read</span></div>
+        <h1>The Throughput Ceiling Was Not in the Code<br><span class="h1-sub">A default of five from a library S3 pulled in — the moderation path of a social polling platform</span></h1>
       </section>
       <article class="article-body">
+        <aside class="article-aside" data-aside="writing" data-slug="the-ceiling-was-not-in-the-code"></aside>
 
         <p>I am building a <strong>social polling platform</strong>. In the previous article I moved an
         external call out of a database transaction and stood up a
@@ -107,7 +108,7 @@
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
-        <ul>
+        <ul class="callout">
           <li>Anyone calling an external API from Spring Boot through <code>RestClient</code> or <code>RestTemplate</code></li>
           <li>Anyone whose throughput sits on one number and will not move, even after raising threads and the database pool</li>
           <li>Anyone who has wondered <em>“is a library I never added deciding how my service behaves?”</em></li>
@@ -715,9 +716,19 @@ assertThat(factories[0]).isSameAs(factories[1])</code></pre>
     </footer>
   </div>
 
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/content.js"></script>
   <script src="../assets/lang.js?v=8eac554c24"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=49e7bee9c8"></script>
   <script defer src="../assets/article.js?v=b40b9e4b99"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
 </body>
 </html>

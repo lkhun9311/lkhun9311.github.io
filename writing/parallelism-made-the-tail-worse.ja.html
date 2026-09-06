@@ -29,7 +29,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="キャッシュ設定を固定したまま逐次を並列に変えると、p99 が 42.6 秒から 79.0 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンがロックされる。6 構成を同条件で測って初めて見えたこと。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=045774ba45" />
+  <link rel="stylesheet" href="../assets/styles.css?v=0c90792fe5" />
 </head>
 <body>
   <div class="topbar">
@@ -67,10 +67,11 @@
     <main>
       <section class="page-hero">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ戻る</a>
-        <h1>スレッドを増やしたらテールが伸びた</h1>
         <div class="article-meta">Writing · 2026年9月<span aria-hidden="true"> · </span><span class="read-time">10分</span></div>
+        <h1>スレッドを増やしたらテールが伸びた</h1>
       </section>
       <article class="article-body">
+        <aside class="article-aside" data-aside="writing" data-slug="parallelism-made-the-tail-worse"></aside>
 
         <p><strong>範囲.</strong> 2026年5月、OpenStack ベースのプライベートクラウド管理コンソールの
         <strong>ボリューム一覧画面</strong>を改善した記録である。製品名・バージョン・顧客名は書かない。以下の数値は
@@ -406,9 +407,19 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
     </footer>
   </div>
 
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/content.js"></script>
   <script src="../assets/lang.js?v=8eac554c24"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=49e7bee9c8"></script>
   <script defer src="../assets/article.js?v=b40b9e4b99"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
 </body>
 </html>

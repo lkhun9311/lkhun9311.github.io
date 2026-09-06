@@ -402,6 +402,13 @@
     var tagList = tagsOf(sec.items);
     var initial = hasAll ? allLabel : (tagList[0] || null);
 
+    /* 기사에서 `?tag=Performance` 로 넘어오면 그 태그를 켠 채로 연다. 링크를 눌렀는데 전체
+       목록이 나오면 "누른 것이 안 먹었나"를 다시 확인하게 된다. 없는 태그면 무시한다. */
+    try {
+      var wanted = decodeURIComponent((/[?&]tag=([^&]+)/.exec(location.search) || [])[1] || "");
+      if (wanted && tagList.indexOf(wanted) !== -1) initial = wanted;
+    } catch (e) { /* 잘못 인코딩된 주소는 그냥 무시한다 */ }
+
     /* 태그는 **왼쪽 세로 목록**으로만 그린다. 18개가 칩 한 줄로 세 줄씩 감기면 고르는 게 아니라
        읽는 일이 된다. 세로로 세우면 묶어서 나눌 수 있고 개수도 붙일 수 있다(AWS 문서의 좌측 내비와
        같은 형태). 홈에는 태그 줄 자체가 없다 — 미리보기 5건에 필터는 번잡하기만 하다. */
@@ -433,7 +440,7 @@
     } else if (tagRowEl) {
       // 섹션이 tagGroups 를 선언하면 그 순서·묶음대로, 아니면 한 덩어리로 그린다.
       var groups = sec.tagGroups || null;
-      var html = hasAll ? facetRow(allLabel, true) : "";
+      var html = hasAll ? facetRow(allLabel, initial === allLabel) : "";
       if (groups) {
         var placed = {};
         Object.keys(groups).forEach(function (name) {
@@ -445,19 +452,19 @@
           if (!inGroup.length) return;
           inGroup.forEach(function (t) { placed[t] = 1; });
           html += '<div class="facet-group"><h3>' + esc(name) + "</h3>" +
-                  inGroup.map(function (t) { return facetRow(t, false); }).join("") + "</div>";
+                  inGroup.map(function (t) { return facetRow(t, t === initial); }).join("") + "</div>";
         });
         var rest = tagList.filter(function (t) { return !placed[t]; })
           .sort(function (a, b) { return countOf(b) - countOf(a) || a.localeCompare(b); });
         if (rest.length) {
           html += '<div class="facet-group"><h3>기타</h3>' +
-                  rest.map(function (t) { return facetRow(t, false); }).join("") + "</div>";
+                  rest.map(function (t) { return facetRow(t, t === initial); }).join("") + "</div>";
         }
       } else {
         html += '<div class="facet-group">' +
                 tagList.slice()
                   .sort(function (a, b) { return countOf(b) - countOf(a) || a.localeCompare(b); })
-                  .map(function (t) { return facetRow(t, false); }).join("") + "</div>";
+                  .map(function (t) { return facetRow(t, t === initial); }).join("") + "</div>";
       }
       tagRowEl.innerHTML = html;
     }
@@ -493,6 +500,54 @@
   };
   window.renderGrid = function (key, gridEl, tagRowEl) {
     render(key, gridEl, { card: "article", limit: 0, tagRow: tagRowEl, allLabel: "All" });
+  };
+
+  /* 기사 왼쪽 레일.
+     오른쪽은 이 글 안을 오가는 목차이고, 왼쪽은 **이 글 밖으로** 나가는 길이다 —
+     같은 주제의 다른 글과 같은 프로젝트의 다른 글. 글 끝에 붙이면 끝까지 읽은 사람만 보지만,
+     레일에 두면 읽는 도중에도 "이 얘기 딴 데서 더 봤나"에 답할 수 있다.
+
+     slug 는 언어 접미사를 뗀 이름이다(`a-pooler-fixes-only-one`). 한국어판에서 눌러도
+     lang.js 가 저장된 언어 선호를 보고 손으로 쓴 판으로 데려간다. */
+  window.renderArticleAside = function (el, key, slug) {
+    if (!el || !DATA[key]) return;
+    var items = DATA[key].items;
+    var me = null;
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].url && items[i].url.split("/").pop() === slug + ".html") { me = items[i]; break; }
+    }
+    if (!me) return;   // 데이터에 없는 글이면 레일을 그리지 않는다 — 빈 상자보다 낫다.
+
+    /* 레일 제목은 페이지 언어를 따른다. 한국어 글에 영어 제목이 붙으면 그 줄만 번역이
+       빠진 것처럼 읽힌다. */
+    var lang = (document.documentElement.lang || "en").slice(0, 2);
+    var L = ({
+      ko: { tags: "태그", more: "관련 글" },
+      ja: { tags: "タグ", more: "関連記事" }
+    })[lang] || { tags: "Tags", more: "Related" };
+
+    var html = "";
+    var tags = me.tags || [];
+    if (tags.length) {
+      html += '<div class="aside-group"><p class="aside-label notranslate">' + esc(L.tags) + '</p><ul>' +
+        tags.map(function (t) {
+          return '<li><a class="notranslate" href="' + BASE + esc(key) + "/index.html?tag=" +
+            encodeURIComponent(t) + '">#' + esc(t) + "</a></li>";
+        }).join("") + "</ul></div>";
+    }
+
+    var siblings = items.filter(function (it) {
+      return it !== me && it.source && it.source === me.source;
+    }).slice(0, 4);
+    if (siblings.length) {
+      html += '<div class="aside-group"><p class="aside-label">' + esc(L.more) +
+        '</p><ul>' + siblings.map(function (it) {
+          return '<li><a class="notranslate" href="' + BASE + esc(it.url) + '">' + esc(it.title) + "</a></li>";
+        }).join("") + "</ul></div>";
+    }
+
+    if (!html) return;
+    el.innerHTML = html;
   };
 
   /* Sets a "+N" count element's text from a section's item count. */

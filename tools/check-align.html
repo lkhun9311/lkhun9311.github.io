@@ -16,8 +16,11 @@
    그래서 폭은 언제나 단언하고, 왼쪽 모서리는 문턱 위에서만 단언한다.
      섹션 인덱스: (100vw - 1360)/2 - 24 >= 130  →  1668px
      기사      : (100vw - 1414)/2 - 24 >= 157  →  1776px */
-var WIDTHS = [1440, 1668, 1776, 1920, 2560];
-var ALIGN_FROM = { notes: 1668, writing: 1668, article: 1776 };
+var WIDTHS = [1440, 1668, 1700, 1920, 2560];
+/* 문턱 = 그 페이지의 컨테이너가 화면에 온전히 들어가는 폭. 그 아래에서는 컨테이너가 화면에
+   맞춰 줄어들어 본문도 같이 좁아지므로, 홈과 같아야 할 이유가 없다.
+   섹션 인덱스 1360 + 여백, 기사 1656 + 세로 스크롤바 폭. */
+var ALIGN_FROM = { notes: 1668, writing: 1668, article: 1700 };
 var frames = [];
 WIDTHS.forEach(function (w) {
   [["home","../index.html",".entry-list"],
@@ -48,8 +51,9 @@ window.addEventListener("load", function () {
     if (!home) { bad.push(w + ": home 없음"); return; }
     ["notes","writing","article"].forEach(function (n) {
       if (!g[n]) { bad.push(w + ": " + n + " 없음"); return; }
+      if (+w < ALIGN_FROM[n]) return;   // 문턱 아래는 단언할 것이 없다
       var wrongWidth = Math.abs(g[n].width - home.width) > 1;
-      var wrongLeft = +w >= ALIGN_FROM[n] && Math.abs(g[n].left - home.left) > 1;
+      var wrongLeft = Math.abs(g[n].left - home.left) > 1;
       if (wrongWidth || wrongLeft) {
         bad.push(w + "px " + n + " left=" + g[n].left + "/w=" + g[n].width +
                  " vs home left=" + home.left + "/w=" + home.width +
