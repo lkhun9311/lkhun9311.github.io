@@ -1745,11 +1745,31 @@ body {
 }
 
 /* 표 아래 한 줄. 「이 표에서 무엇을 봐야 하나」는 표가 스스로 말하지 못한다. */
+/* 표 설명 줄. 그림과 같은 방식으로 번호를 매긴다 — 번호가 있어야 본문에서 「표 2를 보면」
+   이라고 가리킬 수 있고, 없으면 읽는 사람이 매번 위로 올라가 세어야 한다.
+   번호는 이 줄이 올린다. 표 자체가 아니라 설명 줄에 붙여야 설명이 없는 표에 번호가
+   비는 일이 없다. */
+.container.reading .article-body .table-note { counter-increment: tbl; }
+
 .article-body .table-note {
-  margin: -8px 0 24px;
+  margin: -6px 0 26px;
   color: var(--muted);
   font-size: 0.95rem;
   line-height: 1.6;
+}
+
+.container.reading .article-body .table-note::before {
+  content: "Table " counter(tbl) ". ";
+  font-weight: 700;
+  color: var(--text-soft, #3b3344);
+}
+
+html[lang="ko"] .container.reading .article-body .table-note::before {
+  content: "표 " counter(tbl) ". ";
+}
+
+html[lang="ja"] .container.reading .article-body .table-note::before {
+  content: "表 " counter(tbl) ". ";
 }
 
 .article-body tbody tr:last-child td {
@@ -2515,7 +2535,7 @@ body {
 /* Numbered, so the prose can say "그림 2" and mean something. The counter lives on the body so the
    numbering is per article, and the label follows the page's language. */
 
-.container.reading .article-body { counter-reset: fig; }
+.container.reading .article-body { counter-reset: fig tbl; }
 .container.reading .article-body figure.diagram { counter-increment: fig; }
 
 .container.reading .article-body figure.diagram figcaption {
