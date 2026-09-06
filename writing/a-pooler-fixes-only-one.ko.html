@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="출시 전 소셜 투표 플랫폼을 점검하다가 connection pooler를 붙이려고 했습니다. 그런데 커넥션 고갈에는 원인이 두 가지 있고, connection pooler는 그중 하나만 고칩니다. 왜 못 고치는지는 제품 문서가 아니라 transaction pooling의 정의에서 나옵니다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=bd26161b1e" />
+  <link rel="stylesheet" href="../assets/styles.css?v=feb953573a" />
 </head>
 <body>
   <div class="topbar">
@@ -69,10 +69,11 @@
     <main>
       <div class="hero-top">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
-        <div class="article-meta">2026년 9월<span class="source-tag commercial notranslate">사업화 프로젝트</span></div>
+        <div class="article-meta"><span class="source-tag commercial notranslate">사업화 프로젝트</span><span class="repo-private notranslate" translate="no">Private</span></div>
       </div>
       <section class="page-hero">
         <h1>RDS Proxy로는 못 고치는 커넥션 고갈<br><span class="h1-sub">트랜잭션 안에서 외부 API를 호출하고 있었습니다. 출시 전 소셜 투표 플랫폼 점검</span></h1>
+        <p class="article-date">2026년 9월</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="a-pooler-fixes-only-one"></aside>
         <nav class="article-toc" aria-label="목차">
@@ -81,20 +82,20 @@
             <li><a href="#예상-독자">이 글의 예상 독자</a></li>
             <li><a href="#무슨-내용">무슨 내용인가요?</a></li>
             <li><a href="#어떤-서비스">어떤 서비스인가요?</a></li>
-            <li><a href="#pooler를-붙이면">처음엔 connection pooler를 붙이면 될 줄 알았습니다</a></li>
-            <li><a href="#결론부터">결론부터 말씀드리자면</a></li>
-            <li><a href="#원인-a">원인 A. 커넥션이 많아서</a></li>
-            <li><a href="#원인-b">원인 B. 커넥션을 오래 붙잡고 있어서</a></li>
-            <li><a href="#왜-못-고치나">왜 connection pooler가 B를 못 고치나요?</a></li>
-            <li><a href="#순서가-있습니다">그래서 순서가 있습니다</a></li>
-            <li><a href="#코드부터">코드부터 고쳤습니다</a></li>
-            <li><a href="#두-숫자">아무도 고르지 않은 두 숫자</a></li>
-            <li><a href="#쓸-수-있는-코드">connection pooler를 쓸 수 있는 코드인지 먼저 확인했습니다</a></li>
-            <li><a href="#비동기로-바꾸면">“비동기로 바꾸면 되지 않나요?”</a></li>
-            <li><a href="#가드">되돌리기 쉬운 수정이라 가드를 원인에 걸었습니다</a></li>
-            <li><a href="#재-봤습니다">세 주 뒤에 실제로 재 봤습니다</a></li>
-            <li><a href="#겹쳐-부르기">재고 나니 고칠 것이 하나 더 보였습니다</a></li>
-            <li><a href="#주장하지-않는-것">이 글이 주장하지 않는 것</a></li>
+            <li><a href="#pooler를-붙이면">가설: connection pooler를 붙이면 될 줄 알았습니다</a></li>
+            <li><a href="#결론부터">결론: pooler는 두 원인 중 하나만 고칩니다</a></li>
+            <li><a href="#원인-a">원인 A: 커넥션 개수가 많아서</a></li>
+            <li><a href="#원인-b">원인 B: 커넥션을 오래 붙잡고 있어서</a></li>
+            <li><a href="#왜-못-고치나">이유: transaction pooling의 정의 때문입니다</a></li>
+            <li><a href="#순서가-있습니다">순서: 트랜잭션을 짧게 만드는 것이 먼저입니다</a></li>
+            <li><a href="#코드부터">수정 ①: 외부 호출을 트랜잭션 밖으로</a></li>
+            <li><a href="#두-숫자">설정: 아무도 고르지 않은 두 숫자</a></li>
+            <li><a href="#쓸-수-있는-코드">사전 점검: 이 코드가 pooler를 쓸 수 있나</a></li>
+            <li><a href="#비동기로-바꾸면">반론: “비동기로 바꾸면 되지 않나요?”</a></li>
+            <li><a href="#가드">가드: 되돌리기 쉬운 수정이라 원인에 걸었습니다</a></li>
+            <li><a href="#재-봤습니다">측정: 세 주 뒤에 실제로 재 봤습니다</a></li>
+            <li><a href="#겹쳐-부르기">수정 ②: 재고 나니 하나 더 보였습니다</a></li>
+            <li><a href="#주장하지-않는-것">유보: 이 글이 주장하지 않는 것</a></li>
             <li><a href="#마치며">마치며</a></li>
           </ul>
         </nav>
@@ -196,7 +197,7 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
 
         <p>이 숫자를 기억해 주세요. 이 글의 나머지가 전부 여기서 나옵니다.</p>
 
-        <h2 id="pooler를-붙이면">처음엔 connection pooler를 붙이면 될 줄 알았습니다<a class="anchor" href="#pooler를-붙이면" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="pooler를-붙이면">가설: connection pooler를 붙이면 될 줄 알았습니다<a class="anchor" href="#pooler를-붙이면" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>점검의 출발점은 흔한 가설이었습니다.</p>
 
@@ -209,7 +210,7 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
         <p>그런데 이 판단을 내리기 전에 확인해야 할 것이 있었습니다.
         <strong>“내가 겪을 커넥션 부족이 정말 이 도구가 고치는 종류의 부족인가”</strong>입니다.</p>
 
-        <h2 id="결론부터">결론부터 말씀드리자면<a class="anchor" href="#결론부터" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="결론부터">결론: pooler는 두 원인 중 하나만 고칩니다<a class="anchor" href="#결론부터" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>아니었습니다. 한 줄로 줄이면 이렇습니다.</p>
 
@@ -229,7 +230,7 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
 
         <p>여기까지는 두 원인이 똑같이 생겼습니다. 그래서 증상만 보고 도구를 고르면 틀립니다.</p>
 
-        <h2 id="원인-a">원인 A. 커넥션이 많아서<a class="anchor" href="#원인-a" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="원인-a">원인 A: 커넥션 개수가 많아서<a class="anchor" href="#원인-a" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>첫 번째는 <strong>커넥션 개수</strong> 자체가 문제인 경우입니다.</p>
 
@@ -243,8 +244,7 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
         <p><strong>이것이 connection pooler가 존재하는 이유입니다.</strong> 앱 커넥션 2,000개를 백엔드 커넥션 50개로
         묶어 주니까요. A 형 고갈에는 정확히 맞는 도구입니다.</p>
 
-        <h2 id="원인-b">원인 B. 커넥션을 오래 붙잡고 있어서<a class="anchor" href="#원인-b" aria-label="이 절로 가는 링크">#</a></h2>
-        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private repo</span></p>
+        <h2 id="원인-b">원인 B: 커넥션을 오래 붙잡고 있어서<a class="anchor" href="#원인-b" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>두 번째는 커넥션 <strong>개수</strong>가 아니라 <strong>붙잡고 있는 시간</strong>이 문제인 경우입니다.
         그리고 제 코드가 이쪽이었습니다.</p>
@@ -379,7 +379,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         “투표 결과 차트를 공유하는 것”이라서 <strong>공유가 잘 터지는 날이 곧 서비스가 멈추는 날</strong>이
         됩니다.</p>
 
-        <h2 id="왜-못-고치나">왜 connection pooler가 B를 못 고치나요?<a class="anchor" href="#왜-못-고치나" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="왜-못-고치나">이유: transaction pooling의 정의 때문입니다<a class="anchor" href="#왜-못-고치나" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>여기가 이 글의 본론입니다.</p>
 
@@ -464,7 +464,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         도입하면 돈을 쓰고도 아무것도 나아지지 않습니다. 사실 더 나쁜 건 그다음입니다.
         <strong>“이제 대비했다”고 믿게 됩니다.</strong> 그 믿음이 다음 점검을 막습니다.</p>
 
-        <h2 id="순서가-있습니다">그래서 순서가 있습니다<a class="anchor" href="#순서가-있습니다" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="순서가-있습니다">순서: 트랜잭션을 짧게 만드는 것이 먼저입니다<a class="anchor" href="#순서가-있습니다" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>해법은 하나가 아니라 여러 층이고 층에는 순서가 있습니다.</p>
 
@@ -487,8 +487,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
 
         <p>connection pooler는 ③입니다. ①을 안 하고 ③부터 가면 효과가 없다는 게 앞 절의 내용이었습니다.</p>
 
-        <h2 id="코드부터">코드부터 고쳤습니다<a class="anchor" href="#코드부터" aria-label="이 절로 가는 링크">#</a></h2>
-        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private repo</span></p>
+        <h2 id="코드부터">수정 ①: 외부 호출을 트랜잭션 밖으로<a class="anchor" href="#코드부터" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>그래서 ①부터 했습니다. 트랜잭션 경계를 <strong>쓰기 구간으로 좁히는</strong> 작업입니다.
         Spring에서 <code>@Transactional</code> 은 프록시 기반이라 같은 클래스 안에서 자기 메서드를 부르면
@@ -529,8 +528,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         <strong>코드 수정은 connection pooler의 대안이 아니라 전제조건이었습니다.</strong>
         고치고 나니 이제 connection pooler가 값을 할 수 있는 상태가 됐습니다.</p>
 
-        <h2 id="두-숫자">아무도 고르지 않은 두 숫자<a class="anchor" href="#두-숫자" aria-label="이 절로 가는 링크">#</a></h2>
-        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private repo</span></p>
+        <h2 id="두-숫자">설정: 아무도 고르지 않은 두 숫자<a class="anchor" href="#두-숫자" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>②(유입 제어)에도 함정이 하나 있었습니다. <strong>블로킹 JDBC 에서는 <a class="term" href="../notes/connection-pool.html">connection pool</a>이 사실상 동시성
         상한</strong>입니다. 스레드가 아무리 많아도 커넥션을 못 받으면 일을 못 하니까요.</p>
@@ -571,8 +569,7 @@ spring:
         <p>유입 제어라는 것은 상한을 <em>두는</em> 것이 아니라 <strong>그 상한을 의도적으로 정하는
         것</strong>입니다. 기본값 두 개가 만들어 낸 동시성 정책은 정책이 아닙니다.</p>
 
-        <h2 id="쓸-수-있는-코드">connection pooler를 쓸 수 있는 코드인지 먼저 확인했습니다<a class="anchor" href="#쓸-수-있는-코드" aria-label="이 절로 가는 링크">#</a></h2>
-        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private repo</span></p>
+        <h2 id="쓸-수-있는-코드">사전 점검: 이 코드가 pooler를 쓸 수 있나<a class="anchor" href="#쓸-수-있는-코드" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>③으로 넘어가기 전에 확인할 것이 하나 더 있었습니다. transaction pooling에는
         <strong>핀(pin)을 유발하는 패턴</strong>이 있고 코드에 그게 있으면 connection pooler가 무력해집니다.
@@ -604,7 +601,7 @@ VoteRepository.kt        pg_advisory_xact_lock(...)</code></pre>
         <p><strong>도구를 도입하기 전에, 그 도구가 이 코드에서 실제로 동작하는지 먼저 확인하는 절차.</strong>
         이 점검에서 얻은 것 중 다른 프로젝트로 가장 잘 옮겨지는 부분이 이거였습니다.</p>
 
-        <h2 id="비동기로-바꾸면">“비동기로 바꾸면 되지 않나요?”<a class="anchor" href="#비동기로-바꾸면" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="비동기로-바꾸면">반론: “비동기로 바꾸면 되지 않나요?”<a class="anchor" href="#비동기로-바꾸면" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>이 이야기를 하면 자주 나오는 처방이 하나 더 있습니다.</p>
 
@@ -620,8 +617,7 @@ VoteRepository.kt        pg_advisory_xact_lock(...)</code></pre>
         앞서 본 <code>pool 크기 × instance 수 ≤ DB 커넥션 상한</code>에 먼저 걸립니다. 그리고 근본 원인은 그대로 남습니다.
         느린 외부 호출이 커넥션을 붙잡는다는 것 말입니다.</p>
 
-        <h2 id="가드">되돌리기 쉬운 수정이라 가드를 원인에 걸었습니다<a class="anchor" href="#가드" aria-label="이 절로 가는 링크">#</a></h2>
-        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private repo</span></p>
+        <h2 id="가드">가드: 되돌리기 쉬운 수정이라 원인에 걸었습니다<a class="anchor" href="#가드" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>이 수정에는 특유의 취약함이 있습니다. <strong><code>@Transactional</code> 한 줄이면 원래대로
         돌아갑니다.</strong> 그리고 되돌려도 <strong>기능은 멀쩡합니다.</strong> 테스트도 통과하고 화면도
@@ -663,7 +659,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         <p>여기서 배운 것이 이 글에서 제일 옮길 만한 것입니다.
         <strong>mutation이 초록불이면 코드가 안전한 게 아니라 가드가 겨누고 있지 않은 것입니다.</strong></p>
 
-        <h2 id="재-봤습니다">세 주 뒤에 실제로 재 봤습니다<a class="anchor" href="#재-봤습니다" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="재-봤습니다">측정: 세 주 뒤에 실제로 재 봤습니다<a class="anchor" href="#재-봤습니다" aria-label="이 절로 가는 링크">#</a></h2>
         <p>이 글은 원래 <em>“수치가 없습니다”</em>로 끝날 예정이었습니다. 그런데 그 문장을 쓰고 나니
         <strong>수치를 만들 도구가 없다는 뜻</strong>이라는 게 분명해져서 세 주 뒤에 JMeter <a class="term" href="../notes/load-test-harness.html">harness</a>를
         만들어 재 봤습니다.</p>
@@ -745,8 +741,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         pool 10개가 고갈되지 않기 때문입니다. <strong>pool이 마르지 않으면 이 현상은 나타나지 않습니다.</strong>
         이 수치는 조건에 딸린 값이지 상수가 아닙니다.</p>
 
-        <h2 id="겹쳐-부르기">재고 나니 고칠 것이 하나 더 보였습니다<a class="anchor" href="#겹쳐-부르기" aria-label="이 절로 가는 링크">#</a></h2>
-        <p class="h2-src"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg> <span class="repo-private notranslate" translate="no">Private repo</span></p>
+        <h2 id="겹쳐-부르기">수정 ②: 재고 나니 하나 더 보였습니다<a class="anchor" href="#겹쳐-부르기" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>수치가 생기니 다음 질문이 자동으로 나왔습니다. <strong>글 생성 p50이 왜 stub 지연의 정확히
         두 배인가.</strong> 게이트를 열어 보니 외부 분류기를 <strong>순차로</strong> 부르고 있었습니다.</p>
@@ -846,7 +841,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         <code>ExecutionException</code> 언랩 제거, 우선순위 뒤집기, ③ 이 막으면 ④ 건너뛰기. 셋 다
         빨간불이 납니다.</p>
 
-        <h2 id="주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="주장하지-않는-것">유보: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul>
           <li><strong>운영 수치가 아닙니다.</strong> 잰 것은 로컬 harness이고 부하기와 앱이 같은 기계에서
@@ -877,7 +872,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
           <li>connection pooler는 개수 문제를 고치는 도구입니다. 점유 시간 문제에서는 앱 커넥션 1개당 DB 커넥션
           1개가 되어 줄여 줄 것이 없습니다. 이건 제품의 한계가 아니라
           <strong>transaction pooling이라는 방식의 정의</strong>에서 나옵니다.</li>
-          <li>그래서 순서가 있습니다. <strong>트랜잭션을 짧게 만드는 것이 나머지 전부의 전제</strong>입니다.</li>
+          <li>순서: 트랜잭션을 짧게 만드는 것이 먼저입니다. <strong>트랜잭션을 짧게 만드는 것이 나머지 전부의 전제</strong>입니다.</li>
           <li>도구를 도입하기 전에 <strong>이 코드에서 그 도구가 동작하는지</strong> 확인하는 절차를 넣으면
           도입하고 나서 알게 될 일을 미리 알 수 있습니다.</li>
         </ul>
