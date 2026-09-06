@@ -15,7 +15,7 @@
   <meta property="og:title" content="arm(대조군)이란? | Kwanghun Lee" />
   <meta property="og:description" content="비교 실험에서 한 갈래의 실행. 한 변수만 다르고 나머지는 같아야 한다." />
   <meta property="og:locale" content="ko_KR" />
-  <link rel="stylesheet" href="../assets/styles.css?v=855b1948be" />
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
 </head>
 <body>
   <div class="topbar">
@@ -71,20 +71,20 @@
         </nav>
       <article class="article-body">
 
-        <p class="term-oneline">비교 실험에서 <strong>한 갈래의 실행</strong>을 부르는 말입니다. 임상시험에서 온 단어로, arm A 와 arm B 는 <strong>한 가지만 다르고 나머지는 전부 같아야</strong> 합니다.</p>
+        <p class="term-oneline">비교 실험에서 <strong>한 갈래의 실행</strong>을 부르는 말입니다. 임상시험에서 온 단어로, arm A와 arm B는 <strong>한 가지만 다르고 나머지는 전부 같아야</strong> 합니다.</p>
 
 
         <h2 id="어원">왜 이 말을 쓰나<a class="anchor" href="#어원" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>임상시험에서 환자군을 나눌 때 각 갈래를 arm 이라고 부릅니다(치료군 arm, 위약군 arm).
+        <p>임상시험에서 환자군을 나눌 때 각 갈래를 arm이라고 부릅니다(치료군 arm, 위약군 arm).
         성능 측정도 같은 구조입니다 — <strong>같은 조건에 한 가지만 다르게 해서 결과를 비교</strong>합니다.</p>
         <h2 id="단일변수">한 변수만 바꾼다<a class="anchor" href="#단일변수" aria-label="이 절로 가는 링크">#</a></h2>
         <p>이걸 어기면 결과가 무엇 때문인지 알 수 없습니다. 실제로 겪은 오류: 두 실행을 비교했는데
-        한쪽은 <em>캐시 5초 + 순차</em>, 다른 쪽은 <em>캐시 없음 + 병렬</em> 이었습니다. 차이를 "병렬화 덕분"이라고
+        한쪽은 <em>cache 5초 + 순차</em>, 다른 쪽은 <em>cache 없음 + 병렬</em> 이었습니다. 차이를 "병렬화 덕분"이라고
         썼지만 <strong>두 변수가 교란</strong>돼 있었습니다.</p>
 
-        <p>그래서 arm 을 바꿀 때 풀 크기·스레드 수·외부 지연·데이터를 <strong>전부 고정</strong>합니다.</p>
+        <p>그래서 arm을 바꿀 때 pool 크기·thread 수·외부 지연·데이터를 <strong>전부 고정</strong>합니다.</p>
         <h2 id="패치">코드 비교는 패치로 관리한다<a class="anchor" href="#패치" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>arm 이 코드 차이일 때는 그 차이를 <strong>패치 파일 하나</strong>로 두고 실행 시 적용·복구합니다.
+        <p>arm이 코드 차이일 때는 그 차이를 <strong>패치 파일 하나</strong>로 두고 실행 시 적용·복구합니다.
         손으로 고쳤다 되돌리면 언젠가 되돌리는 것을 잊고, 그 실행의 결과는 전부 무효가 됩니다.</p>
 
         <pre data-lang="text">perf/arms/inside-transaction.patch      arm B — @Transactional 복원
@@ -94,12 +94,12 @@ perf/arms/sequential-classifiers.patch  arm SEQ — 분류기를 순차로 되�
 
         <h2 id="쓰인-곳">이 사이트에서 쓰인 곳<a class="anchor" href="#쓰인-곳" aria-label="이 절로 가는 링크">#</a></h2>
         <ul>
-          <li><a href="../writing/a-pooler-fixes-only-one.ko.html">RDS Proxy 로는 못 고치는 커넥션 고갈</a></li>
+          <li><a href="../writing/a-pooler-fixes-only-one.ko.html">RDS Proxy 로는 못 고치는 connection 고갈</a></li>
           </ul>
 
         <h2 id="함께-볼-용어">함께 볼 용어<a class="anchor" href="#함께-볼-용어" aria-label="이 절로 가는 링크">#</a></h2>
         <ul>
-          <li><a href="load-test-harness.html">하네스</a> — arm 을 실행하는 도구</li>
+          <li><a href="load-test-harness.html">harness</a> — arm을 실행하는 도구</li>
           <li><a href="warmup.html">워밍업</a> — arm 끼리 같아야 하는 조건 중 하나</li>
           </ul>
 
@@ -112,7 +112,7 @@ perf/arms/sequential-classifiers.patch  arm SEQ — 분류기를 순차로 되�
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/content.js?v=b5b22e76cb"></script>
+  <script src="../assets/content.js?v=6a34c005d2"></script>
   <script src="../assets/lang.js?v=2d9c133fc2"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

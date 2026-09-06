@@ -29,7 +29,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="キャッシュ設定を固定したまま逐次を並列に変えると、p99 が 42.6 秒から 79.0 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンがロックされる。6 構成を同条件で測って初めて見えたこと。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=855b1948be" />
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
 </head>
 <body>
   <div class="topbar">
@@ -172,7 +172,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロール可能な図">
-            <svg viewBox="0 0 720 384" role="img" aria-labelledby="cia-t cia-d" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 720 312" role="img" aria-labelledby="cia-t cia-d" xmlns="http://www.w3.org/2000/svg">
               <title id="cia-t">computeIfAbsent 内の外部呼び出しが bin をロックする構造</title>
               <desc id="cia-d">同じグループ ID をキーとする 4 つの作業が executor の 4 スレッドに並列で投入される。キーが同じなので
               4 スレッドは 1 つの bin に集まる。T1 がその bin を保持したままマッピング関数の中で外部 API を呼び、ネットワーク
@@ -188,12 +188,12 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
               <rect x="590" y="140" width="122" height="62" rx="8" fill="none" stroke="#3b3344" stroke-width="1.5"/>
 
               <g font-size="15" fill="#7b7186">
-                <text x="16" y="34">executor · スレッド 4</text>
+                <text x="16" y="34">executor · thread 4</text>
                 <text x="286" y="34">ConcurrentHashMap</text>
                 <text x="590" y="34">外部 API</text>
               </g>
 
-              <!-- 스레드 넷. T1 만 실선 = 호출 중. 나머지는 점선 = 대기하면서 풀 자리를 쥔 상태 -->
+              <!-- thread 넷. T1 만 실선 = 호출 중. 나머지는 점선 = 대기하면서 풀 자리를 쥔 상태 -->
               <rect x="24" y="62" width="156" height="48" rx="6" fill="none" stroke="#3b3344" stroke-width="2"/>
               <g fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4">
                 <rect x="24" y="122" width="156" height="48" rx="6"/>
@@ -202,27 +202,27 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
               </g>
               <g font-size="15">
                 <text x="38" y="82" fill="#18121d" font-weight="700">T1 · gid=A</text>
-                <text x="38" y="101" fill="#3b3344" font-size="14">呼出中・枠を占有</text>
+                <text x="38" y="101" fill="#3b3344" font-size="14">呼び出し中 · pool 占有</text>
                 <text x="38" y="142" fill="#18121d">T2 · gid=A</text>
-                <text x="38" y="161" fill="#7b7186" font-size="14">待機・枠を占有</text>
+                <text x="38" y="161" fill="#7b7186" font-size="14">待ち · pool 占有</text>
                 <text x="38" y="202" fill="#18121d">T3 · gid=A</text>
-                <text x="38" y="221" fill="#7b7186" font-size="14">待機・枠を占有</text>
+                <text x="38" y="221" fill="#7b7186" font-size="14">待ち · pool 占有</text>
                 <text x="38" y="262" fill="#18121d">T4 · gid=A</text>
-                <text x="38" y="281" fill="#7b7186" font-size="14">待機・枠を占有</text>
+                <text x="38" y="281" fill="#7b7186" font-size="14">待ち · pool 占有</text>
               </g>
 
               <!-- 버킷. 잠긴 것은 하나뿐이고, 다른 키의 버킷은 그대로 돌아간다 -->
               <g font-size="14" fill="#7b7186">
                 <rect x="294" y="62" width="170" height="40" rx="6" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
-                <text x="306" y="87">別のキー・進行可能</text>
+                <text x="306" y="87">別のキー · 進行できる</text>
                 <rect x="294" y="250" width="170" height="40" rx="6" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
-                <text x="306" y="275">別のキー・進行可能</text>
+                <text x="306" y="275">別のキー · 進行できる</text>
               </g>
               <rect x="294" y="118" width="170" height="116" rx="6" fill="none" stroke="#d62976" stroke-width="3"/>
-              <text x="306" y="143" font-size="15" fill="#18121d" font-weight="700">gid=A の bin・ロック</text>
+              <text x="306" y="143" font-size="15" fill="#18121d" font-weight="700">gid=A のバケット · ロック</text>
               <rect x="310" y="156" width="138" height="40" rx="5" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="322" y="181" font-size="14" fill="#18121d">マッピング関数</text>
-              <text x="316" y="224" font-size="14" fill="#7b7186">T2〜T4 はここで並ぶ</text>
+              <text x="322" y="181" font-size="14" fill="#18121d">マッピング関数の実行</text>
+              <text x="316" y="224" font-size="14" fill="#7b7186">待ち T2 · T3 · T4</text>
 
               <!-- T1 은 버킷을 잡고 들어간다 -->
               <path d="M180 86 H 240 V 176 H 304" fill="none" stroke="#3b3344" stroke-width="2" marker-end="url(#cia-a)"/>
@@ -235,13 +235,8 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
 
               <!-- 잠긴 버킷에서 나가는 외부 호출. 강조색은 "잡혀 있는 것"에만 쓴다 -->
               <path d="M464 176 H 582" fill="none" stroke="#d62976" stroke-width="3" marker-end="url(#cia-b)"/>
-              <text x="470" y="166" font-size="13" fill="#d62976" font-weight="700">ネットワーク往復</text>
-              <text x="602" y="178" font-size="15" fill="#18121d">グループ照会</text>
-
-              <g font-size="15" fill="#3b3344">
-                <text x="16" y="332">マッピング関数は<tspan font-weight="700" fill="#18121d">一度だけ</tspan>実行される。値が公開されると待機は解ける。</text>
-                <text x="16" y="358">増えたのは呼び出し回数ではなく<tspan font-weight="700" fill="#18121d">枠の占有とコンテキストスイッチ</tspan>であり、行列はそのまま残る。</text>
-              </g>
+              <text x="474" y="166" font-size="14" fill="#d62976" font-weight="700">ネットワーク往復</text>
+              <text x="602" y="178" font-size="15" fill="#18121d">グループ取得</text>
 
               <defs>
                 <marker id="cia-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
@@ -256,7 +251,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
               </defs>
             </svg>
           </div>
-          <figcaption>同じキーのリクエストは 1 つの bin に集まる。マッピング関数の中の外部呼び出しがその bin を往復の間つかんでおり、残りのスレッドは枠を占有したまま待つ。別のキーの bin はロックされない。</figcaption>
+          <figcaption>同じキーのリクエストは 1 つの bin に集まる。実線が呼び出し中の T1、点線が待っている T2・T3・T4 だ。マッピング関数の中の外部呼び出しがその bin を往復の間つかんでおり、残りの thread は枠を占有したまま待つ。別のキーの bin はロックされない。マッピング関数は<strong>一度だけ</strong>実行され、値が公開されれば待ちは解ける。つまり増えたのは呼び出し回数ではなく<strong>pool 占有とコンテキストスイッチ</strong>で、行列は逐次コードのまま残る。</figcaption>
         </figure>
 
         <p>だから ③ は ② より悪い。② は 5 秒キャッシュのおかげで外部呼び出しの回数自体が少なく、③ はキャッシュが
@@ -411,7 +406,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/content.js?v=b5b22e76cb"></script>
+  <script src="../assets/content.js?v=6a34c005d2"></script>
   <script src="../assets/lang.js?v=2d9c133fc2"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=44326158d4"></script>

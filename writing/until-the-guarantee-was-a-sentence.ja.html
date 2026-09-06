@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="防御を次元ごとに組むと、次元が増えた瞬間に自動で破れる。min-n は人口軸にしか掛かっておらず、時間軸は後からできた。残差を掘る作業には終了条件がなく、保証線を文にしてはじめて残りの仕事が有限になった。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=855b1948be" />
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
 </head>
 <body>
   <div class="topbar">
@@ -203,7 +203,7 @@
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロール可能な図解">
-            <svg viewBox="0 0 720 252" role="img" aria-labelledby="agg-t agg-d" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 720 174" role="img" aria-labelledby="agg-t agg-d" xmlns="http://www.w3.org/2000/svg">
               <title id="agg-t">占有制約は真なのに差分から漏れる</title>
               <desc id="agg-d">バケット十二個を二つのスナップショットで並べた図である。最初のスナップショットでは各バケットに票が五つずつ
               入っており、二つ目でも依然として五前後である。どちらのスナップショットも「バケットごとに最低五」という占有制約を
@@ -211,7 +211,7 @@
               その1は一人の票であり、どの選択肢が増えて減ったのかまでグラフがそのまま描く。つまり一つのスナップショット内の
               占有制約は、二つのスナップショット間の差分制約を含意しない。</desc>
 
-              <text x="8" y="24" font-size="15" fill="#7b7186">静的制約: どちらのスナップショットもバケットごとに ≥5 を満たす</text>
+              <text x="8" y="24" font-size="15" fill="#7b7186">占有制約 · バケットごとに ≥5</text>
 
               <g font-size="14" fill="#3b3344">
                 <text x="8" y="59">スナップ t1</text>
@@ -300,13 +300,9 @@
                 <text x="676" y="155" font-size="14" fill="#7b7186" text-anchor="middle">·</text>
               </g>
 
-              <g font-size="15" fill="#3b3344">
-                <text x="8" y="200">占有制約（バケットごとに ≥5）は<tspan font-weight="700" fill="#18121d"</tspan>どちらのスナップショットでも</tspan>真である。</text>
-                <text x="8" y="228">漏れるのはスナップショット間の差だ — デルタ1は一人である。</text>
-              </g>
             </svg>
           </div>
-          <figcaption>どちらのスナップショットも「バケットごとに ≥5」を満たしている。ところが二つの差を取るとデルタが1のバケットが出てきて、その1は一人の票である。占有制約は真なのに差分から漏れる。</figcaption>
+          <figcaption>上の二行がスナップショット、下の一行がその差です。占有制約（バケットごとに ≥5）は<strong>どちらのスナップショットでも真</strong>です。ところが差を取るとピンクの二マスに +1 と −1 が残り、その1は一人の票です。つまり一つのスナップショット内の占有制約は、二つの間の差分制約を含意しません。</figcaption>
         </figure>
 
         <p>t1 で12バケットに各5票（計60）なら、<strong>すべてのバケットが絶対 min-n を満たす。</strong>その状態から
@@ -437,7 +433,7 @@
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/content.js?v=b5b22e76cb"></script>
+  <script src="../assets/content.js?v=6a34c005d2"></script>
   <script src="../assets/lang.js?v=2d9c133fc2"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=44326158d4"></script>

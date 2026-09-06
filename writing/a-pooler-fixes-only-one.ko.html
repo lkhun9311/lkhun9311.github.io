@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RDS Proxy로는 못 고치는 커넥션 고갈 | Kwanghun Lee</title>
+  <title>RDS Proxy로는 못 고치는 connection 고갈 | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="RDS Proxy 로는 못 고치는 커넥션 고갈 | Kwanghun Lee" />
-  <meta property="og:description" content="출시 전 소셜 투표 플랫폼을 점검하다가 connection pooler를 붙이려고 했습니다. 그런데 커넥션 고갈에는 원인이 두 가지 있고, connection pooler는 그중 하나만 고칩니다. 왜 못 고치는지는 제품 문서가 아니라 transaction pooling의 정의에서 나옵니다." />
+  <meta property="og:title" content="RDS Proxy 로는 못 고치는 connection 고갈 | Kwanghun Lee" />
+  <meta property="og:description" content="출시 전 소셜 투표 플랫폼을 점검하다가 connection pooler를 붙이려고 했습니다. 그런데 connection 고갈에는 원인이 두 가지 있고, connection pooler는 그중 하나만 고칩니다. 왜 못 고치는지는 제품 문서가 아니라 transaction pooling의 정의에서 나옵니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -26,12 +26,12 @@
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="RDS Proxy 로는 못 고치는 커넥션 고갈 | Kwanghun Lee" />
-  <meta name="twitter:description" content="커넥션 고갈의 원인은 두 가지입니다. connection pooler는 그중 하나만 고치고, 나머지 하나에는 구조적으로 효과가 없습니다." />
+  <meta name="twitter:title" content="RDS Proxy 로는 못 고치는 connection 고갈 | Kwanghun Lee" />
+  <meta name="twitter:description" content="connection 고갈의 원인은 두 가지입니다. connection pooler는 그중 하나만 고치고, 나머지 하나에는 구조적으로 효과가 없습니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="출시 전 소셜 투표 플랫폼을 점검하다가 connection pooler를 붙이려고 했습니다. 그런데 커넥션 고갈에는 원인이 두 가지 있고, connection pooler는 그중 하나만 고칩니다. 왜 못 고치는지는 제품 문서가 아니라 transaction pooling의 정의에서 나옵니다." />
+  <meta name="description" content="출시 전 소셜 투표 플랫폼을 점검하다가 connection pooler를 붙이려고 했습니다. 그런데 connection 고갈에는 원인이 두 가지 있고, connection pooler는 그중 하나만 고칩니다. 왜 못 고치는지는 제품 문서가 아니라 transaction pooling의 정의에서 나옵니다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=855b1948be" />
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
 </head>
 <body>
   <div class="topbar">
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag commercial notranslate">사업화 프로젝트</span><span class="repo-private notranslate" translate="no">Private</span></div>
       </div>
       <section class="page-hero">
-        <h1>RDS Proxy로는 못 고치는 커넥션 고갈<br><span class="h1-sub">트랜잭션 안에서 외부 API를 호출하고 있었습니다. 출시 전 소셜 투표 플랫폼 점검</span></h1>
+        <h1>RDS Proxy로는 못 고치는 connection 고갈<br><span class="h1-sub">transaction 안에서 외부 API를 호출하고 있었습니다. 출시 전 소셜 투표 플랫폼 점검</span></h1>
         <p class="article-date">2026년 9월</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="a-pooler-fixes-only-one"></aside>
@@ -84,16 +84,16 @@
             <li><a href="#어떤-서비스">어떤 서비스인가요?</a></li>
             <li><a href="#pooler를-붙이면">가설: connection pooler를 붙이면 될 줄 알았습니다</a></li>
             <li><a href="#결론부터">결론: pooler는 두 원인 중 하나만 고칩니다</a></li>
-            <li><a href="#원인-a">원인 ①: 커넥션 개수가 많아서</a></li>
-            <li><a href="#원인-b">원인 ②: 커넥션을 오래 붙잡고 있어서</a></li>
+            <li><a href="#원인-a">원인 ①: connection 개수가 많아서</a></li>
+            <li><a href="#원인-b">원인 ②: connection을 오래 붙잡고 있어서</a></li>
             <li><a href="#왜-못-고치나">이유: transaction pooling의 정의 때문입니다</a></li>
-            <li><a href="#순서가-있습니다">순서: 트랜잭션을 짧게 만드는 것이 먼저입니다</a></li>
-            <li><a href="#코드부터">수정 ①: 외부 호출을 트랜잭션 밖으로</a></li>
+            <li><a href="#순서가-있습니다">순서: transaction을 짧게 만드는 것이 먼저입니다</a></li>
+            <li><a href="#코드부터">수정 ①: 외부 호출을 transaction 밖으로</a></li>
             <li><a href="#두-숫자">설정: 아무도 고르지 않은 두 숫자</a></li>
             <li><a href="#쓸-수-있는-코드">사전 점검: 이 코드가 pooler를 쓸 수 있나</a></li>
             <li><a href="#비동기로-바꾸면">반론: “비동기로 바꾸면 되지 않나요?”</a></li>
             <li><a href="#가드">가드: 되돌리기 쉬운 수정이라 원인에 걸었습니다</a></li>
-            <li><a href="#재-봤습니다">측정: 세 주 뒤에 실제로 재 봤습니다</a></li>
+            <li><a href="#재-봤습니다">측정: 3주 뒤에 실제로 재 봤습니다</a></li>
             <li><a href="#겹쳐-부르기">수정 ②: 재고 나니 하나 더 보였습니다</a></li>
             <li><a href="#주장하지-않는-것">한계: 이 글이 주장하지 않는 것</a></li>
             <li><a href="#마치며">마치며</a></li>
@@ -102,7 +102,7 @@
       <article class="article-body">
 
         <p>안녕하세요. <strong>소셜 투표 플랫폼</strong>을 만들고 있습니다. 출시 전에 아키텍처를 점검하다가
-        <em>“트래픽이 늘면 DB 커넥션이 부족해질 텐데 connection pooler를 하나 붙이면 되지 않을까”</em>라는 아주 흔한
+        <em>“트래픽이 늘면 DB connection이 부족해질 텐데 connection pooler를 하나 붙이면 되지 않을까”</em>라는 아주 흔한
         가설에서 출발했는데 결론은 <strong>“이 코드베이스에서는 아니오”</strong>였습니다.</p>
 
         <p>왜 아니오였는지 그리고 그 판단을 무엇을 근거로 내렸는지 공유하려고 합니다.</p>
@@ -112,14 +112,14 @@
 
         <ul class="callout">
           <li>Spring Boot로 서비스를 만들고 있는데 connection pool 설정을 아직 직접 건드려 본 적이 없는 분</li>
-          <li><em>“커넥션이 부족하면 RDS Proxy 같은 걸 붙이면 되지 않나?”</em>라고 생각해 보신 분</li>
-          <li>트랜잭션 안에서 외부 API를 호출하는 코드를 보신 적이 있거나, 지금 그렇게 쓰고 계신 분</li>
+          <li><em>“connection이 부족하면 RDS Proxy 같은 걸 붙이면 되지 않나?”</em>라고 생각해 보신 분</li>
+          <li>transaction 안에서 외부 API를 호출하는 코드를 보신 적이 있거나, 지금 그렇게 쓰고 계신 분</li>
         </ul>
 
         <h2 id="무슨-내용">무슨 내용인가요?<a class="anchor" href="#무슨-내용" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul>
-          <li>커넥션 고갈에는 원인이 <strong>두 가지</strong> 있고 connection pooler는 그중 <strong>하나만</strong>
+          <li>connection 고갈에는 원인이 <strong>두 가지</strong> 있고 connection pooler는 그중 <strong>하나만</strong>
           고칩니다.</li>
           <li>왜 못 고치는지는 제품 문서가 아니라 <strong>transaction pooling이라는 방식의 정의</strong>에서 나옵니다.</li>
           <li>그래서 도구를 도입하기 전에 <strong>이 코드에서 그 도구가 동작하는지</strong>부터 확인했습니다.</li>
@@ -151,7 +151,7 @@
               <title id="svc-t">서비스 구조와 문제가 있던 지점</title>
               <desc id="svc-d">모바일 앱이 API 서버로 글·댓글·투표 요청을 보내고 API 서버는 connection pool을 통해 관리형 PostgreSQL에 쿼리를 보냅니다.
               그런데 글과 댓글을 쓸 때마다 API 서버가 외부 모더레이션 API를 한 번씩 호출합니다. 이 호출에는 read timeout이 10초로
-              설정돼 있고 문제는 이 호출이 데이터베이스 트랜잭션 안에서 일어나고 있었다는 점입니다.</desc>
+              설정돼 있고 문제는 이 호출이 데이터베이스 transaction 안에서 일어나고 있었다는 점입니다.</desc>
 
               <rect x="8" y="44" width="132" height="56" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
               <text x="74" y="70" font-size="14" fill="#18121d" text-anchor="middle">모바일 앱</text>
@@ -165,7 +165,7 @@
               <text x="441" y="62" font-size="13" fill="#7b7186" text-anchor="middle">쿼리</text>
               <rect x="502" y="44" width="206" height="56" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
               <text x="605" y="70" font-size="14" fill="#18121d" text-anchor="middle">PostgreSQL</text>
-              <text x="605" y="89" font-size="13" fill="#7b7186" text-anchor="middle">관리형 · 커넥션 상한 있음</text>
+              <text x="605" y="89" font-size="13" fill="#7b7186" text-anchor="middle">관리형 · connection 상한 있음</text>
               <path d="M295 110 V 158" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#arA)"/>
               <text x="307" y="140" font-size="13" fill="#d62976" font-weight="700">글·댓글마다 1회</text>
               <rect x="202" y="158" width="506" height="54" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
@@ -189,7 +189,7 @@
 
         <p><strong>외부 모더레이션 API</strong>는 유해한 내용을 걸러 주는 외부 서비스입니다. 글이나 댓글을
         쓸 때마다 한 번씩 호출하고 이 호출에는 read timeout이 <strong>10초</strong>로 설정돼 있습니다.
-        그리고 이 호출이 <strong>데이터베이스 트랜잭션 안에서</strong> 일어나고 있었습니다.</p>
+        그리고 이 호출이 <strong>데이터베이스 transaction 안에서</strong> 일어나고 있었습니다.</p>
 
 <pre data-lang="yaml"><code># application.yml
 read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
@@ -200,21 +200,21 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
 
         <p>점검의 출발점은 흔한 가설이었습니다.</p>
 
-        <blockquote><p>트래픽이 늘면 DB 커넥션이 부족해질 텐데 RDS Proxy나 PgBouncer 같은
+        <blockquote><p>트래픽이 늘면 DB connection이 부족해질 텐데 RDS Proxy나 PgBouncer 같은
         <strong><a class="term" href="../notes/connection-pooler.html">connection pooler</a></strong>를 앞에 세우면 되지 않을까?</p></blockquote>
 
-        <p>connection pooler는 애플리케이션이 여는 커넥션 수천 개를 DB 커넥션 수십 개로
+        <p>connection pooler는 애플리케이션이 여는 connection 수천 개를 DB connection 수십 개로
         <strong>묶어 주는</strong> 미들웨어입니다. 소개 그림만 보면 정확히 제게 필요한 물건처럼 보였습니다.</p>
 
         <p>그런데 이 판단을 내리기 전에 확인해야 할 것이 있었습니다.
-        <strong>“내가 겪을 커넥션 부족이 정말 이 도구가 고치는 종류의 부족인가”</strong>입니다.</p>
+        <strong>“내가 겪을 connection 부족이 정말 이 도구가 고치는 종류의 부족인가”</strong>입니다.</p>
 
         <h2 id="결론부터">결론: pooler는 두 원인 중 하나만 고칩니다<a class="anchor" href="#결론부터" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>아니었습니다. 한 줄로 줄이면 이렇습니다.</p>
 
-        <blockquote><p>커넥션 고갈에는 <strong>커넥션 개수 때문에 생기는 것</strong>과
-        <strong>커넥션을 오래 붙잡고 있어서 생기는 것</strong>이 있습니다.
+        <blockquote><p>connection 고갈에는 <strong>connection 개수 때문에 생기는 것</strong>과
+        <strong>connection을 오래 붙잡고 있어서 생기는 것</strong>이 있습니다.
         <strong>증상은 같고 처방은 다릅니다.</strong> connection pooler는 앞쪽만 고칩니다.</p></blockquote>
 
         <p>그리고 이 결론의 근거는 RDS Proxy나 PgBouncer의 제품 문서가 아니라
@@ -222,30 +222,30 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
         차례로 보겠습니다.</p>
 
         <p>먼저 증상부터 보겠습니다. connection pool이 고갈되면 겉으로 드러나는 모습은 대체로 하나입니다.
-        pool에서 커넥션을 기다리다 타임아웃이 나고 서로 아무 상관 없는 API 들이 동시에 느려집니다.
+        pool에서 connection을 기다리다 timeout이 나고 서로 아무 상관 없는 API 들이 동시에 느려집니다.
         로그에는 이런 줄이 찍힙니다.</p>
 
 <pre data-lang="text"><code>Connection is not available, request timed out after 30000ms</code></pre>
 
         <p>여기까지는 두 원인이 똑같이 생겼습니다. 그래서 증상만 보고 도구를 고르면 틀립니다.</p>
 
-        <h2 id="원인-a">원인 ①: 커넥션 개수가 많아서<a class="anchor" href="#원인-a" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="원인-a">원인 ①: connection 개수가 많아서<a class="anchor" href="#원인-a" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>첫 번째는 <strong>커넥션 개수</strong> 자체가 문제인 경우입니다.</p>
+        <p>첫 번째는 <strong>connection 개수</strong> 자체가 문제인 경우입니다.</p>
 
-<pre data-lang="text"><code>앱 instance 100대 × pool 크기 20 = 커넥션 2,000개
+<pre data-lang="text"><code>앱 instance 100대 × pool 크기 20 = connection 2,000개
 그런데 실제로 지금 쿼리를 실행 중인 건 50개
 나머지 1,950개는 그냥 열려만 있습니다</code></pre>
 
-        <p>PostgreSQL은 커넥션 하나마다 백엔드 프로세스를 하나씩 만들고 그 커넥션이 아무 일도 안 하고 있어도
+        <p>PostgreSQL은 connection 하나마다 backend 프로세스를 하나씩 만들고 그 connection이 아무 일도 안 하고 있어도
         메모리를 씁니다. 그래서 instance를 늘릴수록 DB 쪽이 먼저 한계에 부딪힙니다.</p>
 
-        <p><strong>이것이 connection pooler가 존재하는 이유입니다.</strong> 앱 커넥션 2,000개를 백엔드 커넥션 50개로
+        <p><strong>이것이 connection pooler가 존재하는 이유입니다.</strong> 앱 connection 2,000개를 backend connection 50개로
         묶어 주니까요. 원인 ① 쪽 고갈에는 정확히 맞는 도구입니다.</p>
 
-        <h2 id="원인-b">원인 ②: 커넥션을 오래 붙잡고 있어서<a class="anchor" href="#원인-b" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="원인-b">원인 ②: connection을 오래 붙잡고 있어서<a class="anchor" href="#원인-b" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>두 번째는 커넥션 <strong>개수</strong>가 아니라 <strong>붙잡고 있는 시간</strong>이 문제인 경우입니다.
+        <p>두 번째는 connection <strong>개수</strong>가 아니라 <strong>붙잡고 있는 시간</strong>이 문제인 경우입니다.
         그리고 제 코드가 이쪽이었습니다.</p>
 
 <pre data-lang="kotlin"><code>// CommentService.kt (수정 전)
@@ -259,19 +259,19 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
     val comment = commentRepository.insert(...)                      // DB
 }</code></pre>
 
-        <p><code>@Transactional</code> 이 메서드 전체에 걸려 있으니 이 메서드가 도는 동안 커넥션 하나가
+        <p><code>@Transactional</code> 이 메서드 전체에 걸려 있으니 이 메서드가 도는 동안 connection 하나가
         계속 점유됩니다. 그런데 그 구간 한가운데에 <strong>쿼리를 하나도 실행하지 않으면서 최대 10초를
         기다리는 외부 호출</strong>이 들어 있습니다.</p>
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
             <svg viewBox="0 0 720 244" role="img" aria-labelledby="hold-t hold-d" xmlns="http://www.w3.org/2000/svg">
-              <title id="hold-t">수정 전과 수정 후의 DB 커넥션 점유 구간</title>
+              <title id="hold-t">수정 전과 수정 후의 DB connection 점유 구간</title>
               <desc id="hold-d">카드 두 장이 같은 요청을 각각 그린 것입니다. 카드마다 위 줄(테두리 상자)은 요청이 하는 일이고
-              아래 띠는 그동안 DB 커넥션을 붙잡고 있는 구간입니다. 위 카드가 수정 전으로, BEGIN·SELECT·외부 HTTP 호출·
+              아래 띠는 그동안 DB connection을 붙잡고 있는 구간입니다. 위 카드가 수정 전으로, BEGIN·SELECT·외부 HTTP 호출·
               INSERT·COMMIT 전체에 걸쳐 띠가 끊기지 않고 이어집니다. 외부 호출 구간에서는 쿼리를 하나도 실행하지 않는데도
-              커넥션을 쥐고 있습니다. 아래 카드가 수정 후로, 띠가 양 끝 두 토막으로 나뉩니다. 검증 읽기에서 한 번,
-              쓰기 트랜잭션에서 한 번만 커넥션을 쓰고 그 사이 외부 호출 구간에서는 커넥션을 반납한 상태입니다.
+              connection을 쥐고 있습니다. 아래 카드가 수정 후로, 띠가 양 끝 두 토막으로 나뉩니다. 검증 읽기에서 한 번,
+              쓰기 transaction에서 한 번만 connection을 쓰고 그 사이 외부 호출 구간에서는 connection을 반납한 상태입니다.
               가로 폭은 시간에 비례하지 않습니다.</desc>
 
               <rect x="0" y="0" width="720" height="116" rx="10" fill="rgba(214,41,118,0.06)"/>
@@ -296,7 +296,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
               <rect x="10" y="182" width="160" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
               <text x="90" y="200" font-size="13" fill="#18121d" text-anchor="middle">검증 읽기</text>
               <rect x="174" y="182" width="296" height="26" rx="4" fill="none" stroke="#a99fb4" stroke-width="1.5" stroke-dasharray="5 4"/>
-              <text x="322" y="200" font-size="13" fill="#7b7186" text-anchor="middle">외부 HTTP 호출 · 커넥션 없음</text>
+              <text x="322" y="200" font-size="13" fill="#7b7186" text-anchor="middle">외부 HTTP 호출 · connection 없음</text>
               <rect x="474" y="182" width="236" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
               <text x="592" y="200" font-size="13" fill="#18121d" text-anchor="middle">BEGIN·INSERT·COMMIT</text>
               <rect x="10" y="216" width="160" height="18" rx="3" fill="rgba(79,91,213,0.22)" stroke="#4f5bd5" stroke-width="1.5"/>
@@ -305,11 +305,11 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
               <rect x="474" y="216" width="236" height="18" rx="3" fill="rgba(79,91,213,0.22)" stroke="#4f5bd5" stroke-width="1.5"/>
             </svg>
           </div>
-          <figcaption>카드 두 장이 같은 요청을 각각 그린 것입니다. 왼쪽에서 오른쪽으로 시간이 흐르고, 위 줄은 요청이 하는 일, 아래 띠는 그동안 DB 커넥션을 붙잡고 있는 구간입니다. 채워진 띠가 점유, 점선이 반납이며 가로 폭은 시간에 비례하지 않습니다.</figcaption>
+          <figcaption>카드 두 장이 같은 요청을 각각 그린 것입니다. 왼쪽에서 오른쪽으로 시간이 흐르고, 위 줄은 요청이 하는 일, 아래 띠는 그동안 DB connection을 붙잡고 있는 구간입니다. 채워진 띠가 점유, 점선이 반납이며 가로 폭은 시간에 비례하지 않습니다.</figcaption>
         </figure>
 
-        <p>동시에 글을 쓰는 요청이 pool 크기를 넘으면 그 시점부터 커넥션이 없습니다. 여기서 커넥션
-        <strong>개수</strong>를 늘려도 근본 원인은 그대로입니다. 느린 외부 호출이 커넥션을 붙잡고 있다는
+        <p>동시에 글을 쓰는 요청이 pool 크기를 넘으면 그 시점부터 connection이 없습니다. 여기서 connection
+        <strong>개수</strong>를 늘려도 근본 원인은 그대로입니다. 느린 외부 호출이 connection을 붙잡고 있다는
         사실은 변하지 않으니까요.</p>
 
         <p>그리고 멈추는 건 글쓰기 경로만이 아닙니다.</p>
@@ -318,9 +318,9 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
             <svg viewBox="0 0 720 198" role="img" aria-labelledby="spread-t spread-d" xmlns="http://www.w3.org/2000/svg">
               <title id="spread-t">connection pool 고갈이 서비스 전체로 번지는 구조</title>
-              <desc id="spread-d">왼쪽은 글과 댓글을 쓰는 요청들입니다. 이 요청들이 각각 외부 호출을 기다리면서 커넥션을 붙잡고 있습니다.
-              가운데는 connection pool인데 그 요청들이 커넥션을 전부 차지해서 빈 커넥션이 하나도 남지 않았습니다. 오른쪽은 글쓰기와
-              아무 상관이 없는 요청들입니다. 투표, 피드 조회, 결과 차트, 프로필 조회가 모두 같은 pool에서 커넥션을 받기 때문에
+              <desc id="spread-d">왼쪽은 글과 댓글을 쓰는 요청들입니다. 이 요청들이 각각 외부 호출을 기다리면서 connection을 붙잡고 있습니다.
+              가운데는 connection pool인데 그 요청들이 connection을 전부 차지해서 빈 connection이 하나도 남지 않았습니다. 오른쪽은 글쓰기와
+              아무 상관이 없는 요청들입니다. 투표, 피드 조회, 결과 차트, 프로필 조회가 모두 같은 pool에서 connection을 받기 때문에
               글쓰기 경로가 pool을 다 쓰면 이쪽도 함께 멈춥니다.</desc>
 
               <rect x="8" y="24" width="180" height="160" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
@@ -345,7 +345,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
               <text x="348" y="131" font-size="12" fill="#d62976" text-anchor="middle">사용 중</text>
               <rect x="274" y="142" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
               <text x="348" y="157" font-size="12" fill="#d62976" text-anchor="middle">사용 중</text>
-              <text x="348" y="176" font-size="13" fill="#d62976" font-weight="700" text-anchor="middle">빈 커넥션 0개</text>
+              <text x="348" y="176" font-size="13" fill="#d62976" font-weight="700" text-anchor="middle">빈 connection 0개</text>
               <path d="M438 104 H 500" fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arM)"/>
               <rect x="508" y="24" width="200" height="160" rx="6" fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4"/>
               <text x="608" y="48" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">상관없는 다른 요청</text>
@@ -357,7 +357,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
               <text x="608" y="131" font-size="12" fill="#7b7186" text-anchor="middle">결과 차트 · 대기</text>
               <rect x="524" y="142" width="168" height="20" rx="4" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
               <text x="608" y="157" font-size="12" fill="#7b7186" text-anchor="middle">프로필 · 대기</text>
-              <text x="608" y="176" font-size="12" fill="#7b7186" text-anchor="middle">같은 pool 에서 받습니다</text>
+              <text x="608" y="176" font-size="12" fill="#7b7186" text-anchor="middle">같은 pool</text>
               <defs>
                 <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                   <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
@@ -371,10 +371,10 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
               </defs>
             </svg>
           </div>
-          <figcaption>pool 이 고갈되면 멈추는 것은 글 작성 경로만이 아닙니다. 왼쪽이 글쓰기 요청, 가운데가 connection pool, 오른쪽이 글쓰기와 무관한 요청들이고, 가운데가 다 차면 오른쪽이 대기로 바뀝니다.</figcaption>
+          <figcaption>pool이 고갈되면 멈추는 것은 글 작성 경로만이 아닙니다. 왼쪽이 글쓰기 요청, 가운데가 connection pool, 오른쪽이 글쓰기와 무관한 요청들입니다. 오른쪽도 <strong>같은 pool</strong>에서 connection을 받으므로, 가운데가 다 차면 함께 대기로 바뀝니다.</figcaption>
         </figure>
 
-        <p>투표도, 피드 조회도, 결과 차트 조회도 <strong>같은 connection pool</strong>에서 커넥션을 받습니다.
+        <p>투표도, 피드 조회도, 결과 차트 조회도 <strong>같은 connection pool</strong>에서 connection을 받습니다.
         그래서 글쓰기 경로가 pool을 다 쓰면 서비스 전체가 함께 느려집니다.</p>
 
         <p>이 앱에서 특히 아팠던 건 <strong>타이밍</strong>이었습니다. 이 서비스의 성장 엔진이
@@ -385,44 +385,44 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
 
         <p>여기가 이 글의 본론입니다.</p>
 
-        <p>“앱 커넥션 수천 개를 DB 커넥션 수십 개로 묶어 준다”는 설명은 맞습니다. 문제는
+        <p>“앱 connection 수천 개를 DB connection 수십 개로 묶어 준다”는 설명은 맞습니다. 문제는
         <strong>언제 묶이는가</strong>이고 그 답이 transaction pooling의 정의에 이미 들어 있습니다.</p>
 
-        <blockquote><p><strong>커넥션을 다시 쓰는 일은 트랜잭션과 트랜잭션 <em>사이</em>에서만 일어납니다.</strong>
-        트랜잭션이 열려 있는 동안에는 그 백엔드 커넥션이 그 클라이언트에
+        <blockquote><p><strong>connection을 다시 쓰는 일은 transaction과 transaction <em>사이</em>에서만 일어납니다.</strong>
+        transaction이 열려 있는 동안에는 그 backend connection이 그 클라이언트에
         <strong>묶입니다(pin).</strong></p></blockquote>
 
-        <p>당연한 이야기이기도 합니다. 트랜잭션은 상태이고 열려 있는 중간에 다른 세션에 빌려주면 격리가
+        <p>당연한 이야기이기도 합니다. transaction은 상태이고 열려 있는 중간에 다른 세션에 빌려주면 격리가
         깨지니까요.</p>
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
             <svg viewBox="0 0 720 322" role="img" aria-labelledby="pool-t pool-d" xmlns="http://www.w3.org/2000/svg">
-              <title id="pool-t">커넥션이 묶이는 경우와 묶이지 않는 경우</title>
-              <desc id="pool-d">위쪽은 짧은 트랜잭션입니다. 클라이언트 두 개가 BEGIN과 COMMIT 사이에만 백엔드 커넥션을 쓰고 곧
-              놓으므로, connection pooler는 그 사이사이에 두 클라이언트를 백엔드 커넥션 하나에 번갈아 얹습니다. 묶이는 비율은 2대 1입니다.
-              아래쪽은 트랜잭션 안에서 외부 HTTP 호출을 기다리는 경우입니다. 트랜잭션이 열려 있는 동안 백엔드 커넥션은 그
+              <title id="pool-t">connection이 묶이는 경우와 묶이지 않는 경우</title>
+              <desc id="pool-d">위쪽은 짧은 transaction입니다. 클라이언트 두 개가 BEGIN과 COMMIT 사이에만 backend connection을 쓰고 곧
+              놓으므로, connection pooler는 그 사이사이에 두 클라이언트를 backend connection 하나에 번갈아 얹습니다. 묶이는 비율은 2대 1입니다.
+              아래쪽은 transaction 안에서 외부 HTTP 호출을 기다리는 경우입니다. transaction이 열려 있는 동안 backend connection은 그
               클라이언트에 묶이고 그 시간 대부분은 쿼리를 하나도 실행하지 않습니다. 다른 클라이언트는 그동안 기다리기만
               하므로 묶이는 비율이 1대 1이 되어 connection pooler가 만들어 낼 이득이 거의 없습니다.</desc>
 
               <rect x="0" y="6" width="720" height="152" rx="10" fill="rgba(79,91,213,0.06)"/>
               <rect x="0" y="170" width="720" height="152" rx="10" fill="rgba(214,41,118,0.06)"/>
 
-              <g font-size="15" fill="#7b7186">
-                <text x="8" y="34">짧은 트랜잭션 · 여러 개가 1개로 묶입니다</text>
-                <text x="8" y="196">트랜잭션 안에서 기다립니다 · 1개에 묶여 버립니다</text>
-              </g>
+              <rect x="10" y="16" width="128" height="24" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="74" y="33" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">짧은 transaction</text>
+              <rect x="10" y="180" width="156" height="24" rx="12" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="88" y="197" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">transaction 안에서 대기</text>
 
               <g font-size="14" fill="#3b3344">
                 <text x="8" y="70">클라이언트 A</text>
                 <text x="8" y="100">클라이언트 B</text>
-                <text x="8" y="136">백엔드</text>
+                <text x="8" y="136">backend</text>
                 <text x="8" y="232">클라이언트 A</text>
                 <text x="8" y="262">클라이언트 B</text>
-                <text x="8" y="298">백엔드</text>
+                <text x="8" y="298">backend</text>
               </g>
 
-              <!-- 위: 짧은 트랜잭션이 번갈아 얹힌다 -->
+              <!-- 위: 짧은 transaction이 번갈아 얹힌다 -->
               <g fill="none" stroke="#3b3344" stroke-width="1.5">
                 <rect x="104" y="54" width="194" height="24" rx="4"/>
                 <rect x="514" y="54" width="194" height="24" rx="4"/>
@@ -437,39 +437,39 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
                 <path d="M201 78 V 118"/><path d="M406 108 V 118"/><path d="M611 78 V 118"/>
               </g>
               <rect x="104" y="118" width="604" height="24" rx="4" fill="none" stroke="#3b3344" stroke-width="2"/>
-              <text x="116" y="135" font-size="13" fill="#18121d">백엔드 커넥션 1개를 A·B가 번갈아 씁니다</text>
+              <text x="116" y="135" font-size="13" fill="#18121d">backend connection 1개 · A와 B가 번갈아</text>
               <text x="696" y="135" font-size="14" fill="#18121d" font-weight="700" text-anchor="end">앱 2 → DB 1</text>
 
-              <!-- 아래: 트랜잭션이 열린 채 기다리면 백엔드가 붙들린다 -->
+              <!-- 아래: transaction이 열린 채 기다리면 backend가 붙들린다 -->
               <rect x="104" y="216" width="604" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="114" y="233" font-size="13" fill="#18121d">BEGIN</text>
               <rect x="172" y="219" width="420" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="1.5" stroke-dasharray="4 3"/>
-              <text x="184" y="233" font-size="13" fill="#d62976" font-weight="700">외부 HTTP 호출을 기다립니다 · 쿼리 0건</text>
+              <text x="184" y="233" font-size="13" fill="#d62976" font-weight="700">외부 HTTP 호출 · 쿼리 0건</text>
               <text x="604" y="233" font-size="13" fill="#18121d">COMMIT</text>
 
               <rect x="104" y="246" width="604" height="24" rx="4" fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4"/>
-              <text x="116" y="263" font-size="13" fill="#7b7186">대기 · 끼어들 틈이 없습니다</text>
+              <text x="116" y="263" font-size="13" fill="#7b7186">B는 대기 · 끼어들 틈 없음</text>
 
               <rect x="104" y="280" width="604" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="116" y="297" font-size="13" fill="#18121d">A에 묶임(pin) · 트랜잭션이 열려 있는 내내</text>
+              <text x="116" y="297" font-size="13" fill="#18121d">A에 묶임(pin) · transaction이 열려 있는 내내</text>
               <text x="696" y="297" font-size="14" fill="#d62976" font-weight="700" text-anchor="end">앱 1 → DB 1</text>
             </svg>
           </div>
-          <figcaption>가로축은 시간이고 세 줄은 각각 클라이언트 A·B 와 백엔드 커넥션입니다. 위가 짧은 트랜잭션, 아래가 트랜잭션 안에서 기다리는 경우입니다.</figcaption>
+          <figcaption>가로축은 시간이고 세 줄은 각각 클라이언트 A·B와 backend connection입니다. 위 카드에서는 짧은 transaction 여러 개가 backend connection 하나에 번갈아 얹혀 <strong>여러 개가 1개로 묶입니다</strong>. 아래 카드에서는 A가 transaction을 연 채 외부 호출을 기다리는 동안 B가 끼어들지 못해 <strong>1개가 1개에 묶여 버립니다</strong>. 그래서 connection pooler가 만들어 낼 이득이 거의 없습니다.</figcaption>
         </figure>
 
         <p>그래서 이렇게 됩니다.</p>
 
-<pre data-lang="text"><code>트랜잭션이 10초 열려 있음
-  → 백엔드 커넥션도 10초 묶임
-  → 앱 커넥션 1개당 DB 커넥션 1개
+<pre data-lang="text"><code>transaction이 10초 열려 있음
+  → backend connection도 10초 묶임
+  → 앱 connection 1개당 DB connection 1개
   → connection pooler가 줄여 주는 게 없음</code></pre>
 
-        <p>connection pooler는 <strong>짧은 트랜잭션이 많을 때</strong> 값을 하는 도구입니다. 원인 ②인 상태에서
+        <p>connection pooler는 <strong>짧은 transaction이 많을 때</strong> 값을 하는 도구입니다. 원인 ②인 상태에서
         도입하면 돈을 쓰고도 아무것도 나아지지 않습니다. 사실 더 나쁜 건 그다음입니다.
         <strong>“이제 대비했다”고 믿게 됩니다.</strong> 그 믿음이 다음 점검을 막습니다.</p>
 
-        <h2 id="순서가-있습니다">순서: 트랜잭션을 짧게 만드는 것이 먼저입니다<a class="anchor" href="#순서가-있습니다" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="순서가-있습니다">순서: transaction을 짧게 만드는 것이 먼저입니다<a class="anchor" href="#순서가-있습니다" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>해법은 하나가 아니라 여러 층이고 층에는 순서가 있습니다.</p>
 
@@ -477,13 +477,13 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
 <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
         <table>
-          <caption class="sr-only">커넥션 고갈에 대한 다섯 층의 해법과 각각의 성격.</caption>
+          <caption class="sr-only">connection 고갈에 대한 다섯 층의 해법과 각각의 성격.</caption>
           <thead><tr><th scope="col">층</th><th scope="col">무엇을</th><th scope="col">어떤 성격인가</th></tr></thead>
           <tbody>
-            <tr><td>①</td><td><strong>트랜잭션을 짧게</strong>. 외부 호출을 트랜잭션 밖으로</td><td>유일하게 근본적입니다. 나머지 전부의 전제입니다</td></tr>
+            <tr><td>①</td><td><strong>transaction을 짧게</strong>. 외부 호출을 transaction 밖으로</td><td>유일하게 근본적입니다. 나머지 전부의 전제입니다</td></tr>
             <tr><td>②</td><td>유입 제어. 동시 처리 상한을 의도적으로 정하기</td><td>실패를 빠르고 예측 가능하게 만듭니다</td></tr>
             <tr><td>③</td><td>connection pooler</td><td>①이 끝나야 효과가 있습니다</td></tr>
-            <tr><td>④</td><td>읽기 분리·캐시</td><td>커넥션을 <em>덜 쓰게</em> 만드는 유일한 층입니다</td></tr>
+            <tr><td>④</td><td>읽기 분리·cache</td><td>connection을 <em>덜 쓰게</em> 만드는 유일한 층입니다</td></tr>
             <tr><td>⑤</td><td>비동기 오프로드(outbox)</td><td>요청당 DB 작업 자체를 줄입니다</td></tr>
           </tbody>
         </table>
@@ -493,20 +493,20 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
 
         <p>connection pooler는 ③입니다. ①을 안 하고 ③부터 가면 효과가 없다는 게 앞 절의 내용이었습니다.</p>
 
-        <h2 id="코드부터">수정 ①: 외부 호출을 트랜잭션 밖으로<a class="anchor" href="#코드부터" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="코드부터">수정 ①: 외부 호출을 transaction 밖으로<a class="anchor" href="#코드부터" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>그래서 ①부터 했습니다. 트랜잭션 경계를 <strong>쓰기 구간으로 좁히는</strong> 작업입니다.
+        <p>그래서 ①부터 했습니다. transaction 경계를 <strong>쓰기 구간으로 좁히는</strong> 작업입니다.
         Spring에서 <code>@Transactional</code> 은 프록시 기반이라 같은 클래스 안에서 자기 메서드를 부르면
         안 걸립니다. 그래서 이미 코드베이스에 있던 <code>TransactionTemplate</code> 패턴을 그대로
         재사용했습니다. 새 메커니즘을 들이지 않았다는 점이 중요합니다.</p>
 
 <pre data-lang="kotlin"><code>// 수정 후: 메서드에 @Transactional이 없습니다
 fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentResponse {
-    // ① 검증 (읽기. 각각 짧게 커넥션을 쓰고 반납합니다)
+    // ① 검증 (읽기. 각각 짧게 connection을 쓰고 반납합니다)
     val user = activeUserGuard.requireActive(userId)
     val postWithAuthor = postQueryRepository.findActiveById(postId) ?: throw ...
 
-    // ② 외부 호출. 트랜잭션 밖입니다. 여기서 10초를 써도 커넥션을 잡지 않습니다
+    // ② 외부 호출. transaction 밖입니다. 여기서 10초를 써도 connection을 잡지 않습니다
     moderationGate.screenComment(body)
 
     // ③ 쓰기만 원자적으로 묶습니다
@@ -517,15 +517,15 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
     }!!
 }</code></pre>
 
-        <p>여기서 <em>“트랜잭션을 쪼개면 경합이 늘어나지 않나요?”</em>라는 질문이 나올 수 있는데
+        <p>여기서 <em>“transaction을 쪼개면 경합이 늘어나지 않나요?”</em>라는 질문이 나올 수 있는데
         <strong>경합 창은 넓어지지 않았습니다.</strong> 수정 전에도 모더레이션 호출이 읽기와 쓰기
         <em>사이</em>에 있었고 그 경로는 게시글 행에 락을 걸지 않고 있었기 때문입니다
-        (<code>for update</code> 가 없었습니다). 트랜잭션 안에 있다고 해서 다른 세션의 변경을 막아 주지는
+        (<code>for update</code> 가 없었습니다). transaction 안에 있다고 해서 다른 세션의 변경을 막아 주지는
         않습니다. 읽기에서 쓰기까지의 거리는 <strong>동일합니다.</strong></p>
 
         <p>같은 작업을 쓰기 경로 세 곳(글 · 댓글 · 투표 첨부)에 했습니다. 그중 하나는 상태가 더
         나빴습니다. 투표 첨부 경로는 <code>for update</code> 로 <strong>행까지 잠근 채</strong> 외부 호출을
-        하고 있었습니다. 커넥션과 행 락, <strong>두 자원</strong>을 동시에 쥐고 있었던 겁니다.</p>
+        하고 있었습니다. connection과 행 락, <strong>두 자원</strong>을 동시에 쥐고 있었던 겁니다.</p>
 
         <p>글과 댓글 두 경로를 먼저 고치고 투표 첨부는 검열에 넣는 입력이 <em>잠근 행에서</em> 나오는 탓에
         staleness(값이 낡았는지) 재확인이 필요해서 <strong>의도적으로 미뤘다가 나흘 뒤에 고쳤습니다.</strong></p>
@@ -536,8 +536,8 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
 
         <h2 id="두-숫자">설정: 아무도 고르지 않은 두 숫자<a class="anchor" href="#두-숫자" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>②(유입 제어)에도 함정이 하나 있었습니다. <strong>블로킹 JDBC 에서는 <a class="term" href="../notes/connection-pool.html">connection pool</a>이 사실상 동시성
-        상한</strong>입니다. 스레드가 아무리 많아도 커넥션을 못 받으면 일을 못 하니까요.</p>
+        <p>②(유입 제어)에도 함정이 하나 있었습니다. <strong>블로킹 JDBC에서는 <a class="term" href="../notes/connection-pool.html">connection pool</a>이 사실상 동시성
+        상한</strong>입니다. thread가 아무리 많아도 connection을 못 받으면 일을 못 하니까요.</p>
 
         <p>그런데 설정을 열어 보니 이랬습니다.</p>
 
@@ -549,9 +549,9 @@ spring:
     password: ${DB_PASSWORD:...}
     # 끝. hikari 블록 자체가 없습니다</code></pre>
 
-        <p>톰캣 스레드는 <strong>기본값 200</strong>, connection pool은 <strong>설정이 한 줄도 없어서</strong>
-        Spring Boot 기본값이 그대로 서비스 용량이 되어 있었습니다. 이러면 나머지 요청들은 커넥션을
-        기다리다 타임아웃 뒤에 실패합니다.</p>
+        <p>톰캣 thread는 <strong>기본값 200</strong>, connection pool은 <strong>설정이 한 줄도 없어서</strong>
+        Spring Boot 기본값이 그대로 서비스 용량이 되어 있었습니다. 이러면 나머지 요청들은 connection을
+        기다리다 timeout 뒤에 실패합니다.</p>
 
         <p><strong>방향 자체는 맞습니다.</strong> 빨리 실패해야 나머지가 삽니다. 문제는 다른 데
         있었습니다. <strong>두 값 다 아무도 고른 것이 아니었습니다.</strong> 둘 다 프레임워크 기본값이고
@@ -567,7 +567,7 @@ spring:
         <p>다만 <strong>pool을 키운 것은 수리가 아니라 완화</strong>입니다. 그리고 키우는 데에도 상한이
         있습니다.</p>
 
-<pre data-lang="text"><code>pool 크기 × 최대 instance 수 ≤ DB 커넥션 상한</code></pre>
+<pre data-lang="text"><code>pool 크기 × 최대 instance 수 ≤ DB connection 상한</code></pre>
 
         <p>앱은 자기 instance가 몇 대인지 모르기 때문에 이 불변식을 <strong>코드로 강제할 수
         없습니다.</strong> IaC 주석이 유일한 방어라 거기에 못박아 뒀습니다.</p>
@@ -579,7 +579,7 @@ spring:
 
         <p>③으로 넘어가기 전에 확인할 것이 하나 더 있었습니다. transaction pooling에는
         <strong>핀(pin)을 유발하는 패턴</strong>이 있고 코드에 그게 있으면 connection pooler가 무력해집니다.
-        핀이 걸리면 그 커넥션은 트랜잭션이 끝나도 그 클라이언트에 계속 묶여 있게 됩니다.</p>
+        핀이 걸리면 그 connection은 transaction이 끝나도 그 클라이언트에 계속 묶여 있게 됩니다.</p>
 
         <ul class="callout">
           <li>세션 스코프 advisory lock (<code>pg_advisory_lock</code>)</li>
@@ -597,7 +597,7 @@ AuthAuditPurge.kt        pg_try_advisory_xact_lock(...)
 VoteRepository.kt        pg_advisory_xact_lock(...)</code></pre>
 
         <p>네 가지 다 없었습니다. advisory lock은 세 군데에서 쓰는데 <strong>전부 <code>xact</code>
-        스코프</strong>였습니다. 트랜잭션이 끝날 때 자동으로 풀리기 때문에 transaction pooling에 그대로
+        스코프</strong>였습니다. transaction이 끝날 때 자동으로 풀리기 때문에 transaction pooling에 그대로
         얹힙니다.</p>
 
         <p>이 셋이 <code>xact</code> 스코프인 것이 의도였는지 우연이었는지는 기록으로 가릴 수 없습니다.
@@ -611,17 +611,17 @@ VoteRepository.kt        pg_advisory_xact_lock(...)</code></pre>
 
         <p>이 이야기를 하면 자주 나오는 처방이 하나 더 있습니다.</p>
 
-        <p>WebFlux나 코루틴으로 바꾸면 <strong>스레드는</strong> 아낍니다. 그런데
-        <strong>커넥션은 그대로 잡습니다.</strong> JDBC는 블로킹이고 트랜잭션이 열려 있는 한 커넥션은
+        <p>WebFlux나 코루틴으로 바꾸면 <strong>thread는</strong> 아낍니다. 그런데
+        <strong>connection은 그대로 잡습니다.</strong> JDBC는 블로킹이고 transaction이 열려 있는 한 connection은
         반납되지 않기 때문입니다.</p>
 
-        <p><strong>스레드와 커넥션은 다른 자원입니다.</strong> 문제의 축이 커넥션인데 스레드를 아끼는
-        처방을 가져오면 축이 어긋납니다. R2DBC 라면 이야기가 다르지만, 그건 데이터 접근 계층을 전면
+        <p><strong>thread와 connection은 다른 자원입니다.</strong> 문제의 축이 connection인데 thread를 아끼는
+        처방을 가져오면 축이 어긋납니다. R2DBC라면 이야기가 다르지만, 그건 데이터 접근 계층을 전면
         재작성하는 일입니다.</p>
 
         <p>pool을 키우는 처방도 같은 종류입니다. 완화는 되지만 수리는 아니고
-        앞서 본 <code>pool 크기 × instance 수 ≤ DB 커넥션 상한</code>에 먼저 걸립니다. 그리고 근본 원인은 그대로 남습니다.
-        느린 외부 호출이 커넥션을 붙잡는다는 것 말입니다.</p>
+        앞서 본 <code>pool 크기 × instance 수 ≤ DB connection 상한</code>에 먼저 걸립니다. 그리고 근본 원인은 그대로 남습니다.
+        느린 외부 호출이 connection을 붙잡는다는 것 말입니다.</p>
 
         <h2 id="가드">가드: 되돌리기 쉬운 수정이라 원인에 걸었습니다<a class="anchor" href="#가드" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -629,9 +629,9 @@ VoteRepository.kt        pg_advisory_xact_lock(...)</code></pre>
         돌아갑니다.</strong> 그리고 되돌려도 <strong>기능은 멀쩡합니다.</strong> 테스트도 통과하고 화면도
         정상입니다. 증상은 부하가 걸리는 날에만 나옵니다.</p>
 
-        <p>“커넥션을 오래 안 잡는다”는 것은 직접 관측하기가 어렵습니다. 그래서 결과 대신
+        <p>“connection을 오래 안 잡는다”는 것은 직접 관측하기가 어렵습니다. 그래서 결과 대신
         <strong>원인</strong>을 단언했습니다. 실제 HTTP 클라이언트가 앉는 인터페이스 자리에 spy를 앉히고
-        <strong>호출이 일어나는 그 시점에 트랜잭션이 활성인지</strong>를 기록합니다.</p>
+        <strong>호출이 일어나는 그 시점에 transaction이 활성인지</strong>를 기록합니다.</p>
 
 <pre data-lang="kotlin"><code>class TransactionProbe : ContentModerationApi {
     val sawTransaction = mutableListOf&lt;Boolean&gt;()
@@ -642,7 +642,7 @@ VoteRepository.kt        pg_advisory_xact_lock(...)</code></pre>
 
 // 단언
 assertThat(probe.sawTransaction).isNotEmpty()         // ① 호출이 실제로 일어났나
-assertThat(probe.sawTransaction).containsOnly(false)  // ② 그 호출은 트랜잭션 밖이었나</code></pre>
+assertThat(probe.sawTransaction).containsOnly(false)  // ② 그 호출은 transaction 밖이었나</code></pre>
 
         <p>①이 없으면 ②가 <strong>공허하게 통과합니다.</strong> 게이트가 통째로 빠져서 호출이 0건이면
         <code>containsOnly</code> 는 빈 리스트에 대해 참이기 때문입니다. <strong>“~가 아니다”를 검사하는
@@ -665,13 +665,13 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         <p>여기서 배운 것이 이 글에서 제일 옮길 만한 것입니다.
         <strong>mutation이 초록불이면 코드가 안전한 게 아니라 가드가 겨누고 있지 않은 것입니다.</strong></p>
 
-        <h2 id="재-봤습니다">측정: 세 주 뒤에 실제로 재 봤습니다<a class="anchor" href="#재-봤습니다" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="재-봤습니다">측정: 3주 뒤에 실제로 재 봤습니다<a class="anchor" href="#재-봤습니다" aria-label="이 절로 가는 링크">#</a></h2>
         <p>이 글은 원래 <em>“수치가 없습니다”</em>로 끝날 예정이었습니다. 그런데 그 문장을 쓰고 나니
-        <strong>수치를 만들 도구가 없다는 뜻</strong>이라는 게 분명해져서 세 주 뒤에 JMeter <a class="term" href="../notes/load-test-harness.html">harness</a>를
+        <strong>수치를 만들 도구가 없다는 뜻</strong>이라는 게 분명해져서 3주 뒤에 JMeter <a class="term" href="../notes/load-test-harness.html">harness</a>를
         만들어 재 봤습니다.</p>
 
         <p>핵심은 <strong>한 변수만 바꾸는 것</strong>이었습니다. arm A는 현재 코드, arm B는
-        <code>@Transactional</code> 한 줄만 되돌린 코드입니다. pool 크기·스레드 수·외부 호출 지연·데이터는
+        <code>@Transactional</code> 한 줄만 되돌린 코드입니다. pool 크기·thread 수·외부 호출 지연·데이터는
         전부 같습니다. 외부 호출 지연은 앱에 심지 않고 <strong>로컬 stub</strong>을 세워
         <code>base-url</code> 을 그쪽으로 돌렸습니다. 앱에 「느리게 도는 모드」를 넣으면 그게 언젠가
         운영에서 켜집니다.</p>
@@ -680,7 +680,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
         <table>
           <caption class="sr-only">arm A와 arm B의 응답시간·처리량 비교.</caption>
-          <thead><tr><th scope="col">지표</th><th scope="col">arm A (트랜잭션 밖)</th><th scope="col">arm B (안으로 되돌림)</th><th scope="col">배수</th></tr></thead>
+          <thead><tr><th scope="col">지표</th><th scope="col">arm A (transaction 밖)</th><th scope="col">arm B (안으로 되돌림)</th><th scope="col">배수</th></tr></thead>
           <tbody>
             <tr><td><strong>피드 조회 p50</strong></td><td><strong>4 ms</strong></td><td><strong>6,047 ms</strong></td><td><strong>1,512×</strong></td></tr>
             <tr><td>피드 조회 p95</td><td>6 ms</td><td>6,405 ms</td><td>1,068×</td></tr>
@@ -692,13 +692,13 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         </table>
         </div>
         </div>
-        <p class="table-note">고친 경로(글 생성)는 두 arm 이 거의 같습니다. 벌어지는 곳은 <strong>글쓰기와 아무 상관 없는 피드 조회</strong>뿐입니다.</p>
+        <p class="table-note">고친 경로(글 생성)는 두 arm이 거의 같습니다. 벌어지는 곳은 <strong>글쓰기와 아무 상관 없는 피드 조회</strong>뿐입니다.</p>
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
             <svg viewBox="0 0 720 292" role="img" aria-labelledby="ab-t ab-d" xmlns="http://www.w3.org/2000/svg">
               <title id="ab-t">같은 부하에서 arm A와 arm B의 응답시간</title>
               <desc id="ab-d">가로축은 응답시간이고 10배마다 눈금이 하나씩 있는 로그 축입니다. 위쪽 두 막대는 글쓰기와 무관한 피드
-              조회의 중앙값입니다. 외부 호출을 트랜잭션 밖에 둔 arm A는 4밀리초, 트랜잭션 안으로 되돌린 arm B는
+              조회의 중앙값입니다. 외부 호출을 transaction밖에 둔 arm A는 4밀리초, transaction 안으로 되돌린 arm B는
               6,047밀리초로 천오백 배 넘게 벌어집니다. 아래쪽 두 막대는 글 생성의 중앙값인데 2,577밀리초와
               2,584밀리초로 사실상 같습니다. 즉 고친 경로 자체는 두 arm이 다르지 않고 차이는 아무 상관 없는 읽기
               경로에서만 나타납니다.</desc>
@@ -726,7 +726,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
               <rect x="150" y="154" width="450.4" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="609.4" y="168" font-size="13" fill="#d62976" font-weight="700">2,584 ms</text>
               <rect x="8" y="252" width="16" height="10" rx="2" fill="none" stroke="#4f5bd5" stroke-width="2"/>
-              <text x="30" y="262" font-size="12" fill="#3b3344">arm A · 외부 호출이 트랜잭션 밖</text>
+              <text x="30" y="262" font-size="12" fill="#3b3344">arm A · 외부 호출이 transaction 밖</text>
               <rect x="8" y="270" width="16" height="10" rx="2" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="30" y="280" font-size="12" fill="#3b3344">arm B · @Transactional 복원</text>
             </svg>
@@ -738,8 +738,8 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         외부 호출 1.6초가 어느 쪽이든 지배하기 때문입니다. 그래서 <strong>쓰기만 재면 이 수정의 효과가
         보이지 않습니다.</strong></p>
 
-        <p>효과는 <strong>글쓰기와 아무 상관 없는 피드 조회</strong>에 나타납니다. arm B 에서는 쓰기 16개가
-        각각 1.6초씩 커넥션을 붙잡아 pool 10개를 전부 소진하고 4ms로 끝나던 조회가 6초가 됩니다.
+        <p>효과는 <strong>글쓰기와 아무 상관 없는 피드 조회</strong>에 나타납니다. arm B에서는 쓰기 16개가
+        각각 1.6초씩 connection을 붙잡아 pool 10개를 전부 소진하고 4ms로 끝나던 조회가 6초가 됩니다.
         <strong>오류가 아니라 대기라서 오류율은 0% 인 채로</strong> 서비스가 느려집니다. 이게 이 결함이
         조용한 이유입니다.</p>
 
@@ -784,10 +784,10 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
               <text x="149.5" y="252" font-size="14" fill="#4f5bd5" font-weight="700">800 ms</text>
             </svg>
           </div>
-          <figcaption>막대의 가로 길이가 외부 대기 시간입니다. 순차로 부르면 1,600ms 가 쌓이고 겹쳐 부르면 둘 중 긴 쪽인 800ms 만 남습니다. ①② 는 앱 안에서 끝나는 검사라 여기에 들어가지 않습니다.</figcaption>
+          <figcaption>막대의 가로 길이가 외부 대기 시간입니다. 순차로 부르면 1,600ms가 쌓이고 겹쳐 부르면 둘 중 긴 쪽인 800ms만 남습니다. ①② 는 앱 안에서 끝나는 검사라 여기에 들어가지 않습니다.</figcaption>
         </figure>
 
-        <p>가상 스레드(Java 21)로 ④ 를 띄우고 ③ 을 호출 스레드에서 돌립니다.
+        <p>가상 thread(Java 21)로 ④ 를 띄우고 ③ 을 호출 thread에서 돌립니다.
         <strong>고정 크기 pool을 두지 않은 것이 요점입니다.</strong> pool 크기는 곧 새 동시성 상한이고
         이 글이 내내 이야기한 「아무도 고르지 않은 상한」을 모더레이션 경로에 다시 만들게 됩니다.</p>
 
@@ -855,40 +855,41 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
           <strong>설정한 값</strong>이지 실제 지연 분포가 아닙니다.</li>
           <li><strong>arm 당 1회 실행입니다.</strong> 반복 실행으로 분산을 보지 않았습니다.</li>
           <li><strong>1,512배는 조건에 딸린 숫자입니다.</strong> 쓰기 동시성이 pool 크기를 넘을 때 나타납니다.
-          쓰기 8 · pool 10 에서는 p95가 5ms 대 8ms였습니다.</li>
+          쓰기 8 · pool 10에서는 p95가 5ms 대 8ms였습니다.</li>
           <li><strong>“최대 10초”는 설정값입니다.</strong> 외부 호출에 걸어 둔 read timeout 이고 요청마다
           실제로 그만큼 점유했다고 측정한 값이 아닙니다.</li>
           <li><strong>장애가 난 적은 없습니다.</strong> 출시 전 구조 점검에서 나온 것이고 이 경로가 실제로
           고갈되는 것을 관측한 기록은 없습니다.</li>
           <li><strong>connection pooler가 쓸모없다는 이야기가 아닙니다.</strong> 원인 ① 쪽 고갈에는 정확히 맞는
-          도구입니다. 이 글이 말하는 것은 <strong>원인 ②인 상태에서는 앱 커넥션 1개당 DB 커넥션 1개가 되어
+          도구입니다. 이 글이 말하는 것은 <strong>원인 ②인 상태에서는 앱 connection 1개당 DB connection 1개가 되어
           값을 못 한다</strong>는 것뿐입니다.</li>
-          <li><strong>벤더별 커넥션 상한 수치는 쓰지 않았습니다.</strong> 확인하지 않은 값입니다.</li>
+          <li><strong>벤더별 connection 상한 수치는 쓰지 않았습니다.</strong> 확인하지 않은 값입니다.</li>
           <li><strong>핀 유발 패턴 목록이 완전하지 않을 수 있습니다.</strong> pooler와 버전에 따라 다르고
           여기서는 이 코드에 그 넷이 없다는 것만 확인했습니다.</li>
         </ul>
 
+        <div class="wrapup">
         <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>정리하면 이렇습니다.</p>
+          <p>정리하면 이렇습니다.</p>
 
-        <ul>
-          <li>커넥션 고갈의 원인은 <strong>개수</strong>와 <strong>점유 시간</strong> 두 가지이고 증상이
-          같아서 헷갈립니다.</li>
-          <li>connection pooler는 개수 문제를 고치는 도구입니다. 점유 시간 문제에서는 앱 커넥션 1개당 DB 커넥션
-          1개가 되어 줄여 줄 것이 없습니다. 이건 제품의 한계가 아니라
-          <strong>transaction pooling이라는 방식의 정의</strong>에서 나옵니다.</li>
-          <li>순서: 트랜잭션을 짧게 만드는 것이 먼저입니다. <strong>트랜잭션을 짧게 만드는 것이 나머지 전부의 전제</strong>입니다.</li>
-          <li>도구를 도입하기 전에 <strong>이 코드에서 그 도구가 동작하는지</strong> 확인하는 절차를 넣으면
-          도입하고 나서 알게 될 일을 미리 알 수 있습니다.</li>
-        </ul>
+          <ul>
+            <li>connection 고갈의 원인은 <strong>개수</strong>와 <strong>점유 시간</strong> 두 가지이고 증상이
+            같아서 헷갈립니다.</li>
+            <li>connection pooler는 개수 문제를 고치는 도구입니다. 점유 시간 문제에서는 앱 connection 1개당 DB connection
+            1개가 되어 줄여 줄 것이 없습니다. 이건 제품의 한계가 아니라
+            <strong>transaction pooling이라는 방식의 정의</strong>에서 나옵니다.</li>
+            <li>순서: transaction을 짧게 만드는 것이 먼저입니다. <strong>transaction을 짧게 만드는 것이 나머지 전부의 전제</strong>입니다.</li>
+            <li>도구를 도입하기 전에 <strong>이 코드에서 그 도구가 동작하는지</strong> 확인하는 절차를 넣으면
+            도입하고 나서 알게 될 일을 미리 알 수 있습니다.</li>
+          </ul>
 
-        <p>마지막으로 한 줄만 남긴다면 이겁니다.
-        <strong>증상이 같다고 원인이 같은 것은 아니고 도구는 원인 하나에만 맞습니다.</strong>
-        그리고 잘못 고른 도구의 진짜 비용은 돈이 아니라 <strong>“이제 대비했다”는 믿음</strong>입니다.</p>
+          <p>마지막으로 한 줄만 남긴다면 이겁니다.
+          <strong>증상이 같다고 원인이 같은 것은 아니고 도구는 원인 하나에만 맞습니다.</strong>
+          그리고 잘못 고른 도구의 진짜 비용은 돈이 아니라 <strong>“이제 대비했다”는 믿음</strong>입니다.</p>
 
-        <p>읽어 주셔서 감사합니다.</p>
-
+          <p>읽어 주셔서 감사합니다.</p>
+        </div>
 
       </article>
     </main>
@@ -899,7 +900,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/content.js?v=b5b22e76cb"></script>
+  <script src="../assets/content.js?v=6a34c005d2"></script>
   <script src="../assets/lang.js?v=2d9c133fc2"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=44326158d4"></script>

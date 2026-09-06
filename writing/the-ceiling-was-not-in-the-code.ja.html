@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="投稿作成のスループットが 6.27 req/s から動きませんでした。書き込みスレッドを4倍にしても、DB プールを3倍にしても同じです。原因は S3 を使うために入れた AWS SDK が連れてきた HTTP クライアントの既定値「ホストあたり5」でした。この層はランタイムのクラスパスにしかなく、コードを読んでも見つかりません。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=855b1948be" />
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
 </head>
 <body>
   <div class="topbar">
@@ -155,38 +155,35 @@
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロールできる図">
-            <svg viewBox="0 0 720 268" role="img" aria-labelledby="gate-t gate-d" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 720 238" role="img" aria-labelledby="gate-t gate-d" xmlns="http://www.w3.org/2000/svg">
               <title id="gate-t">投稿一件が通るモデレーションゲートの四層</title>
               <desc id="gate-d">ユーザーが投稿すると、API サーバーのモデレーションゲートが四つの検査を行います。
               一つ目の禁止語検査と二つ目の連絡先検査はアプリケーションの中で完結するので高速です。三つ目の有害分類と
               四つ目の攻撃判定は外部 API を呼び、この二つは互いに独立なので重ねて送ります。つまり投稿一件ごとに外部
               呼び出しが二つ出ます。四層すべてを通過してはじめて投稿が PostgreSQL に保存され、公開されます。</desc>
 
-              <rect x="8" y="52" width="128" height="52" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="72" y="76" font-size="14" fill="#18121d" text-anchor="middle">モバイルアプリ</text>
-              <text x="72" y="94" font-size="13" fill="#7b7186" text-anchor="middle">投稿</text>
-              <path d="M136 78 H 180" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#g-ar)"/>
+              <rect x="8" y="52" width="120" height="52" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="68" y="76" font-size="14" fill="#18121d" text-anchor="middle">モバイルアプリ</text>
+              <text x="68" y="94" font-size="13" fill="#7b7186" text-anchor="middle">投稿作成</text>
+              <path d="M128 78 H 174" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#g-ar)"/>
 
-              <rect x="188" y="30" width="222" height="96" rx="6" fill="none" stroke="#18121d" stroke-width="2"/>
-              <text x="299" y="52" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">モデレーションゲート</text>
-              <text x="202" y="76" font-size="13" fill="#3b3344">① 禁止語 · ② 連絡先</text>
-              <text x="202" y="94" font-size="12" fill="#7b7186">アプリ内で完結します</text>
-              <text x="202" y="115" font-size="13" fill="#d62976" font-weight="700">③ 有害分類 · ④ 攻撃判定</text>
+              <rect x="182" y="30" width="212" height="96" rx="6" fill="none" stroke="#18121d" stroke-width="2"/>
+              <text x="288" y="52" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">モデレーションゲート</text>
+              <text x="196" y="76" font-size="13" fill="#3b3344">① 禁止語 · ② 連絡先</text>
+              <text x="196" y="94" font-size="12" fill="#7b7186">アプリ内</text>
+              <text x="196" y="115" font-size="13" fill="#d62976" font-weight="700">③ 有害分類 · ④ 名指し判定</text>
 
-              <path d="M410 100 H 470" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#g-arA)"/>
-              <text x="440" y="92" font-size="12" fill="#d62976" text-anchor="middle">呼び出し2つ</text>
+              <path d="M394 100 H 470" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#g-arA)"/>
+              <text x="432" y="92" font-size="12" fill="#d62976" text-anchor="middle">呼び出し ×2</text>
               <rect x="478" y="66" width="234" height="68" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="595" y="90" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">外部検閲 API</text>
-              <text x="595" y="110" font-size="13" fill="#d62976" text-anchor="middle">投稿1件 = 呼び出し2つ</text>
-              <text x="595" y="127" font-size="12" fill="#7b7186" text-anchor="middle">ハーネスでは 800ms のスタブ</text>
+              <text x="595" y="110" font-size="13" fill="#7b7186" text-anchor="middle">harness では 800ms スタブ</text>
 
-              <path d="M299 126 V 176" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#g-ar)"/>
-              <text x="311" y="158" font-size="12" fill="#7b7186">四層を通過すると</text>
-              <rect x="188" y="176" width="222" height="52" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="299" y="200" font-size="14" fill="#18121d" text-anchor="middle">PostgreSQL</text>
-              <text x="299" y="218" font-size="13" fill="#7b7186" text-anchor="middle">保存 · 公開</text>
+              <path d="M288 126 V 176" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#g-ar)"/>
+              <rect x="182" y="176" width="212" height="52" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="288" y="200" font-size="14" fill="#18121d" text-anchor="middle">PostgreSQL</text>
+              <text x="288" y="218" font-size="13" fill="#7b7186" text-anchor="middle">保存 · 公開</text>
 
-              <text x="8" y="256" font-size="15" fill="#3b3344">止まれば投稿は<tspan font-weight="700" fill="#18121d">公開されません</tspan> — fail-closed です。</text>
               <defs>
                 <marker id="g-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                   <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
@@ -197,7 +194,7 @@
               </defs>
             </svg>
           </div>
-          <figcaption>四層のうち前の二つはアプリ内で完結し、後ろの二つだけが外へ出ます。この記事で重要なのはピンクの矢印に書かれた<strong>「呼び出し2つ」</strong>です。投稿一件が外部呼び出しを二つ作ります。</figcaption>
+          <figcaption>四層のうち前の二つはアプリ内で完結し、後ろの二つだけが外へ出ます。ピンクが外へ出る経路で、投稿一件が<strong>外部呼び出しを二つ</strong>作ります。どれか一つでも止めれば投稿は公開されない <strong>fail-closed</strong> の構造です。</figcaption>
         </figure>
 
         <p>図が語っていないことを一つ添えると、<strong>③ と ④ は同じホストへ出ます。</strong>この事実が後で
@@ -292,42 +289,38 @@
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロールできる図">
-            <svg viewBox="0 0 720 300" role="img" aria-labelledby="cap-t cap-d" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 720 190" role="img" aria-labelledby="cap-t cap-d" xmlns="http://www.w3.org/2000/svg">
               <title id="cap-t">条件を変えても外部呼び出しの同時実行は 10 から動かない</title>
               <desc id="cap-d">三つの条件を比べます。書き込み16に DB プール10、書き込み16に DB プール30、書き込み32に DB プール30 です。
               三つとも外部呼び出しの最大同時実行は10で同じ、スループットも毎秒 6.27、6.27、6.26 件で同じです。変わるのは応答時間だけで、
               書き込みを32にすると中央値が 2,592 ミリ秒から 5,119 ミリ秒に伸びます。仕事が増えたのではなく待ち行列が長くなっただけです。</desc>
 
-              <text x="8" y="22" font-size="14" fill="#7b7186">外部呼び出しの最大同時実行(スタブ計測)</text>
+              <text x="8" y="22" font-size="14" fill="#7b7186">外部呼び出しの最大同時実行</text>
 
-              <text x="8" y="60" font-size="13" fill="#3b3344">書き込み16 · プール10</text>
-              <rect x="180" y="46" width="120" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="310" y="60" font-size="13" fill="#d62976" font-weight="700">10</text>
-              <text x="352" y="60" font-size="13" fill="#3b3344">6.27 req/s · p50 2,592 ms</text>
+              <text x="8" y="60" font-size="13" fill="#3b3344">書き込み 16 · pool 10</text>
+              <rect x="150" y="46" width="120" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="280" y="60" font-size="13" fill="#d62976" font-weight="700">10</text>
+              <text x="330" y="60" font-size="13" fill="#3b3344">6.27 req/s · p50 2,592 ms</text>
 
-              <text x="8" y="96" font-size="13" fill="#3b3344">書き込み16 · プール30</text>
-              <rect x="180" y="82" width="120" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="310" y="96" font-size="13" fill="#d62976" font-weight="700">10</text>
-              <text x="352" y="96" font-size="13" fill="#3b3344">6.27 req/s · p50 2,595 ms</text>
+              <text x="8" y="96" font-size="13" fill="#3b3344">書き込み 16 · pool 30</text>
+              <rect x="150" y="82" width="120" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="280" y="96" font-size="13" fill="#d62976" font-weight="700">10</text>
+              <text x="330" y="96" font-size="13" fill="#3b3344">6.27 req/s · p50 2,595 ms</text>
 
-              <text x="8" y="132" font-size="13" fill="#3b3344">書き込み32 · プール30</text>
-              <rect x="180" y="118" width="120" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="310" y="132" font-size="13" fill="#d62976" font-weight="700">10</text>
-              <text x="352" y="132" font-size="13" fill="#3b3344">6.26 req/s · p50 5,119 ms</text>
+              <text x="8" y="132" font-size="13" fill="#3b3344">書き込み 32 · pool 30</text>
+              <rect x="150" y="118" width="120" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="280" y="132" font-size="13" fill="#d62976" font-weight="700">10</text>
+              <text x="330" y="132" font-size="13" fill="#3b3344">6.26 req/s · p50 5,119 ms</text>
 
-              <path d="M8 154 H 712" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
+              <path d="M8 148 H 712" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
 
-              <text x="8" y="180" font-size="14" fill="#7b7186">参考 · スタブを32ワーカーで直接叩くと</text>
-              <text x="8" y="216" font-size="13" fill="#3b3344">スタブ単体</text>
-              <rect x="180" y="202" width="374" height="18" rx="3" fill="none" stroke="#4f5bd5" stroke-width="2"/>
-              <text x="564" y="216" font-size="13" fill="#4f5bd5" font-weight="700">32</text>
-              <text x="600" y="216" font-size="13" fill="#3b3344">40 req/s</text>
-
-              <text x="8" y="254" font-size="15" fill="#3b3344">スタブは32まで受けます。ですから上限は<tspan font-weight="700" fill="#18121d">アプリ側</tspan>にあります。</text>
-              <text x="8" y="284" font-size="15" fill="#3b3344">増えたのはスループットではなく<tspan font-weight="700" fill="#d62976">待ち時間</tspan>だけです。</text>
+              <text x="8" y="176" font-size="13" fill="#3b3344">スタブ単独</text>
+              <rect x="150" y="162" width="384" height="18" rx="3" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="544" y="176" font-size="13" fill="#4f5bd5" font-weight="700">32</text>
+              <text x="580" y="176" font-size="13" fill="#3b3344">40 req/s</text>
             </svg>
           </div>
-          <figcaption>三条件とも同時実行は10で同じです。下の青い棒は同じスタブをアプリ抜きで直接叩いた値で、スタブ自体は32まで受けます。</figcaption>
+          <figcaption>上のピンクの棒三本は条件を変えても同時実行が<strong>10から動かない</strong>ことを示します。書き込みを32に上げても増えるのはスループットではなく待ち時間（p50）だけです。一番下の青い棒は同じスタブをアプリ抜きで直接叩いた値で、スタブ自体は32まで受けます。ですから上限は<strong>アプリ側</strong>にあります。</figcaption>
         </figure>
 
         <p>表の読み方はこうです。<strong>書き込みを4倍にしても、DB プールを3倍にしても同時実行は10から動きません。</strong>
@@ -363,40 +356,39 @@ at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.acquireEndpoint(.
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロールできる図">
-            <svg viewBox="0 0 720 356" role="img" aria-labelledby="chain-t chain-d" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 720 336" role="img" aria-labelledby="chain-t chain-d" xmlns="http://www.w3.org/2000/svg">
               <title id="chain-t">S3 の依存から外部呼び出し同時10に至る連鎖</title>
               <desc id="chain-d">ファイルアップロードのために AWS SDK の S3 モジュールを入れました。そのモジュールが apache5-client を連れてきて、
               apache5-client がさらに httpclient5 を連れてきます。この最後のライブラリはランタイムのクラスパスにしかないので、コードでは名前すら
               見えません。ところが Spring の RestClient はクラスパスに Apache HttpClient があればそれを選び、そのコネクションプールの既定値は
               対象ホストあたり5です。同じホストを見る RestClient 二つがそれぞれ自分のプールを持つため、外部呼び出しの同時実行は5足す5で10になります。</desc>
 
-              <rect x="8" y="16" width="340" height="44" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="24" y="43" font-size="14" fill="#18121d">アップロードのために入れた <tspan font-weight="700">AWS SDK · S3</tspan></text>
-              <text x="362" y="43" font-size="13" fill="#4f5bd5" font-weight="700">← 私が選んだのはここまで</text>
+              <rect x="8" y="16" width="330" height="44" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="24" y="43" font-size="14" fill="#18121d">ファイルアップロードのために入れた <tspan font-weight="700">AWS SDK · S3</tspan></text>
+              <text x="352" y="43" font-size="13" fill="#4f5bd5" font-weight="700">← 選んだのはここ</text>
 
               <path d="M40 60 V 84" fill="none" stroke="#7b7186" stroke-width="1.5" marker-end="url(#c-ar)"/>
-              <rect x="8" y="84" width="340" height="40" rx="6" fill="none" stroke="#7b7186" stroke-width="1.5"/>
+              <rect x="8" y="84" width="330" height="40" rx="6" fill="rgba(123,113,134,0.09)" stroke="#a99fb4" stroke-width="1.5"/>
               <text x="24" y="109" font-size="13" fill="#3b3344">software.amazon.awssdk:apache5-client</text>
 
               <path d="M40 124 V 148" fill="none" stroke="#7b7186" stroke-width="1.5" marker-end="url(#c-ar)"/>
-              <rect x="8" y="148" width="340" height="40" rx="6" fill="none" stroke="#7b7186" stroke-width="1.5"/>
+              <rect x="8" y="148" width="330" height="40" rx="6" fill="rgba(123,113,134,0.09)" stroke="#a99fb4" stroke-width="1.5"/>
               <text x="24" y="173" font-size="13" fill="#3b3344">org.apache.httpcomponents.client5:httpclient5</text>
-              <text x="362" y="173" font-size="13" fill="#7b7186">← ランタイムのみ</text>
+              <text x="352" y="173" font-size="13" fill="#7b7186">← コードに名前がない</text>
 
               <path d="M40 188 V 212" fill="none" stroke="#7b7186" stroke-width="1.5" marker-end="url(#c-ar)"/>
-              <rect x="8" y="212" width="340" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="24" y="237" font-size="13" fill="#3b3344">Spring の RestClient がこの実装を選びます</text>
+              <rect x="8" y="212" width="330" height="40" rx="6" fill="rgba(123,113,134,0.09)" stroke="#a99fb4" stroke-width="1.5"/>
+              <text x="24" y="237" font-size="13" fill="#3b3344">Spring RestClient → この実装を選択</text>
 
               <path d="M40 252 V 276" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#c-arA)"/>
-              <rect x="8" y="276" width="340" height="44" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="24" y="303" font-size="14" fill="#18121d" font-weight="700">プール既定値 · ホストあたり5</text>
+              <rect x="8" y="276" width="330" height="44" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="24" y="303" font-size="14" fill="#18121d" font-weight="700">connection pool の既定値 · ホストあたり5</text>
 
-              <path d="M348 298 H 400" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#c-arA)"/>
-              <rect x="408" y="270" width="304" height="56" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="560" y="294" font-size="14" fill="#d62976" font-weight="700" text-anchor="middle">RestClient 2つ × 5 = 同時10</text>
-              <text x="560" y="313" font-size="13" fill="#7b7186" text-anchor="middle">③ 有害分類 · ④ 攻撃判定</text>
+              <path d="M338 298 H 396" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#c-arA)"/>
+              <rect x="404" y="270" width="308" height="56" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="558" y="294" font-size="14" fill="#d62976" font-weight="700" text-anchor="middle">RestClient 2個 × 5 = 同時10</text>
+              <text x="558" y="313" font-size="13" fill="#7b7186" text-anchor="middle">③ 有害分類 · ④ 名指し判定</text>
 
-              <text x="8" y="346" font-size="15" fill="#3b3344">間の四つの箱は<tspan font-weight="700" fill="#18121d">誰も選んでいません。</tspan></text>
               <defs>
                 <marker id="c-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                   <path d="M0 0 L10 5 L0 10 z" fill="#7b7186"/>
@@ -407,7 +399,7 @@ at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.acquireEndpoint(.
               </defs>
             </svg>
           </div>
-          <figcaption>一番上の箱だけが私の選択で、下の四つはすべて付いてきたものです。最後の箱の「2つ」は最初の図の ③④ です。</figcaption>
+          <figcaption>青い枠の箱だけが私の選択で、<strong>灰色の箱三つは誰も選んでいない</strong>まま付いてきたものです。一番下のピンクの箱がその連鎖の先で実際に上限を決める値で、右の「2つ」は最初の図の ③④ です。</figcaption>
         </figure>
 
         <p>図が語っていないことを一つ。<strong><code>httpclient5</code> はランタイムのクラスパスにしかありません。</strong>
@@ -471,44 +463,46 @@ spring:
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロールできる図">
-            <svg viewBox="0 0 720 300" role="img" aria-labelledby="pool-t pool-d" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 720 268" role="img" aria-labelledby="pool-t pool-d" xmlns="http://www.w3.org/2000/svg">
               <title id="pool-t">クライアントごとにプールを持つ場合と、プール一つを共有する場合</title>
               <desc id="pool-d">上が修正前です。有害分類用の RestClient と攻撃判定用の RestClient がそれぞれ自分のコネクションプールを持ち、
               各プールの既定上限が5なので実際の同時実行は5足す5で10になります。書いてある数字は5なのに実際に効く上限は10で、両者が食い違います。
               下が修正後です。コネクションマネージャを一つだけ作って二つのクライアントで共有するので、ホストあたり上限50がそのまま実際の上限になります。</desc>
 
-              <text x="8" y="22" font-size="14" fill="#7b7186">修正前 · クライアントごとにプール</text>
-              <rect x="8" y="34" width="170" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="93" y="59" font-size="13" fill="#18121d" text-anchor="middle">③ 有害分類クライアント</text>
-              <rect x="8" y="82" width="170" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="93" y="107" font-size="13" fill="#18121d" text-anchor="middle">④ 攻撃判定クライアント</text>
-              <path d="M178 54 H 220" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
-              <path d="M178 102 H 220" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
-              <rect x="228" y="34" width="150" height="40" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="303" y="59" font-size="13" fill="#d62976" text-anchor="middle">自分のプール · 上限5</text>
-              <rect x="228" y="82" width="150" height="40" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="303" y="107" font-size="13" fill="#d62976" text-anchor="middle">自分のプール · 上限5</text>
-              <path d="M378 78 H 424" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#p-arA)"/>
-              <rect x="432" y="52" width="280" height="52" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="572" y="74" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">実際の上限 = 5 + 5 = 10</text>
-              <text x="572" y="93" font-size="13" fill="#7b7186" text-anchor="middle">書いた数字と食い違います</text>
+              <rect x="0" y="0" width="720" height="128" rx="10" fill="rgba(214,41,118,0.06)"/>
+              <rect x="10" y="10" width="72" height="24" rx="12" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="46" y="27" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">修正前</text>
+              <rect x="10" y="48" width="168" height="32" rx="5" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="94" y="69" font-size="13" fill="#18121d" text-anchor="middle">③ 有害分類</text>
+              <rect x="10" y="86" width="168" height="32" rx="5" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="94" y="107" font-size="13" fill="#18121d" text-anchor="middle">④ 名指し判定</text>
+              <path d="M178 64 H 214" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
+              <path d="M178 102 H 214" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
+              <rect x="222" y="48" width="150" height="32" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="297" y="69" font-size="13" fill="#d62976" text-anchor="middle">自分の pool · 5</text>
+              <rect x="222" y="86" width="150" height="32" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="297" y="107" font-size="13" fill="#d62976" text-anchor="middle">自分の pool · 5</text>
+              <path d="M372 83 H 410" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#p-arA)"/>
+              <rect x="418" y="56" width="292" height="54" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="564" y="80" font-size="14.5" fill="#18121d" font-weight="700" text-anchor="middle">実際の上限 5 + 5 = 10</text>
+              <text x="564" y="99" font-size="13" fill="#d62976" text-anchor="middle">書いた値 5 &#8800; 実際 10</text>
 
-              <path d="M8 144 H 712" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
-
-              <text x="8" y="176" font-size="14" fill="#7b7186">修正後 · プール一つを共有</text>
-              <rect x="8" y="188" width="170" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="93" y="213" font-size="13" fill="#18121d" text-anchor="middle">③ 有害分類クライアント</text>
-              <rect x="8" y="236" width="170" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="93" y="261" font-size="13" fill="#18121d" text-anchor="middle">④ 攻撃判定クライアント</text>
-              <path d="M178 208 H 220" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
-              <path d="M178 256 H 220" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
-              <rect x="228" y="204" width="150" height="56" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
-              <text x="303" y="228" font-size="13" fill="#4f5bd5" text-anchor="middle">共有プール一つ</text>
-              <text x="303" y="248" font-size="13" fill="#4f5bd5" text-anchor="middle">ホストあたり50</text>
-              <path d="M378 232 H 424" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#p-arB)"/>
-              <rect x="432" y="206" width="280" height="52" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
-              <text x="572" y="228" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">実際の上限 = 50</text>
-              <text x="572" y="247" font-size="13" fill="#7b7186" text-anchor="middle">書いた数字と同じです</text>
+              <rect x="0" y="140" width="720" height="128" rx="10" fill="rgba(79,91,213,0.06)"/>
+              <rect x="10" y="150" width="72" height="24" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="46" y="167" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">修正後</text>
+              <rect x="10" y="188" width="168" height="32" rx="5" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="94" y="209" font-size="13" fill="#18121d" text-anchor="middle">③ 有害分類</text>
+              <rect x="10" y="226" width="168" height="32" rx="5" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="94" y="247" font-size="13" fill="#18121d" text-anchor="middle">④ 名指し判定</text>
+              <path d="M178 204 H 214" fill="none" stroke="#4f5bd5" stroke-width="1.5" marker-end="url(#p-arB)"/>
+              <path d="M178 242 H 214" fill="none" stroke="#4f5bd5" stroke-width="1.5" marker-end="url(#p-arB)"/>
+              <rect x="222" y="188" width="150" height="70" rx="5" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="297" y="217" font-size="13" fill="#4f5bd5" text-anchor="middle">共有 pool 一つ</text>
+              <text x="297" y="237" font-size="13" fill="#4f5bd5" text-anchor="middle">ホストあたり50</text>
+              <path d="M372 223 H 410" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#p-arB)"/>
+              <rect x="418" y="196" width="292" height="54" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="564" y="220" font-size="14.5" fill="#18121d" font-weight="700" text-anchor="middle">実際の上限 50</text>
+              <text x="564" y="239" font-size="13" fill="#4f5bd5" text-anchor="middle">書いた値 50 = 実際 50</text>
               <defs>
                 <marker id="p-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                   <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
@@ -522,7 +516,7 @@ spring:
               </defs>
             </svg>
           </div>
-          <figcaption>同じ「ホストあたり5」がクライアント二つでは10として動きます。プールを一つにまとめると、書いた数字と実際の上限が一致します。</figcaption>
+          <figcaption>カード二枚が同じ二つのクライアントをそれぞれ描いたものです。同じ「ホストあたり5」がクライアント二つでは<strong>10</strong>として動きます。pool を一つにまとめると、書いた数字と実際の上限が一致します。</figcaption>
         </figure>
 
 <pre data-lang="kotlin"><code>@Configuration
@@ -662,26 +656,28 @@ assertThat(factories[0]).isSameAs(factories[1])</code></pre>
           書面レビューが先です。</li>
         </ul>
 
+        <div class="wrapup">
         <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="このセクションへのリンク">#</a></h2>
 
-        <p>まとめるとこうです。</p>
+          <p>まとめるとこうです。</p>
 
-        <ul>
-          <li>スループットがある数字に張り付いて動かないなら、まず<strong>その数字を作った層</strong>を探します。
-          スレッドや DB プールを増やすのはその次です。</li>
-          <li>私が選んでいないライブラリが<strong>私のサービスの並行性の方針</strong>を決めていました。その層は
-          ランタイムのクラスパスにしかないので、<strong>読んでも見つからず、測ってはじめて出てきます。</strong></li>
-          <li>上限を<strong>なくすこと</strong>と<strong>決めること</strong>は違います。スループットは同じだけ上がりますが、
-          一方には数字が書かれていて、もう一方にはありません。</li>
-          <li>設定で直したものは<strong>消しても何も失敗しません。</strong>だからこそ値が付いたということ自体を
-          断言する必要があります。</li>
-        </ul>
+          <ul>
+            <li>スループットがある数字に張り付いて動かないなら、まず<strong>その数字を作った層</strong>を探します。
+            スレッドや DB プールを増やすのはその次です。</li>
+            <li>私が選んでいないライブラリが<strong>私のサービスの並行性の方針</strong>を決めていました。その層は
+            ランタイムのクラスパスにしかないので、<strong>読んでも見つからず、測ってはじめて出てきます。</strong></li>
+            <li>上限を<strong>なくすこと</strong>と<strong>決めること</strong>は違います。スループットは同じだけ上がりますが、
+            一方には数字が書かれていて、もう一方にはありません。</li>
+            <li>設定で直したものは<strong>消しても何も失敗しません。</strong>だからこそ値が付いたということ自体を
+            断言する必要があります。</li>
+          </ul>
 
-        <p>最後に一行だけ残すなら、これです。
-        <strong>誰も選んでいない既定値も、方針のように振る舞います。</strong>
-        ただしそれは誰も責任を負わない方針で、たいていは<strong>測るまで存在にすら気づきません。</strong></p>
+          <p>最後に一行だけ残すなら、これです。
+          <strong>誰も選んでいない既定値も、方針のように振る舞います。</strong>
+          ただしそれは誰も責任を負わない方針で、たいていは<strong>測るまで存在にすら気づきません。</strong></p>
 
-        <p>お読みいただきありがとうございました。</p>
+          <p>お読みいただきありがとうございました。</p>
+        </div>
 
       </article>
     </main>
@@ -692,7 +688,7 @@ assertThat(factories[0]).isSameAs(factories[1])</code></pre>
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/content.js?v=b5b22e76cb"></script>
+  <script src="../assets/content.js?v=6a34c005d2"></script>
   <script src="../assets/lang.js?v=2d9c133fc2"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=44326158d4"></script>

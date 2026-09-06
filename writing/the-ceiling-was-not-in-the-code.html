@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="Post creation would not go past 6.27 req/s. Four times the write threads did nothing. Three times the database pool did nothing. The limit was a default of five connections per host, inside an HTTP client that came in as a transitive dependency of the AWS SDK I added for S3 — a layer that is only on the runtime classpath, so reading the code could never have found it." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=855b1948be" />
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
 </head>
 <body>
   <div class="topbar">
@@ -158,7 +158,7 @@
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
-            <svg viewBox="0 0 720 268" role="img" aria-labelledby="gate-t gate-d" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 720 238" role="img" aria-labelledby="gate-t gate-d" xmlns="http://www.w3.org/2000/svg">
               <title id="gate-t">The four layers a post passes through in the moderation gate</title>
               <desc id="gate-d">When a user submits a post, the moderation gate in the API server runs four checks.
               The first, a banned-word check, and the second, a contact-details check, finish inside the application and are fast.
@@ -168,29 +168,26 @@
 
               <rect x="8" y="52" width="120" height="52" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
               <text x="68" y="76" font-size="14" fill="#18121d" text-anchor="middle">Mobile app</text>
-              <text x="68" y="94" font-size="13" fill="#7b7186" text-anchor="middle">writes a post</text>
+              <text x="68" y="94" font-size="13" fill="#7b7186" text-anchor="middle">New post</text>
               <path d="M128 78 H 174" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#g-ar)"/>
 
               <rect x="182" y="30" width="212" height="96" rx="6" fill="none" stroke="#18121d" stroke-width="2"/>
               <text x="288" y="52" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">Moderation gate</text>
-              <text x="196" y="76" font-size="13" fill="#3b3344">① banned words · ② contacts</text>
-              <text x="196" y="94" font-size="12" fill="#7b7186">finish inside the app</text>
-              <text x="196" y="115" font-size="13" fill="#d62976" font-weight="700">③ harmful · ④ harassment</text>
+              <text x="196" y="76" font-size="13" fill="#3b3344">① Banned words · ② Contact</text>
+              <text x="196" y="94" font-size="12" fill="#7b7186">In-process</text>
+              <text x="196" y="115" font-size="13" fill="#d62976" font-weight="700">③ Toxicity · ④ Targeting</text>
 
               <path d="M394 100 H 470" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#g-arA)"/>
-              <text x="432" y="92" font-size="12" fill="#d62976" text-anchor="middle">2 calls</text>
+              <text x="432" y="92" font-size="12" fill="#d62976" text-anchor="middle">×2 calls</text>
               <rect x="478" y="66" width="234" height="68" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="595" y="90" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">External moderation API</text>
-              <text x="595" y="110" font-size="13" fill="#d62976" text-anchor="middle">1 post = 2 calls</text>
-              <text x="595" y="127" font-size="12" fill="#7b7186" text-anchor="middle">800 ms stub in the harness</text>
+              <text x="595" y="110" font-size="13" fill="#7b7186" text-anchor="middle">800 ms stub in the harness</text>
 
               <path d="M288 126 V 176" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#g-ar)"/>
-              <text x="300" y="158" font-size="12" fill="#7b7186">all four pass</text>
               <rect x="182" y="176" width="212" height="52" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
               <text x="288" y="200" font-size="14" fill="#18121d" text-anchor="middle">PostgreSQL</text>
-              <text x="288" y="218" font-size="13" fill="#7b7186" text-anchor="middle">stored · published</text>
+              <text x="288" y="218" font-size="13" fill="#7b7186" text-anchor="middle">Store · publish</text>
 
-              <text x="8" y="256" font-size="15" fill="#3b3344">If it blocks, the post is <tspan font-weight="700" fill="#18121d">not published</tspan> — the gate is fail-closed.</text>
               <defs>
                 <marker id="g-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                   <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
@@ -201,7 +198,7 @@
               </defs>
             </svg>
           </div>
-          <figcaption>The first two layers finish inside the application; only the last two leave it. What matters in this article is the label on the pink arrow: <strong>two calls</strong>. One post produces two outbound requests.</figcaption>
+          <figcaption>The first two layers finish inside the application and only the last two leave it. Pink marks the path that goes out, and one post produces <strong>two outbound calls</strong>. If any layer blocks, the post is not published: the gate is <strong>fail-closed</strong>.</figcaption>
         </figure>
 
         <p>One thing the diagram does not say: <strong>③ and ④ go to the same host.</strong> Later, that fact
@@ -301,43 +298,39 @@
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
-            <svg viewBox="0 0 720 300" role="img" aria-labelledby="cap-t cap-d" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 720 190" role="img" aria-labelledby="cap-t cap-d" xmlns="http://www.w3.org/2000/svg">
               <title id="cap-t">Outbound concurrency stays at ten no matter what changes</title>
               <desc id="cap-d">Three conditions are compared: sixteen writers with a pool of ten, sixteen writers with a pool of thirty,
               and thirty-two writers with a pool of thirty. In all three the peak outbound concurrency is ten and throughput is
               6.27, 6.27 and 6.26 requests per second. Only latency changes: at thirty-two writers the median rises from
               2,592 milliseconds to 5,119 milliseconds. That means no extra work is getting done — only the queue got longer.</desc>
 
-              <text x="8" y="22" font-size="14" fill="#7b7186">Peak outbound concurrency (measured in the stub)</text>
+              <text x="8" y="22" font-size="14" fill="#7b7186">Peak outbound concurrency</text>
 
-              <text x="8" y="60" font-size="13" fill="#3b3344">16 writers · pool 10</text>
-              <rect x="170" y="46" width="120" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="300" y="60" font-size="13" fill="#d62976" font-weight="700">10</text>
-              <text x="342" y="60" font-size="13" fill="#3b3344">6.27 req/s · p50 2,592 ms</text>
+              <text x="8" y="60" font-size="13" fill="#3b3344">write 16 · pool 10</text>
+              <rect x="150" y="46" width="120" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="280" y="60" font-size="13" fill="#d62976" font-weight="700">10</text>
+              <text x="330" y="60" font-size="13" fill="#3b3344">6.27 req/s · p50 2,592 ms</text>
 
-              <text x="8" y="96" font-size="13" fill="#3b3344">16 writers · pool 30</text>
-              <rect x="170" y="82" width="120" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="300" y="96" font-size="13" fill="#d62976" font-weight="700">10</text>
-              <text x="342" y="96" font-size="13" fill="#3b3344">6.27 req/s · p50 2,595 ms</text>
+              <text x="8" y="96" font-size="13" fill="#3b3344">write 16 · pool 30</text>
+              <rect x="150" y="82" width="120" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="280" y="96" font-size="13" fill="#d62976" font-weight="700">10</text>
+              <text x="330" y="96" font-size="13" fill="#3b3344">6.27 req/s · p50 2,595 ms</text>
 
-              <text x="8" y="132" font-size="13" fill="#3b3344">32 writers · pool 30</text>
-              <rect x="170" y="118" width="120" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="300" y="132" font-size="13" fill="#d62976" font-weight="700">10</text>
-              <text x="342" y="132" font-size="13" fill="#3b3344">6.26 req/s · p50 5,119 ms</text>
+              <text x="8" y="132" font-size="13" fill="#3b3344">write 32 · pool 30</text>
+              <rect x="150" y="118" width="120" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="280" y="132" font-size="13" fill="#d62976" font-weight="700">10</text>
+              <text x="330" y="132" font-size="13" fill="#3b3344">6.26 req/s · p50 5,119 ms</text>
 
-              <path d="M8 154 H 712" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
+              <path d="M8 148 H 712" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
 
-              <text x="8" y="180" font-size="14" fill="#7b7186">For reference · hitting the stub directly with 32 workers</text>
-              <text x="8" y="216" font-size="13" fill="#3b3344">stub alone</text>
-              <rect x="170" y="202" width="384" height="18" rx="3" fill="none" stroke="#4f5bd5" stroke-width="2"/>
-              <text x="564" y="216" font-size="13" fill="#4f5bd5" font-weight="700">32</text>
-              <text x="600" y="216" font-size="13" fill="#3b3344">40 req/s</text>
-
-              <text x="8" y="254" font-size="15" fill="#3b3344">The stub takes 32. So the limit is on <tspan font-weight="700" fill="#18121d">the application side</tspan>.</text>
-              <text x="8" y="284" font-size="15" fill="#3b3344">What grew was not throughput but <tspan font-weight="700" fill="#d62976">waiting</tspan>.</text>
+              <text x="8" y="176" font-size="13" fill="#3b3344">stub alone</text>
+              <rect x="150" y="162" width="384" height="18" rx="3" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="544" y="176" font-size="13" fill="#4f5bd5" font-weight="700">32</text>
+              <text x="580" y="176" font-size="13" fill="#3b3344">40 req/s</text>
             </svg>
           </div>
-          <figcaption>All three conditions sit at ten. The blue bar below is the same stub hit directly, without the application: on its own it accepts thirty-two.</figcaption>
+          <figcaption>The three pink bars are three different conditions, and the concurrency <strong>does not move off ten</strong>. Raising writes to 32 grows waiting time (p50), not throughput. The blue bar at the bottom is the same stub hit directly, without the application: on its own it accepts thirty-two. So the limit is on the <strong>application side</strong>.</figcaption>
         </figure>
 
         <p>Here is how to read the table. <strong>Four times the writers and three times the pool leave
@@ -374,40 +367,39 @@ at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.acquireEndpoint(.
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
-            <svg viewBox="0 0 720 356" role="img" aria-labelledby="chain-t chain-d" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 720 336" role="img" aria-labelledby="chain-t chain-d" xmlns="http://www.w3.org/2000/svg">
               <title id="chain-t">The chain from an S3 dependency to ten concurrent outbound calls</title>
               <desc id="chain-d">The AWS SDK's S3 module was added for file uploads. It pulls in apache5-client, which in turn pulls in
               httpclient5. That last library is only on the runtime classpath, so its name never appears in the code. Spring's RestClient,
               however, picks Apache HttpClient whenever it is on the classpath, and that pool defaults to five connections per target host.
               Because two RestClients pointing at the same host each hold their own pool, outbound concurrency becomes five plus five, or ten.</desc>
 
-              <rect x="8" y="16" width="330" height="44" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="24" y="43" font-size="14" fill="#18121d">Added for file uploads: <tspan font-weight="700">AWS SDK · S3</tspan></text>
-              <text x="352" y="43" font-size="13" fill="#4f5bd5" font-weight="700">← this is all I chose</text>
+              <rect x="8" y="16" width="330" height="44" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="24" y="43" font-size="14" fill="#18121d">Added for file upload: <tspan font-weight="700">AWS SDK · S3</tspan></text>
+              <text x="352" y="43" font-size="13" fill="#4f5bd5" font-weight="700">← what I chose</text>
 
               <path d="M40 60 V 84" fill="none" stroke="#7b7186" stroke-width="1.5" marker-end="url(#c-ar)"/>
-              <rect x="8" y="84" width="330" height="40" rx="6" fill="none" stroke="#7b7186" stroke-width="1.5"/>
+              <rect x="8" y="84" width="330" height="40" rx="6" fill="rgba(123,113,134,0.09)" stroke="#a99fb4" stroke-width="1.5"/>
               <text x="24" y="109" font-size="13" fill="#3b3344">software.amazon.awssdk:apache5-client</text>
 
               <path d="M40 124 V 148" fill="none" stroke="#7b7186" stroke-width="1.5" marker-end="url(#c-ar)"/>
-              <rect x="8" y="148" width="330" height="40" rx="6" fill="none" stroke="#7b7186" stroke-width="1.5"/>
+              <rect x="8" y="148" width="330" height="40" rx="6" fill="rgba(123,113,134,0.09)" stroke="#a99fb4" stroke-width="1.5"/>
               <text x="24" y="173" font-size="13" fill="#3b3344">org.apache.httpcomponents.client5:httpclient5</text>
-              <text x="352" y="173" font-size="13" fill="#7b7186">← runtime classpath only</text>
+              <text x="352" y="173" font-size="13" fill="#7b7186">← no name anywhere in the code</text>
 
               <path d="M40 188 V 212" fill="none" stroke="#7b7186" stroke-width="1.5" marker-end="url(#c-ar)"/>
-              <rect x="8" y="212" width="330" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="24" y="237" font-size="13" fill="#3b3344">Spring's RestClient selects this implementation</text>
+              <rect x="8" y="212" width="330" height="40" rx="6" fill="rgba(123,113,134,0.09)" stroke="#a99fb4" stroke-width="1.5"/>
+              <text x="24" y="237" font-size="13" fill="#3b3344">Spring RestClient → picks this implementation</text>
 
               <path d="M40 252 V 276" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#c-arA)"/>
               <rect x="8" y="276" width="330" height="44" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="24" y="303" font-size="14" fill="#18121d" font-weight="700">Pool default · 5 per target host</text>
+              <text x="24" y="303" font-size="14" fill="#18121d" font-weight="700">connection pool default · 5 per host</text>
 
               <path d="M338 298 H 396" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#c-arA)"/>
               <rect x="404" y="270" width="308" height="56" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="558" y="294" font-size="14" fill="#d62976" font-weight="700" text-anchor="middle">2 RestClients × 5 = 10 concurrent</text>
-              <text x="558" y="313" font-size="13" fill="#7b7186" text-anchor="middle">③ harmful · ④ harassment</text>
+              <text x="558" y="313" font-size="13" fill="#7b7186" text-anchor="middle">③ Toxicity · ④ Targeting</text>
 
-              <text x="8" y="346" font-size="15" fill="#3b3344">The four boxes in between were <tspan font-weight="700" fill="#18121d">chosen by nobody.</tspan></text>
               <defs>
                 <marker id="c-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                   <path d="M0 0 L10 5 L0 10 z" fill="#7b7186"/>
@@ -418,7 +410,7 @@ at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.acquireEndpoint(.
               </defs>
             </svg>
           </div>
-          <figcaption>Only the top box was a decision; the four below it arrived on their own. The “2” in the last box is ③ and ④ from the first diagram.</figcaption>
+          <figcaption>Only the box with the blue border was a decision. <strong>The three grey boxes were chosen by nobody</strong> and arrived as transitive dependencies. The pink box at the bottom is where that chain actually sets the limit, and the “2” on the right is ③ and ④ from the first diagram.</figcaption>
         </figure>
 
         <p>Here is what the diagram does not say. <strong><code>httpclient5</code> is on the runtime classpath
@@ -486,45 +478,47 @@ spring:
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
-            <svg viewBox="0 0 720 300" role="img" aria-labelledby="pool-t pool-d" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 720 268" role="img" aria-labelledby="pool-t pool-d" xmlns="http://www.w3.org/2000/svg">
               <title id="pool-t">A pool per client versus one shared pool</title>
               <desc id="pool-d">The top half is the state before the fix. The RestClient for harmful-content classification and the one
               for harassment classification each hold their own connection pool, and each pool defaults to five, so real concurrency is
               five plus five, or ten. The written number is five while the effective limit is ten, so the two disagree. The bottom half is
               after the fix: one connection manager is shared by both clients, so the per-host limit of fifty is also the real limit.</desc>
 
-              <text x="8" y="22" font-size="14" fill="#7b7186">Before · one pool per client</text>
-              <rect x="8" y="34" width="164" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="90" y="59" font-size="13" fill="#18121d" text-anchor="middle">③ harmful client</text>
-              <rect x="8" y="82" width="164" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="90" y="107" font-size="13" fill="#18121d" text-anchor="middle">④ harassment client</text>
-              <path d="M172 54 H 216" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
-              <path d="M172 102 H 216" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
-              <rect x="224" y="34" width="150" height="40" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="299" y="59" font-size="13" fill="#d62976" text-anchor="middle">own pool · limit 5</text>
-              <rect x="224" y="82" width="150" height="40" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="299" y="107" font-size="13" fill="#d62976" text-anchor="middle">own pool · limit 5</text>
-              <path d="M374 78 H 424" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#p-arA)"/>
-              <rect x="432" y="52" width="280" height="52" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="572" y="74" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">real limit = 5 + 5 = 10</text>
-              <text x="572" y="93" font-size="13" fill="#7b7186" text-anchor="middle">disagrees with the written number</text>
+              <rect x="0" y="0" width="720" height="128" rx="10" fill="rgba(214,41,118,0.06)"/>
+              <rect x="10" y="10" width="72" height="24" rx="12" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="46" y="27" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">Before</text>
+              <rect x="10" y="48" width="168" height="32" rx="5" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="94" y="69" font-size="13" fill="#18121d" text-anchor="middle">③ Toxicity</text>
+              <rect x="10" y="86" width="168" height="32" rx="5" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="94" y="107" font-size="13" fill="#18121d" text-anchor="middle">④ Targeting</text>
+              <path d="M178 64 H 214" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
+              <path d="M178 102 H 214" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
+              <rect x="222" y="48" width="150" height="32" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="297" y="69" font-size="13" fill="#d62976" text-anchor="middle">own pool · 5</text>
+              <rect x="222" y="86" width="150" height="32" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="297" y="107" font-size="13" fill="#d62976" text-anchor="middle">own pool · 5</text>
+              <path d="M372 83 H 410" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#p-arA)"/>
+              <rect x="418" y="56" width="292" height="54" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="564" y="80" font-size="14.5" fill="#18121d" font-weight="700" text-anchor="middle">actual limit 5 + 5 = 10</text>
+              <text x="564" y="99" font-size="13" fill="#d62976" text-anchor="middle">written 5 &#8800; actual 10</text>
 
-              <path d="M8 144 H 712" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
-
-              <text x="8" y="176" font-size="14" fill="#7b7186">After · one shared pool</text>
-              <rect x="8" y="188" width="164" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="90" y="213" font-size="13" fill="#18121d" text-anchor="middle">③ harmful client</text>
-              <rect x="8" y="236" width="164" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="90" y="261" font-size="13" fill="#18121d" text-anchor="middle">④ harassment client</text>
-              <path d="M172 208 H 216" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
-              <path d="M172 256 H 216" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
-              <rect x="224" y="204" width="150" height="56" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
-              <text x="299" y="228" font-size="13" fill="#4f5bd5" text-anchor="middle">one shared pool</text>
-              <text x="299" y="248" font-size="13" fill="#4f5bd5" text-anchor="middle">50 per host</text>
-              <path d="M374 232 H 424" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#p-arB)"/>
-              <rect x="432" y="206" width="280" height="52" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
-              <text x="572" y="228" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">real limit = 50</text>
-              <text x="572" y="247" font-size="13" fill="#7b7186" text-anchor="middle">same as the written number</text>
+              <rect x="0" y="140" width="720" height="128" rx="10" fill="rgba(79,91,213,0.06)"/>
+              <rect x="10" y="150" width="72" height="24" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="46" y="167" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">After</text>
+              <rect x="10" y="188" width="168" height="32" rx="5" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="94" y="209" font-size="13" fill="#18121d" text-anchor="middle">③ Toxicity</text>
+              <rect x="10" y="226" width="168" height="32" rx="5" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="94" y="247" font-size="13" fill="#18121d" text-anchor="middle">④ Targeting</text>
+              <path d="M178 204 H 214" fill="none" stroke="#4f5bd5" stroke-width="1.5" marker-end="url(#p-arB)"/>
+              <path d="M178 242 H 214" fill="none" stroke="#4f5bd5" stroke-width="1.5" marker-end="url(#p-arB)"/>
+              <rect x="222" y="188" width="150" height="70" rx="5" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="297" y="217" font-size="13" fill="#4f5bd5" text-anchor="middle">one shared pool</text>
+              <text x="297" y="237" font-size="13" fill="#4f5bd5" text-anchor="middle">50 per host</text>
+              <path d="M372 223 H 410" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#p-arB)"/>
+              <rect x="418" y="196" width="292" height="54" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="564" y="220" font-size="14.5" fill="#18121d" font-weight="700" text-anchor="middle">actual limit 50</text>
+              <text x="564" y="239" font-size="13" fill="#4f5bd5" text-anchor="middle">written 50 = actual 50</text>
               <defs>
                 <marker id="p-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                   <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
@@ -538,7 +532,7 @@ spring:
               </defs>
             </svg>
           </div>
-          <figcaption>The same “five per host” behaves as ten across two clients. Collapse the pools into one and the written number and the effective limit finally agree.</figcaption>
+          <figcaption>Two cards, the same two clients drawn twice. The same “five per host” behaves as <strong>ten</strong> across two clients. Collapse the pools into one and the written number and the effective limit finally agree.</figcaption>
         </figure>
 
 <pre data-lang="kotlin"><code>@Configuration
@@ -687,26 +681,28 @@ assertThat(factories[0]).isSameAs(factories[1])</code></pre>
           rules require a written review first.</li>
         </ul>
 
+        <div class="wrapup">
         <h2 id="wrapping-up">Wrapping up<a class="anchor" href="#wrapping-up" aria-label="Link to this section">#</a></h2>
 
-        <p>To summarise.</p>
+          <p>To summarise.</p>
 
-        <ul>
-          <li>When throughput sticks to a number, find <strong>the layer that produced that number</strong>
-          first. Raising threads and database pools comes after.</li>
-          <li>A library I never chose was setting <strong>my service's concurrency policy</strong>. It lives on
-          the runtime classpath only, so <strong>reading cannot find it — measuring can.</strong></li>
-          <li><strong>Removing a limit and setting one</strong> are different acts. Throughput rises the same
-          either way, but one of them has a number written down and the other does not.</li>
-          <li>A fix made of configuration <strong>fails nothing when deleted</strong>. So the fact that the
-          value took effect is itself what has to be asserted.</li>
-        </ul>
+          <ul>
+            <li>When throughput sticks to a number, find <strong>the layer that produced that number</strong>
+            first. Raising threads and database pools comes after.</li>
+            <li>A library I never chose was setting <strong>my service's concurrency policy</strong>. It lives on
+            the runtime classpath only, so <strong>reading cannot find it — measuring can.</strong></li>
+            <li><strong>Removing a limit and setting one</strong> are different acts. Throughput rises the same
+            either way, but one of them has a number written down and the other does not.</li>
+            <li>A fix made of configuration <strong>fails nothing when deleted</strong>. So the fact that the
+            value took effect is itself what has to be asserted.</li>
+          </ul>
 
-        <p>If one line survives, let it be this.
-        <strong>A default nobody chose still behaves like a policy.</strong>
-        It is just a policy nobody owns — and usually one you do not know exists until you measure.</p>
+          <p>If one line survives, let it be this.
+          <strong>A default nobody chose still behaves like a policy.</strong>
+          It is just a policy nobody owns — and usually one you do not know exists until you measure.</p>
 
-        <p>Thank you for reading.</p>
+          <p>Thank you for reading.</p>
+        </div>
 
       </article>
     </main>
@@ -717,7 +713,7 @@ assertThat(factories[0]).isSameAs(factories[1])</code></pre>
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/content.js?v=b5b22e76cb"></script>
+  <script src="../assets/content.js?v=6a34c005d2"></script>
   <script src="../assets/lang.js?v=2d9c133fc2"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=44326158d4"></script>

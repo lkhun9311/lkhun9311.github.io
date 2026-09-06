@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="스위치 장애로 살아 있는 컴퓨트 노드가 장애로 판정돼 복구가 대량 실행됐다. 감지를 정교하게 만드는 대신 신호에 자격을 매겼고, 시나리오 여덟 중 일곱이 보류로 남았다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=855b1948be" />
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
 </head>
 <body>
   <div class="topbar">
@@ -96,7 +96,7 @@
         장애가 줄었다"는 사후 측정이 없다. 있는 것은 판정 체계와, 그 체계로 시나리오를 하나씩 판정한 결과다.</p>
 
         <p>사건은 한 줄이다. <strong>L2/L3 스위치가 죽자, 멀쩡히 돌아가던 컴퓨트 노드가 장애로 판정돼 복구가
-        대량으로 실행됐다.</strong> 인스턴스 HA에서 복구란 Nova Evacuate — 다른 노드에서 같은 VM 을 다시 띄우는
+        대량으로 실행됐다.</strong> 인스턴스 HA에서 복구란 Nova Evacuate — 다른 노드에서 같은 VM을 다시 띄우는
         것이다. 원본이 살아 있는 채 복제본이 같은 볼륨에 붙으면 두 쪽이 동시에 쓴다.</p>
 
         <p>재설계의 결론은 감지 정확도를 올리는 것이 아니었다. <strong>신호마다 무엇을 증언할 자격이 있는지를
@@ -125,7 +125,7 @@
         </div>
 
         <p>컨트롤러끼리의 통신이 끊기면 쿼럼이 무너진다. 그러면 일부 컨트롤러가 <strong>혼자서</strong> 컴퓨트가
-        죽었다고 판단한다. 그런데 같은 시각 <strong>MGMT 는 살아 있어서 컴퓨트의 에이전트 하트비트가 정상으로
+        죽었다고 판단한다. 그런데 같은 시각 <strong>MGMT는 살아 있어서 컴퓨트의 에이전트 하트비트가 정상으로
         도착하고 있었다.</strong></p>
 
         <p>즉 시스템 안에 두 개의 서로 다른 진술이 동시에 있었다. 컴퓨트는 "나 살아 있다"고 말하고 있었고,
@@ -188,7 +188,7 @@
         <p><strong>기본값이 HOLD 다.</strong> 확신할 수 없으면 아무것도 하지 않는다.</p>
 
         <p>이 분리가 즉시 없앤 오판이 하나 있다. <strong>스토리지 경로 장애를 "컴퓨트 장애"로 읽던 것</strong>이다.
-        스토리지 조건은 Phase 2 에 있으므로 장애 감지를 오염시키지 않는다. 스토리지가 안 보이는 것은 컴퓨트가
+        스토리지 조건은 Phase 2에 있으므로 장애 감지를 오염시키지 않는다. 스토리지가 안 보이는 것은 컴퓨트가
         죽었다는 증거가 아니라, <em>지금 복구하면 안 된다</em>는 증거다.</p>
 
         <h2 id="여덟-중-일곱">여덟 중 일곱<a class="anchor" href="#여덟-중-일곱" aria-label="이 절로 가는 링크">#</a></h2>
@@ -217,12 +217,12 @@
 
         <p>맨 아랫줄이 사고 당시의 상황이다. 그리고 이제 그 줄의 조치는 HOLD 다.</p>
 
-        <p>여덟 중 일곱이 HOLD 라는 결과는 <strong>비대칭적인 비용</strong>에서 나온다. 복구를 안 하면 서비스가
+        <p>여덟 중 일곱이 HOLD라는 결과는 <strong>비대칭적인 비용</strong>에서 나온다. 복구를 안 하면 서비스가
         내려간 채로 남고, 사람이 개입할 시간이 생긴다. 복구를 잘못 하면 원본과 복제본이 같은 볼륨에 동시에 쓰고,
         그건 되돌릴 수 없다. 두 실수의 값이 다르면 판정선도 가운데 있으면 안 된다.</p>
 
         <p>여기서 가장 자주 나오는 반문 — <em>"일곱을 보류하면 진짜 장애 때 복구가 늦지 않나?"</em> 늦는다.
-        늦는 것이 이 설계가 지불하기로 한 값이다. 대신 HOLD 는 조용히 아무것도 안 하는 상태가 아니라
+        늦는 것이 이 설계가 지불하기로 한 값이다. 대신 HOLD는 조용히 아무것도 안 하는 상태가 아니라
         <strong>운영자 알림을 동반한 상태</strong>다. 자동 복구를 포기한 자리에 사람을 넣는 것이지, 아무것도 안
         넣는 것이 아니다.</p>
 
@@ -244,7 +244,7 @@ Compute-02 → VM-A 복구 완료      → /dev/vdb 에 쓴다   (신규 attach)
           <caption class="sr-only">스토리지 종류별 동시 쓰기 위험.</caption>
           <thead><tr><th scope="col">스토리지</th><th scope="col">위험</th></tr></thead>
           <tbody>
-            <tr><td>iSCSI</td><td>SCSI-3 PR 이 있지만, 원본 연결이 정리되기 전에 신규 접근이 들어오면 충돌 가능</td></tr>
+            <tr><td>iSCSI</td><td>SCSI-3 PR이 있지만, 원본 연결이 정리되기 전에 신규 접근이 들어오면 충돌 가능</td></tr>
             <tr><td><strong>LVM</strong></td><td><strong>SCSI PR 미지원.</strong> 동시 쓰기 시 VG/LV 메타데이터 손상 위험이 높다</td></tr>
             <tr><td>NFS</td><td>파일 락 기반이라 동시 mount/write 시 일관성을 보장할 수 없다</td></tr>
           </tbody>
@@ -261,12 +261,12 @@ Compute-02 → VM-A 복구 완료      → /dev/vdb 에 쓴다   (신규 attach)
 4. 스토리지 잔여 연결 정리 확인 (종류마다 다름)
 5. 복구 실행</code></pre>
 
-        <p>2번이 있는 이유는 단순하다. <strong>전원을 내린 직후에 상태를 조회하면 아직 off 가 아니다.</strong>
-        대기 없이 확인하면 "off 가 아님"으로 읽혀 펜싱 실패로 오판하거나, 반대로 낙관적으로 넘어간다. 5초는 그
-        하한이고, 상한은 별도의 펜싱 타임아웃으로 둔다.</p>
+        <p>2번이 있는 이유는 단순하다. <strong>전원을 내린 직후에 상태를 조회하면 아직 off가 아니다.</strong>
+        대기 없이 확인하면 "off가 아님"으로 읽혀 펜싱 실패로 오판하거나, 반대로 낙관적으로 넘어간다. 5초는 그
+        하한이고, 상한은 별도의 펜싱 timeout으로 둔다.</p>
 
-        <p>그리고 이 절차 전체를 무력화하는 전제 조건이 하나 있었다. <strong>펜싱은 IPMI 로 하는데, BMC 가
-        MGMT 와 같은 물리 스위치에 있으면 스위치가 죽을 때 IPMI 도 같이 죽는다.</strong> 펜싱이 필요한 바로 그
+        <p>그리고 이 절차 전체를 무력화하는 전제 조건이 하나 있었다. <strong>펜싱은 IPMI 로 하는데, BMC가
+        MGMT와 같은 물리 스위치에 있으면 스위치가 죽을 때 IPMI도 같이 죽는다.</strong> 펜싱이 필요한 바로 그
         순간에 펜싱이 불가능해진다.</p>
 
         <div class="table-scroll">
@@ -276,21 +276,21 @@ Compute-02 → VM-A 복구 완료      → /dev/vdb 에 쓴다   (신규 attach)
           <caption class="sr-only">BMC 네트워크 구성별 펜싱 가능 여부.</caption>
           <thead><tr><th scope="col">구성</th><th scope="col">스위치 장애 시</th><th scope="col">결과</th></tr></thead>
           <tbody>
-            <tr><td>BMC 와 MGMT 가 같은 물리 스위치</td><td>MGMT·IPMI 동시 차단</td><td><strong>펜싱 불가</strong></td></tr>
-            <tr><td>BMC 를 VLAN 으로만 분리</td><td>스위치 자체가 죽으면 VLAN 도 사라짐</td><td>펜싱 불안정</td></tr>
+            <tr><td>BMC와 MGMT가 같은 물리 스위치</td><td>MGMT·IPMI 동시 차단</td><td><strong>펜싱 불가</strong></td></tr>
+            <tr><td>BMC를 VLAN으로만 분리</td><td>스위치 자체가 죽으면 VLAN도 사라짐</td><td>펜싱 불안정</td></tr>
             <tr><td><strong>BMC 전용 물리 스위치</strong></td><td>MGMT 차단, IPMI 유지</td><td>펜싱 가능</td></tr>
           </tbody>
         </table>
         </div>
         </div>
 
-        <p><strong>VLAN 분리만으로는 부족하다.</strong> 스위치가 통째로 죽으면 그 위의 VLAN 도 전부 사라진다.
+        <p><strong>VLAN 분리만으로는 부족하다.</strong> 스위치가 통째로 죽으면 그 위의 VLAN도 전부 사라진다.
         사고 당시 BMC 네트워크는 아예 없었다. 그래서 이 항목은 설계의 한 절이 아니라
         <strong>전제 조건</strong>으로 못 박았다 — 이게 없으면 위 판정 체계의 마지막 한 칸도 실행할 수 없다.</p>
 
         <h2 id="db-락은-분산-합의가-아니다">DB 락은 분산 합의가 아니다<a class="anchor" href="#db-락은-분산-합의가-아니다" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>판정 체계를 정한 다음 남은 질문은 "그 판정을 누가, 어디서 실행하는가"였다. 사내에 이미 Galera 가 있어
+        <p>판정 체계를 정한 다음 남은 질문은 "그 판정을 누가, 어디서 실행하는가"였다. 사내에 이미 Galera가 있어
         그 위에 DB 락(ShedLock)을 얹자는 흐름이 있었다. 세 방식을 같은 축으로 비교했다.</p>
 
         <div class="table-scroll">
@@ -317,11 +317,11 @@ Compute-02 → VM-A 복구 완료      → /dev/vdb 에 쓴다   (신규 attach)
         Split-Brain 방지인데 그것을 구조적으로 막지 못하면, 싸다는 이유만으로는 목적을 달성하지 못한다. 그래서
         평가표에 "임시 대응"으로 남겼다.</p>
 
-        <p>1순위 권고는 Pacemaker + Corosync 였다. 이유는 감지 시간이 아니라 <strong>STONITH 가 내장이라
+        <p>1순위 권고는 Pacemaker + Corosync 였다. 이유는 감지 시간이 아니라 <strong>STONITH가 내장이라
         「펜싱 없이는 복구도 없다」를 구조적으로 강제한다</strong>는 점이다. 사람이 지키기로 한 원칙을 시스템이
-        대신 지켜 준다. 도입 난이도가 높아 어려우면 etcd 를 차선으로 뒀다.</p>
+        대신 지켜 준다. 도입 난이도가 높아 어려우면 etcd를 차선으로 뒀다.</p>
 
-        <p>여기에도 반문이 있다 — <em>"Pacemaker 는 분단 시 소수 쪽을 freeze 시키는데, 그럼 서비스가 멈추지
+        <p>여기에도 반문이 있다 — <em>"Pacemaker는 분단 시 소수 쪽을 freeze 시키는데, 그럼 서비스가 멈추지
         않나?"</em> 멈춘다. 그게 <strong>의도된 안전 실패</strong>다. 확신 없이 옮기는 것보다 멈추고 사람을 부르는
         쪽이 낫다는 것이 이 설계 전체의 기조이고, 실행 제어 방식도 같은 기조로 골랐다.</p>
 
@@ -356,7 +356,7 @@ Compute-02 → VM-A 복구 완료      → /dev/vdb 에 쓴다   (신규 attach)
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/content.js?v=b5b22e76cb"></script>
+  <script src="../assets/content.js?v=6a34c005d2"></script>
   <script src="../assets/lang.js?v=2d9c133fc2"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=44326158d4"></script>

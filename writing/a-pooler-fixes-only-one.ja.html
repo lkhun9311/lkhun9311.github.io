@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="リリース前のソーシャル投票プラットフォームを点検していて、コネクションプーラーを前に立てようとしました。ところがコネクション枯渇には原因が二つあり、プーラーはそのうち一つしか直しません。なぜ直せないのかは製品ドキュメントではなくトランザクションプーリングの定義から出てきます。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=855b1948be" />
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
 </head>
 <body>
   <div class="topbar">
@@ -158,31 +158,36 @@
 
               <rect x="8" y="44" width="132" height="56" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
               <text x="74" y="70" font-size="14" fill="#18121d" text-anchor="middle">モバイルアプリ</text>
-              <text x="74" y="89" font-size="12" fill="#7b7186" text-anchor="middle">投稿・コメント・投票</text>
+              <text x="74" y="89" font-size="13" fill="#7b7186" text-anchor="middle">投稿 · コメント · 投票</text>
               <path d="M140 72 H 194" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#ar)"/>
               <rect x="202" y="34" width="186" height="76" rx="6" fill="none" stroke="#18121d" stroke-width="2"/>
               <text x="295" y="58" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">API サーバ</text>
-              <text x="295" y="77" font-size="12" fill="#3b3344" text-anchor="middle">Kotlin · Spring Boot</text>
-              <text x="295" y="96" font-size="12" fill="#7b7186" text-anchor="middle">コネクションプール</text>
+              <text x="295" y="77" font-size="13" fill="#3b3344" text-anchor="middle">Kotlin · Spring Boot</text>
+              <text x="295" y="96" font-size="13" fill="#7b7186" text-anchor="middle">connection pool</text>
               <path d="M388 72 H 494" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#ar)"/>
-              <text x="441" y="62" font-size="12" fill="#7b7186" text-anchor="middle">クエリ</text>
+              <text x="441" y="62" font-size="13" fill="#7b7186" text-anchor="middle">クエリ</text>
               <rect x="502" y="44" width="206" height="56" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
               <text x="605" y="70" font-size="14" fill="#18121d" text-anchor="middle">PostgreSQL</text>
-              <text x="605" y="89" font-size="12" fill="#7b7186" text-anchor="middle">マネージド · コネクション上限あり</text>
+              <text x="605" y="89" font-size="13" fill="#7b7186" text-anchor="middle">マネージド · connection 上限あり</text>
               <path d="M295 110 V 158" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#arA)"/>
-              <text x="307" y="140" font-size="12" fill="#d62976" font-weight="700">投稿・コメントごとに1回</text>
-              <rect x="202" y="158" width="300" height="54" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="352" y="182" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">外部モデレーション API</text>
-              <text x="352" y="201" font-size="12" fill="#d62976" text-anchor="middle">read timeout 10秒に設定</text>
-              <text x="8" y="244" font-size="15" fill="#3b3344">この呼び出しが<tspan font-weight="700" fill="#18121d">トランザクションの中で</tspan>起きていました。</text>
+              <text x="307" y="140" font-size="13" fill="#d62976" font-weight="700">投稿・コメントごとに1回</text>
+              <rect x="202" y="158" width="506" height="54" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="455" y="182" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">外部モデレーション API</text>
+              <text x="455" y="201" font-size="13" fill="#d62976" text-anchor="middle">read timeout は 10 秒に設定</text>
               <defs>
-                <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/></marker>
-                <marker id="arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d62976"/></marker>
-                <marker id="arM" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#7b7186"/></marker>
+                <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
+                </marker>
+                <marker id="arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+                <marker id="arM" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#7b7186"/>
+                </marker>
               </defs>
             </svg>
           </div>
-          <figcaption>モバイルアプリ → API サーバ → PostgreSQL というありふれた構成です。この図でありふれていないのはピンクで示した下の一つだけで、それがこの記事のすべてです。</figcaption>
+          <figcaption>モバイルアプリ → API サーバ → PostgreSQL というありふれた構成です。ありふれていないのはピンクで示した下の一つ、<strong>データベーストランザクションの中で</strong>起きていた外部呼び出しだけで、それがこの記事のすべてです。</figcaption>
         </figure>
 
         <p><strong>外部モデレーション API</strong> は有害な内容をふるい落としてくれる外部サービスです。
@@ -272,34 +277,38 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
               コネクションを短く使って返し、外部 HTTP 呼び出しはコネクションを持たない状態で行い、書き込みだけを短い
               トランザクションに包みます。</desc>
 
-              <text x="8" y="26" font-size="15" fill="#7b7186">修正前 — コネクション1本をリクエスト全体で握ります</text>
-              <rect x="104" y="40" width="74" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="141" y="58" font-size="13" fill="#18121d" text-anchor="middle">BEGIN</text>
-              <rect x="182" y="40" width="74" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="219" y="58" font-size="13" fill="#18121d" text-anchor="middle">SELECT</text>
-              <rect x="260" y="40" width="300" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2" stroke-dasharray="5 4"/>
-              <text x="410" y="58" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">外部 HTTP 呼び出し · クエリ0件 · 最大10秒</text>
-              <rect x="564" y="40" width="66" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="597" y="58" font-size="12" fill="#18121d" text-anchor="middle">INSERT</text>
-              <rect x="634" y="40" width="74" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="671" y="58" font-size="12" fill="#18121d" text-anchor="middle">COMMIT</text>
-              <path d="M104 76 V 84 H 708 V 76" fill="none" stroke="#d62976" stroke-width="1.5"/>
-              <text x="104" y="104" font-size="14" fill="#18121d">コネクション1本を占有 — <tspan font-weight="700" fill="#d62976">この区間すべて</tspan></text>
-              <text x="8" y="152" font-size="15" fill="#7b7186">修正後 — 握る区間がクエリ時間まで縮みます</text>
-              <rect x="104" y="166" width="150" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="179" y="184" font-size="13" fill="#18121d" text-anchor="middle">検証の読み取り</text>
-              <rect x="266" y="166" width="270" height="26" rx="4" fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4"/>
-              <text x="401" y="184" font-size="12" fill="#7b7186" text-anchor="middle">外部 HTTP 呼び出し · コネクションなし</text>
-              <rect x="548" y="166" width="160" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="628" y="184" font-size="12" fill="#18121d" text-anchor="middle">BEGIN·INSERT·COMMIT</text>
-              <path d="M104 202 V 210 H 254 V 202" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <path d="M548 202 V 210 H 708 V 202" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="104" y="230" font-size="13" fill="#18121d">コネクション占有</text>
-              <text x="548" y="230" font-size="13" fill="#18121d">コネクション占有</text>
-              <text x="280" y="230" font-size="13" fill="#7b7186">この区間はコネクションを返した状態です</text>
+              <rect x="0" y="0" width="720" height="116" rx="10" fill="rgba(214,41,118,0.06)"/>
+              <rect x="10" y="10" width="72" height="24" rx="12" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="46" y="27" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">修正前</text>
+              <rect x="10" y="54" width="78" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="49" y="72" font-size="13" fill="#18121d" text-anchor="middle">BEGIN</text>
+              <rect x="92" y="54" width="86" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="135" y="72" font-size="13" fill="#18121d" text-anchor="middle">SELECT</text>
+              <rect x="182" y="54" width="328" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2" stroke-dasharray="5 4"/>
+              <text x="346" y="72" font-size="13" fill="#d62976" font-weight="700" text-anchor="middle">外部 HTTP 呼び出し · クエリ0件 · 最大10秒</text>
+              <rect x="514" y="54" width="80" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="554" y="72" font-size="13" fill="#18121d" text-anchor="middle">INSERT</text>
+              <rect x="598" y="54" width="112" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="654" y="72" font-size="13" fill="#18121d" text-anchor="middle">COMMIT</text>
+              <rect x="10" y="88" width="700" height="18" rx="3" fill="rgba(214,41,118,0.22)" stroke="#d62976" stroke-width="1.5"/>
+              <text x="360" y="102" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">リクエストが終わるまで占有</text>
+
+              <rect x="0" y="128" width="720" height="116" rx="10" fill="rgba(79,91,213,0.06)"/>
+              <rect x="10" y="138" width="72" height="24" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="46" y="155" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">修正後</text>
+              <rect x="10" y="182" width="160" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="90" y="200" font-size="13" fill="#18121d" text-anchor="middle">検証の読み取り</text>
+              <rect x="174" y="182" width="296" height="26" rx="4" fill="none" stroke="#a99fb4" stroke-width="1.5" stroke-dasharray="5 4"/>
+              <text x="322" y="200" font-size="13" fill="#7b7186" text-anchor="middle">外部 HTTP 呼び出し · connection なし</text>
+              <rect x="474" y="182" width="236" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="592" y="200" font-size="13" fill="#18121d" text-anchor="middle">BEGIN·INSERT·COMMIT</text>
+              <rect x="10" y="216" width="160" height="18" rx="3" fill="rgba(79,91,213,0.22)" stroke="#4f5bd5" stroke-width="1.5"/>
+              <rect x="174" y="216" width="296" height="18" rx="3" fill="none" stroke="#a99fb4" stroke-width="1.5" stroke-dasharray="4 4"/>
+              <text x="322" y="230" font-size="12.5" fill="#7b7186" text-anchor="middle">返した状態</text>
+              <rect x="474" y="216" width="236" height="18" rx="3" fill="rgba(79,91,213,0.22)" stroke="#4f5bd5" stroke-width="1.5"/>
             </svg>
           </div>
-          <figcaption>上が修正前です。外部呼び出しを待っている間もコネクションは占有されたままです。下が修正後で、コネクションを握る区間が実際のクエリ時間まで縮みます。</figcaption>
+          <figcaption>カード二枚が同じリクエストをそれぞれ描いたものです。左から右へ時間が流れ、上の行がリクエストのしていること、下の帯がその間 DB connection を握っている区間です。塗られた帯が占有、点線が返却で、横幅は時間に比例しません。修正前は request 全体で1本を握り続け、修正後は実際にクエリを出す両端だけに縮みます。</figcaption>
         </figure>
 
         <p>同時に書き込むリクエストがプールサイズを超えると、その時点からコネクションがありません。ここで
@@ -310,58 +319,62 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロール可能な図解">
-            <svg viewBox="0 0 720 250" role="img" aria-labelledby="spread-t spread-d" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 720 198" role="img" aria-labelledby="spread-t spread-d" xmlns="http://www.w3.org/2000/svg">
               <title id="spread-t">コネクションプール枯渇がサービス全体に広がる構造</title>
               <desc id="spread-d">左は投稿とコメントを書くリクエストです。それぞれが外部呼び出しを待ちながらコネクションを握っています。
               中央はコネクションプールで、そのリクエストたちがコネクションを全部占めてしまい空きが一つもありません。
               右は書き込みとは何の関係もないリクエストです。投票、フィード、結果チャート、プロフィールがすべて同じプール
               からコネクションを受け取るため、書き込み経路がプールを使い切るとこちらも一緒に止まります。</desc>
 
-              <text x="8" y="26" font-size="15" fill="#7b7186">プールが枯渇すると、止まるのは書き込み経路だけではありません</text>
-              <rect x="8" y="44" width="180" height="160" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="98" y="68" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">投稿・コメント作成</text>
-              <rect x="24" y="84" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
-              <text x="98" y="99" font-size="11" fill="#d62976" text-anchor="middle">外部呼び出し待ち</text>
-              <rect x="24" y="110" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
-              <text x="98" y="125" font-size="11" fill="#d62976" text-anchor="middle">外部呼び出し待ち</text>
-              <rect x="24" y="136" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
-              <text x="98" y="151" font-size="11" fill="#d62976" text-anchor="middle">外部呼び出し待ち</text>
-              <rect x="24" y="162" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
-              <text x="98" y="177" font-size="11" fill="#d62976" text-anchor="middle">外部呼び出し待ち</text>
-              <text x="98" y="196" font-size="14" fill="#d62976" text-anchor="middle">…</text>
-              <path d="M188 124 H 250" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#arA)"/>
-              <rect x="258" y="44" width="180" height="160" rx="6" fill="none" stroke="#18121d" stroke-width="2"/>
-              <text x="348" y="68" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">コネクションプール</text>
-              <rect x="274" y="84" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
-              <text x="348" y="99" font-size="11" fill="#d62976" text-anchor="middle">使用中</text>
-              <rect x="274" y="110" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
-              <text x="348" y="125" font-size="11" fill="#d62976" text-anchor="middle">使用中</text>
-              <rect x="274" y="136" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
-              <text x="348" y="151" font-size="11" fill="#d62976" text-anchor="middle">使用中</text>
-              <rect x="274" y="162" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
-              <text x="348" y="177" font-size="11" fill="#d62976" text-anchor="middle">使用中</text>
-              <text x="348" y="196" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">空きコネクション0本</text>
-              <path d="M438 124 H 500" fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arM)"/>
-              <rect x="508" y="44" width="200" height="160" rx="6" fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4"/>
-              <text x="608" y="68" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">関係のない他のリクエスト</text>
-              <rect x="524" y="84" width="168" height="20" rx="4" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
-              <text x="608" y="99" font-size="11" fill="#7b7186" text-anchor="middle">投票 — 待機</text>
-              <rect x="524" y="110" width="168" height="20" rx="4" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
-              <text x="608" y="125" font-size="11" fill="#7b7186" text-anchor="middle">フィード — 待機</text>
-              <rect x="524" y="136" width="168" height="20" rx="4" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
-              <text x="608" y="151" font-size="11" fill="#7b7186" text-anchor="middle">結果チャート — 待機</text>
-              <rect x="524" y="162" width="168" height="20" rx="4" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
-              <text x="608" y="177" font-size="11" fill="#7b7186" text-anchor="middle">プロフィール — 待機</text>
-              <text x="608" y="196" font-size="11" fill="#7b7186" text-anchor="middle">同じプールなので一緒に止まります</text>
-              <text x="8" y="236" font-size="15" fill="#3b3344">成長エンジンが<tspan font-weight="700" fill="#18121d">「結果チャートを共有すること」</tspan>なので、共有が跳ねる日がそのまま止まる日になります。</text>
+              <rect x="8" y="24" width="180" height="160" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="98" y="48" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">投稿・コメントの書き込み</text>
+              <rect x="24" y="64" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="98" y="79" font-size="12" fill="#d62976" text-anchor="middle">外部呼び出し待ち</text>
+              <rect x="24" y="90" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="98" y="105" font-size="12" fill="#d62976" text-anchor="middle">外部呼び出し待ち</text>
+              <rect x="24" y="116" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="98" y="131" font-size="12" fill="#d62976" text-anchor="middle">外部呼び出し待ち</text>
+              <rect x="24" y="142" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="98" y="157" font-size="12" fill="#d62976" text-anchor="middle">外部呼び出し待ち</text>
+              <text x="98" y="176" font-size="14" fill="#d62976" text-anchor="middle">…</text>
+              <path d="M188 104 H 250" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#arA)"/>
+              <rect x="258" y="24" width="180" height="160" rx="6" fill="none" stroke="#18121d" stroke-width="2"/>
+              <text x="348" y="48" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">connection pool</text>
+              <rect x="274" y="64" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="348" y="79" font-size="12" fill="#d62976" text-anchor="middle">使用中</text>
+              <rect x="274" y="90" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="348" y="105" font-size="12" fill="#d62976" text-anchor="middle">使用中</text>
+              <rect x="274" y="116" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="348" y="131" font-size="12" fill="#d62976" text-anchor="middle">使用中</text>
+              <rect x="274" y="142" width="148" height="20" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="348" y="157" font-size="12" fill="#d62976" text-anchor="middle">使用中</text>
+              <text x="348" y="176" font-size="13" fill="#d62976" font-weight="700" text-anchor="middle">空き connection 0</text>
+              <path d="M438 104 H 500" fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arM)"/>
+              <rect x="508" y="24" width="200" height="160" rx="6" fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4"/>
+              <text x="608" y="48" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">無関係なリクエスト</text>
+              <rect x="524" y="64" width="168" height="20" rx="4" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
+              <text x="608" y="79" font-size="12" fill="#7b7186" text-anchor="middle">投票 · 待ち</text>
+              <rect x="524" y="90" width="168" height="20" rx="4" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
+              <text x="608" y="105" font-size="12" fill="#7b7186" text-anchor="middle">フィード · 待ち</text>
+              <rect x="524" y="116" width="168" height="20" rx="4" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
+              <text x="608" y="131" font-size="12" fill="#7b7186" text-anchor="middle">結果チャート · 待ち</text>
+              <rect x="524" y="142" width="168" height="20" rx="4" fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5"/>
+              <text x="608" y="157" font-size="12" fill="#7b7186" text-anchor="middle">プロフィール · 待ち</text>
+              <text x="608" y="176" font-size="12" fill="#7b7186" text-anchor="middle">同じ pool</text>
               <defs>
-                <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/></marker>
-                <marker id="arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d62976"/></marker>
-                <marker id="arM" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#7b7186"/></marker>
+                <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
+                </marker>
+                <marker id="arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+                <marker id="arM" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#7b7186"/>
+                </marker>
               </defs>
             </svg>
           </div>
-          <figcaption>書き込みリクエストがプールを使い切ると、書き込みとは何の関係もない投票・フィード・結果チャートも同じプールからコネクションを受け取るため一緒に止まります。</figcaption>
+          <figcaption>pool が枯渇して止まるのは書き込み経路だけではありません。左が書き込みリクエスト、真ん中が connection pool、右が書き込みとは無関係なリクエストです。右も<strong>同じ pool</strong> から connection を受け取るので、真ん中が埋まると一緒に待ちに変わります。成長エンジンが「結果チャートの共有」である以上、共有が跳ねる日がそのまま止まる日になります。</figcaption>
         </figure>
 
         <p>投票も、フィード参照も、結果チャート参照も<strong>同じコネクションプール</strong>から
@@ -397,21 +410,24 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
               クエリを一本も実行しない。もう一方のクライアントはその間待つだけなので比が1対1になり、コネクションプーラーが
               生み出せる利得はほとんどなくなります。</desc>
 
-              <g font-size="15" fill="#7b7186">
-                <text x="8" y="34">短いトランザクション — 複数が1本を共有します</text>
-                <text x="8" y="196">トランザクションの中で待つ — 1本に固定されます</text>
-              </g>
+              <rect x="0" y="6" width="720" height="152" rx="10" fill="rgba(79,91,213,0.06)"/>
+              <rect x="0" y="170" width="720" height="152" rx="10" fill="rgba(214,41,118,0.06)"/>
+
+              <rect x="10" y="16" width="128" height="24" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="74" y="33" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">短い transaction</text>
+              <rect x="10" y="180" width="156" height="24" rx="12" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="88" y="197" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">transaction の中で待つ</text>
 
               <g font-size="14" fill="#3b3344">
-                <text x="8" y="70">クラ A</text>
-                <text x="8" y="100">クラ B</text>
-                <text x="8" y="136">バックエンド</text>
-                <text x="8" y="232">クラ A</text>
-                <text x="8" y="262">クラ B</text>
-                <text x="8" y="298">バックエンド</text>
+                <text x="8" y="70">Client A</text>
+                <text x="8" y="100">Client B</text>
+                <text x="8" y="136">backend</text>
+                <text x="8" y="232">Client A</text>
+                <text x="8" y="262">Client B</text>
+                <text x="8" y="298">backend</text>
               </g>
 
-              <!-- 上段: 短いトランザクションが交互に載る -->
+              <!-- 위: 短い transaction이 번갈아 얹힌다 -->
               <g fill="none" stroke="#3b3344" stroke-width="1.5">
                 <rect x="104" y="54" width="194" height="24" rx="4"/>
                 <rect x="514" y="54" width="194" height="24" rx="4"/>
@@ -426,25 +442,25 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
                 <path d="M201 78 V 118"/><path d="M406 108 V 118"/><path d="M611 78 V 118"/>
               </g>
               <rect x="104" y="118" width="604" height="24" rx="4" fill="none" stroke="#3b3344" stroke-width="2"/>
-              <text x="116" y="135" font-size="13" fill="#18121d">一本のバックエンドコネクションを A・B が交互に使う</text>
-              <text x="696" y="135" font-size="14" fill="#18121d" font-weight="700" text-anchor="end">アプリ 2 → DB 1</text>
+              <text x="116" y="135" font-size="13" fill="#18121d">backend connection 1本 · A と B が交互</text>
+              <text x="696" y="135" font-size="14" fill="#18121d" font-weight="700" text-anchor="end">アプリ2 → DB1</text>
 
-              <!-- 下段: トランザクションを開いたまま待つとバックエンドが掴まれる -->
+              <!-- 아래: transaction이 열린 채 기다리면 backend가 붙들린다 -->
               <rect x="104" y="216" width="604" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="114" y="233" font-size="13" fill="#18121d">BEGIN</text>
               <rect x="172" y="219" width="420" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="1.5" stroke-dasharray="4 3"/>
-              <text x="184" y="233" font-size="13" fill="#d62976" font-weight="700">外部 HTTP 呼び出しを待つ · クエリ0件</text>
+              <text x="184" y="233" font-size="13" fill="#d62976" font-weight="700">外部 HTTP 呼び出し · クエリ0件</text>
               <text x="604" y="233" font-size="13" fill="#18121d">COMMIT</text>
 
               <rect x="104" y="246" width="604" height="24" rx="4" fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4"/>
-              <text x="116" y="263" font-size="13" fill="#7b7186">待機 — 載る隙間ができない</text>
+              <text x="116" y="263" font-size="13" fill="#7b7186">B は待ち · 割り込む隙がない</text>
 
               <rect x="104" y="280" width="604" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="116" y="297" font-size="13" fill="#18121d">A に固定（pin）— トランザクションが開いている間ずっと</text>
-              <text x="696" y="297" font-size="14" fill="#d62976" font-weight="700" text-anchor="end">アプリ 1 → DB 1</text>
+              <text x="116" y="297" font-size="13" fill="#18121d">A に固定（pin）· transaction が開いている間ずっと</text>
+              <text x="696" y="297" font-size="14" fill="#d62976" font-weight="700" text-anchor="end">アプリ1 → DB1</text>
             </svg>
           </div>
-          <figcaption>上: 短いトランザクションならプーラーが二つのクライアントをバックエンドコネクション1本に交互に載せます。下: トランザクションを開いたまま外部呼び出しを待つと、そのコネクションが一つのクライアントに固定され、アプリのコネクション1本につき DB のコネクション1本になります。</figcaption>
+          <figcaption>横軸は時間で、三行はそれぞれ Client A・B と backend connection です。上のカードでは短い transaction が backend connection 1本に交互に載り、<strong>複数が1本にまとまります</strong>。下のカードでは A が transaction を開いたまま外部呼び出しを待ち、B が割り込む隙がないので<strong>1本が1本に固定され</strong>、connection pooler がまとめる余地がなくなります。</figcaption>
         </figure>
 
         <p>だからこうなります。</p>
@@ -683,14 +699,14 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         </div>
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロール可能な図解">
-            <svg viewBox="0 0 720 320" role="img" aria-labelledby="ab-t ab-d" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 720 292" role="img" aria-labelledby="ab-t ab-d" xmlns="http://www.w3.org/2000/svg">
               <title id="ab-t">同じ負荷での arm A と arm B の応答時間</title>
               <desc id="ab-d">横軸は応答時間で、10倍ごとに目盛りが一つある対数軸である。上の二本は書き込みとは無関係なフィード
               参照の中央値で、外部呼び出しをトランザクションの外に置いた arm A が4ミリ秒、中に戻した arm B が
               6,047ミリ秒と、千五百倍以上開く。下の二本は投稿作成の中央値で、2,577ミリ秒と2,584ミリ秒とほぼ同じである。
               つまり直した経路自体は二つの arm で変わらず、差は何の関係もない読み取り経路にだけ現れる。</desc>
 
-              <text x="8" y="22" font-size="14" fill="#7b7186">応答時間の中央値 · 対数軸 (書き込み16 · プール10 · 外部呼び出し800ms)</text>
+              <text x="8" y="22" font-size="13" fill="#a99fb4">対数軸</text>
               <path d="M150.0 38 V 214" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
               <text x="150.0" y="232" font-size="12" fill="#7b7186" text-anchor="middle">1ms</text>
               <path d="M282.0 38 V 214" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
@@ -701,8 +717,8 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
               <text x="546.0" y="232" font-size="12" fill="#7b7186" text-anchor="middle">1s</text>
               <path d="M678.0 38 V 214" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
               <text x="678.0" y="232" font-size="12" fill="#7b7186" text-anchor="middle">10s</text>
-              <text x="8" y="66" font-size="14" fill="#18121d" font-weight="700">フィード参照</text>
-              <text x="8" y="83" font-size="11" fill="#7b7186">書き込みと無関係</text>
+              <text x="8" y="66" font-size="14" fill="#18121d" font-weight="700">フィード取得</text>
+              <text x="8" y="83" font-size="11" fill="#7b7186">書き込みとは無関係</text>
               <rect x="150" y="52" width="79.5" height="18" rx="3" fill="none" stroke="#4f5bd5" stroke-width="2"/>
               <text x="238.5" y="66" font-size="13" fill="#4f5bd5" font-weight="700">4 ms</text>
               <rect x="150" y="78" width="499.2" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
@@ -713,13 +729,12 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
               <rect x="150" y="154" width="450.4" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="609.4" y="168" font-size="13" fill="#d62976" font-weight="700">2,584 ms</text>
               <rect x="8" y="252" width="16" height="10" rx="2" fill="none" stroke="#4f5bd5" stroke-width="2"/>
-              <text x="30" y="262" font-size="12" fill="#3b3344">arm A — 外部呼び出しがトランザクションの外</text>
+              <text x="30" y="262" font-size="12" fill="#3b3344">arm A · 外部呼び出しは transaction の外</text>
               <rect x="8" y="270" width="16" height="10" rx="2" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="30" y="280" font-size="12" fill="#3b3344">arm B — @Transactional を復元</text>
-              <text x="8" y="308" font-size="15" fill="#3b3344">直した経路は両者同じだ。崩れるのは<tspan font-weight="700" fill="#18121d">無関係な読み取り</tspan>のほうである。</text>
+              <text x="30" y="280" font-size="12" fill="#3b3344">arm B · @Transactional を戻す</text>
             </svg>
           </div>
-          <figcaption>書き込み経路は二つの arm でほぼ同じです。差は書き込みと何の関係もないフィード参照にだけ現れます。横軸は対数軸です。</figcaption>
+          <figcaption>応答時間の中央値です。横軸は対数軸で、直した書き込み経路は二つの arm でほぼ同じです。崩れるのは書き込みと無関係な読み取りのほうです。条件は 書き込み16 · pool 10 · 外部呼び出し 800ms です。</figcaption>
         </figure>
 
         <p>読み方はこうです。<strong>書き込み経路は二つの arm で同じです</strong>（2,577 対 2,584ms）。
@@ -744,35 +759,34 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         ならないので、守るべき順序がありません。</p>
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロール可能な図解">
-            <svg viewBox="0 0 720 304" role="img" aria-labelledby="pc-t pc-d" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 720 262" role="img" aria-labelledby="pc-t pc-d" xmlns="http://www.w3.org/2000/svg">
               <title id="pc-t">有害分類と狙撃判定を順次で呼ぶ場合と重ねて呼ぶ場合</title>
               <desc id="pc-d">上段は順次呼び出しです。禁止語と連絡先の検査はローカルなのですぐ終わり、その次に有害分類が800ミリ秒、
               続いて狙撃判定がさらに800ミリ秒かかり、外部待ちが1,600ミリ秒に積み上がります。下段は重ねて呼ぶ場合です。
               二つの分類器は同じ入力を見る独立した検査なので同時に送ることができ、外部待ちの合計が長いほうの800ミリ秒に
               縮みます。応答は両方の結果が揃ってから返し、両方が拒否した場合は有害分類の結果を返します。</desc>
 
-              <text x="8" y="24" font-size="15" fill="#7b7186">順次 — 外部待ち 1,600ms</text>
+              <rect x="8" y="8" width="66" height="22" rx="11" fill="none" stroke="#d62976" stroke-width="1.5"/><text x="41" y="23" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">逐次</text>
               <rect x="104" y="38" width="42.0" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
               <text x="125.0" y="56" font-size="11" fill="#18121d" text-anchor="middle">①②</text>
               <rect x="149.5" y="38" width="280.0" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="289.5" y="56" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">③ 有害分類 800ms</text>
               <rect x="433.0" y="38" width="280.0" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="573.0" y="56" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">④ 狙撃判定 800ms</text>
+              <text x="573.0" y="56" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">④ 名指し判定 800ms</text>
               <path d="M149.5 72 V 80 H 713.0 V 72" fill="none" stroke="#d62976" stroke-width="1.5"/>
               <text x="149.5" y="98" font-size="14" fill="#d62976" font-weight="700">1,600 ms</text>
-              <text x="8" y="148" font-size="15" fill="#7b7186">重ねて呼ぶ — 外部待ち 800ms</text>
+              <rect x="8" y="132" width="86" height="22" rx="11" fill="none" stroke="#4f5bd5" stroke-width="1.5"/><text x="51" y="147" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">重ねて呼ぶ</text>
               <rect x="104" y="162" width="42.0" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
               <text x="125.0" y="180" font-size="11" fill="#18121d" text-anchor="middle">①②</text>
               <rect x="149.5" y="162" width="280.0" height="26" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
               <text x="289.5" y="180" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">③ 有害分類 800ms</text>
               <rect x="149.5" y="192" width="280.0" height="26" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
-              <text x="289.5" y="210" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">④ 狙撃判定 800ms</text>
+              <text x="289.5" y="210" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">④ 名指し判定 800ms</text>
               <path d="M149.5 226 V 234 H 429.5 V 226" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
               <text x="149.5" y="252" font-size="14" fill="#4f5bd5" font-weight="700">800 ms</text>
-              <text x="8" y="292" font-size="14" fill="#3b3344">①② はローカル検査なので外部待ちに入りません。③④ は<tspan font-weight="700" fill="#18121d">同じ入力を見る独立した検査</tspan>なので順序が要りません。</text>
             </svg>
           </div>
-          <figcaption>順次に呼ぶと外部待ちが二度積み上がり、重ねて呼べば長いほうだけが残ります。①②はローカル検査なので外部待ちに入りません。</figcaption>
+          <figcaption>棒の長さが外部待ち時間です。逐次に呼ぶと 1,600ms が積み上がり、重ねて呼べば長いほうの 800ms だけが残ります。①② はアプリ内で終わる検査なので、ここには入りません。</figcaption>
         </figure>
 
         <p>仮想スレッド（Java 21）で ④ を走らせ、③ は呼び出しスレッドで回します。
@@ -853,27 +867,28 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
           異なり、ここで確認したのはこのコードにその四つがないということだけです。</li>
         </ul>
 
+        <div class="wrapup">
         <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="この節へのリンク">#</a></h2>
 
-        <p>まとめるとこうです。</p>
+          <p>まとめるとこうです。</p>
 
-        <ul>
-          <li>コネクション枯渇の原因は<strong>本数</strong>と<strong>占有時間</strong>の二つで、症状が同じなので
-          紛らわしいです。</li>
-          <li>コネクションプーラーは本数の問題を直す道具です。占有時間の問題ではアプリのコネクション1本につき
-          DB のコネクション1本になり、まとめるものがありません。これは製品の限界ではなく
-          <strong>トランザクションプーリングという方式の定義</strong>から出てきます。</li>
-          <li>だから順序があります。<strong>トランザクションを短くすることが残り全部の前提</strong>です。</li>
-          <li>道具を導入する前に<strong>このコードでその道具が動くのか</strong>を確認する手続きを入れれば、
-          導入してから知ることになる事実を先に知ることができます。</li>
-        </ul>
+          <ul>
+            <li>コネクション枯渇の原因は<strong>本数</strong>と<strong>占有時間</strong>の二つで、症状が同じなので
+            紛らわしいです。</li>
+            <li>コネクションプーラーは本数の問題を直す道具です。占有時間の問題ではアプリのコネクション1本につき
+            DB のコネクション1本になり、まとめるものがありません。これは製品の限界ではなく
+            <strong>トランザクションプーリングという方式の定義</strong>から出てきます。</li>
+            <li>だから順序があります。<strong>トランザクションを短くすることが残り全部の前提</strong>です。</li>
+            <li>道具を導入する前に<strong>このコードでその道具が動くのか</strong>を確認する手続きを入れれば、
+            導入してから知ることになる事実を先に知ることができます。</li>
+          </ul>
 
-        <p>最後に一行だけ残すならこれです。<strong>症状が同じでも原因が同じとは限らず、道具は原因一つにしか
-        合いません。</strong>そして誤って選んだ道具の本当の代償はお金ではなく、
-        <strong>「これで備えた」という信念</strong>です。</p>
+          <p>最後に一行だけ残すならこれです。<strong>症状が同じでも原因が同じとは限らず、道具は原因一つにしか
+          合いません。</strong>そして誤って選んだ道具の本当の代償はお金ではなく、
+          <strong>「これで備えた」という信念</strong>です。</p>
 
-        <p>お読みいただきありがとうございました。</p>
-
+          <p>お読みいただきありがとうございました。</p>
+        </div>
 
       </article>
     </main>
@@ -884,7 +899,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/content.js?v=b5b22e76cb"></script>
+  <script src="../assets/content.js?v=6a34c005d2"></script>
   <script src="../assets/lang.js?v=2d9c133fc2"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=44326158d4"></script>
