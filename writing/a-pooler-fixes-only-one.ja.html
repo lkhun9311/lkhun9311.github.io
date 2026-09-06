@@ -759,34 +759,41 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         ならないので、守るべき順序がありません。</p>
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロール可能な図解">
-            <svg viewBox="0 0 720 262" role="img" aria-labelledby="pc-t pc-d" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 720 252" role="img" aria-labelledby="pc-t pc-d" xmlns="http://www.w3.org/2000/svg">
               <title id="pc-t">有害分類と狙撃判定を順次で呼ぶ場合と重ねて呼ぶ場合</title>
               <desc id="pc-d">上段は順次呼び出しです。禁止語と連絡先の検査はローカルなのですぐ終わり、その次に有害分類が800ミリ秒、
               続いて狙撃判定がさらに800ミリ秒かかり、外部待ちが1,600ミリ秒に積み上がります。下段は重ねて呼ぶ場合です。
               二つの分類器は同じ入力を見る独立した検査なので同時に送ることができ、外部待ちの合計が長いほうの800ミリ秒に
               縮みます。応答は両方の結果が揃ってから返し、両方が拒否した場合は有害分類の結果を返します。</desc>
 
-              <rect x="8" y="8" width="66" height="22" rx="11" fill="none" stroke="#d62976" stroke-width="1.5"/><text x="41" y="23" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">逐次</text>
-              <rect x="104" y="38" width="42.0" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="125.0" y="56" font-size="11" fill="#18121d" text-anchor="middle">①②</text>
-              <rect x="149.5" y="38" width="280.0" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="289.5" y="56" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">③ 有害分類 800ms</text>
-              <rect x="433.0" y="38" width="280.0" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="573.0" y="56" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">④ 名指し判定 800ms</text>
-              <path d="M149.5 72 V 80 H 713.0 V 72" fill="none" stroke="#d62976" stroke-width="1.5"/>
-              <text x="149.5" y="98" font-size="14" fill="#d62976" font-weight="700">1,600 ms</text>
-              <rect x="8" y="132" width="86" height="22" rx="11" fill="none" stroke="#4f5bd5" stroke-width="1.5"/><text x="51" y="147" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">重ねて呼ぶ</text>
-              <rect x="104" y="162" width="42.0" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="125.0" y="180" font-size="11" fill="#18121d" text-anchor="middle">①②</text>
-              <rect x="149.5" y="162" width="280.0" height="26" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
-              <text x="289.5" y="180" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">③ 有害分類 800ms</text>
-              <rect x="149.5" y="192" width="280.0" height="26" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
-              <text x="289.5" y="210" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">④ 名指し判定 800ms</text>
-              <path d="M149.5 226 V 234 H 429.5 V 226" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
-              <text x="149.5" y="252" font-size="14" fill="#4f5bd5" font-weight="700">800 ms</text>
+              <rect x="0" y="0" width="720" height="104" rx="10" fill="rgba(214,41,118,0.06)"/>
+              <rect x="10" y="10" width="66" height="24" rx="12" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="43" y="27" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">逐次</text>
+              <rect x="10" y="48" width="44" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="32" y="66" font-size="11" fill="#18121d" text-anchor="middle">①②</text>
+              <rect x="58" y="48" width="324" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="220" y="66" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">③ 有害分類 800ms</text>
+              <rect x="386" y="48" width="324" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="548" y="66" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">④ 名指し判定 800ms</text>
+              <path d="M58 82 V88 H350" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <path d="M418 88 H710 V82" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="384" y="93" font-size="14" fill="#d62976" font-weight="700" text-anchor="middle">1,600 ms</text>
+
+              <rect x="0" y="116" width="720" height="136" rx="10" fill="rgba(79,91,213,0.06)"/>
+              <rect x="10" y="126" width="86" height="24" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="53" y="143" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">重ねて呼ぶ</text>
+              <rect x="10" y="164" width="44" height="55" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="32" y="196" font-size="11" fill="#18121d" text-anchor="middle">①②</text>
+              <rect x="58" y="164" width="324" height="26" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="220" y="182" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">③ 有害分類 800ms</text>
+              <rect x="58" y="193" width="324" height="26" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="220" y="211" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">④ 名指し判定 800ms</text>
+              <path d="M58 227 V233 H194" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <path d="M246 233 H382 V227" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="220" y="238" font-size="14" fill="#4f5bd5" font-weight="700" text-anchor="middle">800 ms</text>
             </svg>
           </div>
-          <figcaption>棒の長さが外部待ち時間です。逐次に呼ぶと 1,600ms が積み上がり、重ねて呼べば長いほうの 800ms だけが残ります。①② はアプリ内で終わる検査なので、ここには入りません。</figcaption>
+          <figcaption>カード二枚が同じリクエストの外部待ち区間をそれぞれ描いたものです。棒の長さが待ち時間で、下の括弧がその合計です。逐次に呼ぶと 1,600ms が積み上がり、重ねて呼べば長いほうの <strong>800ms</strong> だけが残ります。①② はアプリ内で終わる検査なので、ここには入りません。</figcaption>
         </figure>
 
         <p>仮想スレッド（Java 21）で ④ を走らせ、③ は呼び出しスレッドで回します。
