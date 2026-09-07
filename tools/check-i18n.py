@@ -59,9 +59,7 @@ for k in re.findall(r'tr\("([^"]+)"[,)]', CJS):
 # LABEL_KEY 의 값도 실제로 쓰이는 키다
 for k in re.findall(r':\s*"(cards\.[A-Za-z]+)"', CJS):
     used.add(k)
-# facet.<group> 은 tagGroups 의 이름에서 만들어진다
-for name in re.findall(r'^\s*"([A-Z][A-Za-z]+)": \[', CJS, re.M):
-    used.add("facet." + name.lower())
+# 태그 묶음 이름은 세 언어 모두 영어다(UI 라벨). 표를 타지 않는다.
 
 for k in sorted(used):
     if k not in KO:
@@ -79,6 +77,7 @@ for k in sorted(set(KO) - used):
 STRIP = re.compile(r"<(script|style|svg)\b.*?</\1>", re.S)
 COMMENT = re.compile(r"<!--.*?-->", re.S)
 TAGGED = re.compile(r"<([a-z0-9]+)\b[^>]*data-i18n[^>]*>.*?</\1>", re.S | re.I)
+SELFC = re.compile(r'<(p|span|div|h[1-3]|a|li)\b[^>]*class="[^"]*notranslate[^"]*"[^>]*/?>[^<]*', re.I)
 NOTR = re.compile(r'<([a-z0-9]+)\b[^>]*class="[^"]*notranslate[^"]*"[^>]*>.*?</\1>', re.S | re.I)
 
 for f in pages:
@@ -88,10 +87,13 @@ for f in pages:
     body = s[s.index("<body"):s.index("</body>")]
     body = STRIP.sub(" ", body)
     body = COMMENT.sub(" ", body)
-    for _ in range(6):                       # 중첩된 것까지 걷어낸다
+    # `notranslate` 는 「세 언어 모두 이대로 둔다」는 표시다. UI 라벨(메뉴·버튼·바닥글)이
+    # 여기 해당한다 — 사용자 지시(2026-09-07): 그 자리는 번역하지 않고 영어로 둔다.
+    for _ in range(8):                       # 중첩된 것까지 걷어낸다
         body, k1 = TAGGED.subn(" ", body)
         body, k2 = NOTR.subn(" ", body)
-        if not (k1 or k2):
+        body, k3 = SELFC.subn(" ", body)
+        if not (k1 or k2 or k3):
             break
     text = re.sub(r"<[^>]+>", " ", body)
     text = re.sub(r"&[a-z]+;|&#\d+;", " ", text)
