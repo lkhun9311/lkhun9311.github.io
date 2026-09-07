@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>instance 20 個の一覧に 54 秒かかりました | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/slow-screens-2-instance-list.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/slow-screens-2-instance-list.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/slow-screens-2-instance-list.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/slow-screens-2-instance-list.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="instance 20 個の一覧に 54 秒かかりました | Kwanghun Lee" />
+  <meta property="og:description" content="instance は 20 個なのに一覧の取得が timeout しました。同じ取得を CLI で実行しても 54 秒かかり、コードが容疑から外れました。swap が 8.0GiB すべて埋まっており、instances テーブルには削除の印だけが付いた行が 1,021 件残っていました。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/slow-screens-2-instance-list.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="instance 20 個の一覧に 54 秒かかりました | Kwanghun Lee" />
+  <meta name="twitter:description" content="instance は 20 個なのに一覧の取得が timeout しました。同じ取得を CLI で実行しても 54 秒かかり、コードが容疑から外れました。swap が 8.0GiB すべて埋まっており、instances テーブルには削除の印だけが付いた行が 1,021 件残っていました。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="instance は 20 個なのに一覧の取得が timeout しました。同じ取得を CLI で実行しても 54 秒かかり、コードが容疑から外れました。swap が 8.0GiB すべて埋まっており、instances テーブルには削除の印だけが付いた行が 1,021 件残っていました。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "slow-screens-2-instance-list.html", "ko": "slow-screens-2-instance-list.ko.html", "ja": "slow-screens-2-instance-list.ja.html"}'>
+          <option value="ko">한국어</option>
+          <option value="en">English</option>
+          <option value="ja" selected>日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>一覧</a>
+        <div class="article-meta"><span class="source-tag company notranslate">会社の業務</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>instance 20 個の一覧に 54 秒かかりました<br><span class="h1-sub">原因はアプリケーションのコードではなく、swap の飽和と削除の印が残った 1,021 行でした。社内クラウド管理コンソール · 連載「遅い画面」②</span></h1>
+          <p class="article-date">2026年9月</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="slow-screens-2-instance-list"></aside>
+
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#想定読者">想定読者</a></li>
+            <li><a href="#どんな内容">どんな内容</a></li>
+            <li><a href="#どんな画面">どんな画面</a></li>
+            <li><a href="#分かれ道">分かれ道: CLI でも 54 秒でした</a></li>
+            <li><a href="#原因1">原因 ①: swap が 8.0GiB すべて埋まっていました</a></li>
+            <li><a href="#原因2">原因 ②: 削除の印だけが付いた行が 1,021 件</a></li>
+            <li><a href="#修正">修正: 取り消せないコマンドを使いました</a></li>
+            <li><a href="#本番では禁止">⚠️ このコマンドは本番で使ってはいけません</a></li>
+            <li><a href="#本当の答え">1 か月後: 答えはすでに公式文書にありました</a></li>
+            <li><a href="#測定">測定: 何がどれだけ変わったか</a></li>
+            <li><a href="#限界">限界: この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>こんにちは。社内クラウド管理コンソールの backend を作っています。instance 一覧の画面が
+        読み込み中のまま <strong>timeout</strong> しました。そのとき動いていた instance は
+        <strong>20 個</strong>でした。</p>
+
+        <p>20 個を描けないコードではありません。ですからこの記事は
+        <strong>コードを 1 行も読まずに始まります。</strong></p>
+
+        <h2 id="想定読者">想定読者<a class="anchor" href="#想定読者" aria-label="この節へのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>OpenStack や他のシステムを運用していて「データは消したのに遅い」に出会ったことがある方</li>
+          <li>遅い画面に当たると、まずアプリケーションのコードを開く方</li>
+          <li>急ぎのときに DB へ直接 <code>DELETE</code> を打ったことがある方</li>
+        </ul>
+
+        <h2 id="どんな内容">どんな内容<a class="anchor" href="#どんな内容" aria-label="この節へのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>同じ取得を CLI で実行しても 54 秒でした。</strong>その 1 回で、私たちのコードが
+          容疑から外れました。</li>
+          <li>原因が <strong>2 つ重なっていました。</strong>swap が 8.0GiB すべて埋まっており、
+          <code>instances</code> テーブルには <strong>削除の印だけが付いた行が 1,021 件</strong>
+          残っていました。</li>
+          <li>直したあと、CLI の取得が <strong>54 秒から 1.002 秒</strong>になりました。</li>
+          <li>⚠️ ただし <strong>私が使ったコマンドは本番で使ってはいけないもの</strong>でした。1 か月後に
+          同じ問題について、まともな答えを文書にしました。この記事はその 2 つを併せて書きます。</li>
+        </ul>
+
+        <p><strong>社内製品なのでコードも画面もそのまま載せていません。</strong>製品名・顧客名・内部アドレスは
+        外し、構造と数値だけを残しました。画面のスクリーンショットは製品が丸ごと写っているため
+        <strong>使っていません。</strong>ターミナルの出力は host 名を伏せて使います。</p>
+
+        <p><strong>⚠️ 先にお伝えすることがあります。</strong>以下の数値は <strong>QA 試験環境の実測</strong>で、
+        運用統計ではありません。そしてあとで出てくるとおり、<strong>2 つの修正が一度に入ったため、
+        どちらがどれだけ稼いだかを切り分けられません。</strong></p>
+
+        <h2 id="どんな画面">どんな画面<a class="anchor" href="#どんな画面" aria-label="この節へのリンク">#</a></h2>
+
+        <p>プロジェクト内の <strong>instance 一覧</strong>を見る画面です。一覧を呼ぶと管理コンソールの
+        backend が OpenStack の compute API に問い合わせ、そちらはさらに自分の DB(MariaDB)の
+        <code>instances</code> テーブルを読みます。</p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロールできる図">
+            <svg viewBox="0 0 720 200" role="img" aria-labelledby="path-t path-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="path-t">画面と CLI が同じ DB に届く 2 つの経路</title>
+              <desc id="path-d">上は管理画面から出発し、管理コンソールの backend と compute API を経て MariaDB
+              に届く経路です。下は CLI コマンドが管理コンソールの backend を飛ばして compute API に直接つながる
+              経路です。2 つの経路が交わる地点が compute API の下の MariaDB で、ここが青で示した共通区間です。</desc>
+
+              <rect x="8" y="20" width="132" height="34" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="74" y="42" font-size="12.5" fill="#18121d" text-anchor="middle">管理画面</text>
+              <path d="M140 37 H 178" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
+              <rect x="186" y="20" width="164" height="34" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="268" y="42" font-size="12.5" fill="#18121d" text-anchor="middle">管理コンソール backend</text>
+              <path d="M350 37 H 388" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
+
+              <rect x="8" y="86" width="132" height="34" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="74" y="108" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">CLI 1 行</text>
+              <path d="M140 103 H 388 V 62" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#p-arB)"/>
+
+              <rect x="396" y="20" width="150" height="34" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="471" y="42" font-size="12.5" fill="#18121d" text-anchor="middle">compute API</text>
+              <path d="M471 54 V 86" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#p-arB)"/>
+              <rect x="396" y="86" width="150" height="34" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="471" y="108" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">MariaDB</text>
+              <path d="M546 103 H 584" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#p-arB)"/>
+              <rect x="592" y="86" width="120" height="34" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="652" y="108" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">instances</text>
+
+              <rect x="388" y="140" width="324" height="18" rx="3" fill="rgba(79,91,213,0.18)" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="550" y="154" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">2 つの経路が共に通る区間</text>
+              <text x="8" y="178" font-size="12" fill="#7b7186">上の箱 2 つ · CLI が通らない場所</text>
+              <defs>
+                <marker id="p-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
+                </marker>
+                <marker id="p-arB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>画面と CLI は出発点が違い、到着点が同じです。青い区間だけが共通です。
+          <strong>CLI でも 54 秒かかるなら、上の箱 2 つは原因ではありません。</strong></figcaption>
+        </figure>
+
+        <h2 id="分かれ道">分かれ道: CLI でも 54 秒でした<a class="anchor" href="#分かれ道" aria-label="この節へのリンク">#</a></h2>
+
+        <p>画面が出ないとき最初にやったのは、<strong>同じものを別の道から呼んでみること</strong>でした。</p>
+
+<pre data-lang="bash"><code>$ time openstack server list --all-projects</code></pre>
+
+        <p><strong>54 秒かかりました。</strong>⚠️ このときのターミナルは残しておらず、記録には「54 秒」という
+        数字だけがあります。あとで出てくる修正後の出力にはスクリーンショットが残っています。</p>
+
+        <p>この 1 行が <strong>私たちのコードと管理コンソールを容疑から消しました。</strong>
+        CLI は私たちの backend を通りません。それでも 54 秒なら、遅いのはその下です。</p>
+
+        <blockquote><p>画面が遅いときにアプリケーションのコードから開くのは、習慣であって診断ではありません。
+        <strong>同じ問いを別の経路から 1 回投げれば、半分が消えます。</strong></p></blockquote>
+
+        <h2 id="原因1">原因 ①: swap が 8.0GiB すべて埋まっていました<a class="anchor" href="#原因1" aria-label="この節へのリンク">#</a></h2>
+
+        <p>マシンに入って、まずメモリを見ました。</p>
+
+<pre data-lang="text"><code>[root@host ~]# free -h
+               total   used   free   shared  buff/cache   available
+Mem:            62Gi   44Gi  8.1Gi    1.3Gi        12Gi        18Gi
+Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
+
+        <p><strong>swap が 8.0GiB のうち 8.0GiB を使っています。</strong>残りは 2.0MiB です。
+        MariaDB が読むべきページがこの中に入っていると、メモリで終わる読み取りが
+        <strong>ディスクの往復</strong>になります。</p>
+
+        <p>⚠️ 社内文書はここに「RAM 0.0001ms、swap 10〜100ms」と書いています。
+        <strong>このマシンで測った値ではなく、一般的な桁を引用したもの</strong>です。
+        この記事もそれ以上のことは言いません。確認できたのは <strong>swap が埋まっていた</strong>までです。</p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロールできる図">
+            <svg viewBox="0 0 720 176" role="img" aria-labelledby="swap-t swap-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="swap-t">swap が埋まったとき、DB の読み取りが通る道</title>
+              <desc id="swap-d">上のカードが修正前で、MariaDB が探すページが RAM になく swap にあるため、
+              読み取りがディスクを往復します。下のカードが修正後で、同じページが RAM に載っているため読み取りが
+              メモリで終わります。どちらのカードも左がクエリ、中央がページの居場所、右がその結果です。</desc>
+
+              <rect x="0" y="0" width="720" height="76" rx="10" fill="rgba(214,41,118,0.06)"/>
+              <rect x="10" y="10" width="72" height="22" rx="11" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="46" y="26" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">修正前</text>
+              <rect x="98" y="40" width="126" height="24" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="161" y="56" font-size="12" fill="#18121d" text-anchor="middle">MariaDB のクエリ</text>
+              <path d="M224 52 H 262" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#w-arA)"/>
+              <rect x="270" y="40" width="196" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="368" y="56" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">ページが swap にある</text>
+              <path d="M466 52 H 504" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#w-arA)"/>
+              <rect x="512" y="40" width="198" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="611" y="56" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">読み取りごとにディスク往復</text>
+
+              <rect x="0" y="88" width="720" height="76" rx="10" fill="rgba(79,91,213,0.06)"/>
+              <rect x="10" y="98" width="72" height="22" rx="11" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="46" y="114" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">修正後</text>
+              <rect x="98" y="128" width="126" height="24" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="161" y="144" font-size="12" fill="#18121d" text-anchor="middle">MariaDB のクエリ</text>
+              <path d="M224 140 H 262" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#w-arB)"/>
+              <rect x="270" y="128" width="196" height="24" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="368" y="144" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">ページが RAM にある</text>
+              <path d="M466 140 H 504" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#w-arB)"/>
+              <rect x="512" y="128" width="198" height="24" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="611" y="144" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">読み取りがメモリで終わる</text>
+              <defs>
+                <marker id="w-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+                <marker id="w-arB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>swap が埋まると、読み取り 1 件の値段が変わります。クエリはそのままで、下の層が
+          違っています。</figcaption>
+        </figure>
+
+        <h2 id="原因2">原因 ②: 削除の印だけが付いた行が 1,021 件<a class="anchor" href="#原因2" aria-label="この節へのリンク">#</a></h2>
+
+        <p>次はテーブルです。OpenStack はリソースを消すとき、行を <strong>削除しません。</strong>
+        <code>deleted</code> カラムだけを変えます。soft delete です。</p>
+
+<pre data-lang="sql"><code>SELECT deleted, COUNT(*) FROM instances GROUP BY deleted;</code></pre>
+
+        <figure class="diagram">
+          <img src="../assets/figures/instances-deleted-before.png" alt="MariaDB のクエリ結果。deleted が 0 のグループが 20 件で、そのあと deleted の値が 1 から 1040 まで 1 件ずつ続き、最後の行に 1022 rows in set と出ています。" loading="lazy" width="589" height="310">
+          <figcaption>中央を切って上下をつなげました。<code>deleted = 0</code> が 20 件、そのあと削除された行が
+          それぞれ違う <code>deleted</code> の値を 1 つずつ持って続きます。host 名が出ない画面なので
+          そのまま使います。</figcaption>
+        </figure>
+
+        <p>ここで <strong>原本の文書が自分のスクリーンショットを読み違えました。</strong>文書には
+        「1,022 行をフルスキャン」と書かれています。ところが <code>1022 rows in set</code> は
+        <strong>行数ではなく <code>GROUP BY</code> が返したグループの数</strong>です。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると残りが見えます">
+        <table>
+          <caption class="sr-only">1,022 と 1,041 がそれぞれ何を数えた値か。</caption>
+          <thead><tr><th>数字</th><th>何を数えたか</th><th>内訳</th></tr></thead>
+          <tbody>
+            <tr><td><strong>1,022</strong></td><td><code>GROUP BY</code> が返したグループ</td><td><code>deleted = 0</code> の 1 グループ + 削除された行 1,021 グループ</td></tr>
+            <tr><td><strong>1,041</strong></td><td><code>instances</code> テーブルの行</td><td>生きている 20 行 + 削除の印 1,021 行</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">OpenStack は soft delete のとき <code>deleted</code> に <strong>その行の id</strong>
+        を入れます。だから削除された行はそれぞれ違う値を持ち、グループが行数だけできます。
+        スクリーンショットでも <code>deleted = 0</code> だけが <code>COUNT(*) = 20</code> で、残りはすべて 1 です。
+        要約表にある <strong>1,041</strong> が行数で、こちらが正しい値です。</p>
+
+        <p>つまり画面が求めたのは 20 行なのに、テーブルには 1,041 行が入っていました。そして
+        <code>instances</code> だけでなく、<code>instance_actions_events</code>・<code>instance_faults</code>・
+        <code>instance_system_metadata</code> のような付随テーブルにも同じものが溜まっていました。</p>
+
+        <p>⚠️ <strong>実行計画は残っていません。</strong>社内文書はこれを「フルスキャン」と書きましたが、
+        <code>EXPLAIN</code> を取った記録がなく、本当に全部を走査したのかは確認できていません。
+        確認できたのは <strong>テーブルが 20 行ではなく 1,041 行を抱えていた</strong>までです。</p>
+
+        <h2 id="修正">修正: 取り消せないコマンドを使いました<a class="anchor" href="#修正" aria-label="この節へのリンク">#</a></h2>
+
+        <p>まず swap を空けました。</p>
+
+<pre data-lang="bash"><code>$ swapoff -a &amp;&amp; swapon -a</code></pre>
+
+        <p>このコマンドは <strong>swap にあったものを全部 RAM に引き上げます。</strong>ですから
+        <strong>RAM にその分の空きが必要です。</strong>なければ <code>swapoff</code> が失敗するか、
+        OOM killer が何かを殺します。ここでは <code>available</code> が 18GiB だったので、8.0GiB の入る
+        余地がありました。</p>
+
+<pre data-lang="text"><code>[root@host ~]# free -h
+               total   used   free   shared  buff/cache   available
+Mem:            62Gi   51Gi  787Mi    1.3Gi        11Gi        10Gi
+Swap:          8.0Gi     0B  8.0Gi</code></pre>
+
+        <p><strong>そしてその余地を使い切りました。</strong><code>available</code> が 18GiB から
+        <strong>10GiB</strong> へ、<strong>ちょうど 8GiB 分</strong>減りました。swap にあったものが RAM に
+        上がってきた分です。今は速くなりましたが、
+        <strong>同じことがまた起きる余地も、その分だけ減りました。</strong></p>
+
+        <p>次はテーブルです。</p>
+
+<pre data-lang="sql"><code>SET FOREIGN_KEY_CHECKS = 0;
+
+DELETE FROM instance_actions_events    WHERE deleted != 0;
+DELETE FROM instance_actions           WHERE deleted != 0;
+DELETE FROM instance_faults            WHERE deleted != 0;
+DELETE FROM instance_system_metadata   WHERE deleted != 0;
+-- … 付随テーブルを順に
+DELETE FROM instances                  WHERE deleted != 0;
+
+SET FOREIGN_KEY_CHECKS = 1;</code></pre>
+
+        <figure class="diagram">
+          <img src="../assets/figures/instances-deleted-after.png" alt="同じクエリを再び実行した結果。deleted が 0 のグループ 20 件だけが残り、1 row in set と出ています。" loading="lazy" width="596" height="113">
+          <figcaption>同じクエリを回し直した結果です。グループが 1 つ、行が 20 件だけ残りました。</figcaption>
+        </figure>
+
+        <p>アプリケーション側も一緒に直しました。全件取得の API が
+        <strong><code>DELETED</code> 状態を除いて</strong>呼ぶように変えました。DB がまた溜まっても、
+        取得側で 1 枚防ぎます。</p>
+
+        <h2 id="本番では禁止">⚠️ このコマンドは本番で使ってはいけません<a class="anchor" href="#本番では禁止" aria-label="この節へのリンク">#</a></h2>
+
+        <p>上の <code>DELETE</code> の束は <strong>正しいから使ったのではありません。</strong>
+        QA がダッシュボードを使えずにいて、消えたデータだから戻す必要はないと判断して使ったものです。
+        その判断が正しかったとしても、<strong>やり方は悪かった</strong>のです。</p>
+
+        <ul>
+          <li><strong>外部キー検査を切りました。</strong>順番を 1 つでも間違えれば、参照の切れた行が残ります。
+          しかも切れたかどうかは、検査を戻すときではなく <strong>ずっと後で</strong>分かります。</li>
+          <li><strong>先にバックアップを取りませんでした。</strong>「戻す必要はない」という判断は、
+          戻せるうちにしてこそ安全な判断です。</li>
+          <li><strong>再発を止められません。</strong>soft delete は溜まり続けます。今日消したものは今日までです。</li>
+        </ul>
+
+        <p>そこで 1 か月後に <strong>まともな答えを別に書きました。</strong></p>
+
+        <h2 id="本当の答え">1 か月後: 答えはすでに公式文書にありました<a class="anchor" href="#本当の答え" aria-label="この節へのリンク">#</a></h2>
+
+        <p>OpenStack の公式文書に <strong>Soft Delete and Shadow Tables</strong> という項目があります。
+        削除の印が付いた行が溜まると性能に影響すること、定期的に保管して取り除くことが
+        <strong>すでに書かれていました。</strong>私が手で消したのは、その文書を読まずにやったことでした。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると残りが見えます">
+        <table>
+          <caption class="sr-only">削除された行の保存段階と期間。</caption>
+          <thead><tr><th>段階</th><th>どこにあるか</th><th>どれだけ</th><th>何のために</th></tr></thead>
+          <tbody>
+            <tr><td>soft delete</td><td>本テーブル</td><td>30 日</td><td>緊急復旧、直近の監査</td></tr>
+            <tr><td>archive</td><td>shadow テーブル</td><td>90 日</td><td>規程順守、中期の監査</td></tr>
+            <tr><td>purge</td><td>完全削除</td><td>90 日後</td><td>保存領域の確保</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">本テーブルから直接消さず、<strong>1 段階を挟みます。</strong>
+        本テーブルは archive の時点ですでに小さくなり、戻せる期間が 90 日残ります。</p>
+
+<pre data-lang="bash"><code># 1) 30 日を過ぎたものを shadow テーブルへ移す。本テーブルはここで小さくなる
+nova-manage db archive_deleted_rows \
+  --max_rows 10000 --verbose --all-cells \
+  --before "$(date -d '30 days ago' '+%Y-%m-%d')"
+
+# 2) shadow から 90 日を過ぎたものを完全削除する。領域が戻る
+nova-manage db purge \
+  --all --verbose --all-cells \
+  --before "$(date -d '90 days ago' '+%Y-%m-%d')"</code></pre>
+
+        <p>そして <strong>人が覚えてやる仕事にしない</strong>と書きました。負荷の低い夜明けに、
+        少しずつ回すように仕掛ける案です。</p>
+
+<pre data-lang="text"><code># /etc/cron.d/nova-db-daily-archive
+0 2 * * * nova /usr/bin/nova-manage db archive_deleted_rows \
+  --max_rows 5000 --all-cells --sleep 5 \
+  &gt;&gt; /var/log/nova/db-archive-daily.log 2&gt;&amp;1</code></pre>
+
+        <p><code>--max_rows 5000</code> と <code>--sleep 5</code> が並んでいるのが要点です。
+        <strong>一度に片付ければ、それ自体が負荷になります。</strong>毎日少しずつ片付ければ溜まりません。</p>
+
+        <p>実行の前にはバックアップを取ります。今回、私が飛ばした手順です。</p>
+
+<pre data-lang="bash"><code>mysqldump --single-transaction nova       &gt; nova_backup.sql
+mysqldump --single-transaction nova_cell0 &gt; nova_cell0_backup.sql</code></pre>
+
+        <h2 id="測定">測定: 何がどれだけ変わったか<a class="anchor" href="#測定" aria-label="この節へのリンク">#</a></h2>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると残りが見えます">
+        <table>
+          <caption class="sr-only">instance 全件取得の改善前後の比較。</caption>
+          <thead><tr><th>項目</th><th>修正前</th><th>修正後</th></tr></thead>
+          <tbody>
+            <tr><td><strong>CLI の取得時間</strong></td><td>54 秒</td><td><strong>1.002 秒</strong></td></tr>
+            <tr><td>swap 使用量</td><td>8.0GiB (100%)</td><td><strong>0B</strong></td></tr>
+            <tr><td><code>instances</code> の行数</td><td>1,041</td><td><strong>20</strong></td></tr>
+            <tr><td>RAM <code>available</code></td><td>18GiB</td><td>10GiB</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">いちばん下の行は <strong>悪くなった値</strong>です。表から消していません。</p>
+
+<pre data-lang="text"><code>[root@host ~]# time openstack server list --all-projects
+...
+real    0m1.002s
+user    0m0.577s
+sys     0m0.048s</code></pre>
+
+        <p>timeout していた画面は表示されるようになりました。⚠️ <strong>画面そのものの所要時間は
+        測っていません。</strong>修正前は終わらないので測れず、修正後は改めて測りませんでした。
+        <strong>54 秒は CLI の実測値</strong>です。</p>
+
+        <h2 id="限界">限界: この記事が主張しないこと<a class="anchor" href="#限界" aria-label="この節へのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>2 つの修正のどちらがどれだけ稼いだか、切り分けられません。</strong>swap を空けるのと
+          行を消すのが一度に入りました。<a href="slow-screens-1-volume-list.ja.html">前編</a>で 6 通りの構成を
+          別々に測ったのはこのためですが、急ぎの状況でここではそうしませんでした。</li>
+          <li><strong>1,041 行が 54 秒の原因だとは言いません。</strong>1,041 行のテーブルを走査するのは
+          ふつうミリ秒の仕事です。<strong>読み取りごとにディスクを往復しなければならないとき</strong>に
+          はじめて重くなります。2 つの原因が重なったというところまでが確認した範囲で、それぞれの取り分は
+          分かりません。</li>
+          <li><strong>swap を空けたのは原因を無くしたことではありません。</strong>症状を戻しただけです。
+          <code>available</code> が 10GiB に減ったので、また埋まりえます。RAM を増やすか MariaDB のメモリ設定に
+          手を入れるのが本当の答えで、それはしていません。</li>
+          <li><strong>「cache が効けば 500ms 以内」は原本の文です。</strong>その実測値は記録に残っておらず、
+          表には入れていません。</li>
+          <li><strong>運用環境の数値ではありません。</strong>QA 試験環境の実測です。</li>
+          <li><strong>後半は提案であって結果ではありません。</strong>archive・purge・cron は私が文書として出した
+          <strong>提案</strong>で、それが実際に仕掛けられて回ったという記録は手元にありません。
+          この記事で実測が付いているのは前半、急いで直したほうだけです。</li>
+          <li><strong>OpenStack だけの話ではありません。</strong>soft delete を使うシステムはすべて同じ請求書を
+          受け取ります。ただしこの記事が確認したのは、この 1 台のマシンです。</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="この節へのリンク">#</a></h2>
+
+        <p>まとめるとこうです。</p>
+
+        <ul>
+          <li><strong>同じ問いを別の経路から 1 回投げれば、半分が消えます。</strong>CLI が 54 秒だったという
+          一点で、コードを開く必要がなくなりました。</li>
+          <li><strong>消したデータもテーブルには残っています。</strong>soft delete は消したように見えるだけで、
+          消えてはいません。</li>
+          <li><strong>swap が埋まると、その上のすべての判断が揺れます。</strong>クエリはそのままで、
+          読み取り 1 件の値段が変わっています。</li>
+          <li><strong>急ぎで使ったコマンドを、答えとして残してはいけません。</strong>書き留めておかないと、
+          次の人がそれを手順として覚えます。</li>
+        </ul>
+
+        <p>最後に 1 行だけ残すなら、これです。
+        <strong>直したことと、正しく直したことは違います。</strong>
+        54 秒を 1 秒にしたコマンドと、1 か月後に文書として出した答えは、同じものではありませんでした。</p>
+
+        <p>次回も同じ製品の別の画面です。今度は <strong>cache を入れたのに</strong>
+        遅延が消えず、居場所を変えただけでした。</p>
+
+        <p>お読みいただきありがとうございました。</p>
+        </div>
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=21a2b423ae"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=44326158d4"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
