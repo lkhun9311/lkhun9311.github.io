@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Listing 20 Instances Took 54 Seconds | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/slow-screens-2-instance-list.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/slow-screens-2-instance-list.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/slow-screens-2-instance-list.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/slow-screens-2-instance-list.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="Listing 20 Instances Took 54 Seconds | Kwanghun Lee" />
+  <meta property="og:description" content="Twenty instances, and the list screen timed out. The same query from the CLI also took 54 seconds, which ruled our code out. Swap was full at 8.0GiB, and the instances table still held 1,021 rows that were only marked deleted." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/slow-screens-2-instance-list.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Listing 20 Instances Took 54 Seconds | Kwanghun Lee" />
+  <meta name="twitter:description" content="Twenty instances, and the list screen timed out. The same query from the CLI also took 54 seconds, which ruled our code out. Swap was full at 8.0GiB, and the instances table still held 1,021 rows that were only marked deleted." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="Twenty instances, and the list screen timed out. The same query from the CLI also took 54 seconds, which ruled our code out. Swap was full at 8.0GiB, and the instances table still held 1,021 rows that were only marked deleted." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "slow-screens-2-instance-list.html", "ko": "slow-screens-2-instance-list.ko.html", "ja": "slow-screens-2-instance-list.ja.html"}'>
+          <option value="ko">Korean</option>
+          <option value="en" selected>English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing</a>
+        <div class="article-meta"><span class="source-tag company notranslate">Company work</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>Listing 20 Instances Took 54 Seconds<br><span class="h1-sub">The cause was not the application code but a full swap and 1,021 rows left marked as deleted. An internal cloud admin console. Slow Screens, part two</span></h1>
+          <p class="article-date">Sep 2026</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="slow-screens-2-instance-list"></aside>
+
+        <nav class="article-toc" aria-label="Table of contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-is-in-here">What this is about</a></li>
+            <li><a href="#the-screen">The screen</a></li>
+            <li><a href="#the-fork">The fork: the CLI took 54 seconds too</a></li>
+            <li><a href="#cause-a">Cause 1: swap was full, all 8.0GiB of it</a></li>
+            <li><a href="#cause-b">Cause 2: 1,021 rows marked deleted and still there</a></li>
+            <li><a href="#the-fix">The fix: I used commands I could not undo</a></li>
+            <li><a href="#not-in-production">⚠️ Do not run these in production</a></li>
+            <li><a href="#the-real-answer">A month later: the answer was already in the docs</a></li>
+            <li><a href="#measurement">Measurement: what changed, by how much</a></li>
+            <li><a href="#limits">Limits: what this article does not claim</a></li>
+            <li><a href="#Closing">Closing</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>Hello. I write the backend of an internal cloud admin console. Its instance list screen
+        spun and spun and then <strong>timed out.</strong> There were <strong>20 instances</strong> running
+        at the time.</p>
+
+        <p>No code fails to render twenty rows. So this article
+        <strong>starts without opening a single source file.</strong></p>
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>You run OpenStack, or anything else, and have met “we deleted the data and it is still slow”.</li>
+          <li>Your first move on a slow screen is to open the application code.</li>
+          <li>You have typed a <code>DELETE</code> straight into a database because it was urgent.</li>
+        </ul>
+
+        <h2 id="what-is-in-here">What this is about<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>The same query from the CLI also took 54 seconds.</strong> That one run took our code
+          off the suspect list.</li>
+          <li>Two causes were stacked. <strong>Swap was full</strong> at 8.0GiB of 8.0GiB, and the
+          <code>instances</code> table still held <strong>1,021 rows that were only marked deleted.</strong></li>
+          <li>After the fix the CLI query went from <strong>54 seconds to 1.002 seconds.</strong></li>
+          <li>⚠️ But <strong>the commands I used are not ones you should run in production.</strong>
+          A month later I wrote up the proper answer for the same problem. This article carries both.</li>
+        </ul>
+
+        <p><strong>This is an internal product, so neither the code nor the screens are reproduced as they
+        are.</strong> Product names, customers and internal addresses are gone; the structure and the numbers
+        stay. The screenshot of the console <strong>is not used at all</strong> — the product is the whole
+        picture there. Terminal output appears with the host name masked.</p>
+
+        <p><strong>⚠️ One thing up front.</strong> The numbers below are <strong>measurements from a QA test
+        environment</strong>, not production statistics. And as you will see, <strong>two fixes went in at once,
+        so I cannot say how much each one bought.</strong></p>
+
+        <h2 id="the-screen">The screen<a class="anchor" href="#the-screen" aria-label="Link to this section">#</a></h2>
+
+        <p>It shows the <strong>instance list</strong> inside a project. Asking for the list sends the admin
+        console backend to OpenStack’s compute API, which in turn reads the <code>instances</code> table in its
+        own database (MariaDB).</p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
+            <svg viewBox="0 0 720 200" role="img" aria-labelledby="path-t path-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="path-t">Two paths that reach the same database</title>
+              <desc id="path-d">The upper path starts at the admin screen and reaches MariaDB through the admin
+              console backend and the compute API. The lower path is a CLI command that skips the admin console
+              backend and attaches to the compute API directly. The two paths meet at the MariaDB below the
+              compute API, and that shared stretch is drawn in blue.</desc>
+
+              <rect x="8" y="20" width="132" height="34" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="74" y="42" font-size="12.5" fill="#18121d" text-anchor="middle">Admin screen</text>
+              <path d="M140 37 H 178" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
+              <rect x="186" y="20" width="164" height="34" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="268" y="42" font-size="12.5" fill="#18121d" text-anchor="middle">Admin console backend</text>
+              <path d="M350 37 H 388" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
+
+              <rect x="8" y="86" width="132" height="34" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="74" y="108" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">One CLI command</text>
+              <path d="M140 103 H 388 V 62" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#p-arB)"/>
+
+              <rect x="396" y="20" width="150" height="34" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="471" y="42" font-size="12.5" fill="#18121d" text-anchor="middle">compute API</text>
+              <path d="M471 54 V 86" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#p-arB)"/>
+              <rect x="396" y="86" width="150" height="34" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="471" y="108" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">MariaDB</text>
+              <path d="M546 103 H 584" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#p-arB)"/>
+              <rect x="592" y="86" width="120" height="34" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="652" y="108" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">instances</text>
+
+              <rect x="388" y="140" width="324" height="18" rx="3" fill="rgba(79,91,213,0.18)" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="550" y="154" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">the stretch both paths share</text>
+              <text x="8" y="178" font-size="12" fill="#7b7186">upper two boxes · not on the CLI path</text>
+              <defs>
+                <marker id="p-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
+                </marker>
+                <marker id="p-arB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>The screen and the CLI start in different places and end in the same one. Only the blue
+          stretch is shared. <strong>If the CLI also takes 54 seconds, the upper two boxes are not the
+          cause.</strong></figcaption>
+        </figure>
+
+        <h2 id="the-fork">The fork: the CLI took 54 seconds too<a class="anchor" href="#the-fork" aria-label="Link to this section">#</a></h2>
+
+        <p>The first thing I did about a screen that would not load was
+        <strong>ask for the same thing down a different path.</strong></p>
+
+<pre data-lang="bash"><code>$ time openstack server list --all-projects</code></pre>
+
+        <p><strong>It took 54 seconds.</strong> ⚠️ I did not keep the terminal from that run; the record holds
+        only the number. The output after the fix, further down, does have a screenshot.</p>
+
+        <p>That one line <strong>took our code and the admin console off the suspect list.</strong>
+        The CLI does not go through our backend. If it still takes 54 seconds, the slow part is below.</p>
+
+        <blockquote><p>Opening the application code first on a slow screen is a habit, not a diagnosis.
+        <strong>Ask the same question down a second path and half the map goes away.</strong></p></blockquote>
+
+        <h2 id="cause-a">Cause 1: swap was full, all 8.0GiB of it<a class="anchor" href="#cause-a" aria-label="Link to this section">#</a></h2>
+
+        <p>I logged into the box and looked at memory first.</p>
+
+<pre data-lang="text"><code>[root@host ~]# free -h
+               total   used   free   shared  buff/cache   available
+Mem:            62Gi   44Gi  8.1Gi    1.3Gi        12Gi        18Gi
+Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
+
+        <p><strong>Swap is using 8.0GiB out of 8.0GiB.</strong> What is left is 2.0MiB. If a page MariaDB
+        needs sits in there, a read that would have ended in memory becomes
+        <strong>a round trip to disk.</strong></p>
+
+        <p>⚠️ The internal document adds “RAM 0.0001ms, swap 10–100ms” at this point.
+        <strong>Those are cited orders of magnitude, not measurements from this machine.</strong>
+        This article will not claim more than the document could. What was verified is
+        <strong>that swap was full.</strong></p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
+            <svg viewBox="0 0 720 176" role="img" aria-labelledby="swap-t swap-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="swap-t">Where a database read goes when swap is full</title>
+              <desc id="swap-d">The upper card is before the fix: the page MariaDB wants is not in RAM but in
+              swap, so the read makes a round trip to disk. The lower card is after: the same page is back in RAM
+              and the read ends in memory. On both cards the left box is the query, the middle box is where the
+              page lives, and the right box is what follows from that.</desc>
+
+              <rect x="0" y="0" width="720" height="76" rx="10" fill="rgba(214,41,118,0.06)"/>
+              <rect x="10" y="10" width="72" height="22" rx="11" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="46" y="26" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">Before</text>
+              <rect x="98" y="40" width="126" height="24" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="161" y="56" font-size="12" fill="#18121d" text-anchor="middle">MariaDB query</text>
+              <path d="M224 52 H 262" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#w-arA)"/>
+              <rect x="270" y="40" width="196" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="368" y="56" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">page is in swap</text>
+              <path d="M466 52 H 504" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#w-arA)"/>
+              <rect x="512" y="40" width="198" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="611" y="56" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">a disk round trip per read</text>
+
+              <rect x="0" y="88" width="720" height="76" rx="10" fill="rgba(79,91,213,0.06)"/>
+              <rect x="10" y="98" width="72" height="22" rx="11" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="46" y="114" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">After</text>
+              <rect x="98" y="128" width="126" height="24" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="161" y="144" font-size="12" fill="#18121d" text-anchor="middle">MariaDB query</text>
+              <path d="M224 140 H 262" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#w-arB)"/>
+              <rect x="270" y="128" width="196" height="24" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="368" y="144" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">page is in RAM</text>
+              <path d="M466 140 H 504" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#w-arB)"/>
+              <rect x="512" y="128" width="198" height="24" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="611" y="144" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">the read ends in memory</text>
+              <defs>
+                <marker id="w-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+                <marker id="w-arB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>A full swap changes what a single read costs. The query is the same; the layer under it
+          is not.</figcaption>
+        </figure>
+
+        <h2 id="cause-b">Cause 2: 1,021 rows marked deleted and still there<a class="anchor" href="#cause-b" aria-label="Link to this section">#</a></h2>
+
+        <p>Next, the table. When OpenStack deletes a resource it <strong>does not remove the row.</strong>
+        It changes the <code>deleted</code> column. A soft delete.</p>
+
+<pre data-lang="sql"><code>SELECT deleted, COUNT(*) FROM instances GROUP BY deleted;</code></pre>
+
+        <figure class="diagram">
+          <img src="../assets/figures/instances-deleted-before.png" alt="Result of the MariaDB query. The group where deleted is 0 holds 20 rows, followed by deleted values from 1 to 1040 holding one row each, and the last line reads 1022 rows in set." loading="lazy" width="589" height="310">
+          <figcaption>The middle is cut out and the two ends joined. <code>deleted = 0</code> holds 20 rows,
+          and after it each deleted row carries a <code>deleted</code> value of its own. No host name appears on
+          this screen, so it is used as it is.</figcaption>
+        </figure>
+
+        <p>And here <strong>the source document misread its own screenshot.</strong> It says
+        “a full scan of 1,022 rows”. But <code>1022 rows in set</code> is
+        <strong>not a row count — it is the number of groups <code>GROUP BY</code> returned.</strong></p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">What 1,022 and 1,041 each count.</caption>
+          <thead><tr><th>Number</th><th>What it counts</th><th>How it adds up</th></tr></thead>
+          <tbody>
+            <tr><td><strong>1,022</strong></td><td>groups returned by <code>GROUP BY</code></td><td>one group for <code>deleted = 0</code> plus 1,021 deleted rows</td></tr>
+            <tr><td><strong>1,041</strong></td><td>rows in the <code>instances</code> table</td><td>20 live rows plus 1,021 marked deleted</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">On a soft delete OpenStack writes <strong>the row’s own id</strong> into
+        <code>deleted</code>. Each deleted row therefore carries a different value, and one group appears per
+        row. The screenshot shows it: only <code>deleted = 0</code> has <code>COUNT(*) = 20</code>, every other
+        group has 1. The <strong>1,041</strong> in the summary table is the row count, and that one is right.</p>
+
+        <p>So the screen wanted 20 rows and the table held 1,041. And not only <code>instances</code>:
+        the same had piled up in the tables hanging off it, such as
+        <code>instance_actions_events</code>, <code>instance_faults</code> and
+        <code>instance_system_metadata</code>.</p>
+
+        <p>⚠️ <strong>No execution plan was kept.</strong> The internal document calls this a full scan, but
+        there is no recorded <code>EXPLAIN</code>, so whether everything was really scanned is not something I
+        verified. What was verified is <strong>that the table held 1,041 rows and not 20.</strong></p>
+
+        <h2 id="the-fix">The fix: I used commands I could not undo<a class="anchor" href="#the-fix" aria-label="Link to this section">#</a></h2>
+
+        <p>First I cleared swap.</p>
+
+<pre data-lang="bash"><code>$ swapoff -a &amp;&amp; swapon -a</code></pre>
+
+        <p>This command <strong>pulls everything in swap back into RAM.</strong> Which means
+        <strong>RAM has to have room for it.</strong> If it does not, <code>swapoff</code> fails or the OOM
+        killer takes something down. Here <code>available</code> was 18GiB, so there was room for 8.0GiB.</p>
+
+<pre data-lang="text"><code>[root@host ~]# free -h
+               total   used   free   shared  buff/cache   available
+Mem:            62Gi   51Gi  787Mi    1.3Gi        11Gi        10Gi
+Swap:          8.0Gi     0B  8.0Gi</code></pre>
+
+        <p><strong>And it used all of that room.</strong> <code>available</code> went from 18GiB to
+        <strong>10GiB</strong> — down by <strong>exactly 8GiB</strong>, which is what came back out of swap.
+        It is faster now, and <strong>the room for this to happen again shrank by the same amount.</strong></p>
+
+        <p>Then the table.</p>
+
+<pre data-lang="sql"><code>SET FOREIGN_KEY_CHECKS = 0;
+
+DELETE FROM instance_actions_events    WHERE deleted != 0;
+DELETE FROM instance_actions           WHERE deleted != 0;
+DELETE FROM instance_faults            WHERE deleted != 0;
+DELETE FROM instance_system_metadata   WHERE deleted != 0;
+-- … and the rest of the dependent tables
+DELETE FROM instances                  WHERE deleted != 0;
+
+SET FOREIGN_KEY_CHECKS = 1;</code></pre>
+
+        <figure class="diagram">
+          <img src="../assets/figures/instances-deleted-after.png" alt="The same query run again. Only the group where deleted is 0 remains, holding 20 rows, and the line reads 1 row in set." loading="lazy" width="596" height="113">
+          <figcaption>The same query, run again. One group, 20 rows.</figcaption>
+        </figure>
+
+        <p>The application side changed too. The list-all API now
+        <strong>filters out the <code>DELETED</code> state</strong> when it asks. If the database fills up
+        again, the query side holds one layer of defence.</p>
+
+        <h2 id="not-in-production">⚠️ Do not run these in production<a class="anchor" href="#not-in-production" aria-label="Link to this section">#</a></h2>
+
+        <p>I did not run that block of <code>DELETE</code>s <strong>because it was right.</strong>
+        QA could not use the dashboard, and I judged that deleted data did not need to survive.
+        Even if that judgement was correct, <strong>the method was bad.</strong></p>
+
+        <ul>
+          <li><strong>I turned foreign key checks off.</strong> Get the order wrong anywhere and rows with
+          broken references stay behind. And you find out <strong>much later</strong>, not when you switch the
+          checks back on.</li>
+          <li><strong>I did not take a backup first.</strong> “It does not need to survive” is a safe judgement
+          only while you can still undo it.</li>
+          <li><strong>It does not stop this recurring.</strong> Soft deletes keep accumulating. What I cleared,
+          I cleared up to that day.</li>
+        </ul>
+
+        <p>So a month later I <strong>wrote the proper answer down separately.</strong></p>
+
+        <h2 id="the-real-answer">A month later: the answer was already in the docs<a class="anchor" href="#the-real-answer" aria-label="Link to this section">#</a></h2>
+
+        <p>The OpenStack documentation has a section called <strong>Soft Delete and Shadow Tables.</strong>
+        That accumulated deleted rows affect performance, and that you should archive and purge them
+        periodically, <strong>were already written there.</strong> Deleting by hand was what I did instead of
+        reading it.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">Retention stages and periods for deleted rows.</caption>
+          <thead><tr><th>Stage</th><th>Where it lives</th><th>How long</th><th>What for</th></tr></thead>
+          <tbody>
+            <tr><td>soft delete</td><td>main table</td><td>30 days</td><td>emergency recovery, recent audit</td></tr>
+            <tr><td>archive</td><td>shadow table</td><td>90 days</td><td>compliance, medium-term audit</td></tr>
+            <tr><td>purge</td><td>gone for good</td><td>after 90 days</td><td>reclaiming space</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">Nothing is deleted straight out of the main table; <strong>there is a stage in
+        between.</strong> The main table already shrinks at archive time, and 90 days of undo remain.</p>
+
+<pre data-lang="bash"><code># 1) move rows older than 30 days into shadow tables. the main table shrinks here
+nova-manage db archive_deleted_rows \
+  --max_rows 10000 --verbose --all-cells \
+  --before "$(date -d '30 days ago' '+%Y-%m-%d')"
+
+# 2) delete from shadow what is older than 90 days. space comes back
+nova-manage db purge \
+  --all --verbose --all-cells \
+  --before "$(date -d '90 days ago' '+%Y-%m-%d')"</code></pre>
+
+        <p>And I wrote that <strong>this should not be something a person has to remember.</strong>
+        The proposal runs it in small batches in the quiet hours.</p>
+
+<pre data-lang="text"><code># /etc/cron.d/nova-db-daily-archive
+0 2 * * * nova /usr/bin/nova-manage db archive_deleted_rows \
+  --max_rows 5000 --all-cells --sleep 5 \
+  &gt;&gt; /var/log/nova/db-archive-daily.log 2&gt;&amp;1</code></pre>
+
+        <p><code>--max_rows 5000</code> together with <code>--sleep 5</code> is the point.
+        <strong>Clearing it all at once is itself a load.</strong> Clear a little every day and nothing piles
+        up.</p>
+
+        <p>Take a backup before running it. That is the step I skipped.</p>
+
+<pre data-lang="bash"><code>mysqldump --single-transaction nova       &gt; nova_backup.sql
+mysqldump --single-transaction nova_cell0 &gt; nova_cell0_backup.sql</code></pre>
+
+        <h2 id="measurement">Measurement: what changed, by how much<a class="anchor" href="#measurement" aria-label="Link to this section">#</a></h2>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">Listing all instances, before and after.</caption>
+          <thead><tr><th>Metric</th><th>Before</th><th>After</th></tr></thead>
+          <tbody>
+            <tr><td><strong>CLI query time</strong></td><td>54 s</td><td><strong>1.002 s</strong></td></tr>
+            <tr><td>swap in use</td><td>8.0GiB (100%)</td><td><strong>0B</strong></td></tr>
+            <tr><td><code>instances</code> rows</td><td>1,041</td><td><strong>20</strong></td></tr>
+            <tr><td>RAM <code>available</code></td><td>18GiB</td><td>10GiB</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">The last row is <strong>a number that got worse.</strong> It stays in the
+        table.</p>
+
+<pre data-lang="text"><code>[root@host ~]# time openstack server list --all-projects
+...
+real    0m1.002s
+user    0m0.577s
+sys     0m0.048s</code></pre>
+
+        <p>The screen that used to time out now loads. ⚠️ <strong>I did not measure the screen itself.</strong>
+        Before the fix it never finished, so there was nothing to measure; after the fix I did not go back and
+        time it. <strong>The 54 seconds is a CLI measurement.</strong></p>
+
+        <h2 id="limits">Limits: what this article does not claim<a class="anchor" href="#limits" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>I cannot say how much each of the two fixes bought.</strong> Clearing swap and deleting
+          rows went in together. Measuring six configurations separately in
+          <a href="slow-screens-1-volume-list.html">the previous part</a> was exactly for this, and here the
+          situation was urgent enough that I did not.</li>
+          <li><strong>I am not claiming 1,041 rows caused 54 seconds.</strong> Sweeping a 1,041-row table is
+          normally a matter of milliseconds. It gets heavy only <strong>when every read has to go to disk.</strong>
+          That the two causes overlapped is as far as I verified; the share of each is unknown.</li>
+          <li><strong>Clearing swap did not remove a cause.</strong> It reversed a symptom.
+          <code>available</code> is down to 10GiB, so it can fill again. More RAM, or tuning MariaDB’s memory
+          settings, is the real answer, and neither was done.</li>
+          <li><strong>“Under 500 ms once the cache applies” is the source’s sentence.</strong> No measurement
+          behind it survives in the record, so it is not in the table.</li>
+          <li><strong>These are not production numbers.</strong> They are measurements from a QA test
+          environment.</li>
+          <li><strong>The second half is a proposal, not a result.</strong> Archive, purge and cron are what I
+          <strong>proposed</strong> in a document; I have no record that any of it was actually scheduled and
+          ran. The only part of this article with measurements attached is the first half, the hurried fix.</li>
+          <li><strong>This is not only about OpenStack.</strong> Any system with soft deletes gets the same
+          bill. What this article verified, though, is one machine.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="Closing">Closing<a class="anchor" href="#Closing" aria-label="Link to this section">#</a></h2>
+
+        <p>To gather it up.</p>
+
+        <ul>
+          <li><strong>Ask the same question down a second path and half the map goes away.</strong>
+          Knowing the CLI took 54 seconds meant not opening the code at all.</li>
+          <li><strong>Deleted data is still in the table.</strong> A soft delete looks like a deletion and
+          is not one.</li>
+          <li><strong>When swap is full, every judgement above it wobbles.</strong> The query is unchanged;
+          what a single read costs is not.</li>
+          <li><strong>Do not leave an emergency command standing as the answer.</strong> If you do not write
+          that down, the next person learns it as the procedure.</li>
+        </ul>
+
+        <p>If one line survives, this one:
+        <strong>fixing it and fixing it properly are different things.</strong>
+        The commands that turned 54 seconds into one second were not the answer I wrote up a month later.</p>
+
+        <p>The next part is another screen in the same product. That time <strong>a cache went in</strong>
+        and the latency did not disappear — it moved.</p>
+
+        <p>Thank you for reading.</p>
+        </div>
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=21a2b423ae"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=44326158d4"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
