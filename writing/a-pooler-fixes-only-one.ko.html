@@ -306,7 +306,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
               <rect x="474" y="216" width="236" height="18" rx="3" fill="rgba(79,91,213,0.22)" stroke="#4f5bd5" stroke-width="1.5"/>
             </svg>
           </div>
-          <figcaption>카드 두 장이 같은 요청을 각각 그린 것입니다. 왼쪽에서 오른쪽으로 시간이 흐르고, 위 줄은 요청이 하는 일, 아래 띠는 그동안 DB connection을 붙잡고 있는 구간입니다. 채워진 띠가 점유, 점선이 반납이며 가로 폭은 시간에 비례하지 않습니다.</figcaption>
+          <figcaption>카드 두 장이 같은 요청을 각각 그린 것입니다. 왼쪽에서 오른쪽으로 시간이 흐르고 위 줄은 요청이 하는 일, 아래 띠는 그동안 DB connection을 붙잡고 있는 구간입니다. 채워진 띠가 점유, 점선이 반납이며 가로 폭은 시간에 비례하지 않습니다.</figcaption>
         </figure>
 
         <p>동시에 글을 쓰는 요청이 pool 크기를 넘으면 그 시점부터 connection이 없습니다. 여기서 connection
@@ -372,7 +372,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
               </defs>
             </svg>
           </div>
-          <figcaption>pool이 고갈되면 멈추는 것은 글 작성 경로만이 아닙니다. 왼쪽이 글쓰기 요청, 가운데가 connection pool, 오른쪽이 글쓰기와 무관한 요청들입니다. 오른쪽도 <strong>같은 pool</strong>에서 connection을 받으므로, 가운데가 다 차면 함께 대기로 바뀝니다.</figcaption>
+          <figcaption>pool이 고갈되면 멈추는 것은 글 작성 경로만이 아닙니다. 왼쪽이 글쓰기 요청, 가운데가 connection pool, 오른쪽이 글쓰기와 무관한 요청들입니다. 오른쪽도 <strong>같은 pool</strong>에서 connection을 받으므로 가운데가 다 차면 함께 대기로 바뀝니다.</figcaption>
         </figure>
 
         <p>투표도, 피드 조회도, 결과 차트 조회도 <strong>같은 connection pool</strong>에서 connection을 받습니다.
@@ -402,7 +402,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
             <svg viewBox="0 0 720 322" role="img" aria-labelledby="pool-t pool-d" xmlns="http://www.w3.org/2000/svg">
               <title id="pool-t">connection이 묶이는 경우와 묶이지 않는 경우</title>
               <desc id="pool-d">위쪽은 짧은 transaction입니다. 클라이언트 두 개가 BEGIN과 COMMIT 사이에만 backend connection을 쓰고 곧
-              놓으므로, connection pooler는 그 사이사이에 두 클라이언트를 backend connection 하나에 번갈아 얹습니다. 묶이는 비율은 2대 1입니다.
+              놓으므로 connection pooler는 그 사이사이에 두 클라이언트를 backend connection 하나에 번갈아 얹습니다. 묶이는 비율은 2대 1입니다.
               아래쪽은 transaction 안에서 외부 HTTP 호출을 기다리는 경우입니다. transaction이 열려 있는 동안 backend connection은 그
               클라이언트에 묶이고 그 시간 대부분은 쿼리를 하나도 실행하지 않습니다. 다른 클라이언트는 그동안 기다리기만
               하므로 묶이는 비율이 1대 1이 되어 connection pooler가 만들어 낼 이득이 거의 없습니다.</desc>
@@ -521,17 +521,17 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
 
         <p>여기서 <em>“transaction을 쪼개면 경합이 늘어나지 않나요?”</em>라는 질문이 나올 수 있는데
         <strong>경합 창은 넓어지지 않았습니다.</strong> 수정 전에도 모더레이션 호출이 읽기와 쓰기
-        <em>사이</em>에 있었고 그 경로는 게시글 행에 락을 걸지 않고 있었기 때문입니다
+        <em>사이</em>에 있었고 그 경로는 게시글 행에 lock을 걸지 않고 있었기 때문입니다
         (<code>for update</code> 가 없었습니다). transaction 안에 있다고 해서 다른 세션의 변경을 막아 주지는
         않습니다. 읽기에서 쓰기까지의 거리는 <strong>동일합니다.</strong></p>
 
         <p>같은 작업을 쓰기 경로 세 곳(글 · 댓글 · 투표 첨부)에 했습니다. 그중 하나는 상태가 더
         나빴습니다. 투표 첨부 경로는 <code>for update</code> 로 <strong>행까지 잠근 채</strong> 외부 호출을
-        하고 있었습니다. connection과 행 락, <strong>두 자원</strong>을 동시에 쥐고 있었던 겁니다.</p>
+        하고 있었습니다. connection과 행 lock, <strong>두 자원</strong>을 동시에 쥐고 있었던 겁니다.</p>
 
         <p>글과 댓글 두 경로를 먼저 고치고 투표 첨부는 검열에 넣는 입력이 <em>잠근 행에서</em> 나오는 탓에
         staleness(값이 낡았는지) 재확인이 필요해서 <strong>한 번 미뤘다가 같은 날 뒤에 고쳤습니다.</strong>
-        기록에는 「의도적 미착수」로 남겨 두었고, 그날 후속 세션에서 처리했습니다.</p>
+        기록에는 「의도적 미착수」로 남겨 두었고 그날 후속 세션에서 처리했습니다.</p>
 
         <p>결론을 한 줄로 적으면 이렇습니다.
         <strong>코드 수정은 connection pooler의 대안이 아니라 전제조건이었습니다.</strong>
@@ -604,7 +604,7 @@ VoteRepository.kt        pg_advisory_xact_lock(...)</code></pre>
         얹힙니다.</p>
 
         <p>이 셋이 <code>xact</code> 스코프인 것이 의도였는지 우연이었는지는 기록으로 가릴 수 없습니다.
-        확실한 것은 <strong>세션 스코프 락을 한 군데만 썼어도 그 경로가 connection pooler를 무력화했을
+        확실한 것은 <strong>세션 스코프 lock을 한 군데만 썼어도 그 경로가 connection pooler를 무력화했을
         것</strong>이고 그 사실은 도입한 뒤에야 알게 됐으리라는 겁니다.</p>
 
         <p><strong>도구를 도입하기 전에, 그 도구가 이 코드에서 실제로 동작하는지 먼저 확인하는 절차.</strong>
@@ -619,7 +619,7 @@ VoteRepository.kt        pg_advisory_xact_lock(...)</code></pre>
         반납되지 않기 때문입니다.</p>
 
         <p><strong>thread와 connection은 다른 자원입니다.</strong> 문제의 축이 connection인데 thread를 아끼는
-        처방을 가져오면 축이 어긋납니다. R2DBC라면 이야기가 다르지만, 그건 데이터 접근 계층을 전면
+        처방을 가져오면 축이 어긋납니다. R2DBC라면 이야기가 다르지만 그건 데이터 접근 계층을 전면
         재작성하는 일입니다.</p>
 
         <p>pool을 키우는 처방도 같은 종류입니다. 완화는 되지만 수리는 아니고
@@ -734,7 +734,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
               <text x="30" y="280" font-size="12" fill="#3b3344">arm B · @Transactional 복원</text>
             </svg>
           </div>
-          <figcaption>응답시간 중앙값입니다. 가로축은 10배마다 눈금이 하나씩 있는 로그 축이고, 위 두 막대가 피드 조회·아래 두 막대가 글 생성입니다. 조건은 쓰기 16 · pool 10 · 외부 호출 800ms 입니다.</figcaption>
+          <figcaption>응답시간 중앙값입니다. 가로축은 10배마다 눈금이 하나씩 있는 로그 축이고 위 두 막대가 피드 조회·아래 두 막대가 글 생성입니다. 조건은 쓰기 16 · pool 10 · 외부 호출 800ms 입니다.</figcaption>
         </figure>
 
         <p>읽는 법은 이렇습니다. <strong>쓰기 경로는 두 arm이 같습니다</strong>(2,577 대 2,584ms).
@@ -797,7 +797,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
               <text x="220" y="238" font-size="14" fill="#4f5bd5" font-weight="700" text-anchor="middle">800 ms</text>
             </svg>
           </div>
-          <figcaption>카드 두 장이 같은 요청의 외부 대기 구간을 각각 그린 것입니다. 막대의 가로 길이가 대기 시간이고, 아래 괄호가 그 합입니다. 순차로 부르면 1,600ms가 쌓이고, 겹쳐 부르면 둘 중 긴 쪽인 <strong>800ms</strong>만 남습니다. ①②는 앱 안에서 끝나는 검사라 외부 대기에 들어가지 않습니다.</figcaption>
+          <figcaption>카드 두 장이 같은 요청의 외부 대기 구간을 각각 그린 것입니다. 막대의 가로 길이가 대기 시간이고 아래 괄호가 그 합입니다. 순차로 부르면 1,600ms가 쌓이고 겹쳐 부르면 둘 중 긴 쪽인 <strong>800ms</strong>만 남습니다. ①②는 앱 안에서 끝나는 검사라 외부 대기에 들어가지 않습니다.</figcaption>
         </figure>
 
         <p>가상 thread(Java 21)로 ④를 띄우고 ③을 호출 thread에서 돌립니다.
@@ -805,7 +805,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         이 글이 내내 이야기한 「아무도 고르지 않은 상한」을 모더레이션 경로에 다시 만들게 됩니다.</p>
 
         <p>⚠️ <strong>그런데 이 문장을 쓸 때 저는 이미 그 상한 안에 있었습니다.</strong> 새로 만들지
-        않았을 뿐이고, AWS SDK가 끌고 들어온 HTTP 클라이언트의 「호스트당 5」가 그 경로에 이미
+        않았을 뿐이고 AWS SDK가 끌고 들어온 HTTP 클라이언트의 「호스트당 5」가 그 경로에 이미
         걸려 있었습니다. 그건 3주 뒤에야 알았습니다.</p>
 
         <p><strong>응답</strong>은 그대로여야 합니다. 다만 동작이 아주 그대로인 것은 아닙니다.
@@ -814,7 +814,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         예외는 ③이 ④보다 우선합니다(순차와 같은 응답).</p>
 
         <p>⚠️ <strong>대가가 있습니다.</strong> 순차일 때는 ③이 막으면 ④를 아예 안 불렀습니다. 이제는
-        ③이 막아도 ④가 돕니다. 증가분은 <strong>③ 차단율 × ④ 단가</strong>이고, 차단율이 낮은 지금은
+        ③이 막아도 ④가 돕니다. 증가분은 <strong>③ 차단율 × ④ 단가</strong>이고 차단율이 낮은 지금은
         게시글당 약 $0.0002 수준입니다. 무조건부 수치가 아니라, 차단율이 오르면 다시 따져야 합니다.</p>
         <div class="table-scroll">
 <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
@@ -840,7 +840,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         병렬화가 안 먹은 줄 알았습니다.</p>
 
         <p>원인은 코드가 아니라 <strong>측정 조건</strong>이었습니다. 쓰기 16에서는 두 쪽 모두
-        6.26 req/s라는 <strong>같은 천장</strong>에 걸려 있었고, 외부 호출이 그 시점엔 병목이
+        6.26 req/s라는 <strong>같은 천장</strong>에 걸려 있었고 외부 호출이 그 시점엔 병목이
         아니었으므로 그걸 절반으로 줄여도 총 처리량이 변하지 않습니다.</p>
 
         <p>⚠️ <strong>이 문단은 한 번 틀렸습니다.</strong> 처음에는 그 천장을 「부하기·앱·stub·DB가

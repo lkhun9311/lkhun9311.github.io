@@ -100,17 +100,17 @@
           <li><strong>connection pooler</strong>(RDS Proxy 등): <em>앱과 DB 사이</em>에 있는 별도 서버입니다. 여러 앱의 connection을 합칩니다.</li>
         </ul>
 
-        <p>즉 pool은 "한 앱이 자기 connection을 아끼는 것", 풀러는 "여러 앱의 connection을 DB 앞에서 합치는 것"입니다.</p>
+        <p>즉 pool은 "한 앱이 자기 connection을 아끼는 것", pooler는 "여러 앱의 connection을 DB 앞에서 합치는 것"입니다.</p>
         <h2 id="한계">무엇을 못 고치나<a class="anchor" href="#한계" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>connection 부족에는 원인이 두 가지 있고, 풀러는 <strong>하나만</strong> 고칩니다.</p>
+        <p>connection 부족에는 원인이 두 가지 있고 pooler는 <strong>하나만</strong> 고칩니다.</p>
 
         <ul>
-          <li><strong>connection 개수가 많아서</strong>: 풀러가 정확히 이걸 위한 도구입니다.</li>
-          <li><strong>connection을 오래 붙잡고 있어서</strong>: 풀러가 <strong>구조적으로 못 고칩니다.</strong></li>
+          <li><strong>connection 개수가 많아서</strong>: pooler가 정확히 이걸 위한 도구입니다.</li>
+          <li><strong>connection을 오래 붙잡고 있어서</strong>: pooler가 <strong>구조적으로 못 고칩니다.</strong></li>
         </ul>
 
         <p>이유는 <a href="transaction-pooling.html">transaction pooling</a>의 정의에 있습니다. connection 재사용은 transaction과
-        transaction <em>사이</em>에서만 일어나는데, transaction이 열려 있는 동안에는 그 connection이 한 클라이언트에 묶이기
+        transaction <em>사이</em>에서만 일어나는데 transaction이 열려 있는 동안에는 그 connection이 한 클라이언트에 묶이기
         때문입니다. transaction이 10초 열려 있으면 뒤쪽 connection도 10초 묶입니다.</p>
 
         <h2 id="쓰인-곳">이 사이트에서 쓰인 곳<a class="anchor" href="#쓰인-곳" aria-label="이 절로 가는 링크">#</a></h2>
@@ -120,7 +120,7 @@
 
         <h2 id="함께-볼-용어">함께 볼 용어<a class="anchor" href="#함께-볼-용어" aria-label="이 절로 가는 링크">#</a></h2>
         <ul>
-          <li><a href="transaction-pooling.html">transaction pooling</a>: 풀러가 connection을 재사용하는 방식</li>
+          <li><a href="transaction-pooling.html">transaction pooling</a>: pooler가 connection을 재사용하는 방식</li>
           <li><a href="connection-pool.html">connection pool</a>: 앱 안쪽의 그것</li>
           </ul>
 
