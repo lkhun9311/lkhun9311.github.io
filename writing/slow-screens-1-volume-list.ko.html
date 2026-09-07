@@ -80,12 +80,12 @@
             <li><a href="#무슨-내용">무슨 내용인가요?</a></li>
             <li><a href="#어떤-화면">어떤 화면인가요?</a></li>
             <li><a href="#가설">가설: 순차 호출이 문제인 줄 알았습니다</a></li>
-            <li><a href="#결론">결론: 병렬로 바꾸자 더 느려졌습니다</a></li>
+            <li><a href="#결론">결론: 여섯 단계를 따로 쟀습니다</a></li>
             <li><a href="#원인-1">원인 ①: 락 안에서 네트워크를 기다렸습니다</a></li>
-            <li><a href="#원인-2">원인 ②: 0건을 캐시하지 않았습니다</a></li>
+            <li><a href="#원인-2">원인 ②: 0건을 cache에 담지 않았습니다</a></li>
             <li><a href="#왜-줄을-서나">이유: ConcurrentHashMap인데도 줄을 섭니다</a></li>
-            <li><a href="#수정">수정: 키마다 로더를 하나만 돌립니다</a></li>
-            <li><a href="#정합성">정합성: 캐시를 지우면 다음 사람이 느려집니다</a></li>
+            <li><a href="#수정">수정: 락을 잘 다루기보다 락에 들어갈 일을 없앴습니다</a></li>
+            <li><a href="#정합성">정합성: cache를 지우면 다음 사람이 느려집니다</a></li>
             <li><a href="#반론">반론: “thread를 늘리면 되지 않나요?”</a></li>
             <li><a href="#측정">측정: 같은 조건으로 전후를 쟀습니다</a></li>
             <li><a href="#주장하지-않는-것">한계: 이 글이 주장하지 않는 것</a></li>
@@ -360,7 +360,7 @@ if (messages == null || messages.isEmpty()) {
         세그먼트는 Java 7의 구현이고, Java 8부터 <code>ConcurrentHashMap</code>은 <strong>bin 단위</strong>로 잠급니다.
         틀린 이름을 쓰면 다음 사람이 잘못된 곳을 찾아보게 됩니다.</p>
 
-        <h2 id="수정">수정: 키마다 로더를 하나만 돌립니다<a class="anchor" href="#수정" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="수정">수정: 락을 잘 다루기보다 락에 들어갈 일을 없앴습니다<a class="anchor" href="#수정" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>⚠️ 먼저 분명히 해 둘 것이 있습니다. <strong><code>computeIfAbsent</code>도 같은 키의 매핑 함수는
         하나만 실행하고 나머지는 기다립니다.</strong> Caffeine의 <code>LoadingCache</code>로 바꾼다고
