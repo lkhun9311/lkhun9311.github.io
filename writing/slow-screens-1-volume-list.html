@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Volume List Went From a Ten-Minute Timeout to 23 ms | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/slow-screens-1-volume-list.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/slow-screens-1-volume-list.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/slow-screens-1-volume-list.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/slow-screens-1-volume-list.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="A Volume List Went From a Ten-Minute Timeout to 23 ms | Kwanghun Lee" />
+  <meta property="og:description" content="I measured one admin volume list under six configurations. Holding the cache fixed and switching sequential calls to parallel made the median 21x faster and P99 1.9x slower. The code was holding a lock on one cache key while waiting on an external API, but this test alone cannot prove that was the cause." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/slow-screens-1-volume-list.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="A Volume List Went From a Ten-Minute Timeout to 23 ms | Kwanghun Lee" />
+  <meta name="twitter:description" content="I measured one admin volume list under six configurations. Holding the cache fixed and switching sequential calls to parallel made the median 21x faster and P99 1.9x slower. The code was holding a lock on one cache key while waiting on an external API, but this test alone cannot prove that was the cause." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="I measured one admin volume list under six configurations. Holding the cache fixed and switching sequential calls to parallel made the median 21x faster and P99 1.9x slower. The code was holding a lock on one cache key while waiting on an external API, but this test alone cannot prove that was the cause." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "slow-screens-1-volume-list.html", "ko": "slow-screens-1-volume-list.ko.html", "ja": "slow-screens-1-volume-list.ja.html"}'>
+          <option value="ko">Korean</option>
+          <option value="en" selected>English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing</a>
+        <div class="article-meta"><span class="source-tag company notranslate">Company work</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>A Volume List Went From a Ten-Minute Timeout to 23 ms<br><span class="h1-sub">A hand-rolled cache was holding one key locked while it waited on an external API. An internal cloud admin console. Slow Screens, part one</span></h1>
+          <p class="article-date">Sep 2026</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="slow-screens-1-volume-list"></aside>
+
+        <nav class="article-toc" aria-label="Table of contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-is-in-here">What this is about</a></li>
+            <li><a href="#the-screen">The screen</a></li>
+            <li><a href="#the-guess">The guess: I thought sequential calls were the problem</a></li>
+            <li><a href="#six-configurations">The result: six configurations, measured separately</a></li>
+            <li><a href="#cause-a">Cause 1: the network wait happened inside a lock</a></li>
+            <li><a href="#cause-b">Cause 2: an empty result was never cached</a></li>
+            <li><a href="#why-it-queues">Why: a ConcurrentHashMap still makes threads queue</a></li>
+            <li><a href="#the-fix">The fix: not better locking, but removing the reason to lock</a></li>
+            <li><a href="#freshness">Freshness: invalidating a cache slows down whoever comes next</a></li>
+            <li><a href="#objection">Objection: “why not just add threads?”</a></li>
+            <li><a href="#measurement">Measurement: before and after, same conditions</a></li>
+            <li><a href="#limits">Limits: what this article does not claim</a></li>
+            <li><a href="#Closing">Closing</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>Hello. I write the backend of an internal cloud admin console. Its volume list screen was
+        <strong>running past ten minutes and timing out</strong> — five runs out of six failed.</p>
+
+        <p>After fixing it I <strong>split the work into six configurations</strong> and
+        <strong>measured each one under the same load.</strong> That table is the whole article.
+        It shows which change bought how much, and <strong>which change made something worse.</strong></p>
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>You have parallelised a slow list query with <code>CompletableFuture</code>.</li>
+          <li>You have hand-rolled a cache on top of <code>ConcurrentHashMap.computeIfAbsent</code>.</li>
+          <li>You have thought “can’t we just grow the thread pool?”</li>
+        </ul>
+
+        <h2 id="what-is-in-here">What this is about<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>Six configurations, measured one at a time.</strong> Measure only “before and after”
+          and you never learn which change did the work.</li>
+          <li>Holding the cache fixed and switching sequential to parallel made
+          <strong>the median 21x faster and P99 1.9x slower.</strong> Neither “faster” nor “slower” is the answer.</li>
+          <li>The largest drop in seconds came from <strong>adding one cache</strong>: a 579.0 s average became 13.1 s.
+          The final <strong>23 ms</strong> came from putting Caffeine’s refresh behaviour on top of that.</li>
+          <li>The hand-rolled cache had a defect. <strong>It never stored an empty answer,</strong>
+          so it asked again every time there was nothing to find.</li>
+        </ul>
+
+        <p>⚠️ <strong>The claim that parallelising can make things slower has
+        <a href="parallelism-made-the-tail-worse.html">its own article</a>.</strong> That one holds the cache fixed
+        and compares sequential against parallel. This one looks at <strong>all six configurations</strong>.</p>
+
+        <p><strong>This is an internal product, so the code here is not the code that shipped.</strong>
+        Product names, customers and internal addresses are gone; the structure and the numbers stay.
+        Class names are generalised only as far as the story needs.</p>
+
+        <p><strong>⚠️ One thing up front.</strong> The numbers below were <strong>measured with JMeter in an
+        isolated test environment</strong>, not taken from production. The “ten minutes” is the load test’s
+        own timeout ceiling, not a wait any real user sat through.</p>
+
+        <h2 id="the-screen">The screen<a class="anchor" href="#the-screen" aria-label="Link to this section">#</a></h2>
+
+        <p>An administrator opens it to see <strong>every volume in the system</strong>. For each volume,
+        beyond the name and size, the screen also shows <strong>which project owns it</strong>,
+        <strong>which volume group it belongs to</strong> and <strong>whether it has a recent error message</strong>.
+        All three come from different APIs.</p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
+            <svg viewBox="0 0 720 216" role="img" aria-labelledby="svc1-t svc1-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="svc1-t">The calls behind one render of the volume list</title>
+              <desc id="svc1-d">When an administrator opens the volume list, the admin console backend fetches
+              the list once. What follows is the problem. For every single volume it looks up the project, the
+              volume group and the error messages separately, so N volumes mean 3N external API calls.
+              Those three calls are the section drawn in pink.</desc>
+
+              <rect x="8" y="40" width="126" height="52" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="71" y="64" font-size="13.5" fill="#18121d" text-anchor="middle">Admin screen</text>
+              <text x="71" y="82" font-size="12.5" fill="#7b7186" text-anchor="middle">Volume list</text>
+              <path d="M134 66 H 176" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#s1-ar)"/>
+
+              <rect x="184" y="30" width="176" height="72" rx="6" fill="none" stroke="#18121d" stroke-width="2"/>
+              <text x="272" y="54" font-size="13.5" fill="#18121d" font-weight="700" text-anchor="middle">Admin console backend</text>
+              <text x="272" y="73" font-size="12.5" fill="#3b3344" text-anchor="middle">Java · Spring</text>
+              <text x="272" y="91" font-size="12.5" fill="#7b7186" text-anchor="middle">hand-rolled cache</text>
+
+              <path d="M360 50 H 420" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#s1-ar)"/>
+              <text x="390" y="42" font-size="12" fill="#7b7186" text-anchor="middle">list, once</text>
+              <rect x="428" y="30" width="284" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="570" y="55" font-size="13" fill="#18121d" text-anchor="middle">Block storage API</text>
+
+              <path d="M272 102 V 138" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#s1-arA)"/>
+              <text x="284" y="126" font-size="12.5" fill="#d62976" font-weight="700">3 calls per volume</text>
+              <rect x="184" y="138" width="528" height="62" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="448" y="160" font-size="13" fill="#d62976" font-weight="700" text-anchor="middle">N volumes · 3N external API calls</text>
+              <rect x="200" y="170" width="156" height="22" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="278" y="185" font-size="12" fill="#d62976" text-anchor="middle">project lookup</text>
+              <rect x="366" y="170" width="156" height="22" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="444" y="185" font-size="12" fill="#d62976" text-anchor="middle">volume group lookup</text>
+              <rect x="532" y="170" width="164" height="22" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="614" y="185" font-size="12" fill="#d62976" text-anchor="middle">error message lookup</text>
+              <defs>
+                <marker id="s1-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
+                </marker>
+                <marker id="s1-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>The list itself is fetched once. The pink section below it is where this article’s problem
+          lives. Each volume triggers three separate lookups, so the call count grows linearly with the volumes.</figcaption>
+        </figure>
+
+        <p>So one render of the list costs this many calls.</p>
+
+<pre data-lang="text"><code>To render N volumes
+  project lookup        N calls
+  volume group lookup   N calls
+  error message lookup  N calls
+= 3N external API calls</code></pre>
+
+        <p>More volumes, <strong>linearly</strong> slower. In the test environment this screen
+        <strong>ran past ten minutes and timed out</strong>, with an error rate of <strong>83.3%</strong>.</p>
+
+        <h2 id="the-guess">The guess: I thought sequential calls were the problem<a class="anchor" href="#the-guess" aria-label="Link to this section">#</a></h2>
+
+        <p>Those 3N calls were being made <strong>one after another</strong>, so the diagnosis looked easy.</p>
+
+        <blockquote><p>It is slow because the calls are sequential. Go parallel and it drops a lot,
+        maybe not by a factor of N, but a lot.</p></blockquote>
+
+        <p>I built one task per volume with <code>CompletableFuture.supplyAsync</code> and handed them to an
+        executor. To cut the repeated lookups I put a cache in front, a plain <code>ConcurrentHashMap</code>,
+        since the same group id only needs fetching once.</p>
+
+        <h2 id="six-configurations">The result: six configurations, measured separately<a class="anchor" href="#six-configurations" aria-label="Link to this section">#</a></h2>
+
+        <p>In one line, this is it.</p>
+
+        <blockquote><p><strong>Measure only “before and after” and you never learn which change did the work.</strong>
+        Measuring six configurations in turn showed that parallelising
+        <strong>moves the median and the tail in opposite directions.</strong></p></blockquote>
+
+        <p>Here is the table first. The load was identical in all six runs.
+        The <strong>median</strong> is the middle value once requests are sorted by response time;
+        <strong>P99</strong> is the line 1% of requests fall beyond on the slow side.
+        <strong>TPS</strong> is requests finished per second. <strong>Apdex</strong>, which appears later,
+        is the share of requests that finished within 0.5 s and within 1.5 s. Closer to 1 is better.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: Scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">Six load test configurations for the admin volume screen.</caption>
+          <thead><tr><th>Configuration</th><th>Samples</th><th>Errors</th><th>Median</th><th>Mean</th><th>P99</th><th>TPS</th></tr></thead>
+          <tbody>
+            <tr><td>1. no cache · sequential</td><td>54</td><td><strong>83.3%</strong></td><td>600.0 s</td><td>579.0 s</td><td>600.0 s<br>(timeout)</td><td>0.06</td></tr>
+            <tr><td>2. cache 5 s · sequential</td><td>1,641</td><td>0%</td><td>11.0 s</td><td>13.1 s</td><td>42.6 s</td><td>2.69</td></tr>
+            <tr><td>3. no cache · parallel</td><td>541</td><td>0%</td><td>45.1 s</td><td>47.8 s</td><td>129.9 s</td><td>0.87</td></tr>
+            <tr><td>4. cache 5 s · parallel</td><td>1,560</td><td>0%</td><td><strong>0.5 s</strong></td><td>14.7 s</td><td><strong>79.0 s</strong></td><td>2.46</td></tr>
+            <tr><td>5. 4 + <code>addMoreInfo()</code> optimised</td><td>5,991</td><td>0%</td><td>0.03 s</td><td><strong>1.0 s</strong></td><td>6.9 s</td><td>10.01</td></tr>
+            <tr><td>6. 5 + Caffeine refresh</td><td>7,658</td><td>0%</td><td><strong>4 ms</strong></td><td><strong>5.3 ms</strong></td><td><strong>23 ms</strong></td><td>12.82</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">All six runs used <strong>50 concurrent users · 2 min Ramp-Up · 10 min duration ·
+        2–5 s Think Time.</strong> Only the leftmost column of each row changed.</p>
+
+        <p>How to read it. <strong>Row 1 is the worst:</strong> a 579 s mean with an 83.3% error rate,
+        which is to say it does not answer at all. Adding a single cache in row 2 takes that to 0%.</p>
+
+        <p>The next part is the one worth staring at. <strong>Hold the cache fixed and compare
+        sequential (2) against parallel (4), and the two numbers move in opposite directions.</strong></p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: Scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">Distribution: sequential against parallel.</caption>
+          <thead><tr><th>Metric</th><th>2. sequential</th><th>4. parallel</th><th>Ratio</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Median</strong></td><td>10,974 ms</td><td><strong>508 ms</strong></td><td><strong>21.6x faster</strong></td></tr>
+            <tr><td>P90</td><td>23,907 ms</td><td>58,908 ms</td><td>2.5x slower</td></tr>
+            <tr><td><strong>P99</strong></td><td>42,644 ms</td><td><strong>78,997 ms</strong></td><td><strong>1.85x slower</strong></td></tr>
+            <tr><td>Mean</td><td>13,108 ms</td><td>14,749 ms</td><td>1.13x slower</td></tr>
+            <tr><td>TPS</td><td>2.69</td><td>2.46</td><td>0.91x</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">Parallelising made <strong>the median 21x faster and the tail 1.9x slower.</strong>
+        “It got slower” is not a sentence that describes this distribution.</p>
+
+        <figure class="diagram">
+          <img src="../assets/figures/volume-jmeter-seq.png" alt="JMeter report for configuration 2. Apdex 0.014, 1,641 samples, median 10,974 ms, P99 42,644 ms." loading="lazy" width="876" height="383">
+          <figcaption>Configuration 2, cache 5 s · <strong>sequential</strong>. Median 10,974 ms, P99 42,644 ms.
+          In all four screenshots the request name in the <code>Label</code> column is masked as
+          <code>GET (volume list)</code> because it is an internal route. Every number is as the report printed it.</figcaption>
+        </figure>
+
+        <figure class="diagram">
+          <img src="../assets/figures/volume-jmeter-par.png" alt="JMeter report for configuration 4. Apdex 0.526, 1,560 samples, median 508 ms, P99 78,997 ms." loading="lazy" width="876" height="381">
+          <figcaption>Configuration 4, cache 5 s · <strong>parallel</strong>. The median drops to 508 ms while
+          P99 rises to 78,997 ms. Sequential against parallel is the only thing that changed.</figcaption>
+        </figure>
+
+        <p>Requests in the middle got <strong>faster.</strong> In exchange,
+        <strong>the slowest 1% were pushed past 79 seconds.</strong> P99 does not mean “one user in a hundred
+        waited 79 seconds”. It is <strong>the line 1% of requests fall beyond once you sort them slowest first.</strong>
+        One user issues many requests, so it does not convert directly into a headcount.</p>
+
+        <p>Apdex rose from 0.014 to 0.526 as well. Apdex is <strong>the share of requests finishing within
+        0.5 s and within 1.5 s</strong>, not something derived from the median. It rose because more requests
+        landed inside those bands. <strong>Read the mean alone and you get “1.13x slower”, one line that
+        erases both directions at once.</strong></p>
+
+        <p>Which configuration bought how much <strong>depends on which metric you ask.</strong>
+        By the mean, <strong>the largest drop in seconds is 1 → 2:</strong> 579.0 s became 13.1 s, a saving of
+        565.9 s, and all that changed was adding one cache. <strong>The largest drop as a ratio is 5 → 6,</strong>
+        which took 1.0 s to 5.3 ms. Both sentences are <strong>mean-based.</strong> Measured by the median the
+        ranking changes.</p>
+
+        <p>⚠️ What inside configuration 5 bought what <strong>cannot be separated from this record.</strong>
+        The source says only <code>addMoreInfo() optimized</code>. That it was a bundle of changes inside the
+        function that builds one volume is as far as I could verify.</p>
+
+                <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
+            <svg viewBox="0 0 720 250" role="img" aria-labelledby="lock-t lock-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="lock-t">Threads sharing one key queue in front of computeIfAbsent</title>
+              <desc id="lock-d">Two cards, each drawing the same list query. The upper card is before the fix:
+              four threads sharing a group id enter computeIfAbsent together and only T1 makes the external round
+              trip, while the other three wait with the map bin held. The lower card is after the fix: threads
+              waiting on the same key still wait, but they do not hold the map bin, so threads looking up a
+              different key are not blocked.</desc>
+
+              <rect x="0" y="0" width="720" height="112" rx="10" fill="rgba(214,41,118,0.06)"/>
+              <rect x="10" y="10" width="72" height="24" rx="12" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="46" y="27" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">Before</text>
+              <rect x="10" y="48" width="150" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="85" y="66" font-size="12.5" fill="#18121d" text-anchor="middle">4 threads · same key</text>
+              <path d="M160 61 H 200" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#v-arA)"/>
+              <rect x="208" y="42" width="196" height="38" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="306" y="58" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">computeIfAbsent · key locked</text>
+              <text x="306" y="74" font-size="11.5" fill="#7b7186" text-anchor="middle">only T1 enters · T2, T3, T4 wait</text>
+              <path d="M404 61 H 444" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#v-arA)"/>
+              <rect x="452" y="42" width="258" height="38" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="581" y="66" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">external round trip · seats held throughout</text>
+              <rect x="10" y="88" width="700" height="16" rx="3" fill="rgba(214,41,118,0.22)" stroke="#d62976" stroke-width="1.5"/>
+              <text x="360" y="101" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">4 executor seats tied up for the whole round trip</text>
+
+              <rect x="0" y="124" width="720" height="112" rx="10" fill="rgba(79,91,213,0.06)"/>
+              <rect x="10" y="134" width="72" height="24" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="46" y="151" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">After</text>
+              <rect x="10" y="172" width="150" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="85" y="190" font-size="12.5" fill="#18121d" text-anchor="middle">4 threads · same key</text>
+              <path d="M160 185 H 200" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#v-arB)"/>
+              <rect x="208" y="166" width="196" height="38" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="306" y="182" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">LoadingCache · one loader</text>
+              <text x="306" y="198" font-size="11.5" fill="#7b7186" text-anchor="middle">the others wait on that loader</text>
+              <path d="M404 185 H 444" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#v-arB)"/>
+              <rect x="452" y="166" width="258" height="38" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="581" y="190" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">one external round trip</text>
+              <rect x="10" y="212" width="700" height="16" rx="3" fill="rgba(79,91,213,0.22)" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="360" y="225" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">they still queue here. They just do not hold the map lock while queuing</text>
+              <defs>
+                <marker id="v-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+                <marker id="v-arB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>⚠️ <strong>The difference between the two cards is not whether threads queue.</strong>
+          A synchronous <code>LoadingCache.get</code> also makes the rest wait until the loader returns.
+          What differs is <strong>whether they wait holding the map’s lock.</strong> In the upper card the bin
+          that key lives in is locked, so other keys in the same bin are affected as well.</figcaption>
+        </figure>
+
+        <h2 id="cause-a">Cause 1: the network wait happened inside a lock<a class="anchor" href="#cause-a" aria-label="Link to this section">#</a></h2>
+
+        <p>Here is the shape of the problem.</p>
+
+<pre data-lang="java"><code>final Map&lt;String, VolumeGroup&gt; groupCache = new ConcurrentHashMap&lt;&gt;();
+
+final List&lt;VolumeDto&gt; dtos = volumes.stream()
+    .map(v -&gt; CompletableFuture.supplyAsync(() -&gt; {
+
+        // ← several threads enter this block at once
+        final VolumeGroup group = groupCache.computeIfAbsent(
+            v.getGroupId(),
+            gid -&gt; client.groups().get(gid)   // external I/O, called inside the lock
+        );
+        ...
+    }, executor))
+    .map(CompletableFuture::join)
+    .collect(Collectors.toList());</code></pre>
+
+        <p>N volumes means N tasks in the executor. <strong>If M of them share a group id, M threads enter
+        <code>computeIfAbsent</code> on the same key at the same time.</strong> One of them makes the external
+        round trip; the other M−1 wait right there.</p>
+
+        <p>And while they wait, those threads <strong>are still holding executor seats.</strong>
+        So tasks for other volumes queue behind them.</p>
+
+        <p>⚠️ <strong>This causal story comes from reading the code, not from what the test proved.</strong>
+        What the six configurations show is “hold the cache fixed, go parallel, it got worse” and no further.
+        Whether that came from lock contention, thread switching cost, or a limit on the external API side,
+        <strong>this test cannot separate.</strong> Separating them would need a parallel arm with the lock
+        removed, and I did not run one.</p>
+
+        <h2 id="cause-b">Cause 2: an empty result was never cached<a class="anchor" href="#cause-b" aria-label="Link to this section">#</a></h2>
+
+        <p>The hand-rolled cache had one more defect, on the path that reads error messages.
+        ⚠️ This one <strong>was written up on a sibling screen of the same product (project volumes),</strong>
+        and I include it here because the structure is identical. The six-configuration table above is the
+        admin volume screen.</p>
+
+<pre data-lang="java"><code>List&lt;Message&gt; messages = manager.list(Message.class);
+
+// if empty, the external API is called again every time
+if (messages == null || messages.isEmpty()) {
+    client.messages().list(...)
+          .forEach(r -&gt; manager.set(Message.class, r.getResourceUuid(), r));
+}</code></pre>
+
+        <p>Two problems overlap here.</p>
+
+        <ul>
+          <li><strong>Zero rows means nothing is stored,</strong> because <code>forEach</code> never runs.
+          <strong>When a query returns nothing, that answer never reaches the cache, so the next request calls
+          the external API again.</strong> ⚠️ The source does not record how often the result was empty.
+          That the structure behaves this way is as far as I verified.</li>
+          <li><strong>There is a gap between the check and the store.</strong> If several threads pass
+          <code>isEmpty()</code> at once, all of them call the external API.</li>
+        </ul>
+
+        <p>A cache that will not store “nothing” <strong>is not a cache for that answer.</strong></p>
+
+                <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
+            <svg viewBox="0 0 720 176" role="img" aria-labelledby="empty-t empty-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="empty-t">A cache that will not store zero rows is no cache for that answer</title>
+              <desc id="empty-d">The upper card is before the fix. When the query returns zero rows the store
+              loop never runs, nothing lands in the cache, and the next request calls the external API again.
+              For as long as the result is empty, this path behaves as if it had no cache at all. The lower card
+              is after the fix: the empty list is stored as a value, so the next request answers from cache.</desc>
+
+              <rect x="0" y="0" width="720" height="76" rx="10" fill="rgba(214,41,118,0.06)"/>
+              <rect x="10" y="10" width="72" height="22" rx="11" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="46" y="26" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">Before</text>
+              <rect x="98" y="40" width="126" height="24" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="161" y="56" font-size="12" fill="#18121d" text-anchor="middle">query returns 0 rows</text>
+              <path d="M224 52 H 262" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#e-arA)"/>
+              <rect x="270" y="40" width="176" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="358" y="56" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">store loop runs 0 times</text>
+              <path d="M446 52 H 484" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#e-arA)"/>
+              <rect x="492" y="40" width="218" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="601" y="56" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">next request hits the API again</text>
+
+              <rect x="0" y="88" width="720" height="76" rx="10" fill="rgba(79,91,213,0.06)"/>
+              <rect x="10" y="98" width="72" height="22" rx="11" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="46" y="114" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">After</text>
+              <rect x="98" y="128" width="126" height="24" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="161" y="144" font-size="12" fill="#18121d" text-anchor="middle">query returns 0 rows</text>
+              <path d="M224 140 H 262" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#e-arB)"/>
+              <rect x="270" y="128" width="176" height="24" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="358" y="144" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">the empty list is stored too</text>
+              <path d="M446 140 H 484" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#e-arB)"/>
+              <rect x="492" y="128" width="218" height="24" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="601" y="144" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">next request answers from cache</text>
+              <defs>
+                <marker id="e-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+                <marker id="e-arB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>Without storing the empty list, the cache stays empty for as long as the result is
+          empty, and every one of those requests goes back out to the external API.</figcaption>
+        </figure>
+
+        <h2 id="why-it-queues">Why: a ConcurrentHashMap still makes threads queue<a class="anchor" href="#why-it-queues" aria-label="Link to this section">#</a></h2>
+
+        <p><code>ConcurrentHashMap</code> does not lock the whole map, which makes it easy to read
+        “we used a concurrent data structure, so we are fine”. But <code>computeIfAbsent</code>
+        <strong>locks the bin that key lives in</strong> and then runs the mapping function.</p>
+
+        <blockquote><p><strong>The same key is blocked completely,</strong> and for exactly as long as the
+        mapping function takes. Even a different key <strong>is blocked too if its hash lands in the same
+        bin.</strong></p></blockquote>
+
+        <p>If the mapping function is a memory computation, that is microseconds. Here it was
+        <strong>a network round trip</strong> — not milliseconds, but tens to hundreds of them.</p>
+
+        <p>⚠️ The internal document calls this a “segment lock”, which <strong>is not accurate.</strong>
+        Segments are the Java 7 implementation; since Java 8 <code>ConcurrentHashMap</code> locks
+        <strong>per bin.</strong> Use the wrong name and the next person goes looking in the wrong place.</p>
+
+        <h2 id="the-fix">The fix: not better locking, but removing the reason to lock<a class="anchor" href="#the-fix" aria-label="Link to this section">#</a></h2>
+
+        <p>⚠️ One thing first. <strong><code>computeIfAbsent</code> also runs the mapping function once per
+        key and makes the rest wait.</strong> Switching to Caffeine’s <code>LoadingCache</code> does not remove
+        the queue. The difference is not whether threads queue but <strong>whether they queue holding the map’s
+        lock</strong>, and that difference alone does not turn ten minutes into 23 ms.
+        (If the mapping function returns <code>null</code>, nothing is stored and the next call computes again.
+        Looking up a deleted group is one such path.)</p>
+
+        <p>So <strong>what this screen actually got was not better locking, but removing the reason to
+        lock.</strong> The hand-rolled cache and its <code>synchronized</code> blocks came out and Caffeine went
+        in. One loader per key is guaranteed, so there is no separate lock to write against a stampede.</p>
+
+        <p>What configuration 6 added is <strong>a refresh policy.</strong> Instead of dropping a stale value
+        and making the next caller repopulate it, it hands back the old value and reloads behind them.
+        ⚠️ That behaviour only appears <strong>once a value is there.</strong> The first request for a key waits
+        for the loader to finish.</p>
+
+        <p>Five things actually changed on this screen.</p>
+
+        <ul>
+          <li><strong>The hand-rolled cache became Caffeine.</strong> What <code>CacheManager</code> and
+          <code>synchronized</code> blocks were doing is now the library’s job.</li>
+          <li><strong>Refreshing moved to the background.</strong> With <code>refreshAfterWrite(5s)</code>,
+          a list query returns the value it has immediately and the reload happens behind it.</li>
+          <li><strong>The cache is filled at startup.</strong> An <code>ApplicationReadyEvent</code> triggers
+          <code>CompletableFuture.runAsync</code>. <strong>It does not block startup.</strong>
+          Which makes it not a device that removes the cold start but <strong>one that lowers the odds of
+          meeting it.</strong> A request arriving before warming finishes still loads for itself, and the same
+          holds if warming fails. ⚠️ The design document describes this step as “synchronous warming”, but the
+          code says <code>runAsync</code>. I wrote down the code, not the document.</li>
+          <li><strong>Creating or deleting a volume invalidates the cache</strong> — without leaving it empty.
+          The existing value stays while a fresh read happens behind it and swaps in atomically.</li>
+          <li><strong>The path that edits a volume group was not invalidating the volume cache.</strong>
+          It cleared its own cache and left the volume DTO cache alone. That path now invalidates both.</li>
+        </ul>
+
+        <h2 id="freshness">Freshness: invalidating a cache slows down whoever comes next<a class="anchor" href="#freshness" aria-label="Link to this section">#</a></h2>
+
+        <p>Add a cache and <strong>when to drop it</strong> comes with it. Creating or deleting a volume
+        changes the list, so it has to be invalidated. But <strong>the query right after an invalidation goes
+        out to the external API,</strong> and it is not the person who deleted something who pays that cost.
+        It is whoever arrives next.</p>
+
+        <p>So it <strong>keeps the existing value and refills behind it.</strong> That is a trade between
+        showing a briefly stale value and making one person slow. <strong>The five seconds has a reason
+        behind it:</strong> the screen re-fetches the list every five seconds, so the team agreed that staying
+        fresh within that cycle was enough.</p>
+
+        <p>That said, <strong>“five seconds” is not a ceiling.</strong> The volume list carries only
+        <code>refreshAfterWrite(5s)</code> and no expiry. The reload starts <strong>when someone asks for the
+        value again after those five seconds have passed,</strong> and that person receives the old value.
+        If nobody asks, nothing refreshes. If the reload fails, the old value stays. Which means there is
+        <strong>no fixed ceiling on how stale the value can get.</strong> Adding an expiry creates one — and at
+        that moment you are back at the first paragraph of this section. Someone pays the cost.</p>
+
+        <h2 id="objection">Objection: “why not just add threads?”<a class="anchor" href="#objection" aria-label="Link to this section">#</a></h2>
+
+        <p>It is the first prescription anyone reaches for, and <strong>here it is wrong.</strong></p>
+
+        <p>What blocks is not the thread count but <strong>a single key.</strong> More threads only means more
+        of them standing in front of that key. Configurations 2 and 4 part company exactly there: going parallel
+        made <strong>the median 21x faster and P99 1.9x slower.</strong> The queue did not get shorter,
+        <strong>the distribution got wider.</strong> ⚠️ I did not measure the order in which requests finished.
+        That two percentiles moved in opposite directions is everything this test says.</p>
+
+        <p>Growing the executor fails for the same reason. The queue does not shorten;
+        <strong>the people queuing simply take up more seats.</strong></p>
+
+        <h2 id="measurement">Measurement: before and after, same conditions<a class="anchor" href="#measurement" aria-label="Link to this section">#</a></h2>
+
+        <p>The load was identical before and after: <strong>50 concurrent users · 2 min Ramp-Up ·
+        10 min duration · 2–5 s Think Time.</strong> Only the code changed.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: Scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">The admin volume screen, before and after.</caption>
+          <thead><tr><th>Metric</th><th>Before</th><th>After</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Error rate</strong></td><td>83.3%</td><td><strong>0%</strong></td></tr>
+            <tr><td><strong>P99</strong></td><td>10 min timeout</td><td><strong>23 ms</strong></td></tr>
+            <tr><td>Throughput</td><td>0.06 req/s</td><td>12.82 req/s</td></tr>
+            <tr><td>Apdex</td><td>0.0</td><td><strong>1.000</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">45 of 54 samples failed, an error rate of 83.3%. The report’s error table lists
+        exactly one kind, <code>java.net.SocketTimeoutException · Read timed out</code>, 45 times.
+        <strong>Every failure was a timeout.</strong></p>
+
+        <p>I found and fixed the same defect on the three remaining screens, and all four moved the same way.</p>
+
+                <figure class="diagram">
+          <img src="../assets/figures/volume-jmeter-before.png" alt="JMeter report before the fix. Apdex 0.000, 45 of 54 samples failed, error rate 83.33%, P99 600,017 ms, every error a read timeout." loading="lazy" width="876" height="571">
+          <figcaption>The JMeter report before the fix (configuration 1). 45 of 54 samples failed and
+          <strong>every error was <code>Read timed out</code>.</strong> P99 sits at 600,017 ms, which is the
+          ten-minute timeout ceiling exactly.</figcaption>
+        </figure>
+
+        <figure class="diagram">
+          <img src="../assets/figures/volume-jmeter-after.png" alt="JMeter report after the fix. Apdex 1.000, all 7,658 samples succeeded, mean 5.34 ms, P99 23 ms, 12.82 requests per second." loading="lazy" width="645" height="317">
+          <figcaption>After the fix (configuration 6). The configured test duration is the same and
+          <strong>completed samples went from 54 to 7,658</strong> — as throughput, 0.06 to 12.82 requests per
+          second. Median 4 ms, P99 23 ms, Apdex 1.000.</figcaption>
+        </figure>
+
+        <h2 id="limits">Limits: what this article does not claim<a class="anchor" href="#limits" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>These are not production numbers.</strong> They were measured with JMeter in an isolated
+          test environment. The “ten minutes” is the load test’s timeout ceiling, not a wait any user sat through.</li>
+          <li><strong>This is not an argument that parallelism is bad.</strong> I suspect
+          <strong>the network call inside a lock</strong> is why parallelism hurt in this code, and once that lock
+          was gone parallelism pays. But the basis for that suspicion is the code, not this test.</li>
+          <li><strong>It also did not have to be Caffeine.</strong> The property needed is “one loader per key”,
+          not a particular library. You can write it yourself — writing it myself is what caused this article.</li>
+          <li><strong>I do not attribute all four screens to one cause.</strong> Each had slightly different
+          secondary causes, and only the first one is written up in detail here.</li>
+          <li><strong>The 23 ms is the aggregate P99 over all 7,658 samples,</strong> not a figure filtered to
+          cache hits. What the source explains as a cache hit is the 4 ms median.</li>
+          <li><strong>Configurations 5 and 6 cannot be attributed change by change.</strong> The source records
+          5 only as <code>addMoreInfo() optimized</code>, and several edits went in together.</li>
+          <li><strong>This test cannot say why parallel got worse.</strong> The lock-contention explanation comes
+          from reading the code.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="Closing">Closing<a class="anchor" href="#Closing" aria-label="Link to this section">#</a></h2>
+
+        <p>To gather it up.</p>
+
+        <ul>
+          <li><strong>Parallelising can make things slower</strong> — when it manufactures contention that
+          was not there before.</li>
+          <li>A <code>computeIfAbsent</code> mapping function should be <strong>short and simple.</strong>
+          The Java documentation says so. Put I/O inside it and that key stays locked for the whole round trip.</li>
+          <li><strong>“Nothing” is a value too.</strong> A cache that will not store zero rows is not a cache
+          for as long as the answer is zero rows.</li>
+          <li><strong>Using a concurrent data structure and having no contention are different claims.</strong></li>
+        </ul>
+
+        <p>If one line survives, this one:
+        <strong>measure only “before and after” and you never learn which change did the work.</strong>
+        Only after measuring the six configurations separately could I see that parallelism has a harmful
+        stretch in this code.</p>
+
+        <p>The next part is a different screen in the same product. That time <strong>there was nothing wrong
+        with the code</strong> and listing 20 instances still took 54 seconds.</p>
+
+        <p>Thank you for reading.</p>
+        </div>
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=5aec33d2bb"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=44326158d4"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
