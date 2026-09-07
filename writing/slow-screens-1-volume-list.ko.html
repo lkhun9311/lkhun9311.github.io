@@ -138,6 +138,53 @@
         <strong>어느 프로젝트 것인지</strong>, <strong>어느 볼륨 그룹에 속하는지</strong>, <strong>최근 오류 메시지가 있는지</strong>를
         같이 보여 줍니다. 이 세 가지가 전부 다른 API에서 옵니다.</p>
 
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+            <svg viewBox="0 0 720 216" role="img" aria-labelledby="svc1-t svc1-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="svc1-t">볼륨 목록 화면이 그려지기까지의 호출 구조</title>
+              <desc id="svc1-d">관리자가 볼륨 목록 화면을 열면 관리 콘솔 백엔드가 볼륨 목록을 한 번 가져옵니다.
+              그다음이 문제입니다. 볼륨 한 건마다 프로젝트, 볼륨 그룹, 오류 메시지를 따로 조회하므로
+              볼륨이 N개면 외부 API 호출이 3N회 나갑니다. 이 세 호출이 분홍색으로 표시한 구간입니다.</desc>
+
+              <rect x="8" y="40" width="126" height="52" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="71" y="64" font-size="13.5" fill="#18121d" text-anchor="middle">관리자 화면</text>
+              <text x="71" y="82" font-size="12.5" fill="#7b7186" text-anchor="middle">볼륨 목록</text>
+              <path d="M134 66 H 176" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#s1-ar)"/>
+
+              <rect x="184" y="30" width="176" height="72" rx="6" fill="none" stroke="#18121d" stroke-width="2"/>
+              <text x="272" y="54" font-size="13.5" fill="#18121d" font-weight="700" text-anchor="middle">관리 콘솔 backend</text>
+              <text x="272" y="73" font-size="12.5" fill="#3b3344" text-anchor="middle">Java · Spring</text>
+              <text x="272" y="91" font-size="12.5" fill="#7b7186" text-anchor="middle">직접 짠 cache</text>
+
+              <path d="M360 50 H 420" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#s1-ar)"/>
+              <text x="390" y="42" font-size="12" fill="#7b7186" text-anchor="middle">목록 1회</text>
+              <rect x="428" y="30" width="284" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="570" y="55" font-size="13" fill="#18121d" text-anchor="middle">블록 스토리지 API</text>
+
+              <path d="M272 102 V 138" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#s1-arA)"/>
+              <text x="284" y="126" font-size="12.5" fill="#d62976" font-weight="700">볼륨 1건마다 3회</text>
+              <rect x="184" y="138" width="528" height="62" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="448" y="160" font-size="13" fill="#d62976" font-weight="700" text-anchor="middle">볼륨 N개 · 외부 API 3N회</text>
+              <rect x="200" y="170" width="156" height="22" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="278" y="185" font-size="12" fill="#d62976" text-anchor="middle">프로젝트 조회</text>
+              <rect x="366" y="170" width="156" height="22" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="444" y="185" font-size="12" fill="#d62976" text-anchor="middle">볼륨 그룹 조회</text>
+              <rect x="532" y="170" width="164" height="22" rx="4" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="614" y="185" font-size="12" fill="#d62976" text-anchor="middle">오류 메시지 조회</text>
+              <defs>
+                <marker id="s1-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
+                </marker>
+                <marker id="s1-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>목록 자체는 한 번만 가져옵니다. 분홍색으로 표시한 아래쪽이 이 글에서 문제가 되는
+          지점입니다. 볼륨 한 건마다 세 가지를 따로 물어보므로 볼륨이 늘수록 호출이 선형으로 늘어납니다.</figcaption>
+        </figure>
+
         <p>그래서 목록 한 번을 그리는 데 이런 호출이 나갑니다.</p>
 
 <pre data-lang="text"><code>볼륨 N개를 그리려면
