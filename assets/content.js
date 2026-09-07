@@ -248,6 +248,18 @@
           tags: ["Reliability", "Method"]
         },
         {
+          title: "A Volume List Went From a Ten-Minute Timeout to 23 ms",
+          url: "writing/slow-screens-1-volume-list.html",
+          source: "company", sourceLabel: "Company work",
+          title_ko: "볼륨 목록 P99가 10분에서 23ms가 됐습니다",
+          desc_ko: "관리 볼륨 목록이 6번에 5번 timeout이 났습니다. 고친 뒤 구성을 6가지로 나눠 같은 부하로 따로 쟀더니, 초를 가장 많이 줄인 것은 cache 하나였고 병렬화는 중앙값과 꼬리를 반대 방향으로 움직였습니다. 연작 「느린 화면」 ①.",
+          title_ja: "ボリューム一覧の P99 が 10 分の timeout から 23ms になりました",
+          desc_ja: "管理ボリューム一覧が 6 回に 5 回 timeout しました。直したあと構成を 6 通りに分けて同じ負荷で測ると、秒を最も減らしたのは cache 1 つで、並列化は中央値と裾を逆方向に動かしました。連載「遅い画面」①。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "An admin volume list timed out five runs out of six. Measured across six configurations under the same load: one cache bought the largest drop in seconds, and parallelising moved the median and the tail in opposite directions. Slow Screens, part one. Also in Korean and Japanese.",
+          tags: ["Performance", "Backend", "Method"]
+        },
+        {
           title: "Adding Threads Made the Tail Longer",
           url: "writing/parallelism-made-the-tail-worse.html",
           source: "company", sourceLabel: "Company work",
