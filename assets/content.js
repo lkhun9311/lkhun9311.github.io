@@ -252,7 +252,7 @@
           url: "writing/slow-screens-2-instance-list.html",
           source: "company", sourceLabel: "Company work",
           title_ko: "instance 목록 조회가 54초에서 1초가 됐습니다",
-          desc_ko: "instance는 20개인데 목록이 timeout이 났습니다. 같은 조회를 CLI로 해도 54초여서 코드가 용의선상에서 빠졌습니다. swap이 8.0GiB 전부 차 있었고 instances 테이블에 삭제 표시만 된 행이 1,021개 남아 있었습니다. 그리고 제가 쓴 명령은 운영에서 쓰면 안 되는 것이었습니다. 연작 「느린 화면」 ②.",
+          desc_ko: "instance는 20개인데 목록이 timeout이 났습니다. CLI로 불러도 54초여서 느린 구간이 backend 아래에 있다는 것까지는 알았습니다. swap이 8.0GiB 전부 차 있었고 instances 테이블에는 삭제 표시만 된 행이 1,021개 남아 있었습니다. 그리고 제가 쓴 명령은 운영에서 쓰면 안 되는 것이었습니다. 연작 「느린 화면」 ②.",
           title_ja: "instance 20 個の一覧に 54 秒かかりました",
           desc_ja: "instance は 20 個なのに一覧が timeout しました。同じ取得を CLI で実行しても 54 秒で、コードが容疑から外れました。swap が 8.0GiB すべて埋まり、instances テーブルには削除の印だけが付いた行が 1,021 件。そして私が使ったコマンドは本番で使ってはいけないものでした。連載「遅い画面」②。",
           date: "2026-09", dateLabel: "Sep 2026",

@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="instance 20 個の一覧に 54 秒かかりました | Kwanghun Lee" />
-  <meta property="og:description" content="instance は 20 個なのに一覧の取得が timeout しました。同じ取得を CLI で実行しても 54 秒かかり、コードが容疑から外れました。swap が 8.0GiB すべて埋まっており、instances テーブルには削除の印だけが付いた行が 1,021 件残っていました。" />
+  <meta property="og:description" content="instance は 20 個なのに一覧の取得が timeout しました。CLI で同じ一覧を呼んでも 54 秒かかり、遅い区間が backend より下にあるところまでは分かりました。swap が 8.0GiB すべて埋まっており、instances テーブルには削除の印だけが付いた行が 1,021 件残っていました。" />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -27,9 +27,9 @@
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="instance 20 個の一覧に 54 秒かかりました | Kwanghun Lee" />
-  <meta name="twitter:description" content="instance は 20 個なのに一覧の取得が timeout しました。同じ取得を CLI で実行しても 54 秒かかり、コードが容疑から外れました。swap が 8.0GiB すべて埋まっており、instances テーブルには削除の印だけが付いた行が 1,021 件残っていました。" />
+  <meta name="twitter:description" content="instance は 20 個なのに一覧の取得が timeout しました。CLI で同じ一覧を呼んでも 54 秒かかり、遅い区間が backend より下にあるところまでは分かりました。swap が 8.0GiB すべて埋まっており、instances テーブルには削除の印だけが付いた行が 1,021 件残っていました。" />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="instance は 20 個なのに一覧の取得が timeout しました。同じ取得を CLI で実行しても 54 秒かかり、コードが容疑から外れました。swap が 8.0GiB すべて埋まっており、instances テーブルには削除の印だけが付いた行が 1,021 件残っていました。" />
+  <meta name="description" content="instance は 20 個なのに一覧の取得が timeout しました。CLI で同じ一覧を呼んでも 54 秒かかり、遅い区間が backend より下にあるところまでは分かりました。swap が 8.0GiB すべて埋まっており、instances テーブルには削除の印だけが付いた行が 1,021 件残っていました。" />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
 </head>
@@ -116,9 +116,9 @@
         <h2 id="どんな内容">どんな内容<a class="anchor" href="#どんな内容" aria-label="この節へのリンク">#</a></h2>
 
         <ul>
-          <li><strong>同じ取得を CLI で実行しても 54 秒でした。</strong>その 1 回で、私たちのコードが
-          容疑から外れました。</li>
-          <li>原因が <strong>2 つ重なっていました。</strong>swap が 8.0GiB すべて埋まっており、
+          <li><strong>CLI で同じ一覧を呼んでも 54 秒でした。</strong>遅い区間が私たちの backend より
+          下にあるということです。</li>
+          <li>異常なものが <strong>2 つ一緒に観測されました。</strong>swap が 8.0GiB すべて埋まっており、
           <code>instances</code> テーブルには <strong>削除の印だけが付いた行が 1,021 件</strong>
           残っていました。</li>
           <li>直したあと、CLI の取得が <strong>54 秒から 1.002 秒</strong>になりました。</li>
@@ -132,7 +132,7 @@
 
         <p><strong>⚠️ 先にお伝えすることがあります。</strong>以下の数値は <strong>QA 試験環境の実測</strong>で、
         運用統計ではありません。そしてあとで出てくるとおり、<strong>2 つの修正が一度に入ったため、
-        どちらがどれだけ稼いだかを切り分けられません。</strong></p>
+        それぞれが取得時間をどれだけ縮めたかを別々に測っていません。</strong></p>
 
         <h2 id="どんな画面">どんな画面<a class="anchor" href="#どんな画面" aria-label="この節へのリンク">#</a></h2>
 
@@ -181,24 +181,30 @@
               </defs>
             </svg>
           </div>
-          <figcaption>画面と CLI は出発点が違い、到着点が同じです。青い区間だけが共通です。
-          <strong>CLI でも 54 秒かかるなら、上の箱 2 つは原因ではありません。</strong></figcaption>
+          <figcaption>画面と CLI は出発点が違い、到着点が同じです。青い区間だけが共通です。</figcaption>
         </figure>
 
         <h2 id="分かれ道">分かれ道: CLI でも 54 秒でした<a class="anchor" href="#分かれ道" aria-label="この節へのリンク">#</a></h2>
 
         <p>画面が出ないとき最初にやったのは、<strong>同じものを別の道から呼んでみること</strong>でした。</p>
 
-<pre data-lang="bash"><code>$ time openstack server list --all-projects</code></pre>
+<pre data-lang="bash"><code>$ openstack server list</code></pre>
 
-        <p><strong>54 秒かかりました。</strong>⚠️ このときのターミナルは残しておらず、記録には「54 秒」という
-        数字だけがあります。あとで出てくる修正後の出力にはスクリーンショットが残っています。</p>
+        <p><strong>54 秒かかりました。</strong></p>
 
-        <p>この 1 行が <strong>私たちのコードと管理コンソールを容疑から消しました。</strong>
-        CLI は私たちの backend を通りません。それでも 54 秒なら、遅いのはその下です。</p>
+        <p>⚠️ ここで <strong>前後を同じリクエストとして保証できません。</strong>記録に残っているのは
+        修正前が <code>openstack server list</code>、修正後が
+        <code>openstack server list --all-projects</code> です。オプションが違います。
+        そして修正前はターミナルのスクリーンショットがなく、<strong>「54 秒」という数字だけ</strong>が
+        残っています。</p>
+
+        <p>それでもこの 1 行が得たものがあります。<strong>管理コンソールの backend を通らない経路でも
+        54 秒かかった</strong>ということです。遅い区間が <strong>compute API より下に少なくとも 1 つある</strong>
+        という意味です。⚠️ これは私たちの backend が何の遅延も足していないという証明ではありません。
+        そちらは別に測っていません。</p>
 
         <blockquote><p>画面が遅いときにアプリケーションのコードから開くのは、習慣であって診断ではありません。
-        <strong>同じ問いを別の経路から 1 回投げれば、半分が消えます。</strong></p></blockquote>
+        <strong>同じ問いを別の経路から 1 回投げれば、探す場所が減ります。</strong></p></blockquote>
 
         <h2 id="原因1">原因 ①: swap が 8.0GiB すべて埋まっていました<a class="anchor" href="#原因1" aria-label="この節へのリンク">#</a></h2>
 
@@ -210,12 +216,16 @@ Mem:            62Gi   44Gi  8.1Gi    1.3Gi        12Gi        18Gi
 Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
 
         <p><strong>swap が 8.0GiB のうち 8.0GiB を使っています。</strong>残りは 2.0MiB です。
-        MariaDB が読むべきページがこの中に入っていると、メモリで終わる読み取りが
-        <strong>ディスクの往復</strong>になります。</p>
+        ここまでが <strong>見たこと</strong>です。</p>
 
-        <p>⚠️ 社内文書はここに「RAM 0.0001ms、swap 10〜100ms」と書いています。
-        <strong>このマシンで測った値ではなく、一般的な桁を引用したもの</strong>です。
-        この記事もそれ以上のことは言いません。確認できたのは <strong>swap が埋まっていた</strong>までです。</p>
+        <p>ここから先は <strong>仮説</strong>です。MariaDB が読むべきページが swap に入っていれば、
+        メモリで終わる読み取りがディスクの往復になります。だとすればクエリはそのままで遅くなります。</p>
+
+        <p>⚠️ <strong>その仮説を測っていません。</strong><code>vmstat</code> も <code>iostat</code> も
+        MariaDB プロセスの page fault も残っていません。ですからこの記事が言えるのは
+        <strong>「swap が埋まっていた」と「swap を空けたら速くなった」の 2 つの事実</strong>までで、
+        その間をつなぐのは証拠ではなく当て推量です。社内文書の「RAM 0.0001ms、swap 10〜100ms」も
+        このマシンで測った値ではなく、一般的な桁の引用です。</p>
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロールできる図">
@@ -264,7 +274,7 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
 
         <h2 id="原因2">原因 ②: 削除の印だけが付いた行が 1,021 件<a class="anchor" href="#原因2" aria-label="この節へのリンク">#</a></h2>
 
-        <p>次はテーブルです。OpenStack はリソースを消すとき、行を <strong>削除しません。</strong>
+        <p>次はテーブルです。Nova は instance を消すとき、行を <strong>削除しません。</strong>
         <code>deleted</code> カラムだけを変えます。soft delete です。</p>
 
 <pre data-lang="sql"><code>SELECT deleted, COUNT(*) FROM instances GROUP BY deleted;</code></pre>
@@ -293,8 +303,9 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
         </table>
         </div>
         </div>
-        <p class="table-note">OpenStack は soft delete のとき <code>deleted</code> に <strong>その行の id</strong>
-        を入れます。だから削除された行はそれぞれ違う値を持ち、グループが行数だけできます。
+        <p class="table-note">Nova の <code>instances</code> の行は soft delete されるとき
+        <code>deleted</code> に <strong>その行の id</strong> が入ります(ほかのサービスや他のテーブルまで
+        そうだという話ではありません)。だから削除された行はそれぞれ違う値を持ち、グループが行数だけできます。
         スクリーンショットでも <code>deleted = 0</code> だけが <code>COUNT(*) = 20</code> で、残りはすべて 1 です。
         要約表にある <strong>1,041</strong> が行数で、こちらが正しい値です。</p>
 
@@ -314,8 +325,17 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
 
         <p>このコマンドは <strong>swap にあったものを全部 RAM に引き上げます。</strong>ですから
         <strong>RAM にその分の空きが必要です。</strong>なければ <code>swapoff</code> が失敗するか、
-        OOM killer が何かを殺します。ここでは <code>available</code> が 18GiB だったので、8.0GiB の入る
-        余地がありました。</p>
+        カーネルがメモリを取り戻そうとプロセスを殺します(OOM killer)。ここでは
+        <code>available</code>(新しいプロセスが swap なしで使えるとカーネルが見積もった量)が 18GiB
+        だったので、8.0GiB の入る余地がありました。</p>
+
+        <p>⚠️ ところが <strong>この 1 行には、当時の私が知らなかった落とし穴があります。</strong>
+        <code>swapoff -a</code> は <strong>登録された swap を全部</strong>止め、メモリ不足以外の理由でも
+        失敗しえます。一部だけ止まっても <code>swapoff</code> は 0 以外で終わり、
+        <code>&amp;&amp;</code> は前が 0 のときだけ後ろを実行します。つまり <strong>半端に失敗すると
+        <code>swapon -a</code> が実行されず、swap が止まったまま残ります。</strong>
+        本番のマシンでは、余裕を先に確認し、デバイスごとの状態を個別に見て、失敗したときに戻す手順まで
+        用意してから触るコマンドです。</p>
 
 <pre data-lang="text"><code>[root@host ~]# free -h
                total   used   free   shared  buff/cache   available
@@ -323,9 +343,13 @@ Mem:            62Gi   51Gi  787Mi    1.3Gi        11Gi        10Gi
 Swap:          8.0Gi     0B  8.0Gi</code></pre>
 
         <p><strong>そしてその余地を使い切りました。</strong><code>available</code> が 18GiB から
-        <strong>10GiB</strong> になりました。swap にあったものが RAM に上がってきた分です。
-        ⚠️ <code>free -h</code> は丸めて表示するので、「8GiB」は概数です。
-        今は速くなりましたが、<strong>同じことがまた起きる余地も、その分だけ減りました。</strong></p>
+        <strong>10GiB</strong> になりました。</p>
+
+        <p>⚠️ この 8GiB を全部 swap から上がってきた分だと言い切ることはできません。
+        <code>free -h</code> は丸めて表示し、<code>available</code> は実使用量ではなく
+        <strong>見積もり</strong>で、その間ほかのプロセスも動いていました。そして
+        <strong>減ったのはその時点の RAM の余裕であって、swap の容量ではありません。</strong>
+        <code>swapon -a</code> で 8.0GiB の swap は戻してあります。また埋まるかどうかは、その後測っていません。</p>
 
         <p>次はテーブルです。</p>
 
@@ -346,8 +370,10 @@ SET FOREIGN_KEY_CHECKS = 1;</code></pre>
         </figure>
 
         <p>アプリケーション側も一緒に直しました。全件取得の API が
-        <strong><code>DELETED</code> 状態を除いて</strong>呼ぶように変えました。DB がまた溜まっても、
-        取得側で 1 枚防ぎます。</p>
+        <strong><code>DELETED</code> 状態を除いて</strong>呼ぶように変えました。
+        ⚠️ ただしこれが <strong>どれだけ防いでくれるのかは測っていません。</strong>
+        <code>openstack server list</code> はもともと削除済みを除いて呼びます。私たちの backend が
+        その前に何を送っていて、変えたあと何が変わったのか、リクエストもクエリ計画も残していません。</p>
 
         <h2 id="本番では禁止">⚠️ このコマンドは本番で使ってはいけません<a class="anchor" href="#本番では禁止" aria-label="この節へのリンク">#</a></h2>
 
@@ -356,8 +382,11 @@ SET FOREIGN_KEY_CHECKS = 1;</code></pre>
         その判断が正しかったとしても、<strong>やり方は悪かった</strong>のです。</p>
 
         <ul>
-          <li><strong>外部キー検査を切りました。</strong>順番を 1 つでも間違えれば、参照の切れた行が残ります。
-          しかも切れたかどうかは、検査を戻すときではなく <strong>ずっと後で</strong>分かります。</li>
+          <li><strong>外部キー検査を切りました。</strong>これは「順番に気をつければよい」話ではありません。
+          検査を切ったセッションでは <strong>すべての参照違反がそのまま通り</strong>、
+          <strong>戻してもすでに生じた不整合をさかのぼって検査してくれません。</strong>
+          抜けた子テーブル、その間に入った別の書き込み、途中で切れた実行——どれも参照の切れた行を
+          残しえますし、それが分かるのはずっと後です。</li>
           <li><strong>先にバックアップを取りませんでした。</strong>「戻す必要はない」という判断は、
           戻せるうちにしてこそ安全な判断です。</li>
           <li><strong>再発を止められません。</strong>soft delete は溜まり続けます。今日消したものは今日までです。</li>
@@ -371,6 +400,10 @@ SET FOREIGN_KEY_CHECKS = 1;</code></pre>
         削除の印が付いた行が溜まると性能に影響すること、定期的に保管して取り除くことが
         <strong>すでに書かれていました。</strong>私が手で消したのは、その文書を読まずにやったことでした。</p>
 
+        <p>文書が言う方法は <strong>本テーブルから直接消さず、横へ移す</strong>ことです。移し先を
+        <strong>shadow テーブル</strong>と呼びます。名前が <code>shadow_</code> で始まる同じ形のテーブルで、
+        取得の経路から外れています。</p>
+
         <div class="table-scroll">
 <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると残りが見えます">
@@ -378,15 +411,19 @@ SET FOREIGN_KEY_CHECKS = 1;</code></pre>
           <caption class="sr-only">削除された行の保存段階と期間。</caption>
           <thead><tr><th>段階</th><th>どこにあるか</th><th>どれだけ</th><th>何のために</th></tr></thead>
           <tbody>
-            <tr><td>soft delete</td><td>本テーブル</td><td>30 日</td><td>緊急復旧、直近の監査</td></tr>
-            <tr><td>archive</td><td>shadow テーブル</td><td>90 日</td><td>規程順守、中期の監査</td></tr>
-            <tr><td>purge</td><td>完全削除</td><td>90 日後</td><td>保存領域の確保</td></tr>
+            <tr><td>soft delete</td><td>本テーブル</td><td>削除から 30 日</td><td>直近の履歴照会</td></tr>
+            <tr><td>archive</td><td>shadow テーブル</td><td>削除から 30〜90 日</td><td>履歴の保管</td></tr>
+            <tr><td>purge</td><td>残らない</td><td>削除から 90 日以降</td><td>保存領域の確保</td></tr>
           </tbody>
         </table>
         </div>
         </div>
         <p class="table-note">本テーブルから直接消さず、<strong>1 段階を挟みます。</strong>
-        本テーブルは archive の時点ですでに小さくなり、戻せる期間が 90 日残ります。</p>
+        本テーブルは archive の時点ですでに小さくなります。⚠️ 期間はすべて <strong>行が削除された日</strong>を
+        基準に数えます。30 日で archive し 90 日で purge すると、shadow にいるのは 60 日です。
+        ⚠️ そして <strong>shadow テーブルは Nova が保証する復旧手段ではありません。</strong>
+        取得の経路から外しておく履歴の保管用で、すべてのテーブルに shadow があるわけでもありません。
+        「消す前に 90 日戻せる」と読んではいけません。</p>
 
 <pre data-lang="bash"><code># 1) 30 日を過ぎたものを shadow テーブルへ移す。本テーブルはここで小さくなる
 nova-manage db archive_deleted_rows \
@@ -395,24 +432,55 @@ nova-manage db archive_deleted_rows \
 
 # 2) shadow から 90 日を過ぎたものを完全削除する。領域が戻る
 nova-manage db purge \
-  --all --verbose --all-cells \
+  --verbose --all-cells \
   --before "$(date -d '90 days ago' '+%Y-%m-%d')"</code></pre>
+
+        <p>⚠️ 提案書では <code>purge</code> に <code>--all</code> が付いていました。あれは
+        「すべての shadow テーブル」という意味ではなく <strong>残りを全部消せ</strong>という意味なので、
+        <code>--before</code> と一緒に使うと意図がぶつかります。外しました。</p>
 
         <p>そして <strong>人が覚えてやる仕事にしない</strong>と書きました。負荷の低い夜明けに、
         少しずつ回すように仕掛ける案です。</p>
 
-<pre data-lang="text"><code># /etc/cron.d/nova-db-daily-archive
-0 2 * * * nova /usr/bin/nova-manage db archive_deleted_rows \
-  --max_rows 5000 --all-cells --sleep 5 \
-  &gt;&gt; /var/log/nova/db-archive-daily.log 2&gt;&amp;1</code></pre>
+        <p>⚠️ <strong>ところが私が出した提案書の cron 例は、自分の保存方針と食い違っていました。</strong>
+        この記事を書きながら気づきました。3 か所です。</p>
 
-        <p><code>--max_rows 5000</code> と <code>--sleep 5</code> が並んでいるのが要点です。
-        <strong>一度に片付ければ、それ自体が負荷になります。</strong>毎日少しずつ片付ければ溜まりません。</p>
+        <ul>
+          <li><strong><code>--before</code> が抜けていました。</strong>上の表は 30 日置くと言いながら、
+          cron は <strong>昨日消した行まで</strong>その日のうちに移します。</li>
+          <li><strong><code>--sleep</code> は <code>--until-complete</code> と一緒のときだけ意味を持ちます。</strong>
+          1 回回して終わる今の形では、5 秒休む場所がありません。</li>
+          <li><strong>purge を仕掛ける cron がありませんでした。</strong>archive だけ回れば shadow は
+          溜まり続けます。本テーブルは小さくなり、ディスクは減りません。</li>
+        </ul>
+
+        <p>直すとこうなります。</p>
+
+<pre data-lang="text"><code># /etc/cron.d/nova-db-archive
+# 毎日 2 時: 削除から 30 日を過ぎた行だけを shadow へ移す
+0 2 * * * nova /usr/bin/nova-manage db archive_deleted_rows \
+  --max_rows 5000 --all-cells \
+  --before "$(date -d '30 days ago' '+%Y-%m-%d')" \
+  &gt;&gt; /var/log/nova/db-archive.log 2&gt;&amp;1
+
+# 毎週日曜 3 時: shadow で 90 日を過ぎたものを消す
+0 3 * * 0 nova /usr/bin/nova-manage db purge --all-cells \
+  --before "$(date -d '90 days ago' '+%Y-%m-%d')" \
+  &gt;&gt; /var/log/nova/db-purge.log 2&gt;&amp;1</code></pre>
+
+        <p>そして <strong>1 日 5,000 行で足りるのか</strong>が別に残ります。1 日に消える量がそれより多ければ、
+        本テーブルは育ち続けます。片付ける速さが溜まる速さより速くなければなりません。</p>
 
         <p>実行の前にはバックアップを取ります。今回、私が飛ばした手順です。</p>
 
 <pre data-lang="bash"><code>mysqldump --single-transaction nova       &gt; nova_backup.sql
 mysqldump --single-transaction nova_cell0 &gt; nova_cell0_backup.sql</code></pre>
+
+        <p>⚠️ <strong>このバックアップでは足りません。</strong>提案書に書いたそのまま載せましたが、
+        <code>--all-cells</code> は <strong>登録されたすべての cell DB</strong> に触れ(cell は Nova が
+        compute リソースを分けて持つ DB の単位です)、instance を archive するときは
+        <code>nova_api</code> 側の行も一緒に消えます。2 つ取っただけでは戻せません。
+        <strong>cell の一覧をまず出し、そこにある DB 全部と <code>nova_api</code> を一緒に取る必要があります。</strong></p>
 
         <h2 id="測定">測定: 何がどれだけ変わったか<a class="anchor" href="#測定" aria-label="この節へのリンク">#</a></h2>
 
@@ -446,24 +514,26 @@ sys     0m0.048s</code></pre>
         <h2 id="限界">限界: この記事が主張しないこと<a class="anchor" href="#限界" aria-label="この節へのリンク">#</a></h2>
 
         <ul>
-          <li><strong>2 つの修正のどちらがどれだけ稼いだか、切り分けられません。</strong>swap を空けるのと
-          行を消すのが一度に入りました。<a href="slow-screens-1-volume-list.ja.html">前編</a>で 6 通りの構成を
-          別々に測ったのはこのためですが、急ぎの状況でここではそうしませんでした。</li>
-          <li><strong>1,041 行が 54 秒の原因だとは言いません。</strong>1,041 行のテーブルを走査するのは
-          ふつうミリ秒の仕事です。<strong>読み取りごとにディスクを往復しなければならないとき</strong>に
-          はじめて重くなります。2 つの原因が重なったというところまでが確認した範囲で、それぞれの取り分は
-          分かりません。</li>
-          <li><strong>swap を空けたのは原因を無くしたことではありません。</strong>症状を戻しただけです。
-          <code>available</code> が 10GiB に減ったので、また埋まりえます。RAM を増やすか MariaDB のメモリ設定に
-          手を入れるのが本当の答えで、それはしていません。</li>
+          <li><strong>2 つの変更がそれぞれどれだけ縮めたのか、切り分けられません。</strong>swap を空けるのと
+          行を消すのが一度に入りました。2 つが <strong>互いに影響したか</strong>も分かりません。それを見るには
+          4 通りの組み合わせを別々に回す必要があり、1 つも回していません。
+          <a href="slow-screens-1-volume-list.ja.html">前編</a>で 6 通りの構成を別々に測ったのはこのためですが、
+          急ぎの状況でここではそうしませんでした。</li>
+          <li><strong>1,041 行が 54 秒の原因だとは言いません。</strong>逆に原因ではないとも言いません。
+          行数だけを別に変えてみたことがないので、<strong>判定のしようがありません。</strong></li>
+          <li><strong>swap を空けたのは原因を無くしたことではありません。</strong>その時点の状態を戻しただけです。
+          ⚠️ そして <strong>何がそれだけのメモリを使っていたのかを確かめていません。</strong>
+          ですから「RAM を増やすべきだ」も「MariaDB の設定を直すべきだ」も、この記事は言えません。
+          まずどのプロセスがどれだけ握っていたのかを見るところからです。</li>
           <li><strong>「cache が効けば 500ms 以内」は原本の文です。</strong>その実測値は記録に残っておらず、
           表には入れていません。</li>
           <li><strong>運用環境の数値ではありません。</strong>QA 試験環境の実測です。</li>
           <li><strong>後半は提案であって結果ではありません。</strong>archive・purge・cron は私が文書として出した
           <strong>提案</strong>で、それが実際に仕掛けられて回ったという記録は手元にありません。
           この記事で実測が付いているのは前半、急いで直したほうだけです。</li>
-          <li><strong>OpenStack だけの話ではありません。</strong>soft delete を使うシステムはすべて同じ請求書を
-          受け取ります。ただしこの記事が確認したのは、この 1 台のマシンです。</li>
+          <li><strong>OpenStack だけの話ではないかもしれません。</strong>消した行を本テーブルに残す
+          システムなら、schema とクエリ計画しだいで似たことが起こりえます。
+          ただしこの記事が確認したのは <strong>この 1 台のマシン</strong>です。</li>
         </ul>
 
         <div class="wrapup">
@@ -472,12 +542,13 @@ sys     0m0.048s</code></pre>
         <p>まとめるとこうです。</p>
 
         <ul>
-          <li><strong>同じ問いを別の経路から 1 回投げれば、半分が消えます。</strong>CLI が 54 秒だったという
-          一点で、コードを開く必要がなくなりました。</li>
-          <li><strong>消したデータもテーブルには残っています。</strong>soft delete は消したように見えるだけで、
-          消えてはいません。</li>
-          <li><strong>swap が埋まると、その上のすべての判断が揺れます。</strong>クエリはそのままで、
-          読み取り 1 件の値段が変わっています。</li>
+          <li><strong>同じ問いを別の経路から 1 回投げれば、探す場所が減ります。</strong>CLI が 54 秒だった
+          という一点で、先に見る場所が backend より下へ移りました。</li>
+          <li><strong>消したデータも本テーブルには残っています。</strong>soft delete は消したように見えるだけで、
+          消えてはいません。クエリがその行を実際に何件読むかは schema とクエリ計画しだいで、
+          それは別に見る必要があります。</li>
+          <li><strong>swap が埋まっていると、その上の判断が信じにくくなります。</strong>クエリはそのままで
+          読み取り 1 件の値段が変わっているかもしれず、それを確かめるにはメモリ側を別に測る必要があります。</li>
           <li><strong>急ぎで使ったコマンドを、答えとして残してはいけません。</strong>書き留めておかないと、
           次の人がそれを手順として覚えます。</li>
         </ul>
@@ -502,7 +573,7 @@ sys     0m0.048s</code></pre>
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=21a2b423ae"></script>
+  <script src="../assets/content.js?v=c636de8faf"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=44326158d4"></script>
