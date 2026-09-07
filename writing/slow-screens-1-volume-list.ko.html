@@ -568,7 +568,7 @@ if (messages == null || messages.isEmpty()) {
         <code>java.net.SocketTimeoutException · Read timed out</code> 한 종류만 45건으로 나옵니다.
         <strong>실패는 전부 timeout이었습니다.</strong></p>
 
-        <p>같은 결함을 나머지 세 화면에서도 찾아 고쳤고, 네 화면 전부 같은 방향으로 움직였습니다.</p>
+        <p>같은 결함을 나머지 세 화면에서도 찾아 고쳤고 네 화면 전부 같은 방향으로 움직였습니다.</p>
 
                 <figure class="diagram">
           <img src="../assets/figures/volume-jmeter-before.png" alt="고치기 전 JMeter 리포트. Apdex 0.000, 표본 54건 중 45건 실패, 오류율 83.33%, P99 600,017밀리초. 오류 종류는 전부 Read timed out." loading="lazy" width="876" height="571">
@@ -590,16 +590,16 @@ if (messages == null || messages.isEmpty()) {
           <li><strong>운영 수치가 아닙니다.</strong> 격리된 시험 환경에서 JMeter로 잰 값입니다.
           「10분」은 부하 시험의 timeout 상한이지 사용자가 실제로 기다린 시간이 아닙니다.</li>
           <li><strong>병렬화가 나쁘다는 이야기가 아닙니다.</strong> 이 코드에서 병렬화가 해로웠던 이유로
-          <strong>lock 안의 네트워크</strong>를 의심했고, 그 lock을 걷어낸 뒤에는 병렬화가 값을 합니다.
+          <strong>lock 안의 네트워크</strong>를 의심했고 그 lock을 걷어낸 뒤에는 병렬화가 값을 합니다.
           다만 의심의 근거는 코드이지 이 시험이 아닙니다.</li>
           <li><strong>Caffeine이어야 하는 것도 아닙니다.</strong> 필요한 성질은 「키마다 loader 하나」이지
           특정 라이브러리가 아닙니다. 직접 짜도 되지만 직접 짠 것이 이 글의 원인이었습니다.</li>
           <li><strong>네 화면의 수치를 한 원인으로 돌리지 않습니다.</strong> 화면마다 곁가지 원인이 조금씩
-          달랐고, 이 글이 자세히 적은 것은 첫 화면뿐입니다.</li>
+          달랐고 이 글이 자세히 적은 것은 첫 화면뿐입니다.</li>
           <li><strong>23ms는 7,658건 전체의 집계 P99</strong>이지 cache 적중 표본만 고른 값이 아닙니다.
           원본이 cache hit로 설명한 것은 중앙값 4ms 쪽입니다.</li>
           <li><strong>⑤와 ⑥의 개선을 하나씩 귀속할 수 없습니다.</strong> 원본은 ⑤를
-          <code>addMoreInfo() optimized</code> 라고만 적었고, 그 안에 여러 수정이 함께 들어갔습니다.</li>
+          <code>addMoreInfo() optimized</code> 라고만 적었고 그 안에 여러 수정이 함께 들어갔습니다.</li>
           <li><strong>병렬이 나빠진 이유는 이 시험이 가르지 못합니다.</strong> lock 경합이라는 설명은
           코드를 읽어 세운 것입니다.</li>
         </ul>

@@ -96,28 +96,28 @@
         <blockquote><p>connection 재사용은 transaction과 transaction <strong>사이</strong>에서만 일어난다.
         transaction이 열려 있는 동안에는 그 connection이 그 클라이언트에 <strong>묶인다(pin)</strong>.</p></blockquote>
 
-        <p>당연한 이야기입니다. transaction은 <strong>상태</strong>이고, 열려 있는 중간에 다른 세션에 빌려주면 격리가 깨집니다.</p>
+        <p>당연한 이야기입니다. transaction은 <strong>상태</strong>이고 열려 있는 중간에 다른 세션에 빌려주면 격리가 깨집니다.</p>
 
         <p>그래서 이렇게 됩니다.</p>
 
         <pre data-lang="text">transaction이 10초 열려 있음
   → 뒤쪽 connection도 10초 묶임
   → 앱 connection 1개당 DB connection 1개
-  → 풀러가 줄여 주는 게 없음</pre>
+  → pooler가 줄여 주는 게 없음</pre>
 
         <p>즉 <strong>짧은 transaction이 많을 때</strong> 값을 하는 도구입니다. transaction 안에서 외부 API를 기다리는
         코드에는 효과가 없습니다.</p>
         <h2 id="핀">핀(pin)이 걸리는 패턴<a class="anchor" href="#핀" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>아래 패턴이 코드에 있으면 transaction이 끝나도 connection이 계속 묶여, 풀러가 무력해집니다.</p>
+        <p>아래 패턴이 코드에 있으면 transaction이 끝나도 connection이 계속 묶여, pooler가 무력해집니다.</p>
 
         <ul>
           <li>세션 스코프 advisory lock (<code>pg_advisory_lock</code>): <code>pg_advisory_xact_lock</code> 은 괜찮습니다(transaction 종료 시 해제)</li>
           <li>임시 테이블</li>
           <li><code>SET</code> · <code>set search_path</code></li>
-          <li>서버 프리페어드 스테이트먼트 (풀러와 버전에 따라 다름)</li>
+          <li>서버 프리페어드 스테이트먼트 (pooler와 버전에 따라 다름)</li>
         </ul>
 
-        <p>그래서 풀러를 <strong>도입하기 전에</strong> 이 넷이 코드에 있는지 먼저 확인해야 합니다. 도입한 뒤에 알면
+        <p>그래서 pooler를 <strong>도입하기 전에</strong> 이 넷이 코드에 있는지 먼저 확인해야 합니다. 도입한 뒤에 알면
         돈은 이미 나갔고 효과는 없습니다.</p>
 
         <h2 id="쓰인-곳">이 사이트에서 쓰인 곳<a class="anchor" href="#쓰인-곳" aria-label="이 절로 가는 링크">#</a></h2>

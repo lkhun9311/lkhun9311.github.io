@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>역할 조회 1,409ms가 1ms가 됐습니다 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/slow-screens-3-role-lookup.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/slow-screens-3-role-lookup.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/slow-screens-3-role-lookup.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/slow-screens-3-role-lookup.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="역할 조회 1,409ms가 1ms가 됐습니다 | Kwanghun Lee" />
+  <meta property="og:description" content="이용자 화면의 역할 목록이 1.4초였습니다. hit 8번은 전부 0ms였고 miss 6번을 더하면 1,409ms로 응답 시간과 정확히 같았습니다. cache miss 1건이 프로젝트 전체 목록을 다시 부르고 있었는데, 그 6건은 다시 받아도 없는 프로젝트였습니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/slow-screens-3-role-lookup.ko.html" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="역할 조회 1,409ms가 1ms가 됐습니다 | Kwanghun Lee" />
+  <meta name="twitter:description" content="이용자 화면의 역할 목록이 1.4초였습니다. hit 8번은 전부 0ms였고 miss 6번을 더하면 1,409ms로 응답 시간과 정확히 같았습니다. cache miss 1건이 프로젝트 전체 목록을 다시 부르고 있었는데, 그 6건은 다시 받아도 없는 프로젝트였습니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="이용자 화면의 역할 목록이 1.4초였습니다. hit 8번은 전부 0ms였고 miss 6번을 더하면 1,409ms로 응답 시간과 정확히 같았습니다. cache miss 1건이 프로젝트 전체 목록을 다시 부르고 있었는데, 그 6건은 다시 받아도 없는 프로젝트였습니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "slow-screens-3-role-lookup.html", "ko": "slow-screens-3-role-lookup.ko.html", "ja": "slow-screens-3-role-lookup.ja.html"}'>
+          <option value="ko" selected>한국어</option>
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
+        <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>역할 조회 1,409ms가 1ms가 됐습니다<br><span class="h1-sub">못 찾은 프로젝트 id마다 전체 목록을 다시 부르고 있었습니다. 사내 cloud 관리 console · 느린 화면 연작 ③</span></h1>
+          <p class="article-date">2026년 9월</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="slow-screens-3-role-lookup"></aside>
+
+        <nav class="article-toc" aria-label="목차">
+          <p class="toc-label">목차</p>
+          <ul>
+            <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+            <li><a href="#무슨-내용">무슨 내용인가요?</a></li>
+            <li><a href="#어떤-화면">어떤 화면인가요?</a></li>
+            <li><a href="#로그">로그가 지연이 어디 있는지 이미 찍고 있었습니다</a></li>
+            <li><a href="#원인">원인: miss 1건이 전체 목록을 다시 불렀습니다</a></li>
+            <li><a href="#영원한-miss">그 6건은 채워 넣어도 없었습니다</a></li>
+            <li><a href="#수정">수정: 키로 찾지 말고 목록을 걸렀습니다</a></li>
+            <li><a href="#잃은-것">⚠️ 대신 잃은 것: 새 프로젝트가 늦게 보입니다</a></li>
+            <li><a href="#안-고친-것">그리고 원인은 그대로 남았습니다</a></li>
+            <li><a href="#주장하지-않는-것">한계: 이 글이 주장하지 않는 것</a></li>
+            <li><a href="#마치며">마치며</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>안녕하세요. 사내 cloud 관리 console의 backend를 만들고 있습니다. 이용자 상세 화면에서
+        <strong>역할 목록이 1초를 넘겨 로딩만 돌고</strong> 있었습니다.</p>
+
+        <p>⚠️ 이 글의 <strong>1,409ms는 화면 응답 시간이 아닙니다.</strong> 코드에 넣어 둔 타이머가
+        DB 조회가 끝난 <strong>뒤에</strong> 시작해서, 역할 줄을 DTO로 바꾸는 구간만 잽니다.
+        DB 조회와 직렬화·전송은 그 바깥이라 여기 안 들어 있습니다.
+        <strong>사용자가 기다린 시간은 이보다 깁니다.</strong> 이 글의 숫자는 전부 그 구간의 값입니다.</p>
+
+        <p>이 화면에는 <strong>이미 cache가 있었습니다.</strong> 그래서 이번 글은
+        「cache를 넣었더니 빨라졌다」가 아니라 <strong>「cache가 있는데 그 cache 때문에 느렸다」</strong>입니다.</p>
+
+        <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li>cache를 넣었는데 기대만큼 안 빨라진 화면을 보신 분</li>
+          <li>cache miss가 났을 때 <strong>무엇을 다시 불러올지</strong> 정해 본 적이 있는 분</li>
+          <li>없는 것을 찾는 조회가 있는 줄 모르고 지나쳐 보신 분</li>
+        </ul>
+
+        <h2 id="무슨-내용">무슨 내용인가요?<a class="anchor" href="#무슨-내용" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul>
+          <li>화면 요청 1번에 역할 14줄이 딸려 오고 줄마다 <strong>프로젝트 id를 하나씩 풀어 봅니다.</strong>
+          <strong>찾은 것 8줄, 못 찾은 것 6줄</strong>입니다.</li>
+          <li><strong>찾은 8줄은 전부 0ms였습니다.</strong> 그리고 못 찾은 6줄을 더하면
+          <strong>1,409ms</strong>, 즉 <strong>이 실행에서 타이머가 찍은 총계와 같습니다.</strong></li>
+          <li>원인은 <strong><code>CacheBox.project()</code>가 못 찾을 때마다 프로젝트 전체 목록을
+          다시 불렀던 것</strong>입니다. 그런데 그 6개 id는
+          <strong>전체 목록을 새로 받아도 그 안에 없습니다.</strong></li>
+          <li>고친 뒤 같은 구간이 <strong>1ms</strong>가 됐습니다. ⚠️ 그런데
+          <strong>못 찾은 줄은 여전히 6줄</strong>입니다. 줄인 것은 못 찾는 횟수가 아니라
+          <strong>못 찾았을 때 드는 시간</strong>입니다.</li>
+        </ul>
+
+        <p>⚠️ 로그에 <code>[Hit]</code>·<code>[Miss]</code>라고 찍혀 있지만 <strong>이건 cache 안을 잰 것이
+        아닙니다.</strong> <code>CacheBox</code>를 부른 결과로 프로젝트가 돌아왔는지만 보고 붙인 이름입니다.
+        cache에서 제대로 읽었는데 그 id가 목록에 없어서 <code>[Miss]</code>가 되는 경우도 있습니다.
+        아래에서는 <strong>「찾음 · 못 찾음」</strong>으로 부르겠습니다.</p>
+
+        <p><strong>사내 제품이라 코드와 로그를 그대로 옮기지 않았습니다.</strong> 제품명·고객사·내부 주소는 빼고
+        구조와 수치만 남겼습니다. 로그는 <strong>logger 이름과 project id를 가리고 옮겨 적었습니다.</strong>
+        밀리초는 원본 그대로입니다. ⚠️ 줄별 밀리초는 <strong>사내 문서에 붙어 있는 로그 갈무리를 보고
+        손으로 옮긴 값</strong>입니다. 문서 본문에 숫자로 적혀 있는 것은 총계(1,409ms · 250ms · 1ms) 쪽입니다.</p>
+
+        <h2 id="어떤-화면">어떤 화면인가요?<a class="anchor" href="#어떤-화면" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>이용자 1명을 열면 아래쪽에 그 사람이 <strong>어느 프로젝트에서 어떤 역할인지</strong>가 표로 나옵니다.
+        역할 자체는 우리 DB에 있고 <strong>프로젝트 이름은 OpenStack 쪽에 있습니다.</strong>
+        정확히는 OpenStack에서 이용자와 프로젝트를 맡는 <strong>Keystone</strong>입니다.
+        그래서 역할 1줄마다 프로젝트를 한 번씩 찾아야 합니다.</p>
+
+        <p>그 찾는 자리에 cache가 있었습니다. 직접 짠 것이고
+        (<a href="slow-screens-1-volume-list.ko.html">①편</a>에 나온 그 <code>CacheManager</code>입니다)
+        보관 기간은 <strong>10분</strong>이었습니다.</p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+            <svg viewBox="0 0 720 176" role="img" aria-labelledby="svc3-t svc3-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="svc3-t">역할 표 1줄이 프로젝트 이름에 닿기까지</title>
+              <desc id="svc3-d">왼쪽에서 화면이 이용자 1명의 역할 목록을 요청하면 backend가 먼저 우리 DB의
+              역할 표를 한 번 읽어 역할 14줄을 받습니다. 그다음이 이 글의 구간입니다. 줄마다 프로젝트 id를
+              들고 cache에 물어보고 cache가 답하지 못하면 Keystone의 프로젝트 목록 API로 나갑니다.
+              분홍색으로 표시한 것이 그 바깥으로 나가는 경로입니다.</desc>
+
+              <rect x="8" y="30" width="112" height="34" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="64" y="52" font-size="12.5" fill="#18121d" text-anchor="middle">이용자 화면</text>
+              <path d="M120 47 H 158" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#v3-ar)"/>
+              <rect x="166" y="30" width="132" height="34" rx="6" fill="none" stroke="#18121d" stroke-width="2"/>
+              <text x="232" y="52" font-size="12.5" fill="#18121d" font-weight="700" text-anchor="middle">관리 console backend</text>
+              <path d="M298 47 H 336" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#v3-ar)"/>
+              <rect x="344" y="30" width="120" height="34" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="404" y="46" font-size="12.5" fill="#18121d" text-anchor="middle">우리 DB · 역할 표</text>
+              <text x="404" y="60" font-size="11.5" fill="#7b7186" text-anchor="middle">1회 · 14줄</text>
+
+              <path d="M232 64 V 96" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#v3-arA)"/>
+              <text x="244" y="86" font-size="12" fill="#d62976" font-weight="700">줄마다 1회</text>
+              <rect x="166" y="96" width="132" height="34" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="232" y="112" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">직접 짠 cache</text>
+              <text x="232" y="126" font-size="11.5" fill="#7b7186" text-anchor="middle">보관 10분</text>
+              <path d="M298 113 H 336" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#v3-arA)"/>
+              <rect x="344" y="96" width="240" height="34" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="464" y="112" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">Keystone · 프로젝트 목록 API</text>
+              <text x="464" y="126" font-size="11.5" fill="#7b7186" text-anchor="middle">1회 약 235ms</text>
+              <rect x="166" y="144" width="418" height="18" rx="3" fill="rgba(214,41,118,0.18)" stroke="#d62976" stroke-width="1.5"/>
+              <text x="375" y="158" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">이 글이 다루는 구간</text>
+              <defs>
+                <marker id="v3-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
+                </marker>
+                <marker id="v3-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>역할 표는 1번만 읽습니다. 분홍색 구간이 줄마다 반복되는 쪽이고 타이머도 여기서만 돕니다.</figcaption>
+        </figure>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+            <svg viewBox="0 0 720 210" role="img" aria-labelledby="miss-t miss-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="miss-t">cache miss 1건이 부르는 것, 수정 전과 후</title>
+              <desc id="miss-d">위 카드가 수정 전입니다. 키 하나를 찾다 없으면 프로젝트 전체 목록을 외부 API에서
+              다시 받아 cache를 채우고 그 키를 한 번 더 찾습니다. 아래 카드가 수정 후로, 목록을 cache에서 한 번
+              받아 두고 그 안에서 키를 거릅니다. 없으면 없는 채로 끝나고 외부 API를 부르지 않습니다.</desc>
+
+              <rect x="0" y="0" width="720" height="94" rx="10" fill="rgba(214,41,118,0.06)"/>
+              <rect x="10" y="10" width="72" height="22" rx="11" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="46" y="26" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">수정 전</text>
+              <rect x="98" y="44" width="132" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="164" y="61" font-size="12" fill="#18121d" text-anchor="middle">키 1개로 찾기</text>
+              <path d="M230 57 H 268" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#m-arA)"/>
+              <rect x="276" y="44" width="112" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="332" y="61" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">없음</text>
+              <path d="M388 57 H 426" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#m-arA)"/>
+              <rect x="434" y="44" width="276" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="572" y="61" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">전체 목록을 외부 API에서 다시 받음</text>
+              <text x="10" y="86" font-size="12" fill="#d62976" font-weight="700">miss 1건 · 약 235ms</text>
+
+              <rect x="0" y="106" width="720" height="94" rx="10" fill="rgba(79,91,213,0.06)"/>
+              <rect x="10" y="116" width="72" height="22" rx="11" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="46" y="132" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">수정 후</text>
+              <rect x="98" y="150" width="132" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="164" y="167" font-size="12" fill="#18121d" text-anchor="middle">목록을 받아 거르기</text>
+              <path d="M230 163 H 268" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#m-arB)"/>
+              <rect x="276" y="150" width="112" height="26" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="332" y="167" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">없음</text>
+              <path d="M388 163 H 426" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#m-arB)"/>
+              <rect x="434" y="150" width="276" height="26" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="572" y="167" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">그대로 끝 · 외부 API 없음</text>
+              <text x="10" y="192" font-size="12" fill="#4f5bd5" font-weight="700">miss 1건 · 0ms</text>
+              <defs>
+                <marker id="m-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+                <marker id="m-arB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>id 1개로 묻는 방식과 목록을 받아 거르는 방식에서, 외부 API가 붙는 조건을 나란히 둔 것입니다.</figcaption>
+        </figure>
+
+        <h2 id="로그">로그가 지연이 어디 있는지 이미 찍고 있었습니다<a class="anchor" href="#로그" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>조회 1건마다 hit인지 miss인지와 걸린 시간을 찍어 두고 있었습니다. 고치기 전 한 번을 그대로 옮기면
+        이렇습니다.</p>
+
+<pre data-lang="text"><code>[Miss] projectId=project-A   elapsed  247 ms
+[Miss] projectId=project-B   elapsed  235 ms
+[Hit ] projectId=project-C   elapsed    0 ms
+[Hit ] projectId=project-D   elapsed    0 ms
+[Miss] projectId=project-E   elapsed  238 ms
+[Miss] projectId=project-F   elapsed  228 ms
+[Miss] projectId=project-G   elapsed  233 ms
+[Hit ] projectId=project-H   elapsed    0 ms
+[Hit ] projectId=project-I   elapsed    0 ms
+[Hit ] projectId=project-D   elapsed    0 ms
+[Miss] projectId=project-J   elapsed  228 ms
+[Hit ] projectId=project-D   elapsed    0 ms
+[Hit ] projectId=project-H   elapsed    0 ms
+[Hit ] projectId=project-K   elapsed    0 ms
+[Result] Total elapsed time: 1409 ms</code></pre>
+
+        <p>여기서 더할 것이 하나뿐입니다.</p>
+
+        <blockquote><p><strong>247 + 235 + 238 + 228 + 233 + 228 = 1,409</strong><br>
+        못 찾은 6줄의 합이 <strong>이 실행의 총계와 같습니다.</strong> 찾은 8줄은 0ms였습니다.</p></blockquote>
+
+        <p>⚠️ 밀리초 단위 1회 측정이라 <strong>「나머지가 정확히 0이다」까지 말할 수는 없습니다.</strong>
+        DTO를 만들고 거르고 정렬하는 비용은 각 줄의 구간 밖에 있고 그것들이 1ms 아래면 이렇게 보입니다.
+        말할 수 있는 것은 <strong>이 해상도에서 6줄의 기록값 합이 총계와 같았다</strong>는 것입니다.</p>
+
+        <p>그래도 볼 곳은 정해집니다. 물을 것은 「cache가 왜 안 도와주나」가 아니라
+        <strong>「못 찾은 줄 1개가 왜 235ms인가」</strong>입니다.</p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+            <svg viewBox="0 0 720 150" role="img" aria-labelledby="bar-t bar-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="bar-t">응답 시간 1,409ms를 조회 14건으로 나눈 막대</title>
+              <desc id="bar-d">가로 막대 하나가 응답 시간 1,409밀리초 전체입니다. 그 안이 miss 6칸으로만 채워져
+              있고 각 칸은 228에서 247밀리초 사이입니다. hit 8건은 0밀리초여서 막대에서 폭을 차지하지 않고
+              막대 아래에 눈금으로만 표시돼 있습니다.</desc>
+
+              <text x="0" y="20" font-size="12.5" fill="#3b3344">응답 시간 1,409ms · 조회 14건</text>
+              <rect x="0" y="32" width="708" height="34" rx="4" fill="none" stroke="#3b3344" stroke-width="1"/>
+              <rect x="1" y="33" width="124" height="32" fill="rgba(214,41,118,0.30)"/>
+              <rect x="125" y="33" width="118" height="32" fill="rgba(214,41,118,0.16)"/>
+              <rect x="243" y="33" width="120" height="32" fill="rgba(214,41,118,0.30)"/>
+              <rect x="363" y="33" width="114" height="32" fill="rgba(214,41,118,0.16)"/>
+              <rect x="477" y="33" width="117" height="32" fill="rgba(214,41,118,0.30)"/>
+              <rect x="594" y="33" width="114" height="32" fill="rgba(214,41,118,0.16)"/>
+              <text x="63" y="53" font-size="11" fill="#d62976" font-weight="700" text-anchor="middle">247</text>
+              <text x="184" y="53" font-size="11" fill="#d62976" font-weight="700" text-anchor="middle">235</text>
+              <text x="303" y="53" font-size="11" fill="#d62976" font-weight="700" text-anchor="middle">238</text>
+              <text x="420" y="53" font-size="11" fill="#d62976" font-weight="700" text-anchor="middle">228</text>
+              <text x="535" y="53" font-size="11" fill="#d62976" font-weight="700" text-anchor="middle">233</text>
+              <text x="651" y="53" font-size="11" fill="#d62976" font-weight="700" text-anchor="middle">228</text>
+              <text x="0" y="86" font-size="12" fill="#d62976" font-weight="700">miss 6건 · 막대 전부</text>
+              <g stroke="#4f5bd5" stroke-width="2">
+                <path d="M0 104 V 116"/><path d="M14 104 V 116"/><path d="M28 104 V 116"/><path d="M42 104 V 116"/>
+                <path d="M56 104 V 116"/><path d="M70 104 V 116"/><path d="M84 104 V 116"/><path d="M98 104 V 116"/>
+              </g>
+              <text x="112" y="115" font-size="12" fill="#4f5bd5" font-weight="700">hit 8건 · 0ms · 폭 없음</text>
+            </svg>
+          </div>
+          <figcaption>칸 너비는 밀리초에 비례합니다. 찾은 8줄은 0ms라 막대에서 폭이 없습니다.
+          찾은 쪽은 <strong>이미 충분히 빨랐습니다.</strong> 남은 것은 못 찾은 쪽의 처리 시간입니다.</figcaption>
+        </figure>
+
+        <h2 id="원인">원인: miss 1건이 전체 목록을 다시 불렀습니다<a class="anchor" href="#원인" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>프로젝트를 찾는 코드가 이렇게 생겼습니다.</p>
+
+<pre data-lang="java"><code>public static Project project(final String projectId) {
+    CacheManager manager = CacheManager.getInstance().init(Project.class, 10);
+    final Project project = manager.get(Project.class, projectId);
+
+    if (project == null) {                       // ← 키 1개가 없다
+        client.identity().projects().list()      // ← 전체 목록을 다시 받아
+              .forEach(r -&gt; manager.set(Project.class, r.getId(), r));
+        return manager.get(Project.class, projectId);   // ← 다시 찾아본다
+    }
+    return project;
+}</code></pre>
+
+        <p>읽으면 그럴듯합니다. <strong>없으면 채워 넣고 다시 본다.</strong> cache를 처음 쓸 때 자연스럽게
+        나오는 모양이고 실제로 <strong>처음 한 번은 이게 맞습니다.</strong></p>
+
+        <p>문제는 <strong>「채워 넣어도 없는 키」</strong>가 있을 때입니다.</p>
+
+        <h2 id="영원한-miss">그 6건은 채워 넣어도 없었습니다<a class="anchor" href="#영원한-miss" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>역할 표는 <strong>우리 DB</strong>에 있고 프로젝트는 <strong>OpenStack</strong>에 있습니다.
+        OpenStack 쪽에서 프로젝트를 지워도 <strong>우리 역할 표의 그 줄은 그대로 남습니다.</strong>
+        그 줄이 가리키는 projectId는 이제 어디에도 없습니다.</p>
+
+        <p>그러면 위 코드가 이렇게 돕니다.</p>
+
+        <ol>
+          <li>cache에서 찾는다 → 없다</li>
+          <li>전체 목록을 다시 받는다 → <strong>235ms</strong></li>
+          <li>다시 찾는다 → <strong>여전히 없다</strong>. 지워진 프로젝트니까요</li>
+          <li>다음 줄에서 또 없는 id를 만난다 → <strong>1번으로</strong></li>
+        </ol>
+
+        <blockquote><p><strong>없는 id를 만날 때마다 프로젝트 전체 목록을 새로 받았습니다.</strong>
+        새로 받아도 그 6개 id는 목록에 없으므로 다음 줄에서도 똑같이 받습니다.</p></blockquote>
+
+        <p>못 찾은 6줄은 <strong>제가 가진 3번의 실행에서 모두 같은 6개 id</strong>였습니다.
+        고치기 전 1회와 고친 뒤 2회이고 날짜도 하루 차이가 납니다.
+        우연히 비어 있던 것이 아니라 <strong>채워질 수 없는 자리</strong>로 보입니다.
+        ⚠️ 3회는 3회입니다. 그 이상 돌려 보지 않았습니다.</p>
+
+        <h2 id="수정">수정: 키로 찾지 말고 목록을 걸렀습니다<a class="anchor" href="#수정" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>고친 것은 <strong>찾는 방식 하나</strong>입니다.</p>
+
+<pre data-lang="java"><code>// 전: 키 1개를 cache에 묻는다. 없으면 외부 API를 부른다
+var project = CacheBox.project(roleAssignment.getProjectId());
+
+// 후: 목록을 cache에서 받아 그 안에서 거른다. 없으면 없는 채로 끝
+var project = CacheBox.projects().stream()
+        .filter(p -&gt; p.getId().equalsIgnoreCase(roleAssignment.getProjectId()))
+        .findFirst();</code></pre>
+
+        <p><code>projects()</code>도 외부 API를 부를 때가 있습니다. 다른 것은
+        <strong>「그 id가 없다」가 더 이상 외부 API를 부르는 조건이 아니라는 것</strong>입니다.</p>
+
+        <p>정확히는 이렇습니다. <code>projects()</code>는 cache에서 목록을 받아 오는데 이때
+        <strong>만료된 항목을 하나씩 걸러 냅니다.</strong> 그렇게 걸러 낸 결과가
+        <strong>완전히 비었을 때만</strong> 외부 API를 부릅니다.</p>
+
+        <p>⚠️ 여기에 함정이 하나 있습니다. <strong>일부만 만료되면 부르지 않습니다.</strong>
+        살아남은 항목이 하나라도 있으면 그 불완전한 목록을 그대로 돌려주고 그 사이에 빠진 프로젝트는
+        <strong>있는데도 「못 찾음」이 됩니다.</strong> 이번 실행에서는 항목들이 한꺼번에 채워져
+        한꺼번에 만료되므로 드러나지 않았습니다. 드러나지 않았다는 것이지 없다는 뜻은 아닙니다.</p>
+
+        <p>로그가 그대로 보여 줍니다. cache가 만료된 상태에서 한 번 돌리면,</p>
+
+<pre data-lang="text"><code>[Miss] projectId=project-A   elapsed  246 ms   ← 목록을 받아 오는 호출
+[Miss] projectId=project-B   elapsed    0 ms
+[Hit ] projectId=project-C   elapsed    0 ms
+…
+[Miss] projectId=project-J   elapsed    0 ms
+[Result] Total elapsed time: 250 ms</code></pre>
+
+        <p><strong>miss는 여전히 6번입니다.</strong> 그런데 그중 5번이 0ms입니다.
+        cache가 유효한 상태에서는 첫 번째도 0ms가 되고 <strong>총계가 1ms</strong>가 됩니다.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+        <table>
+          <caption class="sr-only">역할 조회 1건의 상태별 응답 시간.</caption>
+          <thead><tr><th>상태</th><th>역할 줄</th><th>못 찾음</th><th>못 찾은 1줄의 시간</th><th>구간 총계</th></tr></thead>
+          <tbody>
+            <tr><td>고치기 전</td><td>14</td><td>6</td><td>228~247ms</td><td><strong>1,409ms</strong></td></tr>
+            <tr><td>고친 뒤 · cache 만료</td><td>14</td><td>6</td><td>첫 1건만 246ms</td><td>250ms</td></tr>
+            <tr><td>고친 뒤 · cache 유효</td><td>14</td><td>6</td><td>0ms</td><td><strong>1ms</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">가운데 칸이 세 줄 다 <strong>6</strong>입니다.
+        <strong>못 찾는 횟수를 줄인 적이 없습니다.</strong> 바뀐 것은 오른쪽 두 칸입니다.
+        ⚠️ 세 줄 모두 <strong>1회 관측</strong>입니다. 반복해서 분포를 본 값이 아닙니다.</p>
+
+        <h2 id="잃은-것">⚠️ 대신 잃은 것: 새 프로젝트가 늦게 보입니다<a class="anchor" href="#잃은-것" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>고치기 전 코드에는 <strong>안 쓰이던 쓸모가 하나 있었습니다.</strong> 모르는 id를 만나면
+        목록을 다시 받았으니, <strong>방금 만든 프로젝트가 곧바로 보였습니다.</strong>
+        느린 대신 최신이었던 것입니다.</p>
+
+        <p>고친 뒤에는 모르는 id를 만나도 아무것도 안 합니다. 그래서 새 프로젝트는
+        <strong>cache가 다시 채워질 때까지 안 보입니다.</strong></p>
+
+        <p>⚠️ 그 「다시 채워질 때」가 <strong>10분이라고 못 박을 수는 없습니다.</strong>
+        보관 기간은 목록 단위가 아니라 <strong>항목마다 기록된 저장 시각</strong>에 걸립니다.
+        그리고 <code>project()</code>는 지워지지 않고 남아 있어서 <strong>다른 화면에서 그 함수가
+        한 번 돌면 항목들이 통째로 다시 채워집니다.</strong> 그러면 시각이 갱신되어 더 늦게 보일 수도,
+        마침 그 순간에 채워져 더 빨리 보일 수도 있습니다.
+        말할 수 있는 것은 <strong>다른 곳에서 채우지 않는다면 마지막 항목이 만료된 뒤 첫 조회에
+        반영된다</strong>는 것까지입니다.</p>
+
+        <blockquote><p>지연을 없앤 것이 아니라 <strong>지연과 최신성을 맞바꾼 것</strong>입니다.
+        이 화면은 사람이 눈으로 읽는 목록이라 10분을 받아들일 수 있었습니다.
+        <strong>그 판단이 안 되는 화면도 있습니다.</strong></p></blockquote>
+
+        <h2 id="안-고친-것">그리고 원인은 그대로 남았습니다<a class="anchor" href="#안-고친-것" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>느린 것의 <strong>직접 원인</strong>은 못 찾을 때마다 전체 목록을 다시 부르던
+        <strong>조회 방식</strong>이었고 그 방식을 <strong>6번이나 밟게 만든 데이터 조건</strong>이
+        없는 프로젝트를 가리키는 역할 줄 6개였습니다. 둘은 다른 것입니다.</p>
+
+        <p>제가 고친 것은 <strong>앞의 것</strong>입니다. 뒤의 것은 <strong>지금도 그대로 있습니다.</strong>
+        그 줄들이 비싸지 않게 됐을 뿐 없어지지는 않았습니다.
+        OpenStack에서 프로젝트가 지워질 때 우리 역할 표도 같이 정리되게 하는 것이 원래 할 일이고,
+        그건 이 작업에 들어 있지 않았습니다.</p>
+
+        <h2 id="주장하지-않는-것">한계: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul>
+          <li><strong>측정이 <code>System.currentTimeMillis()</code>와 <code>log.info</code>입니다.</strong>
+          <code>currentTimeMillis()</code>는 단조 시계가 아니라 시스템 시각이 바뀌면 값도 흔들립니다.
+          그리고 각 줄의 구간 <strong>안에</strong> 로그 출력 1회가 들어가 있고 그 뒤의 로그 1회는
+          빠져 있습니다. <strong>0ms는 「1ms 미만」이라는 뜻</strong>이지 「비용이 없다」가 아닙니다.
+          제대로 하려면 <code>System.nanoTime()</code>이나 timer metric으로 재고 외부 API 호출 횟수는
+          따로 세어야 합니다.</li>
+          <li><strong>1회 실행입니다.</strong> 세 상태를 각각 한 번씩 돌린 로그이고 반복해서 분포를 본 것이
+          아닙니다. 235ms 라는 값도 그 6건의 평균일 뿐입니다.</li>
+          <li><strong>왜 목록 1회가 235ms 인지는 파고들지 않았습니다.</strong> 네트워크인지 Keystone 쪽
+          처리인지 프로젝트 개수 때문인지 가르지 않았습니다.</li>
+          <li><strong>프로젝트가 몇 개였는지 기록에 없습니다.</strong> 그래서 「목록이 커서 느리다」인지
+          「호출 자체가 비싸다」인지도 이 로그로는 모릅니다.</li>
+          <li><strong>고친 코드도 완전하지 않습니다.</strong> <code>projects()</code>를 역할 1줄마다
+          한 번씩 부릅니다. cache가 따뜻할 때는 0ms라 드러나지 않지만 줄이 아주 많아지면
+          <strong>목록을 반복해서 훑는 비용</strong>이 남습니다. 반복문 밖으로 한 번만 꺼내는 것이 낫습니다.</li>
+          <li><strong>이 cache는 ①편의 문제를 그대로 안고 있습니다.</strong> <code>projects()</code>에
+          잠금이 없어서 cache가 비는 순간 요청이 여럿 들어오면 <strong>각자 외부 API를 부릅니다.</strong>
+          ⚠️ 코드를 읽고 하는 말이고 이 로그로 확인한 것은 아닙니다. 이용자 1명을 연 실행이라
+          동시 요청이 없었습니다.</li>
+          <li><strong>운영 통계가 아닙니다.</strong> 시험 환경에서 이용자 1명을 연 로그입니다.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>정리하면 이렇습니다.</p>
+
+        <ul>
+          <li><strong>cache가 있다는 것과 빠르다는 것은 다릅니다.</strong> 여기서는 찾은 줄이 전부 0ms인데도
+          구간이 1,409ms였습니다.</li>
+          <li><strong>못 찾았을 때 무엇을 할지가 cache 설계의 절반입니다.</strong> 「없으면 전부 다시 받는다」는
+          처음 한 번에는 맞고 <strong>채워도 안 생기는 id 앞에서는 가장 나쁜 선택</strong>입니다.</li>
+          <li><strong>줄일 수 있는 것은 두 가지입니다.</strong> 못 찾는 <strong>횟수</strong>와 못 찾았을 때의
+          <strong>처리 시간</strong>. 이번에 줄인 것은 뒤쪽이고 앞쪽은 그대로입니다.</li>
+          <li><strong>빨라진 대신 무엇을 잃었는지 같이 적어야 합니다.</strong> 여기서는 10분어치의 최신성입니다.</li>
+        </ul>
+
+        <p>마지막으로 한 줄만 남긴다면 이겁니다.
+        <strong>이미 찍히고 있던 로그를 더해 보기만 하면 되는 일이었습니다.</strong>
+        그 6줄을 더하기 전까지는 「cache가 왜 안 듣지」를 들여다보고 있었습니다.</p>
+
+        <p>읽어 주셔서 감사합니다.</p>
+        </div>
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=c636de8faf"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=44326158d4"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
