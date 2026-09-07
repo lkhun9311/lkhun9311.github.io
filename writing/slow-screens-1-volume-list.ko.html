@@ -393,6 +393,46 @@ if (messages == null || messages.isEmpty()) {
 
         <p>같은 결함을 나머지 세 화면에서도 찾아 고쳤고, 네 화면 전부 같은 방향으로 움직였습니다.</p>
 
+                <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+            <svg viewBox="0 0 720 168" role="img" aria-labelledby="perf-t perf-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="perf-t">관리 볼륨 화면의 개선 전후</title>
+              <desc id="perf-d">가로축은 10배마다 눈금이 하나씩 있는 로그 축입니다. 고치기 전 P99 는
+              10분 timeout 이고 고친 뒤는 23밀리초입니다. 오류율은 83.3퍼센트에서 0퍼센트가 되었습니다.
+              부하 조건은 전후가 같습니다.</desc>
+
+              <text x="8" y="20" font-size="13" fill="#7b7186">P99 · 로그 축</text>
+              <g font-size="11.5" fill="#a99fb4">
+                <text x="150" y="20">10ms</text><text x="290" y="20">100ms</text>
+                <text x="430" y="20">1s</text><text x="560" y="20">1min</text>
+              </g>
+              <path d="M148 28 V 130" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
+              <path d="M288 28 V 130" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
+              <path d="M428 28 V 130" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
+              <path d="M558 28 V 130" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
+
+              <text x="8" y="56" font-size="12.5" fill="#3b3344">고치기 전</text>
+              <rect x="96" y="42" width="566" height="20" rx="3" fill="rgba(214,41,118,0.22)" stroke="#d62976" stroke-width="1.5"/>
+              <text x="672" y="56" font-size="12.5" fill="#d62976" font-weight="700">10분</text>
+
+              <text x="8" y="92" font-size="12.5" fill="#3b3344">고친 뒤</text>
+              <rect x="96" y="78" width="88" height="20" rx="3" fill="rgba(79,91,213,0.22)" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="194" y="92" font-size="12.5" fill="#4f5bd5" font-weight="700">23ms</text>
+
+              <path d="M8 112 H 712" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
+              <text x="8" y="136" font-size="12.5" fill="#3b3344">오류율</text>
+              <rect x="96" y="122" width="470" height="18" rx="3" fill="rgba(214,41,118,0.22)" stroke="#d62976" stroke-width="1.5"/>
+              <text x="576" y="136" font-size="12.5" fill="#d62976" font-weight="700">83.3%</text>
+              <text x="8" y="160" font-size="12.5" fill="#3b3344">오류율</text>
+              <rect x="96" y="146" width="6" height="18" rx="2" fill="rgba(79,91,213,0.22)" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="112" y="160" font-size="12.5" fill="#4f5bd5" font-weight="700">0%</text>
+            </svg>
+          </div>
+          <figcaption>위 두 막대가 P99이고 가로축은 10배마다 눈금이 하나씩 있는 로그 축입니다.
+          아래 두 막대가 오류율입니다. 부하 조건은 전후가 같습니다. 동시 사용자 50명 · Ramp-Up 2분 ·
+          지속 10분 · Think Time 2~5초.</figcaption>
+        </figure>
+
         <h2 id="주장하지-않는-것">한계: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul>
