@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>느린 화면 ① 볼륨 목록 조회가 10분에서 23ms로 | Kwanghun Lee</title>
+  <title>느린 화면 ① 볼륨 목록을 6단계로 나눠 쟀습니다 | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="느린 화면 ① 볼륨 목록 조회가 10분에서 23ms로 | Kwanghun Lee" />
+  <meta property="og:title" content="느린 화면 ① 볼륨 목록을 6단계로 나눠 쟀습니다 | Kwanghun Lee" />
   <meta property="og:description" content="computeIfAbsent 안에서 외부 API를 부르고 있었습니다. 순차를 병렬로 바꿨더니 더 느려졌고, 원인은 thread 수가 아니라 키 하나를 잠근 채 네트워크를 기다리는 구조였습니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
@@ -22,7 +22,7 @@
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="느린 화면 ① 볼륨 목록 조회가 10분에서 23ms로 | Kwanghun Lee" />
+  <meta name="twitter:title" content="느린 화면 ① 볼륨 목록을 6단계로 나눠 쟀습니다 | Kwanghun Lee" />
   <meta name="twitter:description" content="computeIfAbsent 안에서 외부 API를 부르고 있었습니다. 순차를 병렬로 바꿨더니 더 느려졌고, 원인은 thread 수가 아니라 키 하나를 잠근 채 네트워크를 기다리는 구조였습니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="computeIfAbsent 안에서 외부 API를 부르고 있었습니다. 순차를 병렬로 바꿨더니 더 느려졌고, 원인은 thread 수가 아니라 키 하나를 잠근 채 네트워크를 기다리는 구조였습니다." />
@@ -67,7 +67,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span></div>
       </div>
               <section class="page-hero">
-          <h1>느린 화면 ① 볼륨 목록 조회가 10분에서 23ms로<br><span class="h1-sub">computeIfAbsent 안에서 외부 API를 부르고 있었습니다. 오류율 83.3%였던 관리 볼륨 화면</span></h1>
+          <h1>느린 화면 ① 볼륨 목록을 6단계로 나눠 쟀습니다<br><span class="h1-sub">P99가 timeout 상한 10분에서 23ms가 됐습니다. 어느 수정이 얼마를 줄였는지 단계마다 따로 쟀습니다</span></h1>
           <p class="article-date">2026년 9월</p>
         </section>
 
@@ -99,8 +99,7 @@
         <strong>10분을 넘겨 timeout</strong>이 났습니다. 여섯 번에 다섯 번이 실패하는 화면이었습니다.</p>
 
         <p>고치는 데 <strong>여섯 단계</strong>가 걸렸고, 각 단계를 <strong>같은 부하 조건으로 따로 쟀습니다.</strong>
-        그 표가 이 글의 전부입니다. 어느 수정이 얼마를 벌었는지, 그리고 <strong>어느 수정이 오히려
-        까먹었는지</strong>가 단계마다 나옵니다.</p>
+        그 표가 이 글의 전부입니다. 어느 수정이 얼마를 줄였는지, 그리고 <strong>어느 수정이 오히려 늘렸는지</strong>가 단계마다 나옵니다.</p>
 
         <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -114,8 +113,8 @@
 
         <ul>
           <li><strong>여섯 단계를 각각 쟀습니다.</strong> 「고치기 전과 후」만 재면 무엇이 값을 냈는지 모릅니다.</li>
-          <li><strong>cache 없이 병렬로 돌린 단계</strong>가 평균 47.8초로 가장 나빴습니다.
-          병렬화가 만능이 아니라는 것이 여기서 먼저 보입니다.</li>
+          <li><strong>cache를 고정한 채 순차를 병렬로 바꾸니 나빠졌습니다.</strong>
+          평균 13.1초에서 14.7초, P99는 42.6초에서 79.0초입니다.</li>
           <li>가장 크게 번 것은 <strong>목록을 한 번에 가져오도록 호출 구조를 바꾼 것</strong>이고,
           마지막 <strong>23ms</strong>는 그 위에 Caffeine의 갱신을 얹어서 나왔습니다.</li>
           <li>직접 짠 cache에는 결함이 있었습니다. <strong>0건인 답을 담지 않아</strong> 없는 것을 매번 다시 물었습니다.</li>
@@ -232,13 +231,16 @@
         <p class="table-note">여섯 번 모두 <strong>동시 사용자 50명 · Ramp-Up 2분 · 지속 10분 ·
         Think Time 2~5초</strong>입니다. 바뀐 것은 각 줄의 왼쪽 칸뿐입니다.</p>
 
-        <p>읽는 법은 이렇습니다. <strong>①에서 ②로 가는 구간이 가장 큽니다.</strong> cache 하나가
-        오류율 83.3%를 0%로 만들었습니다. 그런데 <strong>③이 ①보다는 낫고 ②보다는 나쁩니다.</strong>
-        cache 없이 병렬로만 돌리면 평균 47.8초입니다. 그리고 <strong>②와 ④를 견주면
-        cache를 고정한 채 병렬로 바꾼 것이 13.1초에서 14.7초로 나빠집니다.</strong></p>
+        <p>읽는 법은 이렇습니다. <strong>가장 나쁜 것은 ①</strong>입니다. 평균 579초에 오류율 83.3%로,
+        사실상 답을 못 주는 상태입니다. cache 하나를 넣은 ②가 그걸 0%로 만듭니다.</p>
 
-        <p><strong>초를 가장 많이 깎은 것은 ⑤</strong>입니다. 목록을 한 번에 가져오도록 호출 구조를
-        바꾼 것이 14.7초를 1.0초로 만들었습니다. <strong>배수로 가장 큰 것은 ⑥</strong>이고,
+        <p>그다음이 이 표에서 가장 볼 만한 곳입니다. <strong>cache를 고정하고 순차(②)와 병렬(④)만
+        견주면 병렬 쪽이 나쁩니다</strong> — 평균 13.1초 대 14.7초, P99 42.6초 대 79.0초, TPS 2.69 대 2.46.
+        변수 하나만 다른 비교라서 이 방향은 믿을 수 있습니다.</p>
+
+        <p><strong>초를 가장 많이 줄인 것은 ⑤</strong>입니다. 14.7초를 1.0초로 만들었습니다.
+        ⚠️ 원본은 이 단계를 <code>addMoreInfo() optimized</code> 라고만 적어 두었습니다.
+        그 안에 들어간 수정이 여럿이라 <strong>어느 하나로 귀속할 수 없습니다.</strong> <strong>배수로 가장 큰 것은 ⑥</strong>이고,
         1.0초를 5.3ms로 만들었습니다. 만료된 값을 지우는 대신 남겨 둔 채 뒤에서 새로 읽으니
         <strong>사용자가 cache miss를 대신 겪지 않습니다.</strong></p>
 
@@ -274,13 +276,12 @@
               <path d="M160 185 H 200" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#v-arB)"/>
               <rect x="208" y="166" width="196" height="38" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
               <text x="306" y="182" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">LoadingCache · 로더 1개</text>
-              <text x="306" y="198" font-size="11.5" fill="#7b7186" text-anchor="middle">나머지는 결과를 받아 감</text>
+              <text x="306" y="198" font-size="11.5" fill="#7b7186" text-anchor="middle">나머지도 로더를 기다림</text>
               <path d="M404 185 H 444" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#v-arB)"/>
               <rect x="452" y="166" width="258" height="38" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
               <text x="581" y="190" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">외부 API 왕복 1회</text>
-              <rect x="10" y="212" width="196" height="16" rx="3" fill="rgba(79,91,213,0.22)" stroke="#4f5bd5" stroke-width="1.5"/>
-              <rect x="214" y="212" width="496" height="16" rx="3" fill="none" stroke="#a99fb4" stroke-width="1.5" stroke-dasharray="4 4"/>
-              <text x="462" y="225" font-size="12" fill="#7b7186" text-anchor="middle">자리를 곧 비움</text>
+              <rect x="10" y="212" width="700" height="16" rx="3" fill="rgba(79,91,213,0.22)" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="360" y="225" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">여기도 줄은 선다. 맵의 락을 쥐고 서지 않을 뿐</text>
               <defs>
                 <marker id="v-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                   <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
@@ -291,9 +292,10 @@
               </defs>
             </svg>
           </div>
-          <figcaption>카드 두 장이 같은 목록 조회를 각각 그린 것입니다. 수정 전에는 같은 키를 가진 thread 넷 중
-          하나만 외부 API를 왕복하고 나머지 셋은 그 자리에서 기다리면서 executor 자리를 계속 쥡니다.
-          수정 후에는 로더가 하나만 돌고 나머지는 결과를 받아 가므로 자리가 곧 비워집니다.</figcaption>
+          <figcaption>⚠️ <strong>두 카드의 차이는 「줄을 서느냐」가 아닙니다.</strong> 동기식
+          <code>LoadingCache.get</code>도 로더가 끝날 때까지 나머지를 기다리게 합니다.
+          다른 것은 <strong>맵의 락을 쥔 채 기다리느냐</strong>입니다. 위 카드에서는 그 키가 사는 칸이
+          잠겨 있어 같은 칸의 다른 키까지 영향을 받습니다.</figcaption>
         </figure>
 
         <h2 id="원인-1">원인 ①: 락 안에서 네트워크를 기다렸습니다<a class="anchor" href="#원인-1" aria-label="이 절로 가는 링크">#</a></h2>
@@ -320,7 +322,13 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         하나가 외부 API를 왕복하는 동안 나머지 M−1개는 그 자리에서 기다립니다.</p>
 
         <p>기다리는 동안에도 그 thread들은 <strong>executor의 자리를 쥐고 있습니다.</strong>
-        그래서 다른 볼륨의 task는 시작조차 못 합니다.</p>
+        그래서 다른 볼륨의 task가 밀립니다.</p>
+
+        <p>⚠️ <strong>이 인과는 코드를 읽어서 세운 것이지 시험이 증명한 것이 아닙니다.</strong>
+        6단계 시험이 보여 주는 것은 「cache를 고정한 채 병렬로 바꾸니 나빠졌다」까지입니다.
+        그 악화가 락 경합 때문인지, thread 전환 비용인지, 외부 API 쪽 제한인지는
+        <strong>이 시험으로는 가릅니다.</strong> 가르려면 락을 뺀 병렬 arm을 따로 돌려야 하는데
+        그건 하지 않았습니다.</p>
 
         <h2 id="원인-2">원인 ②: 0건을 cache에 담지 않았습니다<a class="anchor" href="#원인-2" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -399,8 +407,8 @@ if (messages == null || messages.isEmpty()) {
         <p><code>ConcurrentHashMap</code>은 맵 전체를 잠그지 않습니다. 그래서 「동시성 자료구조를 썼으니 괜찮다」고
         읽기 쉽습니다. 그런데 <code>computeIfAbsent</code>는 <strong>그 키가 사는 칸(bin)을 잠그고</strong> 매핑 함수를 돌립니다.</p>
 
-        <blockquote><p>다른 키는 서로 안 막습니다. <strong>같은 키는 완전히 막힙니다.</strong>
-        그리고 그 시간은 매핑 함수가 하는 일의 시간입니다.</p></blockquote>
+        <blockquote><p><strong>같은 키는 완전히 막힙니다.</strong> 그리고 그 시간은 매핑 함수가 하는 일의
+        시간입니다. 다른 키라도 <strong>hash가 같은 칸에 떨어지면 같이 막힙니다.</strong></p></blockquote>
 
         <p>매핑 함수가 메모리 계산이면 그 시간은 마이크로초입니다. 그런데 여기서는
         <strong>네트워크 왕복</strong>이었습니다. 밀리초 단위가 아니라 수십·수백 밀리초입니다.</p>
@@ -506,8 +514,12 @@ if (messages == null || messages.isEmpty()) {
           특정 라이브러리가 아닙니다. 직접 짜도 되지만, 직접 짠 것이 이 글의 원인이었습니다.</li>
           <li><strong>네 화면의 수치를 한 원인으로 돌리지 않습니다.</strong> 화면마다 곁가지 원인이 조금씩
           달랐고, 이 글이 자세히 적은 것은 첫 화면뿐입니다.</li>
-          <li><strong>23ms가 cache 적중 시의 값</strong>이라는 점은 분명히 해 둡니다. cache가 비어 있는
-          첫 요청은 그보다 느립니다. 그래서 워밍을 넣었습니다.</li>
+          <li><strong>23ms는 7,658건 전체의 집계 P99</strong>이지 cache 적중 표본만 고른 값이 아닙니다.
+          원본이 cache hit로 설명한 것은 중앙값 4ms 쪽입니다.</li>
+          <li><strong>⑤와 ⑥의 개선을 하나씩 귀속할 수 없습니다.</strong> 원본은 ⑤를
+          <code>addMoreInfo() optimized</code> 라고만 적었고, 그 안에 여러 수정이 함께 들어갔습니다.</li>
+          <li><strong>병렬이 나빠진 이유는 이 시험이 가르지 못합니다.</strong> 락 경합이라는 설명은
+          코드를 읽어 세운 것입니다.</li>
         </ul>
 
         <div class="wrapup">
@@ -524,8 +536,8 @@ if (messages == null || messages.isEmpty()) {
         </ul>
 
         <p>마지막으로 한 줄만 남긴다면 이겁니다.
-        <strong>느린 것을 병렬로 돌리기 전에, 그 안에서 무엇을 기다리는지 먼저 봐야 합니다.</strong>
-        기다리는 것이 네트워크라면 병렬화는 대기자를 늘릴 뿐입니다.</p>
+        <strong>「고치기 전과 후」만 재면 무엇이 값을 냈는지 모릅니다.</strong>
+        여섯 번을 나눠 재고 나서야 병렬화가 이 코드에서 해로운 구간이 있다는 것이 보였습니다.</p>
 
         <p>다음 편은 같은 제품의 다른 화면입니다. 이번에는 <strong>코드에 문제가 없었는데</strong>
         instance 20개 조회에 54초가 걸렸습니다.</p>
