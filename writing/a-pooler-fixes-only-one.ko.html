@@ -530,7 +530,8 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         하고 있었습니다. connection과 행 락, <strong>두 자원</strong>을 동시에 쥐고 있었던 겁니다.</p>
 
         <p>글과 댓글 두 경로를 먼저 고치고 투표 첨부는 검열에 넣는 입력이 <em>잠근 행에서</em> 나오는 탓에
-        staleness(값이 낡았는지) 재확인이 필요해서 <strong>의도적으로 미뤘다가 나흘 뒤에 고쳤습니다.</strong></p>
+        staleness(값이 낡았는지) 재확인이 필요해서 <strong>한 번 미뤘다가 같은 날 뒤에 고쳤습니다.</strong>
+        기록에는 「의도적 미착수」로 남겨 두었고, 그날 후속 세션에서 처리했습니다.</p>
 
         <p>결론을 한 줄로 적으면 이렇습니다.
         <strong>코드 수정은 connection pooler의 대안이 아니라 전제조건이었습니다.</strong>
