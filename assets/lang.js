@@ -47,6 +47,16 @@ var LangRoute = {
     return target;
   },
 
+  /* 이 페이지가 그 언어를 **제자리에서** 감당하는가. `<html data-i18n-full="ko ja">` 는
+     「이 페이지의 보이는 글은 전부 i18n 표에 있다」는 선언이고, 그러면 위젯을 부르면 안 된다 —
+     사람이 쓴 문장 위에 기계번역이 덧씌워진다. 목록·홈처럼 본문이 카드와 짧은 문구뿐인
+     페이지가 여기 해당한다. 본문이 산문인데 번역판이 없는 글은 선언하지 않는다. */
+  servesLocally: function (fullAttr, wanted) {
+    if (!wanted) return false;
+    var langs = String(fullAttr || "").toLowerCase().split(/\s+/);
+    return langs.indexOf(String(wanted).toLowerCase()) >= 0;
+  },
+
   /* Where should this load go instead? null means stay — either the reader is already where they want to
      be, or no one has written this page in the language they want and the widget takes over. */
   authoredDestination: function (page, authored, wanted, currentFile) {
@@ -71,6 +81,7 @@ if (typeof module !== "undefined" && module.exports) module.exports = LangRoute;
   // The source language is whatever the page declares. Hard-coding 'en' — which every page did until the
   // first Korean article shipped — tells Google that Korean text is English and it translates it as such.
   var PAGE = (document.documentElement.getAttribute("lang") || "en").toLowerCase();
+  var I18N_FULL = document.documentElement.getAttribute("data-i18n-full") || "";
 
   var picker = document.getElementById("langPicker");
 
@@ -202,10 +213,13 @@ if (typeof module !== "undefined" && module.exports) module.exports = LangRoute;
 
   /* Nobody wrote this page in the language the reader asked for, so the widget serves it — including on a
      fresh load, which is what makes the preference survive leaving an article. */
-  if (wanted && wanted !== PAGE && !Object.prototype.hasOwnProperty.call(authored, wanted) && !active) {
+  if (wanted && wanted !== PAGE && !Object.prototype.hasOwnProperty.call(authored, wanted) &&
+      !LangRoute.servesLocally(I18N_FULL, wanted) && !active) {
     picker.value = wanted;
     applyWidgetWhenReady(wanted);
   }
+  // 표가 감당하는 언어면 선택기만 그 언어로 맞춘다. i18n.js 가 이미 문자열을 바꿔 끼웠다.
+  if (wanted && LangRoute.servesLocally(I18N_FULL, wanted) && !active) picker.value = wanted;
 
   picker.addEventListener("change", function () {
     var lang = this.value || PAGE;
@@ -226,6 +240,13 @@ if (typeof module !== "undefined" && module.exports) module.exports = LangRoute;
     if (Object.prototype.hasOwnProperty.call(authored, lang)) {
       clearCookie();
       location.href = authored[lang];
+      return;
+    }
+
+    /* 표가 감당하는 언어. 다시 그려야 문자열이 바뀌므로 새로 고친다 — 위젯은 부르지 않는다. */
+    if (LangRoute.servesLocally(I18N_FULL, lang)) {
+      clearCookie();
+      location.reload();
       return;
     }
 
