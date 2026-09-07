@@ -487,7 +487,7 @@
     /* A private repository gets a Private badge where the GitHub link would be. Linking anyway would
        hand every reader a 404, and leaving the slot empty would read as "no code exists". */
     var repo = it.private
-      ? '<span class="repo-private notranslate" translate="no">' + esc(tr("cards.private", "Private")) + "</span>"
+      ? '<span class="repo-private notranslate" translate="no">' + esc("Private") + "</span>"
       : githubLink(it.github, esc(it.title) + " on GitHub");
 
     return (
@@ -519,7 +519,7 @@
     var card = CARDS[opts.card] || cardMini;
     var tagRowEl = opts.tagRow || null;
     var hasAll = !(opts.allLabel === null || opts.allLabel === false);
-    var allLabel = hasAll ? (opts.allLabel || tr("cards.recent", "Recent")) : null;
+    var allLabel = hasAll ? (opts.allLabel || "Recent") : null;
 
     var tagList = tagsOf(sec.items);
     var initial = hasAll ? allLabel : (tagList[0] || null);
@@ -573,13 +573,13 @@
             .sort(function (a, b) { return countOf(b) - countOf(a) || a.localeCompare(b); });
           if (!inGroup.length) return;
           inGroup.forEach(function (t) { placed[t] = 1; });
-          html += '<div class="facet-group"><h3>' + esc(tr("facet." + name.toLowerCase(), name)) + "</h3>" +
+          html += '<div class="facet-group"><h3>' + esc(name) + "</h3>" +
                   inGroup.map(function (t) { return facetRow(t, t === initial); }).join("") + "</div>";
         });
         var rest = tagList.filter(function (t) { return !placed[t]; })
           .sort(function (a, b) { return countOf(b) - countOf(a) || a.localeCompare(b); });
         if (rest.length) {
-          html += '<div class="facet-group"><h3>' + esc(tr("facet.other", "Other")) + "</h3>" +
+          html += '<div class="facet-group"><h3>' + esc("Other") + "</h3>" +
                   rest.map(function (t) { return facetRow(t, t === initial); }).join("") + "</div>";
         }
       } else {
@@ -618,10 +618,10 @@
 
   /* Convenience wrappers (Home uses #Recent, index pages use #All). */
   window.renderHomeSection = function (key, cardsEl, limit) {
-    render(key, cardsEl, { card: "mini", limit: limit || 5, allLabel: tr("cards.recent", "Recent") });
+    render(key, cardsEl, { card: "mini", limit: limit || 5, allLabel: "Recent" });
   };
   window.renderGrid = function (key, gridEl, tagRowEl) {
-    render(key, gridEl, { card: "article", limit: 0, tagRow: tagRowEl, allLabel: tr("cards.all", "All") });
+    render(key, gridEl, { card: "article", limit: 0, tagRow: tagRowEl, allLabel: "All" });
   };
 
   /* 기사 왼쪽 레일.

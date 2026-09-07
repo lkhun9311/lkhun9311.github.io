@@ -9,17 +9,17 @@
 <ul id="out"></ul>
 <script>
 var CASES = [
-  { page: "../index.html",          lang: "ko", nav: "소개",  lead: null },
-  { page: "../index.html",          lang: "ja", nav: "プロフィール", lead: null },
-  { page: "../writing/index.html",  lang: "ko", nav: "소개",  lead: "클라우드" },
-  { page: "../writing/index.html",  lang: "ja", nav: "プロフィール", lead: "クラウド" },
-  { page: "../notes/index.html",    lang: "ko", nav: "소개",  lead: "용어" },
-  { page: "../news/index.html",     lang: "ja", nav: "プロフィール", lead: "公開" },
-  { page: "../writing/a-pooler-fixes-only-one.ko.html", lang: "ko", nav: "소개", lead: null },
+  { page: "../index.html",          lang: "ko", nav: "About", lead: null },
+  { page: "../index.html",          lang: "ja", nav: "About", lead: null },
+  { page: "../writing/index.html",  lang: "ko", nav: "About",  lead: "클라우드" },
+  { page: "../writing/index.html",  lang: "ja", nav: "About", lead: "クラウド" },
+  { page: "../notes/index.html",    lang: "ko", nav: "About",  lead: "용어" },
+  { page: "../news/index.html",     lang: "ja", nav: "About", lead: "公開" },
+  { page: "../writing/a-pooler-fixes-only-one.ko.html", lang: "ko", nav: "About", lead: null },
   /* 용어 노트는 한국어 본문이 영어 URL 로 나가고 있었다. 이제 세 판이 있고, 선호한 언어의
      판으로 **옮겨 가야** 한다 — 옮겨 갔는지는 도착한 문서의 lang 으로 본다. */
-  { page: "../notes/percentile.html", lang: "ko", nav: "소개", lead: null, htmlLang: "ko" },
-  { page: "../notes/percentile.html", lang: "ja", nav: "プロフィール", lead: null, htmlLang: "ja" },
+  { page: "../notes/percentile.html", lang: "ko", nav: "About", lead: null, htmlLang: "ko" },
+  { page: "../notes/percentile.html", lang: "ja", nav: "About", lead: null, htmlLang: "ja" },
   { page: "../notes/percentile.html", lang: "en", nav: "About", lead: null, htmlLang: "en" }
 ];
 var out = document.getElementById("out"), pass = 0, fail = 0, i = 0;
@@ -57,8 +57,8 @@ function next() {
       done = true;
       clearTimeout(watchdog);
       var d = fr.contentDocument;
-      var navs = d.querySelectorAll('[data-i18n="nav.about"]');
-      say(navs.length === 1 && navs[0].textContent.trim() === c.nav,
+      var navs = d.querySelectorAll('nav a[href$="#about"]');
+      say(navs.length >= 1 && navs[0].textContent.trim() === c.nav,
           c.page + " [" + c.lang + "] 메뉴=" + (navs[0] ? navs[0].textContent.trim() : "없음"));
       if (c.lead) {
         var lead = d.querySelector(".lead");
