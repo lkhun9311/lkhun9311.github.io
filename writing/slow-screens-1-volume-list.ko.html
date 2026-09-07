@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>느린 화면 ① 볼륨 10분이 23ms가 됐습니다 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="느린 화면 ① 볼륨 10분이 23ms가 됐습니다 | Kwanghun Lee" />
+  <meta property="og:description" content="computeIfAbsent 안에서 외부 API를 부르고 있었습니다. 순차를 병렬로 바꿨더니 더 느려졌고, 원인은 thread 수가 아니라 키 하나를 잠근 채 네트워크를 기다리는 구조였습니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/slow-screens-1-volume-list.ko.html" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="처리량 상한은 코드에 없었습니다 | Kwanghun Lee" />
+  <meta name="twitter:description" content="아무도 고르지 않은 기본값 5가 콘텐츠 검열의 처리량 상한이었습니다. 읽어서는 찾을 수 없고 재야만 나오는 층에 대한 이야기입니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="computeIfAbsent 안에서 외부 API를 부르고 있었습니다. 순차를 병렬로 바꿨더니 더 느려졌고, 원인은 thread 수가 아니라 키 하나를 잠근 채 네트워크를 기다리는 구조였습니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang">
+          <option value="ko" selected>한국어</option>
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about" data-i18n="nav.about">About</a>
+        <a href="../index.html#news" data-i18n="nav.news">News</a>
+        <a href="../index.html#projects" data-i18n="nav.projects">Projects</a>
+        <a href="../index.html#writing" class="active" data-i18n="nav.writing">Writing</a>
+        <a href="../index.html#notes" data-i18n="nav.notes">Notes</a>
+        <a href="../index.html#cv" data-i18n="nav.cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
+        <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>느린 화면 ① 볼륨 10분이 23ms가 됐습니다<br><span class="h1-sub">computeIfAbsent 안에서 외부 API를 부르고 있었습니다. 오류율 83.3%였던 관리 볼륨 화면</span></h1>
+          <p class="article-date">2026년 9월</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="slow-screens-1-volume-list"></aside>
+
+        <nav class="article-toc" aria-label="목차">
+          <p class="toc-label">목차</p>
+          <ul>
+            <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+            <li><a href="#무슨-내용">무슨 내용인가요?</a></li>
+            <li><a href="#어떤-화면">어떤 화면인가요?</a></li>
+            <li><a href="#가설">가설: 순차 호출이 문제인 줄 알았습니다</a></li>
+            <li><a href="#결론">결론: 병렬로 바꾸자 더 느려졌습니다</a></li>
+            <li><a href="#원인-1">원인 ①: 락 안에서 네트워크를 기다렸습니다</a></li>
+            <li><a href="#원인-2">원인 ②: 0건을 캐시하지 않았습니다</a></li>
+            <li><a href="#왜-줄을-서나">이유: ConcurrentHashMap인데도 줄을 섭니다</a></li>
+            <li><a href="#수정">수정: 키마다 로더를 하나만 돌립니다</a></li>
+            <li><a href="#정합성">정합성: 캐시를 지우면 다음 사람이 느려집니다</a></li>
+            <li><a href="#반론">반론: “thread를 늘리면 되지 않나요?”</a></li>
+            <li><a href="#측정">측정: 같은 조건으로 전후를 쟀습니다</a></li>
+            <li><a href="#주장하지-않는-것">한계: 이 글이 주장하지 않는 것</a></li>
+            <li><a href="#마치며">마치며</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>안녕하세요. 사내 클라우드 관리 콘솔의 백엔드를 만들고 있습니다. 볼륨 목록 화면이
+        <strong>10분을 넘겨 timeout</strong>이 났고, 순차 호출이 문제라고 보고 병렬로 바꿨는데
+        <strong>더 느려졌습니다.</strong></p>
+
+        <p>원인은 thread 수가 아니라 <strong>키 하나를 잠근 채 네트워크를 기다리는 구조</strong>였습니다.
+        같은 결함을 네 화면에서 찾아 고쳤고, 이 글은 그중 첫 화면 이야기입니다.</p>
+
+        <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li>목록 조회가 느려서 <code>CompletableFuture</code>로 병렬화해 본 적이 있는 분</li>
+          <li>cache를 직접 짜면서 <code>ConcurrentHashMap.computeIfAbsent</code>를 써 보신 분</li>
+          <li>“thread pool을 키우면 되지 않나”라고 생각해 보신 분</li>
+        </ul>
+
+        <h2 id="무슨-내용">무슨 내용인가요?<a class="anchor" href="#무슨-내용" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul>
+          <li>순차를 병렬로 바꿨더니 <strong>더 느려졌습니다.</strong> 병렬화가 안 먹은 게 아니라
+          <strong>병렬화가 만든 경합</strong>이 원인이었습니다.</li>
+          <li><code>computeIfAbsent</code>의 매핑 함수 안에서 <strong>외부 API를 부르면 그 키가 왕복 시간만큼 잠깁니다.</strong>
+          같은 키를 가진 thread는 전부 그 앞에 줄을 섭니다.</li>
+          <li>직접 짠 cache에는 결함이 하나 더 있었습니다. <strong>0건인 답을 cache에 담기지 않아서</strong>
+          없는 것을 매번 다시 물었습니다.</li>
+          <li>고친 방법은 thread를 늘리는 것이 아니라 <strong>키마다 로더를 하나만 돌리는 cache</strong>로 바꾸는 것이었습니다.</li>
+        </ul>
+
+        <p><strong>사내 제품이라 코드를 그대로 옮기지 않았습니다.</strong> 제품명·고객사·내부 주소는 빼고,
+        구조와 수치만 남겼습니다. 클래스 이름은 이야기에 필요한 만큼만 일반화해서 씁니다.</p>
+
+        <p><strong>⚠️ 미리 말씀드릴 것이 있습니다.</strong> 아래 수치는 <strong>격리된 시험 환경에서 JMeter로
+        잰 값</strong>이지 운영 통계가 아닙니다. 「10분」은 부하 시험의 timeout 상한에 걸린 값이고,
+        실제 운영에서 사용자가 10분을 기다렸다는 뜻이 아닙니다.</p>
+
+        <h2 id="어떤-화면">어떤 화면인가요?<a class="anchor" href="#어떤-화면" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>관리자가 <strong>전체 볼륨 목록</strong>을 보는 화면입니다. 볼륨 한 건마다 이름·크기 말고도
+        <strong>어느 프로젝트 것인지</strong>, <strong>어느 볼륨 그룹에 속하는지</strong>, <strong>최근 오류 메시지가 있는지</strong>를
+        같이 보여 줍니다. 이 세 가지가 전부 다른 API에서 옵니다.</p>
+
+        <p>그래서 목록 한 번을 그리는 데 이런 호출이 나갑니다.</p>
+
+<pre data-lang="text"><code>볼륨 N개를 그리려면
+  프로젝트 조회   N회
+  볼륨 그룹 조회  N회
+  오류 메시지 조회 N회
+= 외부 API 호출 3N회</code></pre>
+
+        <p>볼륨이 늘수록 <strong>선형으로</strong> 느려집니다. 시험 환경에서 이 화면은
+        <strong>10분을 넘겨 timeout</strong>이 났고 오류율이 <strong>83.3%</strong>였습니다.</p>
+
+        <h2 id="가설">가설: 순차 호출이 문제인 줄 알았습니다<a class="anchor" href="#가설" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>3N회를 <strong>순서대로</strong> 부르고 있었으니 진단은 쉬워 보였습니다.</p>
+
+        <blockquote><p>호출이 순차라서 느린 것이다. 병렬로 바꾸면 N배까지는 아니어도 크게 줄어든다.</p></blockquote>
+
+        <p><code>CompletableFuture.supplyAsync</code>로 볼륨마다 task를 만들어 executor에 던졌습니다.
+        그리고 반복 호출을 줄이려고 <code>ConcurrentHashMap</code>으로 cache를 하나 놓았습니다.
+        같은 그룹 id는 한 번만 부르면 되니까요.</p>
+
+        <h2 id="결론">결론: 병렬로 바꾸자 더 느려졌습니다<a class="anchor" href="#결론" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>한 줄로 줄이면 이렇습니다.</p>
+
+        <blockquote><p><strong>매핑 함수 안에서 외부 API를 부르면, 그 람다가 끝날 때까지 그 자리가 잠깁니다.</strong>
+        병렬로 바꾼 코드가 더 느려지는 이유입니다.</p></blockquote>
+
+        <p>병렬화 자체가 틀린 게 아닙니다. 병렬화가 <strong>없던 경합을 만들었고</strong>, 그 경합이
+        순차 실행보다 비쌌습니다.</p>
+
+                <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+            <svg viewBox="0 0 720 250" role="img" aria-labelledby="lock-t lock-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="lock-t">같은 키를 가진 thread가 computeIfAbsent 앞에 줄을 서는 구조</title>
+              <desc id="lock-d">카드 두 장이 같은 목록 조회를 각각 그린 것입니다. 위 카드가 수정 전으로,
+              같은 그룹 id를 가진 thread 넷이 computeIfAbsent 에 동시에 들어가고 T1 하나만 외부 API를 왕복합니다.
+              나머지 셋은 그 자리에서 기다리며 executor 자리를 계속 쥡니다. 아래 카드가 수정 후로, 로더가 하나만
+              돌고 나머지는 결과를 받아 가므로 executor 자리가 곧 비워집니다.</desc>
+
+              <rect x="0" y="0" width="720" height="112" rx="10" fill="rgba(214,41,118,0.06)"/>
+              <rect x="10" y="10" width="72" height="24" rx="12" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="46" y="27" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">수정 전</text>
+              <rect x="10" y="48" width="150" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="85" y="66" font-size="12.5" fill="#18121d" text-anchor="middle">thread 4개 · 같은 키</text>
+              <path d="M160 61 H 200" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#v-arA)"/>
+              <rect x="208" y="42" width="196" height="38" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="306" y="58" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">computeIfAbsent · 키 잠김</text>
+              <text x="306" y="74" font-size="11.5" fill="#7b7186" text-anchor="middle">T1만 진입 · T2·T3·T4 대기</text>
+              <path d="M404 61 H 444" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#v-arA)"/>
+              <rect x="452" y="42" width="258" height="38" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="581" y="66" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">외부 API 왕복 · 그동안 자리 점유</text>
+              <rect x="10" y="88" width="700" height="16" rx="3" fill="rgba(214,41,118,0.22)" stroke="#d62976" stroke-width="1.5"/>
+              <text x="360" y="101" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">executor 자리 4개가 왕복 시간 내내 묶임</text>
+
+              <rect x="0" y="124" width="720" height="112" rx="10" fill="rgba(79,91,213,0.06)"/>
+              <rect x="10" y="134" width="72" height="24" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="46" y="151" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">수정 후</text>
+              <rect x="10" y="172" width="150" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="85" y="190" font-size="12.5" fill="#18121d" text-anchor="middle">thread 4개 · 같은 키</text>
+              <path d="M160 185 H 200" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#v-arB)"/>
+              <rect x="208" y="166" width="196" height="38" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="306" y="182" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">LoadingCache · 로더 1개</text>
+              <text x="306" y="198" font-size="11.5" fill="#7b7186" text-anchor="middle">나머지는 결과를 받아 감</text>
+              <path d="M404 185 H 444" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#v-arB)"/>
+              <rect x="452" y="166" width="258" height="38" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="581" y="190" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">외부 API 왕복 1회</text>
+              <rect x="10" y="212" width="196" height="16" rx="3" fill="rgba(79,91,213,0.22)" stroke="#4f5bd5" stroke-width="1.5"/>
+              <rect x="214" y="212" width="496" height="16" rx="3" fill="none" stroke="#a99fb4" stroke-width="1.5" stroke-dasharray="4 4"/>
+              <text x="462" y="225" font-size="12" fill="#7b7186" text-anchor="middle">자리를 곧 비움</text>
+              <defs>
+                <marker id="v-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+                <marker id="v-arB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>카드 두 장이 같은 목록 조회를 각각 그린 것입니다. 수정 전에는 같은 키를 가진 thread 넷 중
+          하나만 외부 API를 왕복하고 나머지 셋은 그 자리에서 기다리면서 executor 자리를 계속 쥡니다.
+          수정 후에는 로더가 하나만 돌고 나머지는 결과를 받아 가므로 자리가 곧 비워집니다.</figcaption>
+        </figure>
+
+        <h2 id="원인-1">원인 ①: 락 안에서 네트워크를 기다렸습니다<a class="anchor" href="#원인-1" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>문제의 모양은 이렇습니다.</p>
+
+<pre data-lang="java"><code>final Map&lt;String, VolumeGroup&gt; groupCache = new ConcurrentHashMap&lt;&gt;();
+
+final List&lt;VolumeDto&gt; dtos = volumes.stream()
+    .map(v -&gt; CompletableFuture.supplyAsync(() -&gt; {
+
+        // ← 여러 thread가 동시에 이 블록에 들어온다
+        final VolumeGroup group = groupCache.computeIfAbsent(
+            v.getGroupId(),
+            gid -&gt; client.groups().get(gid)   // 외부 I/O를 락 안에서 부른다
+        );
+        ...
+    }, executor))
+    .map(CompletableFuture::join)
+    .collect(Collectors.toList());</code></pre>
+
+        <p>볼륨이 N개면 executor에 task가 N개 들어갑니다. 그중 <strong>같은 그룹 id를 가진 것이 M개라면
+        M개의 thread가 동시에 같은 키로 <code>computeIfAbsent</code>에 들어갑니다.</strong>
+        하나가 외부 API를 왕복하는 동안 나머지 M−1개는 그 자리에서 기다립니다.</p>
+
+        <p>기다리는 동안에도 그 thread들은 <strong>executor의 자리를 쥐고 있습니다.</strong>
+        그래서 다른 볼륨의 task는 시작조차 못 합니다.</p>
+
+        <h2 id="원인-2">원인 ②: 0건을 cache에 담지 않았습니다<a class="anchor" href="#원인-2" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>직접 짠 cache에는 결함이 하나 더 있었습니다. 오류 메시지를 읽는 쪽입니다.</p>
+
+<pre data-lang="java"><code>List&lt;Message&gt; messages = manager.list(Message.class);
+
+// 비어 있으면 매번 외부 API를 다시 부른다
+if (messages == null || messages.isEmpty()) {
+    client.messages().list(...)
+          .forEach(r -&gt; manager.set(Message.class, r.getResourceUuid(), r));
+}</code></pre>
+
+        <p>두 가지가 겹쳐 있습니다.</p>
+
+        <ul>
+          <li><strong>0건이면 아무것도 저장되지 않습니다.</strong> <code>forEach</code>가 한 번도 돌지 않으니까요.
+          그리고 오류 메시지는 <strong>0건이 정상</strong>입니다. 그래서 「없음」이라는 답을 매번 다시 물었습니다.</li>
+          <li><strong>검사와 저장 사이가 열려 있습니다.</strong> 여러 thread가 동시에 <code>isEmpty()</code>를 통과하면
+          전부 외부 API를 부릅니다.</li>
+        </ul>
+
+        <p>「없음」을 담지 않는 cache는 <strong>가장 흔한 답에서 cache가 아닙니다.</strong></p>
+
+                <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+            <svg viewBox="0 0 720 176" role="img" aria-labelledby="empty-t empty-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="empty-t">0건을 담지 않는 cache는 가장 흔한 답에서 cache가 아니다</title>
+              <desc id="empty-d">위 카드가 수정 전입니다. 조회 결과가 0건이면 저장 루프가 한 번도 돌지 않아
+              cache 에 아무것도 남지 않고, 다음 요청이 다시 외부 API 를 부릅니다. 오류 메시지는 0건이 정상이므로
+              이 경로에서는 cache 가 거의 언제나 비어 있습니다. 아래 카드가 수정 후로, 빈 목록도 값으로 저장해
+              다음 요청이 cache 에서 답을 받습니다.</desc>
+
+              <rect x="0" y="0" width="720" height="76" rx="10" fill="rgba(214,41,118,0.06)"/>
+              <rect x="10" y="10" width="72" height="22" rx="11" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="46" y="26" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">수정 전</text>
+              <rect x="98" y="40" width="126" height="24" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="161" y="56" font-size="12" fill="#18121d" text-anchor="middle">조회 결과 0건</text>
+              <path d="M224 52 H 262" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#e-arA)"/>
+              <rect x="270" y="40" width="176" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="358" y="56" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">저장 루프가 안 돈다</text>
+              <path d="M446 52 H 484" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#e-arA)"/>
+              <rect x="492" y="40" width="218" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="601" y="56" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">다음 요청도 외부 API</text>
+
+              <rect x="0" y="88" width="720" height="76" rx="10" fill="rgba(79,91,213,0.06)"/>
+              <rect x="10" y="98" width="72" height="22" rx="11" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="46" y="114" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">수정 후</text>
+              <rect x="98" y="128" width="126" height="24" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="161" y="144" font-size="12" fill="#18121d" text-anchor="middle">조회 결과 0건</text>
+              <path d="M224 140 H 262" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#e-arB)"/>
+              <rect x="270" y="128" width="176" height="24" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="358" y="144" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">빈 목록도 저장</text>
+              <path d="M446 140 H 484" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#e-arB)"/>
+              <rect x="492" y="128" width="218" height="24" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="601" y="144" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">다음 요청은 cache에서</text>
+              <defs>
+                <marker id="e-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+                <marker id="e-arB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>오류 메시지는 0건이 정상입니다. 그래서 빈 목록을 저장하지 않으면 이 경로의 cache는
+          거의 언제나 비어 있고, 매번 외부 API를 다시 부릅니다.</figcaption>
+        </figure>
+
+        <h2 id="왜-줄을-서나">이유: ConcurrentHashMap인데도 줄을 섭니다<a class="anchor" href="#왜-줄을-서나" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p><code>ConcurrentHashMap</code>은 맵 전체를 잠그지 않습니다. 그래서 「동시성 자료구조를 썼으니 괜찮다」고
+        읽기 쉽습니다. 그런데 <code>computeIfAbsent</code>는 <strong>그 키가 사는 칸(bin)을 잠그고</strong> 매핑 함수를 돌립니다.</p>
+
+        <blockquote><p>다른 키는 서로 안 막습니다. <strong>같은 키는 완전히 막힙니다.</strong>
+        그리고 그 시간은 매핑 함수가 하는 일의 시간입니다.</p></blockquote>
+
+        <p>매핑 함수가 메모리 계산이면 그 시간은 마이크로초입니다. 그런데 여기서는
+        <strong>네트워크 왕복</strong>이었습니다. 밀리초 단위가 아니라 수십·수백 밀리초입니다.</p>
+
+        <p>⚠️ 사내 문서에는 이걸 「세그먼트 락」이라고 적어 뒀는데 <strong>정확하지 않습니다.</strong>
+        세그먼트는 Java 7의 구현이고, Java 8부터 <code>ConcurrentHashMap</code>은 <strong>bin 단위</strong>로 잠급니다.
+        틀린 이름을 쓰면 다음 사람이 잘못된 곳을 찾아보게 됩니다.</p>
+
+        <h2 id="수정">수정: 키마다 로더를 하나만 돌립니다<a class="anchor" href="#수정" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>고친 방향은 <strong>줄을 없애는 것이 아니라 줄이 한 번만 서게 하는 것</strong>이었습니다.
+        Caffeine의 <code>LoadingCache</code>는 cache miss일 때 <strong>키마다 로더를 하나만 실행</strong>하고
+        나머지는 그 결과를 받습니다. 별도 락을 짤 필요가 없어집니다.</p>
+
+        <p>같이 고친 것이 네 가지입니다.</p>
+
+        <ul>
+          <li><strong>이미 있던 cache를 씁니다.</strong> 전체 볼륨 목록은 이미 cache에 있었는데
+          이 화면이 그걸 안 쓰고 외부 API를 직접 부르고 있었습니다. 메모리에서 걸러 쓰도록 바꿨습니다.</li>
+          <li><strong>0건도 cache에 담습니다.</strong> 빈 목록이 값입니다.</li>
+          <li><strong>그룹 조회 결과를 프로젝트 조회에 재활용합니다.</strong> 같은 응답 안에 있던 값을
+          다시 물어보고 있었습니다.</li>
+          <li><strong>서버가 뜰 때 미리 채웁니다.</strong> <code>ApplicationReadyEvent</code>에서 동기로 워밍합니다.
+          첫 사용자가 콜드 스타트를 대신 겪지 않게 하려는 것입니다.</li>
+        </ul>
+
+        <h2 id="정합성">정합성: cache를 지우면 다음 사람이 느려집니다<a class="anchor" href="#정합성" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>cache를 넣으면 <strong>언제 지울 것인가</strong>가 따라옵니다. 볼륨을 만들거나 지우면 목록이 달라지니
+        무효화해야 합니다. 그런데 <strong>무효화한 직후의 조회는 외부 API를 탑니다.</strong>
+        지운 사람이 아니라 그다음에 들어온 사람이 그 비용을 냅니다.</p>
+
+        <p>그래서 <strong>기존 값을 남겨 둔 채 뒤에서 새로 채우는</strong> 방식으로 두었습니다.
+        잠깐 낡은 값을 보여 주는 것과 누군가 한 명이 느려지는 것 사이의 거래입니다.
+        이 화면은 관리자용 목록이라 앞쪽을 골랐습니다.</p>
+
+        <p>그리고 <strong>cache가 두 군데에 있으면 한쪽만 지워집니다.</strong> 볼륨 그룹을 수정하는 경로가
+        자기 cache만 지우고 볼륨 쪽 cache는 그대로 두고 있었습니다. 지우는 지점을 한곳으로 모았습니다.</p>
+
+        <h2 id="반론">반론: “thread를 늘리면 되지 않나요?”<a class="anchor" href="#반론" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>가장 먼저 나오는 처방이고, <strong>여기서는 틀립니다.</strong></p>
+
+        <p>막고 있는 것이 thread 수가 아니라 <strong>키 하나</strong>이기 때문입니다. thread를 늘리면
+        같은 키 앞에 서는 사람이 늘어날 뿐입니다. 실제로 이 화면은 <strong>병렬화한 쪽이 더 느렸습니다.</strong></p>
+
+        <p>같은 이유로 executor를 키우는 것도 답이 아닙니다. 줄이 짧아지는 게 아니라
+        <strong>줄 서는 사람이 자리를 더 많이 차지</strong>합니다.</p>
+
+        <h2 id="측정">측정: 같은 조건으로 전후를 쟀습니다<a class="anchor" href="#측정" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>부하 조건은 전후가 같습니다. <strong>동시 사용자 50명 · Ramp-Up 2분 · 지속 10분 ·
+        Think Time 2~5초.</strong> 바꾼 것은 코드뿐입니다.</p>
+
+        <div class="table-scroll" tabindex="0" role="region" aria-label="가로로 스크롤할 수 있는 표">
+        <table>
+          <caption class="sr-only">관리 볼륨 화면의 개선 전후 비교.</caption>
+          <thead><tr><th>지표</th><th>고치기 전</th><th>고친 뒤</th></tr></thead>
+          <tbody>
+            <tr><td><strong>오류율</strong></td><td>83.3%</td><td><strong>0%</strong></td></tr>
+            <tr><td><strong>P99</strong></td><td>10분 timeout</td><td><strong>23 ms</strong></td></tr>
+            <tr><td>처리량</td><td>0.06 req/s</td><td>12.82 req/s</td></tr>
+            <tr><td>Apdex</td><td>0.0</td><td><strong>1.000</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p class="table-note">오류율이 83.3%였다는 것은 <strong>여섯 번 중 다섯 번이 timeout이었다</strong>는 뜻입니다.
+        고친 뒤에는 timeout이 없습니다.</p>
+
+        <p>같은 결함을 나머지 세 화면에서도 찾아 고쳤고, 네 화면 전부 같은 방향으로 움직였습니다.</p>
+
+        <h2 id="주장하지-않는-것">한계: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul>
+          <li><strong>운영 수치가 아닙니다.</strong> 격리된 시험 환경에서 JMeter로 잰 값입니다.
+          「10분」은 부하 시험의 timeout 상한이지 사용자가 실제로 기다린 시간이 아닙니다.</li>
+          <li><strong>병렬화가 나쁘다는 이야기가 아닙니다.</strong> 이 코드에서 병렬화가 해로웠던 이유는
+          <strong>락 안에 네트워크가 있었기 때문</strong>입니다. 그 락을 걷어낸 뒤에는 병렬화가 값을 합니다.</li>
+          <li><strong>Caffeine이어야 하는 것도 아닙니다.</strong> 필요한 성질은 「키마다 로더 하나」이지
+          특정 라이브러리가 아닙니다. 직접 짜도 되지만, 직접 짠 것이 이 글의 원인이었습니다.</li>
+          <li><strong>네 화면의 수치를 한 원인으로 돌리지 않습니다.</strong> 화면마다 곁가지 원인이 조금씩
+          달랐고, 이 글이 자세히 적은 것은 첫 화면뿐입니다.</li>
+          <li><strong>23ms가 cache 적중 시의 값</strong>이라는 점은 분명히 해 둡니다. cache가 비어 있는
+          첫 요청은 그보다 느립니다. 그래서 워밍을 넣었습니다.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>정리하면 이렇습니다.</p>
+
+        <ul>
+          <li><strong>병렬화가 느려지게 만들 수 있습니다.</strong> 없던 경합을 만들면 그렇습니다.</li>
+          <li><code>computeIfAbsent</code>의 매핑 함수는 <strong>짧고 순수해야 합니다.</strong>
+          그 안에 I/O가 있으면 그 키는 왕복 시간만큼 잠깁니다.</li>
+          <li><strong>「없음」도 값입니다.</strong> 0건을 담지 않는 cache는 가장 흔한 답에서 cache가 아닙니다.</li>
+          <li><strong>동시성 자료구조를 썼다는 것과 경합이 없다는 것은 다릅니다.</strong></li>
+        </ul>
+
+        <p>마지막으로 한 줄만 남긴다면 이겁니다.
+        <strong>느린 것을 병렬로 돌리기 전에, 그 안에서 무엇을 기다리는지 먼저 봐야 합니다.</strong>
+        기다리는 것이 네트워크라면 병렬화는 대기자를 늘릴 뿐입니다.</p>
+
+        <p>다음 편은 같은 제품의 다른 화면입니다. 이번에는 <strong>코드에 문제가 없었는데</strong>
+        instance 20개 조회에 54초가 걸렸습니다.</p>
+
+        <p>읽어 주셔서 감사합니다.</p>
+        </div>
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div data-i18n="footer.built">© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=3602b76730"></script>
+  <script src="../assets/content.js?v=8a2c6c4ff8"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=44326158d4"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
