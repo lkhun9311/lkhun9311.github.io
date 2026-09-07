@@ -835,18 +835,22 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         </div>
         </div>
 
-        <p><strong>Exactly 2×.</strong> Two 800 ms waits became one, which is what should happen, and feed reads
-        stayed at 4 ms — a path that was not touched should not move.</p>
-
         <h3>And at first the improvement did not show</h3>
 
         <p>The first run used 16 writers and gave p50 <strong>2,577 ms against 2,598 ms</strong> — no difference.
         It looked like the change had done nothing.</p>
 
-        <p>The cause was not the code but <strong>the measuring conditions</strong>. At 16 writers the load
-        generator, the app, the stub and the database share one machine's CPU and were already saturated, so
-        throughput sat at the same ceiling of 6.26 req/s in both. <strong>The outbound call was not the
-        bottleneck at that point</strong>, so halving it changed nothing.</p>
+        <p>The cause was not the code but <strong>the measuring conditions</strong>. At 16 writers both arms
+        sat at the <strong>same ceiling</strong> of 6.26 req/s, and since the outbound call was not the
+        bottleneck at that point, halving it changed no total.</p>
+
+        <p>⚠️ <strong>This paragraph was wrong once.</strong> It first said the ceiling was the load generator,
+        the app, the stub and the database sharing one machine's CPU. Chasing that ceiling three weeks later
+        showed it was <strong>not CPU but the outbound HTTP concurrency limit</strong>: raising writers to 32
+        and the database pool to 30 left 6.26 unmoved, which CPU saturation cannot explain. That hunt is written
+        up separately in <a href="the-ceiling-was-not-in-the-code.html">The Throughput Ceiling Was Not in the
+        Code</a>. <strong>Calling a ceiling "saturation" and not chasing the cause is the mistake this article
+        made.</strong></p>
 
         <p>The order of checks was: ① measure whether the stub is the bottleneck — 32 concurrent requests finish
         in 0.81 s, so no. ② compare source and jar timestamps to confirm the parallel code was in the build.
