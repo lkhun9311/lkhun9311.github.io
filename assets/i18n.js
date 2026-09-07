@@ -35,6 +35,7 @@ var I18N = (function () {
      영어를 여기에도 적으면 같은 문장이 두 군데가 되고, 곧 둘이 달라진다. */
   var DICT = {
     ko: {
+      "cards.personal": "개인 프로젝트",
       "cards.commercial": "사업화 프로젝트",
       "cards.company": "회사 업무",
       "cards.companyAuthor": "회사",
@@ -102,6 +103,7 @@ var I18N = (function () {
       "writing.title": "글"
     },
     ja: {
+      "cards.personal": "個人プロジェクト",
       "cards.commercial": "事業化プロジェクト",
       "cards.company": "会社の業務",
       "cards.companyAuthor": "会社",
