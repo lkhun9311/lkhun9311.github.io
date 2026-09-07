@@ -36,7 +36,8 @@
   var LABEL_KEY = {
     "Commercial project": "cards.commercial", "Commercial Project": "cards.commercial",
     "Company Work": "cards.company", "Company work": "cards.company",
-    "Main Project": "cards.main", "Solo": "cards.solo", "Company": "cards.companyAuthor"
+    "Main Project": "cards.main", "Solo": "cards.solo", "Company": "cards.companyAuthor",
+    "Personal project": "cards.personal"
   };
 
   function trLabel(v) {
@@ -189,6 +190,7 @@
         {
           title: "Every Guarantee Ends at a Field the Tenant Can Write",
           url: "writing/every-guarantee-ends-at-a-writable-field.html",
+          source: "side", sourceLabel: "Personal project",
           title_ko: "모든 보장은 테넌트가 쓸 수 있는 필드에서 끝난다",
           desc_ko: "같은 방식으로 뚫린 방어 4건. 전부 읽어서가 아니라 공격해서 찾았다. 검사는 자기가 읽은 것에 대해 옳았고, 틀린 것은 테넌트가 쓰는 값을 테넌트에 관한 증거로 읽은 쪽이었다.",
           title_ja: "すべての保証は、テナントが書けるフィールドで終わる",
@@ -200,6 +202,7 @@
         {
           title: "The Only Control That Has Ever Caught a Cost Error",
           url: "writing/the-only-control-that-caught-something.html",
+          source: "side", sourceLabel: "Personal project",
           title_ko: "비용 오류를 잡은 통제는 예산 알람 하나뿐이었다",
           desc_ko: "개인 GPU 랩 계정의 비용 통제 기록. 손으로 만든 예산 알람 하나가 내 추정에서 통째로 빠져 있던 항목을 찾아냈고, Terraform이 그 알람을 조용히 지울 뻔했다.",
           title_ja: "コストの誤りを捕まえた統制は、予算アラート1つだけだった",
@@ -211,6 +214,7 @@
         {
           title: "It Did Not Protect the Tail. It Deleted the Tenant.",
           url: "writing/it-deleted-the-tenant.html",
+          source: "side", sourceLabel: "Personal project",
           title_ko: "꼬리를 지킨 게 아니라 테넌트를 지웠다",
           desc_ko: "GPU 한 장 위의 4-arm 실험. 거절을 0건 했다는 arm이 완료 수는 프리미엄 요청 수와 정확히 같았다. 리포트의 판정이 전부 비율이라, 네 번의 유료 실행 동안 아무도 그것을 보지 못했다.",
           title_ja: "テールを守ったのではなく、テナントを消していた",
@@ -222,6 +226,7 @@
         {
           title: "Three Documents I Wrote Rested on a False Premise",
           url: "writing/three-documents-on-a-false-premise.html",
+          source: "company", sourceLabel: "Company work",
           title_ko: "내가 쓴 절차서 세 편이 틀린 전제 위에 있었다",
           desc_ko: "2,255 커밋을 건너뛰는 버전 이관. 문서 추론으로는 어디서 깨질지 알 수 없어 격리 환경에 옛 버전을 세우고 한 번 깨뜨려 봤다. 그러자 내 앞선 문서 세 편의 전제가 틀렸다는 게 나왔다.",
           title_ja: "私が書いた手順書3本は誤った前提の上にあった",
@@ -233,6 +238,7 @@
         {
           title: "Seven of Eight Failures Should Not Be Recovered",
           url: "writing/seven-of-eight-should-not-recover.html",
+          source: "company", sourceLabel: "Company work",
           title_ko: "여덟 가지 장애 중 일곱은 복구하지 않기로 했다",
           desc_ko: "스위치 장애로 살아 있는 컴퓨트 노드가 장애로 판정돼 복구가 대량 실행됐다. 감지를 정교하게 만드는 대신 신호에 자격을 매겼고, 시나리오 여덟 중 일곱이 보류로 남았다.",
           title_ja: "8つの障害のうち7つは復旧しないと決めた",
@@ -244,6 +250,7 @@
         {
           title: "Adding Threads Made the Tail Longer",
           url: "writing/parallelism-made-the-tail-worse.html",
+          source: "company", sourceLabel: "Company work",
           title_ko: "thread를 늘렸더니 꼬리가 길어졌다",
           desc_ko: "cache 설정을 고정한 채 순차를 병렬로 바꾸니 P99가 42.6초에서 79.0초로 악화됐다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠긴다. 여섯 구성을 같은 조건으로 재고 나서야 보인 것.",
           title_ja: "スレッドを増やしたらテールが伸びた",
@@ -255,30 +262,10 @@
         {
           title: "Ten Bugs, Zero Failed Tests",
           url: "writing/bugs-that-return-exit-code-zero.html",
+          source: "side", sourceLabel: "Personal project",
           date: "2026-08", dateLabel: "Aug 2026",
           desc: "Control-plane verification on a Kubernetes GPU operator. What each defect broke, how it was found, and the guard that now holds it.",
           tags: ["Kubernetes", "Observability", "GPU"]
-        },
-        {
-          title: "GPU Node Readiness for Kubernetes-native GPU Platforms",
-          url: "writing/gpu-node-readiness.html",
-          date: "2026-02", dateLabel: "Feb 2026",
-          desc: "A practical write-up for validating GPU nodes before admitting AI workloads.",
-          tags: ["GPU", "Kubernetes"]
-        },
-        {
-          title: "Designing a Multi-tenant GPU Quota Control Plane",
-          url: "writing/gpu-quota-control-plane.html",
-          date: "2026-02", dateLabel: "Feb 2026",
-          desc: "Notes on tenant isolation, ResourceQuota, admission policy, and Gateway-level rate limits.",
-          tags: ["GPU", "Kubernetes", "Observability"]
-        },
-        {
-          title: "Lessons from IaaS Backend Performance Optimization",
-          url: "writing/iaas-backend-performance.html",
-          date: "2026-01", dateLabel: "Jan 2026",
-          desc: "How control-plane API design, caching, and parallelization changed user-visible latency.",
-          tags: ["Observability"]
         }
       ]
     },
