@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag commercial notranslate">사업화 프로젝트</span><span class="repo-private notranslate" translate="no">Private</span></div>
       </div>
       <section class="page-hero">
-        <h1>처리량 상한은 코드에 없었습니다<br><span class="h1-sub">S3 때문에 들어온 라이브러리의 기본값 5 — 소셜 투표 플랫폼 콘텐츠 검열 경로</span></h1>
+        <h1>처리량 상한은 코드에 없었습니다<br><span class="h1-sub">S3 때문에 들어온 라이브러리의 기본값 5: 소셜 투표 플랫폼 콘텐츠 검열 경로</span></h1>
         <p class="article-date">2026년 9월</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="the-ceiling-was-not-in-the-code"></aside>
@@ -102,7 +102,7 @@
 
         <p>안녕하세요. <strong>소셜 투표 플랫폼</strong>을 만들고 있습니다. 지난 글에서 transaction 경계를 고치고
         <a class="term" href="../notes/load-test-harness.html">harness</a>를 세워 수치를 만들었는데, 그 harness가
-        곧바로 다음 질문을 던졌습니다 — <em>“글 생성 처리량이 왜 6.27 req/s에서 안 올라가지?”</em></p>
+        곧바로 다음 질문을 던졌습니다. <em>“글 생성 처리량이 왜 6.27 req/s에서 안 올라가지?”</em></p>
 
         <p>쓰기 thread를 4배로 올려도, DB connection pool을 3배로 키워도 그 숫자는 움직이지 않았습니다.
         범인은 <strong>제가 쓴 적도, 고른 적도, 이름을 본 적도 없는 라이브러리의 기본값</strong>이었습니다.</p>
@@ -326,7 +326,7 @@
 
         <p>표를 읽는 법은 이렇습니다. <strong>쓰기를 4배로 올려도, DB pool을 3배로 키워도 동시 실행은 10에서
         움직이지 않습니다.</strong> 늘어나는 것은 응답시간뿐입니다(2,592 → 5,119ms). 이건 전형적인
-        <strong>대기열 신호</strong>입니다 — 일이 더 되는 게 아니라 줄만 길어진 겁니다.</p>
+        <strong>대기열 신호</strong>입니다. 일이 더 되는 게 아니라 줄만 길어진 겁니다.</p>
 
         <p>stub이 범인일 가능성은 따로 지웠습니다. 같은 stub을 앱 없이 32 worker로 20초 두드리면
         <strong>동시 32 · 40 req/s</strong> 를 냅니다. 그러니 10은 stub의 한계가 아니라
@@ -565,7 +565,7 @@ class OutboundHttpConfig {
         </table></div><p class="table-scroll-hint" aria-hidden="true">→ 표를 옆으로 넘길 수 있습니다</p></div>
 
         <p><strong>⚠️ 32는 새 상한이 아닙니다.</strong> 적어 둔 상한은 50인데 관측된 최고 동시 실행은 32입니다.
-        <strong>32는 부하의 모양이지 상한이 아닙니다</strong> — 쓰기 thread 16개가 글 1건당 호출 2개를 내므로
+        <strong>32는 부하의 모양이지 상한이 아닙니다</strong>. 쓰기 thread 16개가 글 1건당 호출 2개를 내므로
         16 × 2 = 32 입니다. 즉 이 실행에서 천장은 <strong>아웃바운드 풀에서 떠났고</strong>, 지금 처리량을
         정하는 것은 유입 동시성입니다. 50이 실제로 걸리는지는 쓰기 thread를 25 이상으로 올려야 보이는데,
         <strong>재지 않았습니다.</strong></p>
@@ -608,7 +608,7 @@ assertThat(manager.getMaxPerRoute(route)).isEqualTo(37)
 assertThat(factories[0]).isSameAs(factories[1])</code></pre>
 
         <p>그리고 이 단언들이 정말 겨누고 있는지는
-        <a class="term" href="../notes/mutation-testing.html">뮤테이션</a>으로 확인했습니다.
+        <a class="term" href="../notes/mutation-testing.html">mutation</a>으로 확인했습니다.
         <code>setMaxConnPerRoute</code> 를 지우면 첫 번째가 5를 보고 빨간불이 나고, 팩토리를 빌더마다
         새로 만들면 두 번째가 빨간불이 납니다. <strong>둘 다 실제로 확인했습니다.</strong></p>
 
@@ -637,7 +637,7 @@ assertThat(factories[0]).isSameAs(factories[1])</code></pre>
         아웃바운드 상한은 그대로입니다. 대신 상태 표시·재시도·중복 방지·실패 통지가 전부 새로 생깁니다.</p>
 
         <p>그래서 <strong>언제 그 설계가 정당해지는지</strong>를 미리 적어 뒀습니다. 나중에 “느낌”으로
-        도입하지 않기 위해서입니다 — 상한을 의도적으로 올린 뒤에도 글 생성 p95가 목표를 넘거나,
+        도입하지 않기 위해서입니다. 상한을 의도적으로 올린 뒤에도 글 생성 p95가 목표를 넘거나,
         외부 API의 p99가 자체 timeout에 근접하면 그때 비동기로 갑니다.</p>
 
         <h2 id="주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>

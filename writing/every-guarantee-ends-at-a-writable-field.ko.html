@@ -72,7 +72,7 @@
         <div class="article-meta"></div>
       </div>
       <section class="page-hero">
-        <h1>모든 보장은 테넌트가 쓸 수 있는 필드에서 끝난다</h1>
+        <h1>모든 보장은 테넌트가 쓸 수 있는 필드에서 끝난다<br><span class="h1-sub">방어 넷이 같은 방식으로 뚫렸고 전부 공격해서 찾았습니다. GPU 쿼터</span></h1>
         <p class="article-date">2026년 9월</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="every-guarantee-ends-at-a-writable-field"></aside>
@@ -150,7 +150,7 @@ $ kubectl -n serving get workloads
 
         <h2 id="ownerreference는-주장이지-사실이-아니다">ownerReference는 주장이지 사실이 아니다<a class="anchor" href="#ownerreference는-주장이지-사실이-아니다" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>그래서 입장 웹훅을 만들었다. 첫 버전의 규칙은 자연스러웠다 — <strong>Pod의 컨트롤러가 큐에 들어간
+        <p>그래서 입장 웹훅을 만들었다. 첫 버전의 규칙은 자연스러웠다. <strong>Pod의 컨트롤러가 큐에 들어간
         Job 이면 통과</strong>. 유닛 스펙 열 개와 라이브 케이스 네 개를 통과했다.</p>
 
 <pre><code># 진짜 큐에 진짜 Job 을 하나 만든다
@@ -169,8 +169,7 @@ forged-owner   1/1   Running</code></pre>
         하나뿐인데, 그건 같은 네임스페이스에서 읽을 수 있다.</p>
 
         <p><strong>수리.</strong> 그 참조를 <strong>Job 컨트롤러가 제시할 때만</strong> 믿는다.
-        <code>req.UserInfo.Username</code> — 입장 요청 안에서 <strong>테넌트가 쓸 수 없는 유일한 필드</strong> —
-        를 본다.</p>
+        <code>req.UserInfo.Username</code>. 입장 요청 안에서 <strong>테넌트가 쓸 수 없는 유일한 필드</strong>를 본다.</p>
 
         <p>여기에 구현상의 결과가 하나 붙는다. 타입이 붙은 <code>Validator</code> 인터페이스는
         <strong>객체만</strong> 넘겨준다. 그런데 믿을 수 없는 것이 바로 그 객체다. 그래서 원시
@@ -185,14 +184,14 @@ forged-owner   1/1   Running</code></pre>
         경우가 있다. 그런데 <strong>테넌트도 자기 Pod에 어노테이션을 달 수 있다.</strong> 그러면 이건 우회에
         단계를 하나 더한 것뿐이다.</p>
 
-        <p><strong>수리.</strong> <code>kube-system</code> 서비스 계정이 요청할 때만 존중한다 — 테넌트가 될 수
+        <p><strong>수리.</strong> <code>kube-system</code> 서비스 계정이 요청할 때만 존중한다. 테넌트가 될 수
         없는 집합이다. 그리고 면제로 통과한 Pod는 <strong>그 어노테이션을 이름으로 지목하는 경고를 남긴다.</strong>
         예산 밖으로 나가는 장치가 스스로를 알리게 한 것이다.</p>
 
         <h2 id="피해자가-고르는-숫자">회수 보장은 피해자가 고르는 숫자에 묶여 있다<a class="anchor" href="#피해자가-고르는-숫자" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>쿼터 회수는 선점으로 동작하고, 선점은 종료를 기다린다. 그리고 종료는
-        <code>terminationGracePeriodSeconds</code> 를 기다린다 — <strong>선점당하는 Pod가 스스로 정하는 값</strong>이다.</p>
+        <code>terminationGracePeriodSeconds</code> 를 기다린다. <strong>선점당하는 Pod가 스스로 정하는 값</strong>이다.</p>
 
         <p>직접 쟀다.</p>
 
@@ -210,15 +209,14 @@ forged-owner   1/1   Running</code></pre>
         </div>
         </div>
 
-        <p>남은 작업량을 43초로 고정하고 파라미터를 훑으면 모델이 나오고, 예측한 자리에 무릎이 생긴다 —
-        <strong><code>점유 = min(남은 작업, grace)</code></strong>.</p>
+        <p>남은 작업량을 43초로 고정하고 파라미터를 훑으면 모델이 나오고, 예측한 자리에 무릎이 생긴다.         <strong><code>점유 = min(남은 작업, grace)</code></strong>.</p>
 
         <p>같은 경계를 반대쪽에서도 쟀다. SIGTERM에 반응하지 않는 워크로드는 <strong>남은 작업이 grace 안에
         들어가는 동안에는 회수를 완전히 무력화</strong>하고, 그 범위를 넘어서는 순간 정확히 grace에서 잘린다.</p>
 
-        <p><strong>수리 — 그리고 이건 앞의 둘과 다르다.</strong> grace는 <strong>진짜로 워크로드의 것</strong>이다.
+        <p><strong>수리. 그리고 이건 앞의 둘과 다르다.</strong> grace는 <strong>진짜로 워크로드의 것</strong>이다.
         체크포인트를 남기고 죽으려면 시간이 필요하고, 그 필요는 정당하다. 그래서 신뢰할 수 있는 값으로 바꿀 수도,
-        쓸 수 있는 쪽을 제한할 수도 없었다. <strong>대신 상한을 뒀다 — 장치를 쥔 Pod은 120초.</strong></p>
+        쓸 수 있는 쪽을 제한할 수도 없었다. <strong>대신 상한을 뒀다. 장치를 쥔 Pod은 120초.</strong></p>
 
         <p>왜 30이 아닌가. SIGTERM에서 체크포인트를 쓰는 학습 스텝은 30초로 부족하고, 그걸 거부하면 테넌트는
         <strong>SIGTERM을 무시하는 쪽으로 간다.</strong> 그리고 측정이 보여준 바로는, 소유자에게 가장 비싼 것이
@@ -226,7 +224,7 @@ forged-owner   1/1   Running</code></pre>
 
         <h2 id="존재할-수-없는-pod">존재할 수 없는 Pod를 위한 예약<a class="anchor" href="#존재할-수-없는-pod" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>세 번째 수리를 시험하다 네 번째가 나왔다. 같은 모양이다 — <strong>Pod를 거부하는 것은 이미 늦다.</strong></p>
+        <p>세 번째 수리를 시험하다 네 번째가 나왔다. 같은 모양이다. <strong>Pod를 거부하는 것은 이미 늦다.</strong></p>
 
         <p>Kueue는 <strong>Job을 보고</strong> Job을 입장시킨다. 그런데 그 Job의 Pod이 이후에 거부되면,
         Job의 입장은 유지된다. Job 컨트롤러는 재시도하고, 모든 Pod이 거부되고, Workload는 입장된 채로 쿼터를
@@ -246,13 +244,12 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
         <p>여기서 라벨은 <strong>Job에서</strong> 검사한다. Kueue가 그 라벨을 읽는 곳이 거기이고, Pod에서
         거부하면 <strong>사용자에게 자기 Pod에 없는 필드를 고치라고 말하는 셈</strong>이 되기 때문이다.</p>
 
-        <p>배포 후 다시 공격했다 — 두 Job 모두 <code>Forbidden</code>, <code>used</code> 는 1에서 변하지 않았고,
+        <p>배포 후 다시 공격했다. 두 Job 모두 <code>Forbidden</code>, <code>used</code> 는 1에서 변하지 않았고,
         grace 90 인 평범한 큐 Job은 그대로 돌았다.</p>
 
         <h2 id="네-수리의-형태가-다르다">네 수리의 형태가 다른 이유<a class="anchor" href="#네-수리의-형태가-다르다" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>네 보장 모두 <strong>공격자가 공급하는 값으로 표현</strong>돼 있었다. 검사의 버그가 아니다 —
-        검사는 <strong>자기가 읽은 것에 대해서는 옳았다.</strong> 틀린 것은 <strong>테넌트가 쓰는 것을 읽고,
+        <p>네 보장 모두 <strong>공격자가 공급하는 값으로 표현</strong>돼 있었다. 검사의 버그가 아니다.         검사는 <strong>자기가 읽은 것에 대해서는 옳았다.</strong> 틀린 것은 <strong>테넌트가 쓰는 것을 읽고,
         그것을 테넌트에 관한 증거로 취급한 것</strong>이다.</p>
 
         <p>그리고 수리가 네 가지 서로 다른 형태로 나왔다는 것이 이 글에서 제일 쓸모 있는 부분이다.</p>
@@ -264,7 +261,7 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
           <caption class="sr-only">네 가지 수리와 각각이 취한 형태.</caption>
           <thead><tr><th scope="col">건</th><th scope="col">형태</th><th scope="col">무엇을 했나</th></tr></thead>
           <tbody>
-            <tr><td>① ownerReference</td><td><strong>대체</strong></td><td>믿을 수 없는 입력을 믿을 수 있는 입력으로 바꿨다 — 요청자는 인증되고 객체는 아니다</td></tr>
+            <tr><td>① ownerReference</td><td><strong>대체</strong></td><td>믿을 수 없는 입력을 믿을 수 있는 입력으로 바꿨다. 요청자는 인증되고 객체는 아니다</td></tr>
             <tr><td>② 면제 어노테이션</td><td><strong>제한</strong></td><td>그 입력을 줄 수 있는 쪽을, 테넌트가 낄 수 없는 집합으로 좁혔다</td></tr>
             <tr><td>③ grace</td><td><strong>상한</strong></td><td>둘 다 못 해서 <em>피해를 묶었다.</em> 가장 약하고 가장 정직한 수리다</td></tr>
             <tr><td>④ Job 예약</td><td><strong>위치 이동</strong></td><td>규칙은 그대로 두고, 약속이 일어나는 지점으로 검사를 옮겼다</td></tr>
@@ -282,7 +279,7 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
 
         <h2 id="이-문서의-한-주장이-거짓이었다">이 문서의 한 주장이 거짓이었고, 가드는 그 위에 지어졌다<a class="anchor" href="#이-문서의-한-주장이-거짓이었다" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>이 작업의 원본 문서에는 이런 문장이 있었다 — <em>"여기서는 Kueue의 Pod·Deployment 통합이 켜져 있지
+        <p>이 작업의 원본 문서에는 이런 문장이 있었다. <em>"여기서는 Kueue의 Pod·Deployment 통합이 켜져 있지
         않으므로, 관리 대상이 될 수 있는 것은 Job 뿐이고 서빙 Pod은 어떻게 라벨을 붙이든 Kueue에게 보이지 않는다."</em></p>
 
         <p><strong>거짓이다.</strong> 열일곱 개 프레임워크가 켜져 있고 그중에 <code>pod</code>,
@@ -291,14 +288,14 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
         살아남았다.</p>
 
         <p>이게 바꾸는 것은 라벨의 <strong>의미</strong>다. 큐 라벨은 테넌트가 자기에게 주는 권한이 아니라
-        <strong>청구서</strong>다 — 그 큐의 예산에 달아 달라는 요청이다. 그러면 "라벨이 붙었으니 통과"라는 규칙은
+        <strong>청구서</strong>다. 그 큐의 예산에 달아 달라는 요청이다. 그러면 "라벨이 붙었으니 통과"라는 규칙은
         가드가 대체하려던 바로 그 문자열 검사와 같은 것이 된다.</p>
 
         <p>그리고 여기서 이 프로젝트의 현재 상태가 나온다. 가드는 서빙 Pod을 거부하는데, 서빙 Pod은 ReplicaSet이
         소유하고 가드는 Job만 받기 때문이다. 그래서 <strong><code>serving</code> 네임스페이스의 라벨을 다시
         떼어 냈다.</strong> 지금 이 리포에서 <strong>이 가드의 통제를 받는 네임스페이스는 없다.</strong></p>
 
-        <p>정직한 상태는 이렇다 — <strong>강제 기제는 만들어졌고, 위조에 대해 시험됐고, 서빙이 진짜로 청구될
+        <p>정직한 상태는 이렇다. <strong>강제 기제는 만들어졌고, 위조에 대해 시험됐고, 서빙이 진짜로 청구될
         쿼터를 갖기 전까지는 켤 수 없다.</strong> 다음 단계는 가드를 약하게 만드는 것이 아니라 서빙을 쿼터 경로에
         올리는 것이다.</p>
 
@@ -316,8 +313,7 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
           장치를 오래 쥐는 것) 사이의 판단이고, 측정이 뒷받침하는 것은 "SIGTERM을 무시하는 쪽이 소유자에게 가장
           비싸다"는 부분까지다.</li>
           <li><strong>4건이 전부라는 뜻이 아니다.</strong> 공격해서 찾은 것이 넷이고, 공격하지 않은 표면은
-          그대로 남아 있다. 첫 가드가 유닛 스펙 열 개와 라이브 케이스 네 개를 통과했다는 사실이 그 이유다 —
-          <strong>테스트는 내가 생각한 것만 시험한다.</strong></li>
+          그대로 남아 있다. 첫 가드가 유닛 스펙 열 개와 라이브 케이스 네 개를 통과했다는 사실이 그 이유다:           <strong>테스트는 내가 생각한 것만 시험한다.</strong></li>
         </ul>
 
         <p>남는 한 줄은 이것이다. <strong>보장을 쓸 때는 그 문장이 어떤 값에 의존하는지를 적고, 그 값을 누가
