@@ -1,0 +1,82 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>언어 렌더 검사</title>
+<!-- 브라우저에서 열어 결과를 본다. 표가 실제로 화면에 걸리는지, 그리고 **위젯이 안 끼어드는지**를
+     사람이 보지 않고 단언한다. 정적 검사(check-i18n.py)는 키가 있는지만 보고, 그 키가 실제로
+     문서에 입혀졌는지는 못 본다. -->
+<style>body{font:13px/1.6 system-ui;margin:16px}li{margin:2px 0}.f{color:#b00;font-weight:700}.p{color:#070}</style>
+<h1>언어 렌더 검사</h1>
+<ul id="out"></ul>
+<script>
+var CASES = [
+  { page: "../index.html",          lang: "ko", nav: "소개",  lead: null },
+  { page: "../index.html",          lang: "ja", nav: "プロフィール", lead: null },
+  { page: "../writing/index.html",  lang: "ko", nav: "소개",  lead: "클라우드" },
+  { page: "../writing/index.html",  lang: "ja", nav: "プロフィール", lead: "クラウド" },
+  { page: "../notes/index.html",    lang: "ko", nav: "소개",  lead: "용어" },
+  { page: "../news/index.html",     lang: "ja", nav: "プロフィール", lead: "公開" },
+  { page: "../writing/a-pooler-fixes-only-one.ko.html", lang: "ko", nav: "소개", lead: null },
+  /* 용어 노트는 한국어 본문이 영어 URL 로 나가고 있었다. 이제 세 판이 있고, 선호한 언어의
+     판으로 **옮겨 가야** 한다 — 옮겨 갔는지는 도착한 문서의 lang 으로 본다. */
+  { page: "../notes/percentile.html", lang: "ko", nav: "소개", lead: null, htmlLang: "ko" },
+  { page: "../notes/percentile.html", lang: "ja", nav: "プロフィール", lead: null, htmlLang: "ja" },
+  { page: "../notes/percentile.html", lang: "en", nav: "About", lead: null, htmlLang: "en" }
+];
+var out = document.getElementById("out"), pass = 0, fail = 0, i = 0;
+function say(ok, msg) {
+  var li = document.createElement("li");
+  li.className = ok ? "p" : "f";
+  li.textContent = (ok ? "OK  " : "FAIL  ") + msg;
+  out.appendChild(li);
+  ok ? pass++ : fail++;
+}
+function next() {
+  if (i >= CASES.length) {
+    var d = document.createElement("p");
+    d.textContent = "checked=" + (pass + fail) + " " + (fail ? "FAILED" : "LOCALIZED");
+    document.body.appendChild(d);
+    return;
+  }
+  var c = CASES[i++];
+  try { localStorage.setItem("lang.pref", c.lang); } catch (e) {}
+  var fr = document.createElement("iframe");
+  fr.style.cssText = "width:1200px;height:400px;border:1px solid #ddd";
+  fr.src = c.page + "?t=" + Date.now();
+  /* 감시 타이머. 기사 페이지는 구글 위젯 스크립트를 기다리느라 onload 가 늦게 오거나 안 온다 —
+     그러면 검사가 조용히 멈추고, 멈춘 검사는 통과처럼 보인다. */
+  var done = false;
+  var watchdog = setTimeout(function () {
+    if (done) return;
+    done = true;
+    say(false, c.page + " [" + c.lang + "] 시간 초과 — 결과를 못 봤다");
+    fr.remove(); next();
+  }, 30000);
+  fr.onload = function () {
+    setTimeout(function () {
+      if (done) return;
+      done = true;
+      clearTimeout(watchdog);
+      var d = fr.contentDocument;
+      var navs = d.querySelectorAll('[data-i18n="nav.about"]');
+      say(navs.length === 1 && navs[0].textContent.trim() === c.nav,
+          c.page + " [" + c.lang + "] 메뉴=" + (navs[0] ? navs[0].textContent.trim() : "없음"));
+      if (c.lead) {
+        var lead = d.querySelector(".lead");
+        say(!!lead && lead.textContent.indexOf(c.lead) >= 0,
+            c.page + " [" + c.lang + "] 리드=" + (lead ? lead.textContent.slice(0, 24) : "없음"));
+      }
+      if (c.htmlLang) {
+        var got = (d.documentElement.getAttribute("lang") || "").toLowerCase();
+        say(got === c.htmlLang, c.page + " [" + c.lang + "] 도착 문서 lang=" + got);
+      }
+      // 위젯이 끼어들면 <html> 에 translated-* 클래스가 붙는다
+      say(!/translated-(ltr|rtl)/.test(d.documentElement.className),
+          c.page + " [" + c.lang + "] 위젯 미개입");
+      fr.remove();
+      next();
+    }, 600);
+  };
+  document.body.appendChild(fr);
+}
+next();
+</script>

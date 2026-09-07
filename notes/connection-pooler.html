@@ -1,19 +1,26 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>connection pooler란? | Kwanghun Lee</title>
+  <title>What is a connection pooler? | Kwanghun Lee</title>
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/notes/connection-pooler.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/notes/connection-pooler.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/notes/connection-pooler.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/notes/connection-pooler.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
   <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
-  <meta name="description" content="앱 connection 수천 개를 DB connection 수십 개로 묶어 주는 중간 서버. RDS Proxy·PgBouncer 등." />
+  <meta name="description" content="A middle server that folds thousands of app connections into dozens of database connections. RDS Proxy, PgBouncer." />
   <meta property="og:type" content="article" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="connection pooler란? | Kwanghun Lee" />
-  <meta property="og:description" content="앱 connection 수천 개를 DB connection 수십 개로 묶어 주는 중간 서버. RDS Proxy·PgBouncer 등." />
+  <meta property="og:title" content="What is a connection pooler? | Kwanghun Lee" />
+  <meta property="og:description" content="A middle server that folds thousands of app connections into dozens of database connections. RDS Proxy, PgBouncer." />
   <meta property="og:locale" content="ko_KR" />
   <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
 </head>
@@ -21,112 +28,114 @@
   <div class="topbar">
     <div class="topbar-inner notranslate">
       <a class="site-name" href="../index.html#about">Kwanghun</a>
-      <nav aria-label="Primary">
-        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language">
-          <option value="ko" selected>Korean</option>
-          <option value="en">English</option>
-          <option value="ja">Japanese</option>
-          <option value="zh-CN">Chinese (Simplified)</option>
-          <option value="zh-TW">Chinese (Traditional)</option>
-          <option value="es">Spanish</option>
-          <option value="fr">French</option>
-          <option value="de">German</option>
-          <option value="pt">Portuguese</option>
-          <option value="ru">Russian</option>
-          <option value="vi">Vietnamese</option>
-          <option value="id">Indonesian</option>
-          <option value="hi">Hindi</option>
-          <option value="ar">Arabic</option>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no"
+                  data-authored='{"en": "connection-pooler.html", "ko": "connection-pooler.ko.html", "ja": "connection-pooler.ja.html"}' aria-label="Select language" data-i18n-attr="aria-label:a11y.lang">
+          <option value="ko">한국어</option>
+          <option value="en" selected>English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
         </select>
         <div id="google_translate_element" aria-hidden="true"></div>
-        <a href="../index.html#about">About</a>
-        <a href="../index.html#news">News</a>
-        <a href="../index.html#projects">Projects</a>
-        <a href="../index.html#writing">Writing</a>
-        <a href="../index.html#notes" class="active">Notes</a>
-        <a href="../index.html#cv">CV</a>
+        <a href="../index.html#about" data-i18n="nav.about">About</a>
+        <a href="../index.html#news" data-i18n="nav.news">News</a>
+        <a href="../index.html#projects" data-i18n="nav.projects">Projects</a>
+        <a href="../index.html#writing" data-i18n="nav.writing">Writing</a>
+        <a href="../index.html#notes" class="active" data-i18n="nav.notes">Notes</a>
+        <a href="../index.html#cv" data-i18n="nav.cv">CV</a>
       </nav>
     </div>
   </div>
   <div class="container reading">
     <main>
       <div class="hero-top">
-        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
-        <div class="article-meta"><span class="source-tag glossary notranslate">용어</span></div>
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Notes</a>
+        <div class="article-meta"><span class="source-tag glossary notranslate">Term</span></div>
       </div>
       <section class="page-hero">
-        <h1>Connection Pooler: connection pooler란?</h1>
-        <p class="article-date">데이터베이스<span aria-hidden="true"> · </span><span class="notranslate">#Connection Pooler</span></p>
+        <h1>Connection Pooler</h1>
+        <p class="article-date">Database<span aria-hidden="true"> · </span><span class="notranslate">#Connection Pooler</span></p>
       </section>
       <aside class="article-aside" data-aside="notes" data-slug="connection-pooler"></aside>
-        <nav class="article-toc" aria-label="목차">
-          <p class="toc-label">목차</p>
+        <nav class="article-toc" aria-label="Contents">
+          <p class="toc-label">Contents</p>
           <ul>
-            <li><a href="#왜">왜 필요한가</a></li>
-            <li><a href="#구별">connection pool과 다른 것이다</a></li>
-            <li><a href="#한계">무엇을 못 고치나</a></li>
-            <li><a href="#쓰인-곳">이 사이트에서 쓰인 곳</a></li>
-            <li><a href="#함께-볼-용어">함께 볼 용어</a></li>
+            <li><a href="#왜">Why it exists</a></li>
+            <li><a href="#구별">It is not the same as a connection pool</a></li>
+            <li><a href="#한계">What it cannot fix</a></li>
+            <li><a href="#쓰인-곳">Where it is used on this site</a></li>
+            <li><a href="#함께-볼-용어">Related terms</a></li>
           </ul>
         </nav>
       <article class="article-body">
 
-        <p class="term-oneline">애플리케이션이 여는 <strong>connection 수천 개를 DB connection 수십 개로 묶어 주는 중간 서버</strong>입니다. RDS Proxy · PgBouncer · Supavisor 같은 것들입니다.</p>
+        <p class="term-oneline"><strong>A middle server that folds the thousands of connections an application opens into dozens of database connections</strong>. RDS Proxy, PgBouncer, Supavisor.</p>
 
 
-        <h2 id="왜">왜 필요한가<a class="anchor" href="#왜" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>PostgreSQL은 <strong>connection 하나마다 backend 프로세스를 하나씩</strong> 만듭니다. 그 프로세스는 아무 일도
-        안 하고 있어도 메모리를 씁니다. 그래서 앱 인스턴스를 늘릴수록 DB 쪽이 먼저 한계에 부딪힙니다.</p>
+        <h2 id="왜">Why it exists<a class="anchor" href="#왜" aria-label="Link to this section">#</a></h2>
+        <p>PostgreSQL creates <strong>one backend process per connection</strong>. That process uses memory even while it does
+        nothing. So the more app instances there are, the sooner the database side hits its limit.</p>
 
-        <pre data-lang="text">앱 인스턴스 100대 × pool 크기 20 = connection 2,000개
-그런데 실제로 지금 쿼리를 실행 중인 건 50개
-나머지 1,950개는 그냥 열려만 있다</pre>
+        <pre data-lang="text">100 app instances × pool size 20 = 2,000 connections
+but only 50 are actually running a query right now
+the other 1,950 are merely open</pre>
 
-        <p>connection pooler는 이 2,000개를 받아서 <strong>실제로 일이 있는 것만</strong> 뒤쪽 connection 50개에 얹습니다.
-        열려만 있는 connection의 비용을 없애 주는 것입니다.</p>
-        <h2 id="구별">connection pool과 다른 것이다<a class="anchor" href="#구별" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>이름이 비슷해서 자주 헷갈립니다.</p>
+        <p>A connection pooler takes those 2,000 and lays <strong>only the ones with work</strong> onto 50 backend connections.
+        It removes the cost of connections that are merely open.</p>
+        <h2 id="구별">It is not the same as a connection pool<a class="anchor" href="#구별" aria-label="Link to this section">#</a></h2>
+        <p>The names are close enough to be confused often.</p>
 
         <ul>
-          <li><strong>connection pool</strong>(HikariCP 등) — <em>앱 안</em>에 있습니다. 앱이 DB connection을 재사용하려고 들고 있는 목록입니다.</li>
-          <li><strong>connection pooler</strong>(RDS Proxy 등) — <em>앱과 DB 사이</em>에 있는 별도 서버입니다. 여러 앱의 connection을 합칩니다.</li>
+          <li><strong>connection pool</strong> (HikariCP and friends) — lives <em>inside the app</em>. It is the list the app holds so it can reuse database connections.</li>
+          <li><strong>connection pooler</strong> (RDS Proxy and friends) — a separate server <em>between the app and the database</em>. It merges connections from many apps.</li>
         </ul>
 
-        <p>즉 pool은 "한 앱이 자기 connection을 아끼는 것", 풀러는 "여러 앱의 connection을 DB 앞에서 합치는 것"입니다.</p>
-        <h2 id="한계">무엇을 못 고치나<a class="anchor" href="#한계" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>connection 부족에는 원인이 두 가지 있고, 풀러는 <strong>하나만</strong> 고칩니다.</p>
+        <p>So a pool is "one app economising on its own connections" and a pooler is "many apps' connections merged in front of the database".</p>
+        <h2 id="한계">What it cannot fix<a class="anchor" href="#한계" aria-label="Link to this section">#</a></h2>
+        <p>Connection shortage has two causes, and a pooler fixes <strong>only one of them</strong>.</p>
 
         <ul>
-          <li><strong>connection 개수가 많아서</strong> — 풀러가 정확히 이걸 위한 도구입니다.</li>
-          <li><strong>connection을 오래 붙잡고 있어서</strong> — 풀러가 <strong>구조적으로 못 고칩니다.</strong></li>
+          <li><strong>too many connections</strong> — this is exactly what a pooler is for.</li>
+          <li><strong>connections held for too long</strong> — a pooler <strong>cannot fix this, structurally.</strong></li>
         </ul>
 
-        <p>이유는 <a href="transaction-pooling.html">transaction pooling</a>의 정의에 있습니다. connection 재사용은 transaction과
-        transaction <em>사이</em>에서만 일어나는데, transaction이 열려 있는 동안에는 그 connection이 한 클라이언트에 묶이기
-        때문입니다. transaction이 10초 열려 있으면 뒤쪽 connection도 10초 묶입니다.</p>
+        <p>The reason is in the definition of <a href="transaction-pooling.html">transaction pooling</a>. Reuse happens only
+        <em>between</em> transactions, and while a transaction is open its connection is pinned to one client.
+        A transaction open for ten seconds pins the backend connection for ten seconds.</p>
 
-        <h2 id="쓰인-곳">이 사이트에서 쓰인 곳<a class="anchor" href="#쓰인-곳" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="쓰인-곳">Where it is used on this site<a class="anchor" href="#쓰인-곳" aria-label="Link to this section">#</a></h2>
         <ul>
-          <li><a href="../writing/a-pooler-fixes-only-one.ko.html">RDS Proxy 로는 못 고치는 connection 고갈</a></li>
+          <li><a href="../writing/a-pooler-fixes-only-one.html">The Connection Exhaustion RDS Proxy Cannot Fix</a></li>
           </ul>
 
-        <h2 id="함께-볼-용어">함께 볼 용어<a class="anchor" href="#함께-볼-용어" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="함께-볼-용어">Related terms<a class="anchor" href="#함께-볼-용어" aria-label="Link to this section">#</a></h2>
         <ul>
-          <li><a href="transaction-pooling.html">transaction pooling</a> — 풀러가 connection을 재사용하는 방식</li>
-          <li><a href="connection-pool.html">connection pool</a> — 앱 안쪽의 그것</li>
+          <li><a href="transaction-pooling.html">transaction pooling</a> — how a pooler reuses connections</li>
+          <li><a href="connection-pool.html">connection pool</a> — the one inside the app</li>
           </ul>
 
       </article>
     </main>
     <footer class="notranslate">
       <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
-      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+      <div data-i18n="footer.built">© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
     </footer>
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/content.js?v=6a34c005d2"></script>
-  <script src="../assets/lang.js?v=2d9c133fc2"></script>
+  <script src="../assets/i18n.js?v=5c1e19d3f2"></script>
+  <script src="../assets/content.js?v=21fc1288cb"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>
     (function () {
