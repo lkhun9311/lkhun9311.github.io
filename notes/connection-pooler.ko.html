@@ -84,9 +84,9 @@
 
         <h2 id="왜">왜 필요한가<a class="anchor" href="#왜" aria-label="이 절로 가는 링크">#</a></h2>
         <p>PostgreSQL은 <strong>connection 하나마다 backend 프로세스를 하나씩</strong> 만듭니다. 그 프로세스는 아무 일도
-        안 하고 있어도 메모리를 씁니다. 그래서 앱 인스턴스를 늘릴수록 DB 쪽이 먼저 한계에 부딪힙니다.</p>
+        안 하고 있어도 메모리를 씁니다. 그래서 앱 instance를 늘릴수록 DB 쪽이 먼저 한계에 부딪힙니다.</p>
 
-        <pre data-lang="text">앱 인스턴스 100대 × pool 크기 20 = connection 2,000개
+        <pre data-lang="text">앱 instance 100대 × pool 크기 20 = connection 2,000개
 그런데 실제로 지금 쿼리를 실행 중인 건 50개
 나머지 1,950개는 그냥 열려만 있다</pre>
 
@@ -96,8 +96,8 @@
         <p>이름이 비슷해서 자주 헷갈립니다.</p>
 
         <ul>
-          <li><strong>connection pool</strong>(HikariCP 등) — <em>앱 안</em>에 있습니다. 앱이 DB connection을 재사용하려고 들고 있는 목록입니다.</li>
-          <li><strong>connection pooler</strong>(RDS Proxy 등) — <em>앱과 DB 사이</em>에 있는 별도 서버입니다. 여러 앱의 connection을 합칩니다.</li>
+          <li><strong>connection pool</strong>(HikariCP 등): <em>앱 안</em>에 있습니다. 앱이 DB connection을 재사용하려고 들고 있는 목록입니다.</li>
+          <li><strong>connection pooler</strong>(RDS Proxy 등): <em>앱과 DB 사이</em>에 있는 별도 서버입니다. 여러 앱의 connection을 합칩니다.</li>
         </ul>
 
         <p>즉 pool은 "한 앱이 자기 connection을 아끼는 것", 풀러는 "여러 앱의 connection을 DB 앞에서 합치는 것"입니다.</p>
@@ -105,8 +105,8 @@
         <p>connection 부족에는 원인이 두 가지 있고, 풀러는 <strong>하나만</strong> 고칩니다.</p>
 
         <ul>
-          <li><strong>connection 개수가 많아서</strong> — 풀러가 정확히 이걸 위한 도구입니다.</li>
-          <li><strong>connection을 오래 붙잡고 있어서</strong> — 풀러가 <strong>구조적으로 못 고칩니다.</strong></li>
+          <li><strong>connection 개수가 많아서</strong>: 풀러가 정확히 이걸 위한 도구입니다.</li>
+          <li><strong>connection을 오래 붙잡고 있어서</strong>: 풀러가 <strong>구조적으로 못 고칩니다.</strong></li>
         </ul>
 
         <p>이유는 <a href="transaction-pooling.html">transaction pooling</a>의 정의에 있습니다. connection 재사용은 transaction과
@@ -120,8 +120,8 @@
 
         <h2 id="함께-볼-용어">함께 볼 용어<a class="anchor" href="#함께-볼-용어" aria-label="이 절로 가는 링크">#</a></h2>
         <ul>
-          <li><a href="transaction-pooling.html">transaction pooling</a> — 풀러가 connection을 재사용하는 방식</li>
-          <li><a href="connection-pool.html">connection pool</a> — 앱 안쪽의 그것</li>
+          <li><a href="transaction-pooling.html">transaction pooling</a>: 풀러가 connection을 재사용하는 방식</li>
+          <li><a href="connection-pool.html">connection pool</a>: 앱 안쪽의 그것</li>
           </ul>
 
       </article>

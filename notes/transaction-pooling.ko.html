@@ -71,7 +71,7 @@
           <p class="toc-label">목차</p>
           <ul>
             <li><a href="#모드">세 가지 모드</a></li>
-            <li><a href="#성질">핵심 성질 — 언제 묶이나</a></li>
+            <li><a href="#성질">핵심 성질: 언제 묶이나</a></li>
             <li><a href="#핀">핀(pin)이 걸리는 패턴</a></li>
             <li><a href="#쓰인-곳">이 사이트에서 쓰인 곳</a></li>
             <li><a href="#함께-볼-용어">함께 볼 용어</a></li>
@@ -86,11 +86,11 @@
         <p>PgBouncer 기준으로 세 가지가 있습니다. 뒤로 갈수록 재사용이 잘 되지만 쓸 수 있는 기능이 줄어듭니다.</p>
 
         <ul>
-          <li><strong>세션 풀링</strong> — 클라이언트가 연결을 끊을 때까지 connection을 붙들고 있습니다. 재사용이 거의 없습니다.</li>
-          <li><strong>transaction pooling</strong> — transaction 단위. 실무에서 가장 많이 쓰는 모드입니다.</li>
-          <li><strong>스테이트먼트 풀링</strong> — 쿼리 하나 단위. transaction을 쓸 수 없습니다.</li>
+          <li><strong>세션 풀링</strong>: 클라이언트가 연결을 끊을 때까지 connection을 붙들고 있습니다. 재사용이 거의 없습니다.</li>
+          <li><strong>transaction pooling</strong>: transaction 단위. 실무에서 가장 많이 쓰는 모드입니다.</li>
+          <li><strong>스테이트먼트 풀링</strong>: 쿼리 하나 단위. transaction을 쓸 수 없습니다.</li>
         </ul>
-        <h2 id="성질">핵심 성질 — 언제 묶이나<a class="anchor" href="#성질" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="성질">핵심 성질: 언제 묶이나<a class="anchor" href="#성질" aria-label="이 절로 가는 링크">#</a></h2>
         <p>이 한 줄이 전부입니다.</p>
 
         <blockquote><p>connection 재사용은 transaction과 transaction <strong>사이</strong>에서만 일어난다.
@@ -111,7 +111,7 @@
         <p>아래 패턴이 코드에 있으면 transaction이 끝나도 connection이 계속 묶여, 풀러가 무력해집니다.</p>
 
         <ul>
-          <li>세션 스코프 advisory lock (<code>pg_advisory_lock</code>) — <code>pg_advisory_xact_lock</code> 은 괜찮습니다(transaction 종료 시 해제)</li>
+          <li>세션 스코프 advisory lock (<code>pg_advisory_lock</code>): <code>pg_advisory_xact_lock</code> 은 괜찮습니다(transaction 종료 시 해제)</li>
           <li>임시 테이블</li>
           <li><code>SET</code> · <code>set search_path</code></li>
           <li>서버 프리페어드 스테이트먼트 (풀러와 버전에 따라 다름)</li>
@@ -127,8 +127,8 @@
 
         <h2 id="함께-볼-용어">함께 볼 용어<a class="anchor" href="#함께-볼-용어" aria-label="이 절로 가는 링크">#</a></h2>
         <ul>
-          <li><a href="connection-pooler.html">connection pooler</a> — 이 방식을 쓰는 미들웨어</li>
-          <li><a href="connection-pool.html">connection pool</a> — 앱 안쪽의 그것</li>
+          <li><a href="connection-pooler.html">connection pooler</a>: 이 방식을 쓰는 미들웨어</li>
+          <li><a href="connection-pool.html">connection pool</a>: 앱 안쪽의 그것</li>
           </ul>
 
       </article>
