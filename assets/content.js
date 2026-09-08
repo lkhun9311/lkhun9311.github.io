@@ -248,6 +248,18 @@
           tags: ["Reliability", "Method"]
         },
         {
+          title: "A Monitoring Screen Authenticated Once Per Project",
+          url: "writing/slow-screens-4-client-per-loop.html",
+          source: "company", sourceLabel: "Company work",
+          title_ko: "모니터링 화면이 프로젝트 수만큼 인증했습니다",
+          desc_ko: "시계열 그래프를 그리는 화면이라 쿼리를 의심했는데 아니었습니다. 초기 로드가 프로젝트마다 client를 새로 만들고 있었고, 우리가 쓰던 팩터리는 client를 줄 때마다 Keystone에 인증합니다. 다만 이 글에는 전후를 잰 숫자가 없습니다. 왜 없는지가 글의 절반입니다. 연작 「느린 화면」 ④.",
+          title_ja: "モニタリング画面がプロジェクトの数だけ認証していました",
+          desc_ja: "時系列グラフを描く画面なのでクエリを疑いましたが違いました。初期ロードがプロジェクトごとに client を作り直しており、使っていたファクトリは client を渡すたびに Keystone へ認証します。ただしこの記事には前後を測った数値がありません。なぜ無いのかが記事の半分です。連載「遅い画面」④。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "It draws time-series graphs, so the query looked like the suspect. It was not. The initial load built a new client per project, and that factory authenticates to Keystone every time it hands one out. This article has no before-and-after numbers, and why it does not is half the story. Slow Screens, part four. Also in Korean and Japanese.",
+          tags: ["Performance", "Backend", "Method"]
+        },
+        {
           title: "A Role Lookup Went From 1,409 ms to 1 ms",
           url: "writing/slow-screens-3-role-lookup.html",
           source: "company", sourceLabel: "Company work",

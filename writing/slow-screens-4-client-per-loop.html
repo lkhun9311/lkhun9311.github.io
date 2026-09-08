@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Monitoring Screen Authenticated Once Per Project | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/slow-screens-4-client-per-loop.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/slow-screens-4-client-per-loop.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/slow-screens-4-client-per-loop.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/slow-screens-4-client-per-loop.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="A Monitoring Screen Authenticated Once Per Project | Kwanghun Lee" />
+  <meta property="og:description" content="It draws time-series graphs, so the query looked like the suspect. It was not. The initial load built a new client per project, and the factory we used authenticates to Keystone every time it hands one out. This article has no before-and-after numbers, and why it does not is half the story." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/slow-screens-4-client-per-loop.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="A Monitoring Screen Authenticated Once Per Project | Kwanghun Lee" />
+  <meta name="twitter:description" content="It draws time-series graphs, so the query looked like the suspect. It was not. The initial load built a new client per project, and the factory we used authenticates to Keystone every time it hands one out. This article has no before-and-after numbers, and why it does not is half the story." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="It draws time-series graphs, so the query looked like the suspect. It was not. The initial load built a new client per project, and the factory we used authenticates to Keystone every time it hands one out. This article has no before-and-after numbers, and why it does not is half the story." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "slow-screens-4-client-per-loop.html", "ko": "slow-screens-4-client-per-loop.ko.html", "ja": "slow-screens-4-client-per-loop.ja.html"}'>
+          <option value="ko">Korean</option>
+          <option value="en" selected>English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing</a>
+        <div class="article-meta"><span class="source-tag company notranslate">Company work</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>A Monitoring Screen Authenticated Once Per Project<br><span class="h1-sub">Getting a client from that factory was the same thing as authenticating to Keystone. An internal cloud admin console. Slow Screens, part four</span></h1>
+          <p class="article-date">Sep 2026</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="slow-screens-4-client-per-loop"></aside>
+
+        <nav class="article-toc" aria-label="Table of contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-is-in-here">What this is about</a></li>
+            <li><a href="#the-screen">The screen</a></li>
+            <li><a href="#the-query-first">The query is what you want to open first</a></li>
+            <li><a href="#the-cause">The cause: getting a client is authenticating</a></li>
+            <li><a href="#dead-cache">And nothing was reading the cache</a></li>
+            <li><a href="#the-fix">The fix: authentication moved out of the loop</a></li>
+            <li><a href="#not-measured">⚠️ And I never measured before and after</a></li>
+            <li><a href="#the-load-test">A load test only measures the path its scenario sends</a></li>
+            <li><a href="#limits">Limits: what this article does not claim</a></li>
+            <li><a href="#Closing">Closing</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>Hello. I write the backend of an internal cloud admin console. A report came in that the
+        monitoring screen was slow.</p>
+
+        <p>⚠️ One thing first. <strong>This article has no before-and-after numbers.</strong>
+        The previous three had them; this one does not. Why it does not is half the article.</p>
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>You keep a convenience function like <code>getClient()</code> around a cloud SDK.</li>
+          <li>You have seen code that gets a client inside a loop.</li>
+          <li>Your first move on a slow screen is to open the query.</li>
+        </ul>
+
+        <h2 id="what-is-in-here">What this is about<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li>The screen draws time-series graphs, so <strong>it is easy to assume the query is the slow
+          part.</strong> It was not.</li>
+          <li>The initial load <strong>built a new client for every project</strong>, and
+          <strong>the <code>serviceClient()</code> we used authenticates to Keystone on every call.</strong>
+          N projects means <strong>N authentications</strong>, one after another.</li>
+          <li>There was also a cache that <strong>nothing was reading.</strong>
+          “We added a cache” and “we read the cache” are different things.</li>
+          <li>The fix was <strong>building one client outside the loop and reusing it.</strong>
+          N authentications become one.</li>
+          <li>⚠️ <strong>How much faster it got, I do not know.</strong> It was never measured, and
+          the load-test scenario people usually write <strong>does not include this stretch.</strong></li>
+        </ul>
+
+        <p><strong>This is an internal product, so the code here is not the code that shipped.</strong>
+        Product names, customers and internal addresses are gone; only the structure stays.
+        Class and function names are generalised as far as the story needs.</p>
+
+        <h2 id="the-screen">The screen<a class="anchor" href="#the-screen" aria-label="Link to this section">#</a></h2>
+
+        <p>A monitoring tab that shows resource usage across several projects on one screen. Two things run
+        at once.</p>
+
+        <ul>
+          <li><strong>The initial load</strong> is one REST request that collects quota and usage per project.</li>
+          <li><strong>After that</strong> the server computes values every 15 seconds and pushes them to every
+          open screen. Holding the connection open and sending from the server is called
+          <strong>SSE</strong> (Server-Sent Events). ⚠️ What is independent of the number of viewers is the
+          <strong>computation</strong>; serialising the result and writing it to each connection grows with
+          the number of connections.</li>
+        </ul>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
+            <svg viewBox="0 0 720 210" role="img" aria-labelledby="mon-t mon-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="mon-t">Two paths: the initial load and the 15-second push</title>
+              <desc id="mon-d">The upper path is the initial load. The screen makes one REST request, and the backend
+              builds a client per project to query it, with one Keystone authentication each time a client is
+              built. That is the stretch drawn in pink. The lower path is what follows: the server computes once
+              every 15 seconds and pushes the same values to every open screen. That one is in blue.</desc>
+
+              <rect x="8" y="24" width="104" height="32" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="60" y="44" font-size="12.5" fill="#18121d" text-anchor="middle">screen</text>
+              <path d="M112 40 H 150" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#mn-arA)"/>
+              <text x="131" y="32" font-size="11.5" fill="#d62976" text-anchor="middle">one REST call</text>
+              <rect x="158" y="24" width="126" height="32" rx="6" fill="none" stroke="#18121d" stroke-width="2"/>
+              <text x="221" y="44" font-size="12.5" fill="#18121d" font-weight="700" text-anchor="middle">backend</text>
+              <path d="M284 40 H 322" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#mn-arA)"/>
+              <rect x="330" y="16" width="382" height="48" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="521" y="36" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">a client per project · which is a Keystone authentication</text>
+              <text x="521" y="54" font-size="11.5" fill="#7b7186" text-anchor="middle">N projects · N authentications · sequential</text>
+              <rect x="158" y="76" width="554" height="18" rx="3" fill="rgba(214,41,118,0.18)" stroke="#d62976" stroke-width="1.5"/>
+              <text x="435" y="90" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">initial load · what the user waits for</text>
+
+              <rect x="8" y="126" width="104" height="32" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="60" y="146" font-size="12.5" fill="#18121d" text-anchor="middle">many screens</text>
+              <path d="M150 142 H 112" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#mn-arB)"/>
+              <rect x="158" y="126" width="126" height="32" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="221" y="146" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">once per 15 s</text>
+              <path d="M322 142 H 284" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#mn-arB)"/>
+              <rect x="330" y="126" width="382" height="32" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="521" y="146" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">computed from the time-series store</text>
+              <rect x="158" y="170" width="554" height="18" rx="3" fill="rgba(79,91,213,0.18)" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="435" y="184" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">push · one computation per tick</text>
+              <defs>
+                <marker id="mn-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+                <marker id="mn-arB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>The call structure of the initial REST load and the 15-second push.</figcaption>
+        </figure>
+
+        <h2 id="the-query-first">The query is what you want to open first<a class="anchor" href="#the-query-first" aria-label="Link to this section">#</a></h2>
+
+        <p>Hearing “the time-series graph is slow”, there is one place your hand goes first: the query.
+        Tune the expression, cache the result, then turn on a load tool and ramp up users to confirm.
+        <strong>The order feels natural, and here the slow stretch was not on that side.</strong></p>
+
+        <p>The time-series query runs <strong>once every 15 seconds</strong>, and once regardless of how many
+        screens are open. ⚠️ Frequency alone does not make it cheap. What it does mean is that
+        <strong>the record never pointed here as the place to look first.</strong></p>
+
+        <blockquote><p><strong>A function that runs a long time is not automatically the stretch the user is
+        waiting on.</strong> Queries are visible, so they get targeted first.</p></blockquote>
+
+        <h2 id="the-cause">The cause: getting a client is authenticating<a class="anchor" href="#the-cause" aria-label="Link to this section">#</a></h2>
+
+        <p>The initial-load code looked like this.</p>
+
+<pre data-lang="java"><code>for (String projectId : projects) {
+    // a new client on every iteration
+    var quota = ClientUtil.serviceClient()
+                          .compute().quotaSets().getDetail(projectId);
+    ...
+}</code></pre>
+
+        <p>Nothing looks wrong reading it. It calls a convenience function and uses the result.
+        <strong>What that function does is not in its name.</strong></p>
+
+        <blockquote><p><strong>In this factory, getting a client is authenticating.</strong>
+        <code>serviceClient()</code> connects to Keystone with the account from the config file, takes a token,
+        and hands back a client that is already authenticated.</p></blockquote>
+
+        <p>⚠️ <strong>This is not a claim about SDKs in general.</strong> The same library has another route that
+        builds a client from a token you already hold. What authenticates here is
+        <strong>our own factory's implementation</strong>, and the article is about that fact not being
+        visible in the function's name.</p>
+
+        <p>⚠️ And <strong>this comes from two internal documents.</strong> The implementation of
+        <code>serviceClient()</code> is not reproduced here, and what survives in the archive is not that
+        implementation but the documents describing it.</p>
+
+        <p>Which makes the loop run like this.</p>
+
+        <ul>
+          <li>one project → <strong>one authentication round trip</strong> plus a few queries for it</li>
+          <li>N projects → <strong>N authentication round trips</strong> plus N × a few queries</li>
+          <li>and it runs <strong>in order</strong>. Each one has to finish before the next starts</li>
+        </ul>
+
+        <p>What the screen shows is a graph, and before drawing it the code was
+        <strong>authenticating N times.</strong> More projects means
+        <strong>proportionally more sequential authentications.</strong>
+        ⚠️ I will not go as far as saying response time grows by exactly that much.
+        How long one authentication takes, and whether it is the same every time, was never measured.</p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
+            <svg viewBox="0 0 720 176" role="img" aria-labelledby="auth-t auth-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="auth-t">Building the client inside the loop against outside it</title>
+              <desc id="auth-d">The upper card is before the fix: the client is built inside the loop, so with four
+              projects authentication and query alternate eight times. The lower card is after: authentication
+              happens once before the loop, followed by four queries.</desc>
+
+              <rect x="0" y="0" width="720" height="76" rx="10" fill="rgba(214,41,118,0.06)"/>
+              <rect x="10" y="10" width="72" height="22" rx="11" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="46" y="26" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">Before</text>
+              <g font-size="11" text-anchor="middle" font-weight="700">
+                <rect x="98" y="40" width="66" height="24" rx="4" fill="rgba(214,41,118,0.22)" stroke="#d62976" stroke-width="1.5"/>
+                <text x="131" y="56" fill="#d62976">auth</text>
+                <rect x="168" y="40" width="66" height="24" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+                <text x="201" y="56" fill="#18121d">query</text>
+                <rect x="238" y="40" width="66" height="24" rx="4" fill="rgba(214,41,118,0.22)" stroke="#d62976" stroke-width="1.5"/>
+                <text x="271" y="56" fill="#d62976">auth</text>
+                <rect x="308" y="40" width="66" height="24" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+                <text x="341" y="56" fill="#18121d">query</text>
+                <rect x="378" y="40" width="66" height="24" rx="4" fill="rgba(214,41,118,0.22)" stroke="#d62976" stroke-width="1.5"/>
+                <text x="411" y="56" fill="#d62976">auth</text>
+                <rect x="448" y="40" width="66" height="24" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+                <text x="481" y="56" fill="#18121d">query</text>
+                <rect x="518" y="40" width="66" height="24" rx="4" fill="rgba(214,41,118,0.22)" stroke="#d62976" stroke-width="1.5"/>
+                <text x="551" y="56" fill="#d62976">auth</text>
+                <rect x="588" y="40" width="66" height="24" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+                <text x="621" y="56" fill="#18121d">query</text>
+              </g>
+
+              <rect x="0" y="88" width="720" height="76" rx="10" fill="rgba(79,91,213,0.06)"/>
+              <rect x="10" y="98" width="72" height="22" rx="11" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="46" y="114" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">After</text>
+              <g font-size="11" text-anchor="middle" font-weight="700">
+                <rect x="98" y="128" width="66" height="24" rx="4" fill="rgba(79,91,213,0.22)" stroke="#4f5bd5" stroke-width="1.5"/>
+                <text x="131" y="144" fill="#4f5bd5">auth</text>
+                <rect x="168" y="128" width="66" height="24" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+                <text x="201" y="144" fill="#18121d">query</text>
+                <rect x="238" y="128" width="66" height="24" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+                <text x="271" y="144" fill="#18121d">query</text>
+                <rect x="308" y="128" width="66" height="24" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+                <text x="341" y="144" fill="#18121d">query</text>
+                <rect x="378" y="128" width="66" height="24" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+                <text x="411" y="144" fill="#18121d">query</text>
+              </g>
+              <text x="460" y="146" font-size="12" fill="#4f5bd5" font-weight="700">one auth · token reused</text>
+            </svg>
+          </div>
+          <figcaption>Drawn for four projects. The pink cells are authentication round trips.
+          What disappears in the lower card is not the queries but the authentications.</figcaption>
+        </figure>
+
+        <h2 id="dead-cache">And nothing was reading the cache<a class="anchor" href="#dead-cache" aria-label="Link to this section">#</a></h2>
+
+        <p>There was already a quota cache on the same path. <strong>Nothing read it.</strong>
+        It was being filled while every request still went out live.</p>
+
+        <blockquote><p><strong>“We added a cache” and “we read the cache” are different things.</strong>
+        A cache nothing reads is worse than none, because it makes people believe there is one.</p></blockquote>
+
+        <p>If <a href="slow-screens-3-role-lookup.html">part three</a> was “there was a cache and the cache was
+        why it was slow”, this one is <strong>“there was a cache and nobody looked at it”.</strong></p>
+
+        <h2 id="the-fix">The fix: authentication moved out of the loop<a class="anchor" href="#the-fix" aria-label="Link to this section">#</a></h2>
+
+<pre data-lang="java"><code>// one authentication. built outside the loop
+final var client = ClientUtil.serviceClient(
+        Config.newConfig()
+              .withConnectionTimeout(...)
+              .withReadTimeout(...));
+
+for (String projectId : projects) {
+    var quota = client.compute().quotaSets().getDetail(projectId);   // token reused
+    var net   = client.networking().quotas().detail(projectId);
+    ...
+}</code></pre>
+
+        <p>What changed is <strong>one place where <code>serviceClient()</code> is called.</strong>
+        It moved from inside the loop to outside it.</p>
+
+        <p>⚠️ To be precise: <strong>authentication did not disappear, it went from N per request to one per
+        request.</strong> The client is built inside this method, so
+        <strong>the next request authenticates again.</strong></p>
+
+        <p>And <strong>even that “once” has conditions.</strong> If the token expires while the loop is running,
+        the next call is refused. Whether the library re-authenticates and retries on its own
+        <strong>depends on the version and connector in use, and I did not check.</strong>
+        The token's lifetime is simply far longer than this loop takes, so it never showed.</p>
+
+        <p>Holding the client between requests would cut authentication further.
+        ⚠️ <strong>That side is harder.</strong> Clients in this family tie the current session to a thread,
+        so sharing one across request threads can leave the session mixed up or missing. Token expiry becomes
+        yours to handle from that point too. <strong>This fix did not go there.</strong></p>
+
+        <p>Scoping the timeouts <strong>to this client only</strong> was deliberate too. Put them in the global
+        configuration and legitimately long calls elsewhere get cut as well. <strong>Fixing a slow screen and
+        breaking a working feature</strong> is a common next incident.</p>
+
+        <p>⚠️ The two limit different things. A connection timeout caps <strong>establishing the
+        connection</strong>; a read timeout caps <strong>waiting for a response</strong> after sending.
+        And scoping them to this client still applies them to
+        <strong>every authentication and query this client makes.</strong> What scoping prevents is the setting
+        spreading to other clients. ⚠️ This is the stated <strong>intent</strong>; there is no record of anyone
+        checking what actually breaks when it is set globally.</p>
+
+        <h2 id="not-measured">⚠️ And I never measured before and after<a class="anchor" href="#not-measured" aria-label="Link to this section">#</a></h2>
+
+        <p>This is where the article parts company with the previous three.</p>
+
+        <p>The internal record holds two numbers and <strong>they disagree.</strong> One says “5 to 10 seconds
+        with N projects”; the other says “the initial load takes seconds to tens of seconds”.
+        <strong>Neither says how it was measured, and there is no figure at all from after the fix.</strong></p>
+
+        <p>So this article <strong>cannot say “it got N times faster”.</strong> What it can say is what the code
+        shows.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">What this article can and cannot say.</caption>
+          <thead><tr><th>What it can say</th><th>What it cannot</th></tr></thead>
+          <tbody>
+            <tr><td>authentication round trips go from N to one</td><td>how many seconds that saved</td></tr>
+            <tr><td>the cost of one authentication is paid N−1 fewer times</td><td>how many ms one authentication is</td></tr>
+            <tr><td>the authentication side stops scaling with project count</td><td>how much flatter the initial load gets overall</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">The left column is <strong>what reading the code gives you;</strong> the right is
+        <strong>what only measuring gives you.</strong> This time there is only a left column.
+        ⚠️ <strong>The initial load still scales with the number of projects.</strong> The per-project queries
+        were untouched. What stopped scaling is the authentication.</p>
+
+        <h2 id="the-load-test">A load test only measures the path its scenario sends<a class="anchor" href="#the-load-test" aria-label="Link to this section">#</a></h2>
+
+        <p>“Then measure it” is the next question. But on this screen,
+        <strong>the scenario people usually write leaves the slow stretch out of the test.</strong></p>
+
+        <p>Turning on a load tool and ramping up concurrent users is the usual move. But the heavy stretch a
+        user waits on here is <strong>the one initial load</strong>, and after that the structure is
+        <strong>the server computing once every 15 seconds and pushing the same values to every open
+        screen.</strong></p>
+
+        <blockquote><p>Take it to ten users and <strong>the computation is still once per tick.</strong>
+        With a scenario that holds connections open, the graph reads “it scales perfectly”.
+        <strong>That is a property of the architecture, not evidence that the slow path was
+        exercised.</strong></p></blockquote>
+
+        <p>⚠️ <strong>This is not the tool's fault.</strong> Ten users each opening the screen would run the
+        initial load ten times. The load tool can reach that path perfectly well;
+        <strong>a scenario written to hold a connection and receive pushes simply does not include it.</strong>
+        Load-test results are valid <strong>only for the requests the scenario actually sent.</strong></p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
+            <svg viewBox="0 0 720 160" role="img" aria-labelledby="axis-t axis-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="axis-t">Expected call counts on two axes, conceptually</title>
+              <desc id="axis-d">Not measurements but a sketch of the call counts the code implies. On the left, an axis
+              of users holding connections open: adding users leaves the computation at once per tick, so the
+              line is flat. On the right, an axis of project count: more projects means more authentications in
+              the initial load, so the line rises.</desc>
+
+              <text x="10" y="18" font-size="12.5" fill="#7b7186" font-weight="700">axis: users holding a connection</text>
+              <rect x="10" y="30" width="330" height="86" rx="6" fill="none" stroke="#7b7186" stroke-width="1.5"/>
+              <path d="M40 96 H 310" fill="none" stroke="#7b7186" stroke-width="2" stroke-dasharray="4 3"/>
+              <text x="175" y="88" font-size="12" fill="#7b7186" text-anchor="middle">one computation per tick · flat</text>
+              <text x="175" y="132" font-size="12" fill="#7b7186" text-anchor="middle">1 user → 50 users</text>
+
+              <text x="380" y="18" font-size="12.5" fill="#d62976" font-weight="700">axis: number of projects</text>
+              <rect x="380" y="30" width="330" height="86" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <path d="M410 106 L 680 46" fill="none" stroke="#d62976" stroke-width="2.5"/>
+              <text x="545" y="88" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">authentications rise with it</text>
+              <text x="545" y="132" font-size="12" fill="#d62976" text-anchor="middle">1 project → N projects</text>
+            </svg>
+          </div>
+          <figcaption>⚠️ Not measurements but <strong>a sketch of the call counts the code implies.</strong>
+          The flat line on the left is not good news; it means that axis does not touch the repeated
+          authentication.</figcaption>
+        </figure>
+
+        <p>Measuring it properly means <strong>changing the axis</strong>: raising the number of projects N and
+        timing one initial load at each step, instead of raising concurrent users.
+        ⚠️ That is written down in the record as the thing to do, and
+        <strong>there is no record of anyone doing it.</strong> That is why this article ends without a
+        number.</p>
+
+        <h2 id="limits">Limits: what this article does not claim<a class="anchor" href="#limits" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>There are no before-and-after measurements.</strong> “5 to 10 seconds” and “seconds to tens
+          of seconds” are two sentences from the internal record with no method attached, and there is no
+          post-fix figure. <strong>No sentence in this article claims an improvement factor.</strong></li>
+          <li><strong>I do not know what one authentication costs.</strong> So “N−1 fewer of them” does not
+          convert into seconds either.</li>
+          <li><strong>That getting a client authenticates comes from two internal documents.</strong>
+          The implementation of <code>serviceClient()</code> is not in the archive and is not reproduced here,
+          and I could not confirm the library version or connector in use.</li>
+          <li><strong>The per-project queries are unchanged.</strong> What went away is on the authentication side;
+          the queries still run once per project. Reducing those needs a different change.</li>
+          <li><strong>This is not an argument that load tools are useless.</strong> It is an argument that they are
+          useless with the wrong axis. <a href="slow-screens-1-volume-list.html">Part one</a> used the same kind
+          of tool to separate six configurations.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="Closing">Closing<a class="anchor" href="#Closing" aria-label="Link to this section">#</a></h2>
+
+        <p>To gather it up.</p>
+
+        <ul>
+          <li><strong>A name can hide a cost.</strong> <code>serviceClient()</code> looks free and is a network
+          round trip. <strong>Code that gets a client inside a loop is always worth one look.</strong></li>
+          <li><strong>“We added a cache” and “we read the cache” are different things.</strong></li>
+          <li><strong>Load-test results are valid only for the requests the scenario actually sent.</strong>
+          With the wrong axis you get a flat graph, and that graph says nothing about the path it never took.</li>
+          <li><strong>If you fixed it and could not measure it, write that.</strong> Separating what the code makes
+          certain from what only measurement can settle at least tells the next person what to measure.</li>
+        </ul>
+
+        <p>If one line survives, this one:
+        <strong>before measuring, ask what the user is waiting on and whether this scenario sends a request
+        down that path.</strong> This time I found the slow stretch and fixed it, then never wrote a scenario
+        that went through it, so there is nothing to compare.</p>
+
+        <p>The next part takes that second question head on: a load test where
+        <strong>throughput stayed flat no matter how much load went in.</strong></p>
+
+        <p>Thank you for reading.</p>
+        </div>
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=918ea37403"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=44326158d4"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
