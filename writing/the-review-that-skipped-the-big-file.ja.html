@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>切った位置を測ったら全部文字の中でした | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/the-review-that-skipped-the-big-file.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/the-review-that-skipped-the-big-file.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/the-review-that-skipped-the-big-file.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/the-review-that-skipped-the-big-file.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="切った位置を測ったら全部文字の中でした | Kwanghun Lee" />
+  <meta property="og:description" content="設計文書を直すと外部レビューが自動で回るようにしていました。head -c は文字ではなくバイトを数えるのですが、コミットとして残ったリビジョンのうち 6 万バイトを超えた 4 つを測ると切れた位置が全部文字の中でした。ツールはその引数をモデルに渡す前に拒否します。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/the-review-that-skipped-the-big-file.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="切った位置を測ったら全部文字の中でした | Kwanghun Lee" />
+  <meta name="twitter:description" content="設計文書を直すと外部レビューが自動で回るようにしていました。head -c は文字ではなくバイトを数えるのですが、コミットとして残ったリビジョンのうち 6 万バイトを超えた 4 つを測ると切れた位置が全部文字の中でした。ツールはその引数をモデルに渡す前に拒否します。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="設計文書を直すと外部レビューが自動で回るようにしていました。head -c は文字ではなくバイトを数えるのですが、コミットとして残ったリビジョンのうち 6 万バイトを超えた 4 つを測ると切れた位置が全部文字の中でした。ツールはその引数をモデルに渡す前に拒否します。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "the-review-that-skipped-the-big-file.html", "ko": "the-review-that-skipped-the-big-file.ko.html", "ja": "the-review-that-skipped-the-big-file.ja.html"}'>
+          <option value="ko">Korean</option>
+          <option value="en">English</option>
+          <option value="ja" selected>日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>一覧</a>
+        <div class="article-meta"><span class="source-tag commercial notranslate">Commercial project</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>切った位置を測ったら全部文字の中でした<br><span class="h1-sub">コミットとして残ったリビジョン 4 つが全部そうで、レビューツールはモデルに渡す前にその引数を拒否します。事業化プロジェクト oxy</span></h1>
+          <p class="article-date">2026年9月</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="the-review-that-skipped-the-big-file"></aside>
+
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#想定読者">この記事の想定読者</a></li>
+            <li><a href="#何の話">何の話ですか？</a></li>
+            <li><a href="#仕込んだもの">設計文書を直すとレビューが回るようにしていました</a></li>
+            <li><a href="#文字の中">切る位置が文字の中でした</a></li>
+            <li><a href="#全リビジョン">残っているリビジョンを全部測りました</a></li>
+            <li><a href="#誰が拒否">拒否したのは私が思っていたプログラムではありませんでした</a></li>
+            <li><a href="#三つの信号">別々のものが失敗の信号を一つずつ消しました</a></li>
+            <li><a href="#フォルダは埋まる">そのあいだフォルダは埋まっていました</a></li>
+            <li><a href="#1バイト">1 バイト捨てたら通りました</a></li>
+            <li><a href="#直したもの">直したものとまだ直せていないもの</a></li>
+            <li><a href="#三度書き間違えた">同じ欠陥を三度書き間違えました</a></li>
+            <li><a href="#主張しないこと">限界: この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>こんにちは。ひとりで作っているソーシャル投票サービスで、設計文書を編集ツールで直すと
+        <strong>外部レビューが自動で回る</strong>ようにしていました。結果はフォルダに溜まります。</p>
+
+        <p>フォルダには結果が溜まっていました。ところがそのレビューに渡す文字列を
+        <strong>いま作り直してみると文字の真ん中で切れていて</strong>、そういう引数は
+        <strong>モデルに届く前に拒否されます。</strong></p>
+
+        <p>⚠️ 先に断っておきます。この記事が<strong>測ったもの</strong>は「いま残っている文書をその
+        コマンドで切るとどうなるか」です。当時フックが実際に何を受け取ってどう終わったかは
+        <strong>記録が残っていません。</strong>そのあいだは<strong>推論</strong>で、
+        どこまでが測ったものでどこからが推論かを、この先も印で示します。</p>
+
+        <h2 id="想定読者">この記事の想定読者<a class="anchor" href="#想定読者" aria-label="この節へのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>自動チェックを仕掛けて、結果フォルダだけ見て安心したことがある方</li>
+          <li>スクリプトで <code>2&gt;/dev/null</code> を癖のように書く方</li>
+          <li>韓国語・日本語の文書をツールに流すパイプラインを扱う方</li>
+        </ul>
+
+        <h2 id="何の話">何の話ですか？<a class="anchor" href="#何の話" aria-label="この節へのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>文書を <code>head -c 60000</code> で切ってレビューツールに渡していました。
+          このコマンドは<strong>先頭 60,000 バイトだけ残します。</strong>文字ではなくバイトを数えます。</li>
+          <li>大きい設計文書のうち 6 万バイトを超えた<strong>コミット 4 つ</strong>を取り出して測ると、
+          <strong>4 つとも切れた位置が文字の中</strong>でした。いま作業中のものを入れて 5 つです。</li>
+          <li>ツールはそういう引数を受け取ると<strong>モデルまで行かずに 2 で終わります。</strong>
+          再現して確認しました。</li>
+          <li>失敗が残す信号は 3 つで、<strong>別々のものが一つずつ</strong>消しました。
+          結果ファイルを先に作るリダイレクト、<code>2&gt;/dev/null</code>、
+          そしてスクリプト末尾の <code>exit 0</code> です。</li>
+          <li>⚠️ <strong>文書が 6 万バイトより短ければ切るものがないので無事です。</strong>
+          だから短いほうの文書の結果が溜まり続け、<strong>フォルダは健康に見えました。</strong></li>
+        </ul>
+
+        <h2 id="仕込んだもの">設計文書を直すとレビューが回るようにしていました<a class="anchor" href="#仕込んだもの" aria-label="この節へのリンク">#</a></h2>
+
+        <p>ひとりで作るプロジェクトなので設計を見てくれる人がいません。そこで設計文書を直すと
+        外部ツールがそれを読んで<strong>いちばん深刻な問題 5 つ</strong>を挙げるようにしました。
+        結果は時刻を付けたファイルで残ります。</p>
+
+        <p>⚠️ <strong>「直すと」の範囲が狭いです。</strong>このフックは特定の編集ツールを使うときだけ
+        掛かります。シェルで直したり別の経路で書いたりすると<strong>そもそも呼ばれません。</strong>
+        あとでまた出てきます。</p>
+
+<pre data-lang="bash"><code>FILE="${1:-docs/DESIGN.md}"
+OUT=".reviews/design-$(date +%Y%m%d-%H%M%S)-$$.md"   # $$ は後から付けた
+
+DOC=$(head -c 60000 "$FILE")
+PROMPT="この設計文書を容赦なくレビューせよ。...
+
+DOC ($FILE):
+$DOC"
+
+codex exec --sandbox read-only "$PROMPT" &gt; "$OUT" 2&gt;/dev/null
+exit 0</code></pre>
+
+        <p>文書全体を渡すと引数が長くなりすぎるかと思って <code>head -c 60000</code> で先頭だけ切りました。
+        <code>2&gt;/dev/null</code> と <code>exit 0</code> は
+        <strong>レビューが失敗しても編集作業は止めないように</strong>入れました。</p>
+
+        <blockquote><p>この 8 行にこの記事が扱う欠陥が入っています。
+        <strong>どれももっともらしい理由で入れたもの</strong>です。
+        ⚠️ ただし<strong>最後の一つはコードの外</strong>にあります。あとで出てきます。</p></blockquote>
+
+        <h2 id="文字の中">切る位置が文字の中でした<a class="anchor" href="#文字の中" aria-label="この節へのリンク">#</a></h2>
+
+        <p><code>head -c</code> は<strong>バイト</strong>を数えます。ASCII は 1 文字が 1 バイトなので
+        両者は一致しますが、<strong>いま使うハングル音節は 1 文字が 3 バイト</strong>です。
+        (韓国語の文にも数字や記号のような 1 バイト文字が混ざり、4 バイトの文字や複数の断片でできた
+        絵文字もあります。)</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="by-t by-d" class="figure-svg">
+            <title id="by-t">バイト境界が文字の中を通る様子</title>
+            <desc id="by-d">上の行は ASCII で、箱一つが 1 文字であり 1 バイトです。切る縦線はどこに置いても
+            箱と箱のあいだに落ちます。下の行はハングルで、1 文字が箱 3 つでできており、3 つの箱の下に
+            その文字が書かれています。切る縦線は最後の文字の 1 つ目の箱と 2 つ目の箱のあいだを通るので、
+            左側にはその文字の先頭バイト 1 つだけが残ります。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="12" y="20" font-size="12" fill="#8a8a8a" font-weight="700">ASCII · 1 文字 = 1 バイト</text>
+              <g fill="none" stroke="#8a8a8a" stroke-width="1.6">
+                <rect x="12" y="30" width="26" height="26" rx="4"/><rect x="40" y="30" width="26" height="26" rx="4"/>
+                <rect x="68" y="30" width="26" height="26" rx="4"/><rect x="96" y="30" width="26" height="26" rx="4"/>
+                <rect x="124" y="30" width="26" height="26" rx="4"/><rect x="152" y="30" width="26" height="26" rx="4"/>
+              </g>
+              <g font-size="13" fill="#4a4a4a" text-anchor="middle">
+                <text x="25" y="48">d</text><text x="53" y="48">e</text><text x="81" y="48">s</text>
+                <text x="109" y="48">i</text><text x="137" y="48">g</text><text x="165" y="48">n</text>
+              </g>
+              <path d="M123 22 V 64" stroke="#d62976" stroke-width="2" stroke-dasharray="4 3" fill="none"/>
+              <text x="200" y="48" font-size="11.5" fill="#8a8a8a">つねに文字と文字の境界</text>
+
+              <text x="12" y="110" font-size="12" fill="#d62976" font-weight="700">ハングル音節 · 1 文字 = 3 バイト</text>
+              <g fill="none" stroke="#8a8a8a" stroke-width="1.4">
+                <rect x="12" y="120" width="22" height="26" rx="4"/><rect x="36" y="120" width="22" height="26" rx="4"/><rect x="60" y="120" width="22" height="26" rx="4"/>
+                <rect x="90" y="120" width="22" height="26" rx="4"/><rect x="114" y="120" width="22" height="26" rx="4"/><rect x="138" y="120" width="22" height="26" rx="4"/>
+                <rect x="168" y="120" width="22" height="26" rx="4"/><rect x="192" y="120" width="22" height="26" rx="4"/><rect x="216" y="120" width="22" height="26" rx="4"/>
+              </g>
+              <g font-size="10" fill="#8a8a8a" text-anchor="middle">
+                <text x="23" y="137">EC</text><text x="47" y="137">84</text><text x="71" y="137">A4</text>
+                <text x="101" y="137">EA</text><text x="125" y="137">B3</text><text x="149" y="137">84</text>
+                <text x="179" y="137">ED</text><text x="203" y="137">95</text><text x="227" y="137">B8</text>
+              </g>
+              <g font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="700">
+                <text x="47" y="164">설</text><text x="125" y="164">계</text><text x="203" y="164">핸</text>
+              </g>
+              <g fill="none" stroke="#c9c9c9" stroke-width="1.2">
+                <path d="M12 150 H 82"/><path d="M90 150 H 160"/><path d="M168 150 H 238"/>
+              </g>
+              <path d="M191 112 V 176" stroke="#d62976" stroke-width="2" stroke-dasharray="4 3" fill="none"/>
+              <text x="262" y="140" font-size="11.5" fill="#d62976" font-weight="700">文字の中を通る境界</text>
+              <text x="262" y="158" font-size="11.5" fill="#8a8a8a">左に残るもの · 先頭バイト 1 つ</text>
+            </g>
+          </svg>
+          <figcaption>縦線はバイトではなく<strong>切る境界</strong>です。
+          いまの文書では 60,000 バイト目が「핸」の先頭バイト <code>ED</code> で、
+          境界がそのすぐ後ろに来るので<strong>3 バイトのうち 1 つ</strong>だけ残ります。
+          <strong>半分ではなく 3 分の 1</strong> です。</figcaption>
+        </figure>
+
+        <h2 id="全リビジョン">残っているリビジョンを全部測りました<a class="anchor" href="#全リビジョン" aria-label="この節へのリンク">#</a></h2>
+
+        <p>「文字が割れうる」と「そのとき割れた」は別の話です。そこでこの文書の
+        <strong>コミットとして残っているリビジョンを一つずつ取り出して</strong>2 つ見ました。
+        <strong>原本全体が有効か</strong>、そして<strong>先頭 60,000 バイトが有効か</strong>です。
+        原本がすでに壊れていたなら切った位置のせいではないからです。</p>
+
+<pre data-lang="bash"><code>blob=$(git rev-parse "$commit:docs/DESIGN.md")
+
+git cat-file -p "$blob" | iconv -f UTF-8 -t UTF-8 &gt; /dev/null                # 原本全体
+git cat-file -p "$blob" | head -c 60000 | iconv -f UTF-8 -t UTF-8 &gt; /dev/null # 先頭 60,000</code></pre>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
+        <table>
+          <caption class="sr-only">リビジョンごとの大きさと、原本・切断後の有効性。</caption>
+          <thead><tr><th>リビジョン</th><th>大きさ</th><th>原本全体</th><th>先頭 60,000 バイト</th></tr></thead>
+          <tbody>
+            <tr><td>7 月 17 日</td><td>51,927 バイト</td><td>有効</td><td>切るものがない</td></tr>
+            <tr><td>8 月 2 日</td><td>75,281 バイト</td><td>有効</td><td><strong>文字の中で切れる</strong></td></tr>
+            <tr><td>8 月 16 日</td><td>111,834 バイト</td><td>有効</td><td><strong>文字の中で切れる</strong></td></tr>
+            <tr><td>8 月 23 日</td><td>114,909 バイト</td><td>有効</td><td><strong>文字の中で切れる</strong></td></tr>
+            <tr><td>8 月 26 日</td><td>115,891 バイト</td><td>有効</td><td><strong>文字の中で切れる</strong></td></tr>
+            <tr><td>作業ツリー(いま)</td><td>130,939 バイト</td><td>有効</td><td><strong>文字の中で切れる</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note"><strong>原本は 6 つとも有効です。</strong>ですから右の欄の壊れは
+        <strong>切った位置で生じたもの</strong>です。6 万バイトを超えた<strong>コミット 4 つが全部</strong>
+        該当し、いま作業中のものを入れると 5 つです。
+        ⚠️ 「半分くらい引っかかる」と書きかけて<strong>測ってから消しました。</strong></p>
+
+        <blockquote><p>⚠️ <strong>この表が証明するのはここまでです。</strong>
+        「この blob をこのコマンドで切ると有効でない UTF-8 になる」。
+        <strong>当時フックがその blob を実際に受け取ったか、受け取ってどう終わったかではありません。</strong>
+        コミットのあいだに<strong>中間状態がもっとあったはず</strong>ですが、それは残っていません。
+        いくつだったかも分かりません。</p></blockquote>
+
+        <p>ですからこの記事が言えるのは<strong>「測れるものからは反例が見つからなかった」</strong>までです。
+        「何週間も一度も読まれなかった」は<strong>その観測から出た推論</strong>であって証明ではありません。</p>
+
+        <h2 id="誰が拒否">拒否したのは私が思っていたプログラムではありませんでした<a class="anchor" href="#誰が拒否" aria-label="この節へのリンク">#</a></h2>
+
+        <p>割れた文字が入った文字列を引数として渡すとどうなるか回してみました。
+        <strong>当時フックが使っていた形のまま</strong>です。</p>
+
+<pre data-lang="text"><code>$ codex exec --sandbox read-only "$(cat broken.txt)"
+
+終了コード: 2
+stdout: 0 バイト
+stderr: error: invalid UTF-8 was detected in one or more arguments
+        Usage: codex exec [OPTIONS] [PROMPT]</code></pre>
+
+        <p><strong>モデルまで行きません。</strong>引数を検査する段階で拒否します。
+        ですからレビュー結果が一文字も出ません。</p>
+
+        <p>ところが<strong>ここで私はもう一度間違えました。</strong>
+        直したフックには <code>timeout</code> を付けてあり、その形で測って
+        <strong>終了コードが 125 だと書いていました。</strong>測り直すとこうです。</p>
+
+<pre data-lang="text"><code>$ codex exec ... "&lt;壊れた引数&gt;"              → 2
+$ timeout 60 codex exec ... "&lt;壊れた引数&gt;"   → 125
+
+$ timeout 60 cat  "&lt;壊れた引数&gt;"             → 125
+$ timeout 60 echo "&lt;壊れた引数&gt;"             → 125</code></pre>
+
+        <p>下の 2 行が答えです。<strong>codex とは何の関係もありません。</strong>
+        この機械の <code>timeout</code> は GNU 版ではなく <strong>Rust で書き直された版</strong>
+        (<code>uutils coreutils 0.8.0</code>)で、<strong>自分の引数に有効でない UTF-8 があると
+        自分で拒否します。</strong>だから <strong>codex は起動すらしません。</strong></p>
+
+        <blockquote><p>2 つのプログラムが<strong>一文字も違わない 1 行目</strong>を出します。
+        どちらも同じ Rust の引数処理ライブラリを使っているからです。
+        違うのは<strong>2 行目と終了コード</strong>だけです。</p></blockquote>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
+        <table>
+          <caption class="sr-only">壊れた引数を拒否する 2 つのプログラムの違い。</caption>
+          <thead><tr><th>拒否したもの</th><th>1 行目</th><th>2 行目</th><th>終了コード</th></tr></thead>
+          <tbody>
+            <tr><td>codex</td><td>invalid UTF-8 …</td><td><code>Usage: codex exec …</code></td><td><strong>2</strong></td></tr>
+            <tr><td>timeout</td><td>invalid UTF-8 …</td><td><code>For more information …</code></td><td><strong>125</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">⚠️ <strong>直す前のフックには <code>timeout</code> がありませんでした。</strong>
+        ですから当時出たはずの値は <strong>2</strong> です。125 は
+        <strong>いま私が測りながら作った値</strong>で、それを当時起きたこととして書くところでした。</p>
+
+        <blockquote><p>結果はどちらでも同じです。<strong>レビューが一文字も出ません。</strong>
+        しかし<strong>誰が拒否したのかを私は取り違えていました。</strong>
+        「ツールが文書を拒否する」と「ツールを呼ぶ殻が引数を拒否する」は別の話で、
+        <strong>直す場所も違います。</strong></p></blockquote>
+
+        <h2 id="三つの信号">別々のものが失敗の信号を一つずつ消しました<a class="anchor" href="#三つの信号" aria-label="この節へのリンク">#</a></h2>
+
+        <p>失敗そのものは騒々しいです。終了コードも 0 ではなく、メッセージもはっきりしています。
+        それが<strong>私まで届かなかった</strong>のは、私が入れた 3 つのせいです。
+        ⚠️ <strong>重ねて塞いだのではありません。</strong>失敗が残す信号が 3 つあって、
+        <strong>別々のものが一つずつ</strong>消しました。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 236" role="img" aria-labelledby="si-t si-d" class="figure-svg">
+            <title id="si-t">失敗の 3 つの信号と、それぞれを消したもの</title>
+            <desc id="si-d">箱が 6 つ、2 列に並んでいます。左の列は失敗が残す信号 3 つで、上から順に
+            結果ファイルが無いはずだということ、エラーメッセージ、0 でない終了コードです。右の列はそれぞれを
+            消したもので、リダイレクトがコマンドより先に空ファイルを作って結果が無いという信号を消し、
+            標準エラーを捨てる設定がメッセージを消し、スクリプト末尾の終了 0 が最後の状態を成功にします。
+            同じ行どうしが点線の矢印で対になっており、行と行のあいだにつながりはありません。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="16" y="22" font-size="12" fill="#d62976" font-weight="700">失敗が残す信号</text>
+              <text x="430" y="22" font-size="12" fill="#8a8a8a" font-weight="700">それを消したもの</text>
+
+              <rect x="16" y="34" width="250" height="52" rx="7" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="141" y="56" font-size="12" fill="#d62976" text-anchor="middle">結果ファイルが無いはず</text>
+              <text x="141" y="74" font-size="11" fill="#8a8a8a" text-anchor="middle">ツールが何も書いていない</text>
+              <path d="M270 60 H 424" fill="none" stroke="#c9c9c9" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#si-ar)"/>
+              <rect x="428" y="34" width="276" height="52" rx="7" fill="none" stroke="#8a8a8a" stroke-width="2"/>
+              <text x="566" y="56" font-size="12" fill="#4a4a4a" text-anchor="middle">コマンドより先に作られる空ファイル</text>
+              <text x="566" y="74" font-size="11" fill="#8a8a8a" text-anchor="middle">フォルダにファイルが見える</text>
+
+              <rect x="16" y="96" width="250" height="52" rx="7" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="141" y="118" font-size="12" fill="#d62976" text-anchor="middle">エラーメッセージ</text>
+              <text x="141" y="136" font-size="11" fill="#8a8a8a" text-anchor="middle">invalid UTF-8 …</text>
+              <path d="M270 122 H 424" fill="none" stroke="#c9c9c9" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#si-ar)"/>
+              <rect x="428" y="96" width="276" height="52" rx="7" fill="none" stroke="#8a8a8a" stroke-width="2"/>
+              <text x="566" y="118" font-size="12" fill="#4a4a4a" text-anchor="middle">2&gt;/dev/null</text>
+              <text x="566" y="136" font-size="11" fill="#8a8a8a" text-anchor="middle">消える理由</text>
+
+              <rect x="16" y="158" width="250" height="52" rx="7" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="141" y="180" font-size="12" fill="#d62976" text-anchor="middle">0 でない終了コード</text>
+              <text x="141" y="198" font-size="11" fill="#8a8a8a" text-anchor="middle">呼んだ側に見える値</text>
+              <path d="M270 184 H 424" fill="none" stroke="#c9c9c9" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#si-ar)"/>
+              <rect x="428" y="158" width="276" height="52" rx="7" fill="none" stroke="#8a8a8a" stroke-width="2"/>
+              <text x="566" y="180" font-size="12" fill="#4a4a4a" text-anchor="middle">スクリプト末尾の exit 0</text>
+              <text x="566" y="198" font-size="11" fill="#8a8a8a" text-anchor="middle">0 になる最後の状態</text>
+
+              <text x="360" y="230" font-size="11" fill="#8a8a8a" text-anchor="middle">行と行のあいだにつながりなし</text>
+            </g>
+            <defs>
+              <marker id="si-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>同じ信号を重ねて塞いだのではなく、<strong>別の信号を一つずつ</strong>消しました。</figcaption>
+        </figure>
+
+        <p>1 つ目がいちばん厄介です。<code>&gt;</code> は<strong>コマンドが始まる前に</strong>
+        ファイルを作って空にします。ですからツールが何も出さなくても<strong>ファイルはできます。</strong>
+        本来なら「結果ファイルが無い」が失敗の信号のはずなのに、<strong>その信号ができません。</strong></p>
+
+        <blockquote><p>⚠️ <strong>3 つ揃わないと見えないわけではありません。</strong>
+        <code>2&gt;/dev/null</code> だけ外しても理由は残り、
+        <code>exit 0</code> だけ外しても呼んだ側は 0 でない値を受け取ります。</p></blockquote>
+
+        <p>だから<strong>4 つ目があります。</strong>これはコードの外です。
+        このフックは編集のあとに自動で呼ばれるのに、私は<strong>その出力がどこへ行くのかも、
+        終了コードを誰が受け取るのかも一度も見ませんでした。</strong>フォルダだけ見ました。
+        3 つを入れたのも私で、<strong>見なかったのも私</strong>です。</p>
+
+        <h2 id="フォルダは埋まる">そのあいだフォルダは埋まっていました<a class="anchor" href="#フォルダは埋まる" aria-label="この節へのリンク">#</a></h2>
+
+        <p>レビュー結果のフォルダを開くとファイルが増えていました。だから回っていると信じました。
+        数えるとこうです。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
+        <table>
+          <caption class="sr-only">設計レビュー結果ファイルの時期ごとの状態。</caption>
+          <thead><tr><th>時期</th><th>結果ファイル</th></tr></thead>
+          <tbody>
+            <tr><td>7 月初 ~ 8 月 8 日</td><td>中身のあるファイル <strong>24 個</strong></td></tr>
+            <tr><td>7 月 13 日 · 8 月 12~13 日</td><td><strong>0 バイトのファイル 5 個</strong></td></tr>
+            <tr><td>8 月 14 日 ~ 8 月 31 日</td><td><strong>ファイル自体が無い</strong></td></tr>
+            <tr><td>9 月初</td><td>中身のあるファイル 5 個 (うち 4 個は直したあと)</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">⚠️ <strong>この表は数えたもので、意味は数えたものではありません。</strong>
+        0 バイトのファイルが「呼んだが失敗」なのかは<strong>当時 stderr を捨てていたので分かりません。</strong>
+        ツールが見つからなくても同じ形になります。ファイルが無いことも「呼ばれなかった」の証拠ではありません。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 190" role="img" aria-labelledby="tl-t tl-d" class="figure-svg">
+            <title id="tl-t">7 月初から 9 月初までの結果</title>
+            <desc id="tl-d">横が時間軸です。軸の上の小さな丸が中身のある結果ファイル、軸の下のバツ印が
+            0 バイトのファイルです。左端の 7 月初に丸が 3 つ集まっており、少し後の 7 月中旬に丸 1 つと
+            バツ印 1 つが並んでいます。そのあと 3 週間近く何も印がなく、8 月初に丸が 5 つ続き、8 月中旬に
+            バツ印が 4 つ集まっています。続く 8 月 14 日から 31 日までは軸の上下とも空で、その区間が
+            薄く塗られています。右端の 9 月初に丸が 2 つまた現れます。8 月 2 日の位置に縦の点線があり、
+            文書が 6 万バイトを超えた日と書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="435" y="78" width="162" height="34" fill="#f1f1f1"/>
+              <text x="516" y="70" font-size="11" fill="#8a8a8a" text-anchor="middle">結果ファイルが無い区間</text>
+
+              <path d="M20 95 H 660" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#tl-ar)"/>
+
+              <g fill="none" stroke="#8a8a8a" stroke-width="1.6">
+                <circle cx="20" cy="80" r="4"/><circle cx="30" cy="80" r="4"/><circle cx="41" cy="80" r="4"/>
+                <circle cx="83" cy="80" r="4"/>
+                <circle cx="314" cy="80" r="4"/><circle cx="324" cy="80" r="4"/><circle cx="335" cy="80" r="4"/>
+                <circle cx="345" cy="80" r="4"/><circle cx="356" cy="80" r="4"/>
+                <circle cx="608" cy="80" r="4"/><circle cx="629" cy="80" r="4"/>
+              </g>
+
+              <g stroke="#d62976" stroke-width="2" stroke-linecap="round">
+                <path d="M79 106 L 87 114"/><path d="M87 106 L 79 114"/>
+                <path d="M390 106 L 398 114"/><path d="M398 106 L 390 114"/>
+                <path d="M400 106 L 408 114"/><path d="M408 106 L 400 114"/>
+                <path d="M411 106 L 419 114"/><path d="M419 106 L 411 114"/>
+                <path d="M421 106 L 429 114"/><path d="M429 106 L 421 114"/>
+              </g>
+
+              <path d="M293 44 V 128" stroke="#d62976" stroke-width="2" stroke-dasharray="4 3" fill="none"/>
+              <text x="293" y="38" font-size="11.5" fill="#d62976" font-weight="700" text-anchor="middle">文書が 6 万バイトを超えた日</text>
+
+              <g font-size="11" fill="#8a8a8a">
+                <text x="20" y="148">7 月初</text>
+                <text x="293" y="148" text-anchor="middle">8 月 2 日</text>
+                <text x="516" y="148" text-anchor="middle">8 月 14~31 日</text>
+                <text x="629" y="148" text-anchor="end">9 月初</text>
+              </g>
+
+              <g font-size="11" fill="#8a8a8a">
+                <circle cx="26" cy="170" r="4" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+                <text x="36" y="174">中身のある結果ファイル</text>
+                <g stroke="#d62976" stroke-width="2" stroke-linecap="round">
+                  <path d="M200 166 L 208 174"/><path d="M208 166 L 200 174"/>
+                </g>
+                <text x="216" y="174">0 バイトのファイル</text>
+              </g>
+            </g>
+            <defs>
+              <marker id="tl-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>丸は<strong>日付ごとに 1 つだけ</strong>描きました。実際には同じ日に複数あります。
+          バツ印は 0 バイトのファイル<strong>5 個をそのまま</strong>描きました。
+          点線の右が大きい文書が切れ始める区間ですが、
+          <strong>丸はそのあともしばらく続きます。</strong></figcaption>
+        </figure>
+
+        <p>⚠️ そして<strong>こう並べて見ると、おかしい所が目につきます。</strong>
+        0 バイトのファイルもそうですし、2 週間を超える空白もそうです。私が見なかったのは
+        <strong>こう並べて見なかったから</strong>です。<strong>ファイルが増えることだけ</strong>を
+        ときどき確かめていました。大きさも日付の間隔も見ていません。</p>
+
+        <p>7 月 13 日の 0 バイトは<strong>この記事の原因では説明されません。</strong>
+        そのとき文書は 6 万バイトより短く、切るものがありませんでした。
+        その失敗の原因は<strong>分かりません。</strong></p>
+
+        <p>8 月初には中身のあるレビューが出続けました。そのとき設計文書が<strong>2 つ</strong>あり、
+        新しく書いていたほうは<strong>31,965 バイト</strong>でした。6 万より短いので切るものがありません。
+        そのレビューの中身もその新しい文書のほうの話でした。
+        ⚠️ <strong>成果物にファイル名が書かれていないので</strong>中身を読んで推測したものであり、
+        <strong>どのレビューがどの文書を見たのかは成果物からは区別できません。</strong></p>
+
+        <blockquote><p>だからフォルダは<strong>もっと健康に見えました。</strong>
+        短いほうの文書を直すたびに、結果がきちんと積まれているように見えたのですから。</p></blockquote>
+
+        <h2 id="1バイト">1 バイト捨てたら通りました<a class="anchor" href="#1バイト" aria-label="この節へのリンク">#</a></h2>
+
+        <p>直し方は<strong>パイプ 1 つ</strong>です。有効でないバイトを捨てる変換を挟みます。</p>
+
+<pre data-lang="bash"><code>DOC=$(head -c 60000 "$FILE" | iconv -f UTF-8 -t UTF-8 -c)</code></pre>
+
+        <p>同じ文書で<strong>ある場合と無い場合</strong>を並べて回しました。
+        ツールは <code>codex-cli 0.153.4</code> で、<strong>直す前のフックと同じく
+        <code>timeout</code> 無し</strong>で回しました。</p>
+
+<pre data-lang="text"><code>[iconv 無し]
+  切り取った断片 60,000 バイト → 終了コード 2 · stdout 0 バイト
+
+[iconv を通して]
+  切り取った断片 59,999 バイト → 終了コード 0 · 文書の題を正確に答えた</code></pre>
+
+        <blockquote><p><strong>違いは 1 バイトです。</strong>割れた文字の断片 1 つを捨てると
+        ツールが文書を読んで答えました。</p></blockquote>
+
+        <p>⚠️ 上の数字は<strong>切り取った断片の大きさ</strong>であって、実際に渡った引数の大きさでは
+        ありません。前に指示文とファイル名が付き、コマンド置換は<strong>末尾に付いた改行を全部消します。</strong>
+        ですから 6 万より短い文書でも<strong>変数の中身が原本とバイト単位で同じではありません。</strong></p>
+
+        <p>⚠️ <code>-c</code> は<strong>末尾だけ捨てるのではありません。</strong>
+        入力のどこにあっても有効でないバイトを全部捨てます。ですから<strong>文書の途中が壊れていても
+        静かに消して進みます。</strong>ここではそれが望む動作ですが<strong>一般的にはそうではありません。</strong></p>
+
+        <p>⚠️ そしてこの環境の <code>iconv</code>(GNU libc 2.43)は末尾を捨てながら
+        <strong>診断文を出して 1 で終わります。</strong>警告ではなく<strong>失敗で終わること</strong>です。
+        いまのフックはその状態を見ていません。<code>set -e</code> の掛かったスクリプトだったら
+        <strong>ツールを呼ぶ前に死んでいたはず</strong>です。</p>
+
+        <h2 id="直したもの">直したものとまだ直せていないもの<a class="anchor" href="#直したもの" aria-label="この節へのリンク">#</a></h2>
+
+<pre data-lang="bash"><code>DOC=$(head -c 60000 "$FILE" | iconv -f UTF-8 -t UTF-8 -c)   # 有効でないバイトを捨てる
+
+ERR=".reviews/.last-design-err"                             # stderr を捨てない
+timeout 240 codex exec -m "$MODEL" --sandbox read-only "$PROMPT" &lt; /dev/null &gt; "$OUT" 2&gt;"$ERR"
+STATUS=$?
+
+if [ "$STATUS" -ne 0 ] || [ ! -s "$OUT" ]; then
+  rm -f "$OUT"                                              # 0 バイトのファイルを残さない
+  echo "[codex] design review FAILED (exit=$STATUS) — 原因: $(tail -2 "$ERR" | tr '\n' ' ')"
+fi</code></pre>
+
+        <ul class="callout">
+          <li><strong>切ったあと有効なバイトだけ残します。</strong>上限はそのままで断片だけ捨てます。</li>
+          <li><strong>ツールの stderr をログファイルへ送ります。</strong>失敗メッセージにそのログの最後の
+          2 行を付けて<strong>理由を画面まで持ってきます。</strong>
+          ⚠️ ログへ行くのは<strong>その 1 行の stderr だけ</strong>です。前の <code>iconv</code> が出す
+          診断文は<strong>いまも外に漏れます。</strong></li>
+          <li><strong>失敗したら 0 バイトのファイルを消します。</strong>「レビュー済み」と誤解されるのを防ぎます。</li>
+          <li><strong><code>&lt; /dev/null</code> を付けました。</strong>このフックは裏で回るので、
+          ツールが標準入力を掴んで待つ状況になると<strong>ぶら下がっても誰も気づきません。</strong>
+          ⚠️ 指示は引数で渡しているので本来は待ちません。引き継いだ入力が開いている場合を防ぐ仕掛けです。</li>
+        </ul>
+
+        <p>⚠️ <strong>ところがこの直した版も失敗をきちんと伝えません。</strong>
+        失敗分岐の最後が <code>echo</code> なので<strong>スクリプトはまた 0 で終わります。</strong>
+        画面を見ない呼び出し側にはいまも成功です。前に挙げた 3 つのうち
+        <strong>3 つ目をまだ直せていません。</strong></p>
+
+        <p>⚠️ そして<strong>名前が重なります。</strong>エラーログはファイル 1 つだけなのでフックが重なって
+        回ると互いに上書きして、見当違いの失敗理由が付きます。結果ファイルの名前も<strong>秒単位の時刻</strong>
+        なので同じ秒に 2 つ回るとそれぞれがファイルを空にして書き、<strong>混ざるか壊れます。</strong>
+        いまは名前にプロセス番号を付けて結果側だけ塞いであり、<strong>ログ側はまだ</strong>です。</p>
+
+        <p>⚠️ 結果ファイルに<strong>どの文書を読んだのかがいまも書かれていません。</strong>
+        ファイル名は時刻だけです。</p>
+
+        <blockquote><p><strong>「レビューが回った」と「この文書がレビューされた」は別の話</strong>なのに、
+        フォルダは前者しか見せません。この記事を書きながら、8 月のレビューがどの文書を見たものかを
+        <strong>成果物だけでは最後まで突き止められませんでした。</strong></p></blockquote>
+
+        <h2 id="三度書き間違えた">同じ欠陥を三度書き間違えました<a class="anchor" href="#三度書き間違えた" aria-label="この節へのリンク">#</a></h2>
+
+        <p>いちばん居心地の悪い部分です。この欠陥を最初に見つけた日、私は規則の文書にこう書きました。</p>
+
+        <blockquote><p>実測: 設計レビューのフックは<strong>一度も成功したことがなかった</strong>
+        (結果フォルダに <code>design-*</code> が 0 個)。</p></blockquote>
+
+        <p><strong>どちらも間違いです。</strong>その日すでに結果フォルダには <code>design-*</code> が
+        <strong>34 個</strong>あり、そのうち 0 バイトは<strong>5 個</strong>でした。
+        「実測」と書いておいて<strong>数えていませんでした。</strong>
+        そしてその文をそのまま<strong>フックのコードのコメントにも複写</strong>してありました。</p>
+
+        <blockquote><p>これは<strong>私が直そうとしていた欠陥と同じ形</strong>です。
+        確認していないことを確認したかのように書き、<strong>書いてあるから確認済みだと信じました。</strong>
+        チェッカーが捕まえてくれる種類ではないので<strong>読み返すまで残ります。</strong></p></blockquote>
+
+        <p>正しい形はこうです。「一度も成功しなかった」ではなく<strong>「6 万バイトを超えたその文書は、
+        測れるリビジョンが全部引っかかる」</strong>です。そのあいだも<strong>別の結果ファイルは
+        積まれていました。</strong>ずっと見えにくい形で、<strong>だからもっと長く続きました。</strong></p>
+
+        <p>⚠️ そのとき「0 個」と書いたのが<strong>どこを見て書いたのかも、いまは分かりません。</strong>
+        単に見なかったのかもしれませんし、別のフォルダを見たのかもしれません。
+        <strong>確認した記録が無いということ</strong>が、いま確認できる全部です。</p>
+
+        <p>そして<strong>3 つ目はこの記事を書きながら出しました。</strong>
+        終了コードを <strong>125</strong> と書きましたが、それは <code>timeout</code> が出した値でした。
+        <strong>直す前のフックにはその <code>timeout</code> がありませんでした。</strong>
+        つまり<strong>いま私の手元で作られた値を、当時起きたこととして書くところでした。</strong></p>
+
+        <blockquote><p>3 つとも同じ形です。<strong>測った場所と主張する場所が違いました。</strong>
+        「いまここで測るとこうだ」を「そのときそこでそうだった」に移して書きました。
+        <strong>この記事が扱う欠陥とまったく同じ間違い</strong>で、
+        私はそれを書いている途中に<strong>もう一度</strong>やりました。</p></blockquote>
+
+        <h2 id="主張しないこと">限界: この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="この節へのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li><strong>0 バイトのファイル 5 件の原因は確認できていません。</strong>当時 stderr を捨てていたので
+          <strong>そのときの失敗理由が残っていません。</strong>再現で示したのは
+          <strong>同じ形を作る 1 つの経路</strong>であって、その 5 件の原因ではありません。
+          うち 7 月 13 日のものは<strong>その経路では説明されません。</strong></li>
+          <li><strong>「何週間も読まれなかった」を証明できません。</strong>証明したのは
+          <strong>「測れるリビジョンは全部切れた位置が文字の中で、そういう引数をツールが拒否する」</strong>
+          までです。そのあいだの中間状態は残っていません。</li>
+          <li><strong>8 月中旬にレビューが全く無かった理由も分かりません。</strong>フックは特定の編集ツール
+          にしか掛からないので別の方法で直せば掛かりませんが、
+          <strong>そのとき何で直したのか記録がありません。</strong></li>
+          <li><strong>他の文書でも必ず引っかかるという意味ではありません。</strong>60,000 バイト目が
+          文字と文字のあいだに落ちれば引っかかりません。
+          <strong>この文書でそういうリビジョンが見つからなかっただけ</strong>です。</li>
+          <li><strong>直したフックが長く回り続けるかはまだ分かりません。</strong>直したあとの成功記録が 4 件で、
+          失敗が見えるかは<strong>わざと失敗させて 1 度</strong>確かめました。</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="この節へのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>バイトで切るツールに韓国語を入れると文字の中で切れうります。</strong>
+          そしてそれは<strong>文書が上限を超えたあとからだけ</strong>起きます。
+          超える前は切るものがないので無事です。</li>
+          <li><strong><code>&gt;</code> はコマンドより先にファイルを作ります。</strong>
+          失敗してもファイルが残り、ファイルがあれば人は「できた」と読みます。</li>
+          <li><strong>失敗の証拠は複数あり、覆いも複数あります。</strong>
+          結果・メッセージ・終了コードをそれぞれ別のものが塞いでいると、<strong>1 つ直しても見えません。</strong></li>
+          <li><strong>「検証が回った」と「これが検証された」は別の話です。</strong>
+          成果物に何を見たか書かれていなければ、前者しか分かりません。</li>
+        </ul>
+
+        <p>1 行だけ残すならこれです。
+        <strong>チェックを直したと書くことと、そのチェックが何をしたか数えることは別の仕事です。</strong>
+        私は前者だけやって、フォルダだけ見ていました。</p>
+
+        <p>お読みいただきありがとうございました。</p>
+        </div>
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=f9984ac3a0"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

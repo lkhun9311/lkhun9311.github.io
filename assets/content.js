@@ -248,6 +248,18 @@
           tags: ["Reliability", "Method"]
         },
         {
+          title: "Every Cut I Could Measure Landed Inside a Character",
+          url: "writing/the-review-that-skipped-the-big-file.html",
+          source: "commercial", sourceLabel: "Commercial project",
+          title_ko: "자른 자리를 재 보니 전부 글자 안이었습니다",
+          desc_ko: "설계 문서를 고치면 외부 리뷰가 자동으로 돌게 해 뒀습니다. 폴더에는 결과가 쌓이고 있었는데, head -c가 글자가 아니라 바이트를 세는 바람에 잘린 자리가 글자 한가운데였습니다. 6만 바이트를 넘긴 커밋 4개를 재 보니 전부 그랬습니다. 그리고 같은 결함을 저는 세 번 틀리게 적었습니다.",
+          title_ja: "切った位置を測ったら全部文字の中でした",
+          desc_ja: "設計文書を直すと外部レビューが自動で回るようにしていました。フォルダには結果が溜まっていたのに、head -c が文字ではなくバイトを数えるせいで切れた位置が文字の真ん中でした。6 万バイトを超えたコミット 4 つを測ると全部そうでした。そして同じ欠陥を私は三度書き間違えました。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "Editing a design document was set up to trigger an outside review, and the folder kept filling up. But head -c counts bytes, not characters, and every one of the four commits over 60,000 bytes is cut inside a character. I also wrote the same defect down wrong three times. Also in Korean and Japanese.",
+          tags: ["Tooling", "Method", "Verification"]
+        },
+        {
           title: "I Wrote a Generator So Six Runs Would Share One Condition",
           url: "writing/slow-screens-8-load-test-harness.html",
           source: "company", sourceLabel: "Company work",
