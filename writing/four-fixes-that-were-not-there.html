@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The State I Reported as Fixed Was Not in the Commits | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/four-fixes-that-were-not-there.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/four-fixes-that-were-not-there.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/four-fixes-that-were-not-there.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/four-fixes-that-were-not-there.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="The State I Reported as Fixed Was Not in the Commits | Kwanghun Lee" />
+  <meta property="og:description" content="Right before renting a GPU with real money for the first time, four guards I had reported complete did not look that way in the code. Three of them stop billing from continuing. Asking the repository, all four first appear in my own commits, though git cannot tell a lost edit from one never made. Then I wrote a script to count the rest, and its own test was wrong." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/four-fixes-that-were-not-there.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="The State I Reported as Fixed Was Not in the Commits | Kwanghun Lee" />
+  <meta name="twitter:description" content="Right before renting a GPU with real money for the first time, four guards I had reported complete did not look that way in the code. Three of them stop billing from continuing. Asking the repository, all four first appear in my own commits, though git cannot tell a lost edit from one never made. Then I wrote a script to count the rest, and its own test was wrong." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="Right before renting a GPU with real money for the first time, four guards I had reported complete did not look that way in the code. Three of them stop billing from continuing. Asking the repository, all four first appear in my own commits, though git cannot tell a lost edit from one never made. Then I wrote a script to count the rest, and its own test was wrong." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "four-fixes-that-were-not-there.html", "ko": "four-fixes-that-were-not-there.ko.html", "ja": "four-fixes-that-were-not-there.ja.html"}'>
+          <option value="ko">Korean</option>
+          <option value="en" selected>English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing</a>
+        <div class="article-meta"><span class="source-tag side notranslate">Personal project</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>The State I Reported as Fixed Was Not in the Commits<br><span class="h1-sub">My first explanation was that the edits had been lost, and it was an explanation I had never checked. A personal project, a GPU control plane</span></h1>
+          <p class="article-date">Sep 2026</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="four-fixes-that-were-not-there"></aside>
+
+        <nav class="article-toc" aria-label="Table of contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-is-in-here">What this is about</a></li>
+            <li><a href="#not-what-i-reported">None of the four looked the way I had reported</a></li>
+            <li><a href="#my-first-explanation">My first explanation was "the edits were lost"</a></li>
+            <li><a href="#asking-the-repository">I asked the repository</a></li>
+            <li><a href="#the-comment-defended-it">A comment was defending the code</a></li>
+            <li><a href="#errors-as-measurements">Error responses were flowing in as measurements</a></li>
+            <li><a href="#the-checker-was-wrong">I wrote a script to count the rest, and its test was wrong</a></li>
+            <li><a href="#one-name">One name let a test pass in silence</a></li>
+            <li><a href="#twelve-more">Twelve more came out of the code I had just fixed</a></li>
+            <li><a href="#what-this-does-not-claim">Limits: what this article does not claim</a></li>
+            <li><a href="#closing">Closing</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>Hello. On a GPU control plane I build alone, just before renting a GPU with real money for the
+        first time, I opened the files to finish off the remaining findings.</p>
+
+        <p><strong>What I had reported as fixed did not look that way in the code.</strong>
+        Not one of them — four.</p>
+
+        <p>⚠️ Scope first. <strong>This project is still in flight.</strong>
+        What this article treats as finished is <strong>the discovery of that day and how I checked it</strong>,
+        not <strong>the state the guards are in now.</strong>
+        In fact <strong>twelve more came out of the code I fixed that day</strong>, and that is below too.</p>
+
+        <p>⚠️ And I separate <strong>what I measured</strong> from <strong>what only exists as a record.</strong>
+        <strong>What I re-ran while writing this</strong>: three repository searches, two versions of one
+        function, <code>curl</code>'s exit code, and one shell variable.
+        <strong>The two false positives among the eighteen checks, and the twelve findings, are that day's
+        record</strong> and were not reproduced. I keep marking which is which.</p>
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>Anyone who has said "that one is handled" from memory</li>
+          <li>Anyone who wrote a verification script and never verified the script</li>
+          <li>Anyone deciding what to look at first before a run that costs money</li>
+        </ul>
+
+        <h2 id="what-is-in-here">What this is about<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>Four things I had reported complete <strong>were not, in the commits, what I had reported.</strong>
+          Two had <strong>the old ordering</strong>; for two <strong>the code was not there.</strong>
+          Three of them <strong>stop billing from continuing.</strong></li>
+          <li>My first explanation was <strong>"the edits were lost by accident"</strong>, and I said it out
+          loud <strong>twice before checking.</strong></li>
+          <li>Asking the repository, all four <strong>first appear in my own commits of 31 August and
+          1 September 2026.</strong> ⚠️ That does not mean I never made the edits.
+          <strong><code>git</code> cannot tell those two apart.</strong></li>
+          <li>The wrong ordering was <strong>defended by a comment I had written</strong>, and rereading it
+          I <strong>took my own justification for evidence.</strong></li>
+          <li>I wrote a script to count the other eighteen. Three came back ❌ —
+          <strong>and two of those were my own test being wrong</strong>, not the code.</li>
+          <li>⚠️ And <strong>twelve more came out of the code I fixed that day.</strong>
+          "Fixed" was not the end.</li>
+        </ul>
+
+        <h2 id="not-what-i-reported">None of the four looked the way I had reported<a class="anchor" href="#not-what-i-reported" aria-label="Link to this section">#</a></h2>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">What I reported complete, and what the code held.</caption>
+          <thead><tr><th>Finding</th><th>My report</th><th>The actual code</th></tr></thead>
+          <tbody>
+            <tr><td>Order of dropping the deadline</td><td>done</td><td>the old order, unchanged</td></tr>
+            <tr><td>Arm first, then start the card</td><td>done</td><td>a human starts it, the script arms afterwards</td></tr>
+            <tr><td>Cost control on the paid path</td><td>done</td><td><strong>no arming and no scale-down in that place</strong></td></tr>
+            <tr><td>Time ceiling for the experiment matrix</td><td>done</td><td><strong>no refusing code in sight</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">"Arming" means <strong>registering a schedule with the cloud in advance</strong>
+        — a device that brings the GPU node down at a fixed time even if my laptop dies.
+        <strong>Three are guards against billing continuing</strong>; one decides in advance whether a run
+        can finish inside its time.</p>
+
+        <h2 id="my-first-explanation">My first explanation was "the edits were lost"<a class="anchor" href="#my-first-explanation" aria-label="Link to this section">#</a></h2>
+
+        <p>I had reverted uncommitted changes at some point during the work. So
+        <strong>"the edits were lost by accident"</strong> was plausible.
+        I said it out loud <strong>twice, before checking.</strong></p>
+
+        <blockquote><p>That explanation was comfortable. <strong>I made the edit and a tool swallowed it</strong>
+        sits better than <strong>I said I had done something I had not.</strong>
+        I picked the comfortable one without checking.</p></blockquote>
+
+        <h2 id="asking-the-repository">I asked the repository<a class="anchor" href="#asking-the-repository" aria-label="Link to this section">#</a></h2>
+
+        <p><code>git log -S</code> is usually introduced as "it finds the commits containing that string",
+        and <strong>that is not what it does.</strong> It selects commits where <strong>the number of
+        occurrences of that string differs from the parent.</strong> So <strong>a commit that deleted the
+        last one also comes back</strong> — and that commit does not contain the string.</p>
+
+        <p>For each guard I picked a string that only that guard had.
+        <strong>These are the results from re-running it while writing this.</strong></p>
+
+<pre data-lang="bash"><code>$ git log -S"ttl_arm" --oneline -- hack/gpu-session.sh
+e96687e fix: give the m6 paid path a deadline, a scale-down, and a delete that finishes
+
+$ git log -S"worst_total_min" --oneline -- hack/m5c-matrix.sh
+4165f10 fix: twelve defects a cold review found in the guards added over the last two days
+d125bfe fix: keep the deadline until the node is confirmed down, and refuse runs that cannot fit
+
+$ git log -S"the card starts billing here" --oneline -- hack/m5b-gpu-session.sh
+4243faf fix: register the deadline before the card exists, by scaling the node group here</code></pre>
+
+        <p>The middle one has <strong>two lines</strong> — it was touched again later, and
+        <strong>the first appearance is the lower one.</strong></p>
+
+        <p>Since it selects commits where the count changed, <strong>whether it went up or down has to be
+        checked separately.</strong> I counted the occurrences in the parent and in the commit.</p>
+
+<pre data-lang="text"><code>ttl_arm                        e96687e   parent 0 → 1
+worst_total_min                d125bfe   parent 0 → 4
+the card starts billing here   4243faf   parent 0 → 1</code></pre>
+
+        <p>All three are <strong>zero in the parent.</strong> That is the commit where the string
+        <strong>first appears, along this path, within the history reachable from the current
+        <code>HEAD</code></strong>, and the dates are <strong>31 August and 1 September 2026</strong>,
+        all my own commits.</p>
+
+        <blockquote><p>⚠️ <strong>And the strings I picked are not all executable code.</strong>
+        The third, <code>the card starts billing here</code>, is <strong>a message printed to the
+        screen.</strong> That message was absent; <strong>"the guard was absent" does not follow from that
+        alone.</strong></p></blockquote>
+
+        <blockquote><p>⚠️ What this search answers is <strong>"that string was not in an earlier commit on
+        that path"</strong> and no further. Without <code>--all</code> it only sees
+        <strong>history reachable from the current branch</strong>, and without <code>--follow</code> a path
+        restriction <strong>loses history from before a rename.</strong>
+        If the same thing had been written with a different string, it would not be found at all.</p></blockquote>
+
+        <p>The fourth one, the ordering, is not about a string but about <strong>position.</strong>
+        I first compared <strong>line numbers</strong>, and that method has a hole that appears later.
+        So here I put <strong>the two versions of the same function side by side.</strong></p>
+
+<pre data-lang="bash"><code># 6086a51 — the commit where the deadline feature first appeared
+gpu_scale_down() {
+  # Drop the deadline first. If the scale-down below succeeds the schedule has nothing left
+  # to do, and if it fails the schedule is the reason this is survivable ...
+  command -v ttl_disarm &gt;/dev/null 2&gt;&amp;1 &amp;&amp; ttl_disarm     # the function's first action
+
+# d125bfe — 31 August 2026, my commit
+gpu_scale_down() {
+  # The deadline is NOT dropped here, and the ordering is the whole point.
+  # ... It comes off at the bottom of this function, after desiredSize has been
+  # read back as 0, and nowhere else.</code></pre>
+
+        <p>In the first, <strong>the function's first action is the disarm.</strong>
+        In the second it is not there, and instead a comment says
+        <strong>"at the bottom, after the size has been read back as 0".</strong></p>
+
+        <p>⚠️ But <strong>a comment is a statement of intent</strong>, not evidence of what happens.
+        The thing the next section warns about has to be honoured here first. Here is the bottom of the
+        second version.</p>
+
+<pre data-lang="bash"><code>  # Confirm it took. An accepted API call that left desiredSize at 1 is the failure this
+  # whole function exists to make impossible ...
+  DESIRED=$(aws eks describe-nodegroup ... --query 'nodegroup.scalingConfig.desiredSize' ...)
+  if [ "$DESIRED" = "0" ]; then
+    # Only now. The deadline has nothing left to protect ...
+    command -v ttl_disarm &gt;/dev/null 2&gt;&amp;1 &amp;&amp; ttl_disarm
+  else
+    echo "WARNING: ... after the scale-down. It is billing." &gt;&amp;2
+    echo "The TTL deadline is left armed on purpose. It is what remains." &gt;&amp;2
+  fi
+}</code></pre>
+
+        <p>It <strong>really is</strong> where the comment said. It reads the size back and disarms
+        <strong>only when it is 0</strong>; otherwise it <strong>leaves it.</strong>
+        First version: the function's first line. Second: after the read-back.
+        <strong>The one that changed the order is the second — my commit.</strong></p>
+
+        <blockquote><p>⚠️ This is <strong>the order written in the source.</strong> Both versions are
+        straight-line code inside the same function so I take the execution order to match,
+        but <strong>I did not run it to confirm.</strong></p></blockquote>
+
+        <h3 class="sr-only">What git cannot tell apart</h3>
+
+        <p>This is where <strong>"so I never made the edit" must not follow.</strong>
+        An uncommitted edit <strong>leaves nothing in the commit history.</strong>
+        If I really wrote it and lost it, <strong>the history looks exactly as it does now.</strong>
+        ⚠️ Content that reached <code>git add</code> <strong>can leave traces elsewhere</strong>,
+        but I did not go looking for them at the time.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 230" role="img" aria-labelledby="gv-t gv-d" class="figure-svg">
+            <title id="gv-t">Two stories the repository cannot tell apart</title>
+            <desc id="gv-d">Two rows, each one story. The upper row is labelled "written and lost": a pink
+            square standing for an edit sits on the left with a cross drawn over it for the revert. The lower
+            row is labelled "never written" and its left side is empty. Both rows have an identical commit
+            square at the right. To the right of both is a box for what the repository shows, with arrows
+            arriving from both rows, and the box says the two rows look the same. A dashed box across the
+            bottom holds what is true either way.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="16" y="40" font-size="12" fill="#d62976" font-weight="700">written and lost</text>
+              <rect x="150" y="28" width="14" height="14" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
+              <g stroke="#d62976" stroke-width="2" stroke-linecap="round">
+                <path d="M148 26 L 166 44"/><path d="M166 26 L 148 44"/>
+              </g>
+              <text x="176" y="40" font-size="11" fill="#8a8a8a">edit · never committed</text>
+              <rect x="380" y="28" width="14" height="14" rx="3" fill="none" stroke="#8a8a8a" stroke-width="2"/>
+              <text x="402" y="40" font-size="11" fill="#8a8a8a">later commit</text>
+
+              <text x="16" y="112" font-size="12" fill="#4a4a4a" font-weight="700">never written</text>
+              <text x="150" y="112" font-size="11" fill="#c9c9c9">(nothing here)</text>
+              <rect x="380" y="100" width="14" height="14" rx="3" fill="none" stroke="#8a8a8a" stroke-width="2"/>
+              <text x="402" y="112" font-size="11" fill="#8a8a8a">later commit</text>
+
+              <path d="M470 35 C 510 35, 520 60, 540 70" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#gv-ar)"/>
+              <path d="M470 107 C 510 107, 520 84, 540 76" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#gv-ar)"/>
+
+              <rect x="544" y="44" width="160" height="60" rx="7" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="624" y="68" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">what git shows</text>
+              <text x="624" y="88" font-size="11" fill="#8a8a8a" text-anchor="middle">the two rows, identical</text>
+
+              <rect x="16" y="150" width="688" height="56" rx="7" fill="none" stroke="#4a4a4a" stroke-width="1.6" stroke-dasharray="6 4"/>
+              <text x="360" y="174" font-size="12" fill="#4a4a4a" font-weight="700" text-anchor="middle">true either way</text>
+              <text x="360" y="194" font-size="11.5" fill="#8a8a8a" text-anchor="middle">a "done" report from a state never committed</text>
+            </g>
+            <defs>
+              <marker id="gv-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>The two rows on the left are <strong>different stories</strong> and in the repository
+          they <strong>look the same.</strong> The dashed box is <strong>what holds either way.</strong></figcaption>
+        </figure>
+
+        <p>Exactly one thing is <strong>settled for both cases</strong>:
+        <strong>up to the moment I reported, that guard was not present as a commit.</strong></p>
+
+        <p>⚠️ <strong>"I did not check when I reported" does not follow from that.</strong>
+        I might really have written it, checked it, and lost it before committing.
+        ⚠️ And <strong>uncommitted code is not code that does not run</strong>: these are shell scripts I run
+        on my own laptop, so whatever is in the working tree <strong>runs as it is.</strong></p>
+
+        <p>What does remain is this: <strong>it was not left as durable history.</strong>
+        Tomorrow's me, another machine, me-after-a-revert — <strong>none of them can pick it up.</strong>
+        And <strong>I called that state "done".</strong></p>
+
+        <h2 id="the-comment-defended-it">A comment was defending the code<a class="anchor" href="#the-comment-defended-it" aria-label="Link to this section">#</a></h2>
+
+        <p>The code for the first item looked like this.</p>
+
+<pre data-lang="bash"><code>gpu_scale_down() {
+  # Drop the deadline first. If the scale-down below succeeds the schedule has nothing left to do,
+  # and if it fails the schedule is the reason this is survivable -- so it is removed only after a
+  # clean exit path is under way, never as a precondition for one.
+  command -v ttl_disarm &gt;/dev/null 2&gt;&amp;1 &amp;&amp; ttl_disarm</code></pre>
+
+        <p><strong>The comment collapses on its own.</strong> It says "if it fails, the schedule is the reason
+        this is survivable" — and then removes that schedule <strong>before the call that might fail.</strong>
+        The moment it fails, the schedule is <strong>already gone.</strong></p>
+
+        <p>What matters is that this is <strong>not the trace of a lost fix.</strong>
+        This comment is <strong>a reason invented while trying to explain a wrong order.</strong></p>
+
+        <blockquote><p>And rereading it, I went <strong>"ah, that one is handled"</strong> and moved on.
+        <strong>I took my own justification for evidence.</strong></p></blockquote>
+
+        <p><strong>An explanation being attached does not mean the explanation is right</strong>,
+        even with the code right beside it.</p>
+
+        <h2 id="errors-as-measurements">Error responses were flowing in as measurements<a class="anchor" href="#errors-as-measurements" aria-label="Link to this section">#</a></h2>
+
+        <p>The largest distortion of a number that day was elsewhere: the code meant to measure how long the
+        model takes to produce its first token.
+        ⚠️ Strictly it measured <strong>time to the first byte</strong>, and that first byte may be a
+        response header. <strong>I have never confirmed the two are the same.</strong></p>
+
+        <p>The old code <strong>discarded the response body and did not look at the exit status</strong>,
+        keeping only the time to the first byte. <strong>That time is computed for an error response too.</strong>
+        And the error response in that day's record <strong>was very fast.</strong></p>
+
+        <p>While writing this I brought up a server that returns nothing but 500 and checked.</p>
+
+<pre data-lang="bash"><code>$ curl -s -o /dev/null -w 'http_code=%{http_code} time_starttransfer=%{time_starttransfer}\n' http://127.0.0.1:8791/
+http_code=500 time_starttransfer=0.000390
+$ echo $?
+0                          &lt;- a 500, and the exit code is 0
+
+$ curl -sf -o /dev/null http://127.0.0.1:8791/   # with --fail
+$ echo $?
+22</code></pre>
+
+        <p><strong>Plain <code>curl</code> does not treat HTTP 500 as a failure.</strong>
+        The transfer itself succeeded. The exit code is 0 and the time is computed
+        <strong>exactly the way it is for a normal response.</strong></p>
+
+        <blockquote><p>So <strong>"I should have checked the exit status" is wrong too.</strong>
+        By default <strong>a normal response and a 500 both exit 0</strong>, so that alone does not separate them.
+        You need <code>--fail</code>, or to <strong>read the response code yourself.</strong>
+        <strong>The place to fix was not where I first thought it was.</strong></p></blockquote>
+
+<pre data-lang="text"><code>[the values below are from that day's record]
+HTTP 500 response time      : 0.000566 s
+arrival rate it would derive: 2,826/s
+
+normal (when it takes 1.4 s): 1.142/s
+                              → 2,475×</code></pre>
+
+        <p>⚠️ These two arrival rates are <strong>derived values, not measurements.</strong>
+        Both have the shape of <strong>some constant divided by the response time</strong> (rate times time
+        gives 1.6 on both sides), and <strong>I did not check what that constant is.</strong></p>
+
+        <p>What I calculated this time from the two recorded values:
+        <strong>2,826 ÷ 1.142 = 2,474.6</strong> and <strong>1.4 ÷ 0.000566 = 2,473.5</strong>.
+        The two are <strong>nearly the same.</strong> That means the recorded rate is
+        <strong>inversely proportional to the response time</strong>, and
+        <strong>the faster the response, the larger the derived value.</strong>
+        (They are not exactly equal, which looks like <strong>rounding on both numbers</strong> — the rates
+        and the times are both given to limited digits.)</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 210" role="img" aria-labelledby="pf-t pf-d" class="figure-svg">
+            <title id="pf-t">How a failed request inflates the measurement</title>
+            <desc id="pf-d">Two branches lie one above the other. The upper is the normal response: a long bar
+            for the time to the first byte, with a small arrival rate written to its right. The lower is the
+            error response: a very short bar in the same place, with a much larger arrival rate to its right.
+            Between the branches sits a dashed box saying this is where a check that would separate the two is
+            missing. The ratio of the two values is written at the bottom right.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="16" y="24" font-size="12" fill="#8a8a8a" font-weight="700">normal response</text>
+              <rect x="16" y="32" width="300" height="18" rx="4" fill="none" stroke="#8a8a8a" stroke-width="1.8"/>
+              <text x="166" y="46" font-size="11.5" fill="#4a4a4a" text-anchor="middle">1.4 s to the first byte</text>
+              <path d="M320 41 H 400" fill="none" stroke="#8a8a8a" stroke-width="2" marker-end="url(#pf-ar)"/>
+              <path d="M316 41 H 320" fill="none" stroke="#8a8a8a" stroke-width="2"/>
+              <text x="410" y="46" font-size="12.5" fill="#4a4a4a" font-weight="700">rate 1.142/s</text>
+
+              <text x="16" y="116" font-size="12" fill="#d62976" font-weight="700">error response (HTTP 500)</text>
+              <rect x="16" y="124" width="6" height="18" rx="2" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="34" y="138" font-size="11.5" fill="#d62976">0.000566 s</text>
+              <path d="M22 133 H 400" fill="none" stroke="#d62976" stroke-width="2" stroke-dasharray="3 3" marker-end="url(#pf-ar2)"/>
+              <text x="410" y="138" font-size="12.5" fill="#d62976" font-weight="700">rate 2,826/s</text>
+
+              <rect x="150" y="66" width="240" height="34" rx="6" fill="none" stroke="#8a8a8a" stroke-width="1.6" stroke-dasharray="6 4"/>
+              <text x="270" y="88" font-size="11.5" fill="#8a8a8a" text-anchor="middle">where a separating check is missing</text>
+
+              <text x="360" y="180" font-size="11.5" fill="#d62976" font-weight="700" text-anchor="middle">2,475×</text>
+              <text x="360" y="198" font-size="11" fill="#8a8a8a" text-anchor="middle">nearly the ratio of the two times</text>
+            </g>
+            <defs>
+              <marker id="pf-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="pf-ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>Bar length is <strong>not to scale.</strong> The real ratio is 2,475×, so drawing both
+          truthfully would make the error side invisible.
+          ⚠️ Nor is filling that empty middle with an exit-status check enough — the reason is just above.</figcaption>
+        </figure>
+
+        <p>This arrival rate is <strong>the single input that sets the load and the run time of every
+        experimental condition.</strong> If it greatly exceeds what the card can actually do,
+        <strong>the tail-latency samples get truncated.</strong></p>
+
+        <blockquote><p>⚠️ <strong>The only thing reproduced in this section is <code>curl</code>'s
+        behaviour.</strong> The numbers, and "so I fixed it", are <strong>that day's record.</strong>
+        What verdict a run at that value would have received was <strong>not checked then either.</strong></p></blockquote>
+
+        <p>The KV capacity check beside it had the same character: it <strong>printed the engine's reported
+        value and the predicted one side by side and never compared them</strong> — with
+        <strong>"refuse if it is nothing like the prediction"</strong> written at the top of the file.
+        ⚠️ This is also that day's record.</p>
+
+        <h2 id="the-checker-was-wrong">I wrote a script to count the rest, and its test was wrong<a class="anchor" href="#the-checker-was-wrong" aria-label="Link to this section">#</a></h2>
+
+        <p>After fixing the four, I wrote a script that checks <strong>all eighteen remaining items at
+        once</strong> to see whether they were really there. Three came back ❌.</p>
+
+        <blockquote><p><strong>Two of those were not the code but my own test being wrong.</strong></p></blockquote>
+
+        <p>Here is one. "Is the arming before the scale-up?" was compared <strong>by line number</strong>,
+        and a comment on line 44 contained the string <code>desiredSize=1</code>.
+        <strong>The test counted that comment as the scale-up.</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="ln-t ln-d" class="figure-svg">
+            <title id="ln-t">Where a comment slips into an ordering judged by line number</title>
+            <desc id="ln-d">Source lines are listed vertically. Line 44 near the top is a comment containing
+            the string desiredSize=1 and is drawn in pink. Line 90 lower down holds the real scale-up call and
+            is grey. Between them, line 60 holds the arming call. On the left are two arrows: the upper one is
+            the path where the test reads line 44 as the scale-up and wrongly concludes it comes before the
+            arming; the lower one points at line 90, which is what should have been compared.</desc>
+            <g font-family="Inter, sans-serif">
+              <g font-size="11.5" fill="#8a8a8a">
+                <text x="200" y="46">line 44</text>
+                <text x="200" y="100">line 60</text>
+                <text x="200" y="154">line 90</text>
+              </g>
+              <rect x="248" y="30" width="380" height="26" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="262" y="48" font-size="12" fill="#d62976"># … desiredSize=1 … (a comment)</text>
+
+              <rect x="248" y="84" width="380" height="26" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="262" y="102" font-size="12" fill="#4a4a4a">ttl_arm   (the arming)</text>
+
+              <rect x="248" y="138" width="380" height="26" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="262" y="156" font-size="12" fill="#4a4a4a">desiredSize=1   (the real scale-up)</text>
+
+              <path d="M180 43 H 240" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#ln-ar1)"/>
+              <text x="14" y="40" font-size="11.5" fill="#d62976" font-weight="700">what the test read</text>
+              <text x="14" y="56" font-size="11" fill="#8a8a8a">a comment, counted as code</text>
+
+              <path d="M180 151 H 240" fill="none" stroke="#8a8a8a" stroke-width="2" marker-end="url(#ln-ar2)"/>
+              <text x="14" y="148" font-size="11.5" fill="#4a4a4a" font-weight="700">what it should have compared</text>
+
+              <text x="360" y="188" font-size="11" fill="#8a8a8a" text-anchor="middle">a judgement that knows only where the characters are</text>
+            </g>
+            <defs>
+              <marker id="ln-ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+              <marker id="ln-ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>A line number knows <strong>where the characters are</strong> but not
+          <strong>whether they are code or a comment.</strong>
+          <strong>The method I first used on the fourth item and then abandoned</strong> is this one.</figcaption>
+        </figure>
+
+        <p>The other was <strong>the test expression itself being nonsense.</strong>
+        That day I did not just read the verdicts but <strong>compared against the files directly</strong>,
+        and recorded that the two ❌ were <strong>false positives of the test</strong>, not defects in the
+        implementation.</p>
+
+        <p>⚠️ <strong>What the third ❌ was is not in the record.</strong>
+        I wrote down only that two were false positives and <strong>never wrote the remaining one.</strong>
+        There is no way to know now. <strong>Even the record of checking the checker has a gap in it.</strong></p>
+
+        <p>⚠️ The two false positives in this section and the <code>desiredSize=1</code> comment story are
+        <strong>that day's record</strong> and <strong>were not reproduced this time.</strong></p>
+
+        <h2 id="one-name">One name let a test pass in silence<a class="anchor" href="#one-name" aria-label="Link to this section">#</a></h2>
+
+        <p>The same day, another test harness used a variable named <code>GROUPS</code>.
+        <strong>That is a name bash keeps for itself.</strong> This is about bash, not shells in general.
+        Re-running it on this machine (<code>bash 5.3.9</code>):</p>
+
+<pre data-lang="bash"><code>$ bash -c 'GROUPS=(a b c); echo "${GROUPS[*]}"'
+&lt;the current user's group ids&gt;             &lt;- not what was assigned
+
+$ bash -c 'MY_GROUPS=(a b c); echo "${MY_GROUPS[*]}"'
+a b c                                       &lt;- with another name it goes in</code></pre>
+
+        <p><strong>The assignment is swallowed in silence.</strong> On this version there is no error and no
+        warning. ⚠️ <strong>It differs by bash version.</strong> Older documentation says an assignment like
+        this <strong>returns a non-zero status.</strong> I checked this one version.</p>
+
+        <p>⚠️ That is as far as this reproduction goes. <strong>What follows is that day's record.</strong>
+        A test that was supposed to detect "another card is already running"
+        <strong>passed without ever seeing the value I had put in.</strong></p>
+
+        <blockquote><p><strong>The code was fine and the test lied.</strong>
+        ⚠️ This and the two false positives above <strong>have different causes.</strong>
+        One counted a comment as code, one had a nonsense test expression, this one never received its value.
+        What they share is only that <strong>the result looked green.</strong>
+        The check <strong>did run.</strong> It just ran <strong>without the value I meant to put in.</strong>
+        <strong>A check passing does not mean it ran with the input you intended.</strong></p></blockquote>
+
+        <h2 id="twelve-more">Twelve more came out of the code I had just fixed<a class="anchor" href="#twelve-more" aria-label="Link to this section">#</a></h2>
+
+        <p>After fixing the four and counting the eighteen, I reviewed <strong>just those guards</strong> again
+        the same day. <strong>Twelve came out.</strong> Most were inside
+        <strong>code written moments earlier to fix the earlier findings.</strong></p>
+
+        <p>Two of them have the same shape as this article.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">Two guards where failure looked exactly like the safe state.</caption>
+          <thead><tr><th>Guard</th><th>Value on failure</th><th>How that value read</th></tr></thead>
+          <tbody>
+            <tr><td>"is another card already running?"</td><td>an empty list</td><td><strong>nothing else is running</strong></td></tr>
+            <tr><td>"how much of the deadline is left?"</td><td>0</td><td><strong>nothing to check</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">The first put the listing call inside a command substitution and
+        <strong>discarded stderr while never looking at the exit status.</strong>
+        ⚠️ A command substitution does not destroy the exit status — <strong>the assignment inherits it</strong>
+        and <strong>the caller did not look.</strong> According to the record, expired credentials, a
+        permissions error and a network failure therefore <strong>all produced an empty list.</strong>
+        ⚠️ That is the record; <strong>what the tool actually emits was not checked this time.</strong>
+        An empty list is <strong>indistinguishable from "nothing else is running".</strong>
+        A guard built for the moment something is wrong with the account
+        <strong>passes at exactly that moment.</strong></p>
+
+        <blockquote><p>The second is the same. If it could not read the remaining deadline it returned 0.
+        <strong>The moment authentication expires mid-session</strong>, exactly the moment to stop,
+        <strong>the guard stops guarding</strong> — with the remote schedule still armed.</p></blockquote>
+
+        <p>⚠️ These twelve were <strong>not reproduced in this session</strong>; they are that day's commit
+        record. The two carried into the text are what that record says.</p>
+
+        <h2 id="what-this-does-not-claim">Limits: what this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li><strong>This article says nothing about the state the guards are in now.</strong>
+          The project is in flight, and what is written here is what I found and checked
+          <strong>on one day, 1 September 2026.</strong> Things to fix keep coming out of the same places since.</li>
+          <li><strong>I did not compare timestamps to show the report came before those commits.</strong>
+          What I have is <strong>commit dates</strong>; I do not separately hold the time or wording of the
+          report. "I found out when I opened it before the paid session" is <strong>that day's record.</strong></li>
+          <li><strong>I do not know why I reported it that way.</strong> Whether I started and stopped,
+          confused it with another file, or read a plan as a result — <strong>there is no record.</strong>
+          What is established is only that <strong>the report and the code differed.</strong></li>
+          <li><strong><code>git log -S</code> selects commits where the occurrence count changed.</strong>
+          If the same thing had been written with a different string it would not be found at all.
+          So this search tells me <strong>"that string was absent"</strong>, not
+          <strong>"that guard was absent".</strong></li>
+          <li><strong>Numbers from a line-number comparison change with what you count.</strong>
+          Rewriting this I looked at the same commits again, and changing the search pattern slightly
+          <strong>changed the line number of the confirming line.</strong> The conclusion held, but
+          <strong>the numbers are not something to carry over as they are.</strong></li>
+          <li><strong>I am not saying every money-leaking path is closed.</strong> The defence I counted then
+          was three layers deep, and <strong>the third I only knew existed</strong>; I had never seen what it
+          deletes. I wrote at the time that it was more honest not to count it.</li>
+          <li><strong>I do not know whether the eighteen-item script is right today.</strong> I fixed two
+          false positives then; <strong>the test expressions for the other sixteen were never checked.</strong></li>
+          <li><strong>The twelve were not reproduced in this session.</strong> They come from that day's
+          commit record, and only two are carried into the text.
+          <strong>What state the other ten are in is outside this article too.</strong></li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="closing">Closing<a class="anchor" href="#closing" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>"I did it" is memory, not evidence.</strong> Memory does not separate
+          <strong>having made an edit from having meant to.</strong></li>
+          <li><strong>When I learned I was wrong, I suspected the tool first.</strong>
+          Because that explanation was comfortable. <strong>The more comfortable the explanation, the sooner
+          it needs checking.</strong></li>
+          <li><strong>I took a comment I had written as evidence.</strong>
+          An explanation being attached does not mean the explanation is right.</li>
+          <li><strong>Write a verification script and the script needs verifying too.</strong>
+          Two of the three ❌ were my test, not the code.</li>
+          <li><strong>"Fixed" needs looking at once more.</strong> Twelve more came out of that day's fixes,
+          and two of them were <strong>failures that looked exactly like the safe state.</strong></li>
+        </ul>
+
+        <p>If one line survives, it is this.
+        <strong>When it feels like things are going well, check what that feeling rests on.</strong>
+        Mine rested on memory.</p>
+
+        <p><code>git log -S</code> answers in seconds. Saving those seconds, I found
+        <strong>four guards that did not look the way I had reported</strong>, right before a paid run.
+        Three were <strong>devices that stop billing from continuing.</strong></p>
+
+        <p>⚠️ And after fixing those, <strong>twelve more came out of the same places.</strong>
+        This is <strong>not a story about things being closed; it is a story about how to check.</strong>
+        The project is still in flight.</p>
+
+        <p>Thank you for reading.</p>
+        </div>
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=2dcb1d4f4c"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

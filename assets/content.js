@@ -248,6 +248,18 @@
           tags: ["Reliability", "Method"]
         },
         {
+          title: "The State I Reported as Fixed Was Not in the Commits",
+          url: "writing/four-fixes-that-were-not-there.html",
+          source: "side", sourceLabel: "Personal project",
+          title_ko: "고쳤다고 보고한 상태가 커밋에 없었습니다",
+          desc_ko: "처음으로 돈을 내고 GPU를 빌리기 직전에, 완료로 보고한 가드 4건이 코드에서는 그 모습이 아니었습니다. 셋은 과금이 계속되는 것을 막는 장치입니다. 저장소에 물어보니 넷 다 제 커밋에서 처음 들어왔는데, git은 잃어버린 편집과 하지 않은 편집을 가르지 못합니다. 나머지를 세는 스크립트를 짰더니 이번엔 판정식이 틀렸습니다.",
+          title_ja: "直したと報告した状態がコミットにありませんでした",
+          desc_ja: "はじめてお金を払って GPU を借りる直前に、完了と報告したガード 4 件がコードではその姿ではありませんでした。3 つは課金が続くのを止める装置です。リポジトリに聞くと 4 つとも私のコミットではじめて入っていましたが、git は失った編集と書かなかった編集を分けられません。残りを数えるスクリプトを書いたら、今度は判定式が誤っていました。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "Right before renting a GPU with real money for the first time, four guards I had reported complete did not look that way in the code. Three of them stop billing from continuing. The repository says all four first appear in my own commits, though git cannot tell a lost edit from one never made. Then I wrote a script to count the rest, and its own test was wrong. Also in Korean and Japanese.",
+          tags: ["Verification", "Method", "GPU"]
+        },
+        {
           title: "Every Cut I Could Measure Landed Inside a Character",
           url: "writing/the-review-that-skipped-the-big-file.html",
           source: "commercial", sourceLabel: "Commercial project",
