@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Dialog That Would Not Open Had Two Causes | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/slow-screens-6-polling-pileup.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/slow-screens-6-polling-pileup.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/slow-screens-6-polling-pileup.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/slow-screens-6-polling-pileup.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="A Dialog That Would Not Open Had Two Causes | Kwanghun Lee" />
+  <meta property="og:description" content="Clicking the create button left the dialog spinning instead of opening. DevTools showed four requests still pending. The list query took over ten seconds while the screen re-fetched it every five, and it kept doing so while the dialog was open." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/slow-screens-6-polling-pileup.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="A Dialog That Would Not Open Had Two Causes | Kwanghun Lee" />
+  <meta name="twitter:description" content="Clicking the create button left the dialog spinning instead of opening. DevTools showed four requests still pending. The list query took over ten seconds while the screen re-fetched it every five, and it kept doing so while the dialog was open." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="Clicking the create button left the dialog spinning instead of opening. DevTools showed four requests still pending. The list query took over ten seconds while the screen re-fetched it every five, and it kept doing so while the dialog was open." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "slow-screens-6-polling-pileup.html", "ko": "slow-screens-6-polling-pileup.ko.html", "ja": "slow-screens-6-polling-pileup.ja.html"}'>
+          <option value="ko">Korean</option>
+          <option value="en" selected>English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing</a>
+        <div class="article-meta"><span class="source-tag company notranslate">Company work</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>A Dialog That Would Not Open Had Two Causes<br><span class="h1-sub">The list query took over ten seconds and the screen re-fetched it every five. An internal cloud admin console. Slow Screens, part six</span></h1>
+          <p class="article-date">Sep 2026</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="slow-screens-6-polling-pileup"></aside>
+
+        <nav class="article-toc" aria-label="Table of contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-is-in-here">What this is about</a></li>
+            <li><a href="#the-screen">The screen</a></li>
+            <li><a href="#the-symptom">The symptom: clicking does not open it</a></li>
+            <li><a href="#cause-a">Cause 1: fetching everything up front</a></li>
+            <li><a href="#cause-b">Cause 2: the five-second refresh kept running</a></li>
+            <li><a href="#the-fix">The fix: pause while open, fetch on selection</a></li>
+            <li><a href="#a-bonus">A bonus: the options show even when a list fails</a></li>
+            <li><a href="#the-five-seconds">Those five seconds shaped a backend decision</a></li>
+            <li><a href="#which-side">So which side needed fixing</a></li>
+            <li><a href="#limits">Limits: what this article does not claim</a></li>
+            <li><a href="#Closing">Closing</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>Hello. I build an internal cloud admin console. On the volume list screen,
+        <strong>clicking “create volume” left a spinner instead of opening the dialog.</strong></p>
+
+        <p>A button that does nothing <strong>reads as a front-end problem.</strong> Half right.
+        There was <strong>one cause on each side.</strong></p>
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>You have put a periodic refresh (polling) on a list screen.</li>
+          <li>You prefetch what a dialog is likely to need before it opens.</li>
+          <li>You have had to work out which side a symptom actually came from.</li>
+        </ul>
+
+        <h2 id="what-is-in-here">What this is about<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li>The dialog failed to open because <strong>two things overlapped</strong>:
+          <strong>fetching everything up front</strong> and <strong>re-fetching every five seconds.</strong></li>
+          <li>The list query took <strong>over ten seconds</strong> while the screen re-fetched it
+          <strong>every five</strong>. The next one goes out before the previous one is done.</li>
+          <li>DevTools showed <strong>four requests still <code>(pending)</code>.</strong></li>
+          <li>The fix was <strong>pausing the refresh while a dialog is open</strong> and
+          <strong>fetching only what the user selected, when they select it.</strong></li>
+          <li>⚠️ <strong>But “requests piled up” is more than I verified.</strong> What the screenshot shows is
+          that <strong>four requests had not finished</strong> at that moment, and I never timed how long the
+          dialog took to open, before or after.</li>
+          <li>And <strong>those five seconds shaped a backend decision.</strong> They are the five in
+          <a href="slow-screens-1-volume-list.html">part one</a>'s <code>refreshAfterWrite(5s)</code>.</li>
+        </ul>
+
+        <p><strong>This is an internal product, so neither the screens nor the code are reproduced as they
+        are.</strong> Product names, customers and internal addresses are gone; only the structure stays.
+        No screenshot containing the product UI is used, and the DevTools panel appears
+        <strong>cropped, with the request names masked.</strong></p>
+
+        <h2 id="the-screen">The screen<a class="anchor" href="#the-screen" aria-label="Link to this section">#</a></h2>
+
+        <p>A screen listing volumes with a “create volume” button above it. Two things run together.</p>
+
+        <ul>
+          <li><strong>The list re-fetches itself every five seconds.</strong> These resources change state, so the
+          screen keeps itself current without anyone doing anything. That periodic re-fetch is called
+          <strong>polling</strong>.</li>
+          <li><strong>Pressing the button opens a create dialog</strong> with a field for choosing a volume
+          source.</li>
+        </ul>
+
+        <h2 id="the-symptom">The symptom: clicking does not open it<a class="anchor" href="#the-symptom" aria-label="Link to this section">#</a></h2>
+
+        <p>Press the button and the dialog <strong>starts to appear and then just spins.</strong> No error.
+        Sometimes it eventually opens, sometimes it does not.</p>
+
+        <p>Open DevTools and the answer is sitting there.</p>
+
+        <figure class="diagram">
+          <img src="../assets/figures/modal-pending-requests.png" alt="The browser DevTools network tab. The upper eight requests finished with status 200; the lower four are pending. All request names are masked." loading="lazy" width="640" height="500">
+          <figcaption>At the moment of the capture, <strong>four requests had not finished</strong>
+          (the red box). The eight above them returned 200. ⚠️ The request names are internal API surface, so
+          they are masked as <code>req-A</code> and so on, and the half of the screenshot showing the product UI
+          is cropped away. Status, type and timings are as captured.</figcaption>
+        </figure>
+
+        <p><code>(pending)</code> means <strong>not finished yet.</strong> Where it is waiting does not appear on
+        this screen. It could be queued inside the browser, or sent and waiting on a response.</p>
+
+        <p>So <strong>the click was handled.</strong> The dialog had started to open and was stuck waiting for
+        what it needed.</p>
+
+        <p>⚠️ <strong>That is as far as the screenshot goes.</strong> Which of these is the periodic refresh and
+        which belongs to the dialog, when each started, and where each spent its time —
+        <strong>this screen cannot separate any of that.</strong> The two causes below come
+        <strong>from the code and the internal record, not from this one capture.</strong></p>
+
+        <h2 id="cause-a">Cause 1: fetching everything up front<a class="anchor" href="#cause-a" aria-label="Link to this section">#</a></h2>
+
+        <p>Opening the dialog fetched <strong>four things</strong>: the volume list, the volume snapshot list,
+        the image list, and the volume type list. ⚠️ The first three were called <strong>one after
+        another</strong> and the volume type separately. They did not all go out side by side.</p>
+
+        <p>But <strong>opening the dialog does not need all four.</strong> Choosing “volume” as the source needs
+        the volume list; choosing “image” needs the image list.
+        <strong>Before anything is chosen, none of the volume, snapshot or image lists is needed.</strong></p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
+            <svg viewBox="0 0 720 200" role="img" aria-labelledby="of-t of-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="of-t">Requests sent on click, before and after</title>
+              <desc id="of-d">The upper card is before the fix: pressing the button fetches the volume, snapshot,
+              volume type and image lists together. The lower card is after: pressing the button fetches
+              nothing, and only once the dialog is open and the user picks a source does that one thing get
+              fetched.</desc>
+
+              <rect x="0" y="0" width="720" height="88" rx="10" fill="rgba(214,41,118,0.06)"/>
+              <rect x="10" y="10" width="72" height="22" rx="11" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="46" y="26" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">Before</text>
+              <rect x="98" y="40" width="112" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="154" y="57" font-size="12" fill="#18121d" text-anchor="middle">button click</text>
+              <path d="M210 53 H 244" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#of-arA)"/>
+              <g font-size="11.5" text-anchor="middle" font-weight="700" fill="#d62976">
+                <rect x="252" y="34" width="106" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="1.5"/>
+                <text x="305" y="47">volume list</text>
+                <rect x="366" y="34" width="106" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="1.5"/>
+                <text x="419" y="47">snapshot list</text>
+                <rect x="252" y="56" width="106" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="1.5"/>
+                <text x="305" y="69">volume type list</text>
+                <rect x="366" y="56" width="106" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="1.5"/>
+                <text x="419" y="69">image list</text>
+              </g>
+              <text x="486" y="58" font-size="12" fill="#d62976" font-weight="700">four of them</text>
+
+              <rect x="0" y="100" width="720" height="96" rx="10" fill="rgba(79,91,213,0.06)"/>
+              <rect x="10" y="110" width="72" height="22" rx="11" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="46" y="126" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">After</text>
+              <rect x="98" y="140" width="112" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="154" y="157" font-size="12" fill="#18121d" text-anchor="middle">button click</text>
+              <path d="M210 153 H 244" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#of-arB)"/>
+              <rect x="252" y="140" width="112" height="26" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="308" y="157" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">dialog opens · 0 requests</text>
+              <path d="M364 153 H 398" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#of-arB)"/>
+              <rect x="406" y="140" width="130" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="471" y="157" font-size="12" fill="#18121d" text-anchor="middle">source picked</text>
+              <path d="M536 153 H 570" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#of-arB)"/>
+              <rect x="578" y="140" width="134" height="26" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="645" y="157" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">only what that choice needs</text>
+              <defs>
+                <marker id="of-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+                <marker id="of-arB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>The number of requests sent at the moment the button is pressed, side by side.</figcaption>
+        </figure>
+
+        <blockquote><p>Fetching something because it might be needed later is called
+        <strong>over-fetching</strong>. It looks like a win — it will be fast later — except
+        <strong>when the dialog never opens to reach that “later”.</strong></p></blockquote>
+
+        <h2 id="cause-b">Cause 2: the five-second refresh kept running<a class="anchor" href="#cause-b" aria-label="Link to this section">#</a></h2>
+
+        <p>This is the middle of the article.</p>
+
+        <p>The list screen <strong>re-fetches the entire volume list every five seconds.</strong>
+        And that refresh <strong>kept running while the dialog was open.</strong> Nothing told it to stop.</p>
+
+        <p>And that full list query took <strong>over ten seconds.</strong> So the next one goes out while the
+        previous one is still running.</p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
+            <svg viewBox="0 0 720 200" role="img" aria-labelledby="poll-t poll-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="poll-t">A ten-second request sent every five seconds</title>
+              <desc id="poll-d">Time runs along the horizontal axis. The upper card is a response that finishes within
+              five seconds: by the time the next request goes out the previous one is done, so only one is in
+              flight. The lower card is a response taking over ten seconds: while a new request goes out every
+              five seconds the previous one is still running, so two overlap.</desc>
+
+              <rect x="0" y="0" width="720" height="88" rx="10" fill="rgba(79,91,213,0.06)"/>
+              <text x="10" y="22" font-size="12" fill="#4f5bd5" font-weight="700">when a response finishes within 5 s</text>
+              <rect x="10" y="34" width="128" height="18" rx="3" fill="rgba(79,91,213,0.28)" stroke="#4f5bd5" stroke-width="1.5"/>
+              <rect x="148" y="34" width="128" height="18" rx="3" fill="rgba(79,91,213,0.28)" stroke="#4f5bd5" stroke-width="1.5"/>
+              <rect x="286" y="34" width="128" height="18" rx="3" fill="rgba(79,91,213,0.28)" stroke="#4f5bd5" stroke-width="1.5"/>
+              <rect x="424" y="34" width="128" height="18" rx="3" fill="rgba(79,91,213,0.28)" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="10" y="72" font-size="11.5" fill="#4f5bd5" font-weight="700">no overlap · one at a time</text>
+
+              <rect x="0" y="100" width="720" height="96" rx="10" fill="rgba(214,41,118,0.06)"/>
+              <text x="10" y="122" font-size="12" fill="#d62976" font-weight="700">when a response takes over 10 s</text>
+              <rect x="10" y="132" width="272" height="12" rx="3" fill="rgba(214,41,118,0.28)" stroke="#d62976" stroke-width="1.5"/>
+              <rect x="148" y="146" width="272" height="12" rx="3" fill="rgba(214,41,118,0.28)" stroke="#d62976" stroke-width="1.5"/>
+              <rect x="286" y="160" width="272" height="12" rx="3" fill="rgba(214,41,118,0.28)" stroke="#d62976" stroke-width="1.5"/>
+              <rect x="424" y="174" width="272" height="12" rx="3" fill="rgba(214,41,118,0.28)" stroke="#d62976" stroke-width="1.5"/>
+              <path d="M148 128 V 190" stroke="#d62976" stroke-width="1" stroke-dasharray="3 3"/>
+              <path d="M286 128 V 190" stroke="#d62976" stroke-width="1" stroke-dasharray="3 3"/>
+              <path d="M424 128 V 190" stroke="#d62976" stroke-width="1" stroke-dasharray="3 3"/>
+              <text x="600" y="128" font-size="11.5" fill="#d62976" font-weight="700">overlap · two at a time</text>
+            </svg>
+          </div>
+          <figcaption>Time runs left to right; each bar is one request's lifetime. The dotted lines are the
+          five-second marks where a new request goes out. In the lower card the bars overlap.</figcaption>
+        </figure>
+
+        <blockquote><p><strong>Call something that takes ten seconds every five seconds and they overlap.</strong>
+        The next one goes out before the previous finishes, so two of the same request are in flight at
+        once.</p></blockquote>
+
+        <p>⚠️ <strong>One step past that and the evidence runs out.</strong> For “requests pile up without
+        bound” you need two more things, and <strong>neither is confirmed by this record.</strong></p>
+
+        <ul>
+          <li><strong>The refresh has to run on a fixed clock.</strong> An implementation that waits five seconds
+          after the previous one finishes, or skips while one is in flight, never overlaps. What the record has
+          is the <strong>call site</strong> of <code>usePolling</code>, not what is inside it.</li>
+          <li><strong>The overlapping requests have to queue somewhere.</strong> If they simply go out alongside
+          each other, the number in flight settles around two and stops growing. The browser's limit on
+          connections to one host could be that place, and <strong>I did not check.</strong></li>
+        </ul>
+
+        <p>So what this article can say is that they <strong>overlap.</strong> The internal record called it
+        “accumulation”, and I read it that way at the time.
+        <strong>Looking again, that word claims more than was verified.</strong></p>
+
+        <p>And at the same moment <strong>the dialog's own requests go out too</strong> — cause one.
+        ⚠️ There is <strong>no direct evidence</strong> that they waited behind the refresh requests.
+        The screenshot shows neither when each request started nor where it spent its time.</p>
+
+        <p>⚠️ <strong>Browsers also cap how many connections they open to one host.</strong> A long queue could
+        run into that cap, but <strong>this article did not check.</strong> What it checked is that four
+        requests were still <code>(pending)</code>.</p>
+
+        <h2 id="the-fix">The fix: pause while open, fetch on selection<a class="anchor" href="#the-fix" aria-label="Link to this section">#</a></h2>
+
+        <p>Two separate causes, so two fixes.</p>
+
+        <p><strong>One. Pause the refresh while a dialog is open.</strong></p>
+
+<pre data-lang="tsx"><code>// stop polling if any dialog is open
+const isAnyDialogOpen = Object.values(openDialogs).some(Boolean);
+
+usePolling({
+  callback: () =&gt; refetchVolumes(),
+  pollingCondition: isLoadingDataExist &amp;&amp; !isAnyDialogOpen,
+});</code></pre>
+
+        <p>⚠️ What this condition prevents is <strong>the next refresh going out.</strong> It does not cancel a
+        request already in flight. And whether <code>openDialogs</code> becomes true right after the click or
+        only once the data has arrived is <strong>not something the call site alone can tell you.</strong></p>
+
+        <p><strong>Two. Fetch on selection instead of up front.</strong> Picking “snapshot” as the volume source
+        fetches the snapshot list then, and only then. Anything already fetched is not fetched again.</p>
+
+<pre data-lang="tsx"><code>const loadSourceData = async (sourceValue: string) =&gt; {
+  if (sourceValue === 'volume' &amp;&amp; volumeSelectItems.length === 0) {
+    // when 'volume' is picked, the volume list only
+  } else if (sourceValue === 'snapshot' &amp;&amp; snapshotSelectItems.length === 0) {
+    // when 'snapshot' is picked, the snapshot list only
+  }
+  ...
+};</code></pre>
+
+        <p>Fetching when it is needed is called <strong>lazy loading</strong>.
+        ⚠️ Depending on the choice it is <strong>not always exactly one request</strong>: picking “image” or
+        “empty volume” also needs the volume type list, so one more goes out.</p>
+
+        <h2 id="a-bonus">A bonus: the options show even when a list fails<a class="anchor" href="#a-bonus" aria-label="Link to this section">#</a></h2>
+
+        <p>One more thing turned up while fixing this. <strong>The source-type options themselves were being
+        built from an API response.</strong> So when that call failed,
+        <strong>there was nothing to choose from at all.</strong></p>
+
+        <p>The options are fixed: volume, snapshot, image, empty volume. That is not something to ask a server
+        for. It became a constant array.</p>
+
+        <blockquote><p><strong>Fetch an unchanging value from a server and a failed call takes the screen with
+        it.</strong> Now a failed list still leaves <strong>the options visible</strong>, and the failure shows
+        up only on that one item.</p></blockquote>
+
+        <h2 id="the-five-seconds">Those five seconds shaped a backend decision<a class="anchor" href="#the-five-seconds" aria-label="Link to this section">#</a></h2>
+
+        <p>The same day, the backend had to pick a refresh interval for the volume list cache — the
+        <code>refreshAfterWrite(5s)</code> from <a href="slow-screens-1-volume-list.html">part one</a>.</p>
+
+        <p><strong>Those five seconds came from here.</strong> The screen re-fetches the list every five seconds,
+        so the trigger for refreshing the cache was lined up with that interval. The team agreed on it.</p>
+
+        <p>⚠️ <strong>That does not mean “fresh within five seconds”.</strong> As
+        <a href="slow-screens-1-volume-list.html">part one</a> says, <code>refreshAfterWrite</code> is not a
+        ceiling but <strong>the condition that starts a refresh</strong>, and if nobody asks, nothing refreshes.
+        What was decided here was <strong>what to line the interval up with</strong>, not a ceiling on
+        staleness.</p>
+
+        <blockquote><p>The front end's refresh interval set what the backend lined its own refresh up against.
+        These were not two numbers chosen independently — <strong>one was the reason for the
+        other.</strong></p></blockquote>
+
+        <h2 id="which-side">So which side needed fixing<a class="anchor" href="#which-side" aria-label="Link to this section">#</a></h2>
+
+        <p>“Isn't the backend taking ten seconds the problem?” is the obvious question. It is.
+        <strong>And fixing only that would not have been enough.</strong></p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">What is left if only one side is fixed.</caption>
+          <thead><tr><th>Side fixed</th><th>What remains</th></tr></thead>
+          <tbody>
+            <tr><td>backend only</td><td>the dialog still fetches four things it may not use</td></tr>
+            <tr><td>front end only</td><td>the list query still takes over ten seconds</td></tr>
+            <tr><td>both</td><td>the dialog opens right away and the list gets faster</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">The symptom appeared in one place and <strong>the causes sat one on each
+        side.</strong> Not two people on the same day but <strong>one person on both sides</strong>, which is
+        how the five seconds carried across.</p>
+
+        <h2 id="limits">Limits: what this article does not claim<a class="anchor" href="#limits" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>I never timed how long the dialog took to open, before or after.</strong> What the record has
+          is the sentence “it opens right away on click”, which is something someone watched.
+          <strong>I cannot say it went from N seconds to M.</strong></li>
+          <li><strong>“Over ten seconds” is the source's sentence.</strong> How it was measured is not recorded.</li>
+          <li><strong>The four pending requests are a single observation.</strong> That is how it was at that
+          instant, not that it was four every time.</li>
+          <li><strong>Pausing the refresh has a cost.</strong> While the dialog is open the list behind it goes
+          stale, so leaving it open a long time can make things jump when it closes.
+          ⚠️ The source does not record that cost, and I did not measure it either.</li>
+          <li><strong>Whether it hit a connection limit, I do not know.</strong> A long queue could run into the
+          browser's cap on connections to one host, and I did not check.</li>
+          <li><strong>The front-end fix did not fix the backend.</strong> The slow list query was fixed separately
+          in <a href="slow-screens-1-volume-list.html">part one</a>. This article sits on top of that and only
+          covers why the dialog would not open.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="Closing">Closing<a class="anchor" href="#Closing" aria-label="Link to this section">#</a></h2>
+
+        <p>To gather it up.</p>
+
+        <ul>
+          <li><strong>Pick an interval with the slowest response in view.</strong> Call something that takes ten
+          seconds every five and the same request overlaps itself.</li>
+          <li><strong>Polling needs a condition to stop on.</strong> If the screen is not in front of anyone, or a
+          dialog is open, it does not have to run.</li>
+          <li><strong>Prefetching is not free, and unchanging options should not be asked of a server.</strong>
+          The first adds requests at the same moment; the second takes the screen down with the server.</li>
+          <li><strong>One side's number becomes the other side's reason.</strong> The front end's five seconds is
+          what the backend cache lined its refresh up against.</li>
+        </ul>
+
+        <p>If one line survives, this one:
+        <strong>a symptom appearing in one place does not put the cause there.</strong>
+        The dialog failed to open in the front end, and half the reason it failed was in the backend.</p>
+
+        <p>The next part closes the series: a load test where <strong>throughput stayed flat however much load
+        went in</strong>, and what that flat graph hid.</p>
+
+        <p>Thank you for reading.</p>
+        </div>
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=918ea37403"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=44326158d4"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
