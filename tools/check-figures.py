@@ -27,6 +27,10 @@ def is_sentence(body):
     t = MARKUP.sub("", body).replace("\n", " ").strip().rstrip(".。")
     if len(t) < 8:
         return False
+    # 「~마다 · ~보다 · ~뿐」 처럼 `다` 로 끝나지만 문장이 아닌 꼬리는 뺀다.
+    # 2026-09-08: 「갱신 cache · 60초마다」가 문장으로 잡혔다.
+    if t.endswith(("마다", "보다", "이다", "만큼", "부터", "까지")) and "·" in t:
+        return False
     if t.endswith(KO_JA_END):
         return True
     # 영문: 마침표로 끝나고 낱말이 넷 이상이면 문장으로 본다.
