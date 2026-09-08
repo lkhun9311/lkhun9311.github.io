@@ -248,6 +248,18 @@
           tags: ["Reliability", "Method"]
         },
         {
+          title: "A Role Lookup Went From 1,409 ms to 1 ms",
+          url: "writing/slow-screens-3-role-lookup.html",
+          source: "company", sourceLabel: "Company work",
+          title_ko: "역할 조회 1,409ms가 1ms가 됐습니다",
+          desc_ko: "화면에 cache가 이미 있었는데 그 cache 때문에 느렸습니다. 찾은 8줄은 전부 0ms였고 못 찾은 6줄을 더하면 1,409ms로 타이머가 찍은 총계와 같았습니다. 못 찾을 때마다 프로젝트 전체 목록을 다시 부르고 있었는데, 그 6개 id는 다시 받아도 없는 프로젝트였습니다. 연작 「느린 화면」 ③.",
+          title_ja: "ロール取得の 1,409ms が 1ms になりました",
+          desc_ja: "画面にはすでに cache があり、その cache のせいで遅くなっていました。解決できた 8 行はすべて 0ms、できなかった 6 行を足すと 1,409ms でタイマーの合計と同じでした。解決できないたびにプロジェクト全件を取り直しており、その 6 つの id は取り直しても存在しません。連載「遅い画面」③。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "The screen already had a cache, and the cache was why it was slow. The eight rows that resolved cost 0 ms; the six that did not sum to 1,409 ms, the whole recorded span. Every failed lookup refetched the entire project list, and those six ids were never in it. Slow Screens, part three. Also in Korean and Japanese.",
+          tags: ["Performance", "Backend", "Method"]
+        },
+        {
           title: "Listing 20 Instances Took 54 Seconds",
           url: "writing/slow-screens-2-instance-list.html",
           source: "company", sourceLabel: "Company work",
