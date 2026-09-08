@@ -133,6 +133,76 @@ check("the output label stays English on a Japanese page", H.label("text", "ja")
 check("language names are not translated", H.label("kotlin", "ko"), "Kotlin");
 check("an unknown language falls back to the output label", H.label("nope", "en"), "Output");
 
+/* ---- languages the articles actually declare ------------------------------------------------- */
+
+/* 이 블록이 이 파일에서 가장 중요하다. 앞의 단언들은 「내가 넘긴 언어」를 검사하지만, 실제 사고는
+   글이 선언한 data-lang 이 highlight.js 에 없을 때 난다. 그때 render 는 평문으로, label 은 "Output"
+   으로 조용히 떨어져서 Java 창이 「출력」이라고 적힌 채 발행된다. 실측으로 117개 블록 중 45개가
+   그 상태였다(java·sql·tsx·bash). 그래서 글에서 값을 읽어 와 대조한다. */
+var fs = require("fs");
+var path = require("path");
+var dir = path.join(__dirname, "..", "writing");
+var known = H.languages();
+var seen = {};
+
+/* 경로가 틀리면 readdirSync 가 던지고 끝나서 「무엇이 왜 없는지」가 안 남는다. */
+var files = [];
+try {
+  files = fs.readdirSync(dir).filter(function (f) { return /\.html$/.test(f); });
+} catch (e) {
+  console.error("FAIL  글 폴더를 못 읽었다: " + dir + " — " + e.code);
+}
+
+files.forEach(function (f) {
+  var html = fs.readFileSync(path.join(dir, f), "utf8");
+  var re = /data-lang="([^"]*)"/g, m;
+  while ((m = re.exec(html)) !== null) (seen[m[1]] = seen[m[1]] || []).push(f);
+});
+
+var declared = Object.keys(seen);
+ran++;
+if (declared.length === 0) {
+  failed++;
+  console.error("FAIL  글에서 data-lang 을 하나도 못 읽었다 — 경로가 틀렸거나 표기가 바뀌었다");
+}
+declared.forEach(function (lang) {
+  ran++;
+  if (known.indexOf(lang) === -1) {
+    failed++;
+    console.error('FAIL  data-lang="' + lang + '" 는 highlight.js 에 없다 — 평문 + "Output" 으로 떨어진다\n' +
+                  "      쓰인 곳: " + seen[lang].slice(0, 3).join(" "));
+  }
+});
+
+/* 라벨만 있고 규칙이 없으면 「선언은 됐는데 아무것도 안 칠해지는」 상태가 된다. text 는 일부러 그렇다. */
+declared.forEach(function (lang) {
+  if (lang === "text" || known.indexOf(lang) === -1) return;
+  ran++;
+  var sample = { java: "class A {}", kotlin: "val a = 1", yaml: "a: 1", shell: "$ ls",
+                 bash: "$ ls", sql: "select 1", tsx: "const a = 1", python: "def f(): pass" }[lang];
+  if (!sample) { failed++; console.error("FAIL  " + lang + " 표본이 이 테스트에 없다"); return; }
+  if (H.render(lang, sample).indexOf('<span class="tok-') === -1) {
+    failed++;
+    console.error("FAIL  " + lang + " 은 라벨만 있고 아무것도 칠하지 않는다");
+  }
+});
+
+/* ---- the languages added for the harness article --------------------------------------------- */
+
+contains("python keeps a comment out of the string rule",
+  H.render("python", 'THREADS = 50  # 동시 사용자'), '<span class="tok-comment"># 동시 사용자</span>');
+lacks("python does not tokenise inside a string",
+  H.render("python", 'x = "def not a keyword"'), '<span class="tok-keyword">def</span>');
+check("sql is case-insensitive", H.render("sql", "select"), '<span class="tok-keyword">select</span>');
+check("sql upper case works too", H.render("sql", "SELECT"), '<span class="tok-keyword">SELECT</span>');
+lacks("case-insensitivity does not leak into kotlin types",
+  H.render("kotlin", "val abc = 1"), '<span class="tok-type">abc</span>');
+contains("bash is highlighted with the shell rules",
+  H.render("bash", "$ bash run.sh"), '<span class="tok-prompt">');
+check("bash keeps its own label", H.label("bash", "ko"), "Bash");
+lacks("java comment markers inside a string stay in the string",
+  H.render("java", 'String s = "a // b";'), '<span class="tok-comment">');
+
 /* ---- termination ----------------------------------------------------------------------------- */
 
 check("empty input", H.render("kotlin", ""), "");
