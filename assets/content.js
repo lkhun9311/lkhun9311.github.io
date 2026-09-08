@@ -248,6 +248,18 @@
           tags: ["Reliability", "Method"]
         },
         {
+          title: "I Wrote a Generator So Six Runs Would Share One Condition",
+          url: "writing/slow-screens-8-load-test-harness.html",
+          source: "company", sourceLabel: "Company work",
+          title_ko: "여섯 번 같은 조건으로 재려고 생성기를 짰습니다",
+          desc_ko: "구성 6가지를 비교하려면 같은 조건으로 6번을 돌려야 합니다. 부하 조건을 상수로 옮겨 JMX를 생성하는 harness를 짰습니다. 그런데 결과 파일이 하나도 없어도 실행 스크립트는 「완료」를 찍고 0으로 끝났고, 어느 회차가 어느 구성이었는지는 도구 밖에만 남았습니다. 연작 「느린 화면」 ⑧, 마지막 편.",
+          title_ja: "6 回を同じ条件で測るために生成器を書きました",
+          desc_ja: "構成 6 通りを比べるには同じ条件で 6 回まわす必要があります。負荷条件を定数に移して JMX を生成する harness を書きました。ところが結果ファイルが 1 つもなくても実行スクリプトは「完了」と出して 0 で終わり、どの回がどの構成だったかは道具の外にしか残りませんでした。連載「遅い画面」⑧、最終編。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "Comparing six configurations means six runs under the same conditions. I moved the load conditions into constants and generated the JMX from them. Then I found the run script printing a completion message and exiting zero with no result files at all, and nothing in the output naming which run was which. Slow Screens, part eight and last. Also in Korean and Japanese.",
+          tags: ["Performance", "Tooling", "Method"]
+        },
+        {
           title: "A Performance Review That Found No Case to Change Anything",
           url: "writing/slow-screens-7-nothing-to-fix.html",
           source: "company", sourceLabel: "Company work",

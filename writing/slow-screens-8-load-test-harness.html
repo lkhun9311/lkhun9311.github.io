@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>I Wrote a Generator So Six Runs Would Share One Condition | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/slow-screens-8-load-test-harness.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/slow-screens-8-load-test-harness.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/slow-screens-8-load-test-harness.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/slow-screens-8-load-test-harness.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="I Wrote a Generator So Six Runs Would Share One Condition | Kwanghun Lee" />
+  <meta property="og:description" content="To measure one screen under six configurations, everything but the thing you are looking at has to match. I moved the load conditions into constants and generated the JMX from them. Then the run script finished successfully with zero reports, and nothing in the output named which run was which." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/slow-screens-8-load-test-harness.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="I Wrote a Generator So Six Runs Would Share One Condition | Kwanghun Lee" />
+  <meta name="twitter:description" content="To measure one screen under six configurations, everything but the thing you are looking at has to match. I moved the load conditions into constants and generated the JMX from them. Then the run script finished successfully with zero reports, and nothing in the output named which run was which." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="To measure one screen under six configurations, everything but the thing you are looking at has to match. I moved the load conditions into constants and generated the JMX from them. Then the run script finished successfully with zero reports, and nothing in the output named which run was which." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "slow-screens-8-load-test-harness.html", "ko": "slow-screens-8-load-test-harness.ko.html", "ja": "slow-screens-8-load-test-harness.ja.html"}'>
+          <option value="ko">Korean</option>
+          <option value="en" selected>English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing</a>
+        <div class="article-meta"><span class="source-tag company notranslate">Company work</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>I Wrote a Generator So Six Runs Would Share One Condition<br><span class="h1-sub">The declared load conditions were pinned as constants; which run was which configuration lived outside the tool. An internal cloud admin console. Slow Screens, part eight</span></h1>
+          <p class="article-date">Sep 2026</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="slow-screens-8-load-test-harness"></aside>
+
+        <nav class="article-toc" aria-label="Table of contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-is-in-here">What this is about</a></li>
+            <li><a href="#why-i-built-it">Six configurations mean six runs</a></li>
+            <li><a href="#conditions-as-constants">I moved the conditions into constants</a></li>
+            <li><a href="#one-at-a-time">Measuring one thing at a time was the point</a></li>
+            <li><a href="#what-all-means">"all" does not mean at the same time</a></li>
+            <li><a href="#what-not-to-save">Deciding what not to save was the design</a></li>
+            <li><a href="#keeping-runs">Reports pile up per run, the raw data does not</a></li>
+            <li><a href="#silent-success">It finished successfully with nothing produced</a></li>
+            <li><a href="#nothing-names-the-run">Nothing says which run was which configuration</a></li>
+            <li><a href="#auth">The test had to stay authenticated for ten minutes</a></li>
+            <li><a href="#what-this-does-not-claim">Limits: what this article does not claim</a></li>
+            <li><a href="#closing">Closing</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>Hello. I work on the backend of an internal cloud admin console.
+        In <a href="slow-screens-1-volume-list.html">part one</a> I took a single volume list screen and
+        measured it under <strong>six configurations</strong>.
+        ⚠️ The six do not stack neatly on top of each other; there is a place where a cache is added and
+        then taken away again. Three more screens were measured under the same conditions
+        (<a href="parallelism-made-the-tail-worse.html">part five</a>).</p>
+
+        <p>To see what each configuration contributed, <strong>everything but the thing you are looking at
+        has to match.</strong> This article is about the tool that took on the "keep the load conditions
+        the same" half of that, and about <strong>what that tool did not do.</strong></p>
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>Anyone who has set up a load test by filling in a GUI and pressing run</li>
+          <li>Anyone measuring the same thing repeatedly without being sure the runs match</li>
+          <li>Anyone who wrote an automation script and then moved on at "well, it runs"</li>
+        </ul>
+
+        <h2 id="what-is-in-here">What this is about<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>I moved the load conditions into <strong>constants in code</strong> and generated the JMX
+          from them. Those values were never touched between runs, so
+          <strong>the declared load conditions are identical across all six.</strong>
+          ⚠️ That does not mean the environment was.</li>
+          <li>I made the <strong>ten</strong> measurement targets runnable one at a time, so the tool
+          would not hit the other APIs alongside.</li>
+          <li>I left the result format as <strong>CSV</strong>. That format has no column for a response body.</li>
+          <li>⚠️ And yet, with <strong>no result files at all</strong>, the run script printed "done" and
+          <strong>exited zero.</strong> I reproduced it to check.</li>
+          <li>⚠️ And <strong>which run was which code configuration</strong> is nowhere in the reports.
+          That pairing was being done by <strong>a document outside the harness.</strong></li>
+        </ul>
+
+        <h2 id="why-i-built-it">Six configurations mean six runs<a class="anchor" href="#why-i-built-it" aria-label="Link to this section">#</a></h2>
+
+        <p>Measuring only before and after tells you <strong>nothing about which change did the work.</strong>
+        So the code configuration was split into six and each one was measured. No cache and sequential,
+        cache only, parallel only, cache and parallel, then the logic optimisation, and finally
+        <code>refreshAfterWrite</code>.</p>
+
+        <p>That is the table in <a href="slow-screens-1-volume-list.html">part one</a>, and the story of the
+        one step where going parallel made the tail longer is
+        <a href="parallelism-made-the-tail-worse.html">part five</a>.</p>
+
+        <blockquote><p>To measure configurations separately, <strong>everything but the thing you are
+        looking at has to match.</strong> Change one thing, hold the rest still. That is what makes a
+        comparison a comparison.</p></blockquote>
+
+        <p>⚠️ The six do <strong>not</strong> each differ from the next by exactly one thing; there are
+        places where two things moved together. That is why
+        <a href="parallelism-made-the-tail-worse.html">part five</a> <strong>picks two rows that hold the
+        cache constant</strong> and compares those. Measuring all six is what makes that choice available.
+        Measuring only before and after does not.</p>
+
+        <p>⚠️ Filling the values in by hand is not wrong in itself. If you write down what you entered each
+        time and <strong>keep that note with the result</strong>, the comparison holds. The problem is not
+        the hand, it is <strong>the missing note.</strong> I chose to remove the hand rather than add the note.</p>
+
+        <h2 id="conditions-as-constants">I moved the conditions into constants<a class="anchor" href="#conditions-as-constants" aria-label="Link to this section">#</a></h2>
+
+        <p>The load conditions went to the top of a python file as constants, and the <code>.jmx</code>
+        that JMeter reads is generated from them.</p>
+
+<pre data-lang="python"><code>THREADS        = 50    # 50 concurrent users
+RAMP_UP        = 120   # seconds to bring them all in
+DURATION       = 600   # how long the test runs (seconds, 10 min)
+THINK_TIME_MIN = 2000  # think time, lower bound (ms)
+THINK_TIME_MAX = 5000  # think time, upper bound (ms)
+GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
+
+        <p>What changed is <strong>where the conditions live.</strong> They used to live in a person's hands
+        and on a screen; now they live in a file. A file can be <strong>read, and compared.</strong></p>
+
+        <p>⚠️ <strong>Only in the sense that it now has that shape.</strong> This harness does not keep a
+        copy of that file per run. To actually compare runs you would have to
+        <strong>put it under version control or copy it into the run folder</strong>, and I did neither.</p>
+
+        <p>Across the six configurations <strong>these constants were never changed.</strong> What changed
+        was the server-side code. That is the basis on which
+        <a href="slow-screens-1-volume-list.html">part one</a> and
+        <a href="parallelism-made-the-tail-worse.html">part five</a> can say the load conditions were the
+        same in all six.</p>
+
+        <blockquote><p>⚠️ <strong>And that is as far as "the same" goes.</strong> What matched is the
+        <strong>declared load conditions</strong>, not the whole setting the test sat in. How much data had
+        piled up, how warm the JVM was, what else was running on that machine at the time — all of that is
+        <strong>outside these constants.</strong> Please read "the same conditions" in the earlier parts
+        with that scope.</p></blockquote>
+
+        <p>And <strong>which report belongs to which configuration</strong> is paired up by a document
+        written at the time. ⚠️ <strong>What the harness leaves behind is not linked together.</strong>
+        If that document cannot be opened, <strong>the output of this tool alone cannot answer it.</strong>
+        (Deployment records and commit times leave some room to reconstruct it. That is not something the
+        harness did for me.)</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 250" role="img" aria-labelledby="hn-t hn-d" class="figure-svg">
+            <title id="hn-t">How the harness flows</title>
+            <desc id="hn-d">The top row is the harness. From the left: the generator file holding the load
+            condition constants, the single JMX file it produces, the run script that drives JMeter with
+            that JMX, the per-target result files, and the per-target reports under a timestamped folder for
+            each run. Below, drawn as a dashed box standing on its own, is the server code configuration,
+            connected to nothing in the harness by a solid line. A pink line running from the reports back
+            toward that box is broken in the middle, with a cross drawn at the break.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="12" y="70" width="150" height="64" rx="7" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="87" y="94" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">generate_jmx.py</text>
+              <text x="87" y="114" font-size="11.5" fill="#d62976" text-anchor="middle">load constants</text>
+
+              <path d="M166 102 H 210" fill="none" stroke="#8a8a8a" stroke-width="2" marker-end="url(#hn-ar)"/>
+              <rect x="214" y="76" width="118" height="52" rx="7" fill="none" stroke="#8a8a8a" stroke-width="2"/>
+              <text x="273" y="99" font-size="12" fill="#4a4a4a" text-anchor="middle">.jmx file</text>
+              <text x="273" y="117" font-size="11" fill="#8a8a8a" text-anchor="middle">same name, overwritten</text>
+
+              <path d="M336 102 H 380" fill="none" stroke="#8a8a8a" stroke-width="2" marker-end="url(#hn-ar)"/>
+              <rect x="384" y="76" width="112" height="52" rx="7" fill="none" stroke="#8a8a8a" stroke-width="2"/>
+              <text x="440" y="99" font-size="12" fill="#4a4a4a" text-anchor="middle">run.sh</text>
+              <text x="440" y="117" font-size="11" fill="#8a8a8a" text-anchor="middle">runs JMeter</text>
+
+              <path d="M500 102 C 522 102, 526 66, 544 66" fill="none" stroke="#8a8a8a" stroke-width="2" marker-end="url(#hn-ar)"/>
+              <rect x="548" y="40" width="158" height="52" rx="7" fill="none" stroke="#8a8a8a" stroke-width="2"/>
+              <text x="627" y="63" font-size="12" fill="#4a4a4a" text-anchor="middle">result files</text>
+              <text x="627" y="81" font-size="11" fill="#8a8a8a" text-anchor="middle">one per target, wiped next run</text>
+
+              <path d="M627 96 V 128" fill="none" stroke="#8a8a8a" stroke-width="2" marker-end="url(#hn-ar)"/>
+              <rect x="548" y="132" width="158" height="58" rx="7" fill="none" stroke="#8a8a8a" stroke-width="2"/>
+              <text x="627" y="154" font-size="12" fill="#4a4a4a" text-anchor="middle">reports per run</text>
+              <text x="627" y="172" font-size="11" fill="#8a8a8a" text-anchor="middle">kept</text>
+
+              <rect x="12" y="182" width="150" height="46" rx="7" fill="none" stroke="#4a4a4a" stroke-width="2" stroke-dasharray="6 4"/>
+              <text x="87" y="200" font-size="12" fill="#4a4a4a" font-weight="700" text-anchor="middle">server code config</text>
+              <text x="87" y="218" font-size="11" fill="#8a8a8a" text-anchor="middle">changed outside the harness</text>
+
+              <path d="M548 168 C 490 200, 450 208, 412 210" fill="none" stroke="#d62976" stroke-width="1.6" stroke-dasharray="5 4"/>
+              <path d="M288 210 C 240 210, 200 206, 168 206" fill="none" stroke="#d62976" stroke-width="1.6"
+                    stroke-dasharray="5 4" marker-end="url(#hn-ar2)"/>
+              <g stroke="#d62976" stroke-width="2.4" stroke-linecap="round">
+                <path d="M340 200 L 360 220"/><path d="M360 200 L 340 220"/>
+              </g>
+              <text x="350" y="190" font-size="11.5" fill="#d62976" font-weight="700" text-anchor="middle">report ↔ config: no link</text>
+            </g>
+            <defs>
+              <marker id="hn-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="hn-ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>How many result files there are depends on <code>GROUP</code>: one, five or ten.
+          The dashed box at the bottom is <strong>what actually produced the six configurations</strong>,
+          and nothing in the harness connects to it. That broken pink line is the subject of the second half
+          of this article.</figcaption>
+        </figure>
+
+        <h2 id="one-at-a-time">Measuring one thing at a time was the point<a class="anchor" href="#one-at-a-time" aria-label="Link to this section">#</a></h2>
+
+        <p>The targets were <strong>ten</strong> read APIs on the volume and snapshot side.
+        ⚠️ Which ones, and their paths, are internal API surface and are not written here.</p>
+
+        <p><code>GROUP</code> is the handle on this harness. <code>"01"</code> runs that one,
+        <code>"volume"</code> runs the five on the volume side, <code>"all"</code> runs everything.</p>
+
+        <blockquote><p>When one screen is slow, you have to <strong>pull out just what that screen calls</strong>
+        so that <strong>this tool</strong> is not hammering the other APIs at the same time.</p></blockquote>
+
+        <p>⚠️ That does not mean load from other people or other processes on the machine is gone.
+        Only that <strong>the harness is not adding it.</strong></p>
+
+        <p>⚠️ And <strong>"alone" is not "independent".</strong> The resource ids that go into the requests
+        are pulled from a CSV file, and the config that reads that file sits
+        <strong>once, at the top of the test plan</strong>, with sharing set to <strong>all</strong> and
+        wrap-around on when it reaches the end. That means one cursor shared across every thread.
+        With the groups running one after another,
+        <strong>each group picks up where the previous one stopped.</strong></p>
+
+        <p>It may not stop at the cursor. If the server was not restarted in between, <strong>whatever is
+        left in its cache and however warm the JVM is carry over too.</strong> ⚠️ There is
+        <strong>no record</strong> of what was done to the server between runs. What is certain reaches as
+        far as <strong>the CSV cursor.</strong></p>
+
+        <h2 id="what-all-means">"all" does not mean at the same time<a class="anchor" href="#what-all-means" aria-label="Link to this section">#</a></h2>
+
+        <p>Rereading the generated JMX, something caught my eye. These values are in the test plan, and in
+        every thread group.</p>
+
+<pre data-lang="text"><code>&lt;!-- test plan --&gt;
+&lt;boolProp name="TestPlan.serialize_threadgroups"&gt;true&lt;/boolProp&gt;
+
+&lt;!-- per group (the generator stamps out ten from one template) --&gt;
+&lt;boolProp name="LoopController.continue_forever"&gt;true&lt;/boolProp&gt;
+&lt;intProp  name="LoopController.loops"&gt;-1&lt;/intProp&gt;
+&lt;boolProp name="ThreadGroup.scheduler"&gt;true&lt;/boolProp&gt;
+&lt;stringProp name="ThreadGroup.duration"&gt;600&lt;/stringProp&gt;</code></pre>
+
+        <p>With the first line true, the thread groups run <strong>one at a time, in order.</strong>
+        The four below mean <strong>the loop count is unlimited and the time is 600 seconds.</strong>
+        ⚠️ Two of them <strong>say the same thing twice</strong>: <code>-1</code> already means forever, so
+        <code>continue_forever</code> being on as well changes nothing.</p>
+
+        <p>Had the loop count not been <code>-1</code>, the group would stop at
+        <strong>whichever of count and time it reached first.</strong> Here the count is never reached, so
+        <strong>the path by which it ends normally is that 600 seconds.</strong>
+        ⚠️ It can of course end sooner if something stops it from outside or an error policy fires.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 250" role="img" aria-labelledby="sz-t sz-d" class="figure-svg">
+            <title id="sz-t">How "all" is laid out in time</title>
+            <desc id="sz-d">Two groups of bars share one time axis and one bar length. The upper group is
+            what people usually picture: the bars are stacked on separate rows but all start at the same
+            point and end at the same point, so they occupy the same interval on the axis and the whole
+            thing is ten minutes. The lower group is the actual configuration: bars of the same length that
+            do not overlap on the axis, laid end to end from the left, with a line beneath spanning the
+            whole extent labelled one hundred minutes as configured. Both groups draw only five bars and
+            elide the rest with an ellipsis.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="12" y="18" font-size="12" fill="#8a8a8a" font-weight="700">what you picture · ten at once</text>
+              <g fill="none" stroke="#8a8a8a" stroke-width="1.6">
+                <rect x="12" y="26" width="62" height="10" rx="3"/><rect x="12" y="40" width="62" height="10" rx="3"/>
+                <rect x="12" y="54" width="62" height="10" rx="3"/><rect x="12" y="68" width="62" height="10" rx="3"/>
+                <rect x="12" y="82" width="62" height="10" rx="3"/>
+              </g>
+              <text x="86" y="60" font-size="11.5" fill="#8a8a8a">… · ten minutes total</text>
+
+              <text x="12" y="118" font-size="12" fill="#d62976" font-weight="700">what is configured · one at a time</text>
+              <g fill="none" stroke="#d62976" stroke-width="1.8">
+                <rect x="12" y="128" width="62" height="12" rx="3"/><rect x="74" y="142" width="62" height="12" rx="3"/>
+                <rect x="136" y="156" width="62" height="12" rx="3"/><rect x="198" y="170" width="62" height="12" rx="3"/>
+                <rect x="260" y="184" width="62" height="12" rx="3"/>
+              </g>
+              <text x="332" y="194" font-size="11.5" fill="#d62976">… up to ten</text>
+              <g stroke="#d62976" stroke-width="1.4" fill="none">
+                <path d="M12 208 H 632"/><path d="M12 203 V 213"/><path d="M632 203 V 213"/>
+              </g>
+              <text x="322" y="224" font-size="11.5" fill="#d62976" font-weight="700" text-anchor="middle">100 minutes as configured</text>
+              <path d="M12 238 H 700" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#sz-ar)"/>
+              <text x="690" y="232" font-size="11" fill="#8a8a8a" text-anchor="end">time</text>
+            </g>
+            <defs>
+              <marker id="sz-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>The bars are ten minutes long in both. Above they sit on top of each other in time;
+          below they run end to end. Only five bars are drawn.</figcaption>
+        </figure>
+
+        <p>So <code>"all"</code> is <strong>not a test that loads ten things at once.</strong>
+        It is <strong>measuring one at a time, ten times over.</strong>
+        ⚠️ As the previous section said, the cursor and the cache and the JVM carry across, so
+        <strong>the ten are not independent of each other.</strong></p>
+
+        <blockquote><p>⚠️ <strong>There is no record that it ever took 100 minutes.</strong>
+        What I verified is that the configuration says so. Whether any run ever went through
+        <code>"all"</code> to the end is not written down anywhere.</p></blockquote>
+
+        <p>⚠️ And it is <strong>100 minutes as configured</strong>, not exactly 100 minutes.
+        JMeter checks the time between requests; it <strong>does not cut off a request in flight.</strong>
+        If the last request sits waiting for a response, that group ends past its 600 seconds.
+        On a screen with a ten-minute timeout, like the one in
+        <a href="slow-screens-1-volume-list.html">part one</a>, that overshoot is not small.</p>
+
+        <h2 id="what-not-to-save">Deciding what not to save was the design<a class="anchor" href="#what-not-to-save" aria-label="Link to this section">#</a></h2>
+
+        <p>JMeter lets you choose what to write to file for each sample. What actually decided it here was
+        <strong>the format.</strong></p>
+
+<pre data-lang="text"><code>&lt;xml&gt;false&lt;/xml&gt;                    &lt;!-- results as CSV, not XML --&gt;
+&lt;time&gt;true&lt;/time&gt;
+&lt;latency&gt;true&lt;/latency&gt;
+&lt;code&gt;true&lt;/code&gt;
+&lt;message&gt;true&lt;/message&gt;             &lt;!-- the response message --&gt;
+&lt;assertions&gt;true&lt;/assertions&gt;
+&lt;saveAssertionResultsFailureMessage&gt;true&lt;/saveAssertionResultsFailureMessage&gt;
+&lt;responseData&gt;false&lt;/responseData&gt;</code></pre>
+
+        <p>False on the first line means results accumulate <strong>one CSV line at a time.</strong>
+        And <strong>CSV has no column that can hold a response body at all.</strong> That is why a test
+        running 50 threads for ten minutes did not pile up bodies.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">What the result file keeps and what it leaves out.</caption>
+          <thead><tr><th>Kept</th><th>Left out</th></tr></thead>
+          <tbody>
+            <tr><td>Elapsed time · latency · timestamp · success</td><td><strong>Response body</strong> (CSV has no place for it)</td></tr>
+            <tr><td>Label · status code · byte counts</td><td>Sampler data · request headers · response headers</td></tr>
+            <tr><td><strong>Response message</strong> and <strong>assertion failure message</strong></td><td>Encoding</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">The <strong>two</strong> items in the last left-hand cell matter.
+        The <code>Read timed out</code> in <a href="slow-screens-1-volume-list.html">part one</a> is a
+        <strong>response message</strong>, not an assertion failure message. They are different columns and
+        <strong>both are on.</strong> With only one of them, that screen does not appear.</p>
+
+        <p>⚠️ The test plan also carries <code>&lt;responseData&gt;false&lt;/responseData&gt;</code>.
+        <strong>In CSV that line does nothing</strong>, because the format already cannot hold a body.
+        <strong>It looks like it is holding something back, and the thing holding it back is the format.</strong>
+        I found this out while writing this article.</p>
+
+        <blockquote><p>⚠️ And "saving bodies makes it slower" is a claim to make <strong>carefully.</strong>
+        JMeter receives the whole response and <strong>fixes the sample's timing</strong> before it hands
+        the result to whatever writes it out. The time spent writing to file is not simply added to that
+        sample's response time. What can be said is that it
+        <strong>uses more CPU and disk on the machine generating the load</strong>, and that this can shake
+        the result through throughput. <strong>How much it shakes it was never measured.</strong></p></blockquote>
+
+        <h2 id="keeping-runs">Reports pile up per run, the raw data does not<a class="anchor" href="#keeping-runs" aria-label="Link to this section">#</a></h2>
+
+        <p>Comparison is the point, so earlier runs have to survive. Each execution creates a folder named
+        by the clock, and under it a <strong>separate report per measurement target.</strong></p>
+
+        <figure class="diagram">
+          <img src="../assets/figures/volume-jmeter-after.png" alt="A JMeter report screen. Apdex 1.000, 7,658 samples all successful, average 5.34 milliseconds, P99 23 milliseconds, 12.82 per second." loading="lazy" width="645" height="317">
+          <figcaption>A run folder holds one of these per measurement target.
+          This one is the last configuration from <a href="slow-screens-1-volume-list.html">part one</a>.
+          The internal record says all six measurements came out of this harness.
+          The request name column is an internal path and is masked.</figcaption>
+        </figure>
+
+        <p>⚠️ To be exact about why the targets get separate folders: it is
+        <strong>not that a combined report hides them.</strong> A combined report does give you per-label
+        rows. They are split so that <strong>the same target from two runs sits side by side</strong> —
+        open two folders in the same place and there it is.</p>
+
+        <p>But <strong>the raw data does not survive.</strong> The run script deletes the previous result
+        files as it starts. Reports pile up per run;
+        <strong>the raw files disappear the moment the next run begins.</strong>
+        If you later want to re-aggregate at a different percentile, <strong>there is nothing to work from.</strong>
+        I nearly titled this section "runs are preserved". What is preserved is <strong>the reports.</strong></p>
+
+        <h2 id="silent-success">It finished successfully with nothing produced<a class="anchor" href="#silent-success" aria-label="Link to this section">#</a></h2>
+
+        <p>This is the reason I am writing the article. The part that builds the reports looks like this.</p>
+
+<pre data-lang="bash"><code>for jtl in jmeter/results/*.jtl; do
+  [ -f "$jtl" ] || continue
+  "$JMETER_BIN" -g "$jtl" -o "$REPORT_BASE/$(basename "$jtl" .jtl)" 2&gt;/dev/null
+done</code></pre>
+
+        <p>While writing this I ran a minimal version again, with <strong>no result files at all.</strong></p>
+
+<pre data-lang="text"><code>$ bash run-min.sh
+ test finished — generating HTML reports...
+ reports are in: jmeter/report/20260908_151437/
+exit code: 0
+
+reports produced: 0</code></pre>
+
+        <p><strong>It prints "test finished", tells you where the reports are, and exits zero.</strong>
+        What it produced is one empty folder.</p>
+
+        <p>The reason is that <strong>in a default bash</strong>, when nothing matches, the loop variable
+        gets <strong>the pattern itself rather than a filename.</strong></p>
+
+<pre data-lang="text"><code>jtl = [jmeter/results/*.jtl]
+not a file → continue</code></pre>
+
+        <p>⚠️ It depends on shell settings. <strong>When nothing matches</strong>, with
+        <code>nullglob</code> on the loop simply runs zero times.
+        <strong>The outcome is the same</strong> — no reports built, and it still reaches the completion
+        message. <strong>The only one that ends differently is <code>failglob</code></strong>, which fails
+        before entering the loop.</p>
+
+        <p><code>[ -f "$jtl" ] || continue</code> filters that pattern out.
+        <strong>It also filters out "nothing was produced".</strong></p>
+
+        <blockquote><p><strong>By exit code and completion message alone, "it never ran" and "it went fine"
+        are indistinguishable.</strong> Open the folder and they differ. But whatever runs this
+        automatically <strong>does not open the folder.</strong> In a tool whose purpose is comparison, that
+        is not a small defect.</p></blockquote>
+
+        <p>There is a second problem on the same line: <code>2&gt;/dev/null</code>.
+        I set up a failing report generation and compared the two.</p>
+
+<pre data-lang="text"><code>[stderr discarded]
+exit code: 1
+
+[stderr kept]
+ERROR: Data exporter ... cannot generate report: empty file
+exit code: 1</code></pre>
+
+        <p>Both do end in failure. <code>set -e</code> is on and this is
+        <strong>not one of the positions that get a pass</strong>, so a failure kills it.
+        Being inside a loop has nothing to do with it.</p>
+
+        <p>The positions that do get a pass are elsewhere: the <strong>condition</strong> of an
+        <code>if</code> or a <code>while</code>, a command that is <strong>not the last</strong> in an
+        <code>&amp;&amp;</code> or <code>||</code> list, a command prefixed with <code>!</code>, and a
+        <strong>non-final member of a pipeline</strong>.
+        <strong>It is not "what it is inside", it is "which position".</strong></p>
+
+        <p>What differs is <strong>whether it dies silently or leaves a reason.</strong>
+        In the reproduction that message came out <strong>on stderr only</strong>, so the first case left
+        nothing at all on screen.</p>
+
+        <p>If I wrote it again I would do this: check the count <strong>against the expected count</strong>,
+        confirm the report actually appeared, and send stderr to a log file instead of throwing it away.</p>
+
+<pre data-lang="bash"><code>made=0
+for jtl in jmeter/results/*.jtl; do
+  [ -f "$jtl" ] || continue
+  dir="$REPORT_BASE/$(basename "$jtl" .jtl)"            # a folder per target
+  "$JMETER_BIN" -g "$jtl" -o "$dir" 2&gt;&gt;"$REPORT_BASE/report.err" || {
+    echo "[ERROR] report failed: $jtl — see $REPORT_BASE/report.err" &gt;&amp;2; exit 1; }
+  [ -s "$dir/index.html" ] || { echo "[ERROR] report is empty: $dir" &gt;&amp;2; exit 1; }
+  made=$((made + 1))
+done
+[ "$made" -eq "$EXPECTED" ] || {                        # 1 · 5 · 10, depending on GROUP
+  echo "[ERROR] $made reports — expected $EXPECTED" &gt;&amp;2; exit 1; }</code></pre>
+
+        <p>Four things changed.</p>
+
+        <ul class="callout">
+          <li><code>dir</code> is computed <strong>inside the loop.</strong> Set once outside, the second
+          report meets a <strong>non-empty folder</strong> and fails. JMeter requires that folder to be empty.</li>
+          <li>Not <code>-gt 0</code> but <strong><code>-eq "$EXPECTED"</code></strong>. Expect ten, get one,
+          and <code>-gt 0</code> still passes. <strong>That is the dangerous case.</strong></li>
+          <li>JMeter returning zero does not mean a report exists, so it also checks
+          <strong>whether <code>index.html</code> is non-empty.</strong></li>
+          <li>stderr goes to <strong>a log inside the run folder.</strong> The file the message points at
+          has to actually exist.</li>
+        </ul>
+
+        <p>⚠️ <strong>This is still not enough.</strong> Things it does not catch:</p>
+
+        <ul class="callout">
+          <li><strong>Matching counts pass.</strong> One expected target missing and one stray result file
+          present still totals the same. It should compare the list of names.</li>
+          <li><strong>A one-byte <code>index.html</code> passes.</strong> A report is many files and this
+          looks at one of them.</li>
+          <li><strong>Dying on the tenth leaves the first nine.</strong> That folder
+          <strong>looks like a completed run.</strong> Better to write a marker when everything finishes, or
+          build into a temporary folder and rename at the end.</li>
+          <li><strong>The log the message points at may not exist.</strong> If the run folder is not
+          writable, sending stderr to <code>report.err</code> fails in the first place.</li>
+        </ul>
+
+        <p>⚠️ And <strong>this corrected form is not what is in the internal repository.</strong>
+        I cannot reach that code now, so what is written here is <strong>how I would write it again.</strong></p>
+
+        <p>I checked it with <strong>a fake executable standing in for JMeter</strong> — twenty lines that
+        refuse when the <code>-o</code> target is non-empty and otherwise create one
+        <code>index.html</code>. With that I ran <strong>five cases</strong>: normal, zero results, fewer
+        than expected, a zero return with an empty report, and a folder collision.
+        <strong>All five stopped where they were meant to.</strong>
+        ⚠️ That is not a check against real JMeter; it is a check of
+        <strong>the script's decision logic only.</strong></p>
+
+        <h2 id="nothing-names-the-run">Nothing says which run was which configuration<a class="anchor" href="#nothing-names-the-run" aria-label="Link to this section">#</a></h2>
+
+        <p>This is the broken pink line in the earlier diagram. Put together:</p>
+
+        <ul class="callout">
+          <li><strong>The load conditions do not move.</strong> They are pinned as constants and were not
+          touched across the six. The generated JMX carries the same values.</li>
+          <li><strong>What changed was the server-side code</strong>, and that is
+          <strong>outside the harness.</strong> This tool does not know what it is measuring.</li>
+          <li><strong>Run folders are told apart only by the clock.</strong> Nothing says
+          "this folder is no cache, sequential".</li>
+        </ul>
+
+        <blockquote><p>What this harness did is <strong>keep the conditions from drifting.</strong>
+        What it did not do is <strong>mark which configuration a result belongs to.</strong>
+        That second part was being done by memory and by a separate document.</p></blockquote>
+
+        <p>⚠️ "There is no condition at all in the report" would not be accurate.
+        A JMeter report has start and end times, a graph of active threads over time, and per-label
+        statistics. <strong>You can read the thread count off the chart.</strong>
+        What is missing is <strong>the JMX and the constants used, and the name of the run.</strong></p>
+
+        <p>The fix is not hard: put the generated JMX, the constants, and a name for the run
+        <strong>into the run folder alongside the results.</strong>
+        ⚠️ Even then it is not <strong>proof that this JMX is what actually ran.</strong>
+        What shrinks is "how much you have to ask a person later", not down to zero.</p>
+
+        <h2 id="auth">The test had to stay authenticated for ten minutes<a class="anchor" href="#auth" aria-label="Link to this section">#</a></h2>
+
+        <p>A load test has to run ten minutes without a break. If authentication expires partway and
+        rejections start coming back, the numbers from that point on are not response times, they are
+        <strong>how fast you get turned away.</strong></p>
+
+        <p>So before writing the test I had to read <strong>what keeps this screen logged in.</strong>
+        ⚠️ What that was is not written here.</p>
+
+        <blockquote><p>The authentication had to be understood <strong>before</strong> the tool could be
+        built. Without it the obstacle is not writing the script, it is
+        <strong>getting through ten minutes.</strong></p></blockquote>
+
+        <p>⚠️ And ten minutes is the case where <code>GROUP</code> is a single target.
+        <code>"all"</code> is a 100-minute affair as configured, and whether authentication is
+        <strong>obtained once and reused or obtained again per group</strong> over that stretch,
+        <strong>I do not know.</strong> The test plan alone does not say, and there is no record of it being
+        run that way.</p>
+
+        <p>⚠️ How to feed credentials to a load tool is something <strong>I have never properly solved.</strong>
+        The reason it is not covered here is that <strong>I have no answer worth showing</strong>, and what
+        was put in that place is not going in this article.</p>
+
+        <h2 id="what-this-does-not-claim">Limits: what this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li><strong>"Doing it by hand makes the conditions drift" was never measured.</strong> There is no
+          record of the values diverging between runs, and none of them matching either.
+          <strong>Not being able to check</strong> is what made me build the tool.</li>
+          <li><strong>This harness does not pin every condition.</strong> What it pins is the calling side.
+          The volume of data, how warm the JVM was, whatever else was on that machine at that hour — all
+          outside the constants. If the six runs happened at different times, that difference is still
+          sitting inside the results.</li>
+          <li><strong>I did not look at the PowerShell side.</strong> The harness also has a Windows runner,
+          and how the empty-result case, the error stream and the exit code behave there is
+          <strong>unverified.</strong> The defects in this article apply to the bash side.</li>
+          <li><strong>There is no record of "all" actually running for 100 minutes.</strong> The
+          configuration says so; that is the extent of it, and that 100 is a nominal figure.</li>
+          <li><strong>The corrected script is a proposal.</strong> It is not in the internal code; it is a
+          form checked in a separate environment.</li>
+          <li><strong>No general claim about tool choice.</strong> JMeter was picked because the reports
+          come with it and it was already in use. If you want scenarios written as code, something else fits.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="closing">Closing<a class="anchor" href="#closing" aria-label="Link to this section">#</a></h2>
+
+        <p>This series has been about fixing a number of slow screens.
+        <a href="slow-screens-7-nothing-to-fix.html">Part seven</a> was
+        <strong>a decision not to fix</strong>; this one is
+        <strong>the instrument written in order to be able to say something was fixed.</strong></p>
+
+        <ul>
+          <li><strong>Conditions in a file are easier to check afterwards.</strong> You can do it by hand
+          and write it down, but then a person has to remember to write it down. This harness removed the
+          remembering.</li>
+          <li><strong>Pinning the conditions and naming the results are different jobs.</strong>
+          Which folder was which configuration was still written by a person.</li>
+          <li><strong>A script that prints "done" may have produced nothing.</strong> Without checking
+          against an expected count, the exit code does not tell them apart.</li>
+          <li><strong>Throw stderr away and it dies without a reason.</strong> The death itself shows in the
+          exit code; where and why does not.</li>
+        </ul>
+
+        <p>If one line survives, it is this.
+        <strong>Building an instrument steadies the conditions you measure under, but whether the
+        instrument did its job is a separate thing to look at.</strong>
+        I looked <strong>four months after I started using it</strong>, and the way I looked was
+        <strong>running it once with no result files.</strong></p>
+
+        <p>Eight parts, and that is the end of the series. Thank you for reading.</p>
+        </div>
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=878abcc169"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

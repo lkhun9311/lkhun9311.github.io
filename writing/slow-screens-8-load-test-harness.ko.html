@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>여섯 번 같은 조건으로 재려고 생성기를 짰습니다 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/slow-screens-8-load-test-harness.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/slow-screens-8-load-test-harness.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/slow-screens-8-load-test-harness.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/slow-screens-8-load-test-harness.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="여섯 번 같은 조건으로 재려고 생성기를 짰습니다 | Kwanghun Lee" />
+  <meta property="og:description" content="화면 하나를 구성 6가지로 재려면 보려는 것 말고는 같아야 합니다. 선언한 부하 조건을 상수로 옮겨 JMX를 생성하는 harness를 짰습니다. 그런데 결과가 하나도 없어도 실행 스크립트는 성공으로 끝났고 어느 회차가 어느 구성이었는지는 도구 밖에만 남았습니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/slow-screens-8-load-test-harness.ko.html" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="여섯 번 같은 조건으로 재려고 생성기를 짰습니다 | Kwanghun Lee" />
+  <meta name="twitter:description" content="화면 하나를 구성 6가지로 재려면 보려는 것 말고는 같아야 합니다. 선언한 부하 조건을 상수로 옮겨 JMX를 생성하는 harness를 짰습니다. 그런데 결과가 하나도 없어도 실행 스크립트는 성공으로 끝났고 어느 회차가 어느 구성이었는지는 도구 밖에만 남았습니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="화면 하나를 구성 6가지로 재려면 보려는 것 말고는 같아야 합니다. 선언한 부하 조건을 상수로 옮겨 JMX를 생성하는 harness를 짰습니다. 그런데 결과가 하나도 없어도 실행 스크립트는 성공으로 끝났고 어느 회차가 어느 구성이었는지는 도구 밖에만 남았습니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "slow-screens-8-load-test-harness.html", "ko": "slow-screens-8-load-test-harness.ko.html", "ja": "slow-screens-8-load-test-harness.ja.html"}'>
+          <option value="ko" selected>한국어</option>
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
+        <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>여섯 번 같은 조건으로 재려고 생성기를 짰습니다<br><span class="h1-sub">선언한 부하 조건은 상수로 고정했고 어느 회차가 어느 구성인지는 도구 밖에 남았습니다. 사내 cloud 관리 console · 느린 화면 연작 ⑧</span></h1>
+          <p class="article-date">2026년 9월</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="slow-screens-8-load-test-harness"></aside>
+
+        <nav class="article-toc" aria-label="목차">
+          <p class="toc-label">목차</p>
+          <ul>
+            <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+            <li><a href="#무슨-내용">무슨 내용인가요?</a></li>
+            <li><a href="#왜-만들었나">구성 6개를 비교하려면 6번을 돌려야 합니다</a></li>
+            <li><a href="#조건을-상수로">조건을 상수로 옮겼습니다</a></li>
+            <li><a href="#하나만-재기">하나만 떼어 재는 것이 핵심이었습니다</a></li>
+            <li><a href="#all의-뜻">「all」은 동시에 돈다는 뜻이 아닙니다</a></li>
+            <li><a href="#안-남길-것">무엇을 저장하지 않을지가 설계였습니다</a></li>
+            <li><a href="#회차-보존">리포트는 회차별로 쌓고 원본은 안 남겼습니다</a></li>
+            <li><a href="#조용한-성공">결과가 하나도 없어도 성공으로 끝났습니다</a></li>
+            <li><a href="#조건이-안-남음">어느 회차가 어느 구성이었는지가 안 남습니다</a></li>
+            <li><a href="#인증">10분을 버티는 인증이 필요했습니다</a></li>
+            <li><a href="#주장하지-않는-것">한계: 이 글이 주장하지 않는 것</a></li>
+            <li><a href="#마치며">마치며</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>안녕하세요. 사내 cloud 관리 console의 backend를 만들고 있습니다.
+        <a href="slow-screens-1-volume-list.ko.html">①편</a>에서 볼륨 목록 화면 하나를 놓고
+        <strong>구성 6가지를 바꿔 가며</strong> 쟀습니다.
+        ⚠️ 6가지가 <strong>차곡차곡 쌓인 것은 아닙니다.</strong> cache를 넣었다가 뺀 자리도 있습니다.
+        같은 조건으로 잰 화면은 이 하나 말고 셋이 더 있습니다
+        (<a href="parallelism-made-the-tail-worse.ko.html">⑤편</a>).</p>
+
+        <p>구성별 기여도를 보려면 <strong>보려는 것 말고는 같아야 합니다.</strong>
+        이 글은 그 「부하 조건을 같게」를 맡은 도구, 그리고 <strong>그 도구가 못 한 것</strong>에
+        대한 것입니다.</p>
+
+        <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li>부하 시험을 화면에서 설정해 돌려 본 적 있는 분</li>
+          <li>측정을 여러 번 하는데 회차마다 조건이 같은지 자신이 없는 분</li>
+          <li>자동화 스크립트를 짜 두고 「돌긴 도는데」로 넘어간 적 있는 분</li>
+        </ul>
+
+        <h2 id="무슨-내용">무슨 내용인가요?<a class="anchor" href="#무슨-내용" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li>부하 조건을 <strong>코드 안의 상수</strong>로 옮기고 JMX를 생성하게 했습니다.
+          회차 사이에 그 값을 건드리지 않았으니 <strong>선언한 부하 조건은 6번 내내 같습니다.</strong>
+          ⚠️ 환경까지 같았다는 뜻은 아닙니다.</li>
+          <li>측정 대상 <strong>10가지</strong>를 하나씩 떼어 잴 수 있게 했습니다. 다른 API의 부하를 빼려고요.</li>
+          <li>결과 파일 형식을 <strong>CSV로 뒀습니다.</strong> 그 형식에는 응답 본문 칸이 없습니다.</li>
+          <li>⚠️ 그런데 결과 파일이 <strong>하나도 없어도</strong> 실행 스크립트는 「완료」를 찍고
+          <strong>0으로 끝났습니다.</strong> 재현해서 확인했습니다.</li>
+          <li>⚠️ 그리고 <strong>어느 회차가 어느 코드 구성이었는지</strong>는 리포트에 안 남습니다.
+          그 짝짓기는 <strong>harness 밖의 문서</strong>가 하고 있었습니다.</li>
+        </ul>
+
+        <h2 id="왜-만들었나">구성 6개를 비교하려면 6번을 돌려야 합니다<a class="anchor" href="#왜-만들었나" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>고치기 전과 후만 재면 <strong>무엇이 효과를 냈는지 모릅니다.</strong>
+        그래서 코드 구성을 6단계로 나눠 각각 쟀습니다. cache 없이 순차, cache만, 병렬만, cache와 병렬,
+        거기에 로직 최적화, 마지막으로 <code>refreshAfterWrite</code>까지.</p>
+
+        <p>그 결과가 <a href="slow-screens-1-volume-list.ko.html">①편</a>의 표이고
+        그중 병렬화 한 단계가 꼬리를 더 길게 만든 이야기가
+        <a href="parallelism-made-the-tail-worse.ko.html">⑤편</a>입니다.</p>
+
+        <blockquote><p>구성을 나눠 재려면 <strong>보려는 것 말고는 같아야</strong> 합니다.
+        하나만 다르게 하고 나머지는 붙들어 두는 것, 그게 비교의 조건입니다.</p></blockquote>
+
+        <p>⚠️ 여섯 구성이 <strong>서로 하나씩만 다른 것은 아닙니다.</strong> 두 가지가 같이 바뀐 자리도
+        있습니다. 그래서 <a href="parallelism-made-the-tail-worse.ko.html">⑤편</a>에서는
+        <strong>cache를 고정한 두 줄을 골라</strong> 비교했습니다.
+        여섯을 다 재 두면 <strong>그렇게 고를 수 있습니다.</strong> 전후 두 번만 쟀으면 못 고릅니다.</p>
+
+        <p>⚠️ 화면에서 손으로 채워 넣는 것 자체가 틀린 방법은 아닙니다.
+        회차마다 <strong>무엇을 넣었는지 적어 두고 그 기록을 결과와 함께 보관하면</strong> 비교는 성립합니다.
+        문제는 손이 아니라 <strong>그 기록이 없다는 것</strong>입니다.
+        저는 기록을 붙이는 대신 <strong>손을 없애는 쪽</strong>을 골랐습니다.</p>
+
+        <h2 id="조건을-상수로">조건을 상수로 옮겼습니다<a class="anchor" href="#조건을-상수로" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>부하 조건을 python 파일 맨 위의 상수로 올리고 그 상수로 JMeter가 읽는 <code>.jmx</code>를
+        만들게 했습니다.</p>
+
+<pre data-lang="python"><code>THREADS        = 50    # 동시 사용자 50명
+RAMP_UP        = 120   # 몇 초에 걸쳐 순차 투입 (초)
+DURATION       = 600   # 테스트 지속 시간 (초, 10분)
+THINK_TIME_MIN = 2000  # Think Time 최솟값 (ms)
+THINK_TIME_MAX = 5000  # Think Time 최댓값 (ms)
+GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
+
+        <p>바뀐 것은 <strong>조건이 어디에 사는가</strong>입니다. 전에는 사람의 손과 화면 안에 있었고
+        이제는 파일 안에 있습니다. 파일이면 <strong>읽을 수 있고 비교할 수 있는 형태</strong>가 됩니다.</p>
+
+        <p>⚠️ <strong>형태가 됐다는 것까지입니다.</strong> 이 harness는 회차마다 그 파일을 따로 남기지
+        않습니다. 실제로 회차끼리 비교하려면 <strong>버전 관리에 넣어 두든가 회차 폴더에 복사</strong>해야
+        하고 둘 다 안 했습니다.</p>
+
+        <p>6단계를 잴 때 <strong>이 상수들은 한 번도 안 바꿨습니다.</strong> 바꾼 것은 서버 쪽 코드였습니다.
+        <a href="slow-screens-1-volume-list.ko.html">①편</a>과 <a href="parallelism-made-the-tail-worse.ko.html">⑤편</a>이
+        「부하 조건은 6번 모두 같다」고 적을 수 있는 근거가 이것입니다.</p>
+
+        <blockquote><p>⚠️ <strong>그 「같다」는 여기까지입니다.</strong> 같은 것은
+        <strong>선언한 부하 조건</strong>이지 시험이 놓인 환경 전체가 아닙니다.
+        데이터가 얼마나 쌓여 있었는지, JVM이 얼마나 데워져 있었는지, 그 시각에 그 장비에 무엇이 더
+        돌고 있었는지는 <strong>이 상수 밖입니다.</strong> 앞 편들의 「같은 조건」도 그 범위로 읽어
+        주십시오.</p></blockquote>
+
+        <p>그리고 <strong>어느 리포트가 어느 단계였는지</strong>는 그때 따로 적어 둔 문서가 짝지어
+        주고 있습니다. ⚠️ <strong>harness가 남긴 것끼리는 안 이어져 있습니다.</strong>
+        그 문서를 못 열면 <strong>이 도구의 산출물만으로는 확인할 방법이 없습니다.</strong>
+        (배포 기록이나 커밋 시각으로 맞춰 볼 여지는 남습니다. 그건 harness가 해 준 일이 아닙니다.)</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 250" role="img" aria-labelledby="hn-t hn-d" class="figure-svg">
+            <title id="hn-t">harness의 흐름</title>
+            <desc id="hn-d">위쪽 줄에 harness가 있습니다. 왼쪽부터 부하 조건 상수가 든 생성기 파일,
+            그것이 만든 JMX 파일 하나, 그 JMX로 JMeter를 돌리는 실행 스크립트, 측정 대상별 결과 파일,
+            그리고 회차별 시각 폴더 아래의 대상별 리포트 순입니다. 아래쪽에 점선 상자로 그린 「서버 코드
+            구성」이 따로 떨어져 있고 harness 어느 상자와도 실선으로 이어져 있지 않습니다. 오른쪽 리포트
+            에서 그 상자로 향하는 분홍색 선은 가운데가 끊겨 있고 그 자리에 가위표가 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="12" y="70" width="150" height="64" rx="7" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="87" y="94" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">generate_jmx.py</text>
+              <text x="87" y="114" font-size="11.5" fill="#d62976" text-anchor="middle">부하 조건 상수</text>
+
+              <path d="M166 102 H 210" fill="none" stroke="#8a8a8a" stroke-width="2" marker-end="url(#hn-ar)"/>
+              <rect x="214" y="76" width="118" height="52" rx="7" fill="none" stroke="#8a8a8a" stroke-width="2"/>
+              <text x="273" y="99" font-size="12" fill="#4a4a4a" text-anchor="middle">.jmx 파일</text>
+              <text x="273" y="117" font-size="11" fill="#8a8a8a" text-anchor="middle">같은 이름에 덮어씀</text>
+
+              <path d="M336 102 H 380" fill="none" stroke="#8a8a8a" stroke-width="2" marker-end="url(#hn-ar)"/>
+              <rect x="384" y="76" width="112" height="52" rx="7" fill="none" stroke="#8a8a8a" stroke-width="2"/>
+              <text x="440" y="99" font-size="12" fill="#4a4a4a" text-anchor="middle">run.sh</text>
+              <text x="440" y="117" font-size="11" fill="#8a8a8a" text-anchor="middle">JMeter 실행</text>
+
+              <path d="M500 102 C 522 102, 526 66, 544 66" fill="none" stroke="#8a8a8a" stroke-width="2" marker-end="url(#hn-ar)"/>
+              <rect x="548" y="40" width="158" height="52" rx="7" fill="none" stroke="#8a8a8a" stroke-width="2"/>
+              <text x="627" y="63" font-size="12" fill="#4a4a4a" text-anchor="middle">결과 파일</text>
+              <text x="627" y="81" font-size="11" fill="#8a8a8a" text-anchor="middle">대상 수만큼 · 다음 회차에 지워짐</text>
+
+              <path d="M627 96 V 128" fill="none" stroke="#8a8a8a" stroke-width="2" marker-end="url(#hn-ar)"/>
+              <rect x="548" y="132" width="158" height="58" rx="7" fill="none" stroke="#8a8a8a" stroke-width="2"/>
+              <text x="627" y="154" font-size="12" fill="#4a4a4a" text-anchor="middle">회차별 리포트</text>
+              <text x="627" y="172" font-size="11" fill="#8a8a8a" text-anchor="middle">쌓여서 남음</text>
+
+              <rect x="12" y="182" width="150" height="46" rx="7" fill="none" stroke="#4a4a4a" stroke-width="2" stroke-dasharray="6 4"/>
+              <text x="87" y="200" font-size="12" fill="#4a4a4a" font-weight="700" text-anchor="middle">서버 코드 구성</text>
+              <text x="87" y="218" font-size="11" fill="#8a8a8a" text-anchor="middle">harness 밖에서 바뀜</text>
+
+              <path d="M548 168 C 490 200, 450 208, 412 210" fill="none" stroke="#d62976" stroke-width="1.6" stroke-dasharray="5 4"/>
+              <path d="M288 210 C 240 210, 200 206, 168 206" fill="none" stroke="#d62976" stroke-width="1.6"
+                    stroke-dasharray="5 4" marker-end="url(#hn-ar2)"/>
+              <g stroke="#d62976" stroke-width="2.4" stroke-linecap="round">
+                <path d="M340 200 L 360 220"/><path d="M360 200 L 340 220"/>
+              </g>
+              <text x="350" y="190" font-size="11.5" fill="#d62976" font-weight="700" text-anchor="middle">리포트 ↔ 구성 연결 없음</text>
+            </g>
+            <defs>
+              <marker id="hn-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="hn-ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>결과 파일 개수는 <code>GROUP</code>에 따라 1개, 5개, 10개로 달라집니다.
+          아래 점선 상자가 <strong>실제로 6단계를 만든 것</strong>인데 harness 어디에도 안 이어져 있습니다.
+          끊긴 분홍 선이 이 글 뒤쪽의 주제입니다.</figcaption>
+        </figure>
+
+        <h2 id="하나만-재기">하나만 떼어 재는 것이 핵심이었습니다<a class="anchor" href="#하나만-재기" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>측정 대상은 볼륨 쪽과 스냅샷 쪽 조회 API <strong>10가지</strong>였습니다.
+        ⚠️ 어떤 것들인지와 경로는 사내 API 표면이라 적지 않습니다.</p>
+
+        <p><code>GROUP</code>이 이 harness의 손잡이입니다.
+        <code>"01"</code>이면 그 하나만, <code>"volume"</code>이면 볼륨 쪽 5가지,
+        <code>"all"</code>이면 전부입니다.</p>
+
+        <blockquote><p>화면 하나가 느릴 때 <strong>그 화면이 부르는 것만 떼어 재야</strong>
+        <strong>이 도구가</strong> 다른 API까지 같이 때리지 않습니다.</p></blockquote>
+
+        <p>⚠️ 그 장비에 다른 사람이나 다른 프로세스가 만든 부하까지 없앤다는 뜻은 아닙니다.
+        <strong>harness가 안 만든다</strong>는 것뿐입니다.</p>
+
+        <p>⚠️ 다만 <strong>「단독」이 「독립」은 아닙니다.</strong>
+        요청에 넣을 자원 id는 CSV 파일에서 꺼내 쓰는데 그 파일을 읽는 설정이
+        <strong>시험 계획 맨 위에 하나씩만</strong> 있고 공유 방식이 <strong>「전부」</strong>로,
+        끝까지 읽으면 처음으로 돌아가게 돼 있습니다. 그러면 커서 하나를 모든 thread가 나눠 씁니다.
+        차례로 도는 구조에서는 <strong>앞 묶음이 멈춘 자리부터 다음 묶음이 이어 받습니다.</strong></p>
+
+        <p>커서만이 아닐 수 있습니다. 서버를 다시 띄우지 않았다면 <strong>cache에 남은 것도
+        데워진 JVM도 앞 묶음에서 넘어옵니다.</strong> ⚠️ 회차 사이에 서버를 어떻게 했는지는
+        <strong>기록에 없습니다.</strong> 확실한 것은 <strong>CSV 커서</strong>까지입니다.</p>
+
+        <h2 id="all의-뜻">「all」은 동시에 돈다는 뜻이 아닙니다<a class="anchor" href="#all의-뜻" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>생성된 JMX를 다시 읽다가 걸린 것이 있습니다. 시험 계획에, 그리고 묶음마다
+        이 값들이 들어 있습니다.</p>
+
+<pre data-lang="text"><code>&lt;!-- 시험 계획 --&gt;
+&lt;boolProp name="TestPlan.serialize_threadgroups"&gt;true&lt;/boolProp&gt;
+
+&lt;!-- 묶음마다 (생성기가 10개를 같은 틀로 찍어 낸다) --&gt;
+&lt;boolProp name="LoopController.continue_forever"&gt;true&lt;/boolProp&gt;
+&lt;intProp  name="LoopController.loops"&gt;-1&lt;/intProp&gt;
+&lt;boolProp name="ThreadGroup.scheduler"&gt;true&lt;/boolProp&gt;
+&lt;stringProp name="ThreadGroup.duration"&gt;600&lt;/stringProp&gt;</code></pre>
+
+        <p>첫 줄이 참이면 thread 묶음이 <strong>한 번에 하나씩 차례로</strong> 돕니다.
+        아래 넷은 <strong>반복은 무제한이고 시간이 600초</strong>라는 뜻입니다.
+        ⚠️ 위의 두 줄은 <strong>같은 말을 두 번</strong> 한 것입니다. <code>-1</code>이 곧 「무제한」이라
+        <code>continue_forever</code>가 따로 켜져 있어도 더 달라지는 것이 없습니다.</p>
+
+        <p>반복 횟수가 <code>-1</code>이 아니었다면 <strong>횟수와 시간 중 먼저 닿는 쪽</strong>에서
+        멈춥니다. 여기서는 횟수 쪽이 안 닿으니 <strong>정상적으로 끝나는 경로가 그 600초</strong>입니다.
+        ⚠️ 물론 밖에서 멈추거나 오류 정책에 걸리면 그 전에도 끝납니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 250" role="img" aria-labelledby="sz-t sz-d" class="figure-svg">
+            <title id="sz-t">「all」로 돌렸을 때의 시간 배치</title>
+            <desc id="sz-d">위아래 두 묶음이 같은 시간축과 같은 막대 길이를 씁니다. 위 묶음은 흔히
+            상상하는 모습으로, 막대들이 줄을 달리해 쌓여 있지만 모두 같은 지점에서 시작해 같은 지점에서
+            끝납니다. 즉 시간축에서 같은 구간을 차지하고 전체가 10분입니다. 아래 묶음은 실제 설정으로,
+            같은 길이의 막대들이 시간축에서 겹치지 않고 왼쪽부터 차례로 이어져 있으며 그 아래에 전체
+            구간을 표시한 선이 설정상 100분이라고 적혀 있습니다. 두 묶음 모두 막대를 다섯 개만 그리고
+            나머지는 줄임표로 생략했습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="12" y="18" font-size="12" fill="#8a8a8a" font-weight="700">상상한 것 · 10가지가 같은 시간에</text>
+              <g fill="none" stroke="#8a8a8a" stroke-width="1.6">
+                <rect x="12" y="26" width="62" height="10" rx="3"/><rect x="12" y="40" width="62" height="10" rx="3"/>
+                <rect x="12" y="54" width="62" height="10" rx="3"/><rect x="12" y="68" width="62" height="10" rx="3"/>
+                <rect x="12" y="82" width="62" height="10" rx="3"/>
+              </g>
+              <text x="86" y="60" font-size="11.5" fill="#8a8a8a">… · 전체 10분</text>
+
+              <text x="12" y="118" font-size="12" fill="#d62976" font-weight="700">설정된 것 · 한 번에 하나씩</text>
+              <g fill="none" stroke="#d62976" stroke-width="1.8">
+                <rect x="12" y="128" width="62" height="12" rx="3"/><rect x="74" y="142" width="62" height="12" rx="3"/>
+                <rect x="136" y="156" width="62" height="12" rx="3"/><rect x="198" y="170" width="62" height="12" rx="3"/>
+                <rect x="260" y="184" width="62" height="12" rx="3"/>
+              </g>
+              <text x="332" y="194" font-size="11.5" fill="#d62976">… 열 개까지</text>
+              <g stroke="#d62976" stroke-width="1.4" fill="none">
+                <path d="M12 208 H 632"/><path d="M12 203 V 213"/><path d="M632 203 V 213"/>
+              </g>
+              <text x="322" y="224" font-size="11.5" fill="#d62976" font-weight="700" text-anchor="middle">설정상 100분</text>
+              <path d="M12 238 H 700" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#sz-ar)"/>
+              <text x="690" y="232" font-size="11" fill="#8a8a8a" text-anchor="end">시간</text>
+            </g>
+            <defs>
+              <marker id="sz-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>막대 길이가 둘 다 10분입니다. 위에서는 겹쳐 있고 아래에서는 이어져 있습니다.
+          막대는 다섯 개만 그렸습니다.</figcaption>
+        </figure>
+
+        <p>그러니까 <code>"all"</code>은 <strong>10가지에 동시에 부하를 주는 시험이 아닙니다.</strong>
+        <strong>한 번에 하나씩 재는 것을 10번 이어 붙인 것</strong>입니다.
+        ⚠️ 앞 절에 적었듯 커서와 cache와 JVM은 이어지므로 <strong>10번이 서로 독립은 아닙니다.</strong></p>
+
+        <blockquote><p>⚠️ <strong>실제로 100분이 걸렸다는 기록은 없습니다.</strong>
+        설정이 그렇게 돼 있다는 것까지가 확인한 것이고 그 값으로 <code>"all"</code>을
+        끝까지 돌린 회차가 있었는지는 남아 있지 않습니다.</p></blockquote>
+
+        <p>⚠️ 그리고 <strong>설정상 100분</strong>이지 정확히 100분은 아닙니다.
+        JMeter는 요청과 요청 사이에서 시간을 확인할 뿐, <strong>진행 중인 요청은 안 끊습니다.</strong>
+        마지막 요청이 응답을 오래 기다리면 그 묶음은 600초를 넘겨서 끝납니다.
+        <a href="slow-screens-1-volume-list.ko.html">①편</a>처럼 timeout이 10분인 화면이면
+        그 초과가 작지 않습니다.</p>
+
+        <h2 id="안-남길-것">무엇을 저장하지 않을지가 설계였습니다<a class="anchor" href="#안-남길-것" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>JMeter는 표본마다 무엇을 파일에 남길지 고를 수 있습니다.
+        여기서 실제로 가른 것은 <strong>형식</strong>이었습니다.</p>
+
+<pre data-lang="text"><code>&lt;xml&gt;false&lt;/xml&gt;                    &lt;!-- 결과를 XML이 아니라 CSV로 --&gt;
+&lt;time&gt;true&lt;/time&gt;
+&lt;latency&gt;true&lt;/latency&gt;
+&lt;code&gt;true&lt;/code&gt;
+&lt;message&gt;true&lt;/message&gt;             &lt;!-- 응답 메시지 --&gt;
+&lt;assertions&gt;true&lt;/assertions&gt;
+&lt;saveAssertionResultsFailureMessage&gt;true&lt;/saveAssertionResultsFailureMessage&gt;
+&lt;responseData&gt;false&lt;/responseData&gt;</code></pre>
+
+        <p>거짓이면 결과가 <strong>CSV 한 줄씩</strong> 쌓입니다.
+        그리고 <strong>CSV에는 응답 본문을 담을 칸이 아예 없습니다.</strong>
+        thread 50개를 10분 굴리는 시험에서 본문까지 쌓이지 않은 이유가 이겁니다.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+        <table>
+          <caption class="sr-only">결과 파일에 남긴 것과 뺀 것.</caption>
+          <thead><tr><th>남긴 것</th><th>뺀 것</th></tr></thead>
+          <tbody>
+            <tr><td>걸린 시간 · 지연 · 시각 · 성공 여부</td><td><strong>응답 본문</strong>(형식이 CSV라 애초에 자리가 없음)</td></tr>
+            <tr><td>이름 · 상태 코드 · 바이트 수</td><td>보낸 데이터 · 요청 헤더 · 응답 헤더</td></tr>
+            <tr><td><strong>응답 메시지</strong>와 <strong>검증 실패 메시지</strong></td><td>인코딩 정보</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">아래 왼쪽 칸이 <strong>두 가지</strong>인 것이 중요합니다.
+        <a href="slow-screens-1-volume-list.ko.html">①편</a>에 나온 <code>Read timed out</code>은
+        <strong>응답 메시지</strong>지 검증 실패 메시지가 아닙니다.
+        둘은 다른 칸이고 <strong>둘 다 켜 뒀습니다.</strong> 하나만 켰으면 그 화면은 안 나옵니다.</p>
+
+        <p>⚠️ 그런데 시험 계획에는 <code>&lt;responseData&gt;false&lt;/responseData&gt;</code>도 같이 적혀 있습니다.
+        <strong>CSV에서는 그 줄이 하는 일이 없습니다.</strong> 형식이 이미 본문을 못 담으니까요.
+        <strong>무언가를 막고 있는 것처럼 보이지만 막고 있는 것은 형식입니다.</strong>
+        이 글을 쓰면서 알았습니다.</p>
+
+        <blockquote><p>⚠️ 그리고 본문을 남기면 느려진다는 말도 <strong>조심해서 해야 합니다.</strong>
+        JMeter는 응답을 다 받아 <strong>표본의 시간을 확정한 다음</strong> 결과를 기록하는 쪽에 넘깁니다.
+        파일에 쓰는 시간이 그 표본의 응답 시간에 그대로 더해지는 것은 아닙니다.
+        말할 수 있는 것은 <strong>부하를 주는 쪽 장비의 CPU와 디스크를 더 쓴다</strong>는 정도이고
+        <strong>얼마나 흔드는지는 재지 않았습니다.</strong></p></blockquote>
+
+        <h2 id="회차-보존">리포트는 회차별로 쌓고 원본은 안 남겼습니다<a class="anchor" href="#회차-보존" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>비교가 목적이니 이전 회차가 남아 있어야 합니다. 실행할 때마다 시각으로 폴더를 만들고
+        그 아래에 <strong>측정 대상마다 따로</strong> 리포트를 만들게 했습니다.</p>
+
+        <figure class="diagram">
+          <img src="../assets/figures/volume-jmeter-after.png" alt="JMeter 리포트 화면. Apdex 1.000, 표본 7,658건 전부 성공, 평균 5.34밀리초, P99 23밀리초, 초당 12.82건." loading="lazy" width="645" height="317">
+          <figcaption>회차 폴더 안에 이런 리포트가 측정 대상 수만큼 생깁니다.
+          이건 <a href="slow-screens-1-volume-list.ko.html">①편</a>에 쓴 마지막 단계의 것입니다.
+          6단계 측정이 전부 이 harness에서 나왔다고 사내 기록에 적혀 있습니다.
+          요청 이름 칸은 사내 경로라 가렸습니다.</figcaption>
+        </figure>
+
+        <p>⚠️ 대상마다 폴더를 나눈 이유를 정확히 적자면 <strong>「합치면 안 보여서」가 아닙니다.</strong>
+        합친 리포트에도 요청 이름별 행은 나옵니다. 나눈 것은 <strong>회차끼리 같은 대상을 나란히 놓고</strong>
+        보기 편해서였습니다. 폴더 두 개를 같은 자리에서 열면 됩니다.</p>
+
+        <p>그런데 <strong>원본은 안 남깁니다.</strong> 실행 스크립트는 시작할 때 이전 결과 파일을 지웁니다.
+        리포트는 회차별로 쌓이지만 <strong>원본은 다음 회차가 시작되는 순간 사라집니다.</strong>
+        나중에 다른 백분위로 다시 집계하고 싶어도 <strong>재료가 없습니다.</strong>
+        절 제목에 「회차를 보존한다」고 쓰려다 말았습니다. 보존한 것은 <strong>리포트뿐</strong>입니다.</p>
+
+        <h2 id="조용한-성공">결과가 하나도 없어도 성공으로 끝났습니다<a class="anchor" href="#조용한-성공" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>여기부터가 이 글을 쓰는 이유입니다. 리포트를 만드는 부분이 이렇게 생겼습니다.</p>
+
+<pre data-lang="bash"><code>for jtl in jmeter/results/*.jtl; do
+  [ -f "$jtl" ] || continue
+  "$JMETER_BIN" -g "$jtl" -o "$REPORT_BASE/$(basename "$jtl" .jtl)" 2&gt;/dev/null
+done</code></pre>
+
+        <p>이 글을 쓰면서 최소 형태로 다시 돌려 봤습니다. 결과 파일이 <strong>하나도 없는</strong> 상태입니다.</p>
+
+<pre data-lang="text"><code>$ bash run-min.sh
+ 테스트 완료 — HTML 리포트 생성 중...
+ 전체 리포트 위치: jmeter/report/20260908_151437/
+종료 코드: 0
+
+만들어진 리포트 수: 0 개</code></pre>
+
+        <p><strong>「테스트 완료」를 찍고 리포트 위치를 알려 주고 0으로 끝납니다.</strong>
+        만들어진 것은 빈 폴더 하나입니다.</p>
+
+        <p>왜 이렇게 되냐면 <strong>기본 설정의 bash에서는</strong> 맞는 파일이 하나도 없을 때
+        반복문의 변수에 <strong>파일 이름이 아니라 무늬 자체</strong>가 들어갑니다.</p>
+
+<pre data-lang="text"><code>jtl = [jmeter/results/*.jtl]
+파일 없음 → continue</code></pre>
+
+        <p>⚠️ 셸 설정에 따라 다릅니다. <strong>맞는 파일이 하나도 없을 때</strong>,
+        <code>nullglob</code>이 켜져 있으면 반복이 아예 0번 돕니다.
+        <strong>그래도 결과는 같습니다.</strong> 리포트를 하나도 안 만들고 완료 메시지까지 갑니다.
+        <strong>다르게 끝나는 것은 <code>failglob</code>뿐</strong>입니다. 그건 반복문에 들어가기 전에
+        실패합니다.</p>
+
+        <p><code>[ -f "$jtl" ] || continue</code>가 그 무늬를 걸러 냅니다.
+        <strong>그런데 「하나도 못 만들었다」까지 같이 걸러집니다.</strong></p>
+
+        <blockquote><p><strong>종료 코드와 완료 메시지만으로는 「안 돌았다」와 「잘 됐다」가 구별되지 않습니다.</strong>
+        폴더를 열어 보면 다릅니다. 하지만 자동으로 도는 것은 <strong>열어 보지 않습니다.</strong>
+        비교가 목적인 도구에서 이건 작은 결함이 아닙니다.</p></blockquote>
+
+        <p>같은 줄에 문제가 하나 더 있습니다. <code>2&gt;/dev/null</code>입니다.
+        리포트 생성이 실패하는 상황을 만들어 두 가지를 비교해 봤습니다.</p>
+
+<pre data-lang="text"><code>[stderr를 버렸을 때]
+종료 코드: 1
+
+[stderr를 살렸을 때]
+ERROR: Data exporter ... cannot generate report: empty file
+종료 코드: 1</code></pre>
+
+        <p>둘 다 실패로 끝나기는 합니다. <code>set -e</code>가 있고 이 자리는
+        <strong>봐주는 자리가 아니라서</strong> 실패하면 죽습니다.
+        반복문 안에 있다는 것은 상관이 없습니다.</p>
+
+        <p>봐주는 자리는 따로 있습니다. <code>if</code>나 <code>while</code>의 <strong>조건 자리</strong>,
+        <code>&amp;&amp;</code>·<code>||</code>로 이은 목록에서 <strong>마지막이 아닌</strong> 명령,
+        <code>!</code>를 붙인 명령, 그리고 <strong>마지막이 아닌 pipeline 구성원</strong>입니다.
+        <strong>「어디에 들어 있느냐」가 아니라 「어느 자리냐」</strong>입니다.</p>
+
+        <p>다른 것은 <strong>아무 말 없이 죽느냐 이유를 남기고 죽느냐</strong>입니다.
+        재현에서 그 메시지는 <strong>stderr로만</strong> 나왔고 그래서 위쪽은 화면에 아무것도 안 남았습니다.</p>
+
+        <p>다시 짠다면 이렇게 하겠습니다. 만든 개수를 <strong>기대한 개수와</strong> 맞춰 보고,
+        리포트가 실제로 생겼는지 확인하고 stderr는 버리는 대신 로그 파일로 보냅니다.</p>
+
+<pre data-lang="bash"><code>made=0
+for jtl in jmeter/results/*.jtl; do
+  [ -f "$jtl" ] || continue
+  dir="$REPORT_BASE/$(basename "$jtl" .jtl)"            # 대상마다 다른 폴더
+  "$JMETER_BIN" -g "$jtl" -o "$dir" 2&gt;&gt;"$REPORT_BASE/report.err" || {
+    echo "[ERROR] 리포트 생성 실패: $jtl — $REPORT_BASE/report.err를 보세요" &gt;&amp;2; exit 1; }
+  [ -s "$dir/index.html" ] || { echo "[ERROR] 리포트가 비었습니다: $dir" &gt;&amp;2; exit 1; }
+  made=$((made + 1))
+done
+[ "$made" -eq "$EXPECTED" ] || {                        # GROUP에 따라 1 · 5 · 10
+  echo "[ERROR] 리포트 $made 개 — $EXPECTED 개를 기대했습니다" &gt;&amp;2; exit 1; }</code></pre>
+
+        <p>바뀐 것이 4가지입니다.</p>
+
+        <ul class="callout">
+          <li><code>dir</code>을 <strong>반복문 안에서</strong> 계산합니다. 밖에서 한 번 정하면
+          두 번째 리포트가 <strong>비어 있지 않은 폴더</strong>를 만나 실패합니다. JMeter는 그 폴더가
+          비어 있기를 요구합니다.</li>
+          <li><code>-gt 0</code>이 아니라 <strong><code>-eq "$EXPECTED"</code></strong>입니다.
+          10개를 기대했는데 1개만 나도 <code>-gt 0</code>은 통과합니다. <strong>그게 제일 위험한 경우입니다.</strong></li>
+          <li>JMeter가 0을 줬다고 리포트가 생긴 것은 아니라서 <strong><code>index.html</code>이 비어 있지 않은지</strong>
+          까지 봅니다.</li>
+          <li>stderr를 <strong>회차 폴더 안의 로그로</strong> 보냅니다. 안내 문구가 가리키는 파일이
+          실제로 있어야 합니다.</li>
+        </ul>
+
+        <p>⚠️ <strong>이것도 충분하지 않습니다.</strong> 여전히 안 잡히는 것이 있습니다.</p>
+
+        <ul class="callout">
+          <li><strong>개수만 맞으면 통과합니다.</strong> 기대한 대상 하나가 빠지고 엉뚱한 결과 파일 하나가
+          들어와도 총수가 같으면 넘어갑니다. 이름 목록을 대조해야 합니다.</li>
+          <li><strong>1바이트짜리 <code>index.html</code>도 통과합니다.</strong> 리포트는 파일 여러 개로
+          이뤄지는데 그중 하나만 봅니다.</li>
+          <li><strong>10번째에서 죽으면 앞의 9개가 남습니다.</strong> 그 폴더는 <strong>완성된 회차처럼
+          보입니다.</strong> 다 끝났을 때 표시를 하나 남기거나, 임시 폴더에 만들고 마지막에 이름을
+          바꾸는 편이 맞습니다.</li>
+          <li><strong>안내가 가리키는 로그가 없을 수 있습니다.</strong> 회차 폴더에 쓸 수 없으면
+          <code>report.err</code>로 보내는 것 자체가 실패합니다.</li>
+        </ul>
+
+        <p>⚠️ 그리고 <strong>이 고친 형태는 사내 저장소에 반영한 것이 아닙니다.</strong>
+        지금은 그 코드에 접근할 수 없어서 이 글에 적는 것은 <strong>다시 짠다면 이렇게 한다</strong>는
+        내용입니다.</p>
+
+        <p>확인은 <strong>JMeter 대신 가짜 실행 파일을 놓고</strong> 했습니다.
+        <code>-o</code> 대상이 비어 있지 않으면 거절하고 아니면 <code>index.html</code>을 하나 만드는
+        스무 줄짜리입니다. 그것으로 <strong>5가지 경우</strong>를 돌렸습니다.
+        정상, 결과 0개, 기대보다 적음, 0을 반환하고도 빈 리포트, 폴더 충돌.
+        <strong>다섯 번 다 의도한 자리에서 멈췄습니다.</strong>
+        ⚠️ 진짜 JMeter로 확인한 것이 아니라 <strong>스크립트의 판정 논리만</strong> 확인한 것입니다.</p>
+
+        <h2 id="조건이-안-남음">어느 회차가 어느 구성이었는지가 안 남습니다<a class="anchor" href="#조건이-안-남음" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>앞 그림에서 끊긴 분홍 선이 이것입니다. 정리하면 이렇습니다.</p>
+
+        <ul class="callout">
+          <li><strong>부하 조건은 안 흔들립니다.</strong> 상수로 박혀 있고 6단계를 재는 동안 안 건드렸습니다.
+          생성된 JMX 안에도 그 값이 적혀 있습니다.</li>
+          <li><strong>바뀐 것은 서버 쪽 코드였습니다.</strong> 그리고 그건 <strong>harness 밖입니다.</strong>
+          이 도구는 자기가 무엇을 재고 있는지 모릅니다.</li>
+          <li><strong>리포트 폴더는 시각으로만 구분됩니다.</strong> 「이 폴더는 cache 없이 순차」라고
+          적힌 데가 없습니다.</li>
+        </ul>
+
+        <blockquote><p>이 harness가 한 일은 <strong>「조건을 안 흔들리게 한 것」</strong>이고
+        하지 않은 일은 <strong>「이 결과가 어느 구성의 것인지 표시하는 것」</strong>입니다.
+        두 번째는 사람의 기억과 따로 적어 둔 문서가 하고 있었습니다.</p></blockquote>
+
+        <p>⚠️ 「리포트에 아무 조건도 없다」는 말은 정확하지 않습니다.
+        JMeter 리포트에는 시작·종료 시각도, 시간에 따른 thread 수 그래프도, 요청 이름별 통계도 있습니다.
+        thread를 몇 개까지 올렸는지는 <strong>그림에서 읽을 수 있습니다.</strong>
+        없는 것은 <strong>실행에 쓴 JMX와 상수, 그리고 그 회차의 이름</strong>입니다.</p>
+
+        <p>고치려면 어렵지 않습니다. 생성한 JMX와 상수를, 그리고 그 회차를 부르는 이름을
+        <strong>회차 폴더 안에 같이 넣으면</strong> 됩니다.
+        ⚠️ 그렇게 해도 <strong>그 JMX로 실제로 돌렸는지</strong>까지 증명되지는 않습니다.
+        줄어드는 것은 「나중에 사람에게 물어봐야 하는 양」이지 0이 되는 것은 아닙니다.</p>
+
+        <h2 id="인증">10분을 버티는 인증이 필요했습니다<a class="anchor" href="#인증" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>부하 시험은 10분을 끊기지 않고 돌아야 합니다.
+        중간에 인증이 만료돼 거절이 나오기 시작하면 그때부터의 숫자는 응답 시간이 아니라
+        <strong>거절당하는 속도</strong>입니다.</p>
+
+        <p>그래서 시험을 짜기 전에 <strong>이 화면이 무엇으로 로그인 상태를 유지하는지</strong>부터
+        읽어야 했습니다. ⚠️ 무엇이었는지는 적지 않습니다.</p>
+
+        <blockquote><p>부하 시험을 만들기 전에 <strong>인증 구조를 먼저 알아야 했습니다.</strong>
+        모르면 도구를 짜는 게 아니라 <strong>10분을 버티는 것부터</strong> 막힙니다.</p></blockquote>
+
+        <p>⚠️ 그리고 10분은 <code>GROUP</code>이 하나일 때 이야기입니다.
+        <code>"all"</code>은 설정상 100분짜리인데, 그동안 인증을 <strong>한 번 얻어 계속 쓰는지
+        묶음마다 다시 얻는지</strong> 저는 <strong>모릅니다.</strong>
+        시험 계획만으로는 안 나오고 그렇게 돌려 본 기록도 없습니다.</p>
+
+        <p>⚠️ 자격 증명을 부하 도구에 어떻게 넣을지는 <strong>제대로 푼 적이 없습니다.</strong>
+        이 글에서 다루지 않는 이유는 <strong>자랑할 만한 답이 없어서</strong>이고,
+        그 자리에 무엇을 뒀는지는 적지 않겠습니다.</p>
+
+        <h2 id="주장하지-않는-것">한계: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li><strong>「손으로 맞추면 조건이 달라진다」를 실측하지 않았습니다.</strong> 회차 간 값이 실제로
+          어긋난 기록도, 어긋나지 않았다는 기록도 없습니다. <strong>확인할 수 없다는 것</strong>이
+          도구를 만든 이유였습니다.</li>
+          <li><strong>이 harness가 조건을 전부 고정하지는 못합니다.</strong> 고정한 것은 부르는 쪽 조건입니다.
+          데이터 양, JVM이 데워진 정도, 그 시각에 그 장비에 걸린 다른 부하는 상수 밖에 있습니다.
+          6회차를 서로 다른 때에 돌렸다면 그 차이는 결과 안에 그대로 남아 있습니다.</li>
+          <li><strong>PowerShell 쪽은 안 봤습니다.</strong> 이 harness에는 Windows용 실행 스크립트도 있는데
+          앞 절에서 따진 빈 결과·오류 스트림·종료 코드가 그쪽에서 어떻게 되는지는
+          <strong>확인하지 않았습니다.</strong> 이 글의 결함 지적은 bash 쪽에 한정됩니다.</li>
+          <li><strong>「all」로 100분을 실제로 돌린 기록은 없습니다.</strong> 설정이 그렇다는 것까지가
+          확인한 범위이고 그 100분도 명목값입니다.</li>
+          <li><strong>고친 스크립트는 제안입니다.</strong> 사내 코드에 반영된 것이 아니라
+          따로 만든 환경에서 확인한 형태입니다.</li>
+          <li><strong>도구 선택을 일반화하지 않습니다.</strong> JMeter를 고른 이유는 리포트가 기본으로
+          따라오고 이미 쓰던 도구여서입니다. 시나리오를 코드로 쓰고 싶어지면 다른 선택이 맞습니다.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>이 연작은 느린 화면 여러 개를 고친 이야기였습니다.
+        <a href="slow-screens-7-nothing-to-fix.ko.html">⑦편</a>은 <strong>안 고치기로 한 판단</strong>이었고
+        이번 편은 <strong>고쳤다고 말하려고 쓴 도구</strong>입니다.</p>
+
+        <ul>
+          <li><strong>조건이 파일에 있으면 나중에 확인하기 쉽습니다.</strong> 손으로 맞추더라도
+          적어 두면 되지만 적는 일을 사람이 기억해야 합니다. 이 harness는 그 기억을 없앴습니다.</li>
+          <li><strong>그런데 조건을 고정하는 것과 결과에 이름을 붙이는 것은 다릅니다.</strong>
+          어느 폴더가 어느 구성인지는 여전히 사람이 적었습니다.</li>
+          <li><strong>「완료」를 찍는 스크립트가 아무것도 안 만들었을 수 있습니다.</strong>
+          기대한 개수와 맞춰 보지 않으면 종료 코드로는 구별되지 않습니다.</li>
+          <li><strong>stderr를 버리면 이유 없이 죽습니다.</strong> 죽는 것 자체는 종료 코드로 보이지만
+          어디서 왜인지는 사라집니다.</li>
+        </ul>
+
+        <p>한 줄로 남긴다면 이겁니다.
+        <strong>재는 도구를 만들면 재는 조건은 안정되지만 그 도구가 제 일을 했는지는 따로 봐야 합니다.</strong>
+        이번에 그걸 본 것이 <strong>도구를 쓴 지 넉 달 뒤</strong>였고,
+        본 방법은 <strong>결과 파일 없이 한 번 돌려 본 것</strong>이었습니다.</p>
+
+        <p>연작 8편은 여기서 끝입니다. 읽어 주셔서 감사합니다.</p>
+        </div>
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=878abcc169"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
