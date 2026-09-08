@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="모니터링 성능 검토에서 고칠 근거를 못 찾았습니다 | Kwanghun Lee" />
-  <meta property="og:description" content="모니터링 화면 셋을 검토했더니 새로 최적화할 것이 없었습니다. cache를 더 넣으려던 자리가 이미 싼 경로였고 과해 보이던 설정 하나는 화면 깜빡임을 막고 있었습니다. 부하 시험은 돌리지 않았고 왜 안 돌렸는지도 적었습니다." />
+  <meta property="og:description" content="모니터링 화면 3개를 검토했는데 새로 최적화할 근거를 못 찾았습니다. cache를 더 넣으려던 자리는 줄일 것이 작아 보였고 과해 보이던 설정 하나는 화면 깜빡임을 막고 있었습니다. 부하 시험은 돌리지 않았고 왜 안 돌렸는지도 적었습니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -27,9 +27,9 @@
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="모니터링 성능 검토에서 고칠 근거를 못 찾았습니다 | Kwanghun Lee" />
-  <meta name="twitter:description" content="모니터링 화면 셋을 검토했더니 새로 최적화할 것이 없었습니다. cache를 더 넣으려던 자리가 이미 싼 경로였고 과해 보이던 설정 하나는 화면 깜빡임을 막고 있었습니다. 부하 시험은 돌리지 않았고 왜 안 돌렸는지도 적었습니다." />
+  <meta name="twitter:description" content="모니터링 화면 3개를 검토했는데 새로 최적화할 근거를 못 찾았습니다. cache를 더 넣으려던 자리는 줄일 것이 작아 보였고 과해 보이던 설정 하나는 화면 깜빡임을 막고 있었습니다. 부하 시험은 돌리지 않았고 왜 안 돌렸는지도 적었습니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="모니터링 화면 셋을 검토했더니 새로 최적화할 것이 없었습니다. cache를 더 넣으려던 자리가 이미 싼 경로였고 과해 보이던 설정 하나는 화면 깜빡임을 막고 있었습니다. 부하 시험은 돌리지 않았고 왜 안 돌렸는지도 적었습니다." />
+  <meta name="description" content="모니터링 화면 3개를 검토했는데 새로 최적화할 근거를 못 찾았습니다. cache를 더 넣으려던 자리는 줄일 것이 작아 보였고 과해 보이던 설정 하나는 화면 깜빡임을 막고 있었습니다. 부하 시험은 돌리지 않았고 왜 안 돌렸는지도 적었습니다." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
 </head>
@@ -97,10 +97,11 @@
         <article class="article-body">
 
         <p>안녕하세요. 사내 cloud 관리 console의 backend를 만들고 있습니다.
-        「모니터링이 느리다」는 보고를 받고 화면 셋을 검토했습니다.</p>
+        「모니터링이 느리다」는 보고를 받고 화면 3개를 검토했습니다.</p>
 
-        <p><strong>결론은 「새로 고칠 것이 없다」였습니다.</strong> 이 연작의 마지막 편은
-        <strong>아무것도 안 하기로 한 검토</strong>에 대한 것입니다.</p>
+        <p><strong>결론은 「고쳐야 한다고 말할 근거를 못 찾았다」였습니다.</strong>
+        이 연작의 마지막 편은 <strong>아무것도 안 하기로 한 검토</strong>에 대한 것입니다.
+        ⚠️ 그것은 「고칠 것이 없다」와 다른 말이고 이 글은 그 차이를 계속 지킵니다.</p>
 
         <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -142,7 +143,7 @@
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
             <svg viewBox="0 0 720 210" role="img" aria-labelledby="rev-t rev-d" xmlns="http://www.w3.org/2000/svg">
-              <title id="rev-t">화면 셋과 각각이 값을 읽는 곳</title>
+              <title id="rev-t">화면 3개와 각각이 값을 읽는 곳</title>
               <desc id="rev-d">왼쪽에 화면이 3개 있습니다. 대시보드와 물리 자원은 backend 안의 갱신 cache에서
               값을 읽고 그 cache는 60초마다 뒤에서 스스로 채워집니다. 가상 자원은 처음 열릴 때 프로젝트마다
               인증과 자원 조회를 반복해 나갑니다. 그 뒤에는 세 화면 모두 15초마다 서버가 보내 주는 값을 받고,
