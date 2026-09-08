@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>直したと報告した状態がコミットにありませんでした | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/four-fixes-that-were-not-there.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/four-fixes-that-were-not-there.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/four-fixes-that-were-not-there.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/four-fixes-that-were-not-there.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="直したと報告した状態がコミットにありませんでした | Kwanghun Lee" />
+  <meta property="og:description" content="はじめてお金を払って GPU を借りる直前に、完了と報告したガード 4 件がコードではその姿ではありませんでした。3 つは課金が続くのを止める装置です。リポジトリに聞くと 4 つとも私のコミットではじめて入っていましたが、git は失った編集と書かなかった編集を分けられません。残りを数えるスクリプトを書いたら、今度は判定式が誤っていました。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/four-fixes-that-were-not-there.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="直したと報告した状態がコミットにありませんでした | Kwanghun Lee" />
+  <meta name="twitter:description" content="はじめてお金を払って GPU を借りる直前に、完了と報告したガード 4 件がコードではその姿ではありませんでした。3 つは課金が続くのを止める装置です。リポジトリに聞くと 4 つとも私のコミットではじめて入っていましたが、git は失った編集と書かなかった編集を分けられません。残りを数えるスクリプトを書いたら、今度は判定式が誤っていました。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="はじめてお金を払って GPU を借りる直前に、完了と報告したガード 4 件がコードではその姿ではありませんでした。3 つは課金が続くのを止める装置です。リポジトリに聞くと 4 つとも私のコミットではじめて入っていましたが、git は失った編集と書かなかった編集を分けられません。残りを数えるスクリプトを書いたら、今度は判定式が誤っていました。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "four-fixes-that-were-not-there.html", "ko": "four-fixes-that-were-not-there.ko.html", "ja": "four-fixes-that-were-not-there.ja.html"}'>
+          <option value="ko">Korean</option>
+          <option value="en">English</option>
+          <option value="ja" selected>日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>一覧</a>
+        <div class="article-meta"><span class="source-tag side notranslate">Personal project</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>直したと報告した状態がコミットにありませんでした<br><span class="h1-sub">私の最初の説明は編集が飛んだというもので、確かめたことのない説明でした。個人プロジェクト GPU 制御面</span></h1>
+          <p class="article-date">2026年9月</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="four-fixes-that-were-not-there"></aside>
+
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#想定読者">この記事の想定読者</a></li>
+            <li><a href="#何の話">何の話ですか？</a></li>
+            <li><a href="#報告どおりでない">4 つとも報告どおりの姿ではありませんでした</a></li>
+            <li><a href="#最初の説明">私の最初の説明は「編集が飛んだ」でした</a></li>
+            <li><a href="#リポジトリに聞く">リポジトリに聞きました</a></li>
+            <li><a href="#コメントが弁護">コメントがコードを弁護していました</a></li>
+            <li><a href="#エラーが測定に">エラー応答が正常な測定として流れ込んでいました</a></li>
+            <li><a href="#判定式が誤り">残りを数えるスクリプトを書いたら判定式が誤っていました</a></li>
+            <li><a href="#名前ひとつ">名前ひとつがテストを静かに通しました</a></li>
+            <li><a href="#さらに12件">直したコードからさらに 12 件出ました</a></li>
+            <li><a href="#主張しないこと">限界: この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>こんにちは。ひとりで作っている GPU 制御面で、はじめてお金を払って GPU を借りる直前に、
+        残っている指摘を片づけようとファイルを開きました。</p>
+
+        <p><strong>直したと報告してあったものが、コードではその姿ではありませんでした。</strong>
+        1 つではなく 4 つです。</p>
+
+        <p>⚠️ まず範囲を書いておきます。<strong>このプロジェクトはいまも進行中</strong>です。
+        この記事が終わった話として扱うのは<strong>その日の発見と、それを確かめた方法</strong>であって、
+        <strong>ガードがいまどういう状態かではありません。</strong>
+        実際その日に直したコードから<strong>同じ日にさらに 12 件出ており</strong>、その話も下にあります。</p>
+
+        <p>⚠️ そして<strong>測ったものと記録にしかないもの</strong>を分けて書きます。
+        <strong>この記事を書きながら回し直したもの</strong>は、リポジトリ検索 3 件、その関数の 2 つの版、
+        <code>curl</code> の終了コード、シェル変数ひとつです。
+        <strong>18 個の検査の誤検知 2 件と、12 件の再レビューはその日の記録</strong>で、今回は再現していません。
+        本文でも区別し続けます。</p>
+
+        <h2 id="想定読者">この記事の想定読者<a class="anchor" href="#想定読者" aria-label="この節へのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>「それは処理した」を記憶で言ったことがある方</li>
+          <li>確認スクリプトを書いておいて、そのスクリプトは確認していない方</li>
+          <li>お金のかかる実行を前に、何から見るか決めなければならない方</li>
+        </ul>
+
+        <h2 id="何の話">何の話ですか？<a class="anchor" href="#何の話" aria-label="この節へのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>完了と報告した <strong>4 件が、コミットでは報告した姿ではありませんでした。</strong>
+          2 つは<strong>順序が昔のまま</strong>で、2 つは<strong>その場所にコードがありません</strong>でした。
+          3 つは<strong>課金が続くのを止める装置</strong>です。</li>
+          <li>私の最初の説明は<strong>「編集が事故で飛んだ」</strong>で、確かめる前に
+          <strong>2 回も口に出しました。</strong></li>
+          <li>リポジトリに聞くと、4 つとも<strong>2026 年 8 月 31 日と 9 月 1 日の私のコミットで</strong>
+          はじめて入っていました。⚠️ だからといって<strong>編集をしたことがないという意味ではありません。</strong>
+          <strong><code>git</code> はその 2 つを分けられません。</strong></li>
+          <li>誤った順序を<strong>私が書いたコメントが弁護</strong>していて、読み返しながら
+          <strong>自分の正当化を証拠にしました。</strong></li>
+          <li>残り 18 個を数えるスクリプトを書いたら ❌ が 3 つ出て、
+          <strong>そのうち 2 つはコードではなく私の判定式の誤り</strong>でした。</li>
+          <li>⚠️ そして<strong>その日に直したコードから同じ日にさらに 12 件出ました。</strong>
+          「直した」が終わりではありませんでした。</li>
+        </ul>
+
+        <h2 id="報告どおりでない">4 つとも報告どおりの姿ではありませんでした<a class="anchor" href="#報告どおりでない" aria-label="この節へのリンク">#</a></h2>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
+        <table>
+          <caption class="sr-only">完了と報告したものと、実際のコード。</caption>
+          <thead><tr><th>指摘</th><th>私の報告</th><th>実際のコード</th></tr></thead>
+          <tbody>
+            <tr><td>期限を解除する順序</td><td>完了</td><td>昔の順序のまま</td></tr>
+            <tr><td>武装してからカードを点ける</td><td>完了</td><td>人が先に点けて、スクリプトが後から武装</td></tr>
+            <tr><td>有料経路のコスト制御</td><td>完了</td><td><strong>その場所に武装もスケールダウンもない</strong></td></tr>
+            <tr><td>実験マトリクスの時間上限</td><td>完了</td><td><strong>拒否するコードが見当たらない</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">「武装」は<strong>クラウド側にあらかじめ予約を掛けておくこと</strong>です。
+        ノートパソコンが死んでも決まった時刻に GPU ノードが落ちるようにする装置です。
+        <strong>3 つは課金が続くのを止めるガード</strong>で、1 つは実行が時間内に終われるかを
+        あらかじめ判定するものです。</p>
+
+        <h2 id="最初の説明">私の最初の説明は「編集が飛んだ」でした<a class="anchor" href="#最初の説明" aria-label="この節へのリンク">#</a></h2>
+
+        <p>作業中にコミットしていない変更を戻したことがありました。だから
+        <strong>「編集が事故で飛んだ」</strong>はもっともらしく思えました。
+        私はその説明を<strong>確かめる前に 2 回口に出しました。</strong></p>
+
+        <blockquote><p>その説明は楽でした。<strong>編集はしたのに道具が飲み込んだ</strong>ほうが、
+        <strong>していないことをしたと言った</strong>より良いですから。
+        私は確かめずに楽なほうを選びました。</p></blockquote>
+
+        <h2 id="リポジトリに聞く">リポジトリに聞きました<a class="anchor" href="#リポジトリに聞く" aria-label="この節へのリンク">#</a></h2>
+
+        <p><code>git log -S</code> はよく「その文字列が入ったコミットを探してくれる」と紹介されますが、
+        <strong>そうではありません。</strong>親コミットと比べて<strong>その文字列の出現回数が変わった</strong>
+        コミットを選びます。だから<strong>最後の 1 つを消したコミットも結果に出て</strong>、
+        そのコミットにはその文字列がありません。</p>
+
+        <p>ガードごとに、そのガードにしかない文字列を 1 つずつ選んで聞きました。
+        <strong>この記事を書きながら回し直した結果</strong>です。</p>
+
+<pre data-lang="bash"><code>$ git log -S"ttl_arm" --oneline -- hack/gpu-session.sh
+e96687e fix: give the m6 paid path a deadline, a scale-down, and a delete that finishes
+
+$ git log -S"worst_total_min" --oneline -- hack/m5c-matrix.sh
+4165f10 fix: twelve defects a cold review found in the guards added over the last two days
+d125bfe fix: keep the deadline until the node is confirmed down, and refuse runs that cannot fit
+
+$ git log -S"the card starts billing here" --oneline -- hack/m5b-gpu-session.sh
+4243faf fix: register the deadline before the card exists, by scaling the node group here</code></pre>
+
+        <p>真ん中は<strong>2 行</strong>です。あとでもう一度手を入れたという意味で、
+        <strong>はじめて入ったのは下のほう</strong>です。</p>
+
+        <p>回数が変わったコミットを選ぶのですから<strong>「増えたのか減ったのか」は別に見る必要があります。</strong>
+        親とそのコミットでそれぞれ何回出るか数えました。</p>
+
+<pre data-lang="text"><code>ttl_arm                        e96687e   親 0 回 → 1 回
+worst_total_min                d125bfe   親 0 回 → 4 回
+the card starts billing here   4243faf   親 0 回 → 1 回</code></pre>
+
+        <p>3 つとも<strong>親では 0 回</strong>です。その文字列が<strong>この経路で、いまの
+        <code>HEAD</code> から辿れる履歴の中ではじめて現れたコミット</strong>で、
+        日付は<strong>2026 年 8 月 31 日と 9 月 1 日</strong>、すべて私のコミットです。</p>
+
+        <blockquote><p>⚠️ <strong>選んだ文字列がすべて実行コードというわけでもありません。</strong>
+        3 つ目に選んだ <code>the card starts billing here</code> は画面に出す
+        <strong>案内文</strong>です。その文がなかったということであって、
+        <strong>「そのガードがなかった」をそれだけで言うことはできません。</strong></p></blockquote>
+
+        <blockquote><p>⚠️ この検索が答えるのは<strong>「その文字列がその経路の以前のコミットになかった」</strong>
+        までです。<code>--all</code> なしで回すと<strong>いまの枝から辿れる履歴だけ</strong>を見て、
+        <code>--follow</code> なしで経路を指定すると<strong>名前が変わる前の履歴を取り落とします。</strong>
+        同じ機能を別の文字列で書いていたら、そもそも引っかかりません。</p></blockquote>
+
+        <p>4 つ目の解除順序は、文字列ではなく<strong>位置</strong>の問題です。
+        はじめは 2 行の<strong>行番号を比べました</strong>が、その方法にはあとで出てくる穴があります。
+        なのでここでは<strong>同じ関数の 2 つの版を並べて</strong>置きます。</p>
+
+<pre data-lang="bash"><code># 6086a51 — 期限機能がはじめて入ったコミット
+gpu_scale_down() {
+  # Drop the deadline first. If the scale-down below succeeds the schedule has nothing left
+  # to do, and if it fails the schedule is the reason this is survivable ...
+  command -v ttl_disarm &gt;/dev/null 2&gt;&amp;1 &amp;&amp; ttl_disarm     # 関数の最初の動作
+
+# d125bfe — 2026 年 8 月 31 日、私のコミット
+gpu_scale_down() {
+  # The deadline is NOT dropped here, and the ordering is the whole point.
+  # ... It comes off at the bottom of this function, after desiredSize has been
+  # read back as 0, and nowhere else.</code></pre>
+
+        <p>前の版は<strong>関数の最初の動作が解除</strong>です。
+        後の版はその場所に解除がなく、代わりに<strong>「いちばん下で、サイズが 0 と読み戻されたあとに」</strong>
+        とコメントが言っています。</p>
+
+        <p>⚠️ ところが<strong>コメントはそうするという言葉</strong>であって、そうしている証拠ではありません。
+        次の節で戒めることを、ここで先に守らなければなりません。後の版の関数の<strong>いちばん下</strong>です。</p>
+
+<pre data-lang="bash"><code>  # Confirm it took. An accepted API call that left desiredSize at 1 is the failure this
+  # whole function exists to make impossible ...
+  DESIRED=$(aws eks describe-nodegroup ... --query 'nodegroup.scalingConfig.desiredSize' ...)
+  if [ "$DESIRED" = "0" ]; then
+    # Only now. The deadline has nothing left to protect ...
+    command -v ttl_disarm &gt;/dev/null 2&gt;&amp;1 &amp;&amp; ttl_disarm
+  else
+    echo "WARNING: ... after the scale-down. It is billing." &gt;&amp;2
+    echo "The TTL deadline is left armed on purpose. It is what remains." &gt;&amp;2
+  fi
+}</code></pre>
+
+        <p>コメントが言った場所に<strong>実際にあります。</strong>
+        サイズを読み戻して<strong>0 のときだけ</strong>解除し、そうでなければ<strong>残します。</strong>
+        前の版は関数の最初の行、後の版は読み戻しのあと。
+        <strong>順序を変えたのは後の版、つまり私のコミット</strong>です。</p>
+
+        <blockquote><p>⚠️ これは<strong>ソースに書かれた並び</strong>です。どちらの版も同じ関数の中の
+        直線コードなので実行の並びも同じだと見ていますが、<strong>回して確かめたわけではありません。</strong></p></blockquote>
+
+        <h3 class="sr-only">git では分けられないもの</h3>
+
+        <p>ここで<strong>「だから編集をしたことがない」に進んではいけません。</strong>
+        コミットしていない編集は<strong>コミット履歴に残りません。</strong>
+        本当に書いて失っていたなら<strong>履歴ではいまとまったく同じに見えます。</strong>
+        ⚠️ <code>git add</code> まで行った内容なら<strong>別のところに痕跡が残りうります</strong>が、
+        私はそのときそれを探しませんでした。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 230" role="img" aria-labelledby="gv-t gv-d" class="figure-svg">
+            <title id="gv-t">リポジトリが分けられない 2 つの話</title>
+            <desc id="gv-d">2 行があり、それぞれ 1 つの話です。上の行は「書いて失った」で、編集を表すピンクの
+            四角が左にあり、その上に取り消しを表すバツ印が重なっています。下の行は「書いたことがない」で、
+            左側は空です。どちらの行も右端に同じ形のコミットの四角が 1 つずつあります。右にリポジトリが
+            見せるものを表す箱があり、両方の行からそこへ矢印が集まります。箱の中には 2 つの行が同じに
+            見えると書かれています。いちばん下の点線の箱に、どちらであっても残る事実が書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="16" y="40" font-size="12" fill="#d62976" font-weight="700">書いて失った</text>
+              <rect x="150" y="28" width="14" height="14" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
+              <g stroke="#d62976" stroke-width="2" stroke-linecap="round">
+                <path d="M148 26 L 166 44"/><path d="M166 26 L 148 44"/>
+              </g>
+              <text x="176" y="40" font-size="11" fill="#8a8a8a">編集 · コミットせず</text>
+              <rect x="380" y="28" width="14" height="14" rx="3" fill="none" stroke="#8a8a8a" stroke-width="2"/>
+              <text x="402" y="40" font-size="11" fill="#8a8a8a">あとのコミット</text>
+
+              <text x="16" y="112" font-size="12" fill="#4a4a4a" font-weight="700">書いたことがない</text>
+              <text x="150" y="112" font-size="11" fill="#c9c9c9">(何もない)</text>
+              <rect x="380" y="100" width="14" height="14" rx="3" fill="none" stroke="#8a8a8a" stroke-width="2"/>
+              <text x="402" y="112" font-size="11" fill="#8a8a8a">あとのコミット</text>
+
+              <path d="M470 35 C 510 35, 520 60, 540 70" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#gv-ar)"/>
+              <path d="M470 107 C 510 107, 520 84, 540 76" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#gv-ar)"/>
+
+              <rect x="544" y="44" width="160" height="60" rx="7" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="624" y="68" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">git が見せるもの</text>
+              <text x="624" y="88" font-size="11" fill="#8a8a8a" text-anchor="middle">2 つの行が同じ</text>
+
+              <rect x="16" y="150" width="688" height="56" rx="7" fill="none" stroke="#4a4a4a" stroke-width="1.6" stroke-dasharray="6 4"/>
+              <text x="360" y="174" font-size="12" fill="#4a4a4a" font-weight="700" text-anchor="middle">どちらでも残る事実</text>
+              <text x="360" y="194" font-size="11.5" fill="#8a8a8a" text-anchor="middle">コミットされたことのない状態から出た「完了」報告</text>
+            </g>
+            <defs>
+              <marker id="gv-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>左の 2 行は<strong>別の話</strong>なのに、リポジトリでは<strong>同じに見えます。</strong>
+          下の点線の箱が<strong>どちらであっても残る事実</strong>です。</figcaption>
+        </figure>
+
+        <p>2 つの場合に<strong>共通して確定するのは 1 つ</strong>です。
+        <strong>報告した時点まで、そのガードはコミットとして存在していなかった。</strong></p>
+
+        <p>⚠️ <strong>「報告するとき確かめなかった」まではここから出ません。</strong>
+        本当に書いて、確かめまでして、コミット前に失った可能性もあります。
+        ⚠️ そして<strong>コミットされていないコードが動かないわけでもありません。</strong>
+        これは自分のノートパソコンで回すシェルスクリプトなので、作業ツリーにあれば<strong>そのまま実行されます。</strong></p>
+
+        <p>それでも残るものがあります。<strong>続く履歴として残らなかった</strong>ということです。
+        明日の私も、別の機械も、戻したあとの私も<strong>それを拾えません。</strong>
+        私は<strong>その状態を「完了」と呼びました。</strong></p>
+
+        <h2 id="コメントが弁護">コメントがコードを弁護していました<a class="anchor" href="#コメントが弁護" aria-label="この節へのリンク">#</a></h2>
+
+        <p>1 つ目の項目のコードはこうでした。</p>
+
+<pre data-lang="bash"><code>gpu_scale_down() {
+  # Drop the deadline first. If the scale-down below succeeds the schedule has nothing left to do,
+  # and if it fails the schedule is the reason this is survivable -- so it is removed only after a
+  # clean exit path is under way, never as a precondition for one.
+  command -v ttl_disarm &gt;/dev/null 2&gt;&amp;1 &amp;&amp; ttl_disarm</code></pre>
+
+        <p><strong>このコメントは自分で崩れます。</strong>
+        「失敗したら予約があるから生き延びられる」と書いておいて、
+        その予約を<strong>失敗しうる呼び出しより先に</strong>消します。
+        失敗した瞬間、予約は<strong>すでにありません。</strong></p>
+
+        <p>大事なのは、これが<strong>失われた修正の痕跡ではない</strong>という点です。
+        このコメントは<strong>誤った順序を説明しようとして、筋の通らない理由を作り出したもの</strong>です。</p>
+
+        <blockquote><p>そして私はそのコメントを読み返しながら<strong>「ああこれは処理した」</strong>と
+        通り過ぎました。<strong>自分が書いた正当化を自分で証拠にしました。</strong></p></blockquote>
+
+        <p><strong>説明が付いているということは、その説明が正しいという意味ではありません。</strong>
+        コードがすぐ隣にあってもそうです。</p>
+
+        <h2 id="エラーが測定に">エラー応答が正常な測定として流れ込んでいました<a class="anchor" href="#エラーが測定に" aria-label="この節へのリンク">#</a></h2>
+
+        <p>同じ日に出たもののうち<strong>数値をいちばん大きく揺らしたもの</strong>は別にありました。
+        モデルが最初のトークンを出すまでの時間を測ろうとしたコードです。
+        ⚠️ 正確には<strong>最初のバイトまでの時間</strong>を測っていて、その最初のバイトが応答ヘッダーの
+        可能性もあります。<strong>2 つが同じだと確かめたことはありません。</strong></p>
+
+        <p>古いコードは<strong>応答本文を捨て、終了状態を見ないまま</strong>最初のバイトまでの時間だけを
+        使っていました。<strong>エラー応答でもその時間は計算されます。</strong>
+        そしてその日の記録に残った<strong>そのエラー応答はとても速いものでした。</strong></p>
+
+        <p>この記事を書きながら、500 だけを返すサーバーを立てて確かめました。</p>
+
+<pre data-lang="bash"><code>$ curl -s -o /dev/null -w 'http_code=%{http_code} time_starttransfer=%{time_starttransfer}\n' http://127.0.0.1:8791/
+http_code=500 time_starttransfer=0.000390
+$ echo $?
+0                          &lt;- 500 なのに終了コードは 0
+
+$ curl -sf -o /dev/null http://127.0.0.1:8791/   # --fail を付けると
+$ echo $?
+22</code></pre>
+
+        <p><strong>既定の <code>curl</code> は HTTP 500 を失敗として扱いません。</strong>
+        転送そのものは成功したからです。終了コードは 0 で、時間も
+        <strong>正常な応答とまったく同じやり方で</strong>計算されて出ます。</p>
+
+        <blockquote><p>ですから<strong>「終了状態を見ていればよかった」も誤りです。</strong>
+        既定では<strong>正常な応答も 500 も終了コードが 0</strong> なので、それだけでは分かれません。
+        <code>--fail</code> を付けるか、<strong>応答コードを自分で読む</strong>必要があります。
+        <strong>直す場所は、私が最初に思っていたところではありませんでした。</strong></p></blockquote>
+
+<pre data-lang="text"><code>[以下はその日の記録に残った値です]
+HTTP 500 の応答時間        : 0.000566 秒
+そのとき導出されたはずの到着率 : 2,826/s
+
+正常(1.4 秒かかるとき)      : 1.142/s
+                             → 2,475 倍</code></pre>
+
+        <p>⚠️ この 2 つの到着率は<strong>測った値ではなく導出された値</strong>です。
+        どちらも<strong>ある定数を応答時間で割った形</strong>で(両方とも到着率と時間を掛けると 1.6 になります)、
+        <strong>その定数が何かは今回確かめていません。</strong></p>
+
+        <p>記録に残る 2 つの値から今回計算してみたのはこうです。
+        <strong>2,826 ÷ 1.142 = 2,474.6</strong>、<strong>1.4 ÷ 0.000566 = 2,473.5</strong>。
+        2 つは<strong>ほぼ同じ</strong>です。記録された到着率が<strong>応答時間に反比例する</strong>という
+        意味で、<strong>応答が速いほど導出値が大きくなります。</strong>
+        (ぴったり同じでないのは<strong>両方の数字とも丸められている</strong>からだと見ています。
+        到着率も応答時間も桁が切られています。)</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 210" role="img" aria-labelledby="pf-t pf-d" class="figure-svg">
+            <title id="pf-t">失敗した要求が測定値を大きくする経路</title>
+            <desc id="pf-d">上下 2 つの枝が並んでいます。上は正常な応答で、最初のバイトまでの時間を表す長い棒が
+            あり、その右に小さな到着率の値が書かれています。下はエラー応答で、同じ位置にとても短い棒があり、
+            その右にはるかに大きな到着率の値が書かれています。2 つの枝のあいだに点線の箱があり、2 つを分ける
+            検査がない場所だと書かれています。右下に 2 つの値の比が書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="16" y="24" font-size="12" fill="#8a8a8a" font-weight="700">正常な応答</text>
+              <rect x="16" y="32" width="300" height="18" rx="4" fill="none" stroke="#8a8a8a" stroke-width="1.8"/>
+              <text x="166" y="46" font-size="11.5" fill="#4a4a4a" text-anchor="middle">最初のバイトまで 1.4 秒</text>
+              <path d="M320 41 H 400" fill="none" stroke="#8a8a8a" stroke-width="2" marker-end="url(#pf-ar)"/>
+              <path d="M316 41 H 320" fill="none" stroke="#8a8a8a" stroke-width="2"/>
+              <text x="410" y="46" font-size="12.5" fill="#4a4a4a" font-weight="700">到着率 1.142/s</text>
+
+              <text x="16" y="116" font-size="12" fill="#d62976" font-weight="700">エラー応答 (HTTP 500)</text>
+              <rect x="16" y="124" width="6" height="18" rx="2" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="34" y="138" font-size="11.5" fill="#d62976">0.000566 秒</text>
+              <path d="M22 133 H 400" fill="none" stroke="#d62976" stroke-width="2" stroke-dasharray="3 3" marker-end="url(#pf-ar2)"/>
+              <text x="410" y="138" font-size="12.5" fill="#d62976" font-weight="700">到着率 2,826/s</text>
+
+              <rect x="150" y="66" width="240" height="34" rx="6" fill="none" stroke="#8a8a8a" stroke-width="1.6" stroke-dasharray="6 4"/>
+              <text x="270" y="88" font-size="11.5" fill="#8a8a8a" text-anchor="middle">2 つを分ける検査がない場所</text>
+
+              <text x="360" y="180" font-size="11.5" fill="#d62976" font-weight="700" text-anchor="middle">2,475 倍</text>
+              <text x="360" y="198" font-size="11" fill="#8a8a8a" text-anchor="middle">ほぼ 2 つの時間の比</text>
+            </g>
+            <defs>
+              <marker id="pf-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="pf-ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>棒の長さは<strong>縮尺ではありません。</strong>実際の比は 2,475 倍なので、
+          正しく描くとエラー側が見えなくなります。
+          ⚠️ その空いた真ん中を終了状態の検査で埋めれば済むわけでもありません。理由はすぐ上です。</figcaption>
+        </figure>
+
+        <p>この到着率は<strong>すべての実験条件の負荷と実行時間を決める単一の入力</strong>です。
+        この値がカードの実際の処理能力を大きく超えると<strong>裾の遅延の標本が切り落とされます。</strong></p>
+
+        <blockquote><p>⚠️ <strong>この節で今回再現したのは <code>curl</code> の動作 1 つだけ</strong>です。
+        数値と「だから直した」は<strong>その日の記録</strong>です。
+        直したあとその値で回した実行がどんな判定を受けたかは<strong>そのときも確かめていません。</strong></p></blockquote>
+
+        <p>すぐ隣の KV 容量の検査も同じ性格でした。エンジンが報告した値と予測値を
+        <strong>並べて出力するだけで比較はしていませんでした。</strong>
+        ファイルの先頭に<strong>「予測とまったく違えば拒否する」</strong>と書いておいてです。
+        ⚠️ これもその日の記録です。</p>
+
+        <h2 id="判定式が誤り">残りを数えるスクリプトを書いたら判定式が誤っていました<a class="anchor" href="#判定式が誤り" aria-label="この節へのリンク">#</a></h2>
+
+        <p>4 つを直したあと、残りも実際にあるか<strong>18 個の項目をまとめて確認するスクリプト</strong>を
+        書きました。結果に ❌ が<strong>3 つ</strong>出ました。</p>
+
+        <blockquote><p><strong>そのうち 2 つはコードではなく、私の判定式が誤っていたのでした。</strong></p></blockquote>
+
+        <p>1 つはこうです。「武装がスケールアップより前か」を<strong>行番号で</strong>比べたのですが、
+        44 行目のコメントの中に <code>desiredSize=1</code> という文字列が入っていました。
+        <strong>判定式がそのコメントをスケールアップとして数えました。</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="ln-t ln-d" class="figure-svg">
+            <title id="ln-t">行番号で順序を判定するときコメントが紛れ込む場所</title>
+            <desc id="ln-d">ソースの行が縦に並んでいます。上のほうの 44 行目はコメントで、その中に
+            desiredSize=1 という文字列が入っており、ピンクで示されています。下のほうの 90 行目に本物の
+            スケールアップの呼び出しがあり、灰色です。そのあいだの 60 行目に武装の呼び出しがあります。
+            左に矢印が 2 つあり、上の矢印は判定式が 44 行目をスケールアップとして読み、武装より前だと
+            誤って判定する経路で、下の矢印は本来比べるべきだった 90 行目を指しています。</desc>
+            <g font-family="Inter, sans-serif">
+              <g font-size="11.5" fill="#8a8a8a">
+                <text x="200" y="46">44 行目</text>
+                <text x="200" y="100">60 行目</text>
+                <text x="200" y="154">90 行目</text>
+              </g>
+              <rect x="248" y="30" width="380" height="26" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="262" y="48" font-size="12" fill="#d62976"># … desiredSize=1 … (コメント)</text>
+
+              <rect x="248" y="84" width="380" height="26" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="262" y="102" font-size="12" fill="#4a4a4a">ttl_arm   (武装)</text>
+
+              <rect x="248" y="138" width="380" height="26" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="262" y="156" font-size="12" fill="#4a4a4a">desiredSize=1   (本物のスケールアップ)</text>
+
+              <path d="M180 43 H 240" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#ln-ar1)"/>
+              <text x="14" y="40" font-size="11.5" fill="#d62976" font-weight="700">判定式が読んだ場所</text>
+              <text x="14" y="56" font-size="11" fill="#8a8a8a">コメントをコードとして数える</text>
+
+              <path d="M180 151 H 240" fill="none" stroke="#8a8a8a" stroke-width="2" marker-end="url(#ln-ar2)"/>
+              <text x="14" y="148" font-size="11.5" fill="#4a4a4a" font-weight="700">比べるべきだった場所</text>
+
+              <text x="360" y="188" font-size="11" fill="#8a8a8a" text-anchor="middle">文字の位置しか知らない判定</text>
+            </g>
+            <defs>
+              <marker id="ln-ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+              <marker id="ln-ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>行番号は<strong>文字がどこにあるか</strong>は分かっても、
+          <strong>それがコードかコメントか</strong>は分かりません。
+          <strong>私が 4 つ目の項目に最初に使って捨てた方法</strong>もこれです。</figcaption>
+        </figure>
+
+        <p>もう 1 つは<strong>判定式そのものがでたらめ</strong>でした。
+        その日は判定結果だけを見ずに<strong>ファイルを直接突き合わせて</strong>、
+        2 つの ❌ が実装の欠陥ではなく<strong>判定式の誤検知</strong>だと確認したと書いておきました。</p>
+
+        <p>⚠️ <strong>3 つ目の ❌ が何だったかは記録にありません。</strong>
+        2 つが誤検知だったとだけ書いて<strong>残りの 1 つを書きませんでした。</strong>
+        いまとなっては分かりません。<strong>検査を検査した記録にも抜けがありました。</strong></p>
+
+        <p>⚠️ この節の 2 つの誤検知と <code>desiredSize=1</code> のコメントの話は
+        <strong>その日の記録</strong>で、<strong>今回は再現していません。</strong></p>
+
+        <h2 id="名前ひとつ">名前ひとつがテストを静かに通しました<a class="anchor" href="#名前ひとつ" aria-label="この節へのリンク">#</a></h2>
+
+        <p>同じ日、別の試験 harness では <code>GROUPS</code> という名前の変数を使いました。
+        <strong>ところがそれは bash が自分の分として使う名前</strong>です。シェル一般ではなく bash の話です。
+        いまこの機械(<code>bash 5.3.9</code>)で回し直すとこうです。</p>
+
+<pre data-lang="bash"><code>$ bash -c 'GROUPS=(a b c); echo "${GROUPS[*]}"'
+&lt;現在のユーザーのグループ番号&gt;               &lt;- 入れた値ではない
+
+$ bash -c 'MY_GROUPS=(a b c); echo "${MY_GROUPS[*]}"'
+a b c                                        &lt;- 名前を変えれば入る</code></pre>
+
+        <p><strong>代入が静かに飲み込まれます。</strong>この版ではエラーも警告もありません。
+        ⚠️ <strong>bash の版によって違います。</strong>古い文書にはこうした代入が
+        <strong>0 でない状態を返す</strong>と書かれています。確かめたのはこの版 1 つです。</p>
+
+        <p>⚠️ ここまでが今回再現したものです。<strong>この先はその日の記録</strong>です。
+        「別のカードがすでに点いている」を検知するはずの試験が
+        <strong>入れておいた値を一度も見ないまま通りました。</strong></p>
+
+        <blockquote><p><strong>コードは無事で、テストが嘘をつきました。</strong>
+        ⚠️ 前の 2 つの誤検知とこれは<strong>原因が互いに違います。</strong>
+        1 つはコメントをコードとして数えたもの、1 つは判定式自体がでたらめだったもの、これは値が入らなかったものです。
+        同じなのは<strong>結果が緑に見えた</strong>ことだけです。
+        検査は<strong>回りました。</strong>ただ<strong>私が入れようとした値が入らないまま</strong>回りました。
+        <strong>検査が通ったということは、その検査が意図した入力で回ったという意味ではありません。</strong></p></blockquote>
+
+        <h2 id="さらに12件">直したコードからさらに 12 件出ました<a class="anchor" href="#さらに12件" aria-label="この節へのリンク">#</a></h2>
+
+        <p>4 つを直して 18 個を数えたあと、同じ日に<strong>そのガードだけを別に再レビュー</strong>しました。
+        <strong>12 件出ました。</strong>ほとんどが<strong>さきほどの指摘を直すために書いたばかりのコード</strong>の
+        中にありました。</p>
+
+        <p>そのうち 2 つがこの記事と同じ形です。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
+        <table>
+          <caption class="sr-only">失敗が安全な状態とまったく同じに見えた 2 つのガード。</caption>
+          <thead><tr><th>ガード</th><th>失敗したときに出た値</th><th>その値が読まれた意味</th></tr></thead>
+          <tbody>
+            <tr><td>「別のカードがすでに点いているか」</td><td>空のリスト</td><td><strong>何も動いていない</strong></td></tr>
+            <tr><td>「期限がどれだけ残っているか」</td><td>0</td><td><strong>確認するものがない</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">1 つ目はリストを呼ぶ呼び出しをコマンド置換の中に入れて、
+        <strong>stderr を捨てたうえに終了状態を見ていませんでした。</strong>
+        ⚠️ コマンド置換が終了状態をなくすわけではありません。<strong>代入文がその値を受け継ぐのに</strong>
+        <strong>呼ぶ側が見ませんでした。</strong>記録によれば、そのため
+        <strong>資格情報の期限切れも、権限エラーも、ネットワーク障害も全部空のリスト</strong>になりました。
+        ⚠️ これはその日の記録で、<strong>その道具が実際に何を出すかは今回確かめていません。</strong>
+        空のリストは<strong>「ほかに動いていない」と一文字も違いません。</strong>
+        アカウントに何か問題があるとき止まるために作ったガードが、<strong>まさにその瞬間に通します。</strong></p>
+
+        <blockquote><p>2 つ目も同じです。残りの期限を読めなければ 0 を返していました。
+        <strong>セッションの途中で認証が切れる瞬間</strong>、まさに止まるべきその瞬間に
+        <strong>ガードが見張るのをやめます。</strong>遠隔の予約はそのまま掛かったままで。</p></blockquote>
+
+        <p>⚠️ この 12 件は<strong>今回のセッションで再現したものではなく</strong>、その日のコミット記録です。
+        本文に写した 2 件もその記録に書かれている内容です。</p>
+
+        <h2 id="主張しないこと">限界: この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="この節へのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li><strong>この記事はガードがいまどういう状態かを述べません。</strong>
+          プロジェクトは進行中で、ここに書いたのは<strong>2026 年 9 月 1 日の 1 日</strong>に
+          見つけて確かめたものです。その後も同じ場所から直すものが出続けています。</li>
+          <li><strong>報告がそのコミットより前だったことも、時刻で突き合わせていません。</strong>
+          残っているのは<strong>コミットの日付</strong>で、報告の時刻と文面は別に持っていません。
+          「有料セッションの直前に開いて気づいた」は<strong>その日の記録</strong>です。</li>
+          <li><strong>なぜそう報告したのかは分かりません。</strong>やろうとしてやめたのか、
+          別のファイルでやったと思い違いをしたのか、計画を結果として読んだのか<strong>記録がありません。</strong>
+          確認されたのは<strong>報告とコードが違った</strong>ということだけです。</li>
+          <li><strong><code>git log -S</code> は出現回数が変わったコミットを選びます。</strong>
+          同じ機能を別の文字列で書いていたら、そもそも引っかかりません。
+          ですからこの検索は<strong>「そのガードがなかった」ではなく「その文字列がなかった」</strong>までしか
+          教えてくれません。</li>
+          <li><strong>行番号比較の数字は、何を数えるかで変わります。</strong>
+          この記事を書きながら同じコミットを見直したところ、検索の模様を少し変えると
+          <strong>確認する行の行番号が変わりました。</strong>結論(順序が逆転した)は同じでしたが、
+          <strong>数字そのものはそのまま持ち出せるものではありません。</strong></li>
+          <li><strong>お金が漏れる経路が全部塞がったとは言いません。</strong>そのとき数えた守りは 3 重で、
+          <strong>3 重目は存在だけを知っていて</strong>何を消すのか見たことがありませんでした。
+          数えないほうが正直だと書いておきました。</li>
+          <li><strong>18 個の確認スクリプトがいまも正しいかは分かりません。</strong>
+          そのとき誤検知 2 つを直しただけで、<strong>残り 16 個の判定式は別に検査していません。</strong></li>
+          <li><strong>12 件は今回のセッションで再現していません。</strong>その日のコミット記録から写したもので、
+          そのうち 2 件だけを本文に載せました。
+          <strong>残り 10 件がいまどういう状態かも、この記事の範囲の外です。</strong></li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="この節へのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>「やった」は記憶であって証拠ではありません。</strong>記憶は
+          <strong>編集をしたのか、しようとしたのか</strong>を区別できません。</li>
+          <li><strong>間違っていたと分かったとき、私はまず道具を疑いました。</strong>
+          そちらの説明が楽だからです。<strong>楽な説明ほど確認が先</strong>であるべきです。</li>
+          <li><strong>自分が書いたコメントを自分で証拠にしました。</strong>
+          説明が付いているということは、その説明が正しいという意味ではありません。</li>
+          <li><strong>確認スクリプトを書いたら、そのスクリプトも確認しなければなりません。</strong>
+          ❌ 3 つのうち 2 つがコードではなく私の判定式でした。</li>
+          <li><strong>「直した」ももう一度見なければなりません。</strong>その日に直したコードから同じ日に
+          <strong>12 件</strong>出て、そのうち 2 つは<strong>失敗が安全な状態とまったく同じに見える</strong>
+          形でした。</li>
+        </ul>
+
+        <p>1 行だけ残すならこれです。
+        <strong>うまくいっていると感じるとき、その感覚が何に支えられているかを確かめるべきです。</strong>
+        私の支えは記憶でした。</p>
+
+        <p><code>git log -S</code> は数秒で答えます。その数秒を惜しんだ代わりに、
+        有料実行の直前に<strong>報告どおりの姿ではなかったガードを 4 つ</strong>見つけました。
+        3 つは<strong>課金が続くのを止める装置</strong>でした。</p>
+
+        <p>⚠️ そしてそれらを直したあとも<strong>同じ場所からさらに 12 件出ました。</strong>
+        この記事は<strong>塞がったという話ではなく、確かめ方の話</strong>です。
+        プロジェクトはまだ進行中です。</p>
+
+        <p>お読みいただきありがとうございました。</p>
+        </div>
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=2dcb1d4f4c"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
