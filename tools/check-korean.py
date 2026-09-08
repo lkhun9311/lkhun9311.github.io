@@ -70,8 +70,16 @@ def scan(path, fix=False):
 
     changed = False
     if fix:
-        new = R13.sub(lambda m: m.group(1) + " ", mid)
+        # ⚠️ 앵커(id·href)는 건드리지 않는다. 손대면 목차와 어긋나고 링크가 죽는다.
+        #    2026-09-08 에 음차 일괄 치환이 앵커까지 바꿔 check-langs 가 3건을 잡았다.
+        anchors = []
+        def stash(m):
+            anchors.append(m.group(0))
+            return "\x00%d\x00" % (len(anchors) - 1)
+        new = re.sub(r'(?:id|href)="[^"]*"', stash, mid)
+        new = R13.sub(lambda m: m.group(1) + " ", new)
         new = R20.sub(lambda m: m.group(1) + m.group(2), new)
+        new = re.sub(r"\x00(\d+)\x00", lambda m: anchors[int(m.group(1))], new)
         if new != mid:
             changed = True
             io.open(path, "w", encoding="utf-8").write(head + new + tail)

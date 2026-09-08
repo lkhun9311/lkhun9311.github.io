@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ロール取得の 1,409ms が 1ms になりました | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/slow-screens-3-role-lookup.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/slow-screens-3-role-lookup.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/slow-screens-3-role-lookup.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/slow-screens-3-role-lookup.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="ロール取得の 1,409ms が 1ms になりました | Kwanghun Lee" />
+  <meta property="og:description" content="ユーザー画面のロール一覧が 1 秒を超えていました。解決できた 8 行はすべて 0ms、解決できなかった 6 行を足すと 1,409ms で、タイマーが記録した区間の合計と同じでした。解決できない project id ごとにプロジェクト全件を取り直しており、その 6 つの id は何度取り直しても入っていませんでした。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/slow-screens-3-role-lookup.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ロール取得の 1,409ms が 1ms になりました | Kwanghun Lee" />
+  <meta name="twitter:description" content="ユーザー画面のロール一覧が 1 秒を超えていました。解決できた 8 行はすべて 0ms、解決できなかった 6 行を足すと 1,409ms で、タイマーが記録した区間の合計と同じでした。解決できない project id ごとにプロジェクト全件を取り直しており、その 6 つの id は何度取り直しても入っていませんでした。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="ユーザー画面のロール一覧が 1 秒を超えていました。解決できた 8 行はすべて 0ms、解決できなかった 6 行を足すと 1,409ms で、タイマーが記録した区間の合計と同じでした。解決できない project id ごとにプロジェクト全件を取り直しており、その 6 つの id は何度取り直しても入っていませんでした。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "slow-screens-3-role-lookup.html", "ko": "slow-screens-3-role-lookup.ko.html", "ja": "slow-screens-3-role-lookup.ja.html"}'>
+          <option value="ko">한국어</option>
+          <option value="en">English</option>
+          <option value="ja" selected>日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>一覧</a>
+        <div class="article-meta"><span class="source-tag company notranslate">会社の業務</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>ロール取得の 1,409ms が 1ms になりました<br><span class="h1-sub">解決できない project id ごとに、プロジェクト全件を取り直していました。社内クラウド管理コンソール · 連載「遅い画面」③</span></h1>
+          <p class="article-date">2026年9月</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="slow-screens-3-role-lookup"></aside>
+
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#想定読者">想定読者</a></li>
+            <li><a href="#どんな内容">どんな内容</a></li>
+            <li><a href="#どんな画面">どんな画面</a></li>
+            <li><a href="#ログ">ログはすでに、遅れがどこにあるかを記録していました</a></li>
+            <li><a href="#原因">原因: 解決できない 1 件が全件を取り直していました</a></li>
+            <li><a href="#存在しない6件">その 6 件は、詰め直しても存在しません</a></li>
+            <li><a href="#修正">修正: キーで引かず、一覧を絞りました</a></li>
+            <li><a href="#失ったもの">⚠️ 代わりに失ったもの: 新しいプロジェクトが遅れて見えます</a></li>
+            <li><a href="#残った条件">そしてデータ側の条件はそのまま残りました</a></li>
+            <li><a href="#限界">限界: この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>こんにちは。社内クラウド管理コンソールの backend を作っています。ユーザー詳細画面で
+        <strong>ロール一覧が 1 秒を超えて読み込み中のまま</strong>でした。</p>
+
+        <p>⚠️ この記事の <strong>1,409ms は画面の応答時間ではありません。</strong>コードに入れたタイマーが
+        DB の取得が終わった<strong>あと</strong>に始まり、ロールの行を DTO に変える区間だけを測ります。
+        DB の取得もシリアライズも転送もその外です。<strong>ユーザーが待った時間はこれより長い</strong>です。
+        この記事の数値はすべてその区間の値です。</p>
+
+        <p>この画面には <strong>すでに cache がありました。</strong>ですからこの記事は
+        「cache を入れたら速くなった」ではなく <strong>「cache があるのに、その cache のせいで遅かった」</strong>です。</p>
+
+        <h2 id="想定読者">想定読者<a class="anchor" href="#想定読者" aria-label="この節へのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>cache を入れたのに、期待したほど速くならない画面を見たことがある方</li>
+          <li>cache が引けなかったとき <strong>何を取り直すか</strong>を決めたことがある方</li>
+          <li>存在しないものを探す取得がある、と気づかず通り過ぎたことがある方</li>
+        </ul>
+
+        <h2 id="どんな内容">どんな内容<a class="anchor" href="#どんな内容" aria-label="この節へのリンク">#</a></h2>
+
+        <ul>
+          <li>画面のリクエスト 1 回にロールが 14 行ついてきて、行ごとに
+          <strong>project id を 1 つずつ解決します。</strong><strong>解決できたのが 8 行、できなかったのが
+          6 行</strong>です。</li>
+          <li><strong>解決できた 8 行はすべて 0ms でした。</strong>そして解決できなかった 6 行を足すと
+          <strong>1,409ms</strong>、つまり <strong>この実行でタイマーが記録した合計と同じ</strong>です。</li>
+          <li>原因は <strong><code>CacheBox.project()</code> が解決できないたびにプロジェクト全件を
+          取り直していたこと</strong>です。ところがその 6 つの id は
+          <strong>全件を取り直してもその中にありません。</strong></li>
+          <li>直したあと同じ区間が <strong>1ms</strong> になりました。⚠️ ところが
+          <strong>解決できない行は今も 6 行</strong>です。減らしたのは解決できない回数ではなく、
+          <strong>解決できなかったときにかかる時間</strong>です。</li>
+        </ul>
+
+        <p>⚠️ ログには <code>[Hit]</code>・<code>[Miss]</code> と出ますが、<strong>これは cache の中を
+        測ったものではありません。</strong><code>CacheBox</code> を呼んだ結果プロジェクトが返ったかどうかで
+        付けた名前です。cache からきちんと読めたのに、その id が一覧にないので <code>[Miss]</code> になる
+        こともあります。以下では <strong>「解決できた・できなかった」</strong>と呼びます.</p>
+
+        <p><strong>社内製品なのでコードもログもそのまま載せていません。</strong>製品名・顧客名・内部アドレスは
+        外し、構造と数値だけを残しました。ログは <strong>logger 名と project id を伏せて書き写しています。</strong>
+        ミリ秒は記録のままです。⚠️ 行ごとのミリ秒は <strong>社内文書に貼られたログのスクリーンショットを見て
+        手で書き写した値</strong>です。文書に文字として書かれているのは合計(1,409ms・250ms・1ms)のほうです。</p>
+
+        <h2 id="どんな画面">どんな画面<a class="anchor" href="#どんな画面" aria-label="この節へのリンク">#</a></h2>
+
+        <p>ユーザーを 1 人開くと、下側にその人が <strong>どのプロジェクトでどのロールか</strong>が表で出ます。
+        ロール自体は自分たちの DB にあり、<strong>プロジェクト名は OpenStack 側にあります。</strong>
+        正確には、OpenStack でユーザーとプロジェクトを受け持つ <strong>Keystone</strong> です。
+        ですからロール 1 行ごとにプロジェクトを 1 回引く必要があります。</p>
+
+        <p>その引く場所に cache がありました。自作で
+        (<a href="slow-screens-1-volume-list.ja.html">前編①</a>に出てくるあの <code>CacheManager</code> です)、
+        保持期間は <strong>10 分</strong>でした。</p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロールできる図">
+            <svg viewBox="0 0 720 176" role="img" aria-labelledby="svc3-t svc3-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="svc3-t">ロール 1 行がプロジェクト名に届くまで</title>
+              <desc id="svc3-d">左で画面が 1 人のロール一覧を要求すると、backend はまず自分たちの DB の
+              ロール表を 1 回読み、ロール 14 行を受け取ります。その次がこの記事の区間です。行ごとに
+              project id を持って cache に尋ね、cache が答えられなければ Keystone のプロジェクト一覧 API へ
+              出ます。ピンクで示したのが外へ出る経路です。</desc>
+
+              <rect x="8" y="30" width="112" height="34" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="64" y="52" font-size="12.5" fill="#18121d" text-anchor="middle">ユーザー画面</text>
+              <path d="M120 47 H 158" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#v3-ar)"/>
+              <rect x="166" y="30" width="132" height="34" rx="6" fill="none" stroke="#18121d" stroke-width="2"/>
+              <text x="232" y="52" font-size="12.5" fill="#18121d" font-weight="700" text-anchor="middle">管理コンソール backend</text>
+              <path d="M298 47 H 336" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#v3-ar)"/>
+              <rect x="344" y="30" width="120" height="34" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="404" y="46" font-size="12.5" fill="#18121d" text-anchor="middle">自分たちの DB · ロール表</text>
+              <text x="404" y="60" font-size="11.5" fill="#7b7186" text-anchor="middle">1 回 · 14 行</text>
+
+              <path d="M232 64 V 96" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#v3-arA)"/>
+              <text x="244" y="86" font-size="12" fill="#d62976" font-weight="700">行ごとに 1 回</text>
+              <rect x="166" y="96" width="132" height="34" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="232" y="112" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">自作の cache</text>
+              <text x="232" y="126" font-size="11.5" fill="#7b7186" text-anchor="middle">保持 10 分</text>
+              <path d="M298 113 H 336" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#v3-arA)"/>
+              <rect x="344" y="96" width="240" height="34" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="464" y="112" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">Keystone · プロジェクト一覧 API</text>
+              <text x="464" y="126" font-size="11.5" fill="#7b7186" text-anchor="middle">1 回 約 235ms</text>
+              <rect x="166" y="144" width="418" height="18" rx="3" fill="rgba(214,41,118,0.18)" stroke="#d62976" stroke-width="1.5"/>
+              <text x="375" y="158" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">この記事が扱う区間</text>
+              <defs>
+                <marker id="v3-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
+                </marker>
+                <marker id="v3-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>ロール表は 1 回しか読みません。ピンクの区間が行ごとに繰り返される側で、タイマーもここだけを回ります。</figcaption>
+        </figure>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロールできる図">
+            <svg viewBox="0 0 720 210" role="img" aria-labelledby="miss-t miss-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="miss-t">解決できない 1 件が呼ぶもの、修正前と後</title>
+              <desc id="miss-d">上のカードが修正前です。キーを 1 つ探して無ければ、プロジェクト全件を外部 API から
+              取り直して cache を詰め、そのキーをもう一度探します。下のカードが修正後で、一覧を cache から
+              1 回受け取り、その中でキーを絞ります。無ければ無いまま終わり、外部 API を呼びません。</desc>
+
+              <rect x="0" y="0" width="720" height="94" rx="10" fill="rgba(214,41,118,0.06)"/>
+              <rect x="10" y="10" width="72" height="22" rx="11" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="46" y="26" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">修正前</text>
+              <rect x="98" y="44" width="132" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="164" y="61" font-size="12" fill="#18121d" text-anchor="middle">キー 1 つで引く</text>
+              <path d="M230 57 H 268" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#m-arA)"/>
+              <rect x="276" y="44" width="112" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="332" y="61" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">なし</text>
+              <path d="M388 57 H 426" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#m-arA)"/>
+              <rect x="434" y="44" width="276" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="572" y="61" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">全件を外部 API から取り直す</text>
+              <text x="10" y="86" font-size="12" fill="#d62976" font-weight="700">解決できない 1 件 · 約 235ms</text>
+
+              <rect x="0" y="106" width="720" height="94" rx="10" fill="rgba(79,91,213,0.06)"/>
+              <rect x="10" y="116" width="72" height="22" rx="11" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="46" y="132" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">修正後</text>
+              <rect x="98" y="150" width="132" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="164" y="167" font-size="12" fill="#18121d" text-anchor="middle">一覧を受け取って絞る</text>
+              <path d="M230 163 H 268" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#m-arB)"/>
+              <rect x="276" y="150" width="112" height="26" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="332" y="167" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">なし</text>
+              <path d="M388 163 H 426" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#m-arB)"/>
+              <rect x="434" y="150" width="276" height="26" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="572" y="167" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">そのまま終わり · 外部 API なし</text>
+              <text x="10" y="192" font-size="12" fill="#4f5bd5" font-weight="700">解決できない 1 件 · 0ms</text>
+              <defs>
+                <marker id="m-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+                <marker id="m-arB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>id 1 つで尋ねるやり方と、一覧を受け取って絞るやり方で、外部 API が付く条件を並べたものです。</figcaption>
+        </figure>
+
+        <h2 id="ログ">ログはすでに、遅れがどこにあるかを記録していました<a class="anchor" href="#ログ" aria-label="この節へのリンク">#</a></h2>
+
+        <p>取得 1 件ごとに、解決できたかどうかと、かかった時間をすでに記録していました。修正前の 1 回を
+        そのまま書き写すとこうです。</p>
+
+<pre data-lang="text"><code>[Miss] projectId=project-A   elapsed  247 ms
+[Miss] projectId=project-B   elapsed  235 ms
+[Hit ] projectId=project-C   elapsed    0 ms
+[Hit ] projectId=project-D   elapsed    0 ms
+[Miss] projectId=project-E   elapsed  238 ms
+[Miss] projectId=project-F   elapsed  228 ms
+[Miss] projectId=project-G   elapsed  233 ms
+[Hit ] projectId=project-H   elapsed    0 ms
+[Hit ] projectId=project-I   elapsed    0 ms
+[Hit ] projectId=project-D   elapsed    0 ms
+[Miss] projectId=project-J   elapsed  228 ms
+[Hit ] projectId=project-D   elapsed    0 ms
+[Hit ] projectId=project-H   elapsed    0 ms
+[Hit ] projectId=project-K   elapsed    0 ms
+[Result] Total elapsed time: 1409 ms</code></pre>
+
+        <p>ここですることは 1 つだけです。</p>
+
+        <blockquote><p><strong>247 + 235 + 238 + 228 + 233 + 228 = 1,409</strong><br>
+        解決できなかった 6 行の合計が <strong>この実行の合計と同じ</strong>です。解決できた 8 行は 0ms でした。</p></blockquote>
+
+        <p>⚠️ ミリ秒単位の 1 回測定なので <strong>「残りがちょうど 0 だ」までは言えません。</strong>
+        DTO を作り、絞り、並べる費用は各行の区間の外にあり、それが 1ms 未満ならこう見えます。
+        言えるのは <strong>この分解能で 6 行の記録値の合計が総計と同じだった</strong>ということです。</p>
+
+        <p>それでも見る場所は決まります。問うべきは「cache がなぜ効かないのか」ではなく
+        <strong>「解決できない 1 行がなぜ 235ms なのか」</strong>です。</p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロールできる図">
+            <svg viewBox="0 0 720 150" role="img" aria-labelledby="bar-t bar-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="bar-t">1,409ms の区間を取得 14 件に分けた棒</title>
+              <desc id="bar-d">横棒 1 本が 1,409 ミリ秒の区間全体です。その中は解決できなかった 6 マスだけで
+              埋まっており、各マスは 228 から 247 ミリ秒のあいだです。解決できた 8 件は 0 ミリ秒なので棒の中で
+              幅を持たず、棒の下に目盛りとしてだけ表示されています。</desc>
+
+              <text x="0" y="20" font-size="12.5" fill="#3b3344">1,409ms の区間 · 取得 14 件</text>
+              <rect x="0" y="32" width="708" height="34" rx="4" fill="none" stroke="#3b3344" stroke-width="1"/>
+              <rect x="1" y="33" width="124" height="32" fill="rgba(214,41,118,0.30)"/>
+              <rect x="125" y="33" width="118" height="32" fill="rgba(214,41,118,0.16)"/>
+              <rect x="243" y="33" width="120" height="32" fill="rgba(214,41,118,0.30)"/>
+              <rect x="363" y="33" width="114" height="32" fill="rgba(214,41,118,0.16)"/>
+              <rect x="477" y="33" width="117" height="32" fill="rgba(214,41,118,0.30)"/>
+              <rect x="594" y="33" width="114" height="32" fill="rgba(214,41,118,0.16)"/>
+              <text x="63" y="53" font-size="11" fill="#d62976" font-weight="700" text-anchor="middle">247</text>
+              <text x="184" y="53" font-size="11" fill="#d62976" font-weight="700" text-anchor="middle">235</text>
+              <text x="303" y="53" font-size="11" fill="#d62976" font-weight="700" text-anchor="middle">238</text>
+              <text x="420" y="53" font-size="11" fill="#d62976" font-weight="700" text-anchor="middle">228</text>
+              <text x="535" y="53" font-size="11" fill="#d62976" font-weight="700" text-anchor="middle">233</text>
+              <text x="651" y="53" font-size="11" fill="#d62976" font-weight="700" text-anchor="middle">228</text>
+              <text x="0" y="86" font-size="12" fill="#d62976" font-weight="700">解決できない 6 件 · 棒の全部</text>
+              <g stroke="#4f5bd5" stroke-width="2">
+                <path d="M0 104 V 116"/><path d="M14 104 V 116"/><path d="M28 104 V 116"/><path d="M42 104 V 116"/>
+                <path d="M56 104 V 116"/><path d="M70 104 V 116"/><path d="M84 104 V 116"/><path d="M98 104 V 116"/>
+              </g>
+              <text x="112" y="115" font-size="12" fill="#4f5bd5" font-weight="700">解決できた 8 件 · 0ms · 幅なし</text>
+            </svg>
+          </div>
+          <figcaption>マスの幅はミリ秒に比例します。解決できた 8 行は 0ms なので棒の中で幅がありません。
+          解決できた側は <strong>すでに十分速かった</strong>のです。残るのは解決できなかった側の処理時間です。</figcaption>
+        </figure>
+
+        <h2 id="原因">原因: 解決できない 1 件が全件を取り直していました<a class="anchor" href="#原因" aria-label="この節へのリンク">#</a></h2>
+
+        <p>プロジェクトを引くコードはこうなっていました。</p>
+
+<pre data-lang="java"><code>public static Project project(final String projectId) {
+    CacheManager manager = CacheManager.getInstance().init(Project.class, 10);
+    final Project project = manager.get(Project.class, projectId);
+
+    if (project == null) {                       // ← キーが 1 つ無い
+        client.identity().projects().list()      // ← 全件を取り直して
+              .forEach(r -&gt; manager.set(Project.class, r.getId(), r));
+        return manager.get(Project.class, projectId);   // ← もう一度引く
+    }
+    return project;
+}</code></pre>
+
+        <p>読むともっともらしく見えます。<strong>無ければ詰めて、もう一度見る。</strong>cache を初めて書くときに
+        自然に出てくる形で、実際 <strong>最初の 1 回はこれで正しい</strong>のです。</p>
+
+        <p>問題は <strong>「詰めても現れないキー」</strong>があるときです。</p>
+
+        <h2 id="存在しない6件">その 6 件は、詰め直しても存在しません<a class="anchor" href="#存在しない6件" aria-label="この節へのリンク">#</a></h2>
+
+        <p>ロール表は <strong>自分たちの DB</strong> にあり、プロジェクトは <strong>OpenStack</strong> にあります。
+        OpenStack 側でプロジェクトを消しても <strong>こちらのロール表のその行はそのまま残ります。</strong>
+        その行が指す projectId は、もうどこにもありません。</p>
+
+        <p>すると上のコードはこう回ります。</p>
+
+        <ol>
+          <li>cache で引く → 無い</li>
+          <li>全件を取り直す → <strong>235ms</strong></li>
+          <li>もう一度引く → <strong>やはり無い</strong>。消えたプロジェクトだからです</li>
+          <li>次の行でまた無い id に当たる → <strong>1 に戻る</strong></li>
+        </ol>
+
+        <blockquote><p><strong>無い id に当たるたびに、プロジェクト全件を取り直していました。</strong>
+        取り直してもその 6 つの id は一覧に無いので、次の行でも同じように取り直します。</p></blockquote>
+
+        <p>解決できなかった 6 行は <strong>手元にある 3 回の実行すべてで同じ 6 つの id</strong> でした。
+        修正前 1 回と修正後 2 回で、日付も 1 日違います。たまたま cache が冷えていたのではなく、
+        <strong>埋まりようのない場所</strong>に見えます。⚠️ 3 回は 3 回です。それ以上は回していません。</p>
+
+        <h2 id="修正">修正: キーで引かず、一覧を絞りました<a class="anchor" href="#修正" aria-label="この節へのリンク">#</a></h2>
+
+        <p>直したのは <strong>引き方 1 つ</strong>です。</p>
+
+<pre data-lang="java"><code>// 前: キー 1 つを cache に尋ねる。無ければ外部 API を呼ぶ
+var project = CacheBox.project(roleAssignment.getProjectId());
+
+// 後: 一覧を cache から受け取り、その中で絞る。無ければ無いまま終わり
+var project = CacheBox.projects().stream()
+        .filter(p -&gt; p.getId().equalsIgnoreCase(roleAssignment.getProjectId()))
+        .findFirst();</code></pre>
+
+        <p><code>projects()</code> も外部 API を呼ぶことがあります。違うのは
+        <strong>「その id が無い」がもう外部 API を呼ぶ条件ではない</strong>という点です。</p>
+
+        <p>正確にはこうです。<code>projects()</code> は cache から一覧を受け取りますが、そのときに
+        <strong>期限切れの項目を 1 つずつ取り除きます。</strong>そうして残ったものが
+        <strong>完全に空のときだけ</strong>外部 API を呼びます。</p>
+
+        <p>⚠️ ここに落とし穴が 1 つあります。<strong>一部だけ期限切れなら呼びません。</strong>
+        生き残った項目が 1 つでもあれば、その不完全な一覧をそのまま返し、その間に抜けたプロジェクトは
+        <strong>存在するのに「解決できない」</strong>になります。今回の実行では項目がまとめて詰められ
+        まとめて期限切れになるので表に出ませんでした。出なかっただけで、無いという意味ではありません。</p>
+
+        <p>ログがそのまま示します。cache が期限切れの状態で 1 回回すと、</p>
+
+<pre data-lang="text"><code>[Miss] projectId=project-A   elapsed  246 ms   ← 一覧を取りに行く呼び出し
+[Miss] projectId=project-B   elapsed    0 ms
+[Hit ] projectId=project-C   elapsed    0 ms
+…
+[Miss] projectId=project-J   elapsed    0 ms
+[Result] Total elapsed time: 250 ms</code></pre>
+
+        <p><strong>解決できない行は今も 6 行です。</strong>ところがそのうち 5 回が 0ms です。
+        cache が有効な状態では最初の 1 回も 0ms になり、<strong>合計が 1ms</strong> になります。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると残りが見えます">
+        <table>
+          <caption class="sr-only">ロール取得 1 件の、cache 状態ごとの時間。</caption>
+          <thead><tr><th>状態</th><th>ロール行</th><th>解決できない</th><th>解決できない 1 行の時間</th><th>区間の合計</th></tr></thead>
+          <tbody>
+            <tr><td>修正前</td><td>14</td><td>6</td><td>228〜247ms</td><td><strong>1,409ms</strong></td></tr>
+            <tr><td>修正後 · cache 期限切れ</td><td>14</td><td>6</td><td>最初の 1 件だけ 246ms</td><td>250ms</td></tr>
+            <tr><td>修正後 · cache 有効</td><td>14</td><td>6</td><td>0ms</td><td><strong>1ms</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">真ん中の欄が 3 行とも <strong>6</strong> です。
+        <strong>解決できない回数を減らしたことはありません。</strong>変わったのは右の 2 欄です。
+        ⚠️ 3 行とも <strong>1 回の観測</strong>です。繰り返して分布を見た値ではありません。</p>
+
+        <h2 id="失ったもの">⚠️ 代わりに失ったもの: 新しいプロジェクトが遅れて見えます<a class="anchor" href="#失ったもの" aria-label="この節へのリンク">#</a></h2>
+
+        <p>修正前のコードには <strong>誰も当てにしていなかった働きが 1 つ</strong>ありました。知らない id に
+        当たると一覧を取り直すので、<strong>さっき作ったプロジェクトがすぐ見えた</strong>のです。
+        遅い代わりに、最新でした。</p>
+
+        <p>直したあとは、知らない id に当たっても何もしません。ですから新しいプロジェクトは
+        <strong>cache が詰め直されるまで見えません。</strong></p>
+
+        <p>⚠️ その「詰め直されるまで」を <strong>10 分だと断言はできません。</strong>
+        保持期間は一覧単位ではなく <strong>項目ごとに記録された保存時刻</strong>に掛かります。そして
+        <code>project()</code> は消えずに残っているので、<strong>別の画面でその関数が 1 回回れば項目が
+        まとめて詰め直されます。</strong>すると時刻が更新されて遅く見えることも、ちょうどその瞬間に
+        詰められて早く見えることもあります。言えるのは <strong>他で詰めなければ、最後の項目が期限切れに
+        なったあとの最初の取得に反映される</strong>というところまでです。</p>
+
+        <blockquote><p>遅延を無くしたのではなく <strong>遅延と最新性を交換した</strong>のです。
+        この画面は人が目で読む一覧なので 10 分を受け入れられました。
+        <strong>その判断ができない画面もあります。</strong></p></blockquote>
+
+        <h2 id="残った条件">そしてデータ側の条件はそのまま残りました<a class="anchor" href="#残った条件" aria-label="この節へのリンク">#</a></h2>
+
+        <p>遅さの <strong>直接の原因</strong>は、解決できないたびに全件を取り直していた
+        <strong>引き方</strong>で、その引き方を <strong>6 回も踏ませたデータ側の条件</strong>が、
+        存在しないプロジェクトを指すロール行 6 つでした。2 つは別のものです。</p>
+
+        <p>私が直したのは <strong>前者</strong>です。後者は <strong>今もそのまま</strong>あります。
+        その行が高くつかなくなっただけで、無くなってはいません。OpenStack でプロジェクトが消えたとき
+        こちらのロール表も一緒に片づくようにするのが本来の仕事で、それはこの作業に入っていませんでした。</p>
+
+        <h2 id="限界">限界: この記事が主張しないこと<a class="anchor" href="#限界" aria-label="この節へのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>測定が <code>System.currentTimeMillis()</code> と <code>log.info</code> です。</strong>
+          <code>currentTimeMillis()</code> は単調時計ではなく、システム時刻が変われば値も動きます。
+          そして各行の区間の <strong>中に</strong> ログ出力が 1 回入っていて、そのあとのログ 1 回は
+          入っていません。<strong>0ms は「1ms 未満」という意味</strong>で、「費用が無い」ではありません。
+          きちんとやるなら <code>System.nanoTime()</code> か timer metric で測り、外部 API の呼び出し回数は
+          別に数える必要があります。</li>
+          <li><strong>1 回の実行です。</strong>3 つの状態をそれぞれ 1 回ずつ回したログで、繰り返して分布を見た
+          ものではありません。235ms という値もその 6 件の平均にすぎません。</li>
+          <li><strong>なぜ一覧 1 回が 235ms なのかは掘り下げていません。</strong>ネットワークか、Keystone 側の
+          処理か、プロジェクト数のせいかを切り分けていません。</li>
+          <li><strong>プロジェクトが何個だったかは記録にありません。</strong>ですから「一覧が大きくて遅い」のか
+          「呼び出し自体が高い」のかも、このログでは分かりません。</li>
+          <li><strong>直したコードも完全ではありません。</strong><code>projects()</code> をロール 1 行ごとに
+          1 回呼びます。cache が温かいうちは 0ms で表に出ませんが、行がとても多くなると
+          <strong>一覧を繰り返し走査する費用</strong>が残ります。ループの外に 1 回だけ出すほうが良いです。</li>
+          <li><strong>この cache は前編①の問題をそのまま抱えています。</strong><code>projects()</code> に
+          ロックが無いので、cache が空になる瞬間にリクエストが複数入ると <strong>それぞれが外部 API を
+          呼びます。</strong>⚠️ コードを読んで言っていることで、このログで確認したものではありません。
+          ユーザーを 1 人開いた実行なので、同時リクエストはありませんでした。</li>
+          <li><strong>運用統計ではありません。</strong>試験環境でユーザーを 1 人開いたログです。</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="この節へのリンク">#</a></h2>
+
+        <p>まとめるとこうです。</p>
+
+        <ul>
+          <li><strong>cache があることと速いことは別です。</strong>ここでは解決できた行がすべて 0ms なのに
+          区間は 1,409ms でした。</li>
+          <li><strong>解決できなかったとき何をするかが cache 設計の半分です。</strong>「無ければ全部取り直す」は
+          最初の 1 回には正しく、<strong>詰めても現れない id の前では最も悪い選択</strong>です。</li>
+          <li><strong>減らせるものは 2 つです。</strong>解決できない <strong>回数</strong>と、解決できなかった
+          ときの <strong>処理時間</strong>。今回減らしたのは後ろで、前はそのままです。</li>
+          <li><strong>速くなった代わりに何を失ったかも一緒に書くべきです。</strong>ここでは 10 分ぶんの
+          最新性です。</li>
+        </ul>
+
+        <p>最後に 1 行だけ残すなら、これです。
+        <strong>すでに書かれていたログを、足してみるだけの仕事でした。</strong>
+        その 6 行を足すまでは「cache がなぜ効かないのか」を覗き込んでいました。</p>
+
+        <p>お読みいただきありがとうございました。</p>
+        </div>
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=a3c0812233"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=44326158d4"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

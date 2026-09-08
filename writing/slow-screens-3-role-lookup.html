@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Role Lookup Went From 1,409 ms to 1 ms | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/slow-screens-3-role-lookup.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/slow-screens-3-role-lookup.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/slow-screens-3-role-lookup.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/slow-screens-3-role-lookup.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="A Role Lookup Went From 1,409 ms to 1 ms | Kwanghun Lee" />
+  <meta property="og:description" content="The role list on a user page took over a second. The eight rows that resolved cost 0 ms each, and the six that did not add up to 1,409 ms — the whole span the timer recorded. Every unresolved project id was pulling the entire project list again, and those six ids were never in it." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/slow-screens-3-role-lookup.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="A Role Lookup Went From 1,409 ms to 1 ms | Kwanghun Lee" />
+  <meta name="twitter:description" content="The role list on a user page took over a second. The eight rows that resolved cost 0 ms each, and the six that did not add up to 1,409 ms — the whole span the timer recorded. Every unresolved project id was pulling the entire project list again, and those six ids were never in it." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="The role list on a user page took over a second. The eight rows that resolved cost 0 ms each, and the six that did not add up to 1,409 ms — the whole span the timer recorded. Every unresolved project id was pulling the entire project list again, and those six ids were never in it." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "slow-screens-3-role-lookup.html", "ko": "slow-screens-3-role-lookup.ko.html", "ja": "slow-screens-3-role-lookup.ja.html"}'>
+          <option value="ko">Korean</option>
+          <option value="en" selected>English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing</a>
+        <div class="article-meta"><span class="source-tag company notranslate">Company work</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>A Role Lookup Went From 1,409 ms to 1 ms<br><span class="h1-sub">Every project id it failed to resolve pulled the whole project list again. An internal cloud admin console. Slow Screens, part three</span></h1>
+          <p class="article-date">Sep 2026</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="slow-screens-3-role-lookup"></aside>
+
+        <nav class="article-toc" aria-label="Table of contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-is-in-here">What this is about</a></li>
+            <li><a href="#the-screen">The screen</a></li>
+            <li><a href="#the-log">The log had already recorded where the time went</a></li>
+            <li><a href="#the-cause">The cause: one failed lookup pulled the whole list</a></li>
+            <li><a href="#never-found">Those six were not there to be found</a></li>
+            <li><a href="#the-fix">The fix: filter a list instead of asking for a key</a></li>
+            <li><a href="#what-it-cost">⚠️ What it cost: new projects show up late</a></li>
+            <li><a href="#still-there">And the data condition is still there</a></li>
+            <li><a href="#limits">Limits: what this article does not claim</a></li>
+            <li><a href="#Closing">Closing</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>Hello. I write the backend of an internal cloud admin console. On the user detail screen,
+        <strong>the role list spun for over a second</strong> without finishing.</p>
+
+        <p>⚠️ The <strong>1,409 ms in this article is not the screen’s response time.</strong> The timer in the
+        code starts <strong>after</strong> the database query returns, and covers only the stretch that turns
+        role rows into DTOs. The database query, serialisation and transport all sit outside it.
+        <strong>What the user waited is longer than this.</strong> Every number here is from that stretch.</p>
+
+        <p>This screen <strong>already had a cache.</strong> So this article is not “we added a cache and it got
+        faster” but <strong>“there was a cache, and the cache was why it was slow”.</strong></p>
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>You have added a cache and not got the speed you expected.</li>
+          <li>You have had to decide <strong>what to reload</strong> when a cache lookup fails.</li>
+          <li>You have missed the fact that some lookups are searching for something that is not there.</li>
+        </ul>
+
+        <h2 id="what-is-in-here">What this is about<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li>One screen request brings back 14 role rows, and each row
+          <strong>resolves one project id.</strong> <strong>Eight resolve, six do not.</strong></li>
+          <li><strong>The eight that resolve cost 0 ms each.</strong> Add up the six that do not and you get
+          <strong>1,409 ms</strong> — <strong>the same figure the timer recorded for the whole stretch in this
+          run.</strong></li>
+          <li>The cause is that <strong><code>CacheBox.project()</code> pulled the entire project list again
+          every time it failed to resolve one.</strong> And those six ids
+          <strong>are not in that list however many times you fetch it.</strong></li>
+          <li>After the fix the same stretch takes <strong>1 ms</strong>. ⚠️ But
+          <strong>six rows still fail to resolve.</strong> What went down is not how often it fails but
+          <strong>what a failure costs.</strong></li>
+        </ul>
+
+        <p>⚠️ The log says <code>[Hit]</code> and <code>[Miss]</code>, but <strong>it is not measuring anything
+        inside the cache.</strong> Those labels come from whether a call to <code>CacheBox</code> returned a
+        project. A read can hit the cache perfectly and still be logged <code>[Miss]</code> because the id is
+        not in the list. Below I will call them <strong>resolved and unresolved.</strong></p>
+
+        <p><strong>This is an internal product, so neither the code nor the logs are reproduced as they
+        are.</strong> Product names, customers and internal addresses are gone; the structure and the numbers
+        stay. The logs appear with <strong>the logger name and the project ids masked.</strong>
+        The milliseconds are as recorded. ⚠️ The per-row milliseconds were <strong>transcribed by hand from log
+        screenshots pasted into the internal document.</strong> What the document states as text are the
+        totals: 1,409 ms, 250 ms, 1 ms.</p>
+
+        <h2 id="the-screen">The screen<a class="anchor" href="#the-screen" aria-label="Link to this section">#</a></h2>
+
+        <p>Open one user and the lower half shows a table of <strong>which role they hold in which
+        project.</strong> The roles live in our own database; <strong>the project names live on the OpenStack
+        side</strong> — specifically in <strong>Keystone</strong>, the service that owns users and projects
+        there. So every role row has to resolve a project.</p>
+
+        <p>There was a cache at that resolving step. Hand-rolled — the same <code>CacheManager</code> that
+        appears in <a href="slow-screens-1-volume-list.html">part one</a> — with a retention of
+        <strong>10 minutes.</strong></p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
+            <svg viewBox="0 0 720 176" role="img" aria-labelledby="svc3-t svc3-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="svc3-t">How one role row reaches a project name</title>
+              <desc id="svc3-d">On the left the screen asks for one user's role list, and the backend first
+              reads the role table in our own database once, getting 14 rows back. What follows is the stretch
+              this article is about: each row takes its project id to the cache, and when the cache cannot
+              answer, the call goes out to Keystone's project list API. The path drawn in pink is the one that
+              leaves the process.</desc>
+
+              <rect x="8" y="30" width="112" height="34" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="64" y="52" font-size="12.5" fill="#18121d" text-anchor="middle">User screen</text>
+              <path d="M120 47 H 158" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#v3-ar)"/>
+              <rect x="166" y="30" width="132" height="34" rx="6" fill="none" stroke="#18121d" stroke-width="2"/>
+              <text x="232" y="52" font-size="12.5" fill="#18121d" font-weight="700" text-anchor="middle">Admin console backend</text>
+              <path d="M298 47 H 336" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#v3-ar)"/>
+              <rect x="344" y="30" width="120" height="34" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="404" y="46" font-size="12.5" fill="#18121d" text-anchor="middle">our DB · role table</text>
+              <text x="404" y="60" font-size="11.5" fill="#7b7186" text-anchor="middle">once · 14 rows</text>
+
+              <path d="M232 64 V 96" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#v3-arA)"/>
+              <text x="244" y="86" font-size="12" fill="#d62976" font-weight="700">once per row</text>
+              <rect x="166" y="96" width="132" height="34" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="232" y="112" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">hand-rolled cache</text>
+              <text x="232" y="126" font-size="11.5" fill="#7b7186" text-anchor="middle">10 min retention</text>
+              <path d="M298 113 H 336" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#v3-arA)"/>
+              <rect x="344" y="96" width="240" height="34" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="464" y="112" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">Keystone · project list API</text>
+              <text x="464" y="126" font-size="11.5" fill="#7b7186" text-anchor="middle">~235 ms per call</text>
+              <rect x="166" y="144" width="418" height="18" rx="3" fill="rgba(214,41,118,0.18)" stroke="#d62976" stroke-width="1.5"/>
+              <text x="375" y="158" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">the stretch this article covers</text>
+              <defs>
+                <marker id="v3-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
+                </marker>
+                <marker id="v3-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>The role table is read once. The pink stretch is the part that repeats per row, and it is
+          also the only part the timer covers.</figcaption>
+        </figure>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
+            <svg viewBox="0 0 720 210" role="img" aria-labelledby="miss-t miss-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="miss-t">What one failed lookup calls, before and after</title>
+              <desc id="miss-d">The upper card is before the fix: looking for one key and not finding it, the
+              code fetches the whole project list from the external API again, refills the cache and looks the
+              key up once more. The lower card is after: the list comes from the cache once and the key is
+              filtered out of it. Not finding it simply ends there, with no external call.</desc>
+
+              <rect x="0" y="0" width="720" height="94" rx="10" fill="rgba(214,41,118,0.06)"/>
+              <rect x="10" y="10" width="72" height="22" rx="11" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="46" y="26" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">Before</text>
+              <rect x="98" y="44" width="132" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="164" y="61" font-size="12" fill="#18121d" text-anchor="middle">look up one key</text>
+              <path d="M230 57 H 268" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#m-arA)"/>
+              <rect x="276" y="44" width="112" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="332" y="61" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">not found</text>
+              <path d="M388 57 H 426" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#m-arA)"/>
+              <rect x="434" y="44" width="276" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="572" y="61" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">fetch the whole list from the external API again</text>
+              <text x="10" y="86" font-size="12" fill="#d62976" font-weight="700">one failure · ~235 ms</text>
+
+              <rect x="0" y="106" width="720" height="94" rx="10" fill="rgba(79,91,213,0.06)"/>
+              <rect x="10" y="116" width="72" height="22" rx="11" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="46" y="132" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">After</text>
+              <rect x="98" y="150" width="132" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="164" y="167" font-size="12" fill="#18121d" text-anchor="middle">take the list and filter</text>
+              <path d="M230 163 H 268" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#m-arB)"/>
+              <rect x="276" y="150" width="112" height="26" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="332" y="167" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">not found</text>
+              <path d="M388 163 H 426" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#m-arB)"/>
+              <rect x="434" y="150" width="276" height="26" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="572" y="167" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">ends there · no external call</text>
+              <text x="10" y="192" font-size="12" fill="#4f5bd5" font-weight="700">one failure · 0 ms</text>
+              <defs>
+                <marker id="m-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+                </marker>
+                <marker id="m-arB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>Asking by one id against taking the list and filtering, with the condition that attaches
+          an external call placed side by side.</figcaption>
+        </figure>
+
+        <h2 id="the-log">The log had already recorded where the time went<a class="anchor" href="#the-log" aria-label="Link to this section">#</a></h2>
+
+        <p>Every lookup was already logging whether it resolved and how long it took. One run from before the
+        fix, transcribed, looks like this.</p>
+
+<pre data-lang="text"><code>[Miss] projectId=project-A   elapsed  247 ms
+[Miss] projectId=project-B   elapsed  235 ms
+[Hit ] projectId=project-C   elapsed    0 ms
+[Hit ] projectId=project-D   elapsed    0 ms
+[Miss] projectId=project-E   elapsed  238 ms
+[Miss] projectId=project-F   elapsed  228 ms
+[Miss] projectId=project-G   elapsed  233 ms
+[Hit ] projectId=project-H   elapsed    0 ms
+[Hit ] projectId=project-I   elapsed    0 ms
+[Hit ] projectId=project-D   elapsed    0 ms
+[Miss] projectId=project-J   elapsed  228 ms
+[Hit ] projectId=project-D   elapsed    0 ms
+[Hit ] projectId=project-H   elapsed    0 ms
+[Hit ] projectId=project-K   elapsed    0 ms
+[Result] Total elapsed time: 1409 ms</code></pre>
+
+        <p>There is only one thing to do with that.</p>
+
+        <blockquote><p><strong>247 + 235 + 238 + 228 + 233 + 228 = 1,409</strong><br>
+        The six unresolved rows sum to <strong>the total for this run.</strong> The eight resolved rows were
+        0 ms.</p></blockquote>
+
+        <p>⚠️ This is one run at millisecond resolution, so <strong>“the rest is exactly zero” is more than it
+        supports.</strong> Building, filtering and sorting the DTOs happens outside each row's own span, and
+        anything under a millisecond looks like this. What it does support is that
+        <strong>at this resolution the six recorded spans summed to the total.</strong></p>
+
+        <p>It still settles where to look. The question is not “why isn't the cache helping” but
+        <strong>“why does one unresolved row cost 235 ms”.</strong></p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
+            <svg viewBox="0 0 720 150" role="img" aria-labelledby="bar-t bar-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="bar-t">The 1,409 ms span split across 14 lookups</title>
+              <desc id="bar-d">One horizontal bar is the whole 1,409 millisecond span. It is filled entirely by
+              six unresolved lookups, each between 228 and 247 milliseconds. The eight resolved lookups were
+              0 milliseconds, so they take up no width in the bar and appear only as tick marks below it.</desc>
+
+              <text x="0" y="20" font-size="12.5" fill="#3b3344">1,409 ms span · 14 lookups</text>
+              <rect x="0" y="32" width="708" height="34" rx="4" fill="none" stroke="#3b3344" stroke-width="1"/>
+              <rect x="1" y="33" width="124" height="32" fill="rgba(214,41,118,0.30)"/>
+              <rect x="125" y="33" width="118" height="32" fill="rgba(214,41,118,0.16)"/>
+              <rect x="243" y="33" width="120" height="32" fill="rgba(214,41,118,0.30)"/>
+              <rect x="363" y="33" width="114" height="32" fill="rgba(214,41,118,0.16)"/>
+              <rect x="477" y="33" width="117" height="32" fill="rgba(214,41,118,0.30)"/>
+              <rect x="594" y="33" width="114" height="32" fill="rgba(214,41,118,0.16)"/>
+              <text x="63" y="53" font-size="11" fill="#d62976" font-weight="700" text-anchor="middle">247</text>
+              <text x="184" y="53" font-size="11" fill="#d62976" font-weight="700" text-anchor="middle">235</text>
+              <text x="303" y="53" font-size="11" fill="#d62976" font-weight="700" text-anchor="middle">238</text>
+              <text x="420" y="53" font-size="11" fill="#d62976" font-weight="700" text-anchor="middle">228</text>
+              <text x="535" y="53" font-size="11" fill="#d62976" font-weight="700" text-anchor="middle">233</text>
+              <text x="651" y="53" font-size="11" fill="#d62976" font-weight="700" text-anchor="middle">228</text>
+              <text x="0" y="86" font-size="12" fill="#d62976" font-weight="700">6 unresolved · the entire bar</text>
+              <g stroke="#4f5bd5" stroke-width="2">
+                <path d="M0 104 V 116"/><path d="M14 104 V 116"/><path d="M28 104 V 116"/><path d="M42 104 V 116"/>
+                <path d="M56 104 V 116"/><path d="M70 104 V 116"/><path d="M84 104 V 116"/><path d="M98 104 V 116"/>
+              </g>
+              <text x="112" y="115" font-size="12" fill="#4f5bd5" font-weight="700">8 resolved · 0 ms · no width</text>
+            </svg>
+          </div>
+          <figcaption>Cell widths are proportional to milliseconds. The eight resolved rows are 0 ms and take
+          no width. The resolved side <strong>was already fast enough.</strong> What is left is what the
+          unresolved side costs.</figcaption>
+        </figure>
+
+        <h2 id="the-cause">The cause: one failed lookup pulled the whole list<a class="anchor" href="#the-cause" aria-label="Link to this section">#</a></h2>
+
+        <p>The code that resolves a project looked like this.</p>
+
+<pre data-lang="java"><code>public static Project project(final String projectId) {
+    CacheManager manager = CacheManager.getInstance().init(Project.class, 10);
+    final Project project = manager.get(Project.class, projectId);
+
+    if (project == null) {                       // ← one key is missing
+        client.identity().projects().list()      // ← fetch the whole list again
+              .forEach(r -&gt; manager.set(Project.class, r.getId(), r));
+        return manager.get(Project.class, projectId);   // ← and look once more
+    }
+    return project;
+}</code></pre>
+
+        <p>It reads reasonably. <strong>If it is not there, fill the cache and look again.</strong> It is the
+        shape a cache naturally takes the first time you write one, and <strong>for the first call it is
+        right.</strong></p>
+
+        <p>The problem is <strong>a key that filling the cache will never produce.</strong></p>
+
+        <h2 id="never-found">Those six were not there to be found<a class="anchor" href="#never-found" aria-label="Link to this section">#</a></h2>
+
+        <p>The role table lives in <strong>our database</strong> and the projects live in
+        <strong>OpenStack.</strong> Delete a project on the OpenStack side and <strong>the row in our role table
+        stays exactly where it was.</strong> The project id it points at now exists nowhere.</p>
+
+        <p>Which makes the code above run like this.</p>
+
+        <ol>
+          <li>look in the cache → not there</li>
+          <li>fetch the whole list again → <strong>235 ms</strong></li>
+          <li>look again → <strong>still not there</strong>, because the project is gone</li>
+          <li>the next row hits another missing id → <strong>back to step 1</strong></li>
+        </ol>
+
+        <blockquote><p><strong>Every missing id fetched the entire project list afresh.</strong>
+        And since those six ids are not in the list however fresh it is, the next row fetches it again.</p></blockquote>
+
+        <p>The six unresolved rows were <strong>the same six ids in all three runs I have</strong> — one before
+        the fix and two after, a day apart. That does not look like a cache that happened to be cold; it looks
+        like <strong>positions that cannot be filled.</strong>
+        ⚠️ Three runs is three runs. I did not run it more than that.</p>
+
+        <h2 id="the-fix">The fix: filter a list instead of asking for a key<a class="anchor" href="#the-fix" aria-label="Link to this section">#</a></h2>
+
+        <p>What changed is <strong>one thing: how it looks the project up.</strong></p>
+
+<pre data-lang="java"><code>// before: ask the cache for one key. if absent, call the external API
+var project = CacheBox.project(roleAssignment.getProjectId());
+
+// after: take the list from the cache and filter it. absent simply ends there
+var project = CacheBox.projects().stream()
+        .filter(p -&gt; p.getId().equalsIgnoreCase(roleAssignment.getProjectId()))
+        .findFirst();</code></pre>
+
+        <p><code>projects()</code> can call the external API too. What differs is that
+        <strong>“this id is absent” is no longer the condition that triggers the call.</strong></p>
+
+        <p>Precisely: <code>projects()</code> takes the list from the cache, and while doing so it
+        <strong>drops expired entries one by one.</strong> Only when what remains is
+        <strong>completely empty</strong> does it call the external API.</p>
+
+        <p>⚠️ There is a trap in that. <strong>Partial expiry does not trigger it.</strong> If even one entry
+        survives, the incomplete list is returned as it is, and a project that fell out in between is reported
+        <strong>unresolved despite existing.</strong> In these runs the entries were filled together and expired
+        together, so it did not show. Not showing is not the same as not being there.</p>
+
+        <p>The log shows it directly. One run with the cache expired:</p>
+
+<pre data-lang="text"><code>[Miss] projectId=project-A   elapsed  246 ms   ← the call that fetches the list
+[Miss] projectId=project-B   elapsed    0 ms
+[Hit ] projectId=project-C   elapsed    0 ms
+…
+[Miss] projectId=project-J   elapsed    0 ms
+[Result] Total elapsed time: 250 ms</code></pre>
+
+        <p><strong>Six rows still fail to resolve.</strong> Five of them now cost 0 ms.
+        With the cache valid the first one is 0 ms as well and <strong>the total is 1 ms.</strong></p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">One role lookup, by cache state.</caption>
+          <thead><tr><th>State</th><th>Role rows</th><th>Unresolved</th><th>Cost of one unresolved</th><th>Span total</th></tr></thead>
+          <tbody>
+            <tr><td>before the fix</td><td>14</td><td>6</td><td>228–247 ms</td><td><strong>1,409 ms</strong></td></tr>
+            <tr><td>after · cache expired</td><td>14</td><td>6</td><td>246 ms for the first only</td><td>250 ms</td></tr>
+            <tr><td>after · cache valid</td><td>14</td><td>6</td><td>0 ms</td><td><strong>1 ms</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">The middle column reads <strong>6</strong> on all three rows.
+        <strong>Nothing here reduced how often a lookup fails.</strong> What changed is the two columns on the
+        right. ⚠️ All three rows are <strong>a single observation.</strong> No distribution was measured.</p>
+
+        <h2 id="what-it-cost">⚠️ What it cost: new projects show up late<a class="anchor" href="#what-it-cost" aria-label="Link to this section">#</a></h2>
+
+        <p>The old code had <strong>a use nobody was counting on.</strong> Meeting an unknown id, it refetched
+        the list, so <strong>a project created moments ago showed up immediately.</strong> It was slow, and it
+        was current.</p>
+
+        <p>After the fix an unknown id does nothing at all. So a new project
+        <strong>does not appear until the cache is refilled.</strong></p>
+
+        <p>⚠️ And “until the cache is refilled” <strong>is not something I can pin at 10 minutes.</strong>
+        Retention hangs on <strong>the write time recorded per entry,</strong> not on the list as a whole. And
+        <code>project()</code> is still there, so <strong>one call to it from another screen refills every
+        entry at once.</strong> That can push the timestamps forward and make a new project appear later, or
+        land at just the right moment and make it appear sooner. What I can say is that
+        <strong>absent any other refill, it shows up on the first lookup after the last entry expires.</strong></p>
+
+        <blockquote><p>The latency was not removed. <strong>It was traded against freshness.</strong>
+        This screen is a list a person reads, so ten minutes was acceptable.
+        <strong>Not every screen can make that trade.</strong></p></blockquote>
+
+        <h2 id="still-there">And the data condition is still there<a class="anchor" href="#still-there" aria-label="Link to this section">#</a></h2>
+
+        <p>The <strong>direct cause</strong> of the delay was the <strong>lookup policy</strong> that refetched
+        the whole list on every failure. The <strong>data condition that made it run six times</strong> was six
+        role rows pointing at projects that no longer exist. Those are two different things.</p>
+
+        <p>I fixed <strong>the first one.</strong> The second <strong>is still there.</strong> Those rows are
+        merely no longer expensive; they have not gone away. Making our role table clean itself up when a
+        project is deleted on the OpenStack side is the actual job, and it was not part of this work.</p>
+
+        <h2 id="limits">Limits: what this article does not claim<a class="anchor" href="#limits" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>The measurement is <code>System.currentTimeMillis()</code> plus <code>log.info</code>.</strong>
+          <code>currentTimeMillis()</code> is not a monotonic clock; change the system time and the value moves.
+          One log call sits <strong>inside</strong> each row's span while the one after it falls outside.
+          <strong>0 ms means “under a millisecond”,</strong> not “free”. Doing this properly means
+          <code>System.nanoTime()</code> or a timer metric, and counting external API calls separately.</li>
+          <li><strong>These are single runs.</strong> One log per state, with no repetition and no distribution.
+          The 235 ms is just the average of those six.</li>
+          <li><strong>Why one list call costs 235 ms is not something I dug into.</strong> Network, Keystone-side
+          processing, the number of projects — none of those were separated.</li>
+          <li><strong>The record does not say how many projects there were.</strong> So whether the list was slow
+          because it was large, or because the call itself is expensive, is not something this log settles.</li>
+          <li><strong>The fixed code is not finished either.</strong> It calls <code>projects()</code> once per role
+          row. While the cache is warm that is 0 ms and invisible, but with many rows
+          <strong>the cost of scanning the list repeatedly</strong> remains. Hoisting it out of the loop would
+          be better.</li>
+          <li><strong>This cache still carries part one's problem.</strong> <code>projects()</code> takes no
+          lock, so if several requests arrive the moment the cache empties, <strong>each of them calls the
+          external API.</strong> ⚠️ That comes from reading the code, not from this log. These runs opened one
+          user, so there were no concurrent requests.</li>
+          <li><strong>Not production statistics.</strong> These are logs from opening one user in a test
+          environment.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="Closing">Closing<a class="anchor" href="#Closing" aria-label="Link to this section">#</a></h2>
+
+        <p>To gather it up.</p>
+
+        <ul>
+          <li><strong>Having a cache and being fast are different things.</strong> Here every resolved row was
+          0 ms and the span was still 1,409 ms.</li>
+          <li><strong>What you do on a failed lookup is half of cache design.</strong> “If it is absent, refetch
+          everything” is right for the first call and <strong>the worst possible choice in front of an id that
+          refilling will never produce.</strong></li>
+          <li><strong>There are two things you can reduce:</strong> how <strong>often</strong> a lookup fails,
+          and what a failure <strong>costs.</strong> This work reduced the second and left the first alone.</li>
+          <li><strong>Write down what the speed cost you.</strong> Here it cost ten minutes of freshness.</li>
+        </ul>
+
+        <p>If one line survives, this one:
+        <strong>it only needed adding up a log that was already being written.</strong>
+        Until I added those six rows up, I was staring at “why isn't the cache helping”.</p>
+
+        <p>Thank you for reading.</p>
+        </div>
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=a3c0812233"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=44326158d4"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
