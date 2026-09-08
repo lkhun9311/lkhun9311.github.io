@@ -248,6 +248,18 @@
           tags: ["Reliability", "Method"]
         },
         {
+          title: "A Performance Review That Found No Case to Change Anything",
+          url: "writing/slow-screens-7-nothing-to-fix.html",
+          source: "company", sourceLabel: "Company work",
+          title_ko: "모니터링 성능 검토에서 고칠 근거를 못 찾았습니다",
+          desc_ko: "모니터링 화면 3개를 검토했는데 새로 최적화할 근거를 못 찾았습니다. cache를 더 넣으려던 자리는 줄일 것이 작아 보였고 과해 보이던 설정 하나는 화면 깜빡임을 막고 있었습니다. 부하 시험은 돌리지 않았고 왜 안 돌렸는지도 적었습니다. 연작 「느린 화면」 ⑦, 마지막 편.",
+          title_ja: "モニタリングの性能レビューで、直す根拠が見つかりませんでした",
+          desc_ja: "モニタリング画面 3 つをレビューしましたが、新しく最適化する根拠が見つかりませんでした。cache を足そうとした場所は削れるものが小さく、過剰に見えた設定 1 つはグラフのちらつきを防いでいました。負荷試験は回しておらず、なぜ回さなかったのかも書きます。連載「遅い画面」⑦、最終編。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "I reviewed three monitoring screens and found no case for a new optimisation. Where a cache would have gone there was little to save, and a setting that looked excessive was keeping the graph from flickering. I never ran a load test, and the article says why. Slow Screens, part seven and last. Also in Korean and Japanese.",
+          tags: ["Performance", "Method"]
+        },
+        {
           title: "A Dialog That Would Not Open Had Two Causes",
           url: "writing/slow-screens-6-polling-pileup.html",
           source: "company", sourceLabel: "Company work",
