@@ -89,7 +89,7 @@
             <li><a href="#죽은-cache">그리고 cache는 읽히지 않고 있었습니다</a></li>
             <li><a href="#수정">수정: 인증을 반복문 밖으로 꺼냈습니다</a></li>
             <li><a href="#안-잰-이유">⚠️ 그런데 전후를 재지 않았습니다</a></li>
-            <li><a href="#부하-도구">부하 도구를 들이대면 엉뚱한 것을 잽니다</a></li>
+            <li><a href="#부하-도구">부하 도구는 시나리오가 밟은 경로만 잽니다</a></li>
             <li><a href="#주장하지-않는-것">한계: 이 글이 주장하지 않는 것</a></li>
             <li><a href="#마치며">마치며</a></li>
           </ul>
@@ -117,14 +117,14 @@
           <li>시계열 그래프를 그리는 화면이라 <strong>느린 곳이 쿼리라고 생각하기 쉽습니다.</strong>
           아니었습니다.</li>
           <li>초기 로드가 <strong>프로젝트 1개마다 client를 새로 만들고</strong> 있었는데,
-          이 SDK에서는 <strong>client를 만드는 것이 곧 Keystone 인증</strong>입니다.
+          <strong>우리가 쓰던 <code>serviceClient()</code>는 부를 때마다 Keystone에 인증</strong>합니다.
           프로젝트가 N개면 <strong>인증도 N번</strong>, 그것도 순서대로입니다.</li>
           <li>게다가 cache가 있었는데 <strong>읽지 않고 있었습니다.</strong>
           「cache를 넣었다」와 「cache를 읽는다」는 다른 일입니다.</li>
           <li>고친 것은 <strong>client 하나를 반복문 밖에서 만들어 재사용</strong>한 것뿐입니다.
           인증 N번이 1번이 됩니다.</li>
           <li>⚠️ <strong>그런데 얼마나 빨라졌는지는 모릅니다.</strong> 재지 않았고,
-          이 화면을 부하 도구로 재면 <strong>엉뚱한 것을 재게 됩니다.</strong></li>
+          흔히 쓰는 부하 시나리오로는 <strong>이 구간이 시험에 안 들어갑니다.</strong></li>
         </ul>
 
         <p><strong>사내 제품이라 코드를 그대로 옮기지 않았습니다.</strong> 제품명·고객사·내부 주소는 빼고
@@ -136,7 +136,10 @@
 
         <ul>
           <li><strong>초기 로드</strong>는 REST로 한 번, 프로젝트마다 쿼터와 사용량을 모아 옵니다.</li>
-          <li><strong>그 뒤</strong>는 서버가 15초마다 값을 계산해 열려 있는 모든 화면에 밀어 줍니다(SSE).</li>
+          <li><strong>그 뒤</strong>는 서버가 15초마다 값을 계산해 열려 있는 모든 화면에 밀어 줍니다.
+          연결을 열어 둔 채 서버가 값을 보내는 방식이라 <strong>SSE</strong>(Server-Sent Events)라고 부릅니다.
+          ⚠️ 여기서 접속자 수와 무관한 것은 <strong>계산 횟수</strong>이고,
+          만든 값을 직렬화해 각 연결로 내보내는 비용은 접속자 수만큼 늘어납니다.</li>
         </ul>
 
         <figure class="diagram">
@@ -170,7 +173,7 @@
               <rect x="330" y="126" width="382" height="32" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
               <text x="521" y="146" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">시계열 저장소에서 계산</text>
               <rect x="158" y="170" width="554" height="18" rx="3" fill="rgba(79,91,213,0.18)" stroke="#4f5bd5" stroke-width="1.5"/>
-              <text x="435" y="184" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">push · 접속자 수와 무관하게 tick당 1회</text>
+              <text x="435" y="184" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">push · 계산은 tick당 1회</text>
               <defs>
                 <marker id="mn-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                   <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
@@ -181,21 +184,21 @@
               </defs>
             </svg>
           </div>
-          <figcaption>같은 화면에 성질이 다른 두 경로가 있습니다. 위는 프로젝트 수에 비례하고
-          아래는 접속자 수와 무관합니다.</figcaption>
+          <figcaption>초기 REST 로드와 15초 주기 전송의 호출 구조입니다.</figcaption>
         </figure>
 
         <h2 id="쿼리부터">쿼리부터 열고 싶어집니다<a class="anchor" href="#쿼리부터" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>「시계열 그래프가 느리다」는 말을 들으면 손이 먼저 가는 곳이 있습니다. 쿼리입니다.
         조회식을 다듬고 결과를 cache하고 그러고 나서 부하 도구로 사용자를 늘려 확인하는 것.
-        <strong>순서가 자연스럽고 여기서는 전부 헛일이었습니다.</strong></p>
+        <strong>순서가 자연스러운데, 여기서는 느린 구간이 그쪽이 아니었습니다.</strong></p>
 
-        <p>시계열 조회는 <strong>15초에 한 번</strong> 돕니다. 그것도 열린 화면 수와 상관없이
-        한 번입니다. 이미 싼 곳이었습니다.</p>
+        <p>시계열 조회는 <strong>15초에 한 번</strong> 돕니다. 그것도 열린 화면 수와 상관없이 한 번입니다.
+        ⚠️ 그 빈도만으로 「싸다」고 판정할 수는 없습니다. 다만 기록에서 <strong>먼저 볼 구간으로
+        지목된 곳은 여기가 아니었습니다.</strong></p>
 
-        <blockquote><p><strong>느린 코드가 있는 곳과 느린 곳은 다릅니다.</strong>
-        쿼리는 눈에 잘 띄어서 표적이 되기 쉽습니다.</p></blockquote>
+        <blockquote><p><strong>실행 시간이 긴 함수가 곧 사용자가 기다리는 구간은 아닙니다.</strong>
+        쿼리는 눈에 잘 띄어서 먼저 표적이 됩니다.</p></blockquote>
 
         <h2 id="원인">원인: client를 만드는 것이 곧 인증입니다<a class="anchor" href="#원인" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -211,19 +214,30 @@
         <p>읽으면 아무 문제가 없어 보입니다. 편의 함수를 부르고 쓰는 것뿐입니다.
         <strong>그 함수가 무엇을 하는지가 이름에 안 적혀 있습니다.</strong></p>
 
-        <blockquote><p>이 SDK에서 <strong>client를 만드는 일은 인증하는 일</strong>입니다.
-        인자 없는 <code>serviceClient()</code>는 호출될 때마다 Keystone에 붙어 토큰을 새로 받습니다.</p></blockquote>
+        <blockquote><p><strong>이 팩터리에서는 client를 얻는 일이 곧 인증하는 일</strong>입니다.
+        <code>serviceClient()</code>는 설정 파일의 계정으로 Keystone에 붙어 토큰을 받고 그렇게 인증된
+        client를 돌려줍니다.</p></blockquote>
+
+        <p>⚠️ <strong>SDK 일반이 그렇다는 이야기가 아닙니다.</strong> 같은 라이브러리에도 이미 받아 둔
+        토큰으로 client를 만드는 길이 따로 있습니다. 인증하는 것은 <strong>우리 쪽 팩터리의 구현</strong>이고,
+        그 사실이 함수 이름에 드러나 있지 않았다는 것이 이 글의 이야기입니다.</p>
+
+        <p>⚠️ 그리고 <strong>이건 사내 문서 2건에서 확인한 것</strong>입니다.
+        <code>serviceClient()</code>의 구현 자체를 이 글에 옮기지 않았고 저장소에 남은 것도 그 구현이
+        아니라 그것을 설명하는 문서입니다.</p>
 
         <p>그러면 반복문이 이렇게 돕니다.</p>
 
         <ul>
-          <li>프로젝트 1개 → <strong>인증 왕복 1회</strong> + 조회 1회</li>
-          <li>프로젝트 N개 → <strong>인증 왕복 N회</strong> + 조회 N회</li>
+          <li>프로젝트 1개 → <strong>인증 왕복 1회</strong> + 그 프로젝트에 대한 조회 몇 회</li>
+          <li>프로젝트 N개 → <strong>인증 왕복 N회</strong> + 조회 N×몇 회</li>
           <li>그리고 <strong>순서대로</strong> 돕니다. 앞이 끝나야 뒤가 시작합니다</li>
         </ul>
 
         <p>화면에 보이는 것은 그래프인데, 그래프를 그리기 전에 <strong>인증만 N번</strong> 하고 있었습니다.
-        프로젝트가 늘수록 정확히 그만큼 느려집니다.</p>
+        프로젝트가 늘면 <strong>순차 인증 횟수가 그만큼 선형으로 늘어납니다.</strong>
+        ⚠️ 그것이 응답 시간을 정확히 그만큼 늘린다고까지는 말하지 않겠습니다.
+        인증 1회가 얼마인지, 매번 같은지를 재지 않았습니다.</p>
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
@@ -306,15 +320,27 @@ for (String projectId : projects) {
         반복문 안에 있던 것을 밖으로 옮겼습니다.</p>
 
         <p>⚠️ 정확히 하겠습니다. <strong>인증이 없어진 것이 아니라 요청 1건당 N회가 1회가 된 것</strong>입니다.
-        client는 이 메서드 안에서 만들어지므로 <strong>다음 요청은 다시 한 번 인증합니다.</strong>
-        그것까지 없애려면 인증된 client를 요청 사이에 들고 있어야 하는데 그러면
-        <strong>토큰이 언제 만료되는지, 만료되면 누가 다시 받는지</strong>를 다뤄야 합니다.
-        그건 이 수정에 들어 있지 않습니다.</p>
+        client는 이 메서드 안에서 만들어지므로 <strong>다음 요청은 다시 한 번 인증합니다.</strong></p>
+
+        <p>그리고 <strong>「1회」에도 조건이 붙습니다.</strong> 반복문이 도는 동안 토큰이 만료되면
+        그다음 호출은 거부됩니다. 그때 라이브러리가 스스로 다시 인증하고 재시도할지는
+        <strong>쓰는 버전과 커넥터에 달렸고 이 글은 확인하지 않았습니다.</strong>
+        토큰 유효 기간이 이 반복문이 도는 시간보다 훨씬 길어서 문제가 드러나지 않았을 뿐입니다.</p>
+
+        <p>요청 사이에 client를 들고 있으면 인증을 더 줄일 수 있습니다.
+        ⚠️ 다만 <strong>그쪽이 더 어렵습니다.</strong> 이 계열 client는 현재 session을 thread에 매어 두는
+        구조라, 하나를 여러 요청 thread가 나눠 쓰면 session이 섞이거나 비는 일이 생길 수 있습니다.
+        토큰 만료도 그때부터는 직접 다뤄야 합니다. <strong>이 수정은 거기까지 가지 않았습니다.</strong></p>
 
         <p>timeout을 <strong>이 client에만</strong> 건 것도 일부러입니다. 전역 설정에 걸면
         정상적으로 오래 걸리는 다른 호출까지 끊깁니다. <strong>느린 화면을 고치려다 멀쩡한 기능을
-        끊는 것</strong>이 흔한 다음 사고입니다.
-        ⚠️ 이것은 그렇게 하기로 한 <strong>의도</strong>이고 전역에 걸었을 때 실제로 무엇이 끊기는지를
+        끊는 것</strong>이 흔한 다음 사고입니다.</p>
+
+        <p>⚠️ 둘은 서로 다른 것을 제한합니다. connection timeout은 <strong>연결을 맺는 데</strong>
+        걸리는 시간을, read timeout은 <strong>보내 놓고 응답을 기다리는</strong> 시간을 자릅니다.
+        그리고 이 client에만 걸어도 <strong>이 client가 하는 인증·조회에는 전부 걸립니다.</strong>
+        막아 주는 것은 다른 client로 설정이 번지는 것뿐입니다.
+        ⚠️ 이건 그렇게 하기로 한 <strong>의도</strong>이고 전역에 걸었을 때 실제로 무엇이 끊기는지
         확인해 본 기록은 없습니다.</p>
 
         <h2 id="안-잰-이유">⚠️ 그런데 전후를 재지 않았습니다<a class="anchor" href="#안-잰-이유" aria-label="이 절로 가는 링크">#</a></h2>
@@ -337,50 +363,58 @@ for (String projectId : projects) {
           <tbody>
             <tr><td>인증 왕복이 N회에서 1회가 된다</td><td>그래서 몇 초가 줄었는지</td></tr>
             <tr><td>인증 1회의 비용만큼 N−1번 덜 낸다</td><td>인증 1회가 몇 ms인지</td></tr>
-            <tr><td>프로젝트 수에 비례하던 것이 안 그렇게 된다</td><td>남은 조회 N회가 얼마인지</td></tr>
+            <tr><td>인증 쪽이 프로젝트 수에 비례하는 것은 없어진다</td><td>초기 로드 전체가 얼마나 완만해지는지</td></tr>
           </tbody>
         </table>
         </div>
         </div>
         <p class="table-note">왼쪽은 <strong>코드를 읽으면 나오는</strong> 것이고 오른쪽은
-        <strong>재야만 나오는</strong> 것입니다. 이번에는 왼쪽만 있습니다.</p>
+        <strong>재야만 나오는</strong> 것입니다. 이번에는 왼쪽만 있습니다.
+        ⚠️ <strong>초기 로드가 프로젝트 수에 비례하는 것 자체는 그대로입니다.</strong>
+        프로젝트마다 도는 조회는 손대지 않았습니다. 비례가 사라진 것은 인증 쪽뿐입니다.</p>
 
-        <h2 id="부하-도구">부하 도구를 들이대면 엉뚱한 것을 잽니다<a class="anchor" href="#부하-도구" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="부하-도구">부하 도구는 시나리오가 밟은 경로만 잽니다<a class="anchor" href="#부하-도구" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>「그럼 재면 되지 않나」가 다음 질문입니다. 그런데 이 화면은
-        <strong>흔한 방법으로 재면 거짓 확신을 줍니다.</strong></p>
+        <strong>흔히 쓰는 시나리오로는 느린 구간이 시험에 안 들어갑니다.</strong></p>
 
         <p>부하 도구를 켜고 동시 사용자를 늘리는 것이 보통 하는 일입니다. 그런데 이 화면에서
         사용자가 기다리는 무거운 구간은 <strong>초기 로드 1회</strong>이고 그 뒤는
-        <strong>15초마다 서버가 한 번 계산해 모두에게 같은 값을 밀어 주는</strong> 구조입니다.</p>
+        <strong>15초마다 서버가 한 번 계산해 열려 있는 모든 화면에 같은 값을 밀어 주는</strong> 구조입니다.</p>
 
-        <blockquote><p>사용자를 10명으로 늘려도 tick당 계산은 <strong>여전히 1회</strong>입니다.
-        그래프는 「사용자를 늘려도 끄떡없다」로 나옵니다.
+        <blockquote><p>사용자를 10명으로 늘려도 <strong>tick당 계산은 여전히 1회</strong>입니다.
+        연결을 붙들고 있는 시나리오라면 그래프는 「사용자를 늘려도 끄떡없다」로 나옵니다.
         <strong>그건 아키텍처의 성질이지 느린 경로를 밟았다는 뜻이 아닙니다.</strong></p></blockquote>
+
+        <p>⚠️ <strong>도구 탓이 아닙니다.</strong> 사용자 10명이 각자 화면을 새로 열면 초기 로드도 10번
+        돕니다. 즉 부하 도구가 그 경로를 못 밟는 것이 아니라,
+        <strong>연결을 유지하며 push를 받는 쪽으로 시나리오를 쓰면 그 경로가 시나리오에 안 들어간다</strong>는
+        이야기입니다. 부하 시험 결과는 <strong>시나리오가 실제로 보낸 요청에 대해서만</strong> 유효합니다.</p>
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
             <svg viewBox="0 0 720 160" role="img" aria-labelledby="axis-t axis-d" xmlns="http://www.w3.org/2000/svg">
-              <title id="axis-t">부하의 축을 동시 사용자에서 프로젝트 수로 바꾸기</title>
-              <desc id="axis-d">왼쪽은 동시 사용자를 늘리는 축입니다. 사용자가 1명에서 50명으로 늘어도
-              tick당 계산은 1회로 그대로여서 선이 평평합니다. 오른쪽은 프로젝트 수를 늘리는 축입니다.
-              프로젝트가 늘면 초기 로드의 인증 횟수가 같이 늘어 선이 비스듬히 올라갑니다.</desc>
+              <title id="axis-t">두 축에서 예상되는 호출 횟수 개념도</title>
+              <desc id="axis-d">잰 값이 아니라 코드에서 예상되는 호출 횟수를 그린 개념도입니다. 왼쪽은 연결을
+              유지하는 사용자를 늘리는 축으로, 사용자가 늘어도 tick당 계산은 1회로 그대로여서 선이
+              평평합니다. 오른쪽은 프로젝트 수를 늘리는 축으로, 프로젝트가 늘면 초기 로드의 인증 횟수가
+              같이 늘어 선이 비스듬히 올라갑니다.</desc>
 
-              <text x="10" y="18" font-size="12.5" fill="#7b7186" font-weight="700">축을 동시 사용자로 두면</text>
+              <text x="10" y="18" font-size="12.5" fill="#7b7186" font-weight="700">축: 연결을 유지하는 사용자 수</text>
               <rect x="10" y="30" width="330" height="86" rx="6" fill="none" stroke="#7b7186" stroke-width="1.5"/>
               <path d="M40 96 H 310" fill="none" stroke="#7b7186" stroke-width="2" stroke-dasharray="4 3"/>
               <text x="175" y="88" font-size="12" fill="#7b7186" text-anchor="middle">tick당 계산 1회 · 평평</text>
               <text x="175" y="132" font-size="12" fill="#7b7186" text-anchor="middle">사용자 1명 → 50명</text>
 
-              <text x="380" y="18" font-size="12.5" fill="#d62976" font-weight="700">축을 프로젝트 수로 두면</text>
+              <text x="380" y="18" font-size="12.5" fill="#d62976" font-weight="700">축: 프로젝트 수</text>
               <rect x="380" y="30" width="330" height="86" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
               <path d="M410 106 L 680 46" fill="none" stroke="#d62976" stroke-width="2.5"/>
               <text x="545" y="88" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">인증 횟수도 함께 증가</text>
               <text x="545" y="132" font-size="12" fill="#d62976" text-anchor="middle">프로젝트 1개 → N개</text>
             </svg>
           </div>
-          <figcaption>같은 화면을 두 축으로 잰 그림입니다. 왼쪽 선이 평평한 것은 좋다는 뜻이 아니라
-          <strong>그 축이 이 문제를 건드리지 못한다</strong>는 뜻입니다.</figcaption>
+          <figcaption>⚠️ 잰 값이 아니라 <strong>코드에서 예상되는 호출 횟수를 그린 개념도</strong>입니다.
+          왼쪽 선이 평평한 것은 좋다는 뜻이 아니라 그 축이 인증 반복을 건드리지 않는다는 뜻입니다.</figcaption>
         </figure>
 
         <p>제대로 재려면 <strong>축을 바꿔야 합니다.</strong> 동시 사용자가 아니라
@@ -396,8 +430,9 @@ for (String projectId : projects) {
           <strong>속도 개선폭을 주장하지 않습니다.</strong></li>
           <li><strong>인증 1회가 얼마인지 모릅니다.</strong> 그래서 「N−1회를 덜 낸다」는 말이
           몇 초인지도 모릅니다.</li>
-          <li><strong>client를 만드는 것이 인증이라는 것은 코드와 사내 문서에서 확인했습니다.</strong>
-          다만 그 함수의 구현 자체는 이 글에 옮기지 않았고 다른 SDK가 다 그렇다는 이야기도 아닙니다.</li>
+          <li><strong>client를 얻는 일이 인증이라는 것은 사내 문서 2건에서 확인했습니다.</strong>
+          <code>serviceClient()</code>의 구현 자체는 저장소에 없고 이 글도 그것을 옮기지 않았습니다.
+          쓰는 라이브러리의 버전과 커넥터도 확인하지 못했습니다.</li>
           <li><strong>남은 조회 N회는 그대로입니다.</strong> 없앤 것은 인증 쪽이고
           프로젝트마다 도는 조회는 여전히 N번입니다. 그것까지 줄이려면 다른 수정이 필요합니다.</li>
           <li><strong>부하 도구가 쓸모없다는 이야기가 아닙니다.</strong> 축이 맞지 않으면 쓸모없다는
@@ -414,15 +449,16 @@ for (String projectId : projects) {
           <li><strong>이름이 비용을 숨깁니다.</strong> <code>serviceClient()</code>는 공짜처럼 생겼는데
           네트워크 왕복입니다. <strong>반복문 안에서 client를 얻는 코드는 항상 한 번 의심할 값</strong>이 있습니다.</li>
           <li><strong>「cache를 넣었다」와 「cache를 읽는다」는 다른 일입니다.</strong></li>
-          <li><strong>부하 도구는 자기가 밟은 경로만 압니다.</strong> 축이 틀리면 평평한 그래프가
-          나오고 그 그래프는 아무것도 보장하지 않습니다.</li>
+          <li><strong>부하 시험 결과는 시나리오가 실제로 보낸 요청에 대해서만 유효합니다.</strong>
+          축이 맞지 않으면 평평한 그래프가 나오고 그 그래프는 안 밟은 경로에 대해 아무것도 말하지 않습니다.</li>
           <li><strong>고쳤는데 못 쟀으면 못 쟀다고 씁니다.</strong> 코드에서 확실한 것과
           재야 아는 것을 갈라 놓으면 적어도 다음 사람이 무엇을 재야 하는지는 압니다.</li>
         </ul>
 
         <p>마지막으로 한 줄만 남긴다면 이겁니다.
-        <strong>측정하기 전에 「사용자가 무엇을 기다리는가」와 「이 도구가 그 경로를 밟는가」를 먼저 물어야
-        합니다.</strong> 이번에는 두 번째 질문에 답하지 못해서 첫 번째도 못 쟀습니다.</p>
+        <strong>측정하기 전에 「사용자가 무엇을 기다리는가」와 「이 시나리오가 그 경로를 보내는가」를
+        먼저 물어야 합니다.</strong> 이번에는 느린 구간을 찾아 고쳐 놓고도,
+        그 구간을 지나가는 시나리오를 쓰지 않아 전후를 못 쟀습니다.</p>
 
         <p>다음 편은 그 두 번째 질문을 정면으로 다룹니다. <strong>부하를 늘려도 TPS가 그대로였던</strong>
         시험 이야기입니다.</p>
