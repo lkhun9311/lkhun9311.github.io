@@ -28,6 +28,10 @@ LOANWORDS = ["커넥션", "트랜잭션", "쓰레드", "스레드", "캐시", "�
              "백엔드", "뮤테이션", "모놀리스", "하네스", "스텁", "풀러", "워커"]
 GUARDED = {"락": r"(?<![가-힣])락(?![가-힣])|(?<![가-힣])락(?=[은을이가에의과와도만])"}
 
+# 뜻이 정반대로 뒤집히는 상습 오기. 2026-09-07 G③, 09-08 G⑥ 에서 두 번 났다.
+# 「가르지 못합니다」를 쓰려다 「가릅니다」로 적으면 유보가 단정으로 바뀐다.
+TYPOS = {"가릅니다": "「가르지 못합니다」의 오기가 아닌지 보라"}
+
 SKIP12 = "해당 없음"
 
 
@@ -67,6 +71,9 @@ def scan(path, fix=False):
     for w, pat in GUARDED.items():
         for m in re.finditer(pat, mid):
             found.append(("15", mid[:m.start()].count("\n") + 1, w))
+    for w, hint in TYPOS.items():
+        for m in re.finditer(re.escape(w), mid):
+            found.append(("오기", mid[:m.start()].count("\n") + 1, "%s — %s" % (w, hint)))
 
     changed = False
     if fix:
