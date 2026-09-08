@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Every Cut I Could Measure Landed Inside a Character | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/the-review-that-skipped-the-big-file.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/the-review-that-skipped-the-big-file.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/the-review-that-skipped-the-big-file.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/the-review-that-skipped-the-big-file.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="Every Cut I Could Measure Landed Inside a Character | Kwanghun Lee" />
+  <meta property="og:description" content="Editing a design document was set up to trigger an outside review. head -c counts bytes, not characters, and measuring the four commits over 60,000 bytes shows every cut landing inside a character. The tool rejects that argument before it reaches a model." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/the-review-that-skipped-the-big-file.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Every Cut I Could Measure Landed Inside a Character | Kwanghun Lee" />
+  <meta name="twitter:description" content="Editing a design document was set up to trigger an outside review. head -c counts bytes, not characters, and measuring the four commits over 60,000 bytes shows every cut landing inside a character. The tool rejects that argument before it reaches a model." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="Editing a design document was set up to trigger an outside review. head -c counts bytes, not characters, and measuring the four commits over 60,000 bytes shows every cut landing inside a character. The tool rejects that argument before it reaches a model." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "the-review-that-skipped-the-big-file.html", "ko": "the-review-that-skipped-the-big-file.ko.html", "ja": "the-review-that-skipped-the-big-file.ja.html"}'>
+          <option value="ko">Korean</option>
+          <option value="en" selected>English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing</a>
+        <div class="article-meta"><span class="source-tag commercial notranslate">Commercial project</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>Every Cut I Could Measure Landed Inside a Character<br><span class="h1-sub">All four surviving commits over the limit were, and the review tool rejects such an argument before it reaches a model. A commercial side project, oxy</span></h1>
+          <p class="article-date">Sep 2026</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="the-review-that-skipped-the-big-file"></aside>
+
+        <nav class="article-toc" aria-label="Table of contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-is-in-here">What this is about</a></li>
+            <li><a href="#what-i-set-up">Editing a design doc was supposed to trigger a review</a></li>
+            <li><a href="#inside-a-character">The cut landed inside a character</a></li>
+            <li><a href="#every-revision">I measured every revision that survives</a></li>
+            <li><a href="#who-rejected-it">The program that rejected it was not the one I thought</a></li>
+            <li><a href="#three-signals">Three different things erased one signal each</a></li>
+            <li><a href="#the-folder-filled-up">Meanwhile the folder kept filling up</a></li>
+            <li><a href="#one-byte">Dropping one byte let it through</a></li>
+            <li><a href="#fixed-and-not">What I fixed and what I did not</a></li>
+            <li><a href="#wrote-it-wrong">I wrote the same defect down wrong three times</a></li>
+            <li><a href="#what-this-does-not-claim">Limits: what this article does not claim</a></li>
+            <li><a href="#closing">Closing</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>Hello. On a social polling service I build alone, editing a design document with my editing tool
+        was set up to <strong>kick off an outside review automatically.</strong> The results pile up in a
+        folder.</p>
+
+        <p>Results were piling up. But when I rebuilt the string that gets handed to that review,
+        <strong>it turned out to be cut through the middle of a character</strong>, and an argument like
+        that is <strong>rejected before it ever reaches a model.</strong></p>
+
+        <p>⚠️ Let me say this at the top. What this article <strong>measured</strong> is "what happens when
+        the documents that survive today are cut by that command". What the hook actually received back
+        then, and how it actually ended, <strong>is not recorded anywhere.</strong> The gap between the two
+        is <strong>inference</strong>, and I will keep marking which is which.</p>
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>Anyone who set up an automated check and then reassured themselves by looking at the output folder</li>
+          <li>Anyone who types <code>2&gt;/dev/null</code> out of habit</li>
+          <li>Anyone piping Korean or Japanese documents into a tool</li>
+        </ul>
+
+        <h2 id="what-is-in-here">What this is about<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>The document was cut with <code>head -c 60000</code> before being handed to the review tool.
+          That command <strong>keeps the first 60,000 bytes.</strong> It counts bytes, not characters.</li>
+          <li>Pulling out the <strong>four commits</strong> of the large design document that are over
+          60,000 bytes and measuring them, <strong>all four are cut inside a character.</strong>
+          Five, counting the copy I am working on now.</li>
+          <li>Given an argument like that, the tool <strong>ends with 2 without reaching a model.</strong>
+          I reproduced it to check.</li>
+          <li>Failure leaves three signals, and <strong>a different thing erased each one</strong>: the
+          redirection that creates the output file up front, <code>2&gt;/dev/null</code>, and the
+          <code>exit 0</code> at the end of the script.</li>
+          <li>⚠️ <strong>Under 60,000 bytes there is nothing to cut, so it is fine.</strong> Results for the
+          shorter document kept accumulating and <strong>the folder looked healthy.</strong></li>
+        </ul>
+
+        <h2 id="what-i-set-up">Editing a design doc was supposed to trigger a review<a class="anchor" href="#what-i-set-up" aria-label="Link to this section">#</a></h2>
+
+        <p>It is a solo project, so there is nobody to review the design. I set it up so that editing a
+        design document makes an outside tool read it and pull out
+        <strong>the five most serious problems.</strong> The result is saved under a timestamped filename.</p>
+
+        <p>⚠️ <strong>"Editing" is narrower than it sounds.</strong> The hook only fires for one particular
+        editing tool. Change the file from a shell or through some other path and it
+        <strong>never runs at all.</strong> That comes back later.</p>
+
+<pre data-lang="bash"><code>FILE="${1:-docs/DESIGN.md}"
+OUT=".reviews/design-$(date +%Y%m%d-%H%M%S)-$$.md"   # the $$ was added later
+
+DOC=$(head -c 60000 "$FILE")
+PROMPT="Review this design document ruthlessly. ...
+
+DOC ($FILE):
+$DOC"
+
+codex exec --sandbox read-only "$PROMPT" &gt; "$OUT" 2&gt;/dev/null
+exit 0</code></pre>
+
+        <p><code>head -c 60000</code> was there because handing over the whole document might make the
+        argument too long. <code>2&gt;/dev/null</code> and <code>exit 0</code> were there
+        <strong>so a failed review would not block the edit.</strong></p>
+
+        <blockquote><p>The defect this article is about lives in those eight lines.
+        <strong>Every one of them went in for a plausible reason.</strong>
+        ⚠️ Except the last one, which is <strong>outside the code.</strong> It comes later.</p></blockquote>
+
+        <h2 id="inside-a-character">The cut landed inside a character<a class="anchor" href="#inside-a-character" aria-label="Link to this section">#</a></h2>
+
+        <p><code>head -c</code> counts <strong>bytes.</strong> For ASCII a character is one byte, so the two
+        coincide; a <strong>modern Hangul syllable is three bytes.</strong> (Korean prose also mixes in
+        one-byte digits and punctuation, and there are four-byte characters and emoji built from several
+        pieces.)</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="by-t by-d" class="figure-svg">
+            <title id="by-t">A byte boundary passing through a character</title>
+            <desc id="by-d">The upper row is ASCII: one box is one character and one byte, and the cut line
+            falls between boxes wherever it is placed. The lower row is Hangul: each character is made of
+            three boxes, with the character written beneath its three boxes. The cut line passes between the
+            first and second box of the last character, so only that character's first byte is left on the
+            left side.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="12" y="20" font-size="12" fill="#8a8a8a" font-weight="700">ASCII · one character = one byte</text>
+              <g fill="none" stroke="#8a8a8a" stroke-width="1.6">
+                <rect x="12" y="30" width="26" height="26" rx="4"/><rect x="40" y="30" width="26" height="26" rx="4"/>
+                <rect x="68" y="30" width="26" height="26" rx="4"/><rect x="96" y="30" width="26" height="26" rx="4"/>
+                <rect x="124" y="30" width="26" height="26" rx="4"/><rect x="152" y="30" width="26" height="26" rx="4"/>
+              </g>
+              <g font-size="13" fill="#4a4a4a" text-anchor="middle">
+                <text x="25" y="48">d</text><text x="53" y="48">e</text><text x="81" y="48">s</text>
+                <text x="109" y="48">i</text><text x="137" y="48">g</text><text x="165" y="48">n</text>
+              </g>
+              <path d="M123 22 V 64" stroke="#d62976" stroke-width="2" stroke-dasharray="4 3" fill="none"/>
+              <text x="200" y="48" font-size="11.5" fill="#8a8a8a">always lands between characters</text>
+
+              <text x="12" y="110" font-size="12" fill="#d62976" font-weight="700">Hangul syllable · one character = three bytes</text>
+              <g fill="none" stroke="#8a8a8a" stroke-width="1.4">
+                <rect x="12" y="120" width="22" height="26" rx="4"/><rect x="36" y="120" width="22" height="26" rx="4"/><rect x="60" y="120" width="22" height="26" rx="4"/>
+                <rect x="90" y="120" width="22" height="26" rx="4"/><rect x="114" y="120" width="22" height="26" rx="4"/><rect x="138" y="120" width="22" height="26" rx="4"/>
+                <rect x="168" y="120" width="22" height="26" rx="4"/><rect x="192" y="120" width="22" height="26" rx="4"/><rect x="216" y="120" width="22" height="26" rx="4"/>
+              </g>
+              <g font-size="10" fill="#8a8a8a" text-anchor="middle">
+                <text x="23" y="137">EC</text><text x="47" y="137">84</text><text x="71" y="137">A4</text>
+                <text x="101" y="137">EA</text><text x="125" y="137">B3</text><text x="149" y="137">84</text>
+                <text x="179" y="137">ED</text><text x="203" y="137">95</text><text x="227" y="137">B8</text>
+              </g>
+              <g font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="700">
+                <text x="47" y="164">설</text><text x="125" y="164">계</text><text x="203" y="164">핸</text>
+              </g>
+              <g fill="none" stroke="#c9c9c9" stroke-width="1.2">
+                <path d="M12 150 H 82"/><path d="M90 150 H 160"/><path d="M168 150 H 238"/>
+              </g>
+              <path d="M191 112 V 176" stroke="#d62976" stroke-width="2" stroke-dasharray="4 3" fill="none"/>
+              <text x="262" y="140" font-size="11.5" fill="#d62976" font-weight="700">a boundary inside a character</text>
+              <text x="262" y="158" font-size="11.5" fill="#8a8a8a">what is left · one leading byte</text>
+            </g>
+          </svg>
+          <figcaption>The vertical line is not a byte, it is <strong>the cut boundary.</strong>
+          In the current document the 60,000th byte is <code>ED</code>, the first byte of 「핸」, and the
+          boundary sits just after it, so <strong>one of three bytes</strong> survives.
+          <strong>Not half — a third.</strong></figcaption>
+        </figure>
+
+        <h2 id="every-revision">I measured every revision that survives<a class="anchor" href="#every-revision" aria-label="Link to this section">#</a></h2>
+
+        <p>"A character can be split" and "it was split then" are different statements. So I pulled out
+        <strong>every revision of this document that survives as a commit</strong> and checked two things:
+        <strong>whether the whole original is valid</strong>, and <strong>whether the first 60,000 bytes
+        are.</strong> If the original was already broken, the cut is not to blame.</p>
+
+<pre data-lang="bash"><code>blob=$(git rev-parse "$commit:docs/DESIGN.md")
+
+git cat-file -p "$blob" | iconv -f UTF-8 -t UTF-8 &gt; /dev/null                # whole original
+git cat-file -p "$blob" | head -c 60000 | iconv -f UTF-8 -t UTF-8 &gt; /dev/null # first 60,000</code></pre>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">Size and validity of each revision, whole and cut.</caption>
+          <thead><tr><th>Revision</th><th>Size</th><th>Whole original</th><th>First 60,000 bytes</th></tr></thead>
+          <tbody>
+            <tr><td>17 Jul</td><td>51,927 bytes</td><td>valid</td><td>nothing to cut</td></tr>
+            <tr><td>2 Aug</td><td>75,281 bytes</td><td>valid</td><td><strong>cut inside a character</strong></td></tr>
+            <tr><td>16 Aug</td><td>111,834 bytes</td><td>valid</td><td><strong>cut inside a character</strong></td></tr>
+            <tr><td>23 Aug</td><td>114,909 bytes</td><td>valid</td><td><strong>cut inside a character</strong></td></tr>
+            <tr><td>26 Aug</td><td>115,891 bytes</td><td>valid</td><td><strong>cut inside a character</strong></td></tr>
+            <tr><td>working tree (now)</td><td>130,939 bytes</td><td>valid</td><td><strong>cut inside a character</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note"><strong>All six originals are valid.</strong> So the breakage in the right-hand
+        column <strong>comes from the cut.</strong> <strong>All four commits</strong> over 60,000 bytes are
+        affected, five counting the working copy.
+        ⚠️ I was about to write "it catches about half the time" and <strong>deleted it after measuring.</strong></p>
+
+        <blockquote><p>⚠️ <strong>This table proves exactly this much:</strong>
+        "cutting this blob with this command produces invalid UTF-8".
+        <strong>Not that the hook actually received that blob, nor how it ended if it did.</strong>
+        There were <strong>more intermediate states</strong> between commits and they are not preserved.
+        I do not know how many.</p></blockquote>
+
+        <p>So what this article can say is <strong>"among what can still be measured, I found no
+        counterexample".</strong> "It went unread for weeks" is <strong>an inference drawn from that</strong>,
+        not a proof.</p>
+
+        <h2 id="who-rejected-it">The program that rejected it was not the one I thought<a class="anchor" href="#who-rejected-it" aria-label="Link to this section">#</a></h2>
+
+        <p>I ran a string containing a split character as an argument, <strong>in the same form the hook used
+        at the time.</strong></p>
+
+<pre data-lang="text"><code>$ codex exec --sandbox read-only "$(cat broken.txt)"
+
+exit code: 2
+stdout: 0 bytes
+stderr: error: invalid UTF-8 was detected in one or more arguments
+        Usage: codex exec [OPTIONS] [PROMPT]</code></pre>
+
+        <p><strong>It never reaches a model.</strong> The rejection happens while the arguments are being
+        checked. So not one character of review comes back.</p>
+
+        <p>And <strong>here I got it wrong once more.</strong> The fixed hook has a <code>timeout</code> in
+        front, and having measured in that form I had written down
+        <strong>an exit code of 125.</strong> Measuring again:</p>
+
+<pre data-lang="text"><code>$ codex exec ... "&lt;broken argument&gt;"              → 2
+$ timeout 60 codex exec ... "&lt;broken argument&gt;"   → 125
+
+$ timeout 60 cat  "&lt;broken argument&gt;"             → 125
+$ timeout 60 echo "&lt;broken argument&gt;"             → 125</code></pre>
+
+        <p>The last two lines are the answer. <strong>It has nothing to do with codex.</strong>
+        The <code>timeout</code> on this machine is not the GNU one but the
+        <strong>Rust rewrite</strong> (<code>uutils coreutils 0.8.0</code>), and it
+        <strong>rejects invalid UTF-8 in its own arguments</strong> before doing anything.
+        <strong>codex never starts.</strong></p>
+
+        <blockquote><p>The two programs print <strong>a first line that does not differ by a character</strong>,
+        because both use the same Rust argument-parsing library.
+        What differs is <strong>the second line and the exit code.</strong></p></blockquote>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">Two programs rejecting the same broken argument.</caption>
+          <thead><tr><th>Who rejected</th><th>First line</th><th>Second line</th><th>Exit code</th></tr></thead>
+          <tbody>
+            <tr><td>codex</td><td>invalid UTF-8 …</td><td><code>Usage: codex exec …</code></td><td><strong>2</strong></td></tr>
+            <tr><td>timeout</td><td>invalid UTF-8 …</td><td><code>For more information …</code></td><td><strong>125</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">⚠️ <strong>The hook before the fix had no <code>timeout</code>.</strong>
+        So the value at the time would have been <strong>2</strong>. The 125 is
+        <strong>a value I produced while measuring now</strong>, and I nearly wrote it down as what happened
+        back then.</p>
+
+        <blockquote><p>The outcome is the same either way: <strong>not one character of review comes back.</strong>
+        But <strong>I had the wrong idea about who did the rejecting.</strong>
+        "The tool rejects the document" and "the wrapper around the tool rejects the argument" are different
+        stories, and <strong>they get fixed in different places.</strong></p></blockquote>
+
+        <h2 id="three-signals">Three different things erased one signal each<a class="anchor" href="#three-signals" aria-label="Link to this section">#</a></h2>
+
+        <p>The failure itself is loud. The exit code is not zero and the message is plain.
+        That it never reached <strong>me</strong> is down to three things I put in.
+        ⚠️ <strong>They are not layers over the same thing.</strong> Failure leaves three signals and
+        <strong>a different thing erased each one.</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 236" role="img" aria-labelledby="si-t si-d" class="figure-svg">
+            <title id="si-t">Three signals of failure and what erased each</title>
+            <desc id="si-d">Six boxes in two columns. The left column holds the three signals a failure
+            leaves: that there should be no result file, the error message, and a non-zero exit code. The
+            right column holds what erased each: the redirection creates an empty file before the command
+            runs, so the missing-file signal never appears; discarding standard error removes the message;
+            and the exit zero at the end of the script makes the final status a success. Each row is paired
+            by a dotted arrow, and there is no connection between rows.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="16" y="22" font-size="12" fill="#d62976" font-weight="700">signals a failure leaves</text>
+              <text x="430" y="22" font-size="12" fill="#8a8a8a" font-weight="700">what erased it</text>
+
+              <rect x="16" y="34" width="250" height="52" rx="7" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="141" y="56" font-size="12" fill="#d62976" text-anchor="middle">there should be no result file</text>
+              <text x="141" y="74" font-size="11" fill="#8a8a8a" text-anchor="middle">the tool wrote nothing</text>
+              <path d="M270 60 H 424" fill="none" stroke="#c9c9c9" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#si-ar)"/>
+              <rect x="428" y="34" width="276" height="52" rx="7" fill="none" stroke="#8a8a8a" stroke-width="2"/>
+              <text x="566" y="56" font-size="12" fill="#4a4a4a" text-anchor="middle">an empty file made before the command</text>
+              <text x="566" y="74" font-size="11" fill="#8a8a8a" text-anchor="middle">a file appears in the folder</text>
+
+              <rect x="16" y="96" width="250" height="52" rx="7" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="141" y="118" font-size="12" fill="#d62976" text-anchor="middle">the error message</text>
+              <text x="141" y="136" font-size="11" fill="#8a8a8a" text-anchor="middle">invalid UTF-8 …</text>
+              <path d="M270 122 H 424" fill="none" stroke="#c9c9c9" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#si-ar)"/>
+              <rect x="428" y="96" width="276" height="52" rx="7" fill="none" stroke="#8a8a8a" stroke-width="2"/>
+              <text x="566" y="118" font-size="12" fill="#4a4a4a" text-anchor="middle">2&gt;/dev/null</text>
+              <text x="566" y="136" font-size="11" fill="#8a8a8a" text-anchor="middle">the reason, gone</text>
+
+              <rect x="16" y="158" width="250" height="52" rx="7" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="141" y="180" font-size="12" fill="#d62976" text-anchor="middle">a non-zero exit code</text>
+              <text x="141" y="198" font-size="11" fill="#8a8a8a" text-anchor="middle">visible to the caller</text>
+              <path d="M270 184 H 424" fill="none" stroke="#c9c9c9" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#si-ar)"/>
+              <rect x="428" y="158" width="276" height="52" rx="7" fill="none" stroke="#8a8a8a" stroke-width="2"/>
+              <text x="566" y="180" font-size="12" fill="#4a4a4a" text-anchor="middle">exit 0 at the end of the script</text>
+              <text x="566" y="198" font-size="11" fill="#8a8a8a" text-anchor="middle">a final status of zero</text>
+
+              <text x="360" y="230" font-size="11" fill="#8a8a8a" text-anchor="middle">no connection between rows</text>
+            </g>
+            <defs>
+              <marker id="si-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>Not layers over the same signal — <strong>one erasure per signal.</strong></figcaption>
+        </figure>
+
+        <p>The first is the nastiest. <code>&gt;</code> creates and empties the file
+        <strong>before the command starts.</strong> So a file appears even when the tool emits nothing.
+        Normally "there is no result file" would be the signal that something failed, and
+        <strong>that signal never appears.</strong></p>
+
+        <blockquote><p>⚠️ <strong>It is not that all three are required to hide it.</strong>
+        Remove only <code>2&gt;/dev/null</code> and the reason survives; remove only <code>exit 0</code>
+        and the caller receives a non-zero value.</p></blockquote>
+
+        <p>So there is <strong>a fourth</strong>, and it is outside the code.
+        This hook is invoked automatically after an edit, and I
+        <strong>never once looked at where its output went or who received its exit code.</strong>
+        I only looked at the folder. I am the one who put the three in, and
+        <strong>I am the one who did not look.</strong></p>
+
+        <h2 id="the-folder-filled-up">Meanwhile the folder kept filling up<a class="anchor" href="#the-folder-filled-up" aria-label="Link to this section">#</a></h2>
+
+        <p>Opening the results folder, files were accumulating. So I believed it was running.
+        Counted, it looks like this.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">Design review result files by period.</caption>
+          <thead><tr><th>Period</th><th>Result files</th></tr></thead>
+          <tbody>
+            <tr><td>early Jul – 8 Aug</td><td><strong>24</strong> files with content</td></tr>
+            <tr><td>13 Jul · 12–13 Aug</td><td><strong>5 zero-byte files</strong></td></tr>
+            <tr><td>14 Aug – 31 Aug</td><td><strong>no files at all</strong></td></tr>
+            <tr><td>early Sep</td><td>5 files with content (4 of them after the fix)</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">⚠️ <strong>The table is counted; the meaning is not.</strong>
+        Whether a zero-byte file means "called and failed" <strong>cannot be known, because stderr was being
+        discarded.</strong> Failing to find the executable would look the same. And an absent file is not
+        evidence that nothing was called.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 190" role="img" aria-labelledby="tl-t tl-d" class="figure-svg">
+            <title id="tl-t">Results from early July to early September</title>
+            <desc id="tl-d">The horizontal axis is time. Small circles above the axis are result files with
+            content; crosses below the axis are zero-byte files. At the far left, in early July, three
+            circles sit together; slightly later, in mid-July, one circle and one cross sit side by side.
+            Then nothing is marked for nearly three weeks, until five circles run along in early August and
+            four crosses cluster in mid-August. The stretch from 14 to 31 August that follows is empty above
+            and below the axis and is lightly shaded. At the far right, in early September, two circles
+            appear again. A dashed vertical line at 2 August is labelled as the day the document passed
+            60,000 bytes.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="435" y="78" width="162" height="34" fill="#f1f1f1"/>
+              <text x="516" y="70" font-size="11" fill="#8a8a8a" text-anchor="middle">stretch with no result files</text>
+
+              <path d="M20 95 H 660" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#tl-ar)"/>
+
+              <g fill="none" stroke="#8a8a8a" stroke-width="1.6">
+                <circle cx="20" cy="80" r="4"/><circle cx="30" cy="80" r="4"/><circle cx="41" cy="80" r="4"/>
+                <circle cx="83" cy="80" r="4"/>
+                <circle cx="314" cy="80" r="4"/><circle cx="324" cy="80" r="4"/><circle cx="335" cy="80" r="4"/>
+                <circle cx="345" cy="80" r="4"/><circle cx="356" cy="80" r="4"/>
+                <circle cx="608" cy="80" r="4"/><circle cx="629" cy="80" r="4"/>
+              </g>
+
+              <g stroke="#d62976" stroke-width="2" stroke-linecap="round">
+                <path d="M79 106 L 87 114"/><path d="M87 106 L 79 114"/>
+                <path d="M390 106 L 398 114"/><path d="M398 106 L 390 114"/>
+                <path d="M400 106 L 408 114"/><path d="M408 106 L 400 114"/>
+                <path d="M411 106 L 419 114"/><path d="M419 106 L 411 114"/>
+                <path d="M421 106 L 429 114"/><path d="M429 106 L 421 114"/>
+              </g>
+
+              <path d="M293 44 V 128" stroke="#d62976" stroke-width="2" stroke-dasharray="4 3" fill="none"/>
+              <text x="293" y="38" font-size="11.5" fill="#d62976" font-weight="700" text-anchor="middle">the day it passed 60,000 bytes</text>
+
+              <g font-size="11" fill="#8a8a8a">
+                <text x="20" y="148">early Jul</text>
+                <text x="293" y="148" text-anchor="middle">2 Aug</text>
+                <text x="516" y="148" text-anchor="middle">14–31 Aug</text>
+                <text x="629" y="148" text-anchor="end">early Sep</text>
+              </g>
+
+              <g font-size="11" fill="#8a8a8a">
+                <circle cx="26" cy="170" r="4" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+                <text x="36" y="174">result file with content</text>
+                <g stroke="#d62976" stroke-width="2" stroke-linecap="round">
+                  <path d="M200 166 L 208 174"/><path d="M208 166 L 200 174"/>
+                </g>
+                <text x="216" y="174">zero-byte file</text>
+              </g>
+            </g>
+            <defs>
+              <marker id="tl-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>Circles are drawn <strong>one per date</strong>; there were several on the same day in
+          reality. Crosses are <strong>all five zero-byte files.</strong> Right of the dashed line is where
+          the large document starts being cut, and <strong>the circles carry on for a while after it.</strong></figcaption>
+        </figure>
+
+        <p>⚠️ And <strong>laid out like this, the odd spots stand out.</strong> The zero-byte files do,
+        and so does a gap of more than two weeks. The reason I did not see them is that
+        <strong>I never laid them out like this.</strong> I checked, now and then, only that
+        <strong>the file count was going up.</strong> Not the sizes, not the gaps between dates.</p>
+
+        <p>The zero-byte file from 13 July <strong>is not explained by the cause in this article.</strong>
+        The document was under 60,000 bytes then, so there was nothing to cut.
+        The reason that one failed, <strong>I do not know.</strong></p>
+
+        <p>In early August reviews with content kept coming. There were <strong>two</strong> design documents
+        then, and the newer one was <strong>31,965 bytes</strong> — under 60,000, so nothing to cut. The
+        content of those reviews was about that newer document too.
+        ⚠️ <strong>The output does not record a filename</strong>, so that is a guess from reading the
+        content, and <strong>which review looked at which document cannot be told from the output.</strong></p>
+
+        <blockquote><p>So the folder looked <strong>even healthier.</strong>
+        Every edit to the shorter document appeared to add another neat result.</p></blockquote>
+
+        <h2 id="one-byte">Dropping one byte let it through<a class="anchor" href="#one-byte" aria-label="Link to this section">#</a></h2>
+
+        <p>The fix is <strong>one pipe</strong>: a conversion that drops invalid bytes.</p>
+
+<pre data-lang="bash"><code>DOC=$(head -c 60000 "$FILE" | iconv -f UTF-8 -t UTF-8 -c)</code></pre>
+
+        <p>I ran the same document <strong>with and without it</strong>, side by side.
+        The tool is <code>codex-cli 0.153.4</code>, run <strong>without <code>timeout</code>, as the hook was
+        before the fix.</strong></p>
+
+<pre data-lang="text"><code>[without iconv]
+  slice of 60,000 bytes → exit code 2 · stdout 0 bytes
+
+[through iconv]
+  slice of 59,999 bytes → exit code 0 · answered with the document's title, correctly</code></pre>
+
+        <blockquote><p><strong>The difference is one byte.</strong> Drop the one fragment of a split
+        character and the tool reads the document and answers.</p></blockquote>
+
+        <p>⚠️ Those numbers are <strong>the size of the slice</strong>, not the size of the argument that
+        actually went over. Instructions and a filename go in front, and command substitution
+        <strong>strips every trailing newline.</strong> So even a document under 60,000 bytes
+        <strong>is not byte-for-byte identical inside the variable.</strong></p>
+
+        <p>⚠️ <code>-c</code> <strong>does not only drop the tail.</strong> It drops invalid bytes anywhere
+        in the input, so <strong>corruption in the middle of a document is quietly deleted too.</strong>
+        Here that is what I want; <strong>in general it is not.</strong></p>
+
+        <p>⚠️ And the <code>iconv</code> on this machine (GNU libc 2.43) prints a diagnostic and
+        <strong>ends with 1</strong> while dropping the tail. That is not a warning, it is
+        <strong>ending in failure.</strong> The hook does not look at that status. Had the script been
+        running under <code>set -e</code>, it would have <strong>died before ever calling the tool.</strong></p>
+
+        <h2 id="fixed-and-not">What I fixed and what I did not<a class="anchor" href="#fixed-and-not" aria-label="Link to this section">#</a></h2>
+
+<pre data-lang="bash"><code>DOC=$(head -c 60000 "$FILE" | iconv -f UTF-8 -t UTF-8 -c)   # drop invalid bytes
+
+ERR=".reviews/.last-design-err"                             # do not discard stderr
+timeout 240 codex exec -m "$MODEL" --sandbox read-only "$PROMPT" &lt; /dev/null &gt; "$OUT" 2&gt;"$ERR"
+STATUS=$?
+
+if [ "$STATUS" -ne 0 ] || [ ! -s "$OUT" ]; then
+  rm -f "$OUT"                                              # leave no zero-byte file
+  echo "[codex] design review FAILED (exit=$STATUS) — cause: $(tail -2 "$ERR" | tr '\n' ' ')"
+fi</code></pre>
+
+        <ul class="callout">
+          <li><strong>Only valid bytes survive the cut.</strong> The limit stays; only the fragment goes.</li>
+          <li><strong>The tool's stderr goes to a log file.</strong> The failure message carries the last two
+          lines of that log, <strong>bringing the reason to the screen.</strong>
+          ⚠️ Only <strong>that one line's stderr</strong> goes to the log. The diagnostic from the
+          <code>iconv</code> in front <strong>still leaks out.</strong></li>
+          <li><strong>A failure deletes the zero-byte file</strong>, so it cannot be mistaken for "reviewed".</li>
+          <li><strong><code>&lt; /dev/null</code> was added.</strong> This hook runs behind the edit, so if
+          the tool ever sat waiting on standard input, <strong>it could hang without anyone noticing.</strong>
+          ⚠️ The instruction goes in as an argument, so it does not normally wait. This guards the case where
+          an inherited input is still open.</li>
+        </ul>
+
+        <p>⚠️ <strong>Even this fixed version does not report failure properly.</strong>
+        The failure branch ends with <code>echo</code>, so <strong>the script exits zero again.</strong>
+        To a caller that does not watch the output it is still a success. Of the three things above,
+        <strong>the third is still unfixed.</strong></p>
+
+        <p>⚠️ And <strong>names collide.</strong> The error log is a single file, so overlapping runs
+        overwrite each other and the wrong cause gets attached. The result filename is a
+        <strong>second-resolution timestamp</strong>, so two runs in the same second each truncate and write,
+        <strong>mixing or corrupting it.</strong> The process id is now in the name, which covers the result
+        side only; <strong>the log side is still open.</strong></p>
+
+        <p>⚠️ The result file <strong>still does not say which document was read.</strong>
+        The filename is only a timestamp.</p>
+
+        <blockquote><p><strong>"A review ran" and "this document was reviewed" are different statements</strong>,
+        and the folder only shows the first. Writing this article, I
+        <strong>never did work out which documents August's reviews had looked at</strong> from the output alone.</p></blockquote>
+
+        <h2 id="wrote-it-wrong">I wrote the same defect down wrong three times<a class="anchor" href="#wrote-it-wrong" aria-label="Link to this section">#</a></h2>
+
+        <p>This is the uncomfortable part. The day I first found this, I wrote the following into my rules
+        document.</p>
+
+        <blockquote><p>Measured: the design review hook <strong>has never once succeeded</strong>
+        (zero <code>design-*</code> files in the results folder).</p></blockquote>
+
+        <p><strong>Both halves are wrong.</strong> That day the folder already held <strong>34</strong>
+        <code>design-*</code> files, of which <strong>5</strong> were zero bytes.
+        I wrote "measured" and <strong>never counted.</strong>
+        Then I <strong>copied that sentence into the hook's own comment.</strong></p>
+
+        <blockquote><p>This is <strong>the same shape as the defect I was fixing.</strong>
+        I wrote down something unverified as if it were verified, and
+        <strong>believed it was verified because it was written down.</strong>
+        No checker catches this kind, so <strong>it survives until someone reads it again.</strong></p></blockquote>
+
+        <p>The right shape is this. Not "it never worked" but <strong>"for the document past 60,000 bytes,
+        every revision that can still be measured is affected".</strong> And in the meantime
+        <strong>other result files were still accumulating.</strong> A far less visible shape, and
+        <strong>that is why it lasted longer.</strong></p>
+
+        <p>⚠️ I also <strong>no longer know what I was looking at</strong> when I wrote "zero". I may simply
+        not have looked, or looked at a different folder.
+        <strong>That there is no record of checking</strong> is all that can be verified now.</p>
+
+        <p>And <strong>the third one I made while writing this article.</strong>
+        I put the exit code down as <strong>125</strong>, and that was a value <code>timeout</code> produced.
+        <strong>The hook before the fix had no <code>timeout</code>.</strong>
+        So I nearly wrote <strong>a value made under my own hand just now</strong> down as something that
+        happened back then.</p>
+
+        <blockquote><p>All three are the same shape. <strong>The place I measured and the place I claimed
+        were different.</strong> I moved "measuring here and now gives this" over into "that is what happened
+        there and then". <strong>Exactly the mistake this article is about</strong>, and I made it
+        <strong>once more</strong> in the middle of writing it up.</p></blockquote>
+
+        <h2 id="what-this-does-not-claim">Limits: what this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li><strong>The cause of the five zero-byte files is unconfirmed.</strong> stderr was being
+          discarded, so <strong>the reasons from that time are gone.</strong> What the reproduction shows is
+          <strong>one path that produces the same shape</strong>, not the cause of those five.
+          The one from 13 July <strong>is not explained by that path.</strong></li>
+          <li><strong>"Unread for weeks" is not proved.</strong> What is proved is
+          <strong>"every measurable revision is cut inside a character, and the tool rejects such an
+          argument".</strong> The intermediate states in between are not preserved.</li>
+          <li><strong>Why there were no reviews at all in mid-August is also unknown.</strong> The hook only
+          fires for particular editing tools, so another path would not trigger it, but
+          <strong>there is no record of what I used then.</strong></li>
+          <li><strong>This does not mean other documents always break.</strong> If the 60,000th byte lands
+          between characters it does not.
+          <strong>I simply found no such revision in this document.</strong></li>
+          <li><strong>Whether the fixed hook holds up over time is still unknown.</strong> There are four
+          successful results since the fix, and I checked that failures are visible
+          <strong>by deliberately breaking it once.</strong></li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="closing">Closing<a class="anchor" href="#closing" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>Feed Korean into a tool that cuts by bytes and it can be cut inside a character.</strong>
+          And that only starts <strong>once the document passes the limit.</strong> Below it there is nothing
+          to cut and everything is fine.</li>
+          <li><strong><code>&gt;</code> creates the file before the command.</strong>
+          A file remains even on failure, and a file present reads to a person as "it worked".</li>
+          <li><strong>Failure leaves several pieces of evidence, and there can be several covers.</strong>
+          If the result, the message and the exit code are each covered by a different thing,
+          <strong>fixing one changes nothing you can see.</strong></li>
+          <li><strong>"A check ran" and "this was checked" are different statements.</strong>
+          If the output does not record what it looked at, you only get the first.</li>
+        </ul>
+
+        <p>If one line survives, it is this.
+        <strong>Writing down that you fixed a check and counting what that check actually did are different
+        jobs.</strong> I did the first and looked at the folder.</p>
+
+        <p>Thank you for reading.</p>
+        </div>
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=f9984ac3a0"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
