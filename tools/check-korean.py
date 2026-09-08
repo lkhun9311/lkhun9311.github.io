@@ -53,6 +53,16 @@ def scan(path, fix=False):
     head, mid, tail = s[:i], s[i:j], s[j:]
     found = []
 
+    # 머리말의 meta 설명과 제목 아래 부제목도 발행되는 글이다.
+    # 2026-09-08: 규약 13 위반 3건이 meta 에만 남아 검사기를 빠져나갔다.
+    meta = " ".join(re.findall(r'(?:name|property)="(?:description|og:description|twitter:description)"'
+                               r'\s+content="([^"]*)"', head))
+    meta += " " + " ".join(re.findall(r'<span class="h1-sub">([^<]*)</span>', head))
+    for m in R13.finditer(meta):
+        found.append(("13", 0, "meta: " + m.group(0).strip()))
+    for m in R20.finditer(meta):
+        found.append(("20", 0, "meta: " + m.group(0)))
+
     # 줄표는 표의 「해당 없음」 칸과 코드 창 안에서만 봐준다.
     masked = re.sub(r"<pre.*?</pre>", lambda m: " " * len(m.group(0)), mid, flags=re.S)
     for m in R12.finditer(masked):
@@ -87,7 +97,18 @@ def scan(path, fix=False):
         new = R13.sub(lambda m: m.group(1) + " ", new)
         new = R20.sub(lambda m: m.group(1) + m.group(2), new)
         new = re.sub(r"\x00(\d+)\x00", lambda m: anchors[int(m.group(1))], new)
-        if new != mid:
+
+        # 머리말은 meta 설명과 h1-sub 안쪽만 고친다. 나머지는 손대지 않는다.
+        def _clean(t):
+            t = R13.sub(lambda m: m.group(1) + " ", t)
+            return R20.sub(lambda m: m.group(1) + m.group(2), t)
+        newhead = re.sub(
+            r'((?:name|property)="(?:description|og:description|twitter:description)"\s+content=")([^"]*)(")',
+            lambda m: m.group(1) + _clean(m.group(2)) + m.group(3), head)
+        newhead = re.sub(r'(<span class="h1-sub">)([^<]*)(</span>)',
+                         lambda m: m.group(1) + _clean(m.group(2)) + m.group(3), newhead)
+        head = newhead
+        if new != mid or head != s[:i]:      # 본문이든 머리말이든 바뀌면 쓴다
             changed = True
             io.open(path, "w", encoding="utf-8").write(head + new + tail)
     return found, s, changed
