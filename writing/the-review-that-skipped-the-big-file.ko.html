@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>자른 자리를 재 보니 전부 글자 안이었습니다 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/the-review-that-skipped-the-big-file.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/the-review-that-skipped-the-big-file.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/the-review-that-skipped-the-big-file.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/the-review-that-skipped-the-big-file.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="자른 자리를 재 보니 전부 글자 안이었습니다 | Kwanghun Lee" />
+  <meta property="og:description" content="설계 문서를 고치면 외부 리뷰가 자동으로 돌게 해 뒀습니다. head -c는 글자가 아니라 바이트를 세는데 커밋으로 남은 리비전 중 6만 바이트를 넘긴 4개를 재 보니 잘린 자리가 전부 글자 안이었습니다. 도구는 그 인자를 모델에 넘기기 전에 거절합니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/the-review-that-skipped-the-big-file.ko.html" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="자른 자리를 재 보니 전부 글자 안이었습니다 | Kwanghun Lee" />
+  <meta name="twitter:description" content="설계 문서를 고치면 외부 리뷰가 자동으로 돌게 해 뒀습니다. head -c는 글자가 아니라 바이트를 세는데 커밋으로 남은 리비전 중 6만 바이트를 넘긴 4개를 재 보니 잘린 자리가 전부 글자 안이었습니다. 도구는 그 인자를 모델에 넘기기 전에 거절합니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="설계 문서를 고치면 외부 리뷰가 자동으로 돌게 해 뒀습니다. head -c는 글자가 아니라 바이트를 세는데 커밋으로 남은 리비전 중 6만 바이트를 넘긴 4개를 재 보니 잘린 자리가 전부 글자 안이었습니다. 도구는 그 인자를 모델에 넘기기 전에 거절합니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "the-review-that-skipped-the-big-file.html", "ko": "the-review-that-skipped-the-big-file.ko.html", "ja": "the-review-that-skipped-the-big-file.ja.html"}'>
+          <option value="ko" selected>한국어</option>
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
+        <div class="article-meta"><span class="source-tag commercial notranslate">사업화 프로젝트</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>자른 자리를 재 보니 전부 글자 안이었습니다<br><span class="h1-sub">커밋으로 남은 리비전 4개가 전부 그랬고 리뷰 도구는 모델에 넘기기 전에 그 인자를 거절합니다. 사업화 프로젝트 oxy</span></h1>
+          <p class="article-date">2026년 9월</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="the-review-that-skipped-the-big-file"></aside>
+
+        <nav class="article-toc" aria-label="목차">
+          <p class="toc-label">목차</p>
+          <ul>
+            <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+            <li><a href="#무슨-내용">무슨 내용인가요?</a></li>
+            <li><a href="#해-둔-것">설계 문서를 고치면 리뷰가 돌게 해 뒀습니다</a></li>
+            <li><a href="#자르는-자리">자르는 자리가 글자 안이었습니다</a></li>
+            <li><a href="#리비전마다-쟀다">남아 있는 리비전을 전부 재 봤습니다</a></li>
+            <li><a href="#도구가-거부">거절한 것이 제가 생각한 프로그램이 아니었습니다</a></li>
+            <li><a href="#세-가지-덮개">서로 다른 것이 실패 신호를 하나씩 지웠습니다</a></li>
+            <li><a href="#폴더는-차-있었다">그동안 폴더는 차 있었습니다</a></li>
+            <li><a href="#대조-실험">1바이트를 버리니 통과했습니다</a></li>
+            <li><a href="#고친-것">고친 것과 아직 못 고친 것</a></li>
+            <li><a href="#내가-틀리게-적었다">같은 결함을 세 번 틀리게 적었습니다</a></li>
+            <li><a href="#주장하지-않는-것">한계: 이 글이 주장하지 않는 것</a></li>
+            <li><a href="#마치며">마치며</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>안녕하세요. 혼자 만들고 있는 소셜 투표 서비스에서 설계 문서를 편집 도구로 고치면
+        <strong>외부 리뷰가 자동으로 돌게</strong> 해 뒀습니다. 결과는 폴더에 쌓입니다.</p>
+
+        <p>폴더에는 결과가 쌓이고 있었습니다. 그런데 그 리뷰에 넘기는 문자열을
+        <strong>지금 다시 만들어 보니 글자 한가운데서 잘려 있었고</strong>, 도구는 그런 인자를
+        <strong>읽지도 않고 거절</strong>했습니다.</p>
+
+        <p>⚠️ 먼저 밝혀 둡니다. 이 글이 <strong>잰 것</strong>은 「지금 남아 있는 문서를 그 명령으로
+        자르면 어떻게 되는가」입니다. 그때 훅이 실제로 무엇을 받아 어떻게 끝났는지는
+        <strong>기록이 안 남아 있습니다.</strong> 그 사이는 <strong>추론</strong>이고,
+        어디까지가 잰 것이고 어디부터가 추론인지 계속 표시하겠습니다.</p>
+
+        <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li>자동 검사를 걸어 두고 결과 폴더만 보고 안심한 적 있는 분</li>
+          <li>스크립트에서 <code>2&gt;/dev/null</code>을 습관처럼 쓰는 분</li>
+          <li>한국어·일본어 문서를 도구에 넘기는 파이프라인을 다루는 분</li>
+        </ul>
+
+        <h2 id="무슨-내용">무슨 내용인가요?<a class="anchor" href="#무슨-내용" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li>문서를 <code>head -c 60000</code>으로 잘라 리뷰 도구에 넘기고 있었습니다.
+          이 명령은 <strong>앞 60,000바이트만 남깁니다.</strong> 글자가 아니라 바이트를 셉니다.</li>
+          <li>큰 설계 문서에서 <strong>6만 바이트를 넘긴 커밋 4개</strong>를 꺼내 재 보니
+          <strong>4개 다 잘린 자리가 글자 안</strong>이었습니다. 지금 작업 중인 것까지 5개입니다.</li>
+          <li>도구는 그런 인자를 받으면 <strong>모델까지 가지도 않고 2로 끝납니다.</strong>
+          재현해서 확인했습니다.</li>
+          <li>실패의 신호는 셋인데 <strong>서로 다른 것이 하나씩</strong> 지웠습니다.
+          결과 파일을 미리 만드는 리다이렉션, <code>2&gt;/dev/null</code>,
+          그리고 스크립트 끝의 <code>exit 0</code>입니다.</li>
+          <li>⚠️ <strong>문서가 6만 바이트보다 짧으면 자를 것이 없어 멀쩡합니다.</strong>
+          그래서 짧은 쪽 문서의 결과가 계속 쌓였고 <strong>폴더는 건강해 보였습니다.</strong></li>
+        </ul>
+
+        <h2 id="해-둔-것">설계 문서를 고치면 리뷰가 돌게 해 뒀습니다<a class="anchor" href="#해-둔-것" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>혼자 만드는 프로젝트라 설계를 봐 줄 사람이 없습니다. 그래서 설계 문서를 고치면
+        외부 도구가 그 문서를 읽고 <strong>가장 심각한 문제 5가지</strong>를 뽑아 주게 해 뒀습니다.
+        결과는 시각을 붙인 파일로 남습니다.</p>
+
+        <p>⚠️ <strong>「고치면」의 범위가 좁습니다.</strong> 이 훅은 특정 편집 도구를 쓸 때만 걸립니다.
+        셸로 고치거나 다른 경로로 쓰면 <strong>아예 안 불립니다.</strong> 뒤에서 다시 나옵니다.</p>
+
+<pre data-lang="bash"><code>FILE="${1:-docs/DESIGN.md}"
+OUT=".reviews/design-$(date +%Y%m%d-%H%M%S)-$$.md"   # $$ 는 나중에 붙였다
+
+DOC=$(head -c 60000 "$FILE")
+PROMPT="이 설계 문서를 가차 없이 검토하라. ...
+
+DOC ($FILE):
+$DOC"
+
+codex exec --sandbox read-only "$PROMPT" &gt; "$OUT" 2&gt;/dev/null
+exit 0</code></pre>
+
+        <p>문서 전체를 넘기면 인자가 너무 길어질까 봐 <code>head -c 60000</code>으로 앞부분만 잘랐습니다.
+        <code>2&gt;/dev/null</code>과 <code>exit 0</code>은
+        <strong>리뷰가 실패해도 편집 작업은 안 막으려고</strong> 넣었습니다.</p>
+
+        <blockquote><p>이 여덟 줄에 이 글이 다루는 결함이 들어 있습니다.
+        <strong>각각은 다 그럴듯한 이유로 넣은 것</strong>입니다.
+        ⚠️ 다만 <strong>마지막 하나는 코드 밖에 있습니다.</strong> 뒤에서 나옵니다.</p></blockquote>
+
+        <h2 id="자르는-자리">자르는 자리가 글자 안이었습니다<a class="anchor" href="#자르는-자리" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p><code>head -c</code>는 <strong>바이트</strong>를 셉니다. ASCII 문자는 한 글자가 1바이트라
+        둘이 같지만 <strong>지금 쓰는 한글 음절은 한 글자가 3바이트</strong>입니다.
+        (한국어 문장에도 숫자·기호 같은 1바이트 글자가 섞이고 4바이트짜리 글자나 여러 조각으로 된 이모지도 있습니다.)</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="by-t by-d" class="figure-svg">
+            <title id="by-t">바이트 경계가 글자 안을 지나는 모습</title>
+            <desc id="by-d">위 줄은 ASCII 글자로, 상자 하나가 글자 하나이고 바이트 하나입니다. 자르는
+            세로선이 어디에 놓여도 상자와 상자 사이에 떨어집니다. 아래 줄은 한글로, 글자 하나가 상자 세 개로
+            이뤄져 있고 세 상자 아래에 글자 하나가 적혀 있습니다. 자르는 세로선은 마지막 글자의 첫 상자와
+            둘째 상자 사이를 지납니다. 그래서 왼쪽에는 그 글자의 첫 바이트 하나만 남습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="12" y="20" font-size="12" fill="#8a8a8a" font-weight="700">ASCII · 한 글자 = 한 바이트</text>
+              <g fill="none" stroke="#8a8a8a" stroke-width="1.6">
+                <rect x="12" y="30" width="26" height="26" rx="4"/><rect x="40" y="30" width="26" height="26" rx="4"/>
+                <rect x="68" y="30" width="26" height="26" rx="4"/><rect x="96" y="30" width="26" height="26" rx="4"/>
+                <rect x="124" y="30" width="26" height="26" rx="4"/><rect x="152" y="30" width="26" height="26" rx="4"/>
+              </g>
+              <g font-size="13" fill="#4a4a4a" text-anchor="middle">
+                <text x="25" y="48">d</text><text x="53" y="48">e</text><text x="81" y="48">s</text>
+                <text x="109" y="48">i</text><text x="137" y="48">g</text><text x="165" y="48">n</text>
+              </g>
+              <path d="M123 22 V 64" stroke="#d62976" stroke-width="2" stroke-dasharray="4 3" fill="none"/>
+              <text x="200" y="48" font-size="11.5" fill="#8a8a8a">어디서 잘라도 글자 사이</text>
+
+              <text x="12" y="110" font-size="12" fill="#d62976" font-weight="700">한글 음절 · 한 글자 = 세 바이트</text>
+              <g fill="none" stroke="#8a8a8a" stroke-width="1.4">
+                <rect x="12" y="120" width="22" height="26" rx="4"/><rect x="36" y="120" width="22" height="26" rx="4"/><rect x="60" y="120" width="22" height="26" rx="4"/>
+                <rect x="90" y="120" width="22" height="26" rx="4"/><rect x="114" y="120" width="22" height="26" rx="4"/><rect x="138" y="120" width="22" height="26" rx="4"/>
+                <rect x="168" y="120" width="22" height="26" rx="4"/><rect x="192" y="120" width="22" height="26" rx="4"/><rect x="216" y="120" width="22" height="26" rx="4"/>
+              </g>
+              <g font-size="10" fill="#8a8a8a" text-anchor="middle">
+                <text x="23" y="137">EC</text><text x="47" y="137">84</text><text x="71" y="137">A4</text>
+                <text x="101" y="137">EA</text><text x="125" y="137">B3</text><text x="149" y="137">84</text>
+                <text x="179" y="137">ED</text><text x="203" y="137">95</text><text x="227" y="137">B8</text>
+              </g>
+              <g font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="700">
+                <text x="47" y="164">설</text><text x="125" y="164">계</text><text x="203" y="164">핸</text>
+              </g>
+              <g fill="none" stroke="#c9c9c9" stroke-width="1.2">
+                <path d="M12 150 H 82"/><path d="M90 150 H 160"/><path d="M168 150 H 238"/>
+              </g>
+              <path d="M191 112 V 176" stroke="#d62976" stroke-width="2" stroke-dasharray="4 3" fill="none"/>
+              <text x="262" y="140" font-size="11.5" fill="#d62976" font-weight="700">글자 안을 지나는 자리</text>
+              <text x="262" y="158" font-size="11.5" fill="#8a8a8a">왼쪽에 남는 것 · 첫 바이트 1개</text>
+            </g>
+          </svg>
+          <figcaption>세로선은 바이트가 아니라 <strong>자르는 경계</strong>입니다.
+          지금 문서에서는 60,000번째 바이트가 「핸」의 첫 바이트 <code>ED</code>이고,
+          경계가 그 바로 뒤에 놓여 <strong>세 바이트 중 하나만</strong> 남았습니다.
+          <strong>반이 아니라 3분의 1</strong>입니다.</figcaption>
+        </figure>
+
+        <h2 id="리비전마다-쟀다">남아 있는 리비전을 전부 재 봤습니다<a class="anchor" href="#리비전마다-쟀다" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>「글자가 갈릴 수 있다」와 「그때 갈렸다」는 다른 말입니다.
+        그래서 이 문서의 <strong>커밋으로 남은 리비전을 하나씩 꺼내</strong> 두 가지를 봤습니다.
+        <strong>원본 전체가 유효한지</strong>, 그리고 <strong>앞 60,000바이트가 유효한지</strong>입니다.
+        원본이 이미 망가져 있었다면 자른 자리 탓이 아니니까요.</p>
+
+<pre data-lang="bash"><code>blob=$(git rev-parse "$commit:docs/DESIGN.md")
+
+git cat-file -p "$blob" | iconv -f UTF-8 -t UTF-8 &gt; /dev/null                # 원본 전체
+git cat-file -p "$blob" | head -c 60000 | iconv -f UTF-8 -t UTF-8 &gt; /dev/null # 앞 60,000</code></pre>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+        <table>
+          <caption class="sr-only">설계 문서 리비전별 크기와 원본·절단본의 유효성.</caption>
+          <thead><tr><th>리비전</th><th>크기</th><th>원본 전체</th><th>앞 60,000바이트</th></tr></thead>
+          <tbody>
+            <tr><td>7월 17일</td><td>51,927 바이트</td><td>유효</td><td>자를 것 없음</td></tr>
+            <tr><td>8월 2일</td><td>75,281 바이트</td><td>유효</td><td><strong>글자 안에서 잘림</strong></td></tr>
+            <tr><td>8월 16일</td><td>111,834 바이트</td><td>유효</td><td><strong>글자 안에서 잘림</strong></td></tr>
+            <tr><td>8월 23일</td><td>114,909 바이트</td><td>유효</td><td><strong>글자 안에서 잘림</strong></td></tr>
+            <tr><td>8월 26일</td><td>115,891 바이트</td><td>유효</td><td><strong>글자 안에서 잘림</strong></td></tr>
+            <tr><td>작업 트리(지금)</td><td>130,939 바이트</td><td>유효</td><td><strong>글자 안에서 잘림</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note"><strong>원본은 여섯 개 다 유효합니다.</strong> 그러니 오른쪽 칸의 깨짐은
+        <strong>자른 자리에서 생긴 것</strong>입니다. 6만 바이트를 넘긴 <strong>커밋 4개가 전부</strong>
+        걸렸고 지금 작업 중인 것까지 하면 5개입니다.
+        ⚠️ 「반쯤 걸린다」고 쓰려다 <strong>재 보고 지웠습니다.</strong></p>
+
+        <blockquote><p>⚠️ <strong>이 표가 증명하는 것은 여기까지입니다.</strong>
+        「이 blob을 이 명령으로 자르면 유효하지 않은 UTF-8이 된다.」
+        <strong>그때 훅이 그 blob을 실제로 받았는지, 받아서 어떻게 끝났는지는 아닙니다.</strong>
+        커밋 사이에 <strong>중간 상태가 더 있었을 텐데</strong> 그건 남아 있지 않습니다.
+        몇 개였는지도 모릅니다.</p></blockquote>
+
+        <p>그러니 이 글이 말할 수 있는 것은 <strong>「재 볼 수 있는 것에서는 반례를 못 찾았다」</strong>입니다.
+        「몇 주 동안 한 번도 안 읽혔다」는 <strong>그 관측에서 나온 추론</strong>이고 증명이 아닙니다.</p>
+
+        <h2 id="도구가-거부">거절한 것이 제가 생각한 프로그램이 아니었습니다<a class="anchor" href="#도구가-거부" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>갈린 글자가 들어 있는 문자열을 인자로 넘기면 어떻게 되는지 돌려 봤습니다.
+        <strong>당시 훅이 쓰던 형태 그대로</strong>입니다.</p>
+
+<pre data-lang="text"><code>$ codex exec --sandbox read-only "$(cat broken.txt)"
+
+종료 코드: 2
+stdout: 0 바이트
+stderr: error: invalid UTF-8 was detected in one or more arguments
+        Usage: codex exec [OPTIONS] [PROMPT]</code></pre>
+
+        <p><strong>모델까지 가지도 않습니다.</strong> 인자를 검사하는 단계에서 거절합니다.
+        그러니 리뷰 결과가 한 글자도 안 나옵니다.</p>
+
+        <p>그런데 <strong>여기서 제가 한 번 더 틀렸습니다.</strong>
+        고친 훅에는 <code>timeout</code>을 붙여 뒀는데 그 형태로 재고는
+        <strong>종료 코드가 125라고 적었습니다.</strong> 다시 재 보니 이렇습니다.</p>
+
+<pre data-lang="text"><code>$ codex exec ... "&lt;깨진 인자&gt;"              → 2
+$ timeout 60 codex exec ... "&lt;깨진 인자&gt;"   → 125
+
+$ timeout 60 cat  "&lt;깨진 인자&gt;"             → 125
+$ timeout 60 echo "&lt;깨진 인자&gt;"             → 125</code></pre>
+
+        <p>아래 두 줄이 답입니다. <strong>codex와 아무 상관이 없습니다.</strong>
+        이 장비의 <code>timeout</code>은 GNU 판이 아니라 <strong>Rust로 다시 쓴 판</strong>
+        (<code>uutils coreutils 0.8.0</code>)이고 <strong>자기 인자에 유효하지 않은 UTF-8이 있으면
+        스스로 거절</strong>합니다. 그래서 <strong>codex는 시작도 안 합니다.</strong></p>
+
+        <blockquote><p>두 프로그램이 <strong>글자 하나 다르지 않은 첫 줄</strong>을 냅니다.
+        둘 다 같은 Rust 인자 처리 라이브러리를 쓰기 때문입니다.
+        다른 것은 <strong>둘째 줄과 종료 코드</strong>뿐입니다.</p></blockquote>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+        <table>
+          <caption class="sr-only">깨진 인자를 거절하는 두 프로그램의 차이.</caption>
+          <thead><tr><th>거절한 것</th><th>첫 줄</th><th>둘째 줄</th><th>종료 코드</th></tr></thead>
+          <tbody>
+            <tr><td>codex</td><td>invalid UTF-8 …</td><td><code>Usage: codex exec …</code></td><td><strong>2</strong></td></tr>
+            <tr><td>timeout</td><td>invalid UTF-8 …</td><td><code>For more information …</code></td><td><strong>125</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">⚠️ <strong>고치기 전 훅에는 <code>timeout</code>이 없었습니다.</strong>
+        그러니 그때 났을 값은 <strong>2</strong>입니다. 125는 <strong>제가 지금 재면서 만든 값</strong>이고,
+        저는 그것을 그때의 값으로 적을 뻔했습니다.</p>
+
+        <blockquote><p>결과는 어느 쪽이든 같습니다. <strong>리뷰가 한 글자도 안 나옵니다.</strong>
+        하지만 <strong>누가 거절했는지를 저는 틀리게 알고 있었습니다.</strong>
+        「도구가 문서를 거부한다」와 「도구를 부르는 껍데기가 인자를 거부한다」는 다른 이야기이고,
+        <strong>고칠 자리도 다릅니다.</strong></p></blockquote>
+
+        <h2 id="세-가지-덮개">서로 다른 것이 실패 신호를 하나씩 지웠습니다<a class="anchor" href="#세-가지-덮개" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>실패 자체는 요란합니다. 종료 코드도 125이고 메시지도 또렷합니다.
+        그게 <strong>저한테까지 못 온 것</strong>은 제가 넣은 세 가지 때문입니다.
+        ⚠️ <strong>겹겹이 막은 것이 아닙니다.</strong> 실패가 남기는 신호가 셋인데
+        <strong>서로 다른 것이 하나씩</strong> 지웠습니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 236" role="img" aria-labelledby="si-t si-d" class="figure-svg">
+            <title id="si-t">실패의 세 신호와 그것을 각각 지운 것</title>
+            <desc id="si-d">상자 여섯 개가 두 열로 놓여 있습니다. 왼쪽 열은 실패가 남기는 신호 세 가지로,
+            위에서부터 결과 파일이 없어야 한다는 것, 오류 메시지, 종료 코드 125입니다. 오른쪽 열은 그것을
+            각각 지운 것으로, 리다이렉션이 명령보다 먼저 빈 파일을 만들어 결과가 없다는 신호를 없애고,
+            표준 오류를 버리는 설정이 메시지를 없애고 스크립트 끝의 종료 0이 마지막 상태를 성공으로
+            만듭니다. 같은 줄끼리 점선 화살표로 짝지어져 있고 줄과 줄 사이에는 연결이 없습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="16" y="22" font-size="12" fill="#d62976" font-weight="700">실패가 남기는 신호</text>
+              <text x="430" y="22" font-size="12" fill="#8a8a8a" font-weight="700">그것을 지운 것</text>
+
+              <rect x="16" y="34" width="250" height="52" rx="7" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="141" y="56" font-size="12" fill="#d62976" text-anchor="middle">없어야 할 결과 파일</text>
+              <text x="141" y="74" font-size="11" fill="#8a8a8a" text-anchor="middle">도구가 아무것도 안 썼으니까</text>
+              <path d="M270 60 H 424" fill="none" stroke="#c9c9c9" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#si-ar)"/>
+              <rect x="428" y="34" width="276" height="52" rx="7" fill="none" stroke="#8a8a8a" stroke-width="2"/>
+              <text x="566" y="56" font-size="12" fill="#4a4a4a" text-anchor="middle">명령보다 먼저 만들어지는 빈 파일</text>
+              <text x="566" y="74" font-size="11" fill="#8a8a8a" text-anchor="middle">폴더에 보이는 파일</text>
+
+              <rect x="16" y="96" width="250" height="52" rx="7" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="141" y="118" font-size="12" fill="#d62976" text-anchor="middle">오류 메시지</text>
+              <text x="141" y="136" font-size="11" fill="#8a8a8a" text-anchor="middle">invalid UTF-8 …</text>
+              <path d="M270 122 H 424" fill="none" stroke="#c9c9c9" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#si-ar)"/>
+              <rect x="428" y="96" width="276" height="52" rx="7" fill="none" stroke="#8a8a8a" stroke-width="2"/>
+              <text x="566" y="118" font-size="12" fill="#4a4a4a" text-anchor="middle">2&gt;/dev/null</text>
+              <text x="566" y="136" font-size="11" fill="#8a8a8a" text-anchor="middle">사라지는 이유</text>
+
+              <rect x="16" y="158" width="250" height="52" rx="7" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="141" y="180" font-size="12" fill="#d62976" text-anchor="middle">종료 코드 125</text>
+              <text x="141" y="198" font-size="11" fill="#8a8a8a" text-anchor="middle">부른 쪽이 볼 수 있는 값</text>
+              <path d="M270 184 H 424" fill="none" stroke="#c9c9c9" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#si-ar)"/>
+              <rect x="428" y="158" width="276" height="52" rx="7" fill="none" stroke="#8a8a8a" stroke-width="2"/>
+              <text x="566" y="180" font-size="12" fill="#4a4a4a" text-anchor="middle">스크립트 끝의 exit 0</text>
+              <text x="566" y="198" font-size="11" fill="#8a8a8a" text-anchor="middle">0이 되는 마지막 상태</text>
+
+              <text x="360" y="230" font-size="11" fill="#8a8a8a" text-anchor="middle">줄과 줄 사이에 연결 없음</text>
+            </g>
+            <defs>
+              <marker id="si-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>같은 신호를 겹쳐 막은 것이 아니라 <strong>다른 신호를 하나씩</strong> 지웠습니다.</figcaption>
+        </figure>
+
+        <p>첫째가 제일 고약합니다. <code>&gt;</code>는 <strong>명령이 시작되기 전에</strong> 파일을
+        만들고 비웁니다. 그러니 도구가 아무것도 안 뱉어도 <strong>파일은 생깁니다.</strong>
+        원래대로면 「결과 파일이 없다」가 실패의 신호일 텐데 <strong>그 신호가 안 생깁니다.</strong></p>
+
+        <blockquote><p>⚠️ <strong>셋이 다 있어야만 안 보이는 것은 아닙니다.</strong>
+        <code>2&gt;/dev/null</code> 하나만 없앴어도 이유가 남고,
+        <code>exit 0</code> 하나만 없앴어도 부른 쪽이 125를 받습니다.</p></blockquote>
+
+        <p>그래서 <strong>네 번째가 있습니다.</strong> 이건 코드 밖입니다.
+        이 훅은 편집 뒤에 자동으로 불리고 저는 <strong>그 출력이 어디로 가는지도 종료 코드를 누가 받는지도
+        한 번도 안 봤습니다.</strong> 폴더만 봤습니다.
+        세 가지를 넣은 것도 저고 <strong>안 본 것도 저</strong>입니다.</p>
+
+        <h2 id="폴더는-차-있었다">그동안 폴더는 차 있었습니다<a class="anchor" href="#폴더는-차-있었다" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>리뷰 결과 폴더를 열면 파일이 늘고 있었습니다. 그래서 <strong>돌고 있다고 믿었습니다.</strong>
+        세어 보니 이렇습니다.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+        <table>
+          <caption class="sr-only">설계 리뷰 결과 파일의 시기별 상태.</caption>
+          <thead><tr><th>시기</th><th>결과 파일</th></tr></thead>
+          <tbody>
+            <tr><td>7월 초 ~ 8월 8일</td><td>내용 있는 파일 <strong>24개</strong></td></tr>
+            <tr><td>7월 13일 · 8월 12~13일</td><td><strong>0바이트 파일 5개</strong></td></tr>
+            <tr><td>8월 14일 ~ 8월 31일</td><td><strong>파일 자체가 없음</strong></td></tr>
+            <tr><td>9월 초</td><td>내용 있는 파일 5개 (그중 4개는 고친 뒤)</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">⚠️ <strong>이 표는 세어 본 것이고 뜻은 세어 본 것이 아닙니다.</strong>
+        0바이트 파일이 「불렀는데 실패」인지는 <strong>그때 stderr를 버려서 알 수 없습니다.</strong>
+        도구를 못 찾았어도 같은 모양이 됩니다. 파일이 없는 것도 「안 불렸다」의 증거는 아닙니다.</p>
+
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 190" role="img" aria-labelledby="tl-t tl-d" class="figure-svg">
+            <title id="tl-t">7월 초부터 9월 초까지의 리뷰 결과</title>
+            <desc id="tl-d">가로가 시간축입니다. 축 위쪽의 작은 동그라미가 내용이 있는 결과 파일이고,
+            축 아래쪽의 가위표가 0바이트 파일입니다. 왼쪽 끝 7월 초에 동그라미가 셋 모여 있고 조금 뒤
+            7월 중순에 동그라미 하나와 가위표 하나가 나란히 있습니다. 그 뒤로 3주 가까이 아무 표시가
+            없다가 8월 초에 동그라미가 다섯 이어지고 8월 중순에 가위표가 넷 모여 있습니다. 이어지는
+            8월 14일부터 31일까지는 축 위아래 모두 비어 있고 그 구간이 옅게 칠해져 있습니다. 오른쪽 끝
+            9월 초에 동그라미가 둘 다시 나타납니다. 8월 2일 자리에 세로 점선이 있고 문서가 6만 바이트를
+            넘긴 날이라고 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="435" y="78" width="162" height="34" fill="#f1f1f1"/>
+              <text x="516" y="70" font-size="11" fill="#8a8a8a" text-anchor="middle">결과 파일이 없는 구간</text>
+
+              <path d="M20 95 H 660" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#tl-ar)"/>
+
+              <g fill="none" stroke="#8a8a8a" stroke-width="1.6">
+                <circle cx="20" cy="80" r="4"/><circle cx="30" cy="80" r="4"/><circle cx="41" cy="80" r="4"/>
+                <circle cx="83" cy="80" r="4"/>
+                <circle cx="314" cy="80" r="4"/><circle cx="324" cy="80" r="4"/><circle cx="335" cy="80" r="4"/>
+                <circle cx="345" cy="80" r="4"/><circle cx="356" cy="80" r="4"/>
+                <circle cx="608" cy="80" r="4"/><circle cx="629" cy="80" r="4"/>
+              </g>
+
+              <g stroke="#d62976" stroke-width="2" stroke-linecap="round">
+                <path d="M79 106 L 87 114"/><path d="M87 106 L 79 114"/>
+                <path d="M390 106 L 398 114"/><path d="M398 106 L 390 114"/>
+                <path d="M400 106 L 408 114"/><path d="M408 106 L 400 114"/>
+                <path d="M411 106 L 419 114"/><path d="M419 106 L 411 114"/>
+                <path d="M421 106 L 429 114"/><path d="M429 106 L 421 114"/>
+              </g>
+
+              <path d="M293 44 V 128" stroke="#d62976" stroke-width="2" stroke-dasharray="4 3" fill="none"/>
+              <text x="293" y="38" font-size="11.5" fill="#d62976" font-weight="700" text-anchor="middle">문서가 6만 바이트를 넘긴 날</text>
+
+              <g font-size="11" fill="#8a8a8a">
+                <text x="20" y="148">7월 초</text>
+                <text x="293" y="148" text-anchor="middle">8월 2일</text>
+                <text x="516" y="148" text-anchor="middle">8월 14~31일</text>
+                <text x="629" y="148" text-anchor="end">9월 초</text>
+              </g>
+
+              <g font-size="11" fill="#8a8a8a">
+                <circle cx="26" cy="170" r="4" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+                <text x="36" y="174">내용 있는 결과 파일</text>
+                <g stroke="#d62976" stroke-width="2" stroke-linecap="round">
+                  <path d="M186 166 L 194 174"/><path d="M194 166 L 186 174"/>
+                </g>
+                <text x="202" y="174">0바이트 파일</text>
+              </g>
+            </g>
+            <defs>
+              <marker id="tl-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>동그라미는 <strong>날짜마다 하나씩만</strong> 그렸습니다. 실제로는 같은 날 여러 건이
+          있습니다. 가위표는 0바이트 파일 <strong>다섯 개를 그대로</strong> 그렸습니다.
+          점선 오른쪽이 큰 문서가 잘리기 시작한 구간인데
+          <strong>동그라미는 그 뒤에도 한동안 이어집니다.</strong></figcaption>
+        </figure>
+
+        <p>⚠️ 그리고 <strong>이 표를 이렇게 놓고 보면 이상한 곳이 눈에 띕니다.</strong>
+        0바이트 파일도, 2주 넘는 공백도 그렇습니다. 제가 못 본 것은
+        <strong>이렇게 놓고 안 봤기 때문</strong>입니다. <strong>파일이 늘어나는 것만</strong> 이따금
+        확인했습니다. 크기도 날짜 간격도 안 봤습니다.</p>
+
+        <p>7월 13일의 0바이트는 <strong>이 글의 원인으로는 설명되지 않습니다.</strong>
+        그때 문서는 6만 바이트보다 짧아서 자를 것이 없었습니다.
+        그 실패의 원인은 <strong>모릅니다.</strong></p>
+
+        <p>8월 초에는 내용 있는 리뷰가 계속 나왔습니다. 그때 설계 문서가 <strong>두 개</strong>였고
+        새로 쓰던 쪽은 <strong>31,965 바이트</strong>였습니다. 6만보다 짧으니 자를 것이 없습니다.
+        그 리뷰들의 내용도 그 새 문서 쪽 이야기였습니다.
+        ⚠️ <strong>결과물에 파일 이름이 안 적혀 있어서</strong> 내용을 읽고 짐작한 것이고,
+        <strong>어느 리뷰가 어느 문서를 봤는지 결과물로는 구분할 수 없습니다.</strong></p>
+
+        <blockquote><p>그래서 폴더는 <strong>더 건강해 보였습니다.</strong>
+        짧은 쪽 문서를 고칠 때마다 결과가 또박또박 쌓이는 것처럼 보였으니까요.</p></blockquote>
+
+        <h2 id="대조-실험">1바이트를 버리니 통과했습니다<a class="anchor" href="#대조-실험" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>고치는 방법은 <strong>파이프 하나</strong>입니다. 유효하지 않은 바이트를 버리는 변환을 끼웁니다.</p>
+
+<pre data-lang="bash"><code>DOC=$(head -c 60000 "$FILE" | iconv -f UTF-8 -t UTF-8 -c)</code></pre>
+
+        <p>같은 문서로 <strong>있을 때와 없을 때</strong>를 나란히 돌렸습니다.
+        도구는 <code>codex-cli 0.153.4</code>입니다.</p>
+
+<pre data-lang="text"><code>[iconv 없이]
+  잘라 낸 조각 60,000 바이트 → 종료 코드 125 · stdout 0 바이트
+
+[iconv 거쳐서]
+  잘라 낸 조각 59,999 바이트 → 종료 코드 0 · 문서 제목을 정확히 답함</code></pre>
+
+        <blockquote><p><strong>차이는 1바이트입니다.</strong> 잘린 글자의 조각 하나를 버리니
+        도구가 문서를 읽고 답했습니다.</p></blockquote>
+
+        <p>⚠️ 위 숫자는 <strong>잘라 낸 조각의 크기</strong>이지 실제로 넘어간 인자의 크기가 아닙니다.
+        앞에 지시문과 파일 이름이 붙고 명령 치환은 <strong>끝에 붙은 개행을 전부 지웁니다.</strong>
+        그래서 6만보다 짧은 문서도 <strong>변수 안의 내용이 원본과 바이트 단위로 같지는 않습니다.</strong></p>
+
+        <p>⚠️ <code>-c</code>는 <strong>꼬리만 버리는 것이 아닙니다.</strong>
+        입력 어디에 있든 유효하지 않은 바이트를 전부 버립니다. 그러니 <strong>문서 가운데가 망가져 있어도
+        조용히 지우고 넘어갑니다.</strong> 이 자리에서는 그게 원하는 동작이지만
+        <strong>일반적으로는 아닙니다.</strong></p>
+
+        <p>⚠️ 그리고 이 환경의 <code>iconv</code>(GNU libc 2.43)는 꼬리를 버리면서
+        <strong>진단문을 내고 1로 끝납니다.</strong> 경고가 아니라 <strong>실패로 끝나는 것</strong>입니다.
+        지금 훅은 그 상태를 안 봅니다. <code>set -e</code>가 걸린 스크립트였다면
+        <strong>도구를 부르기도 전에 죽었을 것</strong>입니다.</p>
+
+        <h2 id="고친-것">고친 것과 아직 못 고친 것<a class="anchor" href="#고친-것" aria-label="이 절로 가는 링크">#</a></h2>
+
+<pre data-lang="bash"><code>DOC=$(head -c 60000 "$FILE" | iconv -f UTF-8 -t UTF-8 -c)   # 유효하지 않은 바이트를 버린다
+
+ERR=".reviews/.last-design-err"                             # stderr를 버리지 않는다
+timeout 240 codex exec -m "$MODEL" --sandbox read-only "$PROMPT" &lt; /dev/null &gt; "$OUT" 2&gt;"$ERR"
+STATUS=$?
+
+if [ "$STATUS" -ne 0 ] || [ ! -s "$OUT" ]; then
+  rm -f "$OUT"                                              # 0바이트 파일을 남기지 않는다
+  echo "[codex] design review FAILED (exit=$STATUS) — 원인: $(tail -2 "$ERR" | tr '\n' ' ')"
+fi</code></pre>
+
+        <ul class="callout">
+          <li><strong>자른 뒤 유효한 바이트만 남깁니다.</strong> 상한은 그대로 두고 조각만 버립니다.</li>
+          <li><strong>도구의 stderr를 로그 파일로 보냅니다.</strong> 실패 메시지에 그 로그의 마지막 두 줄을
+          붙여 <strong>이유를 화면까지 가져옵니다.</strong>
+          ⚠️ 로그로 가는 것은 <strong>그 한 줄의 stderr뿐</strong>입니다. 앞의 <code>iconv</code>가
+          내는 진단문은 <strong>여전히 밖으로 샙니다.</strong></li>
+          <li><strong>실패하면 0바이트 파일을 지웁니다.</strong> 「리뷰됨」으로 오인되는 것을 막습니다.</li>
+          <li><strong><code>&lt; /dev/null</code>을 붙였습니다.</strong> 이 훅은 뒤에서 도는데,
+          도구가 표준 입력을 물고 기다리는 상황이 생기면 <strong>매달려도 아무도 모릅니다.</strong>
+          ⚠️ 인자로 지시를 넘겼으니 원래는 안 기다립니다. 물려받은 입력이 열려 있을 때를 막는 장치입니다.</li>
+        </ul>
+
+        <p>⚠️ <strong>그런데 이 고친 판도 실패를 제대로 전하지는 않습니다.</strong>
+        실패 분기의 마지막이 <code>echo</code>라 <strong>스크립트는 다시 0으로 끝납니다.</strong>
+        화면을 안 보는 호출자에게는 여전히 성공입니다. 앞에서 지적한 세 가지 중
+        <strong>세 번째를 아직 못 고쳤습니다.</strong></p>
+
+        <p>⚠️ 그리고 <strong>이름이 겹칩니다.</strong> 오류 로그는 파일 하나뿐이라 훅이 겹쳐 돌면
+        서로 덮어써서 엉뚱한 실패 이유가 붙습니다. 결과 파일 이름도 <strong>초 단위 시각</strong>이라
+        같은 초에 둘이 돌면 각자 파일을 비우고 써서 <strong>섞이거나 깨집니다.</strong> 지금은 이름에 <strong>프로세스 번호</strong>를 붙여
+        결과 쪽만 막아 뒀고 <strong>로그 쪽은 아직입니다.</strong></p>
+
+        <p>⚠️ 결과 파일에 <strong>어느 문서를 읽었는지가 여전히 안 적혀 있습니다.</strong>
+        파일 이름은 시각뿐입니다.</p>
+
+        <blockquote><p><strong>「리뷰가 돌았다」와 「이 문서가 리뷰됐다」는 다른 말인데</strong>
+        폴더는 앞의 것만 보여 줍니다. 이 글을 쓰면서 8월의 리뷰들이 어느 문서를 본 것인지
+        <strong>결과물만으로는 끝내 알아낼 수 없었습니다.</strong></p></blockquote>
+
+        <h2 id="내가-틀리게-적었다">같은 결함을 세 번 틀리게 적었습니다<a class="anchor" href="#내가-틀리게-적었다" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>가장 불편한 부분입니다. 이 결함을 처음 찾은 날, 저는 규칙 문서에 이렇게 적었습니다.</p>
+
+        <blockquote><p>실측: 설계 리뷰 훅이 <strong>한 번도 성공한 적이 없었다</strong>
+        (결과 폴더에 <code>design-*</code> 0개).</p></blockquote>
+
+        <p><strong>둘 다 틀렸습니다.</strong> 그날 이미 결과 폴더에는 <code>design-*</code> 파일이
+        <strong>34개</strong> 있었고 그중 0바이트는 <strong>5개</strong>였습니다.
+        「실측」이라고 써 놓고 <strong>세어 보지 않았습니다.</strong>
+        그리고 그 문장을 <strong>훅 코드 주석에도 그대로 복사</strong>해 뒀습니다.</p>
+
+        <blockquote><p>이건 <strong>제가 고치려던 결함과 같은 모양</strong>입니다.
+        확인하지 않은 것을 확인한 것처럼 적었고 <strong>적어 두었으니 확인됐다고 믿었습니다.</strong>
+        검사기가 잡아 주는 종류가 아니라 <strong>다시 읽을 때까지 남습니다.</strong></p></blockquote>
+
+        <p>맞는 모양은 이렇습니다. <strong>「한 번도 안 됐다」가 아니라 「6만 바이트를 넘긴 그 문서는
+        재 볼 수 있는 리비전이 전부 걸린다」</strong>입니다. 그 사이에도 <strong>다른 결과 파일은
+        쌓이고 있었습니다.</strong> 훨씬 안 보이는 모양이고 <strong>그래서 더 오래 갔습니다.</strong></p>
+
+        <p>⚠️ 그때 「0개」라고 쓴 것이 <strong>어디를 보고 쓴 것인지도 이제 모릅니다.</strong>
+        그냥 안 봤을 수도 있고 다른 폴더를 봤을 수도 있습니다.
+        <strong>확인한 기록이 없다는 것</strong>이 지금 확인되는 전부입니다.</p>
+
+        <p>그리고 <strong>세 번째는 이 글을 쓰면서 냈습니다.</strong>
+        종료 코드를 <strong>125</strong>라고 적었는데 그건 <code>timeout</code>이 낸 값이었습니다.
+        <strong>고치기 전 훅에는 그 <code>timeout</code>이 없었습니다.</strong>
+        즉 <strong>지금 제 손에서 만들어진 값을 그때 일어난 일로 적을 뻔했습니다.</strong></p>
+
+        <blockquote><p>세 번 다 같은 모양입니다. <strong>재 본 자리와 주장하는 자리가 달랐습니다.</strong>
+        「지금 여기서 재 보니 이렇다」를 「그때 거기서 그랬다」로 옮겨 적었습니다.
+        <strong>이 글이 다루는 결함과 정확히 같은 실수</strong>이고,
+        저는 그것을 쓰는 도중에 <strong>한 번 더</strong> 했습니다.</p></blockquote>
+
+        <h2 id="주장하지-않는-것">한계: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li><strong>0바이트 파일 5건의 원인을 확인하지 못했습니다.</strong> 그때 stderr를 버리고 있어서
+          <strong>당시의 실패 이유가 남아 있지 않습니다.</strong> 재현으로 보인 것은
+          <strong>같은 모양을 만드는 한 가지 경로</strong>이지 그 5건의 원인이 아닙니다.
+          그중 7월 13일 것은 <strong>그 경로로는 설명되지 않습니다.</strong></li>
+          <li><strong>「몇 주 동안 안 읽혔다」를 증명하지 못합니다.</strong> 증명한 것은
+          <strong>「재 볼 수 있는 리비전은 전부 잘린 자리가 글자 안이고 그런 인자를 도구가 거절한다」</strong>
+          까지입니다. 그 사이 중간 상태는 안 남아 있습니다.</li>
+          <li><strong>8월 중순에 리뷰가 아예 없던 이유도 모릅니다.</strong> 훅이
+          <code>Edit</code>·<code>Write</code>에만 걸려 있어 다른 방법으로 고치면 안 걸리는데,
+          <strong>그때 무엇으로 고쳤는지 기록이 없습니다.</strong></li>
+          <li><strong>다른 문서에서도 늘 걸린다는 뜻은 아닙니다.</strong> 60,000번째가 글자 사이에
+          떨어지면 안 걸립니다. <strong>이 문서에서 그런 리비전을 못 찾았을 뿐</strong>입니다.</li>
+          <li><strong>고친 훅이 오래 잘 도는지는 아직 모릅니다.</strong> 고친 뒤 성공 기록이 네 건이고,
+          실패가 보이는지는 <strong>일부러 실패시켜 한 번</strong> 확인했습니다.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul>
+          <li><strong>바이트로 자르는 도구에 한국어를 넣으면 글자 안에서 잘릴 수 있습니다.</strong>
+          그리고 그것은 <strong>문서가 상한을 넘긴 다음부터만</strong> 일어납니다.
+          넘기 전에는 자를 것이 없어 멀쩡합니다.</li>
+          <li><strong><code>&gt;</code>는 명령보다 먼저 파일을 만듭니다.</strong>
+          실패해도 파일이 남고 파일이 있으면 사람은 「됐다」고 읽습니다.</li>
+          <li><strong>실패의 증거는 여러 개인데 덮개도 여러 개입니다.</strong>
+          결과·메시지·종료 코드를 각각 다른 것이 막고 있으면 <strong>하나를 고쳐도 안 보입니다.</strong></li>
+          <li><strong>「검증이 돌았다」와 「이것이 검증됐다」는 다른 말입니다.</strong>
+          결과물에 무엇을 봤는지 안 적혀 있으면 앞의 것만 알 수 있습니다.</li>
+        </ul>
+
+        <p>한 줄로 남긴다면 이겁니다.
+        <strong>검사를 고쳤다고 적는 것과 그 검사가 무엇을 했는지 세어 보는 것은 다른 일입니다.</strong>
+        저는 앞의 것만 하고 폴더만 봤습니다.</p>
+
+        <p>읽어 주셔서 감사합니다.</p>
+        </div>
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=878abcc169"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
