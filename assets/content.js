@@ -248,6 +248,18 @@
           tags: ["Reliability", "Method"]
         },
         {
+          title: "A Dialog That Would Not Open Had Two Causes",
+          url: "writing/slow-screens-6-polling-pileup.html",
+          source: "company", sourceLabel: "Company work",
+          title_ko: "볼륨 생성 창이 안 열린 이유는 2개였습니다",
+          desc_ko: "버튼을 눌러도 창이 안 열리고 로딩만 돌았습니다. 개발자 도구에는 끝나지 않은 요청이 4건 남아 있었습니다. 목록 조회가 10초 넘게 걸리는데 화면은 5초마다 다시 불렀고, 창이 열려 있는 동안에도 멈추지 않았습니다. 그리고 그 5초가 backend cache 결정의 근거가 됐습니다. 연작 「느린 화면」 ⑥.",
+          title_ja: "ボリューム作成ダイアログが開かなかった理由は 2 つでした",
+          desc_ja: "ボタンを押してもダイアログが開かず、ローディングだけが回っていました。開発者ツールには未完了のリクエストが 4 件。一覧の取得に 10 秒以上かかるのに画面は 5 秒ごとに取り直し、ダイアログが開いているあいだも止まりませんでした。そしてその 5 秒が backend cache の判断の根拠になりました。連載「遅い画面」⑥。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "Clicking the create button left the dialog spinning. DevTools showed four requests still pending. The list query took over ten seconds while the screen re-fetched it every five, and kept doing so while the dialog was open — and those five seconds became the reason behind a backend cache setting. Slow Screens, part six. Also in Korean and Japanese.",
+          tags: ["Frontend", "Performance", "Method"]
+        },
+        {
           title: "A Monitoring Screen Authenticated Once Per Project",
           url: "writing/slow-screens-4-client-per-loop.html",
           source: "company", sourceLabel: "Company work",
