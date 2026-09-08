@@ -10,6 +10,7 @@
   · 그림 안에 문장(종결어미)이 남아 있지 않은가 — 설명은 캡션이 한 번만 한다
 """
 import glob
+import io
 import re
 import sys
 import xml.etree.ElementTree as ET
@@ -79,7 +80,27 @@ for path in sorted(glob.glob("writing/*.html") + glob.glob("notes/*.html")):
                 flat = MARKUP.sub("", tm.group(1)).replace("\n", " ").strip()
                 fails.append("%s: 그림 안에 문장이 남아 있다 — 「%s」" % (name, flat[:52]))
 
-print("도해 %d개 검사" % checked)
+# ── <img> 속성 문법 (2026-09-08 추가)
+# 치환 스크립트가 alt 를 반만 갈아 끼워 `alt="..."한국어..." loading=` 이 만들어졌는데
+# 어떤 검사기도 못 잡았다. 속성 사이에 정체불명의 글자가 끼면 여기서 잡는다.
+IMG = re.compile(r"<img\b[^>]*>")
+ATTR = re.compile(r'\s+[a-zA-Z-]+="[^"]*"')
+n_img = 0
+for f in sorted(glob.glob("writing/*.html") + glob.glob("notes/*.html")):
+    try:
+        t = io.open(f, encoding="utf-8").read()
+    except OSError:
+        continue
+    for m in IMG.finditer(t):
+        n_img += 1
+        body = m.group(0)[4:-1]
+        rest = ATTR.sub("", body).strip().lstrip("/")
+        if rest:
+            fails.append("%s: <img> 속성 사이에 남은 것 — %r" % (f, rest[:60]))
+        if 'alt="' not in m.group(0):
+            fails.append("%s: <img> 에 alt 가 없다" % f)
+
+print("도해 %d개 · <img> %d개 검사" % (checked, n_img))
 for f in fails:
     print("  실패:", f)
 print("결과:", "OK" if not fails else "%d건 실패" % len(fails))
