@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="Four defences broken the same way, each found by attacking it rather than reading it. The checks were correct about what they read; the mistake was reading something the tenant writes and treating it as evidence about the tenant." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
 </head>
 <body>
   <div class="topbar">
@@ -69,7 +69,7 @@
     <main>
       <div class="hero-top">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>All posts</a>
-        <div class="article-meta"></div>
+        <div class="article-meta"><span class="source-tag side notranslate">Personal project</span></div>
       </div>
       <section class="page-hero">
         <h1>Every Guarantee Ends at a Field the Tenant Can Write<br><span class="h1-sub">Four defences broken the same way, all found by attacking them. GPU quota</span></h1>
@@ -127,7 +127,7 @@
         <p>But <strong>Kueue only sees what enters its queues.</strong> So what stops a tenant from creating a
         Pod directly?</p>
 
-<pre><code>kubectl apply -f - &lt;&lt;'EOF'
+<pre data-lang="bash"><code>kubectl apply -f - &lt;&lt;'EOF'
 apiVersion: v1
 kind: Pod
 metadata: {name: bypass-probe, namespace: serving}
@@ -153,7 +153,7 @@ $ kubectl -n serving get workloads
         <p>So an admission webhook was written. The first rule was the natural one — <strong>admit a Pod whose
         controller is a Job in a queue</strong>. It passed ten unit specs and four live cases.</p>
 
-<pre><code># create a real Job in a real queue
+<pre data-lang="bash"><code># create a real Job in a real queue
 kubectl apply -f (Job "decoy", labels: {kueue.x-k8s.io/queue-name: gpu-premium})
 
 # then claim that Job as your Pod's controller
@@ -169,7 +169,7 @@ forged-owner   1/1   Running</code></pre>
         Job's UID, which is readable in the same namespace.</p>
 
         <p><strong>Fix.</strong> Believe the reference only <strong>when the Job controller presents it</strong>
-        — read <code>req.UserInfo.Username</code>, <strong>the one field in an admission request a tenant
+        by reading <code>req.UserInfo.Username</code>, <strong>a field in an admission request a tenant
         cannot write</strong>.</p>
 
         <p>That has an implementation consequence. The typed <code>Validator</code> interface hands you
@@ -237,7 +237,7 @@ forged-owner   1/1   Running</code></pre>
         Job keeps its admission. The Job controller retries, every Pod is refused, and the Workload sits
         admitted, holding quota.</p>
 
-<pre><code>t=20s    used=2  admitted=2  job.status.failed=0
+<pre data-lang="text"><code>t=20s    used=2  admitted=2  job.status.failed=0
 t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
 
         <p><code>backoffLimit</code> cannot end it. <strong>An admission rejection is not a Pod failure</strong>,
@@ -343,10 +343,10 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=2dcb1d4f4c"></script>
+  <script src="../assets/content.js?v=d6aefa8091"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
   <script defer src="../assets/article.js?v=6f23973a30"></script>
   <script>
     (function () {

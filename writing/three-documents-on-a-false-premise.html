@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="A migration across 2,255 commits. Reasoning from documents cannot tell you where it breaks, so I stood the old version up in an isolated container and broke it once. That is when three documents I had already written turned out to be wrong." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
 </head>
 <body>
   <div class="topbar">
@@ -69,7 +69,7 @@
     <main>
       <div class="hero-top">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>All posts</a>
-        <div class="article-meta"></div>
+        <div class="article-meta"><span class="source-tag company notranslate">Company work</span></div>
       </div>
       <section class="page-hero">
         <h1>Three Documents I Wrote Rested on a False Premise<br><span class="h1-sub">A runbook gets fixed by failing once, not by being read. An on-site patch upgrade</span></h1>
@@ -119,7 +119,7 @@
         old release build, downloaded more than five months apart (2025-10-31 and 2026-04-15, 166 days). Before choosing which one to treat as the
         baseline, I checked whether they were the same thing.</p>
 
-<pre><code>diff -rq  &lt;release A&gt;  &lt;release B&gt;      # no differences (exit 0)
+<pre data-lang="shell"><code>diff -rq  &lt;release A&gt;  &lt;release B&gt;      # no differences (exit 0)
 find . -type f -exec md5sum {} \;       # every file matches on both sides</code></pre>
 
         <p>The contents were identical; the only difference was file mtime — the moment each was downloaded.
@@ -198,7 +198,7 @@ find . -type f -exec md5sum {} \;       # every file matches on both sides</code
         <p>The reproduction became a one-shot script. Bring up a database on an isolated port, build the old
         version, back it up, rebuild the new version, migrate the data, update the version marker, verify.</p>
 
-<pre><code>start isolated DB
+<pre data-lang="text"><code>start isolated DB
   → build old version (both schemas) + plant test data
   → back up
   → rebuild new version
@@ -278,7 +278,7 @@ find . -type f -exec md5sum {} \;       # every file matches on both sides</code
         arrived at once, and <strong>the application exited on startup.</strong> Tomcat context initialisation
         failed constructing a cache bean and the process died with <code>exit 1</code>.</p>
 
-<pre><code>No enum constant ConfigureKey.FEATURE_SETTINGS
+<pre data-lang="text"><code>No enum constant ConfigureKey.FEATURE_SETTINGS
   ↑
 BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → configures findAll</code></pre>
 
@@ -401,10 +401,10 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=2dcb1d4f4c"></script>
+  <script src="../assets/content.js?v=d6aefa8091"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
   <script defer src="../assets/article.js?v=6f23973a30"></script>
   <script>
     (function () {

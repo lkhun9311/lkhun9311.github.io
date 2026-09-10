@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="同じやり方で破られた防御が 4 件。すべて読んで見つけたのではなく攻撃して見つけた。検査は自分が読んだものについては正しく、誤っていたのはテナントが書く値をテナントについての証拠として読んだ側だった。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
 </head>
 <body>
   <div class="topbar">
@@ -69,7 +69,7 @@
     <main>
       <div class="hero-top">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ戻る</a>
-        <div class="article-meta"></div>
+        <div class="article-meta"><span class="source-tag side notranslate">個人プロジェクト</span></div>
       </div>
       <section class="page-hero">
         <h1>すべての保証は、テナントが書けるフィールドで終わる<br><span class="h1-sub">四つの防御が同じ形で破られ、すべて攻撃して見つけました。GPU クォータ</span></h1>
@@ -127,7 +127,7 @@
         <p>ところが<strong>Kueue は自分のキューに入ったものしか見ない。</strong>ではテナントが Pod を直接作るのを
         何が止めるのか。</p>
 
-<pre><code>kubectl apply -f - &lt;&lt;'EOF'
+<pre data-lang="bash"><code>kubectl apply -f - &lt;&lt;'EOF'
 apiVersion: v1
 kind: Pod
 metadata: {name: bypass-probe, namespace: serving}
@@ -154,7 +154,7 @@ $ kubectl -n serving get workloads
         <strong>Pod のコントローラがキューに入った Job ならアドミットする</strong>。ユニットスペック 10 個と
         ライブケース 4 件を通過した。</p>
 
-<pre><code># 本物のキューに本物の Job を 1 つ作る
+<pre data-lang="bash"><code># 本物のキューに本物の Job を 1 つ作る
 kubectl apply -f (Job "decoy", labels: {kueue.x-k8s.io/queue-name: gpu-premium})
 
 # そしてその Job を自分の Pod のコントローラだと主張する
@@ -170,7 +170,7 @@ forged-owner   1/1   Running</code></pre>
         本物の Job の UID 1 つで、それは同じ名前空間で読める。</p>
 
         <p><strong>修理。</strong>その参照を<strong>Job コントローラが提示したときだけ</strong>信じる。
-        <code>req.UserInfo.Username</code> — アドミッション要求の中で<strong>テナントが書けない唯一の
+        <code>req.UserInfo.Username</code> — アドミッション要求の中で<strong>テナントが書けない
         フィールド</strong> — を読む。</p>
 
         <p>ここに実装上の帰結が 1 つ付く。型の付いた <code>Validator</code> インターフェースは
@@ -236,7 +236,7 @@ forged-owner   1/1   Running</code></pre>
         Job のアドミットは維持される。Job コントローラは再試行し、すべての Pod が拒否され、Workload は
         アドミットされたままクォータを握って座っている。</p>
 
-<pre><code>t=20s    used=2  admitted=2  job.status.failed=0
+<pre data-lang="text"><code>t=20s    used=2  admitted=2  job.status.failed=0
 t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
 
         <p><code>backoffLimit</code> はこれを終わらせられない。<strong>アドミッション拒否は Pod の失敗ではない</strong>
@@ -340,10 +340,10 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=2dcb1d4f4c"></script>
+  <script src="../assets/content.js?v=d6aefa8091"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
   <script defer src="../assets/article.js?v=6f23973a30"></script>
   <script>
     (function () {

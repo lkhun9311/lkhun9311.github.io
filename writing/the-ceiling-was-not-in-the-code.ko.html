@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="처리량 상한은 코드에 없었습니다 | Kwanghun Lee" />
-  <meta property="og:description" content="콘텐츠 검열 경로의 처리량이 6.27 req/s에서 안 올라갔습니다. 쓰기를 4배로 올려도 DB pool을 3배로 키워도 그대로였습니다. 원인은 S3를 쓰려고 넣은 AWS SDK가 끌고 들어온 HTTP 클라이언트의 기본값 5 였고 그 층은 컴파일 클래스패스에 없어서 읽어서는 찾을 수 없었습니다." />
+  <meta property="og:description" content="콘텐츠 검열 경로의 처리량이 6.27 req/s에서 안 올라갔습니다. 쓰기를 2배로 올려도 DB pool을 3배로 키워도 그대로였습니다. 원인은 S3를 쓰려고 넣은 AWS SDK가 끌고 들어온 HTTP 클라이언트의 기본값 5였고 그 층은 컴파일 클래스패스에 없어서 읽어서는 찾을 수 없었습니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -29,9 +29,9 @@
   <meta name="twitter:title" content="처리량 상한은 코드에 없었습니다 | Kwanghun Lee" />
   <meta name="twitter:description" content="아무도 고르지 않은 기본값 5가 콘텐츠 검열의 처리량 상한이었습니다. 읽어서는 찾을 수 없고 재야만 나오는 층에 대한 이야기입니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="콘텐츠 검열 경로의 처리량이 6.27 req/s에서 안 올라갔습니다. 쓰기를 4배로 올려도 DB pool을 3배로 키워도 그대로였습니다. 원인은 S3를 쓰려고 넣은 AWS SDK가 끌고 들어온 HTTP 클라이언트의 기본값 5 였고 그 층은 컴파일 클래스패스에 없어서 읽어서는 찾을 수 없었습니다." />
+  <meta name="description" content="콘텐츠 검열 경로의 처리량이 6.27 req/s에서 안 올라갔습니다. 쓰기를 2배로 올려도 DB pool을 3배로 키워도 그대로였습니다. 원인은 S3를 쓰려고 넣은 AWS SDK가 끌고 들어온 HTTP 클라이언트의 기본값 5였고 그 층은 컴파일 클래스패스에 없어서 읽어서는 찾을 수 없었습니다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
 </head>
 <body>
   <div class="topbar">
@@ -104,14 +104,14 @@
         <a class="term" href="../notes/load-test-harness.html">harness</a>를 세워 수치를 만들었는데 그 harness가
         곧바로 다음 질문을 던졌습니다. <em>“글 생성 처리량이 왜 6.27 req/s에서 안 올라가지?”</em></p>
 
-        <p>쓰기 thread를 4배로 올려도, DB connection pool을 3배로 키워도 그 숫자는 움직이지 않았습니다.
+        <p>쓰기 thread를 2배로 올려도, DB connection pool을 3배로 키워도 그 숫자는 움직이지 않았습니다.
         범인은 <strong>제가 쓴 적도, 고른 적도, 이름을 본 적도 없는 라이브러리의 기본값</strong>이었습니다.</p>
 
 
         <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul class="callout">
-          <li>Spring Boot에서 <code>RestClient</code> 나 <code>RestTemplate</code> 으로 외부 API를 부르고 있는 분</li>
+          <li>Spring Boot에서 <code>RestClient</code>나 <code>RestTemplate</code>으로 외부 API를 부르고 있는 분</li>
           <li>처리량이 어떤 숫자에서 딱 멈춰 있는데 thread도 DB pool도 늘려 봤지만 안 움직이는 분</li>
           <li><em>“내가 안 넣은 라이브러리가 내 서비스 동작을 정하고 있나?”</em>가 궁금하신 분</li>
         </ul>
@@ -119,26 +119,26 @@
         <h2 id="무슨-내용">무슨 내용인가요?<a class="anchor" href="#무슨-내용" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul>
-          <li>콘텐츠 검열 경로의 처리량이 <strong>6.27 req/s</strong> 에서 멈춰 있었습니다. 쓰기 thread를
-          4배로 올려도, DB connection pool을 3배로 키워도 그대로였습니다.</li>
+          <li>콘텐츠 검열 경로의 처리량이 <strong>6.27 req/s</strong>에서 멈춰 있었습니다. 쓰기 thread를
+          2배로 올려도, DB connection pool을 3배로 키워도 그대로였습니다.</li>
           <li>원인은 <strong>S3를 쓰려고 넣은 AWS SDK가 끌고 들어온 HTTP 클라이언트</strong>의 기본값
           <strong>“대상 호스트당 connection 5개”</strong>였습니다.</li>
           <li>이 라이브러리는 <strong>런타임 클래스패스에만</strong> 있습니다. 코드 어디에도 이름이 나오지
           않아서 <strong>읽어서는 찾을 수 없고 재야만 나옵니다.</strong></li>
           <li>고친 방식은 <strong>상한을 없애는 것이 아니라 정하는 것</strong>이었습니다. 상한을 지우면
-          처리량은 똑같이 오르지만 <strong>아무도 안 고른 5</strong> 가 <strong>아무도 안 고른 무한대</strong>로
+          처리량은 똑같이 오르지만 <strong>아무도 안 고른 5</strong>가 <strong>아무도 안 고른 무한대</strong>로
           바뀔 뿐입니다.</li>
           <li>결과는 외부 호출 동시 실행 <strong>10 → 32</strong>, 글 생성 p50 <strong>2,592 → 805ms</strong>,
-          처리량 <strong>6.27 → 19.89 req/s</strong>(3.17배), 오류율 <strong>0%</strong> 였습니다.</li>
+          처리량 <strong>6.27 → 19.89 req/s</strong>(3.17배), 오류율 <strong>0%</strong>였습니다.</li>
         </ul>
 
         <p><strong>코드는 비공개 저장소에 있습니다.</strong> 아직 출시 전이라 저장소를 열어 두지 않았습니다.
-        그래서 절마다 GitHub 링크 대신 <strong>파일 경로와 심볼 이름</strong>을 적어 뒀습니다.</p>
+        그래서 이 글에는 GitHub 링크가 없습니다. 코드는 <strong>인용한 조각만</strong> 본문에 옮겼습니다.</p>
 
         <p><strong>⚠️ 미리 말씀드릴 것이 있습니다.</strong> 이 글의 수치는 전부 <strong>로컬 harness로
         잰 것</strong>입니다. 부하기·애플리케이션·외부 API stub·PostgreSQL이 <strong>전부 한 기계</strong>에서
         CPU를 나눠 씁니다. 그래서 <strong>절대 처리량에는 의미가 없고 비교에만 의미가 있습니다.</strong>
-        외부 호출 800ms는 stub에 <strong>설정한 값</strong>이지 실제 지연 분포가 아니고,
+        외부 호출 800ms는 stub에 <strong>설정한 값</strong>이지 실제 지연 분포가 아니고
         <strong>조건당 1회 실행</strong>입니다.</p>
 
         <h2 id="어떤-경로">어떤 경로에서 생긴 일인가요?<a class="anchor" href="#어떤-경로" aria-label="이 절로 가는 링크">#</a></h2>
@@ -147,7 +147,7 @@
         사람들이 투표하고 그 결과 차트를 앱 밖으로 공유합니다. Kotlin과 Spring Boot로 만든 단일
         monolith이고 데이터베이스는 관리형 PostgreSQL 하나를 씁니다.</p>
 
-        <p>사용자가 올린 글은 <strong>모더레이션 게이트</strong>를 통과해야 게시됩니다. 게이트는 네 겹이고,
+        <p>사용자가 올린 글은 <strong>모더레이션 게이트</strong>를 통과해야 게시됩니다. 게이트는 네 겹이고
         그중 <strong>③ 유해분류</strong>와 <strong>④ 저격판정</strong> 두 겹이 외부 API를 부릅니다.
         게이트는 <a class="term" href="../notes/fail-closed.html">fail-closed</a> 라서, 이 호출이 실패하면
         글은 게시되지 않습니다.</p>
@@ -240,7 +240,7 @@
         <h2 id="쓰기는-가볍다">쓰기는 무겁지 않았습니다<a class="anchor" href="#쓰기는-가볍다" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>“쓰기가 무거운가”는 harness로 바로 대답할 수 있는 질문이었습니다. 외부 stub의 지연을
-        <strong>0ms</strong> 로 두고 나머지 조건을 그대로 두면 남는 것은 애플리케이션과 DB의
+        <strong>0ms</strong>로 두고 나머지 조건을 그대로 두면 남는 것은 애플리케이션과 DB의
         순수한 쓰기 비용뿐입니다.</p>
 
         <div class="table-scroll"><div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표"><table>
@@ -257,7 +257,7 @@
 
         <p><strong>⚠️ 이 측정은 처음에 틀렸습니다.</strong> 지연 0을 요청했는데 <strong>이전 실행의 800ms
         stub이 포트에 그대로 살아 있었습니다.</strong> harness에는 “stub이 정말 그 지연으로 응답하는가”를
-        보는 왕복 검사가 있었는데 조건이 <code>왕복시간 &lt; 요청지연 × 0.8</code> 이라서
+        보는 왕복 검사가 있었는데 조건이 <code>왕복시간 &lt; 요청지연 × 0.8</code>이라서
         <strong>요청지연이 0이면 항상 거짓</strong>이 됩니다. 검사가 <strong>공허하게 통과</strong>한
         겁니다. 그래서 800ms 실행을 0ms 실행으로 기록해 놓고 결론을 냈습니다.</p>
 
@@ -324,16 +324,16 @@
           <figcaption>위 분홍 막대 세 줄은 조건을 바꿔도 동시 실행이 <strong>10에서 움직이지 않는다</strong>는 것입니다. 쓰기를 32로 올리면 늘어나는 것은 처리량이 아니라 대기 시간(p50)뿐입니다. 맨 아래 파란 막대는 같은 stub을 앱을 거치지 않고 직접 두드린 값으로, stub 자체는 32까지 받습니다. 그러니 상한은 <strong>앱 쪽</strong>에 있습니다.</figcaption>
         </figure>
 
-        <p>표를 읽는 법은 이렇습니다. <strong>쓰기를 4배로 올려도, DB pool을 3배로 키워도 동시 실행은 10에서
+        <p>표를 읽는 법은 이렇습니다. <strong>쓰기를 2배로 올려도, DB pool을 3배로 키워도 동시 실행은 10에서
         움직이지 않습니다.</strong> 늘어나는 것은 응답시간뿐입니다(2,592 → 5,119ms). 이건 전형적인
         <strong>대기열 신호</strong>입니다. 일이 더 되는 게 아니라 줄만 길어진 겁니다.</p>
 
         <p>stub이 범인일 가능성은 따로 지웠습니다. 같은 stub을 앱 없이 32 worker로 20초 두드리면
-        <strong>동시 32 · 40 req/s</strong> 를 냅니다. 그러니 10은 stub의 한계가 아니라
+        <strong>동시 32 · 40 req/s</strong>를 냅니다. 그러니 10은 stub의 한계가 아니라
         <strong>앱이 밖으로 나가는 길</strong>의 한계입니다.</p>
 
         <p>여기서 산수가 맞아떨어집니다. 글 1건이 호출 2개를 내므로 동시 10은
-        <strong>동시에 검열 중인 글 5건</strong>입니다. 호출 한 번이 800ms 니까
+        <strong>동시에 검열 중인 글 5건</strong>입니다. 호출 한 번이 800ms니까
         5 ÷ 0.8초 = <strong>약 6.3 req/s</strong>. 관측된 6.27과 같습니다.</p>
 
         <h2 id="thread-덤프">thread 덤프가 어디서 멈췄는지 알려 줬습니다<a class="anchor" href="#thread-덤프" aria-label="이 절로 가는 링크">#</a></h2>
@@ -342,7 +342,7 @@
         <strong>제 코드에는 10도, 5도 적혀 있지 않기 때문입니다.</strong></p>
 
         <p>그래서 부하가 걸린 상태에서 <strong>thread 덤프</strong>를 떴습니다. 톰캣 worker 16개 중
-        <strong>5개는 소켓 입출력 중(RUNNABLE)</strong> 이었고 <strong>11개는 park</strong> 상태였습니다.
+        <strong>5개는 소켓 입출력 중(RUNNABLE)</strong>이었고 <strong>11개는 park</strong> 상태였습니다.
         park 한 쪽의 스택이 답이었습니다.</p>
 
 <pre data-lang="text"><code>at org.apache.hc.core5.pool.StrictConnPool$1.get(StrictConnPool.java:183)
@@ -360,7 +360,7 @@ at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.acquireEndpoint(.
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
             <svg viewBox="0 0 720 336" role="img" aria-labelledby="chain-t chain-d" xmlns="http://www.w3.org/2000/svg">
               <title id="chain-t">S3 의존성에서 시작해 외부 호출 동시 10에 이르는 사슬</title>
-              <desc id="chain-d">파일 업로드에 쓰려고 AWS SDK의 S3 모듈을 넣었습니다. 그 모듈이 apache5-client를 끌고 오고,
+              <desc id="chain-d">파일 업로드에 쓰려고 AWS SDK의 S3 모듈을 넣었습니다. 그 모듈이 apache5-client를 끌고 오고
               apache5-client가 다시 httpclient5를 끌고 옵니다. 이 마지막 라이브러리는 런타임 클래스패스에만 있어서
               코드에서는 이름조차 보이지 않습니다. 그런데 Spring의 RestClient는 클래스패스에 Apache HttpClient가
               있으면 그것을 골라 쓰고 그 connection pool의 기본값은 대상 호스트당 5개입니다. 같은 호스트를 보는 RestClient
@@ -405,9 +405,9 @@ at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.acquireEndpoint(.
           <figcaption>파란 테두리 한 칸만 제가 골랐고 <strong>회색 칸 세 개는 아무도 고르지 않은 채 딸려 온 것</strong>입니다. 맨 아래 분홍 칸이 그 사슬 끝에서 실제로 상한을 정하는 값이고 오른쪽의 “2개”는 앞 그림의 ③④ 입니다.</figcaption>
         </figure>
 
-        <p>그림이 말하지 않는 것을 하나 짚겠습니다. <strong><code>httpclient5</code> 는 런타임 클래스패스에만
+        <p>그림이 말하지 않는 것을 하나 짚겠습니다. <strong><code>httpclient5</code>는 런타임 클래스패스에만
         있습니다.</strong> 컴파일 클래스패스에 없으니 제 코드에서는 이름조차 쓸 수 없습니다. 실제로 설정
-        코드를 먼저 써 보려다 <code>Unresolved reference 'hc'</code> 로 막혔습니다.</p>
+        코드를 먼저 써 보려다 <code>Unresolved reference 'hc'</code>로 막혔습니다.</p>
 
         <p>그래서 이 층은 <strong>읽어서는 찾을 수 없습니다.</strong> 코드 검색으로도, 리뷰로도 안 나옵니다.
         <strong>재야만 나옵니다.</strong></p>
@@ -458,9 +458,9 @@ spring:
         <p>택한 방식은 두 가지였습니다.</p>
 
         <ol>
-          <li><strong><code>httpclient5</code> 를 명시 의존성으로 올립니다.</strong> 이미 런타임에 쓰고 있던
+          <li><strong><code>httpclient5</code>를 명시 의존성으로 올립니다.</strong> 이미 런타임에 쓰고 있던
           라이브러리를 <em>이름으로</em> 적는 것이고 그래야 설정 코드를 쓸 수 있습니다.</li>
-          <li><strong>connection pool을 하나만 만들어 모든 <code>RestClient</code> 가 공유하게 합니다.</strong>
+          <li><strong>connection pool을 하나만 만들어 모든 <code>RestClient</code>가 공유하게 합니다.</strong>
           클라이언트마다 자기 pool을 가지면 “호스트당 N”이 실제로는 “클라이언트 수 × N”이 됩니다.
           그게 5가 10이 되어 있던 이유입니다.</li>
         </ol>
@@ -529,8 +529,8 @@ spring:
 class OutboundHttpConfig {
     @Bean
     fun outboundConnectionManager(
-        @Value("\${oxy.http.outbound.max-per-route:50}") maxPerRoute: Int,
-        @Value("\${oxy.http.outbound.max-total:100}") maxTotal: Int,
+        @Value("\${app.http.outbound.max-per-route:50}") maxPerRoute: Int,
+        @Value("\${app.http.outbound.max-total:100}") maxTotal: Int,
         // 스프링이 붙여 주던 timeout을 여기서 다시 붙인다 — 같은 속성 키를 읽는다.
         @Value("\${spring.http.client.connect-timeout:3s}") connectTimeout: Duration,
         @Value("\${spring.http.client.read-timeout:10s}") readTimeout: Duration,
@@ -544,6 +544,9 @@ class OutboundHttpConfig {
         return RestClientCustomizer { builder -&gt; builder.requestFactory(factory) }
     }
 }</code></pre>
+
+        <p>⚠️ 위 코드의 속성 접두어는 <strong>중립적인 이름으로 바꿔 적었습니다.</strong>
+        나머지는 소스 그대로입니다.</p>
 
         <p><strong>50이라는 숫자의 근거</strong>도 주석에 적어 뒀습니다. 글 1건이 호출 2개를 내므로 50은
         <strong>동시에 검열 중인 글 25건</strong>에 해당하고 외부 호출이 800ms라면 초당 약 31건까지
@@ -566,8 +569,8 @@ class OutboundHttpConfig {
 
         <p><strong>⚠️ 32는 새 상한이 아닙니다.</strong> 적어 둔 상한은 50인데 관측된 최고 동시 실행은 32입니다.
         <strong>32는 부하의 모양이지 상한이 아닙니다</strong>. 쓰기 thread 16개가 글 1건당 호출 2개를 내므로
-        16 × 2 = 32 입니다. 즉 이 실행에서 천장은 <strong>아웃바운드 풀에서 떠났고</strong>, 지금 처리량을
-        정하는 것은 유입 동시성입니다. 50이 실제로 걸리는지는 쓰기 thread를 25 이상으로 올려야 보이는데,
+        16 × 2 = 32입니다. 즉 이 실행에서 천장은 <strong>아웃바운드 풀에서 떠났고</strong> 지금 처리량을
+        정하는 것은 유입 동시성입니다. 50이 실제로 걸리는지는 쓰기 thread를 25 이상으로 올려야 보이는데
         <strong>재지 않았습니다.</strong></p>
 
         <p>그리고 <code>factory=jdk</code>(19.89 req/s)와 이 처방(19.89 req/s)은 <strong>처리량이 같습니다.</strong>
@@ -575,7 +578,7 @@ class OutboundHttpConfig {
 
         <h2 id="timeout">첫 구현이 timeout을 날렸습니다<a class="anchor" href="#timeout" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>첫 구현은 <code>requestFactory</code> 를 통째로 갈아치웠습니다. 그랬더니 스프링 자동설정이
+        <p>첫 구현은 <code>requestFactory</code>를 통째로 갈아치웠습니다. 그랬더니 스프링 자동설정이
         붙여 주던 <code>spring.http.client.*</code> timeout이 <strong>같이 사라졌습니다.</strong></p>
 
         <p>이건 조용히 지나갈 수도 있는 종류의 사고입니다. timeout이 없어도 정상 응답은 정상적으로
@@ -591,7 +594,7 @@ class OutboundHttpConfig {
         <h2 id="설정은-실패하지-않는다">설정은 그 자체로 아무것도 실패시키지 않습니다<a class="anchor" href="#설정은-실패하지-않는다" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>이번 수정에는 다른 수정과 구별되는 성질이 하나 있었습니다. <strong>결과물이 설정값</strong>이라는
-        겁니다. 로직을 고치면 그 로직을 겨누는 테스트가 빨간불이 나지만,
+        겁니다. 로직을 고치면 그 로직을 겨누는 테스트가 빨간불이 나지만
         <strong>설정은 지워도 아무것도 실패하지 않습니다.</strong> 그냥 기본값으로 조용히 돌아갈 뿐입니다.</p>
 
         <p>그리고 그 “조용히 돌아간 기본값”이 바로 이 글 전체의 원인이었습니다. 그래서 값이
@@ -609,7 +612,7 @@ assertThat(factories[0]).isSameAs(factories[1])</code></pre>
 
         <p>그리고 이 단언들이 정말 겨누고 있는지는
         <a class="term" href="../notes/mutation-testing.html">mutation</a>으로 확인했습니다.
-        <code>setMaxConnPerRoute</code> 를 지우면 첫 번째가 5를 보고 빨간불이 나고 팩토리를 빌더마다
+        <code>setMaxConnPerRoute</code>를 지우면 첫 번째가 5를 보고 빨간불이 나고 팩토리를 빌더마다
         새로 만들면 두 번째가 빨간불이 납니다. <strong>둘 다 실제로 확인했습니다.</strong></p>
 
         <h2 id="redis">“Redis나 큐를 쓰면 되지 않나요?”<a class="anchor" href="#redis" aria-label="이 절로 가는 링크">#</a></h2>
@@ -623,7 +626,7 @@ assertThat(factories[0]).isSameAs(factories[1])</code></pre>
             <tr><td>Redis cache(피드·통계)</td><td>✗ 읽기는 p50 4ms로 이미 빠릅니다</td><td>근거 없음</td></tr>
             <tr><td>Redis cache(검열 판정)</td><td>△ 같은 본문이 반복될 때만. 사용자 글은 대개 유일합니다</td><td>중복률을 먼저 재기</td></tr>
             <tr><td>큐잉(Redis · Kafka)</td><td>✗ 큐는 대기를 <strong>옮길 뿐</strong> 외부 상한을 늘리지 않습니다</td><td>그 자체로는 무효</td></tr>
-            <tr><td>쓰기를 큐로 빼기</td><td>✗ 쓰기는 8ms 입니다</td><td>고칠 것이 없음</td></tr>
+            <tr><td>쓰기를 큐로 빼기</td><td>✗ 쓰기는 8ms입니다</td><td>고칠 것이 없음</td></tr>
             <tr><td><strong>아웃바운드 동시 실행을 명시</strong></td><td>✓ 천장을 직접 올립니다</td><td><strong>1순위</strong></td></tr>
           </tbody>
         </table></div><p class="table-scroll-hint" aria-hidden="true">→ 표를 옆으로 넘길 수 있습니다</p></div>
@@ -632,8 +635,8 @@ assertThat(factories[0]).isSameAs(factories[1])</code></pre>
         바꿉니다.</strong> 다만 바뀌는 것은 성능이 아니라 <strong>제품의 약속</strong>입니다.</p>
 
         <p>게이트는 fail-closed 라서 검열 전에 글이 보이면 안 됩니다. 그러니 가능한 형태는
-        <em>“먼저 게시하고 나중에 검열”</em> 이 아니라 <em>“검열이 끝날 때까지 게시되지 않는 비동기 작업”</em>
-        입니다. 지연을 <strong>없애는</strong> 게 아니라 요청 thread에서 <strong>떼어내는</strong> 것이고,
+        <em>“먼저 게시하고 나중에 검열”</em>이 아니라 <em>“검열이 끝날 때까지 게시되지 않는 비동기 작업”</em>
+        입니다. 지연을 <strong>없애는</strong> 게 아니라 요청 thread에서 <strong>떼어내는</strong> 것이고
         아웃바운드 상한은 그대로입니다. 대신 상태 표시·재시도·중복 방지·실패 통지가 전부 새로 생깁니다.</p>
 
         <p>그래서 <strong>언제 그 설계가 정당해지는지</strong>를 미리 적어 뒀습니다. 나중에 “느낌”으로
@@ -650,7 +653,7 @@ assertThat(factories[0]).isSameAs(factories[1])</code></pre>
           <li><strong>조건당 1회 실행입니다.</strong> 반복 실행으로 분산을 보지 않았습니다.</li>
           <li><strong>3.17배는 이 조건에 딸린 숫자입니다.</strong> 외부 호출 지연과 유입 동시성이 바뀌면
           같은 배수가 나오지 않습니다.</li>
-          <li><strong><code>max-per-route = 50</code> 은 실 트래픽으로 재본 값이 아닙니다.</strong>
+          <li><strong><code>max-per-route = 50</code>은 실 트래픽으로 재본 값이 아닙니다.</strong>
           “아무도 안 고른 5”를 “근거를 적은 50”으로 바꾼 것이고 실측이 생기면 다시 정합니다.</li>
           <li><strong>50이 실제로 걸리는 것을 보지 못했습니다.</strong> 이 부하에서는 유입이 먼저
           32로 묶입니다.</li>
@@ -696,10 +699,10 @@ assertThat(factories[0]).isSameAs(factories[1])</code></pre>
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=2dcb1d4f4c"></script>
+  <script src="../assets/content.js?v=d6aefa8091"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
   <script defer src="../assets/article.js?v=6f23973a30"></script>
   <script>
     (function () {

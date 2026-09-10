@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="instance는 20개인데 목록 조회가 timeout이 났습니다. CLI로 같은 목록을 불러도 54초여서, 느린 구간이 우리 backend 아래에 있다는 것까지는 알았습니다. swap이 8.0GiB 전부 차 있었고 instances 테이블에는 삭제 표시만 된 행이 1,021개 남아 있었습니다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
 </head>
 <body>
   <div class="topbar">
@@ -117,7 +117,7 @@
         <ul>
           <li><strong>CLI로 같은 목록을 불러도 54초였습니다.</strong> 느린 구간이 우리 backend 아래에
           있다는 뜻입니다.</li>
-          <li>비정상인 것이 <strong>2가지 같이 관찰됐습니다.</strong> swap이 8.0GiB 전부 차 있었고,
+          <li>비정상인 것이 <strong>2가지 같이 관찰됐습니다.</strong> swap이 8.0GiB 전부 차 있었고
           <code>instances</code> 테이블에 <strong>삭제 표시만 된 행이 1,021개</strong> 남아 있었습니다.</li>
           <li>고친 뒤 CLI 조회가 <strong>54초에서 1.0초</strong>가 됐습니다.</li>
           <li>⚠️ 그런데 <strong>제가 쓴 명령은 운영에서 쓰면 안 되는 것이었습니다.</strong> 한 달 뒤에
@@ -216,12 +216,12 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
         <p><strong>swap이 8.0GiB 가운데 8.0GiB를 쓰고 있습니다.</strong> 남은 것이 2.0MiB입니다.
         여기까지가 <strong>본 것</strong>입니다.</p>
 
-        <p>여기서부터는 <strong>가설</strong>입니다. MariaDB가 읽어야 할 페이지가 swap에 들어가 있으면,
+        <p>여기서부터는 <strong>가설</strong>입니다. MariaDB가 읽어야 할 페이지가 swap에 들어가 있으면
         메모리에서 끝날 읽기가 디스크 왕복이 됩니다. 그렇다면 질의는 그대로인데 느려집니다.</p>
 
         <p>⚠️ <strong>그 가설을 재지 않았습니다.</strong> <code>vmstat</code>도 <code>iostat</code>도
         MariaDB 프로세스의 page fault도 남아 있지 않습니다. 그러니 이 글은
-        <strong>「swap이 꽉 차 있었다」와 「swap을 비웠더니 빨라졌다」 두 사실</strong>만 말할 수 있고,
+        <strong>「swap이 꽉 차 있었다」와 「swap을 비웠더니 빨라졌다」 두 사실</strong>만 말할 수 있고
         그 사이를 잇는 것은 코드가 아니라 짐작입니다.
         사내 문서가 적어 둔 「RAM 0.0001ms, swap 10~100ms」도 이 장비에서 잰 값이 아니라
         일반적인 자릿수를 인용한 것입니다.</p>
@@ -273,7 +273,7 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
         <h2 id="원인-2">원인 ②: 삭제 표시만 된 행 1,021개<a class="anchor" href="#원인-2" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>다음은 테이블입니다. Nova는 instance를 지울 때 행을 <strong>없애지 않습니다.</strong>
-        <code>deleted</code> 컬럼만 바꿉니다. soft delete 입니다.</p>
+        <code>deleted</code> 컬럼만 바꿉니다. soft delete입니다.</p>
 
 <pre data-lang="sql"><code>SELECT deleted, COUNT(*) FROM instances GROUP BY deleted;</code></pre>
 
@@ -311,7 +311,7 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
         <code>instances</code>만이 아니라 <code>instance_actions_events</code>·<code>instance_faults</code>·
         <code>instance_system_metadata</code>처럼 딸린 테이블에도 같은 것이 쌓여 있었습니다.</p>
 
-        <p>⚠️ <strong>실행 계획은 남아 있지 않습니다.</strong> 사내 문서는 이것을 「풀 스캔」이라고 적었는데,
+        <p>⚠️ <strong>실행 계획은 남아 있지 않습니다.</strong> 사내 문서는 이것을 「풀 스캔」이라고 적었는데
         <code>EXPLAIN</code>을 떠 둔 기록이 없어 정말 전부를 훑었는지는 확인하지 못했습니다.
         확인한 것은 <strong>테이블이 20행이 아니라 1,041행을 담고 있었다</strong>까지입니다.</p>
 
@@ -329,7 +329,7 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
 
         <p>⚠️ 그런데 <strong>이 한 줄에는 제가 그때 몰랐던 함정이 있습니다.</strong>
         <code>swapoff -a</code>는 <strong>등록된 swap을 전부</strong> 끄고 메모리가 모자란 것 말고도
-        여러 이유로 실패할 수 있습니다. 일부만 꺼져도 <code>swapoff</code>는 0이 아닌 값으로 끝나고,
+        여러 이유로 실패할 수 있습니다. 일부만 꺼져도 <code>swapoff</code>는 0이 아닌 값으로 끝나고
         <code>&amp;&amp;</code>는 앞이 0일 때만 뒤를 실행합니다. 즉 <strong>일이 반쯤 어그러지면
         <code>swapon -a</code>가 아예 실행되지 않고 swap이 꺼진 채로 남습니다.</strong>
         운영 장비에서는 여유를 먼저 확인하고 장치별 상태를 따로 보고
@@ -445,7 +445,7 @@ nova-manage db purge \
         이 글을 쓰면서 발견했습니다. 세 군데입니다.</p>
 
         <ul>
-          <li><strong><code>--before</code>가 빠져 있었습니다.</strong> 위 표는 30일을 두겠다고 해 놓고,
+          <li><strong><code>--before</code>가 빠져 있었습니다.</strong> 위 표는 30일을 두겠다고 해 놓고
           cron은 <strong>어제 지운 행까지 그날 바로</strong> 옮깁니다.</li>
           <li><strong><code>--sleep</code>은 <code>--until-complete</code>와 같이 있을 때만 뜻이 있습니다.</strong>
           한 번 돌고 끝나는 지금 형태에서는 5초를 쉴 자리가 없습니다.</li>
@@ -476,7 +476,7 @@ nova-manage db purge \
 <pre data-lang="bash"><code>mysqldump --single-transaction nova       &gt; nova_backup.sql
 mysqldump --single-transaction nova_cell0 &gt; nova_cell0_backup.sql</code></pre>
 
-        <p>⚠️ <strong>이 백업으로는 모자랍니다.</strong> 제안서에 적은 그대로 옮겼는데,
+        <p>⚠️ <strong>이 백업으로는 모자랍니다.</strong> 제안서에 적은 그대로 옮겼는데
         <code>--all-cells</code>는 <strong>등록된 모든 cell DB</strong>를 건드리고(cell은 Nova가
         compute 자원을 나눠 담는 DB 단위입니다), instance를 archive 할 때는
         <code>nova_api</code> 쪽 행도 같이 지워집니다. 두 개만 떠 두면 되돌릴 수 없습니다.
@@ -531,7 +531,7 @@ sys     0m0.048s</code></pre>
           <li><strong>뒷부분은 제안이지 결과가 아닙니다.</strong> archive · purge · cron은 제가
           문서로 낸 <strong>제안</strong>이고 그것이 실제로 걸려서 돌았다는 기록은 제게 없습니다.
           이 글에 측정치가 붙어 있는 것은 앞부분(급하게 고친 쪽)뿐입니다.</li>
-          <li><strong>OpenStack 만의 이야기는 아닐 수 있습니다.</strong> 삭제한 행을 본 테이블에 남기는
+          <li><strong>OpenStack만의 이야기는 아닐 수 있습니다.</strong> 삭제한 행을 본 테이블에 남기는
           시스템이면 schema와 질의 계획에 따라 비슷한 일이 생길 수 있습니다.
           다만 이 글이 확인한 것은 <strong>이 한 대의 장비</strong>입니다.</li>
         </ul>
@@ -557,8 +557,8 @@ sys     0m0.048s</code></pre>
         <strong>고친 것과 옳게 고친 것은 다릅니다.</strong>
         54초를 1초로 만든 명령과, 한 달 뒤에 문서로 낸 답은 같은 것이 아니었습니다.</p>
 
-        <p>다음 편도 같은 제품의 다른 화면입니다. 이번에는 <strong>cache를 넣었는데</strong>
-        지연이 사라지지 않고 자리만 옮겼습니다.</p>
+        <p>다음 편도 같은 제품의 다른 화면입니다. 이번에는 <strong>cache가 이미 있었는데</strong>
+        그 cache 때문에 느렸습니다.</p>
 
         <p>읽어 주셔서 감사합니다.</p>
         </div>
@@ -573,10 +573,10 @@ sys     0m0.048s</code></pre>
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=2dcb1d4f4c"></script>
+  <script src="../assets/content.js?v=d6aefa8091"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
   <script defer src="../assets/article.js?v=6f23973a30"></script>
   <script>
     (function () {

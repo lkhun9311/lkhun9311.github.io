@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="スイッチ障害で生きているコンピュートノードが障害と判定され、復旧が大量に実行された。検知を精緻にする代わりに、どの信号が何を証言できるかを決めた。8 シナリオのうち 7 つが保留になった。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
 </head>
 <body>
   <div class="topbar">
@@ -69,7 +69,7 @@
     <main>
       <div class="hero-top">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ戻る</a>
-        <div class="article-meta"></div>
+        <div class="article-meta"><span class="source-tag company notranslate">会社の業務</span></div>
       </div>
       <section class="page-hero">
         <h1>8つの障害のうち7つは復旧しないと決めた<br><span class="h1-sub">検知を精密にする代わりに、信号に等級をつけました。コンピュートノードの HA</span></h1>
@@ -169,7 +169,7 @@
 
         <p>2 つに分けた。</p>
 
-<pre><code>[Phase 1 — 障害検知]
+<pre data-lang="text"><code>[Phase 1 — 障害検知]
 1. クォーラム確認
    コントローラクォーラム喪失 → 判定を信頼できない → HOLD
 
@@ -232,7 +232,7 @@
         <p>復旧してよい唯一のシナリオでも、移す前に<strong>オリジナルの電源が確実に落ちたか</strong>を確認しなければ
         ならない。確認せずに移すとこうなる。</p>
 
-<pre><code>Compute-01 → VM-A はまだ実行中   → /dev/vdb へ書き込む   (オリジナルの接続が残る)
+<pre data-lang="text"><code>Compute-01 → VM-A はまだ実行中   → /dev/vdb へ書き込む   (オリジナルの接続が残る)
 Compute-02 → VM-A の復旧完了     → /dev/vdb へ書き込む   (新規 attach)</code></pre>
 
         <p>同じブロックデバイスに 2 者が同時に書き込むとファイルシステムが壊れる。そして<strong>壊れ方は
@@ -256,7 +256,7 @@ Compute-02 → VM-A の復旧完了     → /dev/vdb へ書き込む   (新規 a
         <p>そこで原則は<strong>フェンシングなくして復旧なし</strong>になった。手順は 4 段階 —
         検知 → 検証 → フェンシング → 復旧。フェンシング段階だけを取り出すとこうなる。</p>
 
-<pre><code>1. IPMI 電源 off コマンド
+<pre data-lang="text"><code>1. IPMI 電源 off コマンド
 2. 最低 5 秒待機               ← 即時の状態照会を禁止
 3. IPMI 電源状態を照会 → 必ず off を確認
 4. ストレージの残存接続が解消されたか確認(種別ごとに異なる)
@@ -359,10 +359,10 @@ Compute-02 → VM-A の復旧完了     → /dev/vdb へ書き込む   (新規 a
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=2dcb1d4f4c"></script>
+  <script src="../assets/content.js?v=d6aefa8091"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
   <script defer src="../assets/article.js?v=6f23973a30"></script>
   <script>
     (function () {

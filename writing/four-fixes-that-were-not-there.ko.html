@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="처음으로 돈을 내고 GPU를 빌리기 직전에 완료로 보고한 가드 4건이 코드에 없는 것을 봤습니다. 셋은 과금이 계속되는 것을 막는 장치였습니다. 저는 「편집이 날아갔다」고 두 번 말했고 그 설명을 확인해 본 적은 없었습니다. 나머지를 세는 스크립트를 짰더니 이번엔 판정식이 틀렸습니다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
 </head>
 <body>
   <div class="topbar">
@@ -107,7 +107,7 @@
         <p>⚠️ 먼저 범위를 적어 둡니다. <strong>이 프로젝트는 지금도 진행 중</strong>입니다.
         이 글이 끝난 일로 말하는 것은 <strong>그날의 발견과 그것을 확인한 방법</strong>이지
         <strong>가드가 지금 어떤 상태인가가 아닙니다.</strong>
-        실제로 그날 고친 코드에서 <strong>같은 날 열두 건이 더 나왔고</strong>, 그 이야기도 아래에 있습니다.</p>
+        실제로 그날 고친 코드에서 <strong>같은 날 열두 건이 더 나왔고</strong> 그 이야기도 아래에 있습니다.</p>
 
         <p>⚠️ 그리고 <strong>잰 것과 기록에만 있는 것</strong>을 갈라 적습니다.
         <strong>이 글을 쓰면서 다시 돌려 본 것</strong>은 저장소 검색 세 건, 그 함수의 두 판본,
@@ -178,7 +178,7 @@
 
         <p><code>git log -S</code>는 흔히 「그 문자열이 든 커밋을 찾아 준다」고 소개되는데
         <strong>그게 아닙니다.</strong> 부모 커밋과 견줘 <strong>그 문자열의 출현 횟수가 달라진</strong>
-        커밋을 고릅니다. 그래서 <strong>마지막 하나를 지운 커밋도 결과에 나오고</strong>,
+        커밋을 고릅니다. 그래서 <strong>마지막 하나를 지운 커밋도 결과에 나오고</strong>
         그 커밋에는 그 문자열이 없습니다.</p>
 
         <p>가드마다 그 가드에만 있는 문자열을 하나씩 골라 물어봤습니다.
@@ -194,7 +194,7 @@ d125bfe fix: keep the deadline until the node is confirmed down, and refuse runs
 $ git log -S"the card starts billing here" --oneline -- hack/m5b-gpu-session.sh
 4243faf fix: register the deadline before the card exists, by scaling the node group here</code></pre>
 
-        <p>가운데 것은 <strong>두 줄</strong>입니다. 나중에 한 번 더 손댔다는 뜻이고,
+        <p>가운데 것은 <strong>두 줄</strong>입니다. 나중에 한 번 더 손댔다는 뜻이고
         <strong>처음 들어온 것은 아래쪽</strong>입니다.</p>
 
         <p>횟수가 달라진 커밋을 고르는 것이니 <strong>「늘었는지 줄었는지」는 따로 봐야 합니다.</strong>
@@ -205,7 +205,7 @@ worst_total_min                d125bfe   부모 0회 → 4회
 the card starts billing here   4243faf   부모 0회 → 1회</code></pre>
 
         <p>셋 다 <strong>부모에서 0회</strong>입니다. 그 문자열이 <strong>이 경로에서, 지금
-        <code>HEAD</code>가 닿는 이력 안에서 처음 나타난 커밋</strong>이고,
+        <code>HEAD</code>가 닿는 이력 안에서 처음 나타난 커밋</strong>이고
         날짜는 <strong>2026년 8월 31일과 9월 1일</strong>, 전부 제 커밋입니다.</p>
 
         <blockquote><p>⚠️ <strong>고른 문자열이 다 실행 코드인 것도 아닙니다.</strong>
@@ -214,7 +214,7 @@ the card starts billing here   4243faf   부모 0회 → 1회</code></pre>
         <strong>「그 가드가 없었다」를 그것만으로 말할 수는 없습니다.</strong></p></blockquote>
 
         <blockquote><p>⚠️ 이 검색이 답하는 것은 <strong>「그 문자열이 그 경로의 이전 커밋에 없었다」</strong>
-        까지입니다. <code>--all</code> 없이 돌리면 <strong>현재 갈래에서 닿는 이력만</strong> 보고,
+        까지입니다. <code>--all</code> 없이 돌리면 <strong>현재 갈래에서 닿는 이력만</strong> 보고
         <code>--follow</code> 없이 경로를 지정하면 <strong>이름이 바뀌기 전 이력을 놓칩니다.</strong>
         같은 기능을 다른 문자열로 짰다면 아예 안 걸립니다.</p></blockquote>
 
@@ -272,7 +272,7 @@ gpu_scale_down() {
         <figure class="diagram">
           <svg viewBox="0 0 720 230" role="img" aria-labelledby="gv-t gv-d" class="figure-svg">
             <title id="gv-t">저장소 기록이 가르지 못하는 두 경우</title>
-            <desc id="gv-d">위아래 두 줄이 각각 하나의 이야기입니다. 위 줄에는 「썼다가 잃었다」가 있고,
+            <desc id="gv-d">위아래 두 줄이 각각 하나의 이야기입니다. 위 줄에는 「썼다가 잃었다」가 있고
             편집을 뜻하는 분홍 표시 하나가 왼쪽에 있으며 그 위에 되돌림을 뜻하는 가위표가 겹쳐 있습니다.
             아래 줄에는 「쓴 적이 없다」가 있고 왼쪽이 비어 있습니다. 두 줄 모두 오른쪽 끝에 같은 모양의
             커밋 표시가 하나씩 있습니다. 오른쪽에 저장소가 보는 화면을 나타내는 상자가 하나 있고 두 줄에서
@@ -336,7 +336,7 @@ gpu_scale_down() {
   ttl_disarm</code></pre>
 
         <p><strong>이 주석은 스스로 무너집니다.</strong>
-        「실패하면 예약이 있어서 살아남을 수 있다」고 써 놓고,
+        「실패하면 예약이 있어서 살아남을 수 있다」고 써 놓고
         그 예약을 <strong>실패할 수도 있는 호출보다 먼저</strong> 지웁니다.
         실패하는 순간 예약은 <strong>이미 없습니다.</strong></p>
 
@@ -394,7 +394,7 @@ HTTP 500 응답 시간         : 0.000566초
         <p>기록에 남은 두 값으로 이번에 계산해 본 것은 이렇습니다.
         <strong>2,826 ÷ 1.142 = 2,474.6</strong>,
         <strong>1.4 ÷ 0.000566 = 2,473.5</strong>. 둘이 <strong>거의 같습니다.</strong>
-        기록된 도착률이 <strong>응답 시간에 반비례</strong>한다는 뜻이고,
+        기록된 도착률이 <strong>응답 시간에 반비례</strong>한다는 뜻이고
         <strong>응답이 빠를수록 도출값이 커집니다.</strong>
         (정확히 같지 않은 것은 <strong>양쪽 숫자가 다 반올림된 값</strong>이기 때문으로 보입니다.
         도착률도 응답 시간도 자릿수가 잘려 있습니다.)</p>
@@ -404,7 +404,7 @@ HTTP 500 응답 시간         : 0.000566초
             <title id="pf-t">실패한 요청이 측정값을 키우는 경로</title>
             <desc id="pf-d">왼쪽에서 오른쪽으로 두 갈래가 나란히 그려져 있습니다. 위쪽 갈래는 정상 응답으로,
             첫 바이트까지 긴 막대가 이어지고 그 끝에서 작은 도착률 값이 나옵니다. 아래쪽 갈래는 오류 응답으로,
-            막대가 아주 짧고 그 끝에서 훨씬 큰 도착률 값이 나옵니다. 두 갈래 사이에 점선 상자가 있고,
+            막대가 아주 짧고 그 끝에서 훨씬 큰 도착률 값이 나옵니다. 두 갈래 사이에 점선 상자가 있고
             두 갈래를 갈라 줄 검사가 없는 자리라고 적혀 있습니다.</desc>
             <g font-family="Inter, sans-serif">
               <text x="16" y="24" font-size="12" fill="#8a8a8a" font-weight="700">정상 응답</text>
@@ -458,7 +458,7 @@ HTTP 500 응답 시간         : 0.000566초
 
         <blockquote><p><strong>그중 둘은 코드가 아니라 제 판정식이 틀린 것</strong>이었습니다.</p></blockquote>
 
-        <p>하나는 이렇습니다. 「무장이 스케일업보다 앞인가」를 <strong>행 번호로</strong> 비교했는데,
+        <p>하나는 이렇습니다. 「무장이 스케일업보다 앞인가」를 <strong>행 번호로</strong> 비교했는데
         44행 주석 안에 <code>desiredSize=1</code>이라는 문자열이 들어 있었습니다.
         <strong>판정식이 그 주석을 스케일업으로 셌습니다.</strong></p>
 
@@ -466,15 +466,15 @@ HTTP 500 응답 시간         : 0.000566초
           <svg viewBox="0 0 720 200" role="img" aria-labelledby="ln-t ln-d" class="figure-svg">
             <title id="ln-t">행 번호로 순서를 판정할 때 주석이 끼어드는 자리</title>
             <desc id="ln-d">세로로 코드 줄이 나열돼 있습니다. 위쪽 44행은 주석이며 그 안에
-            desiredSize=1 이라는 문자열이 들어 있고 분홍색으로 표시돼 있습니다. 아래쪽 90행에 진짜
-            스케일업 호출이 있고 회색입니다. 그 사이 60행에 무장 호출이 있습니다. 왼쪽에 화살표 두 개가
-            있는데 위 화살표는 판정식이 44행을 스케일업으로 읽어 무장보다 앞이라고 잘못 판정하는 경로이고,
-            아래 화살표는 실제로 비교해야 할 90행을 가리킵니다.</desc>
+            desiredSize=1이라는 문자열이 들어 있고 분홍색으로 표시돼 있습니다. 아래쪽 209행에 진짜
+            스케일업 호출이 있고 회색입니다. 그 사이 201행에 무장 호출이 있습니다. 왼쪽에 화살표 두 개가
+            있는데 위 화살표는 판정식이 44행을 스케일업으로 읽어 무장보다 앞이라고 잘못 판정하는 경로이고
+            아래 화살표는 실제로 비교해야 할 209행을 가리킵니다.</desc>
             <g font-family="Inter, sans-serif">
               <g font-size="11.5" fill="#8a8a8a">
                 <text x="200" y="46">44행</text>
-                <text x="200" y="100">60행</text>
-                <text x="200" y="154">90행</text>
+                <text x="200" y="100">201행</text>
+                <text x="200" y="154">209행</text>
               </g>
               <rect x="248" y="30" width="380" height="26" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="262" y="48" font-size="12" fill="#d62976"># … desiredSize=1 … (주석)</text>
@@ -505,7 +505,8 @@ HTTP 500 응답 시간         : 0.000566초
           </svg>
           <figcaption>행 번호는 <strong>글자가 어디 있는지</strong>는 알지만
           <strong>그게 코드인지 주석인지</strong>는 모릅니다.
-          <strong>제가 넷째 항목에 처음 썼다가 버린 방법</strong>도 이것입니다.</figcaption>
+          <strong>제가 넷째 항목에 처음 썼다가 버린 방법</strong>도 이것입니다.
+          행 번호는 커밋 <code>4243faf</code>의 그 파일 기준입니다.</figcaption>
         </figure>
 
         <p>다른 하나는 <strong>판정식 자체가 엉터리</strong>였습니다.
@@ -608,7 +609,7 @@ a b c                                      ← 이름만 바꾸면 들어간다<
           세지 않는 편이 정직하다고 적어 두었습니다.</li>
           <li><strong>18개 확인 스크립트가 지금도 맞는지는 모릅니다.</strong>
           그때 오탐 둘을 고쳤을 뿐이고 <strong>나머지 열여섯의 판정식은 따로 검사하지 않았습니다.</strong></li>
-          <li><strong>열두 건은 이 세션에서 재현하지 않았습니다.</strong> 그날의 커밋 기록에서 옮긴 것이고,
+          <li><strong>열두 건은 이 세션에서 재현하지 않았습니다.</strong> 그날의 커밋 기록에서 옮긴 것이고
           그중 둘만 본문에 실었습니다. <strong>나머지 열이 지금 어떤 상태인지도 이 글의 범위 밖입니다.</strong></li>
         </ul>
 
@@ -654,10 +655,10 @@ a b c                                      ← 이름만 바꾸면 들어간다<
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=2dcb1d4f4c"></script>
+  <script src="../assets/content.js?v=d6aefa8091"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
   <script defer src="../assets/article.js?v=6f23973a30"></script>
   <script>
     (function () {
