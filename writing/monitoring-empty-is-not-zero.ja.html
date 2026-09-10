@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>空のリストを 0 台として公開してはいけませんでした | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/monitoring-empty-is-not-zero.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/monitoring-empty-is-not-zero.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/monitoring-empty-is-not-zero.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/monitoring-empty-is-not-zero.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="空のリストを 0 台として公開してはいけませんでした | Kwanghun Lee" />
+  <meta property="og:description" content="物理ノード画面に同じ serve-stale のパターンを移す途中で「空の結果を 0 台として公開してよいのか」で止まりました。空の結果を五つに分け、二つだけを新しい値として公開し、残りは最後の正常値を保つようにしました。中央値 3,938ms が 23ms になりました。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/monitoring-empty-is-not-zero.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="空のリストを 0 台として公開してはいけませんでした | Kwanghun Lee" />
+  <meta name="twitter:description" content="物理ノード画面に同じ serve-stale のパターンを移す途中で「空の結果を 0 台として公開してよいのか」で止まりました。空の結果を五つに分け、二つだけを新しい値として公開し、残りは最後の正常値を保つようにしました。中央値 3,938ms が 23ms になりました。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="物理ノード画面に同じ serve-stale のパターンを移す途中で「空の結果を 0 台として公開してよいのか」で止まりました。空の結果を五つに分け、二つだけを新しい値として公開し、残りは最後の正常値を保つようにしました。中央値 3,938ms が 23ms になりました。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "monitoring-empty-is-not-zero.html", "ko": "monitoring-empty-is-not-zero.ko.html", "ja": "monitoring-empty-is-not-zero.ja.html"}'>
+          <option value="ko">한국어</option>
+          <option value="en">English</option>
+          <option value="ja" selected>日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>一覧</a>
+        <div class="article-meta"><span class="source-tag company notranslate">会社の業務</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>空のリストを 0 台として公開してはいけませんでした<br><span class="h1-sub">対象が無くて空なのと、取れなくて空なのが同じ形で届きます。社内クラウド管理コンソール · 連載「統合モニタリング」③</span></h1>
+          <p class="article-date">2026年9月</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="monitoring-empty-is-not-zero"></aside>
+
+                <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#想定読者">この記事の想定読者</a></li>
+            <li><a href="#どんな内容">どんな内容ですか?</a></li>
+            <li><a href="#同じパターン">同じパターン、違う問い</a></li>
+            <li><a href="#空の五つ">「空」には意味が五つありました</a></li>
+            <li><a href="#到着順">到着の順序もデータです</a></li>
+            <li><a href="#値と信頼度">値と信頼度を別々に描きます</a></li>
+            <li><a href="#結果">結果</a></li>
+            <li><a href="#主張しないこと">この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>社内クラウド管理コンソールの backend を作っています。
+        <a href="monitoring-three-races-in-one-cache.ja.html">②編</a>でダッシュボードの計算を
+        リクエスト経路の外に移しました。同じパターンを物理ノード画面にそのまま移せばよさそうでした。</p>
+
+        <p>移す途中で問いが一つ出て止まりました。
+        <strong>メトリックのクエリが空のリストを返したとき、それを「ノード 0 台」として公開してよいのか。</strong></p>
+
+        <p>いけません。本当に対象が無くて空のこともあれば、<strong>収集が失敗して空</strong>のこともあります。
+        二つを分けないと、障害が起きた瞬間に<strong>正常だった画面を 0 台で塗りつぶします。</strong></p>
+
+        <h2 id="想定読者">この記事の想定読者<a class="anchor" href="#想定読者" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>最後の正常値を見せる画面（last-known-good）を作ろうとしている方</li>
+          <li>「結果が空だった」を<strong>正常</strong>とするか<strong>失敗</strong>とするか決める必要がある方</li>
+          <li>障害時に<strong>偽の 0 · 空の画面 · 終わらないローディング</strong>のどれを避けるか選ぶ方</li>
+        </ul>
+
+        <h2 id="どんな内容">どんな内容ですか?<a class="anchor" href="#どんな内容" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li>同じ serve-stale のパターンを移しましたが、<strong>「空」の意味</strong>が画面ごとに違いました。</li>
+          <li>空の結果を<strong>五つ</strong>に分けました。<strong>二つだけ</strong>を新しい値として公開し、
+          残りは<strong>最後の正常値を保ちます。</strong></li>
+          <li>値と<strong>収集の状態を別々に</strong>載せて送ります。それではじめて
+          「最後の値は見せるが、いまの収集は失敗した」という画面が作れます。</li>
+          <li>中央値 3,938ms が <strong>23ms</strong> になりました。</li>
+        </ul>
+
+        <p>社内製品なので、コードや画面をそのまま載せていません。製品名・顧客名・内部アドレスは外し、
+        構造と判定の規則だけを残しています。</p>
+
+        <blockquote><p>⚠️ <strong>この編には、最初にできていなかったことが入っています。</strong>
+        物理ノードの実装では、この五つの分岐が<strong>完全ではありませんでした。</strong>
+        「取得は成功したが結果が空」を正常と見る余地が残っており、それを
+        <strong>⑤編の共有 cache の作業でようやく</strong>共通の判定に引き上げました。</p></blockquote>
+
+        <h2 id="同じパターン">同じパターン、違う問い<a class="anchor" href="#同じパターン" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>構造はダッシュボードと同じです。後ろで回る worker が 15 秒ごとに完成スナップショットを作り、
+        新しい接続には最後の値をすぐに送ります。改善前の最初のデータはこうでした。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると残りが見えます">
+        <table>
+          <caption class="sr-only">物理ノード画面の改善前の最初のデータ。</caption>
+          <thead><tr><th>指標</th><th>改善前</th></tr></thead>
+          <tbody>
+            <tr><td>中央値</td><td>約 3,938ms</td></tr>
+            <tr><td>最小</td><td>約 846ms</td></tr>
+            <tr><td>最大 · p99</td><td>約 5,130ms</td></tr>
+            <tr><td>Apdex</td><td>0.050</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">ダッシュボードより計算の範囲は小さいのに、利用者が見る遅延はやはり秒単位でした。</p>
+
+        <p>物理ノードにはダッシュボードに無い性質があります。
+        <strong>「いま何台か」そのものが画面の中身</strong>です。だから「空の結果」がそのまま「0 台」と読まれます。</p>
+
+        <h2 id="空の五つ">「空」には意味が五つありました<a class="anchor" href="#空の五つ" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>新しく収集したものが空でも、無条件には公開しませんでした。インフラの構造が読めたか、
+        メトリックの取得が成功したか、<strong>期待する対象の数</strong>とマッチした標本の数がいくつかを
+        一緒に見ました。</p>
+
+<pre data-lang="text"><code>if インフラの構造が読めなかった:   INFRA_UNAVAILABLE
+else if メトリックの取得に失敗:    FETCH_FAILED
+else if マッチした標本 &gt; 0:        FRESH
+else if 期待する対象の数 == 0:     EMPTY_VALID
+else:                              NO_VALID_METRICS</code></pre>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 250" role="img" aria-labelledby="jd-t jd-d" class="figure-svg">
+            <title id="jd-t">空の結果を五つに分け、二つだけを公開する判定</title>
+            <desc id="jd-d">左から収集結果が入り、判定の箱を通ります。右へ五つの枝が分かれます。
+            上の二つはインフラが読めない場合と取得失敗で、灰色です。真ん中は標本がある場合でピンクです。
+            その下は期待する対象が 0 なので空でも正常な枝で、これもピンクです。いちばん下は対象があるのに
+            標本が無い枝で灰色です。ピンクの二つだけが新しい値として公開され、灰色の三つは前の値を保つと
+            書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="8" y="104" width="126" height="42" rx="6" fill="none" stroke="#3b3344" stroke-width="1.6"/>
+              <text x="71" y="130" font-size="12.5" fill="#18121d" text-anchor="middle">収集結果</text>
+              <path d="M134 125 H 176" fill="none" stroke="#3b3344" stroke-width="1.6" marker-end="url(#jd-ar)"/>
+              <rect x="176" y="100" width="104" height="50" rx="6" fill="none" stroke="#3b3344" stroke-width="2"/>
+              <text x="228" y="130" font-size="12.5" fill="#18121d" text-anchor="middle" font-weight="700">判定</text>
+
+              <path d="M280 118 H 330 V 30 H 380" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#jd-ar2)"/>
+              <path d="M280 122 H 330 V 76 H 380" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#jd-ar2)"/>
+              <path d="M280 125 H 380" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#jd-arp)"/>
+              <path d="M280 128 H 330 V 174 H 380" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#jd-arp)"/>
+              <path d="M280 132 H 330 V 220 H 380" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#jd-ar2)"/>
+
+              <text x="388" y="34" font-size="12" fill="#4a4a4a">INFRA_UNAVAILABLE</text>
+              <text x="388" y="80" font-size="12" fill="#4a4a4a">FETCH_FAILED</text>
+              <text x="388" y="129" font-size="12" fill="#18121d" font-weight="700">FRESH</text>
+              <text x="388" y="178" font-size="12" fill="#18121d" font-weight="700">EMPTY_VALID</text>
+              <text x="388" y="224" font-size="12" fill="#4a4a4a">NO_VALID_METRICS</text>
+
+              <path d="M596 26 H 636" fill="none" stroke="#8a8a8a" stroke-width="1.2"/>
+              <path d="M596 72 H 636" fill="none" stroke="#8a8a8a" stroke-width="1.2"/>
+              <path d="M596 216 H 636" fill="none" stroke="#8a8a8a" stroke-width="1.2"/>
+              <text x="644" y="76" font-size="11.5" fill="#8a8a8a">前の値を保つ</text>
+              <path d="M596 125 H 636" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <path d="M596 174 H 636" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="644" y="152" font-size="11.5" fill="#d62976" font-weight="700">新しい値として公開</text>
+            </g>
+            <defs>
+              <marker id="jd-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
+              </marker>
+              <marker id="jd-ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="jd-arp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption><code>EMPTY_VALID</code> だけが「本当の 0 台」です。
+          <strong>期待する対象の数が 0</strong> という別の根拠があるときにだけそう呼びます。</figcaption>
+        </figure>
+
+        <p>分けてしまえば規則は短いです。<code>FRESH</code> と <code>EMPTY_VALID</code> は新しい値として
+        公開します。残りの三つは<strong>最後の正常値をそのままにして</strong>、劣化状態と失敗時刻だけを
+        更新します。</p>
+
+        <p>値の<strong>世代</strong>と<strong>最後の試行の結果</strong>を分けておくのが要点です。
+        古いデータを新しいデータのふりをさせずに、画面も空にしないで済みます。</p>
+
+        <h2 id="到着順">到着の順序もデータです<a class="anchor" href="#到着順" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>接続の直後に cache された値が出て、ほぼ同時に新しい配信が届くことがあります。
+        非同期リスナーの実行順序は保証されないので、<strong>より古い応答が新しい配信より遅く</strong>
+        届くことがあります。すると画面が巻き戻ります。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 190" role="img" aria-labelledby="or-t or-d" class="figure-svg">
+            <title id="or-t">古い応答が新しい配信より遅く届く逆転</title>
+            <desc id="or-d">横の時間軸の上に二つのフレームがあります。先に作られた接続応答が右の遅い位置に届き、
+            あとに作られた配信がその左の早い位置に届きます。二つの矢印が交差し、画面は新しい値を先に描いてから
+            古い値で塗り替えられると書かれています。下には世代番号で逆転したフレームを捨てると示されています。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="14" y="34" font-size="11.5" fill="#8a8a8a">作った時刻</text>
+              <rect x="126" y="20" width="126" height="26" rx="4" fill="none" stroke="#8a8a8a" stroke-width="1.5"/>
+              <text x="189" y="38" font-size="11.5" fill="#4a4a4a" text-anchor="middle">接続応答 · 世代 7</text>
+              <rect x="320" y="20" width="112" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="376" y="38" font-size="11.5" fill="#18121d" text-anchor="middle">配信 · 世代 8</text>
+
+              <text x="14" y="126" font-size="11.5" fill="#8a8a8a">届いた時刻</text>
+              <rect x="320" y="112" width="112" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="376" y="130" font-size="11.5" fill="#18121d" text-anchor="middle">配信 · 世代 8</text>
+              <rect x="480" y="112" width="126" height="26" rx="4" fill="none" stroke="#8a8a8a" stroke-width="1.5"/>
+              <text x="543" y="130" font-size="11.5" fill="#4a4a4a" text-anchor="middle">接続応答 · 世代 7</text>
+
+              <path d="M189 50 L 536 108" fill="none" stroke="#8a8a8a" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#or-ar)"/>
+              <path d="M376 50 V 108" fill="none" stroke="#d62976" stroke-width="1.6" marker-end="url(#or-arp)"/>
+
+              <text x="360" y="168" font-size="11.5" fill="#8a8a8a" text-anchor="middle">世代の小さいフレーム · 破棄</text>
+            </g>
+            <defs>
+              <marker id="or-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="or-arp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>先に作ったものが後に届くことがあります。だから
+          <strong>届いた順ではなく作った順</strong>で判定しなければなりません。</figcaption>
+        </figure>
+
+        <p>ここで <code>HH:mm:ss</code> の文字列をチャートのキーに使うだけでは足りません。
+        <strong>同じ秒に二つの世代が作られることがあり</strong>、プロセスが再起動すると時計が巻き戻ることも
+        あります。表示用の時刻、並べ替え用の世代番号、実行間隔用の単調増加時間を
+        <strong>別々の値</strong>として持ちました。</p>
+
+        <h2 id="値と信頼度">値と信頼度を別々に描きます<a class="anchor" href="#値と信頼度" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>最後の正常値を見せているあいだ、利用者がそれを最新だと誤解してはいけません。
+        そこで payload にこの四つを別々に載せました。</p>
+
+        <ul>
+          <li>データと<strong>そのデータが作られた時刻</strong></li>
+          <li>最後の収集試行の<strong>状態と時刻</strong></li>
+          <li>前の値を引き継いでいるかを示す<strong>劣化表示</strong></li>
+          <li>接続の寿命の中で順序を判定する<strong>世代番号</strong></li>
+        </ul>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 190" role="img" aria-labelledby="pl-t pl-d" class="figure-svg">
+            <title id="pl-t">値と収集状態を別々に載せた payload の四つの枠</title>
+            <desc id="pl-d">横に四つの枠が並んでいます。一つ目はデータと作られた時刻で、ピンクです。
+            二つ目は最後の収集試行の状態と時刻です。三つ目は前の値を引き継いでいるかを示す劣化表示です。
+            四つ目は順序を決める世代番号です。下には、劣化表示が立っておらず結果が空のときだけ
+            本当の 0 台として描くと書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="14" y="36" width="162" height="58" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="95" y="60" font-size="12.5" fill="#18121d" text-anchor="middle" font-weight="700">データ</text>
+              <text x="95" y="80" font-size="11.5" fill="#d62976" text-anchor="middle">作られた時刻</text>
+
+              <rect x="190" y="36" width="162" height="58" rx="6" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="271" y="60" font-size="12.5" fill="#18121d" text-anchor="middle">最後の試行</text>
+              <text x="271" y="80" font-size="11.5" fill="#8a8a8a" text-anchor="middle">状態 · 時刻</text>
+
+              <rect x="366" y="36" width="162" height="58" rx="6" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="447" y="60" font-size="12.5" fill="#18121d" text-anchor="middle">劣化表示</text>
+              <text x="447" y="80" font-size="11.5" fill="#8a8a8a" text-anchor="middle">前の値を引き継ぎ</text>
+
+              <rect x="542" y="36" width="162" height="58" rx="6" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="623" y="60" font-size="12.5" fill="#18121d" text-anchor="middle">世代番号</text>
+              <text x="623" y="80" font-size="11.5" fill="#8a8a8a" text-anchor="middle">順序の判定用</text>
+
+              <path d="M14 122 H 704" fill="none" stroke="#e0e0e0" stroke-width="1"/>
+              <text x="360" y="150" font-size="11.5" fill="#8a8a8a" text-anchor="middle">劣化表示なし · 結果が空 → 本当の 0 台</text>
+              <text x="360" y="172" font-size="11.5" fill="#8a8a8a" text-anchor="middle">劣化表示あり → 前の値 · 古い表示</text>
+            </g>
+          </svg>
+          <figcaption>四つが<strong>別々</strong>にあってはじめて、画面は値と信頼度を分けて描けます。
+          一つにまとめると、どちらかは必ず嘘になります。</figcaption>
+        </figure>
+
+        <p>フロントエンドは劣化表示が立っていれば既存の値を保ち、古いことも一緒に見せます。
+        <strong>劣化表示が立っておらず結果が空のときだけ</strong>、本当の 0 台として描きます。
+        この区別が無いと、<strong>「障害を 0 として表示する」か「正常な 0 を過去の値で隠す」</strong>の
+        どちらかは必ず起きます。</p>
+
+        <h2 id="結果">結果<a class="anchor" href="#結果" aria-label="このセクションへのリンク">#</a></h2>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると残りが見えます">
+        <table>
+          <caption class="sr-only">物理ノードの最初のデータの改善前後。</caption>
+          <thead><tr><th>指標</th><th>改善前</th><th>共有 cache 反映後</th></tr></thead>
+          <tbody>
+            <tr><td>中央値</td><td>約 3,938ms</td><td><strong>約 23ms</strong></td></tr>
+            <tr><td>p95</td><td>約 4,968ms</td><td>約 40ms</td></tr>
+            <tr><td>p99</td><td>約 5,130ms</td><td>約 43ms</td></tr>
+            <tr><td>エラー率</td><td>0%</td><td>0%</td></tr>
+            <tr><td>Apdex</td><td>0.050</td><td><strong>1.000</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">⚠️「改善後」は<strong>⑤編の共有 cache まで入った状態</strong>で測った値です。
+        この編の変更だけで測った値ではありません。画面ごとの改善の直後にも数十 ms の範囲でしたが、
+        <strong>その時点の表は別に残していません。</strong></p>
+
+        <h2 id="主張しないこと">この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>運用統計ではありません。</strong>最初のデータの遅延を見る逐次 harness であって、
+          同時利用者の負荷試験ではありません。</li>
+          <li><strong>この編の寄与だけを測っていません。</strong>表の「改善後」には⑤編の共有 cache が
+          一緒に入っています。</li>
+          <li><strong>この五つの分岐が最初から完全だったとは言いません。</strong>
+          物理ノードの時点では「取得成功かつ結果が空」を正常と見る余地が残っており、
+          ⑤編でようやく共通の判定に引き上げました。</li>
+          <li><strong>last-known-good が常に正しいという話でもありません。</strong>
+          データの古さを隠せば、可用性と引き換えに<strong>長く嘘をつく</strong>ことになります。</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="このセクションへのリンク">#</a></h2>
+
+          <ul>
+            <li><strong>「空」は観測ではなく、解釈が要る値です。</strong>
+            対象が無くて空なのと、取れなくて空なのは<strong>同じデータ構造で届きます。</strong></li>
+            <li><strong>値と収集状態を分けてはじめて正直な画面になります。</strong>
+            「最後の値は見せるが、いまの収集は失敗した」は、二つを混ぜたら書けない文です。</li>
+            <li><strong>到着順で最新を判定すると画面が巻き戻ります。</strong>
+            作った順を値に載せる必要があります。</li>
+          </ul>
+
+          <p>最後に一行だけ残すなら、これです。
+          <strong>モニタリング画面が決めるべきなのは最新の数字ではなく、観測が失敗したときに
+          偽の 0 と空の画面と終わらないローディングのどれを避けるかです。</strong></p>
+
+          <p>次回は仮想リソースです。この画面はボトルネックが一つではなく
+          <strong>二つ</strong>ありました。お読みいただきありがとうございました。</p>
+        </div>
+
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=deeb528830"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

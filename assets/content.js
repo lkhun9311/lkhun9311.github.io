@@ -272,6 +272,18 @@
           tags: ["Tooling", "Method", "Verification"]
         },
         {
+          title: "An Empty List Is Not a Zero",
+          url: "writing/monitoring-empty-is-not-zero.html",
+          source: "company", sourceLabel: "Company work",
+          title_ko: "빈 목록을 0대라고 발행하면 안 됐습니다",
+          desc_ko: "물리 노드 화면에 같은 serve-stale 패턴을 옮기다가 「빈 결과를 0대로 발행해도 되는가」에서 멈췄습니다. 대상이 없어서 빈 것과 못 가져와서 빈 것이 같은 모양으로 옵니다. 빈 결과를 다섯 갈래로 갈라 둘만 새 값으로 발행하고 나머지는 마지막 정상값을 유지하도록 했습니다. 연작 「통합 모니터링」 ③.",
+          title_ja: "空のリストを 0 台として公開してはいけませんでした",
+          desc_ja: "物理ノード画面に同じ serve-stale のパターンを移す途中で「空の結果を 0 台として公開してよいのか」で止まりました。対象が無くて空なのと、取れなくて空なのが同じ形で届きます。空の結果を五つに分け、二つだけを新しい値として公開しました。連載「統合モニタリング」③。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "Carrying the same serve-stale pattern to the physical nodes screen stopped at one question: may an empty result be published as zero nodes? Empty because nothing is there and empty because nothing could be fetched arrive in the same shape. Empty results were split five ways, two published as new values and the rest keeping the last good one. Unified Monitoring, part three. Also in Korean and Japanese.",
+          tags: ["Observability", "Reliability", "Method"]
+        },
+        {
           title: "One Cache, Three Races Hiding Inside It",
           url: "writing/monitoring-three-races-in-one-cache.html",
           source: "company", sourceLabel: "Company work",
