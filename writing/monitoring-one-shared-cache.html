@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Merging Them Revealed the Contracts Separation Had Been Keeping | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/monitoring-one-shared-cache.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/monitoring-one-shared-cache.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/monitoring-one-shared-cache.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/monitoring-one-shared-cache.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="Merging Them Revealed the Contracts Separation Had Been Keeping | Kwanghun Lee" />
+  <meta property="og:description" content="The three screens were collecting the same source separately, so the three caches became one. Merging produced a regression at once: with only one screen open, another screen's last value disappeared. The contract the separated caches had been keeping silently was gone, and nobody had ever written it down. The last part of the series." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/monitoring-one-shared-cache.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Merging Them Revealed the Contracts Separation Had Been Keeping | Kwanghun Lee" />
+  <meta name="twitter:description" content="The three screens were collecting the same source separately, so the three caches became one. Merging produced a regression at once: with only one screen open, another screen's last value disappeared. The contract the separated caches had been keeping silently was gone, and nobody had ever written it down. The last part of the series." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="The three screens were collecting the same source separately, so the three caches became one. Merging produced a regression at once: with only one screen open, another screen's last value disappeared. The contract the separated caches had been keeping silently was gone, and nobody had ever written it down. The last part of the series." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "monitoring-one-shared-cache.html", "ko": "monitoring-one-shared-cache.ko.html", "ja": "monitoring-one-shared-cache.ja.html"}'>
+          <option value="ko">Korean</option>
+          <option value="en" selected>English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing</a>
+        <div class="article-meta"><span class="source-tag company notranslate">Company work</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>Merging Them Revealed the Contracts Separation Had Been Keeping<br><span class="h1-sub">Gathering three caches into one turned what separation protected into contracts. An internal cloud admin console. Unified Monitoring, part five</span></h1>
+          <p class="article-date">Sep 2026</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="monitoring-one-shared-cache"></aside>
+
+                <nav class="article-toc" aria-label="Table of contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-is-in-here">What is in here</a></li>
+            <li><a href="#three-problems">Three problems in the structure before merging</a></li>
+            <li><a href="#partial-failure">Partial failure is carried per item</a></li>
+            <li><a href="#the-regression">Merging produced a regression immediately</a></li>
+            <li><a href="#slow-consumers">Slow consumers were separated from collection</a></li>
+            <li><a href="#merged-result">The merged result</a></li>
+            <li><a href="#questions-to-answer">What to check when merging shared state</a></li>
+            <li><a href="#what-this-does-not-claim">What this article does not claim</a></li>
+            <li><a href="#wrapping-up">Wrapping up</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>I build the backend of an internal cloud admin console. By
+        <a href="monitoring-two-gates-one-screen.html">part four</a> all three screens were fixed individually.
+        First data was fast everywhere, and <strong>each screen was still collecting the same source
+        separately.</strong></p>
+
+        <p>Node metrics were read twice, by the dashboard and by physical nodes. Instance metrics were read
+        twice, by the dashboard and by virtual resources.
+        <strong>Merging the three caches into one removes the duplication.</strong></p>
+
+        <p>The actual work was much larger than turning three data structures into one, because
+        <strong>everything that separation had been protecting by accident</strong> became a contract that had
+        to be written down.</p>
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>Anyone about to merge several similar caches into one</li>
+          <li>Anyone whose several consumers each read <strong>the same source</strong></li>
+          <li>Anyone who started with “a refactor to reduce object count” and ended up rewriting contracts</li>
+        </ul>
+
+        <h2 id="what-is-in-here">What is in here<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li>There were three problems before merging.
+          <strong>Duplicate collection, a shared mutable DTO, and treating an outage as an empty value.</strong></li>
+          <li><strong>Partial failure is carried per item.</strong> An instance metric failing does not roll the
+          successfully collected nodes back to an earlier generation.</li>
+          <li>Merging <strong>produced a regression immediately.</strong> With only one screen open, the other
+          screen's last value <strong>disappeared from the cache.</strong> Re-entry took 5,115 ms.</li>
+          <li>Slow consumers were separated from collection. <strong>The synchronous send itself did not go
+          away.</strong></li>
+        </ul>
+
+        <p>This is an internal product, so the code and the screens are not reproduced literally.
+        Product names, customers and internal addresses are out; the structure and the contracts stay.</p>
+
+        <h2 id="three-problems">Three problems in the structure before merging<a class="anchor" href="#three-problems" aria-label="Link to this section">#</a></h2>
+
+        <p><strong>First, duplicate collection.</strong> When the three screens' 15 second cycles overlap, the
+        same nodes and instances are read several times. As screens are added, load on the source grows
+        <strong>in proportion to the number of consumers.</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 240" role="img" aria-labelledby="dp-t dp-d" class="figure-svg">
+            <title id="dp-t">Each screen reading the same source, then a single producer</title>
+            <desc id="dp-d">The upper half is before merging. Arrows leave each of the three screens, dashboard,
+            physical nodes and virtual resources, and head to the same time-series store; there are five arrows,
+            marked as duplication. The lower half is after merging. Only a single producer sends an arrow to the
+            time-series store, and the three screens read the snapshot that producer built.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="14" y="30" font-size="11.5" fill="#8a8a8a">before</text>
+              <rect x="86" y="16" width="104" height="26" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="138" y="34" font-size="11" fill="#4a4a4a" text-anchor="middle">dashboard</text>
+              <rect x="86" y="48" width="104" height="26" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="138" y="66" font-size="11" fill="#4a4a4a" text-anchor="middle">physical nodes</text>
+              <rect x="86" y="80" width="104" height="26" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="138" y="98" font-size="11" fill="#4a4a4a" text-anchor="middle">virtual resources</text>
+              <path d="M190 29 H 420" fill="none" stroke="#d62976" stroke-width="1.4" marker-end="url(#dp-arp)"/>
+              <path d="M190 36 H 420" fill="none" stroke="#d62976" stroke-width="1.4" marker-end="url(#dp-arp)"/>
+              <path d="M190 61 H 420" fill="none" stroke="#d62976" stroke-width="1.4" marker-end="url(#dp-arp)"/>
+              <path d="M190 93 H 420" fill="none" stroke="#d62976" stroke-width="1.4" marker-end="url(#dp-arp)"/>
+              <path d="M190 100 H 420" fill="none" stroke="#d62976" stroke-width="1.4" marker-end="url(#dp-arp)"/>
+              <rect x="420" y="42" width="160" height="40" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="500" y="66" font-size="11.5" fill="#18121d" text-anchor="middle">time-series store</text>
+              <text x="596" y="66" font-size="11" fill="#d62976" font-weight="700">five reads</text>
+
+              <path d="M14 126 H 704" fill="none" stroke="#e0e0e0" stroke-width="1"/>
+
+              <text x="14" y="160" font-size="11.5" fill="#8a8a8a">after</text>
+              <rect x="86" y="146" width="104" height="26" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="138" y="164" font-size="11" fill="#4a4a4a" text-anchor="middle">dashboard</text>
+              <rect x="86" y="178" width="104" height="26" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="138" y="196" font-size="11" fill="#4a4a4a" text-anchor="middle">physical nodes</text>
+              <rect x="86" y="210" width="104" height="26" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="138" y="228" font-size="11" fill="#4a4a4a" text-anchor="middle">virtual resources</text>
+              <path d="M190 159 H 244" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#dp-ar)"/>
+              <path d="M190 191 H 244" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#dp-ar)"/>
+              <path d="M190 223 H 244" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#dp-ar)"/>
+              <rect x="244" y="172" width="136" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="2"/>
+              <text x="312" y="196" font-size="11.5" fill="#18121d" text-anchor="middle">single producer</text>
+              <path d="M380 192 H 420" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#dp-arp)"/>
+              <rect x="420" y="172" width="160" height="40" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="500" y="196" font-size="11.5" fill="#18121d" text-anchor="middle">time-series store</text>
+              <text x="596" y="196" font-size="11" fill="#d62976" font-weight="700">one read</text>
+            </g>
+            <defs>
+              <marker id="dp-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="dp-arp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>Load on the source grows with the number of consumers.
+          From this figure alone, <strong>merging looks like pure gain.</strong></figcaption>
+        </figure>
+
+        <p><strong>Second, a shared mutable DTO.</strong> Each screen filled the object returned by the
+        structure cache with metrics <strong>in place.</strong> If one thread mutates while another serialises,
+        <strong>two different moments end up in one payload.</strong> Swapping the pointer atomically does not
+        help: <strong>if the objects inside are shared and mutable, it is not an immutable snapshot.</strong></p>
+
+        <p><strong>Third, treating an outage as an empty value.</strong> When an infrastructure read or a metric
+        fetch failed and an empty list went out as the new healthy snapshot, the last good screen was overwritten
+        with zero. Parts three and four met this problem screen by screen.</p>
+
+        <h2 id="partial-failure">Partial failure is carried per item<a class="anchor" href="#partial-failure" aria-label="Link to this section">#</a></h2>
+
+        <p>The dashboard shows node and instance results <strong>combined.</strong> Rolling
+        <strong>successfully collected nodes back to an earlier generation</strong> because the instance metric
+        failed lets one dependency's outage age the whole screen. Accepting an empty instance list as a new
+        value overwrites the real VM count with zero.</p>
+
+        <p>So the five branches from part three were lifted into a <strong>common judgement</strong> and applied
+        per item.</p>
+
+<pre data-lang="text"><code>FRESH              publish new data with a new generation
+EMPTY_VALID        the target count is zero, so publish the empty data as healthy
+INFRA_UNAVAILABLE  carry the previous data + degraded
+FETCH_FAILED       carry the previous data + degraded
+NO_VALID_METRICS   carry the previous data + degraded</code></pre>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 210" role="img" aria-labelledby="pf-t pf-d" class="figure-svg">
+            <title id="pf-t">Two items in one payload judged differently</title>
+            <desc id="pf-d">One payload box holds two items. The node item above succeeded, is published with a
+            new generation, and is pink. The instance item below failed its fetch, carries the previous value with
+            a degraded flag, and is grey. On the right a note says the screen draws nodes with the new value and
+            instances with an old marker.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="24" y="24" width="346" height="146" rx="8" fill="none" stroke="#3b3344" stroke-width="1.6"/>
+              <text x="197" y="48" font-size="12" fill="#18121d" text-anchor="middle" font-weight="700">one payload · one generation</text>
+
+              <rect x="48" y="62" width="298" height="42" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="72" y="88" font-size="11.5" fill="#18121d">nodes</text>
+              <text x="200" y="88" font-size="11.5" fill="#d62976">FRESH · new generation</text>
+
+              <rect x="48" y="116" width="298" height="42" rx="6" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="72" y="142" font-size="11.5" fill="#18121d">instances</text>
+              <text x="200" y="142" font-size="11.5" fill="#8a8a8a">FETCH_FAILED · carried</text>
+
+              <path d="M370 84 H 440" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#pf-arp)"/>
+              <path d="M370 138 H 440" fill="none" stroke="#8a8a8a" stroke-width="1.5" marker-end="url(#pf-ar)"/>
+              <text x="450" y="88" font-size="11.5" fill="#d62976" font-weight="700">drawn with the new value</text>
+              <text x="450" y="142" font-size="11.5" fill="#8a8a8a">previous value · marked old</text>
+
+              <text x="360" y="196" font-size="11.5" fill="#8a8a8a" text-anchor="middle">one side failing does not roll back the other side's success</text>
+            </g>
+            <defs>
+              <marker id="pf-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="pf-arp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>When carrying, <strong>the data and the generation that produced it stay</strong> and only
+          the status and time of the last attempt are rewritten.</figcaption>
+        </figure>
+
+        <h2 id="the-regression">Merging produced a regression immediately<a class="anchor" href="#the-regression" aria-label="Link to this section">#</a></h2>
+
+        <p>The most visible thing after merging was <strong>leaving a page and coming back.</strong></p>
+
+        <p>The single producer computed <strong>only the paths currently subscribed</strong> and published them
+        as one map, <strong>replacing the previous map wholesale.</strong> With only the physical nodes screen
+        open, a refresh leaves only nodes in the newest generation.
+        <strong>The previous dashboard value disappears from the cache.</strong></p>
+
+        <p>Connecting to the dashboard after that leaves nothing to send at once, so it
+        <strong>waits a full collection cycle.</strong> Measured, that was
+        <strong>about 5,115 ms</strong>, and connecting again right away was 16 ms.</p>
+
+        <blockquote><p>The contract the separated caches <strong>had been keeping silently</strong> was this.
+        <strong>“A refresh on another path does not erase my last value.”</strong>
+        Merging removed that contract, and nobody had ever written it down.</p></blockquote>
+
+<pre data-lang="text"><code>latestGeneration       the set of paths included in this collection
+lastPageByPath[path]   the last successful payload for each path
+
+publish(generation):
+    replace latestGeneration
+    merge only the included paths into lastPageByPath
+
+onConnect(path):
+    send lastPageByPath[path] immediately
+    if the path is absent from latestGeneration:
+        request a refresh</code></pre>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 220" role="img" aria-labelledby="rg-t rg-d" class="figure-svg">
+            <title id="rg-t">Keeping the last value per path after the fix</title>
+            <desc id="rg-d">The upper half is before the fix: publishing replaces the map wholesale, the dashboard
+            entry not included this time disappears, and re-entry is 5,115 milliseconds. The lower half is after:
+            the latest generation is replaced while the per-path last values are only merged, so the dashboard
+            entry survives and re-entry is 17 milliseconds.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="14" y="34" font-size="11.5" fill="#8a8a8a">before</text>
+              <rect x="94" y="20" width="136" height="28" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="162" y="39" font-size="11" fill="#4a4a4a" text-anchor="middle">publish · replace all</text>
+              <path d="M230 34 H 286" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#rg-ar)"/>
+              <rect x="286" y="20" width="212" height="28" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="392" y="39" font-size="11" fill="#4a4a4a" text-anchor="middle">nodes only · dashboard gone</text>
+              <text x="512" y="39" font-size="11.5" fill="#d62976" font-weight="700">re-entry 5,115 ms</text>
+
+              <path d="M14 76 H 704" fill="none" stroke="#e0e0e0" stroke-width="1"/>
+
+              <text x="14" y="118" font-size="11.5" fill="#8a8a8a">after</text>
+              <rect x="94" y="104" width="136" height="28" rx="5" fill="none" stroke="#3b3344" stroke-width="1.6"/>
+              <text x="162" y="123" font-size="11" fill="#18121d" text-anchor="middle">latest generation · replace</text>
+              <rect x="94" y="146" width="136" height="28" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="162" y="165" font-size="11" fill="#18121d" text-anchor="middle">per path · merge</text>
+              <path d="M230 118 H 286" fill="none" stroke="#3b3344" stroke-width="1.4" marker-end="url(#rg-ar2)"/>
+              <path d="M230 160 H 286" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#rg-arp)"/>
+              <rect x="286" y="104" width="212" height="28" rx="5" fill="none" stroke="#3b3344" stroke-width="1.4"/>
+              <text x="392" y="123" font-size="11" fill="#18121d" text-anchor="middle">paths included this time</text>
+              <rect x="286" y="146" width="212" height="28" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="392" y="165" font-size="11" fill="#18121d" text-anchor="middle">dashboard value · still there</text>
+              <text x="512" y="165" font-size="11.5" fill="#d62976" font-weight="700">re-entry 17 ms</text>
+            </g>
+            <defs>
+              <marker id="rg-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="rg-ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
+              </marker>
+              <marker id="rg-arp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>An old value can show briefly right after connecting. I chose
+          <strong>“the last value now, a fresh one shortly” over “five seconds of blank screen”.</strong></figcaption>
+        </figure>
+
+        <h2 id="slow-consumers">Slow consumers were separated from collection<a class="anchor" href="#slow-consumers" aria-label="Link to this section">#</a></h2>
+
+        <p>An SSE send can block on a slow client. Holding the collection lock until the broadcast finishes lets
+        <strong>one client's network delay the next collection.</strong> So the collection token is released
+        right after the new generation is published, and sending was handed to a separate component.</p>
+
+        <p>Putting per-session tasks on an ordinary executor queue can starve them: in a small pool
+        <strong>the leading sessions are accepted repeatedly while the trailing ones keep getting rejected.</strong>
+        The sender uses a ready deque and resident workers.</p>
+
+        <ul>
+          <li>Each session keeps <strong>only the highest pending generation.</strong></li>
+          <li>A session enters the queue <strong>once.</strong></li>
+          <li>After a worker sends, a new pending item puts the session <strong>back at the tail.</strong></li>
+          <li>Anything at or below an already-sent generation is dropped.</li>
+          <li>A closed session is re-checked immediately before sending.</li>
+        </ul>
+
+        <blockquote><p>⚠️ <strong>The synchronous send itself did not go away.</strong>
+        When the number of simultaneously blocked sessions exceeds the number of workers, sending is still
+        delayed. Asynchronous I/O and pre-emptive eviction of slow sessions
+        <strong>remain as separate work.</strong></p></blockquote>
+
+        <h2 id="merged-result">The merged result<a class="anchor" href="#merged-result" aria-label="Link to this section">#</a></h2>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">First SSE data on the three screens, before and after merging.</caption>
+          <thead><tr><th>Screen</th><th>Median before</th><th>Final median</th><th>p99 before</th><th>Final p99</th></tr></thead>
+          <tbody>
+            <tr><td>Dashboard</td><td>about 6,776 ms</td><td><strong>about 23 ms</strong></td><td>about 8,607 ms</td><td>about 55 ms</td></tr>
+            <tr><td>Physical nodes</td><td>about 3,938 ms</td><td><strong>about 23 ms</strong></td><td>about 5,130 ms</td><td>about 43 ms</td></tr>
+            <tr><td>Virtual resources</td><td>about 1,436 ms</td><td><strong>about 23 ms</strong></td><td>about 1,742 ms</td><td>about 37 ms</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">All three at 0% errors and Apdex 1.000. REST reads stayed within tens of
+        milliseconds, confirming the earlier improvements had not regressed.
+        ⚠️ However, <strong>some metrics were absent in the environment when virtual resources were re-measured.</strong>
+        The direct comparison under populated conditions rests on the per-screen measurement in part four.</p>
+
+        <h2 id="questions-to-answer">What to check when merging shared state<a class="anchor" href="#questions-to-answer" aria-label="Link to this section">#</a></h2>
+
+        <p>Cache consolidation is <strong>not a refactor to reduce object count.</strong> These questions need
+        answers.</p>
+
+        <ul>
+          <li>Is <strong>the last value preserved</strong> for a consumer that is not currently subscribed?</li>
+          <li>Does one source's failure <strong>roll back another source's success?</strong></li>
+          <li>Is an empty value <strong>a healthy zero or an undecidable one?</strong></li>
+          <li>Are <strong>the objects inside the payload</strong> immutable per generation?</li>
+          <li>Can a new value and an old one <strong>be sent out of order?</strong></li>
+          <li>Does a slow consumer <strong>block the producer?</strong></li>
+          <li>With several processes, are there <strong>several producers?</strong></li>
+        </ul>
+
+        <h2 id="what-this-does-not-claim">What this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>These are not production statistics.</strong> Sequential single-user measurements.</li>
+          <li><strong>The final figure for virtual resources is not a direct comparison.</strong> Some metrics
+          were absent at re-measurement, so part four's per-screen measurement is the reference.</li>
+          <li><strong>I do not claim the slow consumer problem is solved.</strong> It was separated from
+          collection; sending is still delayed once blocked sessions outnumber workers.</li>
+          <li><strong>Several producers were not addressed.</strong> The last question in the list above is
+          still open.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="wrapping-up">Wrapping up<a class="anchor" href="#wrapping-up" aria-label="Link to this section">#</a></h2>
+
+          <p>Five parts, summarised.</p>
+
+          <ul>
+            <li><strong>“No case for a change” is a different sentence from “I did not measure.”</strong>
+            Where I measured was not where users waited.</li>
+            <li><strong>“Build it ahead and serve it” becomes one line only once you decide who builds and who
+            publishes.</strong></li>
+            <li><strong>“Empty” is not an observation, it is a value that needs interpreting.</strong></li>
+            <li><strong>The gate that finishes last sets the screen's delay.</strong></li>
+            <li><strong>What separation was protecting has to be written down as a contract when you merge.</strong></li>
+          </ul>
+
+          <p>If one line survives, this one.
+          <strong>Shared state does not get simpler by being gathered in one place. It becomes manageable only
+          once every implicit contract has been made explicit.</strong></p>
+
+          <p>More durable than the performance won by removing duplicate collection is
+          <strong>having written these meanings into the code and the tests.</strong>
+          Thank you for reading all five parts.</p>
+        </div>
+
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=8f7393b1c8"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
