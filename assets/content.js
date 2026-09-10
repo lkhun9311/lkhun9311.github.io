@@ -272,6 +272,18 @@
           tags: ["Tooling", "Method", "Verification"]
         },
         {
+          title: "Fixing One Side Left the Screen Where It Was",
+          url: "writing/monitoring-two-gates-one-screen.html",
+          source: "company", sourceLabel: "Company work",
+          title_ko: "한쪽만 고치면 화면은 그대로였습니다",
+          desc_ko: "가상자원 화면에는 따로 시작하는 경로가 둘 있어 한쪽만 고쳐서는 빨라지지 않았습니다. 프로젝트마다 도는 호출을 병렬화 대신 요청에서 떼어 냈고 빈 목록을 성공으로 받으면 기존 값이 0으로 덮인다는 지적을 받았습니다. 그리고 SSE가 빨라지자 숨어 있던 순서 의존이 드러났습니다. 연작 「통합 모니터링」 ④.",
+          title_ja: "片方だけ直しても画面はそのままでした",
+          desc_ja: "仮想リソース画面には別々に始まる経路が二つあり、片方だけ直しても速くなりませんでした。プロジェクトごとに回る呼び出しを並列化ではなくリクエストから外し、空のリストを成功として受け取ると既存の値が 0 で塗り替えられるという指摘を受けました。そして SSE が速くなると隠れていた順序依存が表に出ました。連載「統合モニタリング」④。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "The virtual resources screen had two independently starting paths, so fixing one did not make it faster. The per-project fan-out came off the request instead of being parallelised, a review caught that an empty list accepted as success overwrites the value with zero, and speeding up SSE exposed a hidden ordering dependency. Unified Monitoring, part four. Also in Korean and Japanese.",
+          tags: ["Performance", "Method", "Observability"]
+        },
+        {
           title: "An Empty List Is Not a Zero",
           url: "writing/monitoring-empty-is-not-zero.html",
           source: "company", sourceLabel: "Company work",

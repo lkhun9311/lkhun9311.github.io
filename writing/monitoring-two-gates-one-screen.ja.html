@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>片方だけ直しても画面はそのままでした | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/monitoring-two-gates-one-screen.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/monitoring-two-gates-one-screen.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/monitoring-two-gates-one-screen.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/monitoring-two-gates-one-screen.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="片方だけ直しても画面はそのままでした | Kwanghun Lee" />
+  <meta property="og:description" content="仮想リソース画面には別々に始まる経路が二つあり、片方だけ直しても速くなりませんでした。プロジェクトごとに回る呼び出しを並列化ではなくリクエストから外し、空のリストを成功として受け取ると既存の値が 0 で塗り替えられるという指摘を受けました。そして SSE が速くなると隠れていた順序依存が表に出ました。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/monitoring-two-gates-one-screen.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="片方だけ直しても画面はそのままでした | Kwanghun Lee" />
+  <meta name="twitter:description" content="仮想リソース画面には別々に始まる経路が二つあり、片方だけ直しても速くなりませんでした。プロジェクトごとに回る呼び出しを並列化ではなくリクエストから外し、空のリストを成功として受け取ると既存の値が 0 で塗り替えられるという指摘を受けました。そして SSE が速くなると隠れていた順序依存が表に出ました。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="仮想リソース画面には別々に始まる経路が二つあり、片方だけ直しても速くなりませんでした。プロジェクトごとに回る呼び出しを並列化ではなくリクエストから外し、空のリストを成功として受け取ると既存の値が 0 で塗り替えられるという指摘を受けました。そして SSE が速くなると隠れていた順序依存が表に出ました。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "monitoring-two-gates-one-screen.html", "ko": "monitoring-two-gates-one-screen.ko.html", "ja": "monitoring-two-gates-one-screen.ja.html"}'>
+          <option value="ko">한국어</option>
+          <option value="en">English</option>
+          <option value="ja" selected>日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>一覧</a>
+        <div class="article-meta"><span class="source-tag company notranslate">会社の業務</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>片方だけ直しても画面はそのままでした<br><span class="h1-sub">ボトルネックが二つで、遅く終わるほうが画面を決めます。社内クラウド管理コンソール · 連載「統合モニタリング」④</span></h1>
+          <p class="article-date">2026年9月</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="monitoring-two-gates-one-screen"></aside>
+
+                <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#想定読者">この記事の想定読者</a></li>
+            <li><a href="#どんな内容">どんな内容ですか?</a></li>
+            <li><a href="#完了条件">完了条件を式で書きました</a></li>
+            <li><a href="#一つ目のゲート">一つ目のゲート、プロジェクトの数だけ回る呼び出し</a></li>
+            <li><a href="#二つ目のゲート">二つ目のゲート、そして速くなって表に出たもの</a></li>
+            <li><a href="#結果">結果</a></li>
+            <li><a href="#残した限界">レビューが残した限界</a></li>
+            <li><a href="#主張しないこと">この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>社内クラウド管理コンソールの backend を作っています。
+        <a href="monitoring-empty-is-not-zero.ja.html">③編</a>までで画面を二つ直しました。
+        三つ目の仮想リソース画面は、前の二つとは違いました。</p>
+
+        <p>この画面には<strong>別々に始まるデータ経路が二つ</strong>ありました。
+        REST がプロジェクトごとのクォータと使用量を作り、SSE が仮想サーバーのメトリックを送ります。
+        改善前、REST は約 2.6 秒、SSE の最初のデータは約 1.4 秒でした。</p>
+
+        <p><strong>片方だけ直しても画面は速くなりません。</strong>
+        全体のローディング時間は二つの和ではなく<strong>遅く終わるほう</strong>だからです。</p>
+
+        <h2 id="想定読者">この記事の想定読者<a class="anchor" href="#想定読者" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>一つの画面が<strong>複数のリクエスト</strong>で埋まる構造をお持ちの方</li>
+          <li>一覧を回して項目ごとに外部 API を呼ぶコードをお持ちの方</li>
+          <li>「片方を速くしたのに画面はそのまま」を経験した方</li>
+        </ul>
+
+        <h2 id="どんな内容">どんな内容ですか?<a class="anchor" href="#どんな内容" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li>画面の完了条件を<strong>先に式で書きました。</strong>和ではなく最大値です。</li>
+          <li>REST 側はプロジェクトごとに外部呼び出しが回る構造でした。
+          <strong>並列化するのではなく</strong>、そのファンアウトをリクエストから外しました。</li>
+          <li>そこでレビュー指摘が出ました。<strong>空のリストを成功として受け取ると</strong>
+          既存の値が <code>0/0</code> で塗り替えられます。失敗を<strong>失敗として</strong>表す必要がありました。</li>
+          <li>そして<strong>速くなったことで隠れていた順序依存が表に出ました。</strong>
+          SSE が 24ms になると REST より先に届き、画面が空になりました。</li>
+        </ul>
+
+        <p>社内製品なので、コードや画面をそのまま載せていません。製品名・顧客名・内部アドレスは外し、
+        構造と数値だけを残しています。</p>
+
+        <blockquote><p>⚠️ <strong>数値は単一利用者の逐次測定です。</strong>
+        同時利用者の負荷試験ではないので、「何人までさばけるか」としては読んでいません。</p></blockquote>
+
+        <h2 id="完了条件">完了条件を式で書きました<a class="anchor" href="#完了条件" aria-label="このセクションへのリンク">#</a></h2>
+
+<pre data-lang="text"><code>画面完了 = max(REST 使用量, SSE 最初のメトリック, 小さな設定リクエスト)</code></pre>
+
+        <p>REST だけ直せば SSE の 1.4 秒が残り、SSE だけ直せば REST の 2.6 秒が残ります。
+        この画面の性能作業は<strong>単一ボトルネックの最適化ではなく、別々の二つのゲートを取り除くこと</strong>でした。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 210" role="img" aria-labelledby="tg-t tg-d" class="figure-svg">
+            <title id="tg-t">二つの経路が同時に始まり、遅いほうが画面を決める構造</title>
+            <desc id="tg-d">横の時間軸の上にバーが二つあります。上は REST 使用量で長くピンクです。
+            下は SSE の最初のメトリックでそれより短く灰色です。二つは同じ地点から始まります。
+            右端に画面完了の線が縦に引かれ、長いほうの REST の終わりに合わせてあります。
+            下には短いほうを直してもこの線は動かないと書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="14" y="52" font-size="11.5" fill="#d62976" font-weight="700">REST 使用量</text>
+              <rect x="140" y="38" width="404" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="342" y="55" font-size="11.5" fill="#d62976" text-anchor="middle">約 2,627ms</text>
+
+              <text x="14" y="112" font-size="11.5" fill="#8a8a8a">SSE 最初のメトリック</text>
+              <rect x="140" y="98" width="222" height="24" rx="4" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="251" y="115" font-size="11.5" fill="#4a4a4a" text-anchor="middle">約 1,436ms</text>
+
+              <path d="M140 26 V 140" fill="none" stroke="#c9c9c9" stroke-width="1.2" stroke-dasharray="4 3"/>
+              <text x="140" y="20" font-size="11" fill="#8a8a8a" text-anchor="middle">同時に開始</text>
+              <path d="M544 26 V 140" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="556" y="20" font-size="11.5" fill="#d62976" font-weight="700">画面完了</text>
+
+              <path d="M140 164 H 660" fill="none" stroke="#c9c9c9" stroke-width="1.2" marker-end="url(#tg-ar)"/>
+              <text x="360" y="192" font-size="11.5" fill="#8a8a8a" text-anchor="middle">短いほうだけ直してもこの線は動かない</text>
+            </g>
+            <defs>
+              <marker id="tg-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>性能レポートで独立したリクエストの時間を<strong>足し合わせる</strong>と、
+          利用者が待った時間より大きくなります。<strong>いちばん速い一つだけ</strong>を出すと残りのゲートを隠します。</figcaption>
+        </figure>
+
+        <h2 id="一つ目のゲート">一つ目のゲート、プロジェクトの数だけ回る呼び出し<a class="anchor" href="#一つ目のゲート" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>REST 経路はプロジェクト一覧を回り、各プロジェクトのコンピュートとネットワークまたはストレージの
+        クォータを順に取得していました。プロジェクトが N 個なら外部呼び出しは<strong>約 2N 個</strong>になります。
+        クライアントを作るたびに認証まで行う経路なら、費用はさらに大きくなります。</p>
+
+        <p>最初に浮かぶ解は並列化です。ところが<strong>制限のない並列呼び出し</strong>は、認証サービスと
+        外部 API とアプリケーションの thread pool に一気に負荷を集めます。中央値は下がっても
+        p99 とエラー率が悪くなりうるし、リクエストが集まると
+        <strong>利用者の数だけ同じファンアウトが複製されます。</strong></p>
+
+        <p>選んだのは<strong>ファンアウトを利用者のリクエストから外すこと</strong>でした。</p>
+
+<pre data-lang="text"><code>バックグラウンドの使用量ローダー
+    現在のプロジェクト一覧を読む
+    プロジェクトごとに必要なクォータ値を取得する
+    一貫した使用量スナップショットを一つ公開する
+
+REST リクエスト
+    最後に完成したスナップショットを返す</code></pre>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 250" role="img" aria-labelledby="fo-t fo-d" class="figure-svg">
+            <title id="fo-t">プロジェクトごとのファンアウトをリクエストから外す前と後</title>
+            <desc id="fo-d">上半分は改善前です。利用者のリクエスト一つから矢印が何本にも分かれて
+            プロジェクトごとの外部呼び出しへ向かい、利用者がその全部を待つと書かれています。
+            下半分は改善後です。バックグラウンドのローダーからだけ矢印が何本にも分かれ、
+            利用者のリクエストはスナップショットの箱を一つ読むだけです。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="14" y="30" font-size="11.5" fill="#8a8a8a">改善前</text>
+              <rect x="86" y="16" width="122" height="34" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="147" y="38" font-size="11.5" fill="#18121d" text-anchor="middle">利用者リクエスト</text>
+              <path d="M208 26 H 300" fill="none" stroke="#d62976" stroke-width="1.5" marker-end="url(#fo-arp)"/>
+              <path d="M208 33 H 300" fill="none" stroke="#d62976" stroke-width="1.5" marker-end="url(#fo-arp)"/>
+              <path d="M208 40 H 300" fill="none" stroke="#d62976" stroke-width="1.5" marker-end="url(#fo-arp)"/>
+              <path d="M208 47 H 300" fill="none" stroke="#d62976" stroke-width="1.5" marker-end="url(#fo-arp)"/>
+              <text x="310" y="37" font-size="11.5" fill="#d62976">外部呼び出し · プロジェクトごとに 2 つ</text>
+              <text x="310" y="58" font-size="11" fill="#8a8a8a">利用者がこの全部を待つ</text>
+
+              <path d="M14 96 H 704" fill="none" stroke="#e0e0e0" stroke-width="1"/>
+
+              <text x="14" y="140" font-size="11.5" fill="#8a8a8a">改善後</text>
+              <rect x="86" y="126" width="150" height="34" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="161" y="148" font-size="11.5" fill="#4a4a4a" text-anchor="middle">バックグラウンドローダー</text>
+              <path d="M236 136 H 328" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#fo-ar)"/>
+              <path d="M236 143 H 328" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#fo-ar)"/>
+              <path d="M236 150 H 328" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#fo-ar)"/>
+              <text x="338" y="147" font-size="11.5" fill="#8a8a8a">外部呼び出し</text>
+
+              <rect x="86" y="186" width="150" height="34" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="161" y="208" font-size="11.5" fill="#18121d" text-anchor="middle">利用者リクエスト</text>
+              <path d="M236 203 H 328" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#fo-arp)"/>
+              <rect x="328" y="186" width="140" height="34" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="398" y="208" font-size="11.5" fill="#18121d" text-anchor="middle">スナップショット一つ</text>
+              <text x="482" y="208" font-size="11.5" fill="#d62976" font-weight="700">約 5〜12ms</text>
+            </g>
+            <defs>
+              <marker id="fo-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="fo-arp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>N+1 を直すいちばん良い結果は<strong>N 個を速く終えることではなく</strong>、
+          利用者のリクエストとその N 個のあいだの同期的な結合を切ることです。</figcaption>
+        </figure>
+
+        <p>ここでレビュー指摘が一つ出ました。構造 cache が劣化して<strong>空のプロジェクト一覧</strong>を
+        返したとき、ローダーがそれを<strong>正常な成功</strong>として受け取ると <code>0/0</code> の使用量が
+        新しい正常値として保存されます。③編で見たのと同じ形です。</p>
+
+        <p>直し方は<strong>構造情報が無いときに例外を投げること</strong>でした。
+        失敗は既存の値を守りますが、<strong>空のリストの成功は既存の値を 0 で塗り替えます。</strong>
+        serve-stale では失敗を<strong>正確に失敗として</strong>表さないと、cache が最後の正常値を守れません。</p>
+
+        <p>REST の中央値は約 2,627ms から <strong>5〜12ms</strong> に、p99 は約 3,005ms から 10〜20ms 台に
+        下がりました。</p>
+
+        <h2 id="二つ目のゲート">二つ目のゲート、そして速くなって表に出たもの<a class="anchor" href="#二つ目のゲート" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>SSE 側は前の二画面と同じでした。接続時にメトリックを新しく収集して最初のデータを送っており、
+        15 秒の worker が先に作っておいて接続時に即時再生する構造に変えました。
+        中央値は約 1,436ms から <strong>24ms</strong> になりました。</p>
+
+        <p>ところがここで<strong>回帰の候補が一つ出ました。</strong></p>
+
+        <p>既存の画面は<strong>REST が先に届くという暗黙の順序</strong>に頼っていました。
+        以前の状態が空なら SSE のマージ関数が早めに戻り、<strong>遅かった REST が偶然</strong>
+        その状態を先に埋めていました。SSE を数十 ms に縮めると順序が逆転し、
+        <strong>次の 15 秒配信まで画面が空になります。</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 220" role="img" aria-labelledby="ho-t ho-d" class="figure-svg">
+            <title id="ho-t">SSE が速くなって逆転した到着順序</title>
+            <desc id="ho-d">上半分は改善前です。REST が先に届き SSE が後に届いてマージが成功します。
+            下半分は改善後です。SSE が先に届くのに以前の状態が空でマージが早めに戻り、REST が後に届きます。
+            そのあいだの区間が破線の箱で示され、画面が空の区間だと書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="14" y="40" font-size="11.5" fill="#8a8a8a">改善前</text>
+              <rect x="120" y="26" width="106" height="26" rx="4" fill="none" stroke="#8a8a8a" stroke-width="1.5"/>
+              <text x="173" y="44" font-size="11.5" fill="#4a4a4a" text-anchor="middle">REST 到着</text>
+              <rect x="380" y="26" width="106" height="26" rx="4" fill="none" stroke="#8a8a8a" stroke-width="1.5"/>
+              <text x="433" y="44" font-size="11.5" fill="#4a4a4a" text-anchor="middle">SSE 到着</text>
+              <text x="500" y="44" font-size="11.5" fill="#8a8a8a">マージ成功</text>
+
+              <path d="M14 84 H 704" fill="none" stroke="#e0e0e0" stroke-width="1"/>
+
+              <text x="14" y="128" font-size="11.5" fill="#d62976" font-weight="700">改善後</text>
+              <rect x="120" y="114" width="106" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="173" y="132" font-size="11.5" fill="#18121d" text-anchor="middle">SSE 到着</text>
+              <text x="234" y="132" font-size="11" fill="#8a8a8a">状態が空 · 早めに戻る</text>
+              <rect x="440" y="114" width="106" height="26" rx="4" fill="none" stroke="#8a8a8a" stroke-width="1.5"/>
+              <text x="493" y="132" font-size="11.5" fill="#4a4a4a" text-anchor="middle">REST 到着</text>
+
+              <rect x="226" y="152" width="214" height="24" rx="4" fill="#f6f6f6" stroke="#c9c9c9" stroke-width="1" stroke-dasharray="5 4"/>
+              <text x="333" y="169" font-size="11.5" fill="#8a8a8a" text-anchor="middle">画面が空の区間</text>
+              <text x="360" y="200" font-size="11.5" fill="#8a8a8a" text-anchor="middle">最初のフレームで一覧を初期化して解決</text>
+            </g>
+          </svg>
+          <figcaption><strong>性能改善が隠れていた順序依存を表に出しました。</strong>
+          遅いほうが順序を守ってくれていたわけです。</figcaption>
+        </figure>
+
+        <p>そこで安全装置を三つ置きました。接続応答と定期配信が逆転しうるので
+        <strong>作った時刻で古いフレームを捨て</strong>、プロセス再起動で時刻の基準が巻き戻ったら
+        <strong>新しいストリームを受け入れるよう基準を取り直し</strong>、SSE が REST より先に届いても
+        <strong>最初のフレームでプロジェクトと VM の一覧を初期化する</strong>ようにしました。</p>
+
+        <h2 id="結果">結果<a class="anchor" href="#結果" aria-label="このセクションへのリンク">#</a></h2>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると残りが見えます">
+        <table>
+          <caption class="sr-only">仮想リソース画面の二つの経路と支配値。</caption>
+          <thead><tr><th>経路</th><th>改善前の中央値</th><th>改善後の中央値</th></tr></thead>
+          <tbody>
+            <tr><td>REST クォータ · 使用量</td><td>約 2,627ms</td><td>約 5〜12ms</td></tr>
+            <tr><td>SSE 最初のメトリック</td><td>約 1,436ms</td><td>約 24ms</td></tr>
+            <tr><td><strong>画面の支配値</strong></td><td><strong>約 2,627ms</strong></td><td><strong>約 24ms</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">改善前は<strong>REST が最大</strong>で、改善後は<strong>SSE が最大</strong>です。
+        支配する側が入れ替わりました。</p>
+
+        <h2 id="残した限界">レビューが残した限界<a class="anchor" href="#残した限界" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li>画面ごとの cache が依然として<strong>他の画面と同じ可変の構造 DTO を共有</strong>していました。
+          一つの画面がその場で更新しているあいだに別の画面が直列化すると、世代が混ざりえます。</li>
+          <li>インフラが劣化したとき<strong>SSE が空のスナップショットを正常として公開する</strong>問題は
+          <strong>三画面に共通</strong>でした。一画面だけに例外を付けると、同じ源を画面ごとに違うふうに解釈します。</li>
+          <li><strong>プロジェクト集合が変わるときの契約</strong>がありませんでした。フロントエンドが既存の
+          プロジェクトにメトリックだけを合わせると、後から追加されたプロジェクトは再読み込みまで見えず、
+          削除されたものが残ります。</li>
+        </ul>
+
+        <p>前の二つを次の編の共有 cache の作業に回しました。</p>
+
+        <h2 id="主張しないこと">この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>運用統計ではありません。</strong>単一利用者の逐次測定です。</li>
+          <li><strong>並列化が悪いという話ではありません。</strong>制限のない並列化を選ばなかっただけで、
+          <strong>選んでいたら p99 がどうなったかは測っていません。</strong></li>
+          <li><strong>順序依存が運用で表面化したとは言いません。</strong>改善の途中で見つけて塞いだもので、
+          <strong>利用者が空の画面を見た記録はありません。</strong></li>
+          <li><strong>プロジェクト集合の契約はまだありません。</strong>残った課題として書いておきます。</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="このセクションへのリンク">#</a></h2>
+
+          <ul>
+            <li><strong>画面の性能は、目立つ API 一つの時間ではありません。</strong>
+            並列な経路のうち<strong>最後に終わらなければならないゲート</strong>が利用者の遅延を決めます。</li>
+            <li><strong>N+1 のいちばん良い結果は N 個を速く終えることではありません。</strong>
+            利用者のリクエストとその N 個のあいだの<strong>同期的な結合を切ること</strong>です。</li>
+            <li><strong>遅いものが順序を守ってくれていたのかもしれません。</strong>
+            速くなると、その偶然が消えます。</li>
+          </ul>
+
+          <p>最後に一行だけ残すなら、これです。
+          <strong>各経路を別々に測り、全体の完了式を一緒に書き残しておかないと、片方だけ速くなったものを
+          完了だと勘違いします。</strong></p>
+
+          <p>次回が最終編です。三画面の cache を一つにまとめると、
+          <strong>別々だったから偶然守られていたこと</strong>が契約として表に出ました。
+          お読みいただきありがとうございました。</p>
+        </div>
+
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=bfeb90d3dc"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
