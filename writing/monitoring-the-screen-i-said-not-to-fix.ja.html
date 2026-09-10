@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>直す必要がないと書いた画面が 6.8 秒でした | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/monitoring-the-screen-i-said-not-to-fix.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/monitoring-the-screen-i-said-not-to-fix.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/monitoring-the-screen-i-said-not-to-fix.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/monitoring-the-screen-i-said-not-to-fix.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="直す必要がないと書いた画面が 6.8 秒でした | Kwanghun Lee" />
+  <meta property="og:description" content="モニタリング画面 3 つをレビューして「直す根拠が見つからなかった」と公開したのに、同じ画面の最初のデータが 6.8 秒でした。REST の応答を測り、利用者は SSE の最初の data を待っていました。リクエスト経路から計算を外すと、三画面とも約 23ms になりました。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/monitoring-the-screen-i-said-not-to-fix.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="直す必要がないと書いた画面が 6.8 秒でした | Kwanghun Lee" />
+  <meta name="twitter:description" content="モニタリング画面 3 つをレビューして「直す根拠が見つからなかった」と公開したのに、同じ画面の最初のデータが 6.8 秒でした。REST の応答を測り、利用者は SSE の最初の data を待っていました。リクエスト経路から計算を外すと、三画面とも約 23ms になりました。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="モニタリング画面 3 つをレビューして「直す根拠が見つからなかった」と公開したのに、同じ画面の最初のデータが 6.8 秒でした。REST の応答を測り、利用者は SSE の最初の data を待っていました。リクエスト経路から計算を外すと、三画面とも約 23ms になりました。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "monitoring-the-screen-i-said-not-to-fix.html", "ko": "monitoring-the-screen-i-said-not-to-fix.ko.html", "ja": "monitoring-the-screen-i-said-not-to-fix.ja.html"}'>
+          <option value="ko">한국어</option>
+          <option value="en">English</option>
+          <option value="ja" selected>日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>一覧</a>
+        <div class="article-meta"><span class="source-tag company notranslate">会社の業務</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>直す必要がないと書いた画面が 6.8 秒でした<br><span class="h1-sub">測った場所と利用者が待っていた場所が違いました。社内クラウド管理コンソール · 連載「統合モニタリング」①</span></h1>
+          <p class="article-date">2026年9月</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="monitoring-the-screen-i-said-not-to-fix"></aside>
+
+                <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#想定読者">この記事の想定読者</a></li>
+            <li><a href="#どんな内容">どんな内容ですか?</a></li>
+            <li><a href="#どの画面">どの画面ですか?</a></li>
+            <li><a href="#間違っていた記事">公開した記事が間違っていました</a></li>
+            <li><a href="#測った場所">測った場所と待っていた場所が違いました</a></li>
+            <li><a href="#測り直すと">測り直すとこうでした</a></li>
+            <li><a href="#直した方法">直した方法は一行です</a></li>
+            <li><a href="#続く四編">続く四編</a></li>
+            <li><a href="#主張しないこと">この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>社内クラウド管理コンソールの backend を作っています。</p>
+
+        <p>前回の<a href="slow-screens-7-nothing-to-fix.ja.html">⑦編</a>でモニタリング画面 3 つをレビューし、
+        <strong>「直すべきだと言える根拠が見つからなかった」</strong>と書きました。その記事にはこんな文もあります。
+        <strong>「cache をこれ以上足さないことにしました。足そうとしていた場所はすでに安い経路で、
+        そこに cache を入れると古さと複雑さだけが増えます。」</strong></p>
+
+        <p><strong>その画面の最初のデータは 6.8 秒でした。</strong>そして直した方法は
+        <strong>まさにその場所に cache を入れること</strong>でした。23ms になりました。</p>
+
+        <p>この記事は、その判断がなぜ間違っていたのか、そして何を測っていなかったから間違えたのかの話です。
+        続く 4 編で画面ごとに詳しく扱います。</p>
+
+        <h2 id="想定読者">この記事の想定読者<a class="anchor" href="#想定読者" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>負荷試験の結果は良いのに、利用者はずっと遅いと言う画面をお持ちの方</li>
+          <li>SSE や WebSocket で最初のデータを押し出す画面を作っている方</li>
+          <li>「ここはすでに安い」と判断して通り過ぎた経路がある方</li>
+        </ul>
+
+        <h2 id="どんな内容">どんな内容ですか?<a class="anchor" href="#どんな内容" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>自分が公開した記事の結論が間違っていました。</strong>「直す根拠がない」と書いたのに、
+          同じ画面の最初のデータが 6.8 秒でした。</li>
+          <li>間違いは計算ではなく<strong>測った場所</strong>でした。私は REST の応答時間を測り、
+          利用者は <strong>SSE の最初の <code>data</code></strong> を待っていました。</li>
+          <li>「時系列ストアは 15 秒に 1 回だから安い」という根拠は
+          <strong>定期更新についてだけ正しかった</strong>のです。
+          接続が新しく開くたびに、同じ計算が<strong>同期で</strong>もう一度回っていました。</li>
+          <li>画面 3 つをそれぞれ直し、最後に cache 3 つを一つにまとめました。中央値は
+          <strong>6,776ms · 3,938ms · 1,436ms から、三つとも約 23ms</strong> になりました。</li>
+        </ul>
+
+        <p>社内製品なので、コードや画面をそのまま載せていません。製品名・顧客名・内部アドレスは外し、
+        構造と設定値だけを残しています。</p>
+
+        <blockquote><p>⚠️ <strong>先にお伝えすることがあります。</strong>この記事の数値は
+        <strong>単一利用者 30 回の測定</strong>であり、運用環境の統計ではありません。
+        そして ⑦編のレビュー時点（8 月）と今回の測定時点（9 月）のあいだに
+        <strong>別の人の改善がもう一つ入っています。</strong>その寄与を自分のものと切り分けていません。
+        下の「この記事が主張しないこと」にもう一度書きます。</p></blockquote>
+
+        <h2 id="どの画面">どの画面ですか?<a class="anchor" href="#どの画面" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>統合モニタリングには画面が 3 つあります。<strong>ダッシュボード · 物理ノード · 仮想リソース。</strong>
+        三つとも構造情報は REST で受け取り、リアルタイムの値は SSE で受け取ります。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 250" role="img" aria-labelledby="mon-t mon-d" class="figure-svg">
+            <title id="mon-t">モニタリング画面 3 つが同じ二つの源から値を読む構造</title>
+            <desc id="mon-d">左にダッシュボード・物理ノード・仮想リソースの三つの画面が縦に並んでいます。
+            中央に API サーバーがあり、矢印が二手に分かれます。上は REST で構造情報を受け取る道、
+            下は SSE でリアルタイムの値を受け取る道です。右にはインフラ API と時系列ストアがあり、
+            三つの画面が同じ二つの源をそれぞれ別々に読むと書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="8" y="24" width="150" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="83" y="49" font-size="13" fill="#18121d" text-anchor="middle">ダッシュボード</text>
+              <rect x="8" y="82" width="150" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="83" y="107" font-size="13" fill="#18121d" text-anchor="middle">物理ノード</text>
+              <rect x="8" y="140" width="150" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="83" y="165" font-size="13" fill="#18121d" text-anchor="middle">仮想リソース</text>
+
+              <rect x="248" y="72" width="150" height="60" rx="6" fill="none" stroke="#3b3344" stroke-width="2"/>
+              <text x="323" y="98" font-size="13.5" fill="#18121d" text-anchor="middle" font-weight="700">API サーバー</text>
+              <text x="323" y="118" font-size="11.5" fill="#8a8a8a" text-anchor="middle">REST · SSE</text>
+
+              <path d="M158 44 H 248" fill="none" stroke="#8a8a8a" stroke-width="1.6" marker-end="url(#mon-ar)"/>
+              <path d="M158 102 H 248" fill="none" stroke="#8a8a8a" stroke-width="1.6" marker-end="url(#mon-ar)"/>
+              <path d="M158 160 H 248" fill="none" stroke="#8a8a8a" stroke-width="1.6" marker-end="url(#mon-ar)"/>
+
+              <rect x="498" y="24" width="200" height="44" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="598" y="51" font-size="12.5" fill="#18121d" text-anchor="middle">インフラ API · 構造情報</text>
+              <rect x="498" y="136" width="200" height="44" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="598" y="163" font-size="12.5" fill="#18121d" text-anchor="middle">時系列ストア · メトリック</text>
+
+              <path d="M398 90 H 448 V 46 H 498" fill="none" stroke="#8a8a8a" stroke-width="1.6" marker-end="url(#mon-ar)"/>
+              <path d="M398 114 H 448 V 158 H 498" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#mon-arp)"/>
+              <text x="448" y="40" font-size="11.5" fill="#8a8a8a">REST</text>
+              <text x="448" y="200" font-size="11.5" fill="#d62976" font-weight="700">SSE</text>
+
+              <text x="360" y="232" font-size="11.5" fill="#8a8a8a" text-anchor="middle">三画面 · 同じ二つの源 · それぞれ別々に</text>
+            </g>
+            <defs>
+              <marker id="mon-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="mon-arp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>画面ごとに SSE を別々に開きます。後で出てきますが、この「別々に」が最終編の主題になります。</figcaption>
+        </figure>
+
+        <h2 id="間違っていた記事">公開した記事が間違っていました<a class="anchor" href="#間違っていた記事" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>まず何を書いたのかをそのまま並べます。</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると残りが見えます">
+        <table>
+          <caption class="sr-only">⑦編の判断と今回の測定の対照。</caption>
+          <thead><tr><th></th><th>⑦編に書いたこと</th><th>今回測ったこと</th></tr></thead>
+          <tbody>
+            <tr><td>結論</td><td>直すべきだと言える根拠が見つからなかった</td><td><strong>最初のデータの中央値 6,776ms</strong></td></tr>
+            <tr><td>cache</td><td>これ以上足さない。すでに安い経路だ</td><td><strong>その場所に入れて 23ms</strong></td></tr>
+            <tr><td>根拠</td><td>15 秒に 1 回計算して全員に配る</td><td>定期更新は正しい。<strong>接続ごとにもう一度回る</strong></td></tr>
+            <tr><td>測定</td><td>⚠️ 負荷試験を走らせていない</td><td>SSE の最初の <code>data</code> までを直接測った</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">⑦編の最後の行は<strong>「負荷試験を走らせていません。コードを見て判断し、
+        実際に走らせて確かめてはいません。」</strong>でした。自分で書いておいた限界がそのまま実現しました。</p>
+
+        <p>⚠️ 一つだけ切り分けておきます。<strong>「15 秒に 1 回だから安い」はそれ自体が誤りではありません。</strong>
+        定期更新は実際に利用者数と無関係で、tick ごとに 1 回です。間違っていたのは
+        <strong>その一文で画面全体を説明できると見たこと</strong>です。</p>
+
+        <h2 id="測った場所">測った場所と待っていた場所が違いました<a class="anchor" href="#測った場所" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>画面がローディングを終える条件はこうでした。</p>
+
+<pre data-lang="text"><code>1. REST で構造情報を受け取る                約 20ms
+2. EventSource が接続する
+3. connection イベントを受け取る
+4. 最初の data イベントを受け取る           ← ここまで 6.8 秒
+5. フロントエンドがローディング層を外す</code></pre>
+
+        <p>一般的な HTTP サンプラーは<strong>1〜3 までを見て成功として終わります。</strong>
+        利用者が待っていたのは 4 でした。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="gap-t gap-d" class="figure-svg">
+            <title id="gap-t">測定ツールが終えた地点と利用者が待ち終えた地点の差</title>
+            <desc id="gap-d">横に時間軸があります。上のバーは測定ツールが見た区間で、
+            接続と最初のイベントまでが短く灰色で描かれています。下のバーは利用者が待った区間で、
+            最初の data イベントまで長くピンクで伸びています。二つのバーの終点が大きく離れており、
+            そのあいだが誰も見ていなかった区間だと書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="14" y="42" font-size="12" fill="#8a8a8a">測定ツール</text>
+              <rect x="140" y="28" width="126" height="22" rx="4" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="203" y="44" font-size="11.5" fill="#4a4a4a" text-anchor="middle">接続 · 最初のイベント</text>
+              <text x="274" y="44" font-size="11.5" fill="#8a8a8a">成功</text>
+
+              <text x="14" y="112" font-size="12" fill="#d62976" font-weight="700">利用者</text>
+              <rect x="140" y="98" width="450" height="22" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="365" y="114" font-size="11.5" fill="#d62976" text-anchor="middle">最初の data イベントまで · 約 6.8 秒</text>
+
+              <path d="M266 56 V 92" fill="none" stroke="#8a8a8a" stroke-width="1.4" stroke-dasharray="4 3"/>
+              <path d="M590 56 V 92" fill="none" stroke="#d62976" stroke-width="1.4" stroke-dasharray="4 3"/>
+              <rect x="266" y="60" width="324" height="26" rx="4" fill="#f6f6f6" stroke="#c9c9c9" stroke-width="1" stroke-dasharray="5 4"/>
+              <text x="428" y="78" font-size="11.5" fill="#8a8a8a" text-anchor="middle">誰も見ていなかった区間</text>
+
+              <path d="M140 150 H 660" fill="none" stroke="#c9c9c9" stroke-width="1.2" marker-end="url(#gap-ar)"/>
+              <text x="672" y="154" font-size="11.5" fill="#8a8a8a">時間</text>
+            </g>
+            <defs>
+              <marker id="gap-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>ツールが「成功」と書く地点と、ローディング層が外れる地点は別です。
+          ツールは嘘をつきませんでした。<strong>私が別のことを尋ねたのです。</strong></figcaption>
+        </figure>
+
+        <p>そこで SSE につないで最初の <code>data</code> フレームで接続を閉じ、経過時間を残す
+        小さな計測器を作りました。その値からパーセンタイルと Apdex を出し直しました。</p>
+
+        <h2 id="測り直すと">測り直すとこうでした<a class="anchor" href="#測り直すと" aria-label="このセクションへのリンク">#</a></h2>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると残りが見えます">
+        <table>
+          <caption class="sr-only">画面ごとの最初のデータの中央値と p99 の改善前後。</caption>
+          <thead><tr><th>画面</th><th>前の中央値</th><th>後の中央値</th><th>前の p99</th><th>後の p99</th></tr></thead>
+          <tbody>
+            <tr><td>ダッシュボード</td><td>約 6,776ms</td><td><strong>約 23ms</strong></td><td>約 8,607ms</td><td>約 55ms</td></tr>
+            <tr><td>物理ノード</td><td>約 3,938ms</td><td><strong>約 23ms</strong></td><td>約 5,130ms</td><td>約 43ms</td></tr>
+            <tr><td>仮想リソース</td><td>約 1,436ms</td><td><strong>約 23ms</strong></td><td>約 1,742ms</td><td>約 37ms</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">仮想リソースは SSE 側の値です。この画面は REST も約 2,627ms あり、
+        <strong>両方を直してはじめて速くなりました。</strong>③編の主題です。</p>
+
+        <h2 id="直した方法">直した方法は一行です<a class="anchor" href="#直した方法" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>リクエスト経路から計算を外しました。後ろで回る worker が 15 秒ごとに完成したスナップショットを作り、
+        新しい接続には<strong>最後に完成した値をすぐに</strong>送ります。更新が失敗したら
+        <strong>前の値をそのまま残します。</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 210" role="img" aria-labelledby="ss-t ss-d" class="figure-svg">
+            <title id="ss-t">リクエスト経路から計算を外したあとの構造</title>
+            <desc id="ss-d">上に 15 秒ごとに回る worker があり、矢印が中央のスナップショットの箱へ向かいます。
+            下に新しい接続があり、矢印が同じスナップショットの箱から出てそのまま応答につながります。
+            worker からスナップショットへの道には更新失敗時は前の値を保つと書かれており、
+            新しい接続から外へ出る矢印はありません。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="14" y="20" width="190" height="44" rx="6" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="109" y="47" font-size="12.5" fill="#18121d" text-anchor="middle">15 秒 worker · 外部読み取り</text>
+              <path d="M204 42 H 288" fill="none" stroke="#8a8a8a" stroke-width="1.6" marker-end="url(#ss-ar)"/>
+              <text x="246" y="32" font-size="11" fill="#8a8a8a" text-anchor="middle">完成品だけ入れ替え</text>
+
+              <rect x="288" y="76" width="164" height="56" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="370" y="100" font-size="13" fill="#18121d" text-anchor="middle" font-weight="700">スナップショット</text>
+              <text x="370" y="120" font-size="11.5" fill="#d62976" text-anchor="middle">最後に完成した値</text>
+
+              <rect x="14" y="146" width="190" height="44" rx="6" fill="none" stroke="#3b3344" stroke-width="1.6"/>
+              <text x="109" y="173" font-size="12.5" fill="#18121d" text-anchor="middle">新しい接続</text>
+              <path d="M204 168 H 288 V 132" fill="none" stroke="#3b3344" stroke-width="1.6" marker-end="url(#ss-ar2)"/>
+
+              <path d="M452 104 H 556" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#ss-arp)"/>
+              <rect x="556" y="82" width="150" height="44" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="631" y="109" font-size="12.5" fill="#18121d" text-anchor="middle">即時送信 · 23ms</text>
+
+              <text x="370" y="196" font-size="11.5" fill="#8a8a8a" text-anchor="middle">更新失敗 · 前の値を保つ</text>
+            </g>
+            <defs>
+              <marker id="ss-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="ss-ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
+              </marker>
+              <marker id="ss-arp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>新しい接続が外へ出ないことが要点です。
+          ⑦編は<strong>この構造がすでにあると読み</strong>、実際には構造情報にだけありました。</figcaption>
+        </figure>
+
+        <p>名前は serve-stale です。古い値でもすぐに渡すという意味で、
+        <strong>古さを受け入れる代わりに遅延をなくす</strong>取引です。
+        その取引が画面ごとにどこまで許されるのかが、続く 4 編の内容です。</p>
+
+        <h2 id="続く四編">続く四編<a class="anchor" href="#続く四編" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>①編 ダッシュボード。</strong>利用者が待つ境界をどう見つけ、
+          計測器をどう作ったか。6,776ms から 10ms まで。</li>
+          <li><strong>②編 物理ノード。</strong>同じパターンを移そうとして出会った問いが一つ。
+          <strong>メトリックが空のリストで返ったとき、それを正常な 0 台として発行してよいのか。</strong></li>
+          <li><strong>③編 仮想リソース。</strong>ボトルネックが REST と SSE の二つあり、
+          片方だけ直しても画面はそのままでした。</li>
+          <li><strong>④編 共有 cache。</strong>三画面の cache を一つにまとめると、
+          <strong>別々だったから偶然守られていたこと</strong>が契約として表に出ました。</li>
+        </ul>
+
+        <h2 id="主張しないこと">この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>運用統計ではありません。</strong>単一利用者 30 回の測定で、
+          同時利用者や長期の分布は見ていません。</li>
+          <li><strong>改善の寄与を切り分けられていません。</strong>⑦編のレビュー（8 月）と今回の測定（9 月）の
+          あいだに、別の人の改善がもう一つ入っています。before の値にその寄与がどれだけ含まれるかを
+          <strong>分けて測っていません。</strong></li>
+          <li><strong>⑦編が丸ごと間違いだという話ではありません。</strong>あの記事が「直さない」と決めたうちの
+          一つ、広すぎるように見える照会窓は今もそのままでよいと考えています。間違っていたのは
+          <strong>cache についての判断と、その根拠</strong>です。</li>
+          <li><strong>serve-stale がいつでも答えだという話でもありません。</strong>古い値を見せてよい画面でだけ
+          成り立ちます。その境界を画面ごとに引くのが②編と④編の主題です。</li>
+          <li><strong>23ms は定数ではありません。</strong>メモリからスナップショットを読んで直列化する費用で、
+          データ規模が変わればこの値も変わります。</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="このセクションへのリンク">#</a></h2>
+
+          <ul>
+            <li><strong>「すでに安い」という判断には、どの経路について安いのかが付いていなければなりません。</strong>
+            定期更新は安く、接続経路はそうではありませんでした。一文で両方を説明できると見たのが誤りでした。</li>
+            <li><strong>ツールが成功と書く地点が、利用者が待ち終えた地点と同じかを確かめる必要があります。</strong>
+            違えば、そのあいだは誰にも見えません。</li>
+            <li><strong>やらないと決めたことは、直したことより検算が難しいです。</strong>
+            ⑦編にそう書いておきながら、検算する道具を作りませんでした。</li>
+          </ul>
+
+          <p>最後に一行だけ残すなら、これです。
+          <strong>「直す根拠がない」は「測っていない」と区別して書かなければなりません。</strong>
+          ⑦編はその二つを分けようと努めた記事なのに、いちばん分けるべき場所で分けられませんでした。</p>
+
+          <p>次回はダッシュボードです。お読みいただきありがとうございました。</p>
+        </div>
+
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=5f0f855c8c"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
