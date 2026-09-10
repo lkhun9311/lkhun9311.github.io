@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>One Cache, Three Races Hiding Inside It | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/monitoring-three-races-in-one-cache.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/monitoring-three-races-in-one-cache.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/monitoring-three-races-in-one-cache.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/monitoring-three-races-in-one-cache.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="One Cache, Three Races Hiding Inside It | Kwanghun Lee" />
+  <meta property="og:description" content="First data on the dashboard took 6.8 seconds because connecting was computing. Moving the computation off the request path brought it to 10 ms, and along the way three races appeared: a cancelled refresh, the same value broadcast many times, and one timeout cutting somebody else's query." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/monitoring-three-races-in-one-cache.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="One Cache, Three Races Hiding Inside It | Kwanghun Lee" />
+  <meta name="twitter:description" content="First data on the dashboard took 6.8 seconds because connecting was computing. Moving the computation off the request path brought it to 10 ms, and along the way three races appeared: a cancelled refresh, the same value broadcast many times, and one timeout cutting somebody else's query." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="First data on the dashboard took 6.8 seconds because connecting was computing. Moving the computation off the request path brought it to 10 ms, and along the way three races appeared: a cancelled refresh, the same value broadcast many times, and one timeout cutting somebody else's query." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "monitoring-three-races-in-one-cache.html", "ko": "monitoring-three-races-in-one-cache.ko.html", "ja": "monitoring-three-races-in-one-cache.ja.html"}'>
+          <option value="ko">Korean</option>
+          <option value="en" selected>English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing</a>
+        <div class="article-meta"><span class="source-tag company notranslate">Company work</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>One Cache, Three Races Hiding Inside It<br><span class="h1-sub">A startup warm-up, a scheduled job and a new connection all refreshed the same slot. An internal cloud admin console. Unified Monitoring, part two</span></h1>
+          <p class="article-date">Sep 2026</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="monitoring-three-races-in-one-cache"></aside>
+
+                <nav class="article-toc" aria-label="Table of contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-is-in-here">What is in here</a></li>
+            <li><a href="#connecting-was-computing">Connecting was computing</a></li>
+            <li><a href="#endless-spinner">It looked like an endless spinner, not an error</a></li>
+            <li><a href="#off-the-request-path">I took the computation off the request path</a></li>
+            <li><a href="#three-races">Then there were three races</a></li>
+            <li><a href="#the-result">The result</a></li>
+            <li><a href="#what-i-did-not-do">What I did not do</a></li>
+            <li><a href="#what-this-does-not-claim">What this article does not claim</a></li>
+            <li><a href="#wrapping-up">Wrapping up</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>I build the backend of an internal cloud admin console. In
+        <a href="monitoring-the-screen-i-said-not-to-fix.html">part one</a> I wrote that first data on the
+        dashboard took 6.8 seconds, and that taking the computation off the request path brought it to 23 ms.</p>
+
+        <p>In one line, the fix was <strong>“build the snapshot ahead of time and hand it to the
+        connection.”</strong> One line makes it sound easy. The implementation review turned up
+        <strong>three races that the happy path never shows.</strong></p>
+
+        <p>This part is about those three.</p>
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>Anyone about to add a “compute it in advance and serve it” layer</li>
+          <li>Anyone whose startup warm-up, scheduled job and request trigger all
+          <strong>refresh the same slot</strong></li>
+          <li>Anyone broadcasting the same value to many sessions over SSE or WebSocket</li>
+        </ul>
+
+        <h2 id="what-is-in-here">What is in here<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li>It was slow because <strong>connecting was computing.</strong> The cache that existed held
+          “who is there”, and the “how much is each using right now” that the screen needed was
+          <strong>outside it.</strong></li>
+          <li>An exception was being swallowed, so <strong>the connection stayed alive while no data came</strong>
+          and the screen showed <strong>an endless spinner</strong> instead of an error.</li>
+          <li>Once the computation moved off the request path, <strong>three races</strong> appeared: a refresh
+          being cancelled, the same value broadcast to everyone several times, and
+          <strong>one timeout cutting somebody else's query.</strong></li>
+          <li>The median went from 6,776 ms to <strong>10 ms.</strong> I also wrote down
+          <strong>what I did not do.</strong></li>
+        </ul>
+
+        <p>This is an internal product, so the code and the screens are not reproduced literally.
+        Product names, customers and internal addresses are out; the structure and the configured values stay.</p>
+
+        <blockquote><p>⚠️ <strong>These are 30 sequential runs by a single user.</strong>
+        Not concurrent throughput, so I did not read throughput here as scalability.
+        What means something is <strong>the latency distribution to first business data, and the error rate.</strong></p></blockquote>
+
+        <h2 id="connecting-was-computing">Connecting was computing<a class="anchor" href="#connecting-was-computing" aria-label="Link to this section">#</a></h2>
+
+        <p>The SSE connection itself was established immediately. But <strong>the path that produced the
+        data</strong> had a query joining several time-series measurements, a global resource listing,
+        authentication and DTO assembly lined up <strong>in series.</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 230" role="img" aria-labelledby="b4-t b4-d" class="figure-svg">
+            <title id="b4-t">One connection paying for four serial stages</title>
+            <desc id="b4-d">A new connection sits on the left, with four boxes in a row to its right:
+            authentication, resource listing, the time-series join, and assembly. Only the time-series join is
+            drawn in bold pink and marked as the most expensive. First data is at the far right, and the whole
+            span is labelled 6.8 seconds.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="8" y="70" width="106" height="42" rx="6" fill="none" stroke="#3b3344" stroke-width="1.6"/>
+              <text x="61" y="96" font-size="12.5" fill="#18121d" text-anchor="middle">new connection</text>
+
+              <rect x="134" y="70" width="90" height="42" rx="6" fill="none" stroke="#8a8a8a" stroke-width="1.5"/>
+              <text x="179" y="96" font-size="12" fill="#4a4a4a" text-anchor="middle">auth</text>
+              <rect x="242" y="70" width="110" height="42" rx="6" fill="none" stroke="#8a8a8a" stroke-width="1.5"/>
+              <text x="297" y="96" font-size="12" fill="#4a4a4a" text-anchor="middle">resource list</text>
+              <rect x="370" y="66" width="146" height="50" rx="6" fill="none" stroke="#d62976" stroke-width="2.4"/>
+              <text x="443" y="88" font-size="12.5" fill="#18121d" text-anchor="middle" font-weight="700">time-series join</text>
+              <text x="443" y="106" font-size="11" fill="#d62976" text-anchor="middle">most expensive</text>
+              <rect x="534" y="70" width="86" height="42" rx="6" fill="none" stroke="#8a8a8a" stroke-width="1.5"/>
+              <text x="577" y="96" font-size="12" fill="#4a4a4a" text-anchor="middle">assembly</text>
+
+              <path d="M114 91 H 134" fill="none" stroke="#8a8a8a" stroke-width="1.5" marker-end="url(#b4-ar)"/>
+              <path d="M224 91 H 242" fill="none" stroke="#8a8a8a" stroke-width="1.5" marker-end="url(#b4-ar)"/>
+              <path d="M352 91 H 370" fill="none" stroke="#8a8a8a" stroke-width="1.5" marker-end="url(#b4-ar)"/>
+              <path d="M516 91 H 534" fill="none" stroke="#8a8a8a" stroke-width="1.5" marker-end="url(#b4-ar)"/>
+              <path d="M620 91 H 660" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#b4-arp)"/>
+              <text x="668" y="95" font-size="11.5" fill="#d62976" font-weight="700">first data</text>
+
+              <path d="M61 130 V 160 H 660" fill="none" stroke="#c9c9c9" stroke-width="1.2"/>
+              <text x="360" y="180" font-size="12" fill="#8a8a8a" text-anchor="middle">this whole span · about 6.8 s</text>
+              <text x="360" y="206" font-size="11.5" fill="#8a8a8a" text-anchor="middle">old cache reached the resource list · time series outside it</text>
+            </g>
+            <defs>
+              <marker id="b4-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="b4-arp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>What matters is not that a cache existed but
+          <strong>whether the expensive layer went inside it.</strong> The old one stopped at “who is there”.</figcaption>
+        </figure>
+
+        <p>The distribution had that shape too. When the timing lined up with the previous computation it was
+        fast, and when it did not the user waited <strong>for the next tick and then for a computation lasting
+        seconds.</strong> That is why the samples split into fast ones and 6 to 9 second ones.</p>
+
+        <h2 id="endless-spinner">It looked like an endless spinner, not an error<a class="anchor" href="#endless-spinner" aria-label="Link to this section">#</a></h2>
+
+        <p>When the send path swallowed a computation exception,
+        <strong>the connection stayed alive and no data arrived.</strong> The front end logged only connection
+        errors and never dropped the loading layer, so what the user got was
+        <strong>a spinner that never stopped</strong> rather than a message.</p>
+
+        <p>Slow and never-arriving <strong>looked identical on screen.</strong> That got fixed alongside the rest.</p>
+
+        <h2 id="off-the-request-path">I took the computation off the request path<a class="anchor" href="#off-the-request-path" aria-label="Link to this section">#</a></h2>
+
+        <p>Dashboard values <strong>do not differ per user.</strong> Every session gets the same payload.
+        So there is no reason to repeat the same computation per connection.</p>
+
+<pre data-lang="text"><code>scheduled job or startup warm-up
+    → collect metrics within a time budget
+    → assemble the payload the screen needs
+    → swap the completed snapshot through a single reference
+    → broadcast to current sessions
+
+new connection
+    → send the last completed snapshot to that session only
+    → if it is missing or stale, ask for a background refresh</code></pre>
+
+        <p>Swapping through a single reference is the point: a reader never sees
+        <strong>a half-updated value.</strong> A failed refresh does not clear the previous snapshot. That must
+        not hide an outage, so <strong>the computation time and a degraded flag ride along with the value.</strong></p>
+
+        <h2 id="three-races">Then there were three races<a class="anchor" href="#three-races" aria-label="Link to this section">#</a></h2>
+
+        <p>That was the design. These three came out of the implementation review, and
+        <strong>none of them shows on the happy path.</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 250" role="img" aria-labelledby="rc-t rc-d" class="figure-svg">
+            <title id="rc-t">Three refresh paths contending for one slot</title>
+            <desc id="rc-d">On the left, three sources are stacked: startup warm-up, the 15 second scheduled job,
+            and a new connection. Arrows from all three converge on a single refresh slot in the middle, which is
+            labelled as cancelling when a refresh is already running. On the right are the snapshot and the
+            broadcast, and a dashed line shows that the cancelled side cannot publish and waits for the next
+            cycle.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="8" y="20" width="164" height="38" rx="6" fill="none" stroke="#8a8a8a" stroke-width="1.5"/>
+              <text x="90" y="44" font-size="12" fill="#4a4a4a" text-anchor="middle">startup warm-up</text>
+              <rect x="8" y="84" width="164" height="38" rx="6" fill="none" stroke="#8a8a8a" stroke-width="1.5"/>
+              <text x="90" y="108" font-size="12" fill="#4a4a4a" text-anchor="middle">15 s scheduled job</text>
+              <rect x="8" y="148" width="164" height="38" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="90" y="172" font-size="12" fill="#18121d" text-anchor="middle">new connection</text>
+
+              <path d="M172 39 H 236 V 96" fill="none" stroke="#8a8a8a" stroke-width="1.5" marker-end="url(#rc-ar)"/>
+              <path d="M172 103 H 236" fill="none" stroke="#8a8a8a" stroke-width="1.5" marker-end="url(#rc-ar)"/>
+              <path d="M172 167 H 236 V 116" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#rc-arp)"/>
+
+              <rect x="252" y="76" width="156" height="54" rx="6" fill="none" stroke="#3b3344" stroke-width="2"/>
+              <text x="330" y="99" font-size="13" fill="#18121d" text-anchor="middle" font-weight="700">refresh slot</text>
+              <text x="330" y="118" font-size="11" fill="#8a8a8a" text-anchor="middle">cancels if already running</text>
+
+              <path d="M408 103 H 470" fill="none" stroke="#3b3344" stroke-width="1.6" marker-end="url(#rc-ar2)"/>
+              <rect x="470" y="76" width="118" height="54" rx="6" fill="none" stroke="#3b3344" stroke-width="1.6"/>
+              <text x="529" y="107" font-size="12.5" fill="#18121d" text-anchor="middle">snapshot</text>
+              <path d="M588 103 H 640" fill="none" stroke="#3b3344" stroke-width="1.6" marker-end="url(#rc-ar2)"/>
+              <text x="648" y="107" font-size="11.5" fill="#4a4a4a">broadcast</text>
+
+              <path d="M330 130 V 200 H 640" fill="none" stroke="#c9c9c9" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#rc-ar3)"/>
+              <text x="470" y="222" font-size="11.5" fill="#8a8a8a" text-anchor="middle">cancelled side · cannot publish · waits a cycle</text>
+            </g>
+            <defs>
+              <marker id="rc-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="rc-arp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+              <marker id="rc-ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
+              </marker>
+              <marker id="rc-ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>Three sources refresh one slot. “Cancel if a refresh is running” prevents duplicates, and
+          <strong>the cancelled one may be the person who was waiting.</strong></figcaption>
+        </figure>
+
+        <p><strong>First, a cancelled refresh leaves somebody waiting.</strong>
+        If a user connects while the startup warm-up is running, the refresh that connection asked for is
+        cancelled because one is already in flight. And if the warm-up puts its result in the cache
+        <strong>without broadcasting</strong>, that user waits for the next 15 second tick. I collapsed warm-up,
+        scheduled job and connection refresh <strong>into one function</strong> and made whoever actually wins
+        the refresh <strong>always publish the result.</strong></p>
+
+        <p><strong>Second, the same value gets broadcast several times.</strong>
+        With a stale cache and N connections arriving together, each of them could re-send the existing value
+        <strong>to every session.</strong> Now a connection is answered <strong>on its own session only</strong>,
+        and the full broadcast of a new result happens <strong>once, from the refresh winner.</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 210" role="img" aria-labelledby="sp-t sp-d" class="figure-svg">
+            <title id="sp-t">The flow after immediate reply and full broadcast were separated</title>
+            <desc id="sp-d">On the upper branch, three connections each receive the last value on their own
+            session only. On the lower branch, the single winner of the refresh produces the new value and
+            broadcasts it once to every session. The upper arrows are short and point to each connection; the
+            lower arrow goes from one source to all sessions.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="14" y="32" font-size="11.5" fill="#8a8a8a">immediate reply</text>
+              <rect x="120" y="18" width="104" height="32" rx="5" fill="none" stroke="#3b3344" stroke-width="1.4"/>
+              <text x="172" y="38" font-size="11.5" fill="#18121d" text-anchor="middle">connection A</text>
+              <rect x="120" y="58" width="104" height="32" rx="5" fill="none" stroke="#3b3344" stroke-width="1.4"/>
+              <text x="172" y="78" font-size="11.5" fill="#18121d" text-anchor="middle">connection B</text>
+              <rect x="120" y="98" width="104" height="32" rx="5" fill="none" stroke="#3b3344" stroke-width="1.4"/>
+              <text x="172" y="118" font-size="11.5" fill="#18121d" text-anchor="middle">connection C</text>
+              <path d="M224 34 H 286" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#sp-ar)"/>
+              <path d="M224 74 H 286" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#sp-ar)"/>
+              <path d="M224 114 H 286" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#sp-ar)"/>
+              <text x="294" y="38" font-size="11.5" fill="#4a4a4a">own session only</text>
+              <text x="294" y="78" font-size="11.5" fill="#4a4a4a">own session only</text>
+              <text x="294" y="118" font-size="11.5" fill="#4a4a4a">own session only</text>
+
+              <path d="M14 150 H 700" fill="none" stroke="#e0e0e0" stroke-width="1"/>
+              <text x="14" y="178" font-size="11.5" fill="#d62976" font-weight="700">full broadcast</text>
+              <rect x="120" y="162" width="136" height="32" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="188" y="182" font-size="11.5" fill="#18121d" text-anchor="middle">refresh winner, one</text>
+              <path d="M256 178 H 450" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#sp-arp)"/>
+              <text x="460" y="182" font-size="11.5" fill="#d62976" font-weight="700">all sessions · once</text>
+            </g>
+            <defs>
+              <marker id="sp-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="sp-arp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>Separated, <strong>the full broadcast happens once</strong> no matter how many
+          connections arrive. Before, the same value went out to everyone once per connection.</figcaption>
+        </figure>
+
+        <p><strong>Third, one timeout cuts somebody else's query.</strong>
+        Putting a <strong>total request deadline</strong> on the metrics client also cuts long reporting queries
+        that share the client. Instead of a global total, I set bounds
+        <strong>on the connect and read stages</strong> and separated the client policy per feature.</p>
+
+        <blockquote><p>⚠️ None of the three was <strong>found by measurement.</strong> They came out of reading
+        the code during review. I did not reproduce them under load; I judged that they could happen and fixed
+        them. So I will not write that these three <strong>were occurring.</strong></p></blockquote>
+
+        <h2 id="the-result">The result<a class="anchor" href="#the-result" aria-label="Link to this section">#</a></h2>
+
+        <p>Measured again under the same definition of “first <code>data</code>”.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">Dashboard first data, before and after.</caption>
+          <thead><tr><th>Metric</th><th>Before</th><th>After</th></tr></thead>
+          <tbody>
+            <tr><td>Median</td><td>about 6,776 ms</td><td><strong>about 10 ms</strong></td></tr>
+            <tr><td>p95</td><td>about 8,454 ms</td><td>about 20 ms</td></tr>
+            <tr><td>p99</td><td>about 8,607 ms</td><td>about 23 ms</td></tr>
+            <tr><td>Cold first data</td><td>about 9,342 ms</td><td>about 87 ms</td></tr>
+            <tr><td>Error rate</td><td>0%</td><td>0%</td></tr>
+            <tr><td>Apdex</td><td>0.100</td><td><strong>1.000</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">⚠️ <strong>I did not widen this result to the whole screen.</strong>
+        The resource usage REST API on the same screen was still measured in seconds after this change.
+        A separate problem, one quota call per project, was still there, and part four covers it.</p>
+
+        <h2 id="what-i-did-not-do">What I did not do<a class="anchor" href="#what-i-did-not-do" aria-label="Link to this section">#</a></h2>
+
+        <p><strong>I did not shorten the 15 second collection interval to 5.</strong>
+        The source agent also produces a new sample every 15 seconds. At 5 seconds I would likely
+        <strong>read the same sample three times.</strong> Freshness would not improve and the store would carry
+        more load.</p>
+
+        <p><strong>I did not merge the computation time with the observation time.</strong>
+        The first exists for the cache refresh policy; the second is how a user judges the age of the data.
+        With a quiet source, merging them lets <strong>every connection decide the cache is stale</strong>
+        and pile recomputations on top of each other.</p>
+
+        <h2 id="what-this-does-not-claim">What this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>These are not production statistics.</strong> Thirty sequential runs by a single user,
+          with no concurrent throughput measured.</li>
+          <li><strong>I do not claim the three races were occurring.</strong> I read the code, judged, and fixed;
+          <strong>I did not reproduce them.</strong></li>
+          <li><strong>This is not “monitoring got faster”.</strong> It is one SSE path on one screen.</li>
+          <li><strong>10 ms is not a constant.</strong> It is the cost of reading a snapshot from memory and
+          serialising it, and it follows the size of the data.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="wrapping-up">Wrapping up<a class="anchor" href="#wrapping-up" aria-label="Link to this section">#</a></h2>
+
+          <ul>
+            <li><strong>What matters is whether the expensive layer went into the cache, not that a cache
+            exists.</strong> “Who is there” was inside. “How much right now” was outside.</li>
+            <li><strong>A duplicate guard can cancel the person who is waiting.</strong>
+            “Cancel if a refresh is running” is correct, and if the cancelled side cannot publish, that person
+            waits a full cycle.</li>
+            <li><strong>A bound on a shared client applies to other paths too.</strong>
+            What was needed was per-stage bounds, not a total deadline.</li>
+          </ul>
+
+          <p>If one line survives, this one.
+          <strong>“Build it ahead and serve it” is one line, but it stops being one line until you decide who
+          builds and who publishes.</strong></p>
+
+          <p>The next part is physical nodes, where moving the same pattern ran into
+          <strong>“may an empty list be published as a healthy zero?”</strong> Thank you for reading.</p>
+        </div>
+
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=aeebad2369"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

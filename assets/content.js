@@ -272,6 +272,18 @@
           tags: ["Tooling", "Method", "Verification"]
         },
         {
+          title: "One Cache, Three Races Hiding Inside It",
+          url: "writing/monitoring-three-races-in-one-cache.html",
+          source: "company", sourceLabel: "Company work",
+          title_ko: "cache 하나 넣는 일에 경합이 셋 숨어 있었습니다",
+          desc_ko: "대시보드의 첫 데이터가 6.8초였던 이유는 접속이 곧 계산이었기 때문입니다. 요청 경로에서 계산을 떼어 내 10ms가 됐는데 그 과정에서 갱신이 취소되는 것·같은 값을 전체에 여러 번 뿌리는 것·timeout 하나가 남의 쿼리를 끊는 것, 경합 셋이 나왔습니다. 연작 「통합 모니터링」 ②.",
+          title_ja: "cache を一つ入れる話に競合が三つ隠れていました",
+          desc_ja: "ダッシュボードの最初のデータが 6.8 秒だった理由は、接続がそのまま計算だったからです。リクエスト経路から計算を外して 10ms になりましたが、その過程で更新が取り消されること・同じ値を全体に何度も配ること・timeout 一つが他人のクエリを切ることという競合が三つ出てきました。連載「統合モニタリング」②。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "First data on the dashboard took 6.8 seconds because connecting was computing. Moving the computation off the request path brought it to 10 ms, and along the way three races appeared: a cancelled refresh, the same value broadcast many times, and one timeout cutting somebody else's query. Unified Monitoring, part two. Also in Korean and Japanese.",
+          tags: ["Performance", "Concurrency", "Method"]
+        },
+        {
           title: "The Screen I Said Not to Fix Took 6.8 Seconds",
           url: "writing/monitoring-the-screen-i-said-not-to-fix.html",
           source: "company", sourceLabel: "Company work",
