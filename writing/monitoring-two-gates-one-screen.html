@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fixing One Side Left the Screen Where It Was | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/monitoring-two-gates-one-screen.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/monitoring-two-gates-one-screen.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/monitoring-two-gates-one-screen.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/monitoring-two-gates-one-screen.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="Fixing One Side Left the Screen Where It Was | Kwanghun Lee" />
+  <meta property="og:description" content="The virtual resources screen had two independently starting paths, so fixing one did not make it faster. The per-project fan-out came off the request instead of being parallelised, a review caught that an empty list accepted as success overwrites the value with zero, and speeding up SSE exposed a hidden ordering dependency." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/monitoring-two-gates-one-screen.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Fixing One Side Left the Screen Where It Was | Kwanghun Lee" />
+  <meta name="twitter:description" content="The virtual resources screen had two independently starting paths, so fixing one did not make it faster. The per-project fan-out came off the request instead of being parallelised, a review caught that an empty list accepted as success overwrites the value with zero, and speeding up SSE exposed a hidden ordering dependency." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="The virtual resources screen had two independently starting paths, so fixing one did not make it faster. The per-project fan-out came off the request instead of being parallelised, a review caught that an empty list accepted as success overwrites the value with zero, and speeding up SSE exposed a hidden ordering dependency." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "monitoring-two-gates-one-screen.html", "ko": "monitoring-two-gates-one-screen.ko.html", "ja": "monitoring-two-gates-one-screen.ja.html"}'>
+          <option value="ko">Korean</option>
+          <option value="en" selected>English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing</a>
+        <div class="article-meta"><span class="source-tag company notranslate">Company work</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>Fixing One Side Left the Screen Where It Was<br><span class="h1-sub">Two bottlenecks, so whichever finishes last sets the screen. An internal cloud admin console. Unified Monitoring, part four</span></h1>
+          <p class="article-date">Sep 2026</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="monitoring-two-gates-one-screen"></aside>
+
+                <nav class="article-toc" aria-label="Table of contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-is-in-here">What is in here</a></li>
+            <li><a href="#the-formula">I wrote the completion condition as a formula</a></li>
+            <li><a href="#first-gate">The first gate, one call per project</a></li>
+            <li><a href="#second-gate">The second gate, and what speed exposed</a></li>
+            <li><a href="#the-result">The result</a></li>
+            <li><a href="#limits-left">Limits the review left standing</a></li>
+            <li><a href="#what-this-does-not-claim">What this article does not claim</a></li>
+            <li><a href="#wrapping-up">Wrapping up</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>I build the backend of an internal cloud admin console. Two screens were done by
+        <a href="monitoring-empty-is-not-zero.html">part three</a>. The third one, virtual resources, was
+        different from the other two.</p>
+
+        <p>This screen had <strong>two data paths that start independently.</strong> REST builds the per-project
+        quota and usage; SSE pushes the virtual machine metrics. Before the change REST was about 2.6 seconds
+        and SSE first data about 1.4 seconds.</p>
+
+        <p><strong>Fixing one of them does not make the screen faster.</strong>
+        Total loading time is not their sum but <strong>whichever finishes last.</strong></p>
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>Anyone whose single screen is filled by <strong>several requests</strong></li>
+          <li>Anyone with code that walks a list and calls an external API per item</li>
+          <li>Anyone who has made one side fast and watched the screen stay the same</li>
+        </ul>
+
+        <h2 id="what-is-in-here">What is in here<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li>I wrote the screen's completion condition <strong>as a formula first.</strong> A maximum, not a sum.</li>
+          <li>The REST path made one external call per project. Rather than
+          <strong>running them in parallel</strong>, I took that fan-out off the request.</li>
+          <li>A review caught something there. <strong>Accepting an empty list as a success</strong> overwrites
+          the existing value with <code>0/0</code>. A failure had to be expressed <strong>as a failure.</strong></li>
+          <li>And <strong>getting faster exposed a hidden ordering dependency.</strong> Once SSE reached 24 ms it
+          arrived before REST, and the screen went blank.</li>
+        </ul>
+
+        <p>This is an internal product, so the code and the screens are not reproduced literally.
+        Product names, customers and internal addresses are out; the structure and the numbers stay.</p>
+
+        <blockquote><p>⚠️ <strong>These are sequential single-user measurements.</strong>
+        Not a concurrency load test, so I have not read them as “it handles N users”.</p></blockquote>
+
+        <h2 id="the-formula">I wrote the completion condition as a formula<a class="anchor" href="#the-formula" aria-label="Link to this section">#</a></h2>
+
+<pre data-lang="text"><code>page ready = max(REST usage, SSE first metric, small configuration request)</code></pre>
+
+        <p>Fix only REST and SSE's 1.4 seconds remain. Fix only SSE and REST's 2.6 seconds remain.
+        The performance work on this screen was <strong>not a single-bottleneck optimisation but the removal of
+        two different gates.</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 210" role="img" aria-labelledby="tg-t tg-d" class="figure-svg">
+            <title id="tg-t">Two paths starting together, the later one setting the screen</title>
+            <desc id="tg-d">Two bars on a horizontal time axis. The upper one, REST usage, is long and pink.
+            The lower one, SSE first metric, is shorter and grey. Both start at the same point. A vertical line
+            at the right marks the screen as ready, aligned with the end of the longer REST bar. A note below
+            says fixing the shorter one does not move that line.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="14" y="52" font-size="11.5" fill="#d62976" font-weight="700">REST usage</text>
+              <rect x="140" y="38" width="404" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="342" y="55" font-size="11.5" fill="#d62976" text-anchor="middle">about 2,627 ms</text>
+
+              <text x="14" y="112" font-size="11.5" fill="#8a8a8a">SSE first metric</text>
+              <rect x="140" y="98" width="222" height="24" rx="4" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="251" y="115" font-size="11.5" fill="#4a4a4a" text-anchor="middle">about 1,436 ms</text>
+
+              <path d="M140 26 V 140" fill="none" stroke="#c9c9c9" stroke-width="1.2" stroke-dasharray="4 3"/>
+              <text x="140" y="20" font-size="11" fill="#8a8a8a" text-anchor="middle">start together</text>
+              <path d="M544 26 V 140" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="556" y="20" font-size="11.5" fill="#d62976" font-weight="700">page ready</text>
+
+              <path d="M140 164 H 660" fill="none" stroke="#c9c9c9" stroke-width="1.2" marker-end="url(#tg-ar)"/>
+              <text x="360" y="192" font-size="11.5" fill="#8a8a8a" text-anchor="middle">fixing only the shorter bar leaves this line where it is</text>
+            </g>
+            <defs>
+              <marker id="tg-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>In a performance report, <strong>summing</strong> independent requests overstates what the
+          user waited. Quoting <strong>only the fastest</strong> hides the other gate.</figcaption>
+        </figure>
+
+        <h2 id="first-gate">The first gate, one call per project<a class="anchor" href="#first-gate" aria-label="Link to this section">#</a></h2>
+
+        <p>The REST path walked the project list and fetched each project's compute and network or storage quota
+        in turn. With N projects that is <strong>about 2N external calls.</strong> If the client factory
+        authenticates on every call, the cost is higher still.</p>
+
+        <p>The first idea is parallelism. But <strong>unbounded parallel calls</strong> push a burst at the
+        authentication service, the external API and the application thread pool at once. The median falls
+        while p99 and the error rate can worsen, and under load
+        <strong>the same fan-out is duplicated per user.</strong></p>
+
+        <p>What I chose was <strong>taking the fan-out off the user request.</strong></p>
+
+<pre data-lang="text"><code>background usage loader
+    read the current project list
+    fetch the required quota values per project
+    publish one coherent usage snapshot
+
+REST request
+    return the last completed snapshot</code></pre>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 250" role="img" aria-labelledby="fo-t fo-d" class="figure-svg">
+            <title id="fo-t">The per-project fan-out before and after it left the request</title>
+            <desc id="fo-d">The upper half is before. One user request branches into several arrows going to an
+            external call per project, and a note says the user waits for all of them. The lower half is after.
+            Only the background loader branches into several arrows, and the user request reads a single snapshot
+            box.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="14" y="30" font-size="11.5" fill="#8a8a8a">before</text>
+              <rect x="86" y="16" width="122" height="34" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="147" y="38" font-size="11.5" fill="#18121d" text-anchor="middle">user request</text>
+              <path d="M208 26 H 300" fill="none" stroke="#d62976" stroke-width="1.5" marker-end="url(#fo-arp)"/>
+              <path d="M208 33 H 300" fill="none" stroke="#d62976" stroke-width="1.5" marker-end="url(#fo-arp)"/>
+              <path d="M208 40 H 300" fill="none" stroke="#d62976" stroke-width="1.5" marker-end="url(#fo-arp)"/>
+              <path d="M208 47 H 300" fill="none" stroke="#d62976" stroke-width="1.5" marker-end="url(#fo-arp)"/>
+              <text x="310" y="37" font-size="11.5" fill="#d62976">external calls · two per project</text>
+              <text x="310" y="58" font-size="11" fill="#8a8a8a">the user waits for all of them</text>
+
+              <path d="M14 96 H 704" fill="none" stroke="#e0e0e0" stroke-width="1"/>
+
+              <text x="14" y="140" font-size="11.5" fill="#8a8a8a">after</text>
+              <rect x="86" y="126" width="140" height="34" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="156" y="148" font-size="11.5" fill="#4a4a4a" text-anchor="middle">background loader</text>
+              <path d="M226 136 H 318" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#fo-ar)"/>
+              <path d="M226 143 H 318" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#fo-ar)"/>
+              <path d="M226 150 H 318" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#fo-ar)"/>
+              <text x="328" y="147" font-size="11.5" fill="#8a8a8a">external calls</text>
+
+              <rect x="86" y="186" width="140" height="34" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="156" y="208" font-size="11.5" fill="#18121d" text-anchor="middle">user request</text>
+              <path d="M226 203 H 318" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#fo-arp)"/>
+              <rect x="318" y="186" width="132" height="34" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="384" y="208" font-size="11.5" fill="#18121d" text-anchor="middle">one snapshot</text>
+              <text x="462" y="208" font-size="11.5" fill="#d62976" font-weight="700">about 5 to 12 ms</text>
+            </g>
+            <defs>
+              <marker id="fo-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="fo-arp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>The best outcome of fixing an N+1 is <strong>not finishing the N calls faster</strong> but
+          breaking the synchronous coupling between the user request and those N calls.</figcaption>
+        </figure>
+
+        <p>A review caught one thing here. When the structure cache degraded and returned
+        <strong>an empty project list</strong>, the loader taking that as <strong>a successful result</strong>
+        stored <code>0/0</code> usage as the new healthy value. The same shape as part three.</p>
+
+        <p>The fix was <strong>throwing when the structure information is missing.</strong>
+        A failure preserves the existing value, while
+        <strong>a successful empty list overwrites it with zero.</strong> Under serve-stale, a failure has to be
+        expressed <strong>exactly as a failure</strong> for the cache to keep the last good value.</p>
+
+        <p>The REST median went from about 2,627 ms to <strong>5 to 12 ms</strong>, and p99 from about 3,005 ms
+        into the 10 to 20 ms range.</p>
+
+        <h2 id="second-gate">The second gate, and what speed exposed<a class="anchor" href="#second-gate" aria-label="Link to this section">#</a></h2>
+
+        <p>The SSE side matched the other two screens: it collected metrics at connection time and sent first
+        data. A 15 second worker now builds it ahead and the connection replays it at once. The median went from
+        about 1,436 ms to <strong>24 ms.</strong></p>
+
+        <p>And here <strong>a regression candidate appeared.</strong></p>
+
+        <p>The existing screen leaned on <strong>an implicit assumption that REST arrives first.</strong>
+        If the previous state was empty, the SSE merge function returned early, and
+        <strong>the slow REST happened to fill that state first.</strong> Once SSE dropped to tens of
+        milliseconds the order flipped and <strong>the screen stayed blank until the next 15 second broadcast.</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 220" role="img" aria-labelledby="ho-t ho-d" class="figure-svg">
+            <title id="ho-t">Arrival order flipping once SSE got faster</title>
+            <desc id="ho-d">The upper half is before: REST arrives first, SSE second, and the merge succeeds.
+            The lower half is after: SSE arrives first, the previous state is empty so the merge returns early,
+            and REST arrives later. The gap between them is drawn as a dashed box labelled as the stretch where
+            the screen is blank.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="14" y="40" font-size="11.5" fill="#8a8a8a">before</text>
+              <rect x="120" y="26" width="106" height="26" rx="4" fill="none" stroke="#8a8a8a" stroke-width="1.5"/>
+              <text x="173" y="44" font-size="11.5" fill="#4a4a4a" text-anchor="middle">REST arrives</text>
+              <rect x="380" y="26" width="106" height="26" rx="4" fill="none" stroke="#8a8a8a" stroke-width="1.5"/>
+              <text x="433" y="44" font-size="11.5" fill="#4a4a4a" text-anchor="middle">SSE arrives</text>
+              <text x="500" y="44" font-size="11.5" fill="#8a8a8a">merge succeeds</text>
+
+              <path d="M14 84 H 704" fill="none" stroke="#e0e0e0" stroke-width="1"/>
+
+              <text x="14" y="128" font-size="11.5" fill="#d62976" font-weight="700">after</text>
+              <rect x="120" y="114" width="106" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="173" y="132" font-size="11.5" fill="#18121d" text-anchor="middle">SSE arrives</text>
+              <text x="234" y="132" font-size="11" fill="#8a8a8a">state empty · returns early</text>
+              <rect x="440" y="114" width="106" height="26" rx="4" fill="none" stroke="#8a8a8a" stroke-width="1.5"/>
+              <text x="493" y="132" font-size="11.5" fill="#4a4a4a" text-anchor="middle">REST arrives</text>
+
+              <rect x="226" y="152" width="214" height="24" rx="4" fill="#f6f6f6" stroke="#c9c9c9" stroke-width="1" stroke-dasharray="5 4"/>
+              <text x="333" y="169" font-size="11.5" fill="#8a8a8a" text-anchor="middle">screen blank here</text>
+              <text x="360" y="200" font-size="11.5" fill="#8a8a8a" text-anchor="middle">fixed by initialising the lists from the first frame</text>
+            </g>
+          </svg>
+          <figcaption><strong>The improvement exposed a hidden ordering dependency.</strong>
+          The slow path had been keeping the order by accident.</figcaption>
+        </figure>
+
+        <p>So three guards went in. Connection replies and periodic broadcasts can invert, so
+        <strong>frames older by creation time are dropped</strong>; a process restart can move the time base
+        backwards, so the client <strong>rebaselines and accepts the new stream</strong>; and if SSE arrives
+        before REST, <strong>the first frame initialises the project and VM lists.</strong></p>
+
+        <h2 id="the-result">The result<a class="anchor" href="#the-result" aria-label="Link to this section">#</a></h2>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">The two paths on the virtual resources screen and the dominating value.</caption>
+          <thead><tr><th>Path</th><th>Median before</th><th>Median after</th></tr></thead>
+          <tbody>
+            <tr><td>REST quota and usage</td><td>about 2,627 ms</td><td>about 5 to 12 ms</td></tr>
+            <tr><td>SSE first metric</td><td>about 1,436 ms</td><td>about 24 ms</td></tr>
+            <tr><td><strong>The screen's dominating value</strong></td><td><strong>about 2,627 ms</strong></td><td><strong>about 24 ms</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">Before, <strong>REST was the maximum</strong>. After,
+        <strong>SSE is the maximum</strong>. The dominating side changed.</p>
+
+        <h2 id="limits-left">Limits the review left standing<a class="anchor" href="#limits-left" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li>Each screen's cache still <strong>shared a mutable structure DTO with the other screens.</strong>
+          If one screen updates it in place while another serialises, generations can mix.</li>
+          <li>The problem of <strong>SSE publishing an empty snapshot as healthy</strong> when the
+          infrastructure degrades was <strong>common to all three screens.</strong> Handling it on one screen
+          only means the same source is interpreted differently per screen.</li>
+          <li>There was <strong>no contract for a changing project set.</strong> If the front end merges only
+          metrics into existing projects, a project added later stays invisible until a refresh and a deleted
+          one lingers.</li>
+        </ul>
+
+        <p>The first two went to the shared cache work in the next part.</p>
+
+        <h2 id="what-this-does-not-claim">What this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>These are not production statistics.</strong> Sequential single-user measurements.</li>
+          <li><strong>I am not saying parallelism is bad.</strong> I chose not to use unbounded parallelism, and
+          <strong>I did not measure what p99 would have done if I had.</strong></li>
+          <li><strong>I do not claim the ordering dependency broke in production.</strong> It was found during
+          the change and blocked, and <strong>there is no record of a user seeing a blank screen.</strong></li>
+          <li><strong>The project set contract still does not exist.</strong> It is written down as remaining work.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="wrapping-up">Wrapping up<a class="anchor" href="#wrapping-up" aria-label="Link to this section">#</a></h2>
+
+          <ul>
+            <li><strong>Screen performance is not the time of the most visible API.</strong>
+            Among parallel paths, <strong>the gate that has to finish last</strong> sets the user's delay.</li>
+            <li><strong>The best outcome of an N+1 fix is not finishing N calls faster.</strong>
+            It is <strong>breaking the synchronous coupling</strong> between the user request and those N calls.</li>
+            <li><strong>The slow thing may have been holding the order for you.</strong>
+            Speed removes that accident.</li>
+          </ul>
+
+          <p>If one line survives, this one.
+          <strong>Measure each path separately and write down the whole completion formula next to them, or you
+          will mistake half a fix for a finished one.</strong></p>
+
+          <p>The next part is the last. Merging the three screens' caches into one turned
+          <strong>things that separation had been protecting by accident</strong> into contracts.
+          Thank you for reading.</p>
+        </div>
+
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=bfeb90d3dc"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
