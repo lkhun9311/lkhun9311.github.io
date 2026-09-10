@@ -108,6 +108,52 @@ for f in sorted(glob.glob("writing/*.html") + glob.glob("notes/*.html")):
         if 'alt="' not in m.group(0):
             fails.append("%s: <img> 에 alt 가 없다" % f)
 
+# ── 규약 4: 그림 3장 이상 ────────────────────────────────────────────────────
+# 2026-09-10 에 새 글을 2장으로 발행할 뻔했다. 개수를 세는 검사가 없어서 사람이 규약 문서를
+# 다시 읽어야만 알 수 있었다. 그래서 여기서 센다.
+#
+# ⚠️ 기존 발행본 여럿이 이미 3장 미만이다(STYLE-KO 진행표의 「초판」·「용어」 단계).
+#    그것들을 지금 실패로 만들면 검사기가 늘 빨간불이라 아무도 안 보게 된다. 그래서
+#    **아래 목록은 봐주고 그 밖의 글만 잠근다.** 목록은 줄기만 해야 한다 — 채워 넣은 글은 여기서 뺀다.
+FEW_FIGURES_OK = {
+    "writing/bugs-that-return-exit-code-zero.html",
+    "writing/every-guarantee-ends-at-a-writable-field.html",
+    "writing/every-guarantee-ends-at-a-writable-field.ja.html",
+    "writing/every-guarantee-ends-at-a-writable-field.ko.html",
+    "writing/gpu-node-readiness.html",
+    "writing/gpu-quota-control-plane.html",
+    "writing/iaas-backend-performance.html",
+    "writing/it-deleted-the-tenant.html",
+    "writing/it-deleted-the-tenant.ja.html",
+    "writing/it-deleted-the-tenant.ko.html",
+    "writing/parallelism-made-the-tail-worse.html",
+    "writing/parallelism-made-the-tail-worse.ja.html",
+    "writing/parallelism-made-the-tail-worse.ko.html",
+    "writing/seven-of-eight-should-not-recover.html",
+    "writing/seven-of-eight-should-not-recover.ja.html",
+    "writing/seven-of-eight-should-not-recover.ko.html",
+    "writing/the-only-control-that-caught-something.html",
+    "writing/the-only-control-that-caught-something.ja.html",
+    "writing/the-only-control-that-caught-something.ko.html",
+    "writing/three-documents-on-a-false-premise.html",
+    "writing/three-documents-on-a-false-premise.ja.html",
+    "writing/three-documents-on-a-false-premise.ko.html",
+    "writing/until-the-guarantee-was-a-sentence.html",
+    "writing/until-the-guarantee-was-a-sentence.ja.html",
+    "writing/until-the-guarantee-was-a-sentence.ko.html",
+}
+
+few = []
+for f in sorted(glob.glob("writing/*.html")):
+    if f.endswith("index.html") or f.endswith("tags.html"):
+        continue
+    n = open(f, encoding="utf-8").read().count('<figure class="diagram"')
+    if n < 3 and f not in FEW_FIGURES_OK:
+        few.append("%s: 그림 %d장 — 규약 4 는 3장 이상이다" % (f, n))
+    if n >= 3 and f in FEW_FIGURES_OK:
+        few.append("%s: 그림 %d장으로 채워졌다 — FEW_FIGURES_OK 에서 빼라" % (f, n))
+fails.extend(few)
+
 print("도해 %d개 · <img> %d개 검사" % (checked, n_img))
 for f in fails:
     print("  실패:", f)

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>An Empty List Is Not a Zero | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/monitoring-empty-is-not-zero.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/monitoring-empty-is-not-zero.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/monitoring-empty-is-not-zero.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/monitoring-empty-is-not-zero.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="An Empty List Is Not a Zero | Kwanghun Lee" />
+  <meta property="og:description" content="Carrying the same serve-stale pattern to the physical nodes screen stopped at one question: may an empty result be published as zero nodes? Empty results were split five ways, two of them published as new values and the rest keeping the last good one. The median went from 3,938 ms to 23 ms." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/monitoring-empty-is-not-zero.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="An Empty List Is Not a Zero | Kwanghun Lee" />
+  <meta name="twitter:description" content="Carrying the same serve-stale pattern to the physical nodes screen stopped at one question: may an empty result be published as zero nodes? Empty results were split five ways, two of them published as new values and the rest keeping the last good one. The median went from 3,938 ms to 23 ms." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="Carrying the same serve-stale pattern to the physical nodes screen stopped at one question: may an empty result be published as zero nodes? Empty results were split five ways, two of them published as new values and the rest keeping the last good one. The median went from 3,938 ms to 23 ms." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "monitoring-empty-is-not-zero.html", "ko": "monitoring-empty-is-not-zero.ko.html", "ja": "monitoring-empty-is-not-zero.ja.html"}'>
+          <option value="ko">Korean</option>
+          <option value="en" selected>English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing</a>
+        <div class="article-meta"><span class="source-tag company notranslate">Company work</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>An Empty List Is Not a Zero<br><span class="h1-sub">Empty because nothing is there and empty because nothing could be fetched arrive in the same shape. An internal cloud admin console. Unified Monitoring, part three</span></h1>
+          <p class="article-date">Sep 2026</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="monitoring-empty-is-not-zero"></aside>
+
+                <nav class="article-toc" aria-label="Table of contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-is-in-here">What is in here</a></li>
+            <li><a href="#same-pattern">Same pattern, different question</a></li>
+            <li><a href="#five-meanings">“Empty” had five meanings</a></li>
+            <li><a href="#arrival-order">Arrival order is data too</a></li>
+            <li><a href="#value-and-trust">The value and its trustworthiness are drawn separately</a></li>
+            <li><a href="#the-result">The result</a></li>
+            <li><a href="#what-this-does-not-claim">What this article does not claim</a></li>
+            <li><a href="#wrapping-up">Wrapping up</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>I build the backend of an internal cloud admin console. In
+        <a href="monitoring-three-races-in-one-cache.html">part two</a> the dashboard computation moved off the
+        request path. Carrying the same pattern to the physical nodes screen looked like a copy job.</p>
+
+        <p>It stopped at one question.
+        <strong>When the metric query returns an empty list, may that be published as “zero nodes”?</strong></p>
+
+        <p>It may not. The list can be empty because there really is nothing, or because
+        <strong>collection failed.</strong> Without separating those, the moment something breaks
+        <strong>a healthy screen gets overwritten with zero.</strong></p>
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>Anyone building a screen that serves the last known good value</li>
+          <li>Anyone deciding whether “the result was empty” means <strong>healthy</strong> or <strong>failed</strong></li>
+          <li>Anyone choosing which of <strong>a false zero, a blank screen or an endless spinner</strong> to avoid
+          during an outage</li>
+        </ul>
+
+        <h2 id="what-is-in-here">What is in here<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li>The same serve-stale pattern moved across, but <strong>what “empty” means</strong> differed per screen.</li>
+          <li>Empty results were split <strong>five ways.</strong> <strong>Only two</strong> are published as new
+          values; the rest <strong>keep the last good one.</strong></li>
+          <li>The value and <strong>the collection status travel separately.</strong> That is what makes
+          “showing the last value, and the current collection failed” expressible.</li>
+          <li>The median went from 3,938 ms to <strong>23 ms.</strong></li>
+        </ul>
+
+        <p>This is an internal product, so the code and the screens are not reproduced literally.
+        Product names, customers and internal addresses are out; the structure and the decision rules stay.</p>
+
+        <blockquote><p>⚠️ <strong>This part includes something I did not get right at first.</strong>
+        In the physical nodes implementation the five branches were <strong>not complete.</strong>
+        “Fetch succeeded but the result was empty” could still be read as healthy, and it took
+        <strong>the shared cache work in part five</strong> to lift it into a common judgement.</p></blockquote>
+
+        <h2 id="same-pattern">Same pattern, different question<a class="anchor" href="#same-pattern" aria-label="Link to this section">#</a></h2>
+
+        <p>The structure matches the dashboard. A background worker builds a completed snapshot every 15 seconds
+        and a new connection gets the last value at once. First data before the change looked like this.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">Physical nodes first data before the change.</caption>
+          <thead><tr><th>Metric</th><th>Before</th></tr></thead>
+          <tbody>
+            <tr><td>Median</td><td>about 3,938 ms</td></tr>
+            <tr><td>Minimum</td><td>about 846 ms</td></tr>
+            <tr><td>Maximum and p99</td><td>about 5,130 ms</td></tr>
+            <tr><td>Apdex</td><td>0.050</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">Less computation than the dashboard, and the delay users saw was still in seconds.</p>
+
+        <p>Physical nodes have a property the dashboard does not.
+        <strong>“How many are there right now” is itself the content of the screen.</strong>
+        So “empty result” reads directly as “zero”.</p>
+
+        <h2 id="five-meanings">“Empty” had five meanings<a class="anchor" href="#five-meanings" aria-label="Link to this section">#</a></h2>
+
+        <p>A new collection coming back empty was not published unconditionally. I looked at whether the
+        infrastructure structure could be read, whether the metric fetch succeeded, and how the
+        <strong>expected number of targets</strong> compared with the number of matched samples.</p>
+
+<pre data-lang="text"><code>if the infrastructure could not be read:   INFRA_UNAVAILABLE
+else if the metric fetch failed:           FETCH_FAILED
+else if matched samples &gt; 0:               FRESH
+else if expected targets == 0:             EMPTY_VALID
+else:                                      NO_VALID_METRICS</code></pre>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 250" role="img" aria-labelledby="jd-t jd-d" class="figure-svg">
+            <title id="jd-t">Empty results split five ways, only two of them published</title>
+            <desc id="jd-d">A collection result enters from the left and passes through a judgement box.
+            Five branches leave to the right. The top two, infrastructure unavailable and fetch failed, are grey.
+            The middle branch, samples present, is pink. Below it, expected targets is zero so empty is valid, also
+            pink. The bottom branch, targets exist but no samples, is grey. A note says the two pink branches are
+            published as new values and the three grey ones keep the previous value.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="8" y="104" width="126" height="42" rx="6" fill="none" stroke="#3b3344" stroke-width="1.6"/>
+              <text x="71" y="130" font-size="12.5" fill="#18121d" text-anchor="middle">collection result</text>
+              <path d="M134 125 H 176" fill="none" stroke="#3b3344" stroke-width="1.6" marker-end="url(#jd-ar)"/>
+              <rect x="176" y="100" width="104" height="50" rx="6" fill="none" stroke="#3b3344" stroke-width="2"/>
+              <text x="228" y="130" font-size="12.5" fill="#18121d" text-anchor="middle" font-weight="700">judgement</text>
+
+              <path d="M280 118 H 330 V 30 H 380" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#jd-ar2)"/>
+              <path d="M280 122 H 330 V 76 H 380" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#jd-ar2)"/>
+              <path d="M280 125 H 380" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#jd-arp)"/>
+              <path d="M280 128 H 330 V 174 H 380" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#jd-arp)"/>
+              <path d="M280 132 H 330 V 220 H 380" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#jd-ar2)"/>
+
+              <text x="388" y="34" font-size="12" fill="#4a4a4a">INFRA_UNAVAILABLE</text>
+              <text x="388" y="80" font-size="12" fill="#4a4a4a">FETCH_FAILED</text>
+              <text x="388" y="129" font-size="12" fill="#18121d" font-weight="700">FRESH</text>
+              <text x="388" y="178" font-size="12" fill="#18121d" font-weight="700">EMPTY_VALID</text>
+              <text x="388" y="224" font-size="12" fill="#4a4a4a">NO_VALID_METRICS</text>
+
+              <path d="M596 26 H 636" fill="none" stroke="#8a8a8a" stroke-width="1.2"/>
+              <path d="M596 72 H 636" fill="none" stroke="#8a8a8a" stroke-width="1.2"/>
+              <path d="M596 216 H 636" fill="none" stroke="#8a8a8a" stroke-width="1.2"/>
+              <text x="644" y="76" font-size="11.5" fill="#8a8a8a">keep previous</text>
+              <path d="M596 125 H 636" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <path d="M596 174 H 636" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="644" y="152" font-size="11.5" fill="#d62976" font-weight="700">publish as new</text>
+            </g>
+            <defs>
+              <marker id="jd-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
+              </marker>
+              <marker id="jd-ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="jd-arp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>Only <code>EMPTY_VALID</code> is a real zero, and it earns that name only when
+          <strong>a separate signal says the expected target count is zero.</strong></figcaption>
+        </figure>
+
+        <p>Split like that, the rule is short. <code>FRESH</code> and <code>EMPTY_VALID</code> publish as new
+        values. The other three <strong>leave the last good value alone</strong> and update only the degraded
+        flag and the failure time.</p>
+
+        <p>Separating the <strong>generation of the value</strong> from the
+        <strong>outcome of the last attempt</strong> is the point. It lets old data avoid posing as new data
+        without blanking the screen.</p>
+
+        <h2 id="arrival-order">Arrival order is data too<a class="anchor" href="#arrival-order" aria-label="Link to this section">#</a></h2>
+
+        <p>Right after a connection, the cached value goes out, and a new broadcast can land almost at the same
+        time. Asynchronous listeners have no guaranteed ordering, so
+        <strong>an older response can arrive after a newer broadcast.</strong> Then the screen moves backwards.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 190" role="img" aria-labelledby="or-t or-d" class="figure-svg">
+            <title id="or-t">An older response landing after a newer broadcast</title>
+            <desc id="or-d">Two frames on a horizontal time axis. The connection response, created first, arrives
+            later on the right. The broadcast, created second, arrives earlier and to its left. The two arrows
+            cross, and a note says the screen draws the newer value first and is then overwritten by the older
+            one. Below, a line says frames with a lower generation number are dropped.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="14" y="34" font-size="11.5" fill="#8a8a8a">created</text>
+              <rect x="120" y="20" width="134" height="26" rx="4" fill="none" stroke="#8a8a8a" stroke-width="1.5"/>
+              <text x="187" y="38" font-size="11.5" fill="#4a4a4a" text-anchor="middle">connection reply · gen 7</text>
+              <rect x="320" y="20" width="112" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="376" y="38" font-size="11.5" fill="#18121d" text-anchor="middle">broadcast · gen 8</text>
+
+              <text x="14" y="126" font-size="11.5" fill="#8a8a8a">arrived</text>
+              <rect x="320" y="112" width="112" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="376" y="130" font-size="11.5" fill="#18121d" text-anchor="middle">broadcast · gen 8</text>
+              <rect x="480" y="112" width="134" height="26" rx="4" fill="none" stroke="#8a8a8a" stroke-width="1.5"/>
+              <text x="547" y="130" font-size="11.5" fill="#4a4a4a" text-anchor="middle">connection reply · gen 7</text>
+
+              <path d="M187 50 L 540 108" fill="none" stroke="#8a8a8a" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#or-ar)"/>
+              <path d="M376 50 V 108" fill="none" stroke="#d62976" stroke-width="1.6" marker-end="url(#or-arp)"/>
+
+              <text x="360" y="168" font-size="11.5" fill="#8a8a8a" text-anchor="middle">lower generation · dropped</text>
+            </g>
+            <defs>
+              <marker id="or-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="or-arp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>What was made first can arrive last, so the test has to be
+          <strong>creation order, not arrival order.</strong></figcaption>
+        </figure>
+
+        <p>Using an <code>HH:mm:ss</code> string as the chart key is not enough here.
+        <strong>Two generations can be made within the same second</strong>, and a process restart can move the
+        clock backwards. The display time, the ordering generation and the monotonic time used for scheduling
+        are kept as <strong>three separate values.</strong></p>
+
+        <h2 id="value-and-trust">The value and its trustworthiness are drawn separately<a class="anchor" href="#value-and-trust" aria-label="Link to this section">#</a></h2>
+
+        <p>While the last good value is on screen, a user must not read it as current. So the payload carries
+        these four separately.</p>
+
+        <ul>
+          <li>The data and <strong>the time that data was made</strong></li>
+          <li>The <strong>status and time</strong> of the last collection attempt</li>
+          <li>A <strong>degraded flag</strong> saying the previous value is being carried</li>
+          <li>A <strong>generation</strong> for ordering within the life of the connection</li>
+        </ul>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 190" role="img" aria-labelledby="pl-t pl-d" class="figure-svg">
+            <title id="pl-t">Four fields carrying the value and the collection status separately</title>
+            <desc id="pl-d">Four boxes sit side by side. The first holds the data and the time it was made, in
+            pink. The second holds the status and time of the last collection attempt. The third is the degraded
+            flag saying the previous value is being carried. The fourth is the generation used for ordering.
+            Below, a note says a real zero is drawn only when the flag is clear and the result is empty.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="14" y="36" width="162" height="58" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="95" y="60" font-size="12.5" fill="#18121d" text-anchor="middle" font-weight="700">data</text>
+              <text x="95" y="80" font-size="11.5" fill="#d62976" text-anchor="middle">time it was made</text>
+
+              <rect x="190" y="36" width="162" height="58" rx="6" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="271" y="60" font-size="12.5" fill="#18121d" text-anchor="middle">last attempt</text>
+              <text x="271" y="80" font-size="11.5" fill="#8a8a8a" text-anchor="middle">status · time</text>
+
+              <rect x="366" y="36" width="162" height="58" rx="6" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="447" y="60" font-size="12.5" fill="#18121d" text-anchor="middle">degraded flag</text>
+              <text x="447" y="80" font-size="11.5" fill="#8a8a8a" text-anchor="middle">carrying previous</text>
+
+              <rect x="542" y="36" width="162" height="58" rx="6" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="623" y="60" font-size="12.5" fill="#18121d" text-anchor="middle">generation</text>
+              <text x="623" y="80" font-size="11.5" fill="#8a8a8a" text-anchor="middle">for ordering</text>
+
+              <path d="M14 122 H 704" fill="none" stroke="#e0e0e0" stroke-width="1"/>
+              <text x="360" y="150" font-size="11.5" fill="#8a8a8a" text-anchor="middle">flag clear · result empty → a real zero</text>
+              <text x="360" y="172" font-size="11.5" fill="#8a8a8a" text-anchor="middle">flag set → previous value · marked old</text>
+            </g>
+          </svg>
+          <figcaption>The four have to be <strong>separate</strong> for the screen to draw the value apart from
+          its trustworthiness. Merged, one of the two becomes a lie.</figcaption>
+        </figure>
+
+        <p>When the degraded flag is set, the front end keeps the existing value and shows that it is old.
+        <strong>Only when the flag is clear and the result is empty</strong> does it draw a real zero.
+        Without that split you cannot avoid at least one of
+        <strong>“render an outage as zero” or “hide a genuine zero behind an old value”.</strong></p>
+
+        <h2 id="the-result">The result<a class="anchor" href="#the-result" aria-label="Link to this section">#</a></h2>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">Physical nodes first data, before and after.</caption>
+          <thead><tr><th>Metric</th><th>Before</th><th>After the shared cache</th></tr></thead>
+          <tbody>
+            <tr><td>Median</td><td>about 3,938 ms</td><td><strong>about 23 ms</strong></td></tr>
+            <tr><td>p95</td><td>about 4,968 ms</td><td>about 40 ms</td></tr>
+            <tr><td>p99</td><td>about 5,130 ms</td><td>about 43 ms</td></tr>
+            <tr><td>Error rate</td><td>0%</td><td>0%</td></tr>
+            <tr><td>Apdex</td><td>0.050</td><td><strong>1.000</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">⚠️ The “after” column was measured
+        <strong>with the shared cache from part five already in place.</strong> It is not this part's change
+        alone. First data was in the tens of milliseconds right after the per-screen work too, but
+        <strong>I did not keep a separate table at that point.</strong></p>
+
+        <h2 id="what-this-does-not-claim">What this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>These are not production statistics.</strong> It is a sequential harness measuring
+          first-data latency, not a concurrency load test.</li>
+          <li><strong>This part's contribution was not measured on its own.</strong> The “after” column includes
+          the shared cache from part five.</li>
+          <li><strong>I do not claim the five branches were complete from the start.</strong> At the time of the
+          physical nodes work, “fetch succeeded and the result was empty” could still be read as healthy, and
+          part five is where it became a common judgement.</li>
+          <li><strong>last-known-good is not always right.</strong> Hiding the age of the data buys availability
+          by <strong>lying for longer.</strong></li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="wrapping-up">Wrapping up<a class="anchor" href="#wrapping-up" aria-label="Link to this section">#</a></h2>
+
+          <ul>
+            <li><strong>“Empty” is not an observation, it is a value that needs interpreting.</strong>
+            Empty because nothing is there and empty because nothing could be fetched
+            <strong>arrive in the same data structure.</strong></li>
+            <li><strong>An honest screen needs the value and the collection status kept apart.</strong>
+            “Here is the last value, and the current collection failed” is not sayable once they are merged.</li>
+            <li><strong>Judging recency by arrival order makes the screen move backwards.</strong>
+            Creation order has to ride along with the value.</li>
+          </ul>
+
+          <p>If one line survives, this one.
+          <strong>What a monitoring screen has to decide is not the latest number, but which of a false zero,
+          a blank screen and an endless spinner it will avoid when observation fails.</strong></p>
+
+          <p>The next part is virtual resources, where the screen had
+          <strong>two</strong> bottlenecks rather than one. Thank you for reading.</p>
+        </div>
+
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=deeb528830"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
