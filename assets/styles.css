@@ -629,7 +629,8 @@ h2 {
   font-family: var(--font-body);
   font-size: 0.96rem;
   font-weight: 400;
-  font-style: italic;
+  /* 규약 11 — 한글은 기울이면 자형이 무너져 강조가 아니라 흐림으로 읽힌다. 날짜와 배지는 한국어·일본어다. */
+  font-style: normal;
   letter-spacing: 0.01em;
 }
 
@@ -651,7 +652,8 @@ h2 {
   font-family: var(--font-body);
   font-size: 0.96rem;
   font-weight: 400;
-  font-style: italic;
+  /* 규약 11 — 한글은 기울이면 자형이 무너져 강조가 아니라 흐림으로 읽힌다. 날짜와 배지는 한국어·일본어다. */
+  font-style: normal;
   letter-spacing: 0.01em;
 }
 
@@ -1472,7 +1474,8 @@ footer a:hover {
   gap: 6px 8px;
   font-size: 0.86rem;
   color: var(--text-soft);
-  font-style: italic;
+  /* 규약 11 — 한글은 기울이면 자형이 무너져 강조가 아니라 흐림으로 읽힌다. 날짜와 배지는 한국어·일본어다. */
+  font-style: normal;
 }
 
 .entry-main { min-width: 0; }
@@ -2079,9 +2082,16 @@ html[lang="ja"] .container.reading .article-body .table-note::before {
   background: rgba(255, 255, 255, 0.55);
 }
 
-.article-body .repo-link:hover,
-.article-body .repo-link:focus-visible {
+/* 테두리가 밝아지는 것은 **누를 수 있다는 신호**다. 비공개 저장소 칩은 링크가 아니라
+   `<span>` 이라 그 신호를 주면 안 된다. 그래서 hover 는 `a` 에만 준다. */
+.article-body a.repo-link:hover,
+.article-body a.repo-link:focus-visible {
   border-color: var(--accent, #b0389a);
+}
+
+.article-body span.repo-link {
+  cursor: default;
+  opacity: 0.82;
 }
 
 .article-body .repo-link svg {
