@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="While reviewing a social polling platform before launch I went to put a connection pooler in front of the database. But connection exhaustion has two causes, and a pooler fixes only one of them. Why it cannot fix the other comes from the definition of transaction pooling, not from any vendor document." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
 </head>
 <body>
   <div class="topbar">
@@ -133,8 +133,8 @@
         </ul>
 
         <p><strong>The code is in a private repository.</strong> The app has not launched, so the
-        repository is not open. Each section therefore carries <strong>the file path and the symbol
-        name</strong> rather than a GitHub link. Package and environment-variable names are the anonymised ones from the
+        repository is not open. So there are no GitHub links in this article; <strong>only the quoted
+        fragments</strong> of the code appear in the text. Package and environment-variable names are the anonymised ones from the
         original notes.</p>
 
         <p><strong>⚠️ One thing up front.</strong> The numbers here come from a <strong>local harness</strong>,
@@ -195,7 +195,8 @@
         </figure>
 
         <p>The <strong>external moderation API</strong> is a third-party service that screens harmful content.
-        Every post and comment calls it once, and that call has a read timeout of <strong>10 seconds</strong>.
+        Every post and comment calls it (as it turns out later, <strong>twice per post</strong>), and that call
+        has a read timeout of <strong>10 seconds</strong>.
         And it was happening <strong>inside a database transaction</strong>.</p>
 
 <pre data-lang="yaml"><code># application.yml
@@ -385,8 +386,9 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         So when the write path consumes it, the whole service slows down together.</p>
 
         <p>What made this particularly sharp was the <strong>timing</strong>. This service's growth engine is
-        “sharing the result chart”, which means <strong>the day sharing spikes is the day the service
-        stalls</strong>.</p>
+        “sharing the result chart”, which means <strong>the day sharing spikes could be the day the service
+        stalls</strong>. ⚠️ It has not launched, and <strong>no such day has actually come</strong>.
+        This is a prediction from the structure, not an observed incident.</p>
 
         <h2 id="why-a-pooler-cannot">Why can't a pooler fix B?<a class="anchor" href="#why-a-pooler-cannot" aria-label="Link to this section">#</a></h2>
 
@@ -536,7 +538,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         connection and the row lock.</p>
 
         <p>The post and comment paths went first. The poll path takes its screening input <em>from the locked
-        row</em>, so it needed a staleness re-check and was <strong>deliberately deferred, then fixed four days
+        row</em>, so it needed a staleness re-check and was <strong>deliberately deferred, then fixed the same day, a session
         later.</strong></p>
 
         <p>The conclusion in one line: <strong>the code change was not an alternative to the pooler, it was its
@@ -761,6 +763,9 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
 
         <h2 id="overlapping-the-calls">With numbers, one more thing to fix became visible<a class="anchor" href="#overlapping-the-calls" aria-label="Link to this section">#</a></h2>
 
+        <p>⚠️ <strong>This change is not merged yet.</strong> It touches the security gate, so a written
+        review comes first. The numbers below were measured on the branch.</p>
+
         <p>Having numbers produced the next question on its own — <strong>why is post-create p50 exactly twice
         the stub delay?</strong> Opening the gate showed it calling the external classifiers
         <strong>in sequence</strong>.</p>
@@ -812,12 +817,19 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         <strong>Not using a fixed-size pool is the point</strong> — a pool size is a new concurrency cap, and it
         would put the very thing this article is about, a cap nobody chose, back into the moderation path.</p>
 
-        <p><strong>The behaviour has to stay the same.</strong> This is a performance change, not a behaviour
-        change. So both are awaited (abandoning the loser means the cost is paid and nobody reads the result),
+        <p>⚠️ <strong>When I wrote that sentence I was already inside such a cap.</strong> I had not made a new
+        one, but the “five per host” of the HTTP client the AWS SDK pulled in was already sitting on that path.
+        I only learned that three weeks later.</p>
+
+        <p><strong>The response has to stay the same.</strong> This is a performance change, not a response
+        change. The behaviour is not quite the same: ④ now runs even when ③ blocks, so the outbound call count
+        rises. So both are awaited (abandoning the loser means the cost is paid and nobody reads the result),
         and ③'s exception wins over ④'s — the same response the sequential version produced.</p>
 
         <p>⚠️ <strong>It costs something.</strong> Sequentially, if ③ blocked, ④ was never called. Now ④ runs
-        even when ③ blocks, at roughly $0.0002 more per post. That is the trade for halving the latency.</p>
+        even when ③ blocks. The increase is <strong>③'s block rate × ④'s unit price</strong>, which at today's low
+        block rate is roughly $0.0002 more per post. It is not an unconditional number. If the block rate rises
+        it has to be worked out again.</p>
         <div class="table-scroll">
 <p class="table-scroll-hint">Scroll sideways to see the rest</p>
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
@@ -847,7 +859,10 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         <p>⚠️ <strong>This paragraph was wrong once.</strong> It first said the ceiling was the load generator,
         the app, the stub and the database sharing one machine's CPU. Chasing that ceiling three weeks later
         showed it was <strong>not CPU but the outbound HTTP concurrency limit</strong>: raising writers to 32
-        and the database pool to 30 left 6.26 unmoved, which CPU saturation cannot explain. That hunt is written
+        and the database pool to 30 left 6.26 unmoved. ⚠️ That on its own does <strong>not</strong> separate it
+        from CPU saturation, since both predict that nothing moves. What separated them was hitting the stub
+        directly (32 concurrent in 0.81 s) and instrumenting it (in-flight calls pinned at exactly ten).
+        That hunt is written
         up separately in <a href="the-ceiling-was-not-in-the-code.html">The Throughput Ceiling Was Not in the
         Code</a>. <strong>Calling a ceiling "saturation" and not chasing the cause is the mistake this article
         made.</strong></p>
@@ -927,10 +942,10 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=2dcb1d4f4c"></script>
+  <script src="../assets/content.js?v=d6aefa8091"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
   <script defer src="../assets/article.js?v=6f23973a30"></script>
   <script>
     (function () {
