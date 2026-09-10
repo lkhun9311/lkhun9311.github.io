@@ -90,6 +90,14 @@ var CodeHighlight = (function () {
       ["type", "\\b[A-Z]\\w*"],
       ["number", "\\b\\d[\\d_]*(?:\\.\\d+)?\\b"]
     ],
+    json: [
+      /* 열쇠와 값을 가른다. 열쇠는 뒤에 콜론이 오는 문자열이고 나머지 문자열은 값이다.
+         순서가 중요하다 — 열쇠 규칙이 먼저 와야 값 규칙이 열쇠까지 먹지 않는다. */
+      ["attr", "\"(?:[^\"\\\\]|\\\\.)*\"(?=\\s*:)"],
+      ["string", "\"(?:[^\"\\\\]|\\\\.)*\""],
+      ["keyword", "\\b(?:true|false|null)\\b"],
+      ["number", "-?\\b\\d+(?:\\.\\d+)?(?:[eE][-+]?\\d+)?\\b"]
+    ],
     text: []
   };
 
@@ -104,7 +112,7 @@ var CodeHighlight = (function () {
      나머지 하나만 「출력」·「出力」로 번역해 두면 그 창만 성격이 다른 것처럼 보인다.
      라벨이 가리키는 것은 화면에 찍힌 글이지 한국어 낱말이 아니다. */
   var LABELS = { kotlin: "Kotlin", yaml: "YAML", shell: "Shell", bash: "Bash", java: "Java",
-                 python: "Python", sql: "SQL", tsx: "TSX", text: "Output" };
+                 python: "Python", sql: "SQL", tsx: "TSX", json: "JSON", text: "Output" };
   var LABELS_KO = LABELS;
   var LABELS_JA = LABELS;
 
