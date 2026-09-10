@@ -83,30 +83,35 @@
             <li><a href="#どんな内容">どんな内容ですか?</a></li>
             <li><a href="#どんなサービス">どんなサービスですか?</a></li>
             <li><a href="#poolerを足せば">最初は pooler を足せば済むと思っていました</a></li>
-            <li><a href="#結論から">結論から申し上げると</a></li>
-            <li><a href="#原因a">原因 A — connection が多いから</a></li>
-            <li><a href="#原因b">原因 B — connection を長く握っているから</a></li>
-            <li><a href="#なぜ直せない">なぜ pooler は B を直せないのですか?</a></li>
-            <li><a href="#順序があります">だから順序があります</a></li>
-            <li><a href="#コードから">コードから直しました</a></li>
-            <li><a href="#二つの数字">誰も選んでいない二つの数字</a></li>
-            <li><a href="#使えるコードか">pooler が使えるコードかを先に確認しました</a></li>
+            <li><a href="#結論から">症状は一つ、原因は二つでした</a></li>
+            <li><a href="#原因a">一つ目の原因は connection の本数です</a></li>
+            <li><a href="#原因b">二つ目の原因は握っている時間です</a></li>
+            <li><a href="#なぜ直せない">なぜ pooler は二つ目を直せないのか</a></li>
+            <li><a href="#順序があります">直す順序はすでに決まっていました</a></li>
+            <li><a href="#コードから">外部呼び出しを transaction の外に出しました</a></li>
+            <li><a href="#二つの数字">誰も選んでいない数字二つが容量を決めていました</a></li>
+            <li><a href="#使えるコードか">このコードは pooler を使えるコードなのか</a></li>
             <li><a href="#非同期にすれば">「非同期にすればいいのでは?」</a></li>
-            <li><a href="#ガード">戻しやすい修正なので、ガードを原因に置きました</a></li>
+            <li><a href="#ガード">一行で戻る修正なので原因にガードを置きました</a></li>
             <li><a href="#測ってみました">三週間後に実際に測ってみました</a></li>
-            <li><a href="#重ねて呼ぶ">測ってみたら、直すところがもう一つ見えました</a></li>
+            <li><a href="#重ねて呼ぶ">測ったら次の問いが続いて出てきました</a></li>
             <li><a href="#主張しないこと">この記事が主張しないこと</a></li>
             <li><a href="#おわりに">おわりに</a></li>
           </ul>
         </nav>
       <article class="article-body">
 
-        <p><strong>ソーシャル投票プラットフォーム</strong>を作っています。リリース前にアーキテクチャを点検していて、
-        <em>「トラフィックが増えれば DB connection が足りなくなるだろうから、 connection pooler を一つ前に
-        立てればいいのでは」</em>という、ごくありふれた仮説から出発しました。結論は
-        <strong>「このコードベースでは否」</strong>でした。</p>
+        <p>リリース前の<strong>ソーシャル投票プラットフォーム</strong>を一人で作っています。</p>
 
-        <p>なぜ否だったのか、そしてその判断を何を根拠に下したのかを共有します。</p>
+        <p>このサービスで投稿を一つ書くと、サーバーはそれを DB に入れる前に外部モデレーション API へ送り、
+        有害な内容かどうかを尋ねます。その呼び出しには read timeout が <strong>10 秒</strong>で掛かっています。
+        そしてその呼び出しが <strong>DB transaction の中に</strong>ありました。</p>
+
+        <p>この構造を見て最初に思ったのは、ごくありふれたことでした。
+        <strong>「トラフィックが増えれば connection が足りなくなるから、RDS Proxy のようなものを一つ前に立てよう。」</strong>
+        間違った考えでした。</p>
+
+        <p>この記事は、その判断がなぜ間違っていたのか、そして道具を買う前に何を先に確かめるべきだったのかの話です。</p>
 
 
         <h2 id="想定読者">この記事の想定読者<a class="anchor" href="#想定読者" aria-label="この節へのリンク">#</a></h2>
@@ -170,7 +175,7 @@
               <text x="605" y="70" font-size="14" fill="#18121d" text-anchor="middle">PostgreSQL</text>
               <text x="605" y="89" font-size="13" fill="#7b7186" text-anchor="middle">マネージド · connection 上限あり</text>
               <path d="M295 110 V 158" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#arA)"/>
-              <text x="307" y="140" font-size="13" fill="#d62976" font-weight="700">投稿・コメントごとに1回</text>
+              <text x="307" y="140" font-size="13" fill="#d62976" font-weight="700">投稿・コメントのたびに</text>
               <rect x="202" y="158" width="506" height="54" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="455" y="182" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">外部モデレーション API</text>
               <text x="455" y="201" font-size="13" fill="#d62976" text-anchor="middle">read timeout は 10 秒に設定</text>
@@ -190,21 +195,20 @@
           <figcaption>モバイルアプリ → API サーバ → PostgreSQL というありふれた構成です。ありふれていないのはピンクで示した下の一つ、<strong>データベース transaction の中で</strong>起きていた外部呼び出しだけで、それがこの記事のすべてです。</figcaption>
         </figure>
 
-        <p><strong>外部モデレーション API</strong> は有害な内容をふるい落としてくれる外部サービスです。
-        投稿やコメントを書くたびに呼び出し（後で出てきますが実際には<strong>投稿 1 件あたり 2 回</strong>です）、
-        この呼び出しには read timeout が<strong>10秒</strong>で
-        設定されています。そしてこの呼び出しが<strong>データベース transaction の中で</strong>起きていました。</p>
+        <p>先ほどの<strong>外部モデレーション API</strong> が、有害な内容をふるい落とすそのサービスです。
+        投稿やコメントを書くたびに呼び出しますが、後で出てくるとおり実際には
+        <strong>投稿 1 件あたり 2 回</strong>です。</p>
+
+        <p>問題はこの呼び出しがあることではなく、<strong>どこにあるか</strong>でした。</p>
 
 <pre data-lang="yaml"><code># application.yml
 read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
 
-        <p>この数字を覚えておいてください。この記事の残りは全部ここから出てきます。ただし
+        <p>この 10 秒が記事の最後までついて回ります。ただし
         <strong>後の測定は 10 秒ではなく 800ms の stub で測ったもの</strong>です。10 秒は「最悪でどこまで
         握りうるか」を言う設定値です。</p>
 
         <h2 id="poolerを足せば">最初は pooler を足せば済むと思っていました<a class="anchor" href="#poolerを足せば" aria-label="この節へのリンク">#</a></h2>
-
-        <p>点検の出発点はありふれた仮説でした。</p>
 
         <blockquote><p>トラフィックが増えれば DB connection が足りなくなるだろうから、RDS Proxy や PgBouncer の
         ような<strong>connection pooler（connection pooler）</strong>を前に立てればいいのでは?</p></blockquote>
@@ -216,9 +220,10 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
         <p>ところがこの判断を下す前に確かめるべきことがありました。
         <strong>「私がこれから迎える connection 不足は、本当にこの道具が直す種類の不足なのか」</strong>です。</p>
 
-        <h2 id="結論から">結論から申し上げると<a class="anchor" href="#結論から" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="結論から">症状は一つ、原因は二つでした<a class="anchor" href="#結論から" aria-label="この節へのリンク">#</a></h2>
 
-        <p>違いました。一行にまとめるとこうです。</p>
+        <p>違いました。道具を調べる代わりに<strong>自分の枯渇がどちらの種類か</strong>を先に見たら、
+        こう分かれました。</p>
 
         <blockquote><p>connection 枯渇には<strong>connection の本数が原因のもの</strong>と
         <strong>connection を長く握っているのが原因のもの</strong>があります。
@@ -226,9 +231,9 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
 
         <p>そしてこの結論の根拠は RDS Proxy や PgBouncer の製品ドキュメントではなく、
         <strong>transaction pooling（transaction pooling）という方式の定義そのもの</strong>から
-        出てきました。順に見ていきます。</p>
+        出てきました。</p>
 
-        <p>まず症状からです。 connection pool が枯渇すると、表に出てくる姿はたいてい一つです。 pool で
+        <p>二つの原因は外から見るとまったく同じ顔をしています。 connection pool が枯渇すると、表に出てくる姿はたいてい一つです。 pool で
  connection を待って timeout し、互いに何の関係もない API が同時に遅くなります。ログにはこの行が
         出ます。</p>
 
@@ -236,9 +241,7 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
 
         <p>ここまでは二つの原因がまったく同じ顔をしています。だから症状だけを見て道具を選ぶと外します。</p>
 
-        <h2 id="原因a">原因 A — connection が多いから<a class="anchor" href="#原因a" aria-label="この節へのリンク">#</a></h2>
-
-        <p>一つ目は<strong>connection の本数</strong>そのものが問題である場合です。</p>
+        <h2 id="原因a">一つ目の原因は connection の本数です<a class="anchor" href="#原因a" aria-label="この節へのリンク">#</a></h2>
 
 <pre data-lang="text"><code>アプリ100台 × pool サイズ20 = connection2,000本
 ところが今実際にクエリを実行しているのは50本
@@ -250,10 +253,9 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
         <p><strong>これが connection pooler の存在理由です。</strong>アプリの connection2,000本を
  backend の50本にまとめてくれるのですから。A 型の枯渇にはまさに正しい道具です。</p>
 
-        <h2 id="原因b">原因 B — connection を長く握っているから<a class="anchor" href="#原因b" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="原因b">二つ目の原因は握っている時間です<a class="anchor" href="#原因b" aria-label="この節へのリンク">#</a></h2>
 
-        <p>二つ目は connection の<strong>本数</strong>ではなく<strong>握っている時間</strong>が問題である
-        場合です。そして私のコードはこちらでした。</p>
+        <p>そして<strong>私のコードはこちらでした。</strong></p>
 
 <pre data-lang="kotlin"><code>// CommentService.kt — 修正前
 @Transactional
@@ -388,9 +390,10 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         なりえます</strong>。⚠️ ただしまだリリース前で、<strong>そんな日が実際に来たことはありません</strong>。
         観測した障害ではなく構造から出る予想です。</p>
 
-        <h2 id="なぜ直せない">なぜ pooler は B を直せないのですか?<a class="anchor" href="#なぜ直せない" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="なぜ直せない">なぜ pooler は二つ目を直せないのか<a class="anchor" href="#なぜ直せない" aria-label="この節へのリンク">#</a></h2>
 
-        <p>ここがこの記事の本題です。</p>
+        <p>では pooler を足せばいいのでは。ここで製品ドキュメントではなく<strong>方式の定義</strong>を
+        見る必要があります。</p>
 
         <p>「アプリの connection 数千本を DB の connection 数十本にまとめてくれる」という説明は正しいです。
         問題は<strong>いつまとまるのか</strong>であり、その答えは transaction pooling の定義にすでに
@@ -478,9 +481,10 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         患ったまま導入すればお金を使っても何も良くならないのですが、実はもっと悪いのはその次です —
         <strong>「これで備えた」と信じてしまいます。</strong>その信念が次の点検を止めます。</p>
 
-        <h2 id="順序があります">だから順序があります<a class="anchor" href="#順序があります" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="順序があります">直す順序はすでに決まっていました<a class="anchor" href="#順序があります" aria-label="この節へのリンク">#</a></h2>
 
-        <p>解法は一つではなくいくつもの層であり、層には順序があります。</p>
+        <p>では何から手を付けるか。 pooler が値を出すには transaction が短くなければならないので、
+        <strong>順序はおのずと決まります。</strong>解法は一つではなくいくつもの層であり、層には順序があります。</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
@@ -501,7 +505,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
 
         <p>connection pooler は③です。①をやらずに③から行くと効かない、というのが前の節の内容でした。</p>
 
-        <h2 id="コードから">コードから直しました<a class="anchor" href="#コードから" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="コードから">外部呼び出しを transaction の外に出しました<a class="anchor" href="#コードから" aria-label="この節へのリンク">#</a></h2>
 
         <p>そこで①からやりました。 transaction の境界を<strong>書き込みの区間まで狭める</strong>作業です。
         Spring では <code>@Transactional</code> はプロキシベースなので、同じクラスの中で自分のメソッドを呼ぶと
@@ -541,7 +545,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         <p>結論を一行で書けばこうです。<strong>コード修正は connection pooler の代替ではなく前提条件でした。</strong>
         直してみてはじめて、 pooler が価値を出せる状態になりました。</p>
 
-        <h2 id="二つの数字">誰も選んでいない二つの数字<a class="anchor" href="#二つの数字" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="二つの数字">誰も選んでいない数字二つが容量を決めていました<a class="anchor" href="#二つの数字" aria-label="この節へのリンク">#</a></h2>
 
         <p>②（流入制御）にも罠が一つありました。<strong>ブロッキング JDBC では connection pool が事実上の
         同時実行上限</strong>です。 thread がいくら多くても connection を受け取れなければ仕事ができません。</p>
@@ -583,9 +587,10 @@ spring:
         <p>流入制御とは上限を<em>置く</em>ことではなく<strong>その上限を意図的に決めること</strong>です。
         デフォルト二つが作り出した同時実行ポリシーはポリシーではありません。</p>
 
-        <h2 id="使えるコードか">pooler が使えるコードかを先に確認しました<a class="anchor" href="#使えるコードか" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="使えるコードか">このコードは pooler を使えるコードなのか<a class="anchor" href="#使えるコードか" aria-label="この節へのリンク">#</a></h2>
 
-        <p>③に進む前に確認することがもう一つありました。 transaction pooling には
+        <p>① と ② を終えて、いよいよ ③ の番でした。ところが ③ には条件がもう一つ付いていました。
+        transaction pooling には
         <strong>ピン（pin）を誘発するパターン</strong>があり、コードにそれがあると connection pooler が
         無力になります。ピンが掛かると、その connection は transaction が終わってもそのクライアントに
         固定されたままになります。</p>
@@ -632,7 +637,7 @@ VoteRepository.kt        pg_advisory_xact_lock(...)</code></pre>
         <code>pool サイズ × instance 数 ≤ DB connection 上限</code>に先に引っかかります。そして根本原因 —
         遅い外部呼び出しが connection を握る — はそのまま残ります。</p>
 
-        <h2 id="ガード">戻しやすい修正なので、ガードを原因に置きました<a class="anchor" href="#ガード" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="ガード">一行で戻る修正なので原因にガードを置きました<a class="anchor" href="#ガード" aria-label="この節へのリンク">#</a></h2>
 
         <p>この修正には固有の脆さがあります。<strong><code>@Transactional</code> 一行で元に戻ります。</strong>
         しかも戻しても<strong>機能は正常です</strong> — テストも通りますし画面も問題ありません。症状は負荷が
@@ -754,7 +759,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         書き込み8個では pool10個が枯渇しないからです。<strong>pool が枯れなければこの現象は現れません</strong> —
         この数値は条件に付いた値であって定数ではありません。</p>
 
-        <h2 id="重ねて呼ぶ">測ってみたら、直すところがもう一つ見えました<a class="anchor" href="#重ねて呼ぶ" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="重ねて呼ぶ">測ったら次の問いが続いて出てきました<a class="anchor" href="#重ねて呼ぶ" aria-label="この節へのリンク">#</a></h2>
 
         <p>⚠️ <strong>この修正はまだマージしていません。</strong>セキュリティゲートに触れる変更なので
         書面レビューが先です。以下の数値はブランチで測ったものです。</p>

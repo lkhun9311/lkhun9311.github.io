@@ -83,30 +83,35 @@
             <li><a href="#what-is-in-here">What is in here</a></li>
             <li><a href="#what-is-the-service">What is the service?</a></li>
             <li><a href="#i-thought-a-pooler">At first I thought a pooler would do it</a></li>
-            <li><a href="#the-conclusion-first">The conclusion first</a></li>
-            <li><a href="#cause-a">Cause A — too many connections</a></li>
-            <li><a href="#cause-b">Cause B — connections held too long</a></li>
-            <li><a href="#why-a-pooler-cannot">Why can't a pooler fix B?</a></li>
-            <li><a href="#so-there-is-an-order">So there is an order</a></li>
-            <li><a href="#the-code-went-first">The code went first</a></li>
-            <li><a href="#two-numbers">Two numbers nobody chose</a></li>
-            <li><a href="#is-this-code-poolable">I checked whether the code could take a pooler at all</a></li>
+            <li><a href="#the-conclusion-first">One symptom, two causes</a></li>
+            <li><a href="#cause-a">The first cause is the number of connections</a></li>
+            <li><a href="#cause-b">The second cause is how long they are held</a></li>
+            <li><a href="#why-a-pooler-cannot">Why a pooler cannot fix the second one</a></li>
+            <li><a href="#so-there-is-an-order">The order was already decided</a></li>
+            <li><a href="#the-code-went-first">I moved the external call out of the transaction</a></li>
+            <li><a href="#two-numbers">Two numbers nobody chose were setting the capacity</a></li>
+            <li><a href="#is-this-code-poolable">Could this code even take a pooler?</a></li>
             <li><a href="#why-not-async">“Why not just go async?”</a></li>
             <li><a href="#the-guard">The fix is easy to undo, so the guard went on the cause</a></li>
             <li><a href="#i-measured-it">Three weeks later I actually measured it</a></li>
-            <li><a href="#overlapping-the-calls">With numbers, one more thing to fix became visible</a></li>
+            <li><a href="#overlapping-the-calls">Measuring produced the next question</a></li>
             <li><a href="#what-this-does-not-claim">What this article does not claim</a></li>
             <li><a href="#wrapping-up">Wrapping up</a></li>
           </ul>
         </nav>
       <article class="article-body">
 
-        <p>I am building a <strong>social polling platform</strong>. While reviewing the architecture before launch I
-        started from a very ordinary hypothesis — <em>“traffic will grow, database connections will run short, so
-        why not put a connection pooler in front?”</em> — and the answer turned out to be
-        <strong>“not in this codebase.”</strong></p>
+        <p>I am building a <strong>social polling platform</strong> on my own, and it has not launched yet.</p>
 
-        <p>This is why it was no, and what I based that judgement on.</p>
+        <p>When someone writes a post, the server sends it to an external moderation API to ask whether the
+        content is harmful before it goes into the database. That call has a read timeout of
+        <strong>10 seconds</strong>. And the call was sitting <strong>inside a database transaction</strong>.</p>
+
+        <p>Looking at that, the first thing I thought was the ordinary thing.
+        <strong>“Traffic will grow, connections will run short, so put something like RDS Proxy in front.”</strong>
+        It was the wrong thought.</p>
+
+        <p>This is the story of why it was wrong, and of what I should have checked before buying a tool.</p>
 
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
@@ -157,7 +162,7 @@
               <title id="svc-t">The service, and where the problem was</title>
               <desc id="svc-d">A mobile app sends post, comment and vote requests to an API server, which queries a managed PostgreSQL
               through a connection pool. Every time a post or a comment is written the API server also calls an external
-              moderation API once. That call has a read timeout set to 10 seconds, and the problem was that it happened
+              moderation API. That call has a read timeout set to 10 seconds, and the problem was that it happened
               inside a database transaction.</desc>
 
               <rect x="8" y="44" width="132" height="56" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
@@ -174,7 +179,7 @@
               <text x="605" y="70" font-size="14" fill="#18121d" text-anchor="middle">PostgreSQL</text>
               <text x="605" y="89" font-size="13" fill="#7b7186" text-anchor="middle">managed · connection limit</text>
               <path d="M295 110 V 158" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#arA)"/>
-              <text x="307" y="140" font-size="13" fill="#d62976" font-weight="700">once per post / comment</text>
+              <text x="307" y="140" font-size="13" fill="#d62976" font-weight="700">on every post · comment</text>
               <rect x="202" y="158" width="506" height="54" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="455" y="182" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">External moderation API</text>
               <text x="455" y="201" font-size="13" fill="#d62976" text-anchor="middle">read timeout set to 10s</text>
@@ -194,10 +199,11 @@
           <figcaption>An ordinary mobile app → API server → PostgreSQL. Exactly one thing here is not ordinary: the pink box at the bottom, an outbound call that was happening <strong>inside the database transaction</strong>. That one fact is the whole article.</figcaption>
         </figure>
 
-        <p>The <strong>external moderation API</strong> is a third-party service that screens harmful content.
-        Every post and comment calls it (as it turns out later, <strong>twice per post</strong>), and that call
-        has a read timeout of <strong>10 seconds</strong>.
-        And it was happening <strong>inside a database transaction</strong>.</p>
+        <p>The <strong>external moderation API</strong> above is that third-party service, the one that screens
+        harmful content. Every post and comment calls it, and as it turns out later that is
+        <strong>twice per post</strong>.</p>
+
+        <p>The problem was not that the call exists. It was <strong>where it was.</strong></p>
 
 <pre data-lang="yaml"><code># application.yml
 read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
@@ -205,8 +211,6 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
         <p>Hold on to that number. The rest of this article comes out of it.</p>
 
         <h2 id="i-thought-a-pooler">At first I thought a pooler would do it<a class="anchor" href="#i-thought-a-pooler" aria-label="Link to this section">#</a></h2>
-
-        <p>The review started from a common hypothesis.</p>
 
         <blockquote><p>Traffic will grow and database connections will run short, so why not put a
         <strong>connection pooler</strong> — RDS Proxy, PgBouncer and the like — in front?</p></blockquote>
@@ -218,9 +222,10 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
         <p>But there was something to establish before that decision:
         <strong>is the connection shortage I am going to hit the kind this tool fixes?</strong></p>
 
-        <h2 id="the-conclusion-first">The conclusion first<a class="anchor" href="#the-conclusion-first" aria-label="Link to this section">#</a></h2>
+        <h2 id="the-conclusion-first">One symptom, two causes<a class="anchor" href="#the-conclusion-first" aria-label="Link to this section">#</a></h2>
 
-        <p>It was not. In one line:</p>
+        <p>It was not. Instead of reading about the tool I looked at <strong>which kind of shortage mine
+        was</strong>, and it split like this.</p>
 
         <blockquote><p>Connection exhaustion comes in two kinds — one caused by <strong>the number of
         connections</strong>, one caused by <strong>holding connections too long</strong>.
@@ -228,9 +233,9 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
         one.</p></blockquote>
 
         <p>And the basis for that conclusion was not the product documentation for RDS Proxy or PgBouncer but
-        <strong>the definition of transaction pooling itself</strong>. I will get there.</p>
+        <strong>the definition of transaction pooling itself</strong>.</p>
 
-        <p>Start with the symptom. When a connection pool runs dry, what surfaces is mostly one thing:
+        <p>The two causes look the same from outside. When a connection pool runs dry, what surfaces is mostly one thing:
         requests wait for a connection and time out, and APIs with nothing to do with each other slow down
         together. The log carries this line.</p>
 
@@ -238,9 +243,7 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
 
         <p>Both causes look identical up to here. Which is why picking a tool from the symptom gets it wrong.</p>
 
-        <h2 id="cause-a">Cause A — too many connections<a class="anchor" href="#cause-a" aria-label="Link to this section">#</a></h2>
-
-        <p>The first is when the <strong>count</strong> itself is the problem.</p>
+        <h2 id="cause-a">The first cause is the number of connections<a class="anchor" href="#cause-a" aria-label="Link to this section">#</a></h2>
 
 <pre data-lang="text"><code>100 app instances × pool size 20 = 2,000 connections
 but only 50 are actually running a query right now
@@ -252,10 +255,9 @@ the other 1,950 are simply open</code></pre>
         <p><strong>This is why poolers exist.</strong> They fold 2,000 app connections into 50 backend ones.
         For type-A exhaustion a pooler is exactly the right tool.</p>
 
-        <h2 id="cause-b">Cause B — connections held too long<a class="anchor" href="#cause-b" aria-label="Link to this section">#</a></h2>
+        <h2 id="cause-b">The second cause is how long they are held<a class="anchor" href="#cause-b" aria-label="Link to this section">#</a></h2>
 
-        <p>The second is when the problem is not the <strong>number</strong> of connections but
-        <strong>how long each one is held</strong>. My code was this kind.</p>
+        <p>And <strong>my code was this kind.</strong></p>
 
 <pre data-lang="kotlin"><code>// CommentService.kt — before
 @Transactional
@@ -390,9 +392,10 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         stalls</strong>. ⚠️ It has not launched, and <strong>no such day has actually come</strong>.
         This is a prediction from the structure, not an observed incident.</p>
 
-        <h2 id="why-a-pooler-cannot">Why can't a pooler fix B?<a class="anchor" href="#why-a-pooler-cannot" aria-label="Link to this section">#</a></h2>
+        <h2 id="why-a-pooler-cannot">Why a pooler cannot fix the second one<a class="anchor" href="#why-a-pooler-cannot" aria-label="Link to this section">#</a></h2>
 
-        <p>This is the heart of it.</p>
+        <p>So why not put a pooler in front anyway? This is where the <strong>definition of the method</strong>
+        matters more than the product documentation.</p>
 
         <p>“Thousands of app connections folded into dozens of database connections” is an accurate
         description. The question is <strong>when the folding happens</strong>, and the answer is already
@@ -479,9 +482,10 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         suffering from B spends money and changes nothing — and the worse part comes next:
         <strong>you come to believe you are covered.</strong> That belief is what stops the next review.</p>
 
-        <h2 id="so-there-is-an-order">So there is an order<a class="anchor" href="#so-there-is-an-order" aria-label="Link to this section">#</a></h2>
+        <h2 id="so-there-is-an-order">The order was already decided<a class="anchor" href="#so-there-is-an-order" aria-label="Link to this section">#</a></h2>
 
-        <p>The remedy is not one thing but several layers, and the layers have an order.</p>
+        <p>So what comes first? A pooler only earns its keep when transactions are short, which
+        <strong>settles the order on its own.</strong> The remedy is not one thing but several layers, and the layers have an order.</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">Scroll sideways to see the rest</p>
@@ -502,7 +506,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
 
         <p>A pooler is ③. Going straight to ③ without ① is what the previous section was about.</p>
 
-        <h2 id="the-code-went-first">The code went first<a class="anchor" href="#the-code-went-first" aria-label="Link to this section">#</a></h2>
+        <h2 id="the-code-went-first">I moved the external call out of the transaction<a class="anchor" href="#the-code-went-first" aria-label="Link to this section">#</a></h2>
 
         <p>So ① came first: narrowing the transaction boundary <strong>to the write</strong>. In Spring,
         <code>@Transactional</code> is proxy-based and does not apply to self-invocation, so I reused the
@@ -545,7 +549,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         precondition.</strong> Once it was done, the system was finally in a state where a pooler could earn its
         keep.</p>
 
-        <h2 id="two-numbers">Two numbers nobody chose<a class="anchor" href="#two-numbers" aria-label="Link to this section">#</a></h2>
+        <h2 id="two-numbers">Two numbers nobody chose were setting the capacity<a class="anchor" href="#two-numbers" aria-label="Link to this section">#</a></h2>
 
         <p>Layer ② had a trap of its own. <strong>With blocking JDBC the connection pool is effectively the
         concurrency cap.</strong> However many threads there are, they cannot work without a connection.</p>
@@ -587,9 +591,10 @@ spring:
         <p>Admission control is not about <em>having</em> a cap, it is about <strong>deciding that cap
         deliberately</strong>. A concurrency policy produced by two defaults is not a policy.</p>
 
-        <h2 id="is-this-code-poolable">I checked whether the code could take a pooler at all<a class="anchor" href="#is-this-code-poolable" aria-label="Link to this section">#</a></h2>
+        <h2 id="is-this-code-poolable">Could this code even take a pooler?<a class="anchor" href="#is-this-code-poolable" aria-label="Link to this section">#</a></h2>
 
-        <p>Before moving to ③ there was one more thing to establish. Transaction pooling has
+        <p>With ① and ② done it was ③'s turn. But ③ came with one more condition attached.
+        Before moving to it there was one more thing to establish. Transaction pooling has
         <strong>pin-inducing patterns</strong>, and where the code has them the pooler is powerless — a pinned
         connection stays bound to that client even after the transaction ends.</p>
 
@@ -761,7 +766,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         8 writers do not exhaust a pool of 10. <strong>Without pool exhaustion the phenomenon does not
         appear</strong> — this number belongs to its conditions, it is not a constant.</p>
 
-        <h2 id="overlapping-the-calls">With numbers, one more thing to fix became visible<a class="anchor" href="#overlapping-the-calls" aria-label="Link to this section">#</a></h2>
+        <h2 id="overlapping-the-calls">Measuring produced the next question<a class="anchor" href="#overlapping-the-calls" aria-label="Link to this section">#</a></h2>
 
         <p>⚠️ <strong>This change is not merged yet.</strong> It touches the security gate, so a written
         review comes first. The numbers below were measured on the branch.</p>
