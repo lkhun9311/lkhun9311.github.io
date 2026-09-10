@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>まとめたら偶然守られていた契約が表に出ました | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/monitoring-one-shared-cache.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/monitoring-one-shared-cache.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/monitoring-one-shared-cache.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/monitoring-one-shared-cache.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="まとめたら偶然守られていた契約が表に出ました | Kwanghun Lee" />
+  <meta property="og:description" content="三画面が同じ源を別々に収集していたので cache 三つを一つにまとめました。まとめた直後に、一つの画面だけ開いていると別の画面の最後の値が消える回帰が出ました。分離された cache が黙って持っていた契約が消えたのであり、誰もそれを書き残していませんでした。連載の最終編です。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/monitoring-one-shared-cache.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="まとめたら偶然守られていた契約が表に出ました | Kwanghun Lee" />
+  <meta name="twitter:description" content="三画面が同じ源を別々に収集していたので cache 三つを一つにまとめました。まとめた直後に、一つの画面だけ開いていると別の画面の最後の値が消える回帰が出ました。分離された cache が黙って持っていた契約が消えたのであり、誰もそれを書き残していませんでした。連載の最終編です。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="三画面が同じ源を別々に収集していたので cache 三つを一つにまとめました。まとめた直後に、一つの画面だけ開いていると別の画面の最後の値が消える回帰が出ました。分離された cache が黙って持っていた契約が消えたのであり、誰もそれを書き残していませんでした。連載の最終編です。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "monitoring-one-shared-cache.html", "ko": "monitoring-one-shared-cache.ko.html", "ja": "monitoring-one-shared-cache.ja.html"}'>
+          <option value="ko">한국어</option>
+          <option value="en">English</option>
+          <option value="ja" selected>日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>一覧</a>
+        <div class="article-meta"><span class="source-tag company notranslate">会社の業務</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>まとめたら偶然守られていた契約が表に出ました<br><span class="h1-sub">cache 三つを一つに集めると、分離が守ってくれていたことが契約になりました。社内クラウド管理コンソール · 連載「統合モニタリング」⑤</span></h1>
+          <p class="article-date">2026年9月</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="monitoring-one-shared-cache"></aside>
+
+                <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#想定読者">この記事の想定読者</a></li>
+            <li><a href="#どんな内容">どんな内容ですか?</a></li>
+            <li><a href="#統合前の三つ">統合前の構造が持っていた三つ</a></li>
+            <li><a href="#部分的な失敗">部分的な失敗は項目ごとに引き継ぎます</a></li>
+            <li><a href="#回帰">まとめた直後に回帰が出ました</a></li>
+            <li><a href="#遅い消費者">遅い消費者を収集から切り離しました</a></li>
+            <li><a href="#統合結果">統合の結果</a></li>
+            <li><a href="#確認すること">共有状態をまとめるときに確認すること</a></li>
+            <li><a href="#主張しないこと">この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>社内クラウド管理コンソールの backend を作っています。
+        <a href="monitoring-two-gates-one-screen.ja.html">④編</a>までで三つの画面をそれぞれ直しました。
+        最初のデータはどれも速くなったのに、<strong>同じ源を画面ごとに別々に収集</strong>していました。</p>
+
+        <p>ノードのメトリックはダッシュボードと物理ノードが重ねて読み、 instance のメトリックは
+        ダッシュボードと仮想リソースが重ねて読んでいました。
+        <strong>cache 三つを一つにまとめれば重複はなくなります。</strong></p>
+
+        <p>実際の作業は、データ構造三つを一つにするよりずっと大きなものでした。
+        <strong>別々だったから偶然守られていたこと</strong>が、すべて明示すべき契約になったからです。</p>
+
+        <h2 id="想定読者">この記事の想定読者<a class="anchor" href="#想定読者" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>似た cache をいくつか一つにまとめようとしている方</li>
+          <li>複数の消費者が<strong>同じ源</strong>をそれぞれ読んでいる構造をお持ちの方</li>
+          <li>「オブジェクト数を減らすリファクタリング」で始めて、契約を書き直すことになった方</li>
+        </ul>
+
+        <h2 id="どんな内容">どんな内容ですか?<a class="anchor" href="#どんな内容" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li>統合前に問題が三つありました。
+          <strong>重複収集 · 可変 DTO の共有 · 障害を空の値として確定すること。</strong></li>
+          <li><strong>部分的な失敗は項目ごとに</strong>引き継ぎます。 instance だけ失敗したからといって、
+          成功したノードまで前の世代に戻したりしません。</li>
+          <li>まとめた直後に<strong>回帰が出ました。</strong>一つの画面だけ開いていると、
+          別の画面の最後の値が<strong>cache から消えました。</strong>再入場が 5,115ms でした。</li>
+          <li>遅い消費者を収集から切り離しました。<strong>ただし同期送信そのものが消えたわけではありません。</strong></li>
+        </ul>
+
+        <p>社内製品なので、コードや画面をそのまま載せていません。製品名・顧客名・内部アドレスは外し、
+        構造と契約だけを残しています。</p>
+
+        <h2 id="統合前の三つ">統合前の構造が持っていた三つ<a class="anchor" href="#統合前の三つ" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p><strong>一つ目、重複収集。</strong>三画面の 15 秒周期が重なると、同じノードと instance を
+        何度も読みます。画面が増えるほど源の負荷が<strong>消費者の数に比例</strong>します。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 240" role="img" aria-labelledby="dp-t dp-d" class="figure-svg">
+            <title id="dp-t">画面ごとに同じ源を読んでいた構造と単一 producer に変えた構造</title>
+            <desc id="dp-d">上半分は統合前です。ダッシュボード・物理ノード・仮想リソースの三画面からそれぞれ
+            矢印が出て同じ時系列ストアへ向かい、矢印が五本あって重複だと書かれています。
+            下半分は統合後です。単一 producer だけが時系列ストアへ矢印を送り、
+            三画面はその producer が作ったスナップショットを読みます。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="14" y="30" font-size="11.5" fill="#8a8a8a">統合前</text>
+              <rect x="86" y="16" width="112" height="26" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="142" y="34" font-size="11" fill="#4a4a4a" text-anchor="middle">ダッシュボード</text>
+              <rect x="86" y="48" width="112" height="26" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="142" y="66" font-size="11" fill="#4a4a4a" text-anchor="middle">物理ノード</text>
+              <rect x="86" y="80" width="112" height="26" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="142" y="98" font-size="11" fill="#4a4a4a" text-anchor="middle">仮想リソース</text>
+              <path d="M198 29 H 420" fill="none" stroke="#d62976" stroke-width="1.4" marker-end="url(#dp-arp)"/>
+              <path d="M198 36 H 420" fill="none" stroke="#d62976" stroke-width="1.4" marker-end="url(#dp-arp)"/>
+              <path d="M198 61 H 420" fill="none" stroke="#d62976" stroke-width="1.4" marker-end="url(#dp-arp)"/>
+              <path d="M198 93 H 420" fill="none" stroke="#d62976" stroke-width="1.4" marker-end="url(#dp-arp)"/>
+              <path d="M198 100 H 420" fill="none" stroke="#d62976" stroke-width="1.4" marker-end="url(#dp-arp)"/>
+              <rect x="420" y="42" width="150" height="40" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="495" y="66" font-size="11.5" fill="#18121d" text-anchor="middle">時系列ストア</text>
+              <text x="586" y="66" font-size="11" fill="#d62976" font-weight="700">重複 5 回</text>
+
+              <path d="M14 126 H 704" fill="none" stroke="#e0e0e0" stroke-width="1"/>
+
+              <text x="14" y="160" font-size="11.5" fill="#8a8a8a">統合後</text>
+              <rect x="86" y="146" width="112" height="26" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="142" y="164" font-size="11" fill="#4a4a4a" text-anchor="middle">ダッシュボード</text>
+              <rect x="86" y="178" width="112" height="26" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="142" y="196" font-size="11" fill="#4a4a4a" text-anchor="middle">物理ノード</text>
+              <rect x="86" y="210" width="112" height="26" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="142" y="228" font-size="11" fill="#4a4a4a" text-anchor="middle">仮想リソース</text>
+              <path d="M198 159 H 248" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#dp-ar)"/>
+              <path d="M198 191 H 248" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#dp-ar)"/>
+              <path d="M198 223 H 248" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#dp-ar)"/>
+              <rect x="248" y="172" width="132" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="2"/>
+              <text x="314" y="196" font-size="11.5" fill="#18121d" text-anchor="middle">単一 producer</text>
+              <path d="M380 192 H 420" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#dp-arp)"/>
+              <rect x="420" y="172" width="150" height="40" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="495" y="196" font-size="11.5" fill="#18121d" text-anchor="middle">時系列ストア</text>
+              <text x="586" y="196" font-size="11" fill="#d62976" font-weight="700">1 回</text>
+            </g>
+            <defs>
+              <marker id="dp-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="dp-arp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>画面が増えるほど源の負荷が消費者の数に比例します。
+          この図だけ見ると<strong>まとめることは得しかないように見えます。</strong></figcaption>
+        </figure>
+
+        <p><strong>二つ目、可変 DTO の共有。</strong>構造 cache が返したオブジェクトを、画面ごとに
+        <strong>その場で</strong>メトリックで埋めていました。ある thread が値を変えているあいだに別の
+        thread が直列化すると、<strong>一つの payload に別々の時点が混ざります。</strong>
+        原子的な参照でポインタを入れ替えても、<strong>中のオブジェクトが共有かつ可変なら不変スナップショットでは
+        ありません。</strong></p>
+
+        <p><strong>三つ目、障害を空の値として確定すること。</strong>インフラの取得やメトリックの取得が
+        失敗したのに、空のリストを新しい正常スナップショットとして公開すると、最後の正常な画面が 0 で
+        塗り替えられます。③編と④編で画面ごとに出会った問題です。</p>
+
+        <h2 id="部分的な失敗">部分的な失敗は項目ごとに引き継ぎます<a class="anchor" href="#部分的な失敗" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>ダッシュボードはノードと instance の結果を<strong>合わせて</strong>見せます。
+ instance のメトリックだけ失敗したからといって<strong>成功したノードまで前の世代に戻す</strong>と、
+        依存先一つの障害が画面全体を古くします。逆に空の instance 一覧を新しい値として受け取ると、
+        実際の VM 数を 0 で塗り替えます。</p>
+
+        <p>そこで③編の五つの分岐を<strong>共通の判定</strong>に引き上げ、項目ごとに適用しました。</p>
+
+<pre data-lang="text"><code>FRESH              新しいデータと新しい世代で公開
+EMPTY_VALID        対象が 0 なので正常な空データとして公開
+INFRA_UNAVAILABLE  前のデータを引き継ぎ + 劣化表示
+FETCH_FAILED       前のデータを引き継ぎ + 劣化表示
+NO_VALID_METRICS   前のデータを引き継ぎ + 劣化表示</code></pre>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 210" role="img" aria-labelledby="pf-t pf-d" class="figure-svg">
+            <title id="pf-t">一つの画面の中で項目ごとに違う判定をした結果</title>
+            <desc id="pf-d">一つの payload の箱の中に項目が二つあります。上のノードの項目は成功なので
+            新しい世代で公開され、ピンクです。下の instance の項目は取得失敗なので前の値を引き継ぎ、
+            劣化表示が付いていて灰色です。右には、画面はノードを新しい値で、 instance を古い表示とともに
+            描くと書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="24" y="24" width="346" height="146" rx="8" fill="none" stroke="#3b3344" stroke-width="1.6"/>
+              <text x="197" y="48" font-size="12" fill="#18121d" text-anchor="middle" font-weight="700">一つの payload · 同じ世代</text>
+
+              <rect x="48" y="62" width="298" height="42" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="72" y="88" font-size="11.5" fill="#18121d">ノード</text>
+              <text x="200" y="88" font-size="11.5" fill="#d62976">FRESH · 新しい世代</text>
+
+              <rect x="48" y="116" width="298" height="42" rx="6" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="72" y="142" font-size="11.5" fill="#18121d">instance</text>
+              <text x="200" y="142" font-size="11.5" fill="#8a8a8a">FETCH_FAILED · 引き継ぎ</text>
+
+              <path d="M370 84 H 440" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#pf-arp)"/>
+              <path d="M370 138 H 440" fill="none" stroke="#8a8a8a" stroke-width="1.5" marker-end="url(#pf-ar)"/>
+              <text x="450" y="88" font-size="11.5" fill="#d62976" font-weight="700">新しい値で描く</text>
+              <text x="450" y="142" font-size="11.5" fill="#8a8a8a">前の値 · 古い表示</text>
+
+              <text x="360" y="196" font-size="11.5" fill="#8a8a8a" text-anchor="middle">一方の失敗が他方の成功を戻さない</text>
+            </g>
+            <defs>
+              <marker id="pf-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="pf-arp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>引き継ぐときは<strong>データとそれが作られた世代はそのままにして</strong>、
+          最後の試行の状態と時刻だけを書き直します。</figcaption>
+        </figure>
+
+        <h2 id="回帰">まとめた直後に回帰が出ました<a class="anchor" href="#回帰" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>統合後にいちばん目立ったのは<strong>ページを移ってから戻ったとき</strong>でした。</p>
+
+        <p>単一 producer は<strong>いま購読されている経路だけ</strong>を計算してマップ一つで公開し、
+        公開のときに<strong>前のマップをまるごと入れ替えて</strong>いました。物理ノードの画面だけ開いた状態で
+        更新が回ると、最新の世代にはノードだけが残ります。
+        <strong>前のダッシュボードの値は cache から消えます。</strong></p>
+
+        <p>そのあとダッシュボードに接続すると、すぐ送る値が無いので
+        <strong>収集を一周待ちます。</strong>測ると<strong>約 5,115ms</strong>で、
+        すぐにもう一度接続すると 16ms でした。</p>
+
+        <blockquote><p>分離された cache が<strong>黙って持っていた契約</strong>はこれでした。
+        <strong>「別の経路の更新が自分の最後の値を消さない。」</strong>
+        まとめたことでその契約が消え、誰もそれを書き残していませんでした。</p></blockquote>
+
+<pre data-lang="text"><code>latestGeneration       今回の収集に含まれた経路の集合
+lastPageByPath[経路]   各経路の最後に成功した payload
+
+公開(世代):
+    latestGeneration を入れ替える
+    含まれた経路だけを lastPageByPath にマージする
+
+接続(経路):
+    lastPageByPath[経路] をすぐに送る
+    その経路が latestGeneration に無ければ更新を要求する</code></pre>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 220" role="img" aria-labelledby="rg-t rg-d" class="figure-svg">
+            <title id="rg-t">経路ごとの最後の値を別に保つよう直した構造</title>
+            <desc id="rg-d">上半分は直す前です。公開がマップをまるごと入れ替えるので、今回含まれなかった
+            ダッシュボードの項目が消え、再入場が 5,115 ミリ秒と書かれています。下半分は直したあとです。
+            最新の世代は入れ替えつつ、経路ごとの最後の値はマージだけなのでダッシュボードの項目が残り、
+            再入場が 17 ミリ秒と書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="14" y="34" font-size="11.5" fill="#8a8a8a">直す前</text>
+              <rect x="94" y="20" width="140" height="28" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="164" y="39" font-size="11" fill="#4a4a4a" text-anchor="middle">公開 · まるごと入れ替え</text>
+              <path d="M234 34 H 288" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#rg-ar)"/>
+              <rect x="288" y="20" width="210" height="28" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="393" y="39" font-size="11" fill="#4a4a4a" text-anchor="middle">ノードだけ残る · ダッシュボード消失</text>
+              <text x="512" y="39" font-size="11.5" fill="#d62976" font-weight="700">再入場 5,115ms</text>
+
+              <path d="M14 76 H 704" fill="none" stroke="#e0e0e0" stroke-width="1"/>
+
+              <text x="14" y="118" font-size="11.5" fill="#8a8a8a">直したあと</text>
+              <rect x="94" y="104" width="140" height="28" rx="5" fill="none" stroke="#3b3344" stroke-width="1.6"/>
+              <text x="164" y="123" font-size="11" fill="#18121d" text-anchor="middle">最新の世代 · 入れ替え</text>
+              <rect x="94" y="146" width="140" height="28" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="164" y="165" font-size="11" fill="#18121d" text-anchor="middle">経路ごと · マージ</text>
+              <path d="M234 118 H 288" fill="none" stroke="#3b3344" stroke-width="1.4" marker-end="url(#rg-ar2)"/>
+              <path d="M234 160 H 288" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#rg-arp)"/>
+              <rect x="288" y="104" width="210" height="28" rx="5" fill="none" stroke="#3b3344" stroke-width="1.4"/>
+              <text x="393" y="123" font-size="11" fill="#18121d" text-anchor="middle">今回含まれた経路</text>
+              <rect x="288" y="146" width="210" height="28" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="393" y="165" font-size="11" fill="#18121d" text-anchor="middle">ダッシュボードの値 · 残っている</text>
+              <text x="512" y="165" font-size="11.5" fill="#d62976" font-weight="700">再入場 17ms</text>
+            </g>
+            <defs>
+              <marker id="rg-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="rg-ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
+              </marker>
+              <marker id="rg-arp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>接続の直後に古い値が一瞬見えることがあります。
+          <strong>「5 秒の空白画面」より「すぐ最後の値、まもなく新しい値」</strong>を選びました。</figcaption>
+        </figure>
+
+        <h2 id="遅い消費者">遅い消費者を収集から切り離しました<a class="anchor" href="#遅い消費者" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>SSE の送信は遅いクライアントで詰まることがあります。収集の lock を配信が終わるまで握っていると、
+        <strong>一つのクライアントのネットワークが次の収集を遅らせます。</strong>
+        そこで新しい世代を公開した直後に収集トークンを手放し、送信は別のコンポーネントに渡しました。</p>
+
+        <p>ところが通常の実行キューにセッションごとの処理を入れると、小さな pool では
+        <strong>前のセッションだけが繰り返し受け入れられ、後ろのセッションが拒否され続ける飢餓</strong>が
+        起こりえました。送信器は準備 deque と常駐 worker を使います。</p>
+
+        <ul>
+          <li>セッションごとに待ちの payload は<strong>いちばん大きい世代を一つだけ</strong>持ちます。</li>
+          <li>セッションはキューに<strong>一度だけ</strong>入ります。</li>
+          <li>worker が一度送ったあと新しい待ちがあれば<strong>末尾に入れ直します。</strong></li>
+          <li>すでに送った世代以下の値は捨てます。</li>
+          <li>終了したセッションは送信の直前にもう一度確認します。</li>
+        </ul>
+
+        <blockquote><p>⚠️ <strong>同期送信そのものが消えたわけではありません。</strong>
+        同時に詰まったセッションの数が worker の数を超えれば、送信は依然として遅れます。
+        非同期 I/O や遅いセッションの先制的な追い出しは<strong>別の課題として残しました。</strong></p></blockquote>
+
+        <h2 id="統合結果">統合の結果<a class="anchor" href="#統合結果" aria-label="このセクションへのリンク">#</a></h2>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると残りが見えます">
+        <table>
+          <caption class="sr-only">三画面の最初の SSE データ、改善前と統合後。</caption>
+          <thead><tr><th>画面</th><th>前の中央値</th><th>最終の中央値</th><th>前の p99</th><th>最終の p99</th></tr></thead>
+          <tbody>
+            <tr><td>ダッシュボード</td><td>約 6,776ms</td><td><strong>約 23ms</strong></td><td>約 8,607ms</td><td>約 55ms</td></tr>
+            <tr><td>物理ノード</td><td>約 3,938ms</td><td><strong>約 23ms</strong></td><td>約 5,130ms</td><td>約 43ms</td></tr>
+            <tr><td>仮想リソース</td><td>約 1,436ms</td><td><strong>約 23ms</strong></td><td>約 1,742ms</td><td>約 37ms</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">三つともエラー率 0%、Apdex 1.000 です。REST の取得も数十 ms 以内を保ち、
+        先の改善が戻っていないことを確認しました。
+        ⚠️ ただし<strong>仮想リソースを測り直した時点では一部のメトリックが無い環境</strong>でした。
+        データがある条件での直接比較は④編の個別測定を基準にしています。</p>
+
+        <h2 id="確認すること">共有状態をまとめるときに確認すること<a class="anchor" href="#確認すること" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>cache の統合は<strong>オブジェクト数を減らすリファクタリングではありません。</strong>
+        次の問いに答える必要があります。</p>
+
+        <ul>
+          <li>いま購読していない消費者の<strong>最後の値は保たれるか</strong></li>
+          <li>ある源の失敗が<strong>別の源の成功を戻すか</strong></li>
+          <li>空の値は<strong>正常な 0 か、判断不能か</strong></li>
+          <li>payload の<strong>中のオブジェクトまで</strong>世代ごとに不変か</li>
+          <li>新しい値と古い値が<strong>逆転して送られうるか</strong></li>
+          <li>遅い消費者が<strong>producer を止めるか</strong></li>
+          <li>プロセスが複数なら<strong>producer も複数か</strong></li>
+        </ul>
+
+        <h2 id="主張しないこと">この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>運用統計ではありません。</strong>単一利用者の逐次測定です。</li>
+          <li><strong>仮想リソースの最終値は直接比較ではありません。</strong>測り直しの時点で一部の
+          メトリックが無い環境だったため、④編の個別測定を基準にしています。</li>
+          <li><strong>遅い消費者の問題を解決したとは言いません。</strong>収集から切り離しただけで、
+          同時に詰まったセッションが worker の数を超えれば送信は依然として遅れます。</li>
+          <li><strong>producer が複数の場合は扱っていません。</strong>上の問いの最後の項目が
+          そのまま残っています。</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="このセクションへのリンク">#</a></h2>
+
+          <p>五編をまとめるとこうです。</p>
+
+          <ul>
+            <li><strong>「直す根拠がない」と「測っていない」は違います。</strong>
+            測った場所が、利用者が待っていた場所と違いました。</li>
+            <li><strong>「先に作っておいて渡す」は、誰が作って誰が公開するかを決めてはじめて一行になります。</strong></li>
+            <li><strong>「空」は観測ではなく、解釈が要る値です。</strong></li>
+            <li><strong>画面の遅延は、遅く終わるゲートが決めます。</strong></li>
+            <li><strong>別々だったから守られていたことは、まとめるときに契約として書かなければなりません。</strong></li>
+          </ul>
+
+          <p>最後に一行だけ残すなら、これです。
+          <strong>共有状態は一か所に集めたから単純になるのではありません。暗黙だった契約をすべて表に出して
+          はじめて管理できます。</strong></p>
+
+          <p>重複収集をなくして得た性能より、<strong>これらの意味をコードとテストに書き残したこと</strong>の
+          ほうが長く残る結果だと思います。五編お読みいただきありがとうございました。</p>
+        </div>
+
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=8f7393b1c8"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

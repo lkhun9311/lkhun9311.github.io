@@ -272,6 +272,18 @@
           tags: ["Tooling", "Method", "Verification"]
         },
         {
+          title: "Merging Them Revealed the Contracts Separation Had Been Keeping",
+          url: "writing/monitoring-one-shared-cache.html",
+          source: "company", sourceLabel: "Company work",
+          title_ko: "합치자 우연히 지켜지던 계약이 드러났습니다",
+          desc_ko: "세 화면이 같은 원천을 따로 수집하고 있어 cache 셋을 하나로 합쳤습니다. 합치자마자 한 화면만 열어 두면 다른 화면의 마지막 값이 사라지는 회귀가 나왔습니다. 분리된 cache가 말없이 갖고 있던 계약이 사라진 것이고 아무도 그것을 적어 둔 적이 없었습니다. 연작 「통합 모니터링」 ⑤, 마지막 편.",
+          title_ja: "まとめたら偶然守られていた契約が表に出ました",
+          desc_ja: "三画面が同じ源を別々に収集していたので cache 三つを一つにまとめました。まとめた直後に、一つの画面だけ開いていると別の画面の最後の値が消える回帰が出ました。分離された cache が黙って持っていた契約が消えたのであり、誰もそれを書き残していませんでした。連載「統合モニタリング」⑤、最終編。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "The three screens were collecting the same source separately, so the three caches became one. Merging produced a regression at once: with only one screen open, another screen's last value disappeared. The contract the separated caches had been keeping silently was gone, and nobody had ever written it down. Unified Monitoring, part five and last. Also in Korean and Japanese.",
+          tags: ["Concurrency", "Reliability", "Method"]
+        },
+        {
           title: "Fixing One Side Left the Screen Where It Was",
           url: "writing/monitoring-two-gates-one-screen.html",
           source: "company", sourceLabel: "Company work",

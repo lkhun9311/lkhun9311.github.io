@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>합치자 우연히 지켜지던 계약이 드러났습니다 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/monitoring-one-shared-cache.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/monitoring-one-shared-cache.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/monitoring-one-shared-cache.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/monitoring-one-shared-cache.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="합치자 우연히 지켜지던 계약이 드러났습니다 | Kwanghun Lee" />
+  <meta property="og:description" content="세 화면이 같은 원천을 따로 수집하고 있어 cache 셋을 하나로 합쳤습니다. 합치자마자 한 화면만 열어 두면 다른 화면의 마지막 값이 사라지는 회귀가 나왔습니다. 분리된 cache가 말없이 갖고 있던 계약이 사라진 것이고 아무도 그것을 적어 둔 적이 없었습니다. 연작의 마지막 편입니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/monitoring-one-shared-cache.ko.html" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="합치자 우연히 지켜지던 계약이 드러났습니다 | Kwanghun Lee" />
+  <meta name="twitter:description" content="세 화면이 같은 원천을 따로 수집하고 있어 cache 셋을 하나로 합쳤습니다. 합치자마자 한 화면만 열어 두면 다른 화면의 마지막 값이 사라지는 회귀가 나왔습니다. 분리된 cache가 말없이 갖고 있던 계약이 사라진 것이고 아무도 그것을 적어 둔 적이 없었습니다. 연작의 마지막 편입니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="세 화면이 같은 원천을 따로 수집하고 있어 cache 셋을 하나로 합쳤습니다. 합치자마자 한 화면만 열어 두면 다른 화면의 마지막 값이 사라지는 회귀가 나왔습니다. 분리된 cache가 말없이 갖고 있던 계약이 사라진 것이고 아무도 그것을 적어 둔 적이 없었습니다. 연작의 마지막 편입니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "monitoring-one-shared-cache.html", "ko": "monitoring-one-shared-cache.ko.html", "ja": "monitoring-one-shared-cache.ja.html"}'>
+          <option value="ko" selected>한국어</option>
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
+        <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>합치자 우연히 지켜지던 계약이 드러났습니다<br><span class="h1-sub">cache 셋을 하나로 모으니 분리가 지켜 주던 것들이 계약이 됐습니다. 사내 cloud 관리 console · 통합 모니터링 연작 ⑤</span></h1>
+          <p class="article-date">2026년 9월</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="monitoring-one-shared-cache"></aside>
+
+                <nav class="article-toc" aria-label="목차">
+          <p class="toc-label">목차</p>
+          <ul>
+            <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+            <li><a href="#무슨-내용">무슨 내용인가요?</a></li>
+            <li><a href="#통합-전">통합 전 구조가 가진 셋</a></li>
+            <li><a href="#부분-실패">부분 실패는 항목별로 이어 씁니다</a></li>
+            <li><a href="#회귀">합치자마자 회귀가 나왔습니다</a></li>
+            <li><a href="#느린-소비자">느린 소비자를 수집에서 떼어 냈습니다</a></li>
+            <li><a href="#통합-결과">통합 결과</a></li>
+            <li><a href="#확인할-것">공유 상태를 합칠 때 확인할 것</a></li>
+            <li><a href="#주장하지-않는-것">이 글이 주장하지 않는 것</a></li>
+            <li><a href="#마치며">마치며</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>안녕하세요. 사내 cloud 관리 console의 backend를 만들고 있습니다.
+        <a href="monitoring-two-gates-one-screen.ko.html">④편</a>까지 화면 셋을 각각 고쳤습니다.
+        첫 데이터는 다 빨라졌는데 <strong>같은 원천을 화면마다 따로 수집</strong>하고 있었습니다.</p>
+
+        <p>노드 메트릭은 대시보드와 물리 노드가 겹쳐 읽었고 instance 메트릭은 대시보드와 가상자원이
+        겹쳐 읽었습니다. <strong>cache 셋을 하나로 합치면 중복이 없어집니다.</strong></p>
+
+        <p>실제 작업은 자료구조 셋을 하나로 바꾸는 것보다 훨씬 컸습니다.
+        <strong>따로 있어서 우연히 지켜지던 것들</strong>이 전부 명시할 계약이 됐기 때문입니다.</p>
+
+        <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li>비슷한 cache 여러 개를 하나로 합치려는 분</li>
+          <li>여러 소비자가 <strong>같은 원천</strong>을 각각 읽고 있는 구조를 가진 분</li>
+          <li>「객체 수를 줄이는 리팩터링」으로 시작했다가 계약을 다시 쓰게 된 분</li>
+        </ul>
+
+        <h2 id="무슨-내용">무슨 내용인가요?<a class="anchor" href="#무슨-내용" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul>
+          <li>통합 전에 문제가 셋 있었습니다. <strong>중복 수집 · 가변 DTO 공유 · 장애를 빈 값으로 확정.</strong></li>
+          <li><strong>부분 실패를 항목별로</strong>이어 씁니다. instance만 실패했다고
+          성공한 노드까지 이전 세대로 되돌리지 않습니다.</li>
+          <li>합치자마자 <strong>회귀가 나왔습니다.</strong> 한 화면만 열어 두면
+          다른 화면의 마지막 값이 <strong>cache에서 사라졌습니다.</strong> 재진입이 5,115ms였습니다.</li>
+          <li>느린 소비자를 수집에서 떼어 냈습니다. <strong>다만 동기 전송 자체가 사라진 것은 아닙니다.</strong></li>
+        </ul>
+
+        <p>사내 제품이라 코드와 화면을 그대로 옮기지 않았습니다. 제품명·고객사·내부 주소는 빼고
+        구조와 계약만 남겼습니다.</p>
+
+        <h2 id="통합-전">통합 전 구조가 가진 셋<a class="anchor" href="#통합-전" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p><strong>첫째, 중복 수집.</strong> 세 화면의 15초 주기가 겹치면 같은 노드와 instance를
+        여러 번 읽습니다. 화면이 늘수록 원천 부하가 <strong>소비자 수에 비례</strong>합니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 240" role="img" aria-labelledby="dp-t dp-d" class="figure-svg">
+            <title id="dp-t">화면마다 같은 원천을 따로 읽던 구조와 단일 producer로 바꾼 구조</title>
+            <desc id="dp-d">위쪽은 통합 전입니다. 대시보드·물리 노드·가상자원 세 화면에서 각각 화살표가 나와
+            같은 시계열 저장소로 향하고 화살표가 다섯 개라 중복이 있다고 적혀 있습니다.
+            아래쪽은 통합 후입니다. 단일 producer 하나만 시계열 저장소로 화살표를 보내고
+            세 화면은 그 producer가 만든 스냅샷을 읽습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="14" y="30" font-size="11.5" fill="#8a8a8a">통합 전</text>
+              <rect x="86" y="16" width="96" height="26" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="134" y="34" font-size="11" fill="#4a4a4a" text-anchor="middle">대시보드</text>
+              <rect x="86" y="48" width="96" height="26" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="134" y="66" font-size="11" fill="#4a4a4a" text-anchor="middle">물리 노드</text>
+              <rect x="86" y="80" width="96" height="26" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="134" y="98" font-size="11" fill="#4a4a4a" text-anchor="middle">가상자원</text>
+              <path d="M182 29 H 420" fill="none" stroke="#d62976" stroke-width="1.4" marker-end="url(#dp-arp)"/>
+              <path d="M182 36 H 420" fill="none" stroke="#d62976" stroke-width="1.4" marker-end="url(#dp-arp)"/>
+              <path d="M182 61 H 420" fill="none" stroke="#d62976" stroke-width="1.4" marker-end="url(#dp-arp)"/>
+              <path d="M182 93 H 420" fill="none" stroke="#d62976" stroke-width="1.4" marker-end="url(#dp-arp)"/>
+              <path d="M182 100 H 420" fill="none" stroke="#d62976" stroke-width="1.4" marker-end="url(#dp-arp)"/>
+              <rect x="420" y="42" width="150" height="40" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="495" y="66" font-size="11.5" fill="#18121d" text-anchor="middle">시계열 저장소</text>
+              <text x="586" y="66" font-size="11" fill="#d62976" font-weight="700">중복 5회</text>
+
+              <path d="M14 126 H 704" fill="none" stroke="#e0e0e0" stroke-width="1"/>
+
+              <text x="14" y="160" font-size="11.5" fill="#8a8a8a">통합 후</text>
+              <rect x="86" y="146" width="96" height="26" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="134" y="164" font-size="11" fill="#4a4a4a" text-anchor="middle">대시보드</text>
+              <rect x="86" y="178" width="96" height="26" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="134" y="196" font-size="11" fill="#4a4a4a" text-anchor="middle">물리 노드</text>
+              <rect x="86" y="210" width="96" height="26" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="134" y="228" font-size="11" fill="#4a4a4a" text-anchor="middle">가상자원</text>
+              <path d="M182 159 H 240" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#dp-ar)"/>
+              <path d="M182 191 H 240" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#dp-ar)"/>
+              <path d="M182 223 H 240" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#dp-ar)"/>
+              <rect x="240" y="172" width="140" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="2"/>
+              <text x="310" y="196" font-size="11.5" fill="#18121d" text-anchor="middle">단일 producer</text>
+              <path d="M380 192 H 420" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#dp-arp)"/>
+              <rect x="420" y="172" width="150" height="40" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="495" y="196" font-size="11.5" fill="#18121d" text-anchor="middle">시계열 저장소</text>
+              <text x="586" y="196" font-size="11" fill="#d62976" font-weight="700">1회</text>
+            </g>
+            <defs>
+              <marker id="dp-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="dp-arp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>화면이 늘수록 원천 부하가 소비자 수에 비례합니다.
+          이 그림만 보면 <strong>합치는 것이 이득만 있어 보입니다.</strong></figcaption>
+        </figure>
+
+        <p><strong>둘째, 가변 DTO 공유.</strong> 구조 cache가 돌려준 객체를 화면마다
+        <strong>제자리에서</strong> 메트릭으로 채웠습니다. 한 thread가 값을 바꾸는 동안 다른 thread가
+        직렬화하면 한 payload 안에 <strong>서로 다른 시점이 섞입니다.</strong>
+        원자 참조로 포인터를 바꿔도 <strong>안의 객체가 공유·가변이면 불변 스냅샷이 아닙니다.</strong></p>
+
+        <p><strong>셋째, 장애를 빈 값으로 확정.</strong> 인프라 조회나 메트릭 가져오기가 실패했는데
+        빈 목록을 새 정상 스냅샷으로 발행하면 마지막 정상 화면이 0으로 덮입니다.
+        ③편과 ④편에서 화면마다 따로 만난 문제입니다.</p>
+
+        <h2 id="부분-실패">부분 실패는 항목별로 이어 씁니다<a class="anchor" href="#부분-실패" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>대시보드는 노드와 instance 결과를 <strong>합쳐서</strong> 보여 줍니다.
+        instance 메트릭만 실패했다고 <strong>성공한 노드까지 이전 세대로 되돌리면</strong>
+        의존성 하나의 장애가 화면 전체를 늙게 만듭니다. 반대로 빈 instance 목록을 새 값으로 받으면
+        실제 VM 수를 0으로 덮습니다.</p>
+
+        <p>그래서 ③편의 다섯 갈래를 <strong>공통 판정</strong>으로 끌어올리고 항목마다 따로 적용했습니다.</p>
+
+<pre data-lang="text"><code>FRESH              새 데이터와 새 세대로 발행
+EMPTY_VALID        대상이 0이므로 정상 빈 데이터로 발행
+INFRA_UNAVAILABLE  이전 데이터 이어 씀 + 저하 표시
+FETCH_FAILED       이전 데이터 이어 씀 + 저하 표시
+NO_VALID_METRICS   이전 데이터 이어 씀 + 저하 표시</code></pre>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 210" role="img" aria-labelledby="pf-t pf-d" class="figure-svg">
+            <title id="pf-t">한 화면 안에서 항목마다 다르게 판정한 결과</title>
+            <desc id="pf-d">한 payload 상자 안에 항목이 둘 있습니다. 위의 노드 항목은 성공이라 새 세대로
+            발행되고 분홍색입니다. 아래의 instance 항목은 가져오기 실패라 이전 값을 이어 쓰고 저하 표시가
+            붙어 있으며 회색입니다. 오른쪽에는 화면이 노드는 새 값으로, instance는 오래됨 표시와 함께
+            그린다고 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="30" y="24" width="330" height="146" rx="8" fill="none" stroke="#3b3344" stroke-width="1.6"/>
+              <text x="195" y="48" font-size="12" fill="#18121d" text-anchor="middle" font-weight="700">한 payload · 같은 세대</text>
+
+              <rect x="54" y="62" width="282" height="42" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="80" y="88" font-size="11.5" fill="#18121d">노드</text>
+              <text x="200" y="88" font-size="11.5" fill="#d62976">FRESH · 새 세대</text>
+
+              <rect x="54" y="116" width="282" height="42" rx="6" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="80" y="142" font-size="11.5" fill="#18121d">instance</text>
+              <text x="200" y="142" font-size="11.5" fill="#8a8a8a">FETCH_FAILED · 이어 씀</text>
+
+              <path d="M360 84 H 430" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#pf-arp)"/>
+              <path d="M360 138 H 430" fill="none" stroke="#8a8a8a" stroke-width="1.5" marker-end="url(#pf-ar)"/>
+              <text x="440" y="88" font-size="11.5" fill="#d62976" font-weight="700">새 값으로 그림</text>
+              <text x="440" y="142" font-size="11.5" fill="#8a8a8a">이전 값 · 오래됨 표시</text>
+
+              <text x="360" y="196" font-size="11.5" fill="#8a8a8a" text-anchor="middle">한쪽 실패가 다른 쪽 성공을 되돌리지 않음</text>
+            </g>
+            <defs>
+              <marker id="pf-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="pf-arp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>이어 쓸 때 <strong>데이터와 그것이 만들어진 세대는 그대로 두고</strong>
+          마지막 시도의 상태와 시각만 새로 적습니다.</figcaption>
+        </figure>
+
+        <h2 id="회귀">합치자마자 회귀가 나왔습니다<a class="anchor" href="#회귀" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>통합 후 가장 눈에 띈 것은 <strong>페이지를 옮겼다가 돌아왔을 때</strong>였습니다.</p>
+
+        <p>단일 producer는 <strong>지금 구독 중인 경로만</strong> 계산해 맵 하나로 발행했고
+        발행할 때 <strong>이전 맵을 통째로 교체</strong>했습니다. 물리 노드 화면만 열어 둔 채 갱신이 돌면
+        최신 세대에는 노드만 남습니다. <strong>이전 대시보드 값은 cache에서 사라집니다.</strong></p>
+
+        <p>그다음 대시보드에 접속하면 즉시 보낼 값이 없어 <strong>수집 한 사이클을 기다립니다.</strong>
+        재 보니 <strong>약 5,115ms</strong>였고 바로 다시 접속하면 16ms였습니다.</p>
+
+        <blockquote><p>분리된 cache가 <strong>말없이 갖고 있던 계약</strong>은 이것이었습니다.
+        <strong>「다른 경로의 갱신이 내 마지막 값을 지우지 않는다.」</strong>
+        합치면서 그 계약이 사라졌고 아무도 그것을 적어 둔 적이 없었습니다.</p></blockquote>
+
+<pre data-lang="text"><code>latestGeneration      이번 수집에 포함된 경로 집합
+lastPageByPath[경로]  각 경로의 마지막 성공 payload
+
+발행(세대):
+    latestGeneration 을 교체한다
+    포함된 경로만 lastPageByPath 에 병합한다
+
+접속(경로):
+    lastPageByPath[경로] 를 즉시 보낸다
+    그 경로가 latestGeneration 에 없으면 갱신을 요청한다</code></pre>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 220" role="img" aria-labelledby="rg-t rg-d" class="figure-svg">
+            <title id="rg-t">경로별 마지막 값을 따로 보존하도록 고친 구조</title>
+            <desc id="rg-d">위쪽은 고치기 전입니다. 발행이 맵을 통째로 교체해 이번에 포함되지 않은
+            대시보드 항목이 사라지고 재진입이 5,115밀리초라고 적혀 있습니다. 아래쪽은 고친 뒤입니다.
+            최신 세대는 교체하되 경로별 마지막 값은 병합만 하므로 대시보드 항목이 남아 있고
+            재진입이 17밀리초라고 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="14" y="34" font-size="11.5" fill="#8a8a8a">고치기 전</text>
+              <rect x="110" y="20" width="120" height="28" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="170" y="39" font-size="11" fill="#4a4a4a" text-anchor="middle">발행 · 통째 교체</text>
+              <path d="M230 34 H 290" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#rg-ar)"/>
+              <rect x="290" y="20" width="200" height="28" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="390" y="39" font-size="11" fill="#4a4a4a" text-anchor="middle">노드만 남음 · 대시보드 사라짐</text>
+              <text x="504" y="39" font-size="11.5" fill="#d62976" font-weight="700">재진입 5,115ms</text>
+
+              <path d="M14 76 H 704" fill="none" stroke="#e0e0e0" stroke-width="1"/>
+
+              <text x="14" y="118" font-size="11.5" fill="#8a8a8a">고친 뒤</text>
+              <rect x="110" y="104" width="120" height="28" rx="5" fill="none" stroke="#3b3344" stroke-width="1.6"/>
+              <text x="170" y="123" font-size="11" fill="#18121d" text-anchor="middle">최신 세대 · 교체</text>
+              <rect x="110" y="146" width="120" height="28" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="170" y="165" font-size="11" fill="#18121d" text-anchor="middle">경로별 · 병합</text>
+              <path d="M230 118 H 290" fill="none" stroke="#3b3344" stroke-width="1.4" marker-end="url(#rg-ar2)"/>
+              <path d="M230 160 H 290" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#rg-arp)"/>
+              <rect x="290" y="104" width="200" height="28" rx="5" fill="none" stroke="#3b3344" stroke-width="1.4"/>
+              <text x="390" y="123" font-size="11" fill="#18121d" text-anchor="middle">이번에 포함된 경로</text>
+              <rect x="290" y="146" width="200" height="28" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="390" y="165" font-size="11" fill="#18121d" text-anchor="middle">대시보드 값 · 남아 있음</text>
+              <text x="504" y="165" font-size="11.5" fill="#d62976" font-weight="700">재진입 17ms</text>
+            </g>
+            <defs>
+              <marker id="rg-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="rg-ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
+              </marker>
+              <marker id="rg-arp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>접속 직후 오래된 값이 잠깐 보일 수 있습니다.
+          <strong>「5초 빈 화면」보다 「즉시 마지막 값, 곧 새 값」</strong>을 골랐습니다.</figcaption>
+        </figure>
+
+        <h2 id="느린-소비자">느린 소비자를 수집에서 떼어 냈습니다<a class="anchor" href="#느린-소비자" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>SSE의 전송은 느린 클라이언트에서 막힐 수 있습니다. 수집 lock을 방송이 끝날 때까지 쥐고 있으면
+        <strong>한 클라이언트의 네트워크가 다음 수집을 늦춥니다.</strong>
+        그래서 새 세대를 발행한 직후 수집 토큰을 놓고 전송은 별도 컴포넌트에 넘겼습니다.</p>
+
+        <p>그런데 일반 실행기 큐에 세션별 작업을 넣으면 작은 pool에서
+        <strong>앞 세션만 반복 수락되고 뒤 세션은 계속 거부되는 기아</strong>가 생길 수 있었습니다.
+        전송기는 준비 deque와 상주 worker를 씁니다.</p>
+
+        <ul>
+          <li>세션마다 대기 payload는 <strong>가장 큰 세대 하나만</strong> 둡니다.</li>
+          <li>세션은 큐에 <strong>한 번만</strong> 들어갑니다.</li>
+          <li>worker가 한 번 보낸 뒤 새 대기가 있으면 <strong>뒤에 다시</strong> 넣습니다.</li>
+          <li>이미 보낸 세대 이하의 값은 버립니다.</li>
+          <li>종료된 세션은 전송 직전에 다시 확인합니다.</li>
+        </ul>
+
+        <blockquote><p>⚠️ <strong>동기 전송 자체가 사라진 것은 아닙니다.</strong>
+        동시에 막힌 세션 수가 worker 수를 넘으면 전송은 여전히 늦어집니다.
+        비동기 I/O나 느린 세션 선제 축출은 <strong>따로 남겨 둔 과제</strong>입니다.</p></blockquote>
+
+        <h2 id="통합-결과">통합 결과<a class="anchor" href="#통합-결과" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+        <table>
+          <caption class="sr-only">세 화면의 첫 SSE 데이터, 개선 전과 통합 후.</caption>
+          <thead><tr><th>화면</th><th>전 중앙값</th><th>최종 중앙값</th><th>전 p99</th><th>최종 p99</th></tr></thead>
+          <tbody>
+            <tr><td>대시보드</td><td>약 6,776ms</td><td><strong>약 23ms</strong></td><td>약 8,607ms</td><td>약 55ms</td></tr>
+            <tr><td>물리 노드</td><td>약 3,938ms</td><td><strong>약 23ms</strong></td><td>약 5,130ms</td><td>약 43ms</td></tr>
+            <tr><td>가상자원</td><td>약 1,436ms</td><td><strong>약 23ms</strong></td><td>약 1,742ms</td><td>약 37ms</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">셋 다 오류율 0%, Apdex 1.000입니다. REST 조회도 수십 ms 안쪽을 유지해
+        앞선 개선이 되돌아가지 않았음을 확인했습니다.
+        ⚠️ 다만 <strong>가상자원 재측정 당시 일부 메트릭이 없는 환경</strong>이었습니다.
+        데이터가 있는 조건의 직접 비교는 ④편의 개별 측정을 기준으로 삼았습니다.</p>
+
+        <h2 id="확인할-것">공유 상태를 합칠 때 확인할 것<a class="anchor" href="#확인할-것" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>cache 통합은 <strong>객체 수를 줄이는 리팩터링이 아닙니다.</strong> 이 질문들에 답해야 합니다.</p>
+
+        <ul>
+          <li>지금 구독 중이 아닌 소비자의 <strong>마지막 값은 보존되는가</strong></li>
+          <li>한 원천의 실패가 <strong>다른 원천의 성공을 되돌리는가</strong></li>
+          <li>빈 값은 <strong>정상적인 0인가, 판단 불가인가</strong></li>
+          <li>payload <strong>안의 객체까지</strong> 세대별로 불변인가</li>
+          <li>새 값과 오래된 값이 <strong>역전되어 전송될 수 있는가</strong></li>
+          <li>느린 소비자가 <strong>producer를 막는가</strong></li>
+          <li>프로세스가 여러 대라면 <strong>producer도 여러 개인가</strong></li>
+        </ul>
+
+        <h2 id="주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul>
+          <li><strong>운영 통계가 아닙니다.</strong> 단일 사용자 순차 측정입니다.</li>
+          <li><strong>가상자원의 최종값은 직접 비교가 아닙니다.</strong> 재측정 당시 일부 메트릭이 없는
+          환경이라 ④편의 개별 측정을 기준으로 삼았습니다.</li>
+          <li><strong>느린 소비자 문제를 해결했다고 말하지 않습니다.</strong> 수집에서 떼어 냈을 뿐이고
+          동시에 막힌 세션이 worker 수를 넘으면 전송은 여전히 늦어집니다.</li>
+          <li><strong>producer가 여러 대일 때는 다루지 않았습니다.</strong> 위 질문 목록의 마지막 항목이
+          그대로 남아 있습니다.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
+
+          <p>다섯 편을 정리하면 이렇습니다.</p>
+
+          <ul>
+            <li><strong>「고칠 근거가 없다」와 「안 재 봤다」는 다릅니다.</strong>
+            잰 자리가 사용자가 기다린 자리와 달랐습니다.</li>
+            <li><strong>「미리 만들어 두고 준다」는 누가 만들고 누가 게시하는지를 정해야 한 줄이 됩니다.</strong></li>
+            <li><strong>「비었다」는 관측이 아니라 해석이 필요한 값입니다.</strong></li>
+            <li><strong>화면의 지연은 늦게 끝나는 게이트가 정합니다.</strong></li>
+            <li><strong>따로 있어서 지켜지던 것은 합칠 때 계약으로 적어야 합니다.</strong></li>
+          </ul>
+
+          <p>마지막으로 한 줄만 남긴다면 이겁니다.
+          <strong>공유 상태는 한 곳에 모았다고 단순해지지 않습니다. 암묵적이던 계약을 전부 드러냈을 때
+          비로소 관리할 수 있습니다.</strong></p>
+
+          <p>중복 수집을 없애 얻은 성능보다 <strong>이 의미들을 코드와 테스트로 적어 둔 것</strong>이
+          더 오래갈 결과라고 생각합니다. 다섯 편 읽어 주셔서 감사합니다.</p>
+        </div>
+
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=8f7393b1c8"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
