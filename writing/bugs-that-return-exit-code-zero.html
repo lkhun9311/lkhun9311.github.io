@@ -25,7 +25,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="Ten defects found in a Kubernetes GPU control plane. Control-plane verification on a Kubernetes GPU operator: what each defect broke, how it was found, and what guards it now." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
 </head>
 <body>
   <div class="topbar">
@@ -62,7 +62,7 @@
     <main>
       <div class="hero-top">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>All posts</a>
-        <div class="article-meta"></div>
+        <div class="article-meta"><span class="source-tag side notranslate">Personal project</span></div>
       </div>
       <section class="page-hero">
         <h1>Ten Bugs, Zero Failed Tests</h1>
@@ -150,7 +150,7 @@
 
         <p><strong>What it printed.</strong></p>
 
-<pre><code>first error   49.1ms after the delete
+<pre data-lang="text"><code>first error   49.1ms after the delete
 recovered   3079.8ms after the delete
 gateway 5xx: 9      client failures: 9</code></pre>
 
@@ -161,7 +161,7 @@ gateway 5xx: 9      client failures: 9</code></pre>
         matched once. I found out only because I had written "this experiment is n=1" in a validity table and
         went back to close the gap:</p>
 
-<pre><code>run 1:  counter = 15
+<pre data-lang="text"><code>run 1:  counter = 15
 run 2:  counter = 23
 run 3:  counter = 31      while every run saw 9 failures</code></pre>
 
@@ -230,7 +230,7 @@ run 3:  counter = 31      while every run saw 9 failures</code></pre>
         Two specs pin it, one against the validator and one through a real apiserver, plus a control asserting
         the same spec is still refused on a live object. Removing the bypass turns both red:</p>
 
-<pre><code>admission webhook "vmltrainingjob.kb.io" denied the request:
+<pre data-lang="text"><code>admission webhook "vmltrainingjob.kb.io" denied the request:
   spec.image: Required value: a training image is required</code></pre>
 
         <p><strong>Transferable point.</strong> I reasoned correctly about the danger and guarded the wrong
@@ -302,7 +302,7 @@ run 3:  counter = 31      while every run saw 9 failures</code></pre>
         <p>A chaos harness reported latencies and also recorded its own measured sampling interval. After I
         fixed the timing logic on the injection path and not the recovery path, the next record said:</p>
 
-<pre><code>"harnessResolutionMs": 95.9,
+<pre data-lang="text"><code>"harnessResolutionMs": 95.9,
 "readyToUntaint": 37.9</code></pre>
 
         <p>A measurement smaller than the resolution that produced it. Nothing failed. The document simply
@@ -324,7 +324,7 @@ run 3:  counter = 31      while every run saw 9 failures</code></pre>
         <p>The operator and gateway export seventeen metrics. They had never been scraped. Connecting a
         Prometheus found that the operator was serving none of them.</p>
 
-        <p>A kustomize overlay I had written patched the manager's <code>args</code> with a strategic merge.
+        <p>A Kustomize overlay I had written patched the manager's <code>args</code> with a strategic merge.
         <code>containers[].args</code> is a list of plain strings with no merge key, so a strategic merge
         replaces it, and the patch deleted <code>--metrics-bind-address</code>. Kustomize built, apply
         succeeded, the Deployment rolled out, the webhook worked, and a live webhook verification passed 6/6.
@@ -373,7 +373,7 @@ run 3:  counter = 31      while every run saw 9 failures</code></pre>
         <code>admission_mode_active</code> is set once at process start from the mode the gateway actually
         resolved, so it is present before any request or scrape. That makes the missing case expressible:</p>
 
-        <pre><code>(gpuaas_gateway_admission_mode_active{mode="kv-aware"} == 1)
+        <pre data-lang="text"><code>(gpuaas_gateway_admission_mode_active{mode="kv-aware"} == 1)
   unless on() gpuaas_gateway_backend_telemetry_fresh</code></pre>
 
         <p><code>unless on()</code> drops the left side as soon as any freshness series exists, so the new
@@ -400,7 +400,7 @@ run 3:  counter = 31      while every run saw 9 failures</code></pre>
 
         <p>Everything runs on a laptop. No cloud account, no GPU.</p>
 
-<pre><code># operator, webhook and cert-manager on a kind cluster
+<pre data-lang="bash"><code># operator, webhook and cert-manager on a kind cluster
 kubectl apply -k config/webhook-enabled
 ./hack/verify-webhook-live.sh          # expect 6/6
 
@@ -442,13 +442,14 @@ OUT=./ex/fr002.json ./hack/chaos-fr002-serving-pod-killed.sh
         </div>
         </div>
 
-        <p>Two of the ten defects came from external code review, which is its own argument for having one.
+        <p>One of the ten defects came from external code review, which is its own argument for having one.
         The remaining gaps are ordered: queue behaviour under concurrent reconciles first, then alert routing
         past Prometheus, then real hardware.</p>
 
         <p><a href="../projects/gpuaas-control-plane.html">Project overview</a> ·
         <a href="https://github.com/lkhun9311/gpu-platform-control-plane" target="_blank" rel="noopener noreferrer">Source</a> ·
-        <a href="https://github.com/lkhun9311/storage/tree/main/gpu-platform-control-plane/docs/engineering-journal" target="_blank" rel="noopener noreferrer">engineering journal</a>,
+        engineering journal <span class="repo-private notranslate" translate="no">Private</span>
+        (<code>gpu-platform-control-plane/docs/engineering-journal</code>),
         written while the work happened rather than after it.</p>
 
       </article>
@@ -461,10 +462,10 @@ OUT=./ex/fr002.json ./hack/chaos-fr002-serving-pod-killed.sh
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=2dcb1d4f4c"></script>
+  <script src="../assets/content.js?v=d6aefa8091"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
   <script defer src="../assets/article.js?v=6f23973a30"></script>
   <script>
     (function () {
