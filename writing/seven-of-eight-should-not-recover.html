@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="A switch failure made live compute nodes look dead and mass recovery ran. The fix was not sharper detection but deciding which signal is entitled to testify to what — and seven of eight scenarios came out as hold." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
 </head>
 <body>
   <div class="topbar">
@@ -69,10 +69,10 @@
     <main>
       <div class="hero-top">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>All posts</a>
-        <div class="article-meta"></div>
+        <div class="article-meta"><span class="source-tag company notranslate">Company work</span></div>
       </div>
       <section class="page-hero">
-        <h1>Seven of Eight Failures Should Not Be Recovered<br><span class="h1-sub">Instead of sharpening detection, we graded the signals. Compute node HA</span></h1>
+        <h1>Seven of Eight Failures Should Not Be Recovered<br><span class="h1-sub">Instead of sharpening detection, I graded the signals. Compute node HA</span></h1>
         <p class="article-date">Sep 2026</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="seven-of-eight-should-not-recover"></aside>
@@ -93,7 +93,7 @@
         <p><strong>Scope.</strong> In March 2026 I redesigned instance-HA failure handling for an
         OpenStack-based private cloud product. I do not name the product, its version, the customer, or ticket
         numbers. <strong>The deliverable was a design document; another engineer took the implementation.</strong>
-        So there is no "we shipped this and misjudgements fell by N" measurement here. What there is is a
+        So there is no "this shipped and misjudgements fell by N" measurement here. What there is is a
         decision procedure, and the result of running every scenario through it.</p>
 
         <p>The incident is one sentence. <strong>An L2/L3 switch failed, compute nodes that were running
@@ -173,7 +173,7 @@
 
         <p>They were split.</p>
 
-<pre><code>[Phase 1 — failure detection]
+<pre data-lang="text"><code>[Phase 1 — failure detection]
 1. Check quorum
    Controller quorum lost → the judgement cannot be trusted → HOLD
 
@@ -238,7 +238,7 @@
         <p>Even in the one scenario where recovery is allowed, you have to confirm the original is
         <strong>definitely powered off</strong> before moving anything. Skip that and you get this.</p>
 
-<pre><code>Compute-01 → VM-A still running   → writes /dev/vdb   (original attachment held)
+<pre data-lang="text"><code>Compute-01 → VM-A still running   → writes /dev/vdb   (original attachment held)
 Compute-02 → VM-A evacuated       → writes /dev/vdb   (new attachment)</code></pre>
 
         <p>Two writers on one block device corrupts the filesystem — and <strong>how badly depends on the
@@ -262,7 +262,7 @@ Compute-02 → VM-A evacuated       → writes /dev/vdb   (new attachment)</code
         <p>Hence the principle: <strong>no fencing, no recovery.</strong> Four stages — detect, verify, fence,
         recover. The fencing stage on its own reads:</p>
 
-<pre><code>1. IPMI chassis power off
+<pre data-lang="text"><code>1. IPMI chassis power off
 2. wait at least 5s               ← do not query immediately
 3. IPMI power status → must read off
 4. confirm residual storage attachments are cleared (varies by type)
@@ -299,7 +299,7 @@ Compute-02 → VM-A evacuated       → writes /dev/vdb   (new attachment)</code
         <h2 id="a-db-lock-is-not-consensus">A DB lock is not distributed consensus<a class="anchor" href="#a-db-lock-is-not-consensus" aria-label="Link to this section">#</a></h2>
 
         <p>With the decision procedure settled, the remaining question was who executes it and where. Galera
-        was already in house, so there was momentum behind putting a DB lock on top of it. Three approaches
+        was already in house, so there was momentum behind putting a DB lock (ShedLock) on top of it. Three approaches
         were compared on the same axes.</p>
 
         <div class="table-scroll">
@@ -374,10 +374,10 @@ Compute-02 → VM-A evacuated       → writes /dev/vdb   (new attachment)</code
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=2dcb1d4f4c"></script>
+  <script src="../assets/content.js?v=d6aefa8091"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
   <script defer src="../assets/article.js?v=6f23973a30"></script>
   <script>
     (function () {

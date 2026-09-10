@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="꼬리를 지킨 게 아니라 테넌트를 지웠다 | Kwanghun Lee" />
-  <meta property="og:description" content="GPU 한 장 위의 4-arm 실험. 거절을 0건 했다는 arm이 완료 수는 프리미엄 요청 수와 정확히 같았다. 리포트의 판정이 전부 비율이라, 네 번의 유료 실행 동안 아무도 그것을 보지 못했다." />
+  <meta property="og:description" content="GPU 한 장 위의 4-arm 실험. 거절을 0건 했다는 arm의 완료 수가 프리미엄 요청 수와 정확히 같았다. 리포트의 판정이 전부 비율이라, 유료 반복 4회 동안 아무도 그것을 보지 못했다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -29,9 +29,9 @@
   <meta name="twitter:title" content="꼬리를 지킨 게 아니라 테넌트를 지웠다 | Kwanghun Lee" />
   <meta name="twitter:description" content="거절을 0건 했다는 arm의 완료 수가 프리미엄 요청 수와 정확히 같았다. 리포트의 판정은 전부 비율이었다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="GPU 한 장 위의 4-arm 실험. 거절을 0건 했다는 arm이 완료 수는 프리미엄 요청 수와 정확히 같았다. 리포트의 판정이 전부 비율이라, 네 번의 유료 실행 동안 아무도 그것을 보지 못했다." />
+  <meta name="description" content="GPU 한 장 위의 4-arm 실험. 거절을 0건 했다는 arm의 완료 수가 프리미엄 요청 수와 정확히 같았다. 리포트의 판정이 전부 비율이라, 유료 반복 4회 동안 아무도 그것을 보지 못했다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
 </head>
 <body>
   <div class="topbar">
@@ -69,7 +69,7 @@
     <main>
       <div class="hero-top">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
-        <div class="article-meta"></div>
+        <div class="article-meta"><span class="source-tag side notranslate">개인 프로젝트</span></div>
       </div>
       <section class="page-hero">
         <h1>꼬리를 지킨 게 아니라 테넌트를 지웠다<br><span class="h1-sub">40센트짜리 마이크로테스트가 세 번의 실행이 못 산 답을 샀습니다. GPU 입장 제어</span></h1>
@@ -83,7 +83,7 @@
             <li><a href="#숫자">숫자</a></li>
             <li><a href="#세-문장이-동시에-참일-수-없다">세 문장이 동시에 참일 수 없다</a></li>
             <li><a href="#리포트가-그걸-못-본-이유">리포트가 그걸 못 본 이유</a></li>
-            <li><a href="#40센트가-답한-것">40센트가 세 번의 유료 실행이 못 한 답을 줬다</a></li>
+            <li><a href="#40센트가-답한-것">40센트가 세 번의 유료 세션이 못 한 답을 줬다</a></li>
             <li><a href="#아직-사지-않은-실행">아직 사지 않은 실행</a></li>
             <li><a href="#이-글이-주장하지-않는-것">이 글이 주장하지 않는 것</a></li>
           </ul>
@@ -98,10 +98,10 @@
         않은 실행이 하나 있고 그 결과는 마지막 절을 바꾼다.</p>
 
         <p>재려던 것은 이것이다. 프리미엄 테넌트와 긴 컨텍스트를 쓰는 시끄러운 이웃이 GPU 한 장을 나눠 쓸 때,
-        <strong>게이트웨이의 KV cache 인지 입장 제어가 프리미엄의 꼬리 지연을 지켜 주는가.</strong></p>
+        <strong>게이트웨이의 KV cache인지 입장 제어가 프리미엄의 꼬리 지연을 지켜 주는가.</strong></p>
 
         <p>답은 <strong>아니오</strong>였다. 그리고 그보다 더 값이 나간 것은,
-        <strong>왜 네 번의 유료 실행 동안 그 사실이 보이지 않았는가</strong>였다.</p>
+        <strong>왜 유료 반복 4회 동안 그 사실이 보이지 않았는가</strong>였다.</p>
 
 
         <h2 id="반증-가능하게-만드는-arm">반증 가능하게 만드는 arm<a class="anchor" href="#반증-가능하게-만드는-arm" aria-label="이 절로 가는 링크">#</a></h2>
@@ -118,7 +118,7 @@
             <tr><td>R1</td><td>프리미엄 단독, 같은 도착 스케줄</td><td>경쟁자가 없으면 얼마나 빠른가</td></tr>
             <tr><td>off</td><td>두 테넌트, 입장 제어 없음</td><td>경쟁의 비용은 얼마인가</td></tr>
             <tr><td><strong>static-cap</strong></td><td>압력을 안 보는 토큰 버킷. <strong>kv-aware와 같은 양을 통과시키도록 맞출 의도였다</strong></td><td><strong>이 가드가 레이트리밋이 못 하는 일을 하는가</strong></td></tr>
-            <tr><td>kv-aware</td><td>KV cache 인지 가드</td><td>시험 대상</td></tr>
+            <tr><td>kv-aware</td><td>KV cache인지 가드</td><td>시험 대상</td></tr>
           </tbody>
         </table>
         </div>
@@ -139,7 +139,7 @@
         <p>그리고 체크를 읽기 <em>전에</em> 실행을 실격시키는 조건을 따로 뒀다. 비교 대상 arm 중 하나라도 프리미엄
         완료가 0이거나, 꼬리가 잘렸거나(프리미엄 timeout 1% 초과), 완료 수가 최소 표본 미만이면 실격이다. 마지막
         하한은 고른 값이 아니라 유도한 값이다. 백분위가 nearest-rank라
-        <code>ceil(0.99n)-1</code> 이 100 미만의 모든 <code>n</code> 에서 <code>n-1</code> 로 붙는다. 그
+        <code>ceil(0.99n)-1</code>이 100 미만의 모든 <code>n</code>에서 <code>n-1</code>로 붙는다. 그
         아래에서는 보고되는 p99가 <strong>그냥 가장 느린 요청 하나</strong>다.</p>
 
         <h2 id="숫자">숫자<a class="anchor" href="#숫자" aria-label="이 절로 가는 링크">#</a></h2>
@@ -167,7 +167,7 @@
         <strong>83.7배</strong>로 들어왔다. 이 마일스톤이 하려던 주장은 철회했다.</p>
 
         <p>그런데 <strong>셋 중 둘은 실패가 아니라 무효다.</strong> 증분 가치와 입장 일치는 둘 다
-        <code>static-cap</code> 을 대조군으로 놓고 계산하는데 그 arm이 대조군이 아니었기 때문이다.
+        <code>static-cap</code>을 대조군으로 놓고 계산하는데 그 arm이 대조군이 아니었기 때문이다.
         <strong>의도한 것을 실제로 비교한 체크는 절대 보호 하나뿐이고 그것이 기준의 67배로 실패했다.</strong></p>
 
         <p>왜 대조군이 아니었는지가 이 글의 나머지다.</p>
@@ -185,10 +185,10 @@
         <p>제어를 걸었는데 아무것도 거절하지 않았고 결과가 격리와 같다. 세 문장이 동시에 참일 수는 없다.</p>
 
         <p>답은 완료 수에 있다. <strong>1,840은 이 실행의 프리미엄 요청 수와 정확히 같다.</strong> 그리고
-        <code>off</code> 의 200 응답은 프리미엄 1,840과 시끄러운 이웃 1,788로 쪼개진다. 즉 static-cap은
+        <code>off</code>의 200 응답은 프리미엄 1,840과 시끄러운 이웃 1,788로 쪼개진다. 즉 static-cap은
         <strong>그 1,788건을 한 건도 남기지 않고 전부 거절했다.</strong></p>
 
-        <p>통과시킨 작업 비율 <strong>0.0%</strong> 가 그 진술이다. static-cap이 격리와 같은 지연을 낸 이유는
+        <p>통과시킨 작업 비율 <strong>0.0%</strong>가 그 진술이다. static-cap이 격리와 같은 지연을 낸 이유는
         엔진을 효율적으로 만들었기 때문이 아니라, <strong>경쟁하는 테넌트를 지웠기 때문</strong>이다. 꼬리를
         지킨 것이 아니라 꼬리를 만드는 쪽을 없앤 것이다.</p>
 
@@ -197,7 +197,7 @@
         플래그에 넣었다. 둘, 버스트 플래그를 <strong>아예 넘기지 않아</strong> 게이트웨이 기본값
         <strong>8,192 토큰</strong>이 그대로 쓰였는데 트레이스의 시끄러운 프롬프트는 하나하나가
         <strong>약 10,000 토큰</strong>으로 추정된다. 버킷보다 큰 요청은 <strong>어떤 버킷에도 담길 수
-        없으므로</strong>, 게이트웨이는 네 번의 반복 모두에서 그것들을 전부 413으로 거절했다.</p>
+        없으므로</strong> 게이트웨이는 네 번의 반복 모두에서 그것들을 전부 413으로 거절했다.</p>
 
         <p>그래서 static-cap은 <strong>대조군이 아니라 두 번째 격리 arm</strong>이 됐다. 그것이
         <code>kv-aware</code> 대비 비율(84.760)이 격리 대비 비율(83.747)과 거의 같게 나온 이유다.         두 값이 같은 것을 재고 있었다.</p>
@@ -206,21 +206,21 @@
 
         <p>이게 왜 리포트에 안 보였나. 두 가지가 겹쳤다.</p>
 
-        <p><strong>첫째, 게이트웨이는 거절을 두 종류로 나눈다.</strong> <code>429</code> 는 "나중에 오라"이고,
-        <code>413</code> 은 "더 작게 보내라"다. 이 구분은 의도적으로 넣은 것이다. 버킷이 절대 담을 수 없는 크기의
+        <p><strong>첫째, 게이트웨이는 거절을 두 종류로 나눈다.</strong> <code>429</code>는 "나중에 오라"이고
+        <code>413</code>은 "더 작게 보내라"다. 이 구분은 의도적으로 넣은 것이다. 버킷이 절대 담을 수 없는 크기의
         요청에 429를 주면 클라이언트가 <strong>산술적으로 불가능한 요청을 영원히 재시도</strong>하기 때문이다.
         설계로는 맞다.</p>
 
-        <p>그런데 리포트는 <strong>429만 "버린 것"으로 셌다.</strong> static-cap의 1,788건은 전부 413 이었고,
+        <p>그런데 리포트는 <strong>429만 "버린 것"으로 셌다.</strong> static-cap의 1,788건은 전부 413이었고
         그래서 "버린 요청 0건"으로 찍혔다. 옳은 구분이 <strong>집계에서 한쪽을 통째로 빠뜨렸다.</strong></p>
 
         <p><strong>둘째, 리포트가 만든 판정이 전부 비율이었다.</strong> 절대 보호와 증분 가치는 꼬리 지연의 비율,
         입장 일치는 통과 작업량의 비율이다. 그런데 입장 일치조차 <em>두 arm이 서로 얼마나 비슷한가</em>를
-        물을 뿐, <strong>둘 중 하나가 0 이어도 그 사실을 이름으로 말하지 않는다.</strong> 비율만 보면
+        물을 뿐, <strong>둘 중 하나가 0이어도 그 사실을 이름으로 말하지 않는다.</strong> 비율만 보면
         "적게 처리하고 빨라진 것"과 "같이 처리하고 빨라진 것"이 구별되지 않는다.
         <strong>분모가 사라진 것을 비율만으로는 볼 수 없다.</strong></p>
 
-        <p>이 두 가지가 겹쳐서, 이 사실은 <strong>네 번의 유료 실행 동안 보이지 않았다.</strong></p>
+        <p>이 두 가지가 겹쳐서, 이 사실은 <strong>유료 반복 4회 동안 보이지 않았다.</strong></p>
 
         <p>보이게 만든 것은 새 실행이 아니었다. <strong>이미 산 증거를 다른 축으로 다시 채점한 것</strong>이다.
         같은 2026-09-03 원시 자료에 처리량과 테넌트별 점유를 붙였다.</p>
@@ -241,14 +241,14 @@
         </div>
         </div>
 
-        <p>이 축에서 보면 <strong>아무 제어도 안 건 <code>off</code> 가 "꼬리에서 이긴" arm보다 토큰을 24% 더
+        <p>이 축에서 보면 <strong>아무 제어도 안 건 <code>off</code>가 "꼬리에서 이긴" arm보다 토큰을 24% 더
         냈다.</strong> 그리고 static-cap은 격리의 지연 <em>과</em> 격리의 처리량을 동시에 맞췄는데 그건
         격리를 재현한 것이지 경쟁을 관리한 것이 아니다.</p>
 
         <p>여기서 배운 것은 KV cache에 대한 것이 아니다. <strong>측정이 지키려는 것 하나만 보면 그것을 지키려고
         무엇을 없앴는지는 보이지 않는다.</strong></p>
 
-        <h2 id="40센트가-답한-것">40센트가 세 번의 유료 실행이 못 한 답을 줬다<a class="anchor" href="#40센트가-답한-것" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="40센트가-답한-것">40센트가 세 번의 유료 세션이 못 한 답을 줬다<a class="anchor" href="#40센트가-답한-것" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>가드가 실패했다면 다음 질문은 "가드를 어떻게 고칠까"가 아니라 <strong>"고칠 층이 여기가 맞나"</strong>다.
         게이트웨이는 엔진 밖에 있고 엔진이 요청을 어떻게 배치에 넣는지는 게이트웨이가 보지 못한다.</p>
@@ -273,7 +273,7 @@
         </div>
 
         <p><strong>두 숫자를 나란히 놓을 때는 조심해야 한다</strong>. 83.7배는 동시 프리필이 여럿인 도착
-        과정의 p99 이고 1.57배는 요청 두 개를 열 번 반복한 중앙값이다. 같은 축이 아니므로
+        과정의 p99이고 1.57배는 요청 두 개를 열 번 반복한 중앙값이다. 같은 축이 아니므로
         "83.7이 1.57로 내려갔다"고 읽으면 안 된다. 말할 수 있는 것은 이것이다.         <strong>게이트웨이가 아무것도 못 한 그 간섭이, 엔진 설정만 바꾼 훨씬 단순한 부하에서는 작게 나온다.</strong>
         층이 달랐던 것이다. 컨트롤 플레인을 잘못 설정된 엔진 위에 얹으면 측정하는 것은 컨트롤 플레인이 아니라
         잘못된 설정이다.</p>
@@ -284,17 +284,17 @@
         이렇게 생겼는지는 아직 설명되지 않았다.</p>
 
         <p>이 마이크로테스트에도 사전 등록한 판독표가 있었고 <strong>그중 어느 것도 성립하지 않았다.</strong>
-        두 요인의 상호작용을 판독표가 담지 못했기 때문이다. 사전 등록은 결과를 사후에 맞추지 못하게 하지만,
+        두 요인의 상호작용을 판독표가 담지 못했기 때문이다. 사전 등록은 결과를 사후에 맞추지 못하게 하지만
         <strong>등록한 판독표 자체가 결과를 담지 못하는 경우</strong>까지 막아 주지는 않는다.</p>
 
-        <p>비용을 적어 두면 이렇다. <strong>유료 세션 세 번에 GPU·클러스터 시간 대략 10달러</strong>가 들었고,
+        <p>비용을 적어 두면 이렇다. <strong>유료 세션 세 번에 GPU·클러스터 시간 대략 10달러</strong>가 들었고
         <strong>앞의 두 번은 유효한 측정을 내지 못했다.</strong> 그 뒤의 모든 것. 메커니즘, 재채점, 내 설명 두 개가
         반증된 것은 <strong>이미 산 증거 안에서</strong> 나왔다. 그리고 층을 찾아낸 실험은 40센트였다. 질문을
         요청 두 개로 답할 수 있을 만큼 좁혔기 때문이다.</p>
 
         <h2 id="아직-사지-않은-실행">아직 사지 않은 실행<a class="anchor" href="#아직-사지-않은-실행" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>여기까지가 <strong>2026-09-05 기준으로 확정된 것</strong>이다. 남은 질문은 이렇게 사전 등록해 뒀고,
+        <p>여기까지가 <strong>2026-09-05 기준으로 확정된 것</strong>이다. 남은 질문은 이렇게 사전 등록해 뒀고
         아직 사지 않았다.</p>
 
         <blockquote><p>경쟁하는 테넌트의 작업을 지우지 않으면서 프리미엄 꼬리를 지키는 설정이 있는가, 그리고
@@ -310,17 +310,17 @@
         <h2 id="이-글이-주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#이-글이-주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul>
-          <li><strong>비교군 하나가 무효였다.</strong> <code>static-cap</code> 은 설정 오류로 아무것도
+          <li><strong>비교군 하나가 무효였다.</strong> <code>static-cap</code>은 설정 오류로 아무것도
           통과시키지 못해 대조군이 아니라 두 번째 격리 arm이 됐다. 그래서 사전 등록한 체크 셋 중 둘
           (증분 가치·입장 일치)은 실패가 아니라 <strong>무효</strong>다. 유효하게 실패한 것은 절대 보호 하나다.</li>
-          <li><strong>마이크로테스트는 예산 단독의 효과가 아니다.</strong> 예산 × 스케줄링 정책의 상호작용이고,
+          <li><strong>마이크로테스트는 예산 단독의 효과가 아니다.</strong> 예산 × 스케줄링 정책의 상호작용이고
           여섯 셀 중 기준을 통과한 것은 하나이며 사전 등록한 판독 중 어느 것도 성립하지 않았다.</li>
           <li><strong>입장 제어가 꼬리를 지킬 수 없다는 일반 주장이 아니다.</strong> 반증된 것은
           <strong>하나의 신호</strong>: 반응적 KV 점유, 0.85 인게이지 임계, 30초 해제. 이고 하나의 워크로드,
           하나의 모델, 한 장의 카드 위에서다.</li>
           <li><strong>엔진 설정이 이 문제를 해결한다는 주장도 아니다.</strong> 마이크로테스트는 긴 요청 하나와
           짧은 요청 하나를 셀당 10회 반복한 중앙값이다. 위의 4-arm 실행은 동시 프리필이 여럿인 도착 과정이고
-          지표가 p99 다. 같은 축이 아니다.</li>
+          지표가 p99다. 같은 축이 아니다.</li>
           <li><strong>실리콘이 다른 마일스톤 간 비교가 아니다.</strong> 카드 클래스·모델·dtype이 같은 범위
           안에서만 비교했고 뒤의 둘은 계약 테스트가 강제한다.</li>
           <li><strong>콜드 스타트에 대해 아무것도 말하지 않는다.</strong> 모든 arm이 예열된 엔진을 쓴다.</li>
@@ -344,10 +344,10 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=2dcb1d4f4c"></script>
+  <script src="../assets/content.js?v=d6aefa8091"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
   <script defer src="../assets/article.js?v=6f23973a30"></script>
   <script>
     (function () {

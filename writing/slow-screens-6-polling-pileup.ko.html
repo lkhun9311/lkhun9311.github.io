@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="볼륨 생성 버튼을 눌러도 창이 안 열리고 로딩만 돌았습니다. 개발자 도구에는 요청 4건이 pending으로 멈춰 있었습니다. 목록 조회가 10초 넘게 걸리는데 화면은 5초마다 다시 부르고 있었고 창이 열려 있는 동안에도 멈추지 않았습니다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
 </head>
 <body>
   <div class="topbar">
@@ -131,7 +131,7 @@
         </ul>
 
         <p><strong>사내 제품이라 화면과 코드를 그대로 옮기지 않았습니다.</strong> 제품명·고객사·내부 주소는
-        빼고 구조만 남겼습니다. 제품 화면이 찍힌 갈무리는 쓰지 않았고,
+        빼고 구조만 남겼습니다. 제품 화면이 찍힌 갈무리는 쓰지 않았고
         <strong>개발자 도구 창만 잘라서</strong> 씁니다.</p>
 
         <h2 id="어떤-화면">어떤 화면인가요?<a class="anchor" href="#어떤-화면" aria-label="이 절로 가는 링크">#</a></h2>
@@ -154,7 +154,7 @@
         <figure class="diagram">
           <img src="../assets/figures/modal-pending-requests.png" alt="브라우저 개발자 도구의 네트워크 탭. 위쪽 8건은 상태 200으로 끝났고 아래쪽 4건은 상태가 pending입니다. 요청 이름은 전부 가렸습니다." loading="lazy" width="640" height="500">
           <figcaption>갈무리 시점에 <strong>끝나지 않은 요청이 4건</strong> 보입니다(빨간 칸).
-          위쪽 8건은 200으로 끝났습니다. ⚠️ 요청 이름은 사내 API 표면이라 <code>req-A</code>처럼 가렸고,
+          위쪽 8건은 200으로 끝났습니다. ⚠️ 요청 이름은 사내 API 표면이라 <code>req-A</code>처럼 가렸고
           제품 화면이 찍힌 오른쪽은 잘라 냈습니다. 상태·종류·시각은 갈무리 그대로입니다.</figcaption>
         </figure>
 
@@ -351,7 +351,7 @@ usePolling({
         고정된 배열로 바꿨습니다.</p>
 
         <blockquote><p><strong>바뀌지 않는 값을 서버에서 받아 오면 그 호출이 실패했을 때 화면도 같이
-        못 씁니다.</strong> 이제 목록을 못 받아도 <strong>선택지는 보이고</strong>, 못 받은 것은
+        못 씁니다.</strong> 이제 목록을 못 받아도 <strong>선택지는 보이고</strong> 못 받은 것은
         그 항목에서만 드러납니다.</p></blockquote>
 
         <h2 id="5초">이 5초가 backend 결정의 근거가 됐습니다<a class="anchor" href="#5초" aria-label="이 절로 가는 링크">#</a></h2>
@@ -390,7 +390,7 @@ usePolling({
         </div>
         </div>
         <p class="table-note">증상은 한 곳에서 났는데 <strong>원인이 양쪽에 하나씩</strong> 있었습니다.
-        같은 날 두 사람이 아니라 <strong>같은 사람이 양쪽을 고쳤고</strong>, 그래서 5초가 이어졌습니다.</p>
+        같은 날 두 사람이 아니라 <strong>같은 사람이 양쪽을 고쳤고</strong> 그래서 5초가 이어졌습니다.</p>
 
         <h2 id="주장하지-않는-것">한계: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -399,7 +399,7 @@ usePolling({
           기록에 남은 것은 「클릭하면 바로 열린다」는 문장이고 그건 눈으로 본 것입니다.
           <strong>몇 초가 몇 초가 됐다고 말할 수 없습니다.</strong></li>
           <li><strong>「10초 이상」은 원본의 문장입니다.</strong> 어떻게 잰 값인지 적혀 있지 않습니다.</li>
-          <li><strong><code>(pending)</code> 4건 갈무리는 1회 관측입니다.</strong> 그 순간 그랬다는 것이고,
+          <li><strong><code>(pending)</code> 4건 갈무리는 1회 관측입니다.</strong> 그 순간 그랬다는 것이고
           매번 4건이었다는 뜻이 아닙니다.</li>
           <li><strong>polling을 멈추는 데는 대가가 있습니다.</strong> 창이 열려 있는 동안 뒤의 목록은
           낡습니다. 창을 오래 띄워 두면 닫았을 때 한 번 튀어 보일 수 있습니다.
@@ -431,8 +431,8 @@ usePolling({
         <strong>증상이 한 곳에서 났다고 원인도 한 곳에 있는 것은 아닙니다.</strong>
         창은 프런트에서 안 열렸는데 안 열린 이유의 절반은 backend에 있었습니다.</p>
 
-        <p>다음 편은 이 연작의 마지막입니다. <strong>부하를 늘려도 TPS가 그대로였던</strong> 시험,
-        그리고 그 평평한 그래프가 무엇을 감췄는지 씁니다.</p>
+        <p>다음 편은 <strong>모니터링 화면을 검토하고도 고칠 근거를 못 찾은</strong> 이야기입니다.
+        거기서 예상한 평평한 그래프를 <strong>왜 돌려서 확인하지 않았는지</strong>도 적습니다.</p>
 
         <p>읽어 주셔서 감사합니다.</p>
         </div>
@@ -447,10 +447,10 @@ usePolling({
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=2dcb1d4f4c"></script>
+  <script src="../assets/content.js?v=d6aefa8091"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
   <script defer src="../assets/article.js?v=6f23973a30"></script>
   <script>
     (function () {

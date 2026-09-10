@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Listing 20 Instances Took 54 Seconds | Kwanghun Lee</title>
+  <title>Listing Instances Went from 54 Seconds to One | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Listing 20 Instances Took 54 Seconds | Kwanghun Lee" />
+  <meta property="og:title" content="Listing Instances Went from 54 Seconds to One | Kwanghun Lee" />
   <meta property="og:description" content="Twenty instances, and the list screen timed out. The CLI took 54 seconds for the same list, which put the slow stretch below our backend. Swap was full at 8.0GiB, and the instances table still held 1,021 rows that were only marked deleted." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
@@ -26,12 +26,12 @@
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Listing 20 Instances Took 54 Seconds | Kwanghun Lee" />
+  <meta name="twitter:title" content="Listing Instances Went from 54 Seconds to One | Kwanghun Lee" />
   <meta name="twitter:description" content="Twenty instances, and the list screen timed out. The CLI took 54 seconds for the same list, which put the slow stretch below our backend. Swap was full at 8.0GiB, and the instances table still held 1,021 rows that were only marked deleted." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="Twenty instances, and the list screen timed out. The CLI took 54 seconds for the same list, which put the slow stretch below our backend. Swap was full at 8.0GiB, and the instances table still held 1,021 rows that were only marked deleted." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
 </head>
 <body>
   <div class="topbar">
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">Company work</span></div>
       </div>
               <section class="page-hero">
-          <h1>Listing 20 Instances Took 54 Seconds<br><span class="h1-sub">The cause was not the application code but a full swap and 1,021 rows left marked as deleted. An internal cloud admin console. Slow Screens, part two</span></h1>
+          <h1>Listing Instances Went from 54 Seconds to One<br><span class="h1-sub">The cause was not the application code but a full swap and 1,021 rows left marked as deleted. An internal cloud admin console. Slow Screens, part two</span></h1>
           <p class="article-date">Sep 2026</p>
         </section>
 
@@ -102,7 +102,7 @@
         spun and spun and then <strong>timed out.</strong> There were <strong>20 instances</strong> running
         at the time.</p>
 
-        <p>No code fails to render twenty rows. So this article
+        <p>This was not code that could fail on 20 rows. So this article
         <strong>starts without opening a single source file.</strong></p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
@@ -127,7 +127,7 @@
 
         <p><strong>This is an internal product, so neither the code nor the screens are reproduced as they
         are.</strong> Product names, customers and internal addresses are gone; the structure and the numbers
-        stay. The screenshot of the console <strong>is not used at all</strong> — the product is the whole
+        stay. The screenshot of the console <strong>is not used at all</strong>. The product is the whole
         picture there. Terminal output appears with the host name masked.</p>
 
         <p><strong>⚠️ One thing up front.</strong> The numbers below are <strong>measurements from a QA test
@@ -225,7 +225,7 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
 
         <p>⚠️ <strong>I never measured that hypothesis.</strong> There is no <code>vmstat</code>, no
         <code>iostat</code>, no page-fault record for the MariaDB process. So this article can state
-        <strong>two facts — swap was full, and clearing it made things faster —</strong> and what joins them is a
+        <strong>two facts: swap was full, and clearing it made things faster.</strong> What joins them is a
         guess, not evidence. The internal document’s “RAM 0.0001ms, swap 10–100ms” is likewise a cited order of
         magnitude, not a measurement from this machine.</p>
 
@@ -291,7 +291,7 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
 
         <p>And here <strong>the source document misread its own screenshot.</strong> It says
         “a full scan of 1,022 rows”. But <code>1022 rows in set</code> is
-        <strong>not a row count — it is the number of groups <code>GROUP BY</code> returned.</strong></p>
+        <strong>not a row count. It is the number of groups <code>GROUP BY</code> returned.</strong></p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">Scroll sideways to see the rest</p>
@@ -328,8 +328,8 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
 
         <p>This command <strong>pulls everything in swap back into RAM.</strong> Which means
         <strong>RAM has to have room for it.</strong> If it does not, <code>swapoff</code> fails or the kernel
-        starts killing processes to reclaim memory (the OOM killer). Here <code>available</code> — the kernel’s
-        estimate of what a new process could use without swapping — was 18GiB, so there was room for 8.0GiB.</p>
+        starts killing processes to reclaim memory (the OOM killer). Here <code>available</code> (the kernel’s
+        estimate of what a new process could use without swapping) was 18GiB, so there was room for 8.0GiB.</p>
 
         <p>⚠️ And <strong>this one line has a trap I did not know about at the time.</strong>
         <code>swapoff -a</code> turns off <strong>every registered swap</strong>, and it can fail for reasons
@@ -386,7 +386,7 @@ SET FOREIGN_KEY_CHECKS = 1;</code></pre>
           <li><strong>I turned foreign key checks off.</strong> This is not a “be careful with the order”
           problem. In a session with checks off, <strong>every reference violation simply passes,</strong> and
           <strong>switching them back on does not go back and validate what already happened.</strong>
-          A child table I missed, another write landing in between, an execution cut short — any of these can
+          A child table I missed, another write landing in between, an execution cut short. Any of these can
           leave rows with broken references, and you find out much later.</li>
           <li><strong>I did not take a backup first.</strong> “It does not need to survive” is a safe judgement
           only while you can still undo it.</li>
@@ -554,7 +554,7 @@ sys     0m0.048s</code></pre>
           is not one. How many of those rows a query actually reads depends on the schema and the plan, and
           that has to be checked separately.</li>
           <li><strong>With swap full, judgements above it get hard to trust.</strong> The query is unchanged
-          while what a single read costs may not be — and confirming that means measuring the memory side.</li>
+          while what a single read costs may not be, and confirming that means measuring the memory side.</li>
           <li><strong>Do not leave an emergency command standing as the answer.</strong> If you do not write
           that down, the next person learns it as the procedure.</li>
         </ul>
@@ -563,8 +563,8 @@ sys     0m0.048s</code></pre>
         <strong>fixing it and fixing it properly are different things.</strong>
         The commands that turned 54 seconds into one second were not the answer I wrote up a month later.</p>
 
-        <p>The next part is another screen in the same product. That time <strong>a cache went in</strong>
-        and the latency did not disappear — it moved.</p>
+        <p>The next part is another screen in the same product. That time <strong>a cache was already
+        there</strong> and that cache was the reason the screen was slow.</p>
 
         <p>Thank you for reading.</p>
         </div>
@@ -579,10 +579,10 @@ sys     0m0.048s</code></pre>
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=2dcb1d4f4c"></script>
+  <script src="../assets/content.js?v=d6aefa8091"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
   <script defer src="../assets/article.js?v=6f23973a30"></script>
   <script>
     (function () {

@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="The role list on a user page took over a second. The eight rows that resolved cost 0 ms each, and the six that did not add up to 1,409 ms — the whole span the timer recorded. Every unresolved project id was pulling the entire project list again, and those six ids were never in it." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
 </head>
 <body>
   <div class="topbar">
@@ -122,7 +122,7 @@
           <li>One screen request brings back 14 role rows, and each row
           <strong>resolves one project id.</strong> <strong>Eight resolve, six do not.</strong></li>
           <li><strong>The eight that resolve cost 0 ms each.</strong> Add up the six that do not and you get
-          <strong>1,409 ms</strong> — <strong>the same figure the timer recorded for the whole stretch in this
+          <strong>1,409 ms</strong>, <strong>the same figure the timer recorded for the whole stretch in this
           run.</strong></li>
           <li>The cause is that <strong><code>CacheBox.project()</code> pulled the entire project list again
           every time it failed to resolve one.</strong> And those six ids
@@ -148,11 +148,11 @@
 
         <p>Open one user and the lower half shows a table of <strong>which role they hold in which
         project.</strong> The roles live in our own database; <strong>the project names live on the OpenStack
-        side</strong> — specifically in <strong>Keystone</strong>, the service that owns users and projects
+        side</strong>, specifically in <strong>Keystone</strong>, the service that owns users and projects
         there. So every role row has to resolve a project.</p>
 
-        <p>There was a cache at that resolving step. Hand-rolled — the same <code>CacheManager</code> that
-        appears in <a href="slow-screens-1-volume-list.html">part one</a> — with a retention of
+        <p>There was a cache at that resolving step. Hand-rolled (the same <code>CacheManager</code> that
+        appears in <a href="slow-screens-1-volume-list.html">part one</a>) with a retention of
         <strong>10 minutes.</strong></p>
 
         <figure class="diagram">
@@ -358,7 +358,7 @@
         <blockquote><p><strong>Every missing id fetched the entire project list afresh.</strong>
         And since those six ids are not in the list however fresh it is, the next row fetches it again.</p></blockquote>
 
-        <p>The six unresolved rows were <strong>the same six ids in all three runs I have</strong> — one before
+        <p>The six unresolved rows were <strong>the same six ids in all three runs I have</strong>: one before
         the fix and two after, a day apart. That does not look like a cache that happened to be cold; it looks
         like <strong>positions that cannot be filled.</strong>
         ⚠️ Three runs is three runs. I did not run it more than that.</p>
@@ -458,7 +458,7 @@ var project = CacheBox.projects().stream()
           <li><strong>These are single runs.</strong> One log per state, with no repetition and no distribution.
           The 235 ms is just the average of those six.</li>
           <li><strong>Why one list call costs 235 ms is not something I dug into.</strong> Network, Keystone-side
-          processing, the number of projects — none of those were separated.</li>
+          processing, the number of projects. None of those were separated.</li>
           <li><strong>The record does not say how many projects there were.</strong> So whether the list was slow
           because it was large, or because the call itself is expensive, is not something this log settles.</li>
           <li><strong>The fixed code is not finished either.</strong> It calls <code>projects()</code> once per role
@@ -506,10 +506,10 @@ var project = CacheBox.projects().stream()
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=2dcb1d4f4c"></script>
+  <script src="../assets/content.js?v=d6aefa8091"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
   <script defer src="../assets/article.js?v=6f23973a30"></script>
   <script>
     (function () {

@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="時系列グラフを描く画面なのでクエリを疑いましたが、違いました。初期ロードがプロジェクトごとに client を作り直しており、使っていたファクトリは client を渡すたびに Keystone へ認証します。ただしこの記事には前後を測った数値がありません。なぜ無いのかが記事の半分です。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
 </head>
 <body>
   <div class="topbar">
@@ -222,7 +222,7 @@
         であり、その事実が関数名に出ていなかった、というのがこの記事の話です。</p>
 
         <p>⚠️ そして <strong>これは社内文書 2 件で確認したこと</strong>です。<code>serviceClient()</code> の
-        実装そのものはこの記事に載せておらず、保管庫に残っているのも実装ではなく、それを説明する文書です。</p>
+        実装そのものはこの記事に載せておらず、リポジトリに残っているのも実装ではなく、それを説明する文書です。</p>
 
         <p>するとループはこう回ります。</p>
 
@@ -428,12 +428,12 @@ for (String projectId : projects) {
           <li><strong>認証 1 回がどれだけかを知りません。</strong>ですから「N−1 回分を払わずに済む」が
           何秒なのかも分かりません。</li>
           <li><strong>client を得ることが認証だというのは社内文書 2 件で確認しました。</strong>
-          <code>serviceClient()</code> の実装自体は保管庫になく、この記事にも載せていません。
+          <code>serviceClient()</code> の実装自体はリポジトリになく、この記事にも載せていません。
           使っているライブラリのバージョンやコネクタも確認できていません。</li>
           <li><strong>プロジェクトごとの取得はそのままです。</strong>無くしたのは認証の側で、取得は今も
           プロジェクトの数だけ回ります。そこまで減らすには別の修正が要ります。</li>
           <li><strong>負荷ツールが役に立たないという話ではありません。</strong>軸が合わなければ役に立たない、
-          という話です。前の <a href="slow-screens-1-volume-list.ja.html">①編</a>では同じ種類の道具で
+          という話です。前の <a href="slow-screens-1-volume-list.ja.html">①編</a>では同じ道具で
           6 通りの構成を切り分けました。</li>
         </ul>
 
@@ -457,8 +457,9 @@ for (String projectId : projects) {
         先に問うべきです。</strong>今回は遅い区間を見つけて直しておきながら、その区間を通るシナリオを
         書かなかったので、前後を比べられませんでした。</p>
 
-        <p>次回はその 2 つめの問いを正面から扱います。<strong>負荷を増やしてもスループットが変わらなかった</strong>
-        試験の話です。</p>
+        <p>次回はその 2 つめの問いを正面から扱います。<strong>構成を 6 段階に分け、同じ条件で
+        それぞれ測った</strong>試験の話です。この連載名がつく前に公開したので、タイトルに番号がありません
+        (<a href="parallelism-made-the-tail-worse.ja.html">⑤編</a>)。</p>
 
         <p>お読みいただきありがとうございました。</p>
         </div>
@@ -473,10 +474,10 @@ for (String projectId : projects) {
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=2dcb1d4f4c"></script>
+  <script src="../assets/content.js?v=d6aefa8091"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
   <script defer src="../assets/article.js?v=6f23973a30"></script>
   <script>
     (function () {

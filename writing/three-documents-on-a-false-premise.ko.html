@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="2,255 커밋을 건너뛰는 버전 이관. 문서 추론으로는 어디서 깨질지 알 수 없어 격리 환경에 옛 버전을 세우고 한 번 깨뜨려 봤다. 그러자 내 앞선 문서 세 편의 전제가 틀렸다는 게 나왔다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
 </head>
 <body>
   <div class="topbar">
@@ -69,7 +69,7 @@
     <main>
       <div class="hero-top">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
-        <div class="article-meta"></div>
+        <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span></div>
       </div>
       <section class="page-hero">
         <h1>내가 쓴 절차서 세 편이 틀린 전제 위에 있었다<br><span class="h1-sub">절차서는 읽어서가 아니라 한 번 실패해 봐야 고쳐집니다. 현장 패치 업그레이드</span></h1>
@@ -93,12 +93,12 @@
 
         <p><strong>범위.</strong> 2026년 7월, 운영 중인 고객 현장의 OpenStack 기반 프라이빗 클라우드 포털을
         <strong>2,255 커밋 차이가 나는 상위 버전</strong>으로 올리기 위해 준비한 기록이다. 제품명·버전 번호·고객사·
-        티켓 번호는 쓰지 않는다. <strong>여기서 실제로 한 것은 격리 환경 재현과 절차·런북 준비까지</strong>이고,
+        티켓 번호는 쓰지 않는다. <strong>여기서 실제로 한 것은 격리 환경 재현과 절차·런북 준비까지</strong>이고
         현장 적용을 내가 수행한 기록이 아니다. 수치의 출처는 섞여 있다. 이관 결과(3/3, FAIL 0)는
         <strong>격리 컨테이너 재현</strong>이고 커밋 수·릴리스본 대조·48개 테이블 컬럼 비교는
         <strong>저장소와 스키마 실사</strong>이며 기동 실패는 <strong>로컬 트러블슈팅</strong>이다.</p>
 
-        <p>작업은 이렇게 생겼다. 두 breaking change. 인증 체계가 바뀌면서 전 사용자 비밀번호가 초기화되고,
+        <p>작업은 이렇게 생겼다. 두 breaking change. 인증 체계가 바뀌면서 전 사용자 비밀번호가 초기화되고
         스키마 두 개가 하나로 통합된다. 운영 DB라 무중단이 불가능하고 롤백 경로가 필수다. 그리고
         <strong>공식 마이그레이션 가이드는 현장보다 한 단계 위 버전을 기준으로 쓰여 있었다.</strong></p>
 
@@ -113,7 +113,7 @@
         <p>재현을 하려면 출발점이 있어야 한다. 그런데 현장에 전달된 구버전 릴리스본이 <strong>두 벌</strong>이었다.
         받은 시점이 다섯 달 넘게 차이 났다(2025-10-31과 2026-04-15, 166일). 어느 쪽을 기준선으로 쓸지 고르기 전에, 두 벌이 같은 것인지부터 봤다.</p>
 
-<pre><code>diff -rq  &lt;릴리스본 A&gt;  &lt;릴리스본 B&gt;      # 차이 없음 (exit 0)
+<pre data-lang="shell"><code>diff -rq  &lt;릴리스본 A&gt;  &lt;릴리스본 B&gt;      # 차이 없음 (exit 0)
 find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</code></pre>
 
         <p>내용은 100% 같았고 차이는 파일 mtime. 즉 다시 내려받은 시각뿐이었다. 어느 쪽을 써도 무방하다고
@@ -155,7 +155,7 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
         결론냈다. 이것이 재현 스크립트를 만든 직접적인 이유다.</p>
 
         <p>덧붙여, 실사 과정에서 이전 문서가 "확인 필요"로 남겨둔 항목 하나가 해소됐다. 구버전 릴리스본의 패치
-        폴더에 중간 버전 마이그레이션 SQL이 <strong>아예 없었다</strong>. 즉 그 마이그레이션은 미포함이고,
+        폴더에 중간 버전 마이그레이션 SQL이 <strong>아예 없었다</strong>. 즉 그 마이그레이션은 미포함이고
         상위 버전으로 올릴 때 델타에 반드시 들어가야 하며 날짜상 가장 앞서므로 <strong>최우선으로
         선적용</strong>해야 했다.</p>
 
@@ -173,7 +173,7 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
         <p>델타 실사가 무의미해진 것은 아니다. 어느 패치가 baseline에 들어 있는지는 재구축 후 이관에서도 필요한
         정보다. 무의미해진 것은 <strong>"패치를 순서대로 적용하면 도착한다"는 결론</strong> 쪽이다.</p>
 
-        <p>세 편을 지우지 않고 <strong>각각에 정정 표기를 달았다.</strong> 지우면 왜 그렇게 생각했는지가 사라지고,
+        <p>세 편을 지우지 않고 <strong>각각에 정정 표기를 달았다.</strong> 지우면 왜 그렇게 생각했는지가 사라지고
         다음에 같은 자리에서 같은 추론을 하게 된다. 남겨 두면 "이 전제는 이런 이유로 틀렸다"가 문서에 남는다.</p>
 
         <p>여기서 얻은 교훈은 "가이드를 먼저 읽어라"가 아니다. 가이드는 처음부터 있었고 나도 봤다. 정확히 말하면
@@ -185,7 +185,7 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
         <p>재현은 원샷 스크립트로 만들었다. 격리된 포트에 DB를 띄우고 옛 버전을 세운 뒤, 백업하고 신규 버전을
         재구축하고 데이터를 이관하고 버전을 갱신하고 검증한다.</p>
 
-<pre><code>격리 DB 기동
+<pre data-lang="text"><code>격리 DB 기동
   → 구버전 빌드(스키마 2종) + 테스트 데이터 심기
   → 백업
   → 신규 버전 재구축
@@ -195,12 +195,12 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
 
         <p>이관 부분에서 의도적으로 부정확한 선택을 했다. 가이드는 컬럼 매핑을 표로 명시하지만 그 표를 당시에는
         확보하지 못했다. 그래서 스크립트는 <strong>원본과 신규의 공통 컬럼 교집합만 골라
-        <code>INSERT IGNORE</code> 로 복사</strong>하게 했다.</p>
+        <code>INSERT IGNORE</code>로 복사</strong>하게 했다.</p>
 
         <p>이건 정확한 이관이 아니다. 그게 <strong>의도</strong>였다. 이 스크립트의 목적은 정확히 옮기는 것이 아니라
         <strong>어느 테이블이 깨지는지 드러내는 것</strong>이다. 스키마 드리프트를 흡수하고 넘어가되, 실패한
         테이블은 로그에 남는다. 그러면 <strong>FAIL 로그가 스키마 갭의 후보 목록</strong>이 된다.
-        완전한 목록은 아니다. 대상에 없는 테이블은 SKIP으로 지나가고 <code>INSERT IGNORE</code> 는 컬럼 누락과
+        완전한 목록은 아니다. 대상에 없는 테이블은 SKIP으로 지나가고 <code>INSERT IGNORE</code>는 컬럼 누락과
         형 변환 경고를 실패로 만들지 않고 흡수한다. 드러나는 것은 <em>깨지는 것</em>이지 <em>다른 것 전부</em>가
         아니다.</p>
 
@@ -247,7 +247,7 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
         <p>여기서 선택지가 둘이다. 그 단계를 스크립트에서 빼고 "전 구간 성공"이라고 쓰거나, 남겨 두고 못 했다고
         말하거나.</p>
 
-        <p>스크립트가 그 단계마다 <strong>명시적으로 <code>SKIP</code> 또는 <code>WARN</code> 을 로깅</strong>하게
+        <p>스크립트가 그 단계마다 <strong>명시적으로 <code>SKIP</code> 또는 <code>WARN</code>을 로깅</strong>하게
         했다. 그러면 실행 로그를 읽는 사람이 무엇이 검증됐고 무엇이 검증되지 않았는지를 <strong>같은 화면에서</strong>
         본다. 검증되지 않은 구간이 로그에서 사라지면 다음 사람은 그 구간도 검증됐다고 읽는다.</p>
 
@@ -257,11 +257,11 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
 
         <h2 id="그리고-하나가-터졌다">그리고 실제로 하나가 터졌다<a class="anchor" href="#그리고-하나가-터졌다" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>준비 기간에 커스터마이징 브랜치를 원격 최신으로 올렸다. 39 커밋이 한꺼번에 들어왔고,
+        <p>준비 기간에 커스터마이징 브랜치를 원격 최신으로 올렸다. 39 커밋이 한꺼번에 들어왔고
         <strong>WAS가 기동 즉시 종료됐다.</strong> Tomcat 컨텍스트 초기화에서 cache 빈 생성에 실패하며 프로세스가
-        <code>exit 1</code> 로 죽었다.</p>
+        <code>exit 1</code>로 죽었다.</p>
 
-<pre><code>No enum constant ConfigureKey.FEATURE_SETTINGS
+<pre data-lang="text"><code>No enum constant ConfigureKey.FEATURE_SETTINGS
   ↑
 BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → configures findAll</code></pre>
 
@@ -310,7 +310,7 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
         <strong>애초에 걱정 대상이 아니었다.</strong></p>
 
         <p>남은 반론은 "그래도 이관이 어렵지 않나"였다. 그건 실측으로 답했다. 보존해야 할 테이블 전부에 대해
-        <code>information_schema</code> 로 구버전과 신버전의 컬럼을 비교했다.</p>
+        <code>information_schema</code>로 구버전과 신버전의 컬럼을 비교했다.</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
@@ -327,7 +327,7 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
         </div>
 
         <p><strong>48개 테이블에서 컬럼의 추가·삭제가 0이었다.</strong> 컬럼 집합이 같으면
-        <code>INSERT ... SELECT</code> 로 옮기는 경로가 성립할 가능성이 높다. 다만 이건 컬럼 이름의 집합만 본
+        <code>INSERT ... SELECT</code>로 옮기는 경로가 성립할 가능성이 높다. 다만 이건 컬럼 이름의 집합만 본
         것이고 타입·길이·순서·nullability·기본값·키·FK·트리거까지 같은지는 이 비교가 답하지 않는다. 확인된
         차이는 과금·미터링 테이블이 속한 <strong>스키마 위치가 바뀐다</strong>는 것 하나다.</p>
 
@@ -370,10 +370,10 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=2dcb1d4f4c"></script>
+  <script src="../assets/content.js?v=d6aefa8091"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
   <script defer src="../assets/article.js?v=6f23973a30"></script>
   <script>
     (function () {

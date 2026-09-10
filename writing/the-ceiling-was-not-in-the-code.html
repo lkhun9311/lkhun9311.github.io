@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="The Throughput Ceiling Was Not in the Code | Kwanghun Lee" />
-  <meta property="og:description" content="Post creation would not go past 6.27 req/s. Four times the write threads did nothing. Three times the database pool did nothing. The limit was a default of five connections per host, inside an HTTP client that came in as a transitive dependency of the AWS SDK I added for S3 — a layer that is only on the runtime classpath, so reading the code could never have found it." />
+  <meta property="og:description" content="Post creation would not go past 6.27 req/s. Twice the write threads did nothing. Three times the database pool did nothing. The limit was a default of five connections per host, inside an HTTP client that came in as a transitive dependency of the AWS SDK I added for S3 — a layer that is only on the runtime classpath, so reading the code could never have found it." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -29,9 +29,9 @@
   <meta name="twitter:title" content="The Throughput Ceiling Was Not in the Code | Kwanghun Lee" />
   <meta name="twitter:description" content="A default nobody chose was the throughput ceiling of the moderation path. A layer you cannot find by reading, only by measuring." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="Post creation would not go past 6.27 req/s. Four times the write threads did nothing. Three times the database pool did nothing. The limit was a default of five connections per host, inside an HTTP client that came in as a transitive dependency of the AWS SDK I added for S3 — a layer that is only on the runtime classpath, so reading the code could never have found it." />
+  <meta name="description" content="Post creation would not go past 6.27 req/s. Twice the write threads did nothing. Three times the database pool did nothing. The limit was a default of five connections per host, inside an HTTP client that came in as a transitive dependency of the AWS SDK I added for S3 — a layer that is only on the runtime classpath, so reading the code could never have found it." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
 </head>
 <body>
   <div class="topbar">
@@ -105,7 +105,7 @@
         <a class="term" href="../notes/load-test-harness.html">load-test harness</a> to put numbers on it.
         The harness immediately asked the next question — <em>why does post creation stop at 6.27 req/s?</em></p>
 
-        <p>Four times the write threads did nothing. Three times the database pool did nothing. The culprit
+        <p>Twice the write threads did nothing. Three times the database pool did nothing. The culprit
         was <strong>a default inside a library I never added, never chose, and had never seen the name of</strong>.</p>
 
 
@@ -120,7 +120,7 @@
         <h2 id="what-is-in-here">What is in here<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
 
         <ul>
-          <li>Throughput on the content moderation path sat at <strong>6.27 req/s</strong>. Four times the
+          <li>Throughput on the content moderation path sat at <strong>6.27 req/s</strong>. Twice the
           write threads, three times the database pool — no change.</li>
           <li>The cause was the <strong>HTTP client the AWS SDK pulled in when I added S3</strong>, and its
           default of <strong>five connections per target host</strong>.</li>
@@ -135,8 +135,8 @@
         </ul>
 
         <p><strong>The code is in a private repository.</strong> The product has not launched, so the
-        repository is not open yet. Each section therefore carries <strong>a file path and a symbol name</strong>
-        instead of a GitHub link.</p>
+        repository is not open yet. So there are no GitHub links in this article; <strong>only the quoted
+        fragments</strong> of the code appear in the text.</p>
 
         <p><strong>⚠️ One thing up front.</strong> Every number here comes from a <strong>local harness</strong>.
         The load generator, the application, the external-API stub and PostgreSQL all share one machine's CPU.
@@ -333,7 +333,7 @@
           <figcaption>The three pink bars are three different conditions, and the concurrency <strong>does not move off ten</strong>. Raising writes to 32 grows waiting time (p50), not throughput. The blue bar at the bottom is the same stub hit directly, without the application: on its own it accepts thirty-two. So the limit is on the <strong>application side</strong>.</figcaption>
         </figure>
 
-        <p>Here is how to read the table. <strong>Four times the writers and three times the pool leave
+        <p>Here is how to read the table. <strong>Twice the writers and three times the pool leave
         concurrency at ten.</strong> The only thing that grows is latency (2,592 → 5,119 ms), which is the
         classic <strong>queueing signal</strong> — no extra work, just a longer line.</p>
 
@@ -539,8 +539,8 @@ spring:
 class OutboundHttpConfig {
     @Bean
     fun outboundConnectionManager(
-        @Value("\${oxy.http.outbound.max-per-route:50}") maxPerRoute: Int,
-        @Value("\${oxy.http.outbound.max-total:100}") maxTotal: Int,
+        @Value("\${app.http.outbound.max-per-route:50}") maxPerRoute: Int,
+        @Value("\${app.http.outbound.max-total:100}") maxTotal: Int,
         // Re-attach the timeouts Spring used to supply — by reading the same property keys.
         @Value("\${spring.http.client.connect-timeout:3s}") connectTimeout: Duration,
         @Value("\${spring.http.client.read-timeout:10s}") readTimeout: Duration,
@@ -554,6 +554,9 @@ class OutboundHttpConfig {
         return RestClientCustomizer { builder -&gt; builder.requestFactory(factory) }
     }
 }</code></pre>
+
+        <p>⚠️ The property prefix above is <strong>renamed to a neutral one.</strong>
+        Everything else is the source as it stands.</p>
 
         <p><strong>The reasoning behind 50</strong> is written into the comment. One post makes two calls, so
         fifty is <strong>twenty-five posts under moderation at once</strong>; at 800 ms per call that accepts
@@ -611,7 +614,7 @@ class OutboundHttpConfig {
         <p>And that quiet fallback to a default is the cause of this entire article. So I added two tests that
         assert the values <strong>actually took effect</strong>.</p>
 
-<pre data-lang="kotlin"><code>// ① The value must be ours, not the default of 5.
+<pre data-lang="kotlin"><code>// ① The value must be the one I set, not the default of 5.
 assertThat(manager.defaultMaxPerRoute).isEqualTo(37)
 assertThat(manager.maxTotal).isEqualTo(91)
 // Per-route lookup must agree — if they diverge, the effective limit differs.
@@ -653,7 +656,7 @@ assertThat(factories[0]).isSameAs(factories[1])</code></pre>
 
         <p>So I wrote down <strong>when that design becomes justified</strong>, ahead of time, to avoid adopting
         it later on a feeling: if post creation p95 still misses the target <em>after</em> the limit has been
-        deliberately raised, or if the external API's p99 approaches our own timeout, then it goes
+        deliberately raised, or if the external API's p99 approaches the service's own timeout, then it goes
         asynchronous.</p>
 
         <h2 id="what-this-does-not-claim">What this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
@@ -714,10 +717,10 @@ assertThat(factories[0]).isSameAs(factories[1])</code></pre>
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=2dcb1d4f4c"></script>
+  <script src="../assets/content.js?v=d6aefa8091"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
   <script defer src="../assets/article.js?v=6f23973a30"></script>
   <script>
     (function () {

@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="I measured one admin volume list under six configurations. Holding the cache fixed and switching sequential calls to parallel made the median 21x faster and P99 1.9x slower. The code was holding a lock on one cache key while waiting on an external API, but this test alone cannot prove that was the cause." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=ce939082f9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
 </head>
 <body>
   <div class="topbar">
@@ -101,7 +101,7 @@
         <article class="article-body">
 
         <p>Hello. I write the backend of an internal cloud admin console. Its volume list screen was
-        <strong>running past ten minutes and timing out</strong> — five runs out of six failed.</p>
+        <strong>running past ten minutes and timing out</strong>. It failed about five times in six.</p>
 
         <p>After fixing it I <strong>split the work into six configurations</strong> and
         <strong>measured each one under the same load.</strong> That table is the whole article.
@@ -481,7 +481,7 @@ if (messages == null || messages.isEmpty()) {
         bin.</strong></p></blockquote>
 
         <p>If the mapping function is a memory computation, that is microseconds. Here it was
-        <strong>a network round trip</strong> — not milliseconds, but tens to hundreds of them.</p>
+        <strong>a network round trip</strong>. Not milliseconds, but tens to hundreds of them.</p>
 
         <p>⚠️ The internal document calls this a “segment lock”, which <strong>is not accurate.</strong>
         Segments are the Java 7 implementation; since Java 8 <code>ConcurrentHashMap</code> locks
@@ -518,7 +518,7 @@ if (messages == null || messages.isEmpty()) {
           meeting it.</strong> A request arriving before warming finishes still loads for itself, and the same
           holds if warming fails. ⚠️ The design document describes this step as “synchronous warming”, but the
           code says <code>runAsync</code>. I wrote down the code, not the document.</li>
-          <li><strong>Creating or deleting a volume invalidates the cache</strong> — without leaving it empty.
+          <li><strong>Creating or deleting a volume invalidates the cache</strong>, without leaving it empty.
           The existing value stays while a fresh read happens behind it and swaps in atomically.</li>
           <li><strong>The path that edits a volume group was not invalidating the volume cache.</strong>
           It cleared its own cache and left the volume DTO cache alone. That path now invalidates both.</li>
@@ -540,7 +540,7 @@ if (messages == null || messages.isEmpty()) {
         <code>refreshAfterWrite(5s)</code> and no expiry. The reload starts <strong>when someone asks for the
         value again after those five seconds have passed,</strong> and that person receives the old value.
         If nobody asks, nothing refreshes. If the reload fails, the old value stays. Which means there is
-        <strong>no fixed ceiling on how stale the value can get.</strong> Adding an expiry creates one — and at
+        <strong>no fixed ceiling on how stale the value can get.</strong> Adding an expiry creates one, and at
         that moment you are back at the first paragraph of this section. Someone pays the cost.</p>
 
         <h2 id="objection">Objection: “why not just add threads?”<a class="anchor" href="#objection" aria-label="Link to this section">#</a></h2>
@@ -592,7 +592,7 @@ if (messages == null || messages.isEmpty()) {
         <figure class="diagram">
           <img src="../assets/figures/volume-jmeter-after.png" alt="JMeter report after the fix. Apdex 1.000, all 7,658 samples succeeded, mean 5.34 ms, P99 23 ms, 12.82 requests per second." loading="lazy" width="645" height="317">
           <figcaption>After the fix (configuration 6). The configured test duration is the same and
-          <strong>completed samples went from 54 to 7,658</strong> — as throughput, 0.06 to 12.82 requests per
+          <strong>completed samples went from 54 to 7,658</strong>. As throughput, 0.06 to 12.82 requests per
           second. Median 4 ms, P99 23 ms, Apdex 1.000.</figcaption>
         </figure>
 
@@ -605,7 +605,7 @@ if (messages == null || messages.isEmpty()) {
           <strong>the network call inside a lock</strong> is why parallelism hurt in this code, and once that lock
           was gone parallelism pays. But the basis for that suspicion is the code, not this test.</li>
           <li><strong>It also did not have to be Caffeine.</strong> The property needed is “one loader per key”,
-          not a particular library. You can write it yourself — writing it myself is what caused this article.</li>
+          not a particular library. You can write it yourself. Writing it myself is what caused this article.</li>
           <li><strong>I do not attribute all four screens to one cause.</strong> Each had slightly different
           secondary causes, and only the first one is written up in detail here.</li>
           <li><strong>The 23 ms is the aggregate P99 over all 7,658 samples,</strong> not a figure filtered to
@@ -622,7 +622,7 @@ if (messages == null || messages.isEmpty()) {
         <p>To gather it up.</p>
 
         <ul>
-          <li><strong>Parallelising can make things slower</strong> — when it manufactures contention that
+          <li><strong>Parallelising can make things slower</strong>, when it manufactures contention that
           was not there before.</li>
           <li>A <code>computeIfAbsent</code> mapping function should be <strong>short and simple.</strong>
           The Java documentation says so. Put I/O inside it and that key stays locked for the whole round trip.</li>
@@ -652,10 +652,10 @@ if (messages == null || messages.isEmpty()) {
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=2dcb1d4f4c"></script>
+  <script src="../assets/content.js?v=d6aefa8091"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <script defer src="../assets/highlight.js?v=0cb53b9ada"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
   <script defer src="../assets/article.js?v=6f23973a30"></script>
   <script>
     (function () {
