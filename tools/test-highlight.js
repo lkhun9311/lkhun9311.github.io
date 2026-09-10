@@ -179,7 +179,8 @@ declared.forEach(function (lang) {
   if (lang === "text" || known.indexOf(lang) === -1) return;
   ran++;
   var sample = { java: "class A {}", kotlin: "val a = 1", yaml: "a: 1", shell: "$ ls",
-                 bash: "$ ls", sql: "select 1", tsx: "const a = 1", python: "def f(): pass" }[lang];
+                 bash: "$ ls", sql: "select 1", tsx: "const a = 1", python: "def f(): pass",
+                 json: '{"a": 1}' }[lang];
   if (!sample) { failed++; console.error("FAIL  " + lang + " 표본이 이 테스트에 없다"); return; }
   if (H.render(lang, sample).indexOf('<span class="tok-') === -1) {
     failed++;
