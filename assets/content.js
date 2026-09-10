@@ -272,6 +272,18 @@
           tags: ["Tooling", "Method", "Verification"]
         },
         {
+          title: "The Screen I Said Not to Fix Took 6.8 Seconds",
+          url: "writing/monitoring-the-screen-i-said-not-to-fix.html",
+          source: "company", sourceLabel: "Company work",
+          title_ko: "고칠 게 없다고 쓴 화면이 6.8초였습니다",
+          desc_ko: "모니터링 화면 3개를 검토하고 「고칠 근거를 못 찾았다」고 발행했는데 같은 화면의 첫 데이터가 6.8초였습니다. 저는 REST 응답을 쟀고 사용자는 SSE의 첫 data를 기다리고 있었습니다. 요청 경로에서 계산을 떼어 내자 세 화면 모두 약 23ms가 됐습니다. 연작 「통합 모니터링」 ①.",
+          title_ja: "直す必要がないと書いた画面が 6.8 秒でした",
+          desc_ja: "モニタリング画面 3 つをレビューして「直す根拠が見つからなかった」と公開したのに、同じ画面の最初のデータが 6.8 秒でした。私は REST の応答を測り、利用者は SSE の最初の data を待っていました。リクエスト経路から計算を外すと、三画面とも約 23ms になりました。連載「統合モニタリング」①。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "I reviewed three monitoring screens, published that there was no case for a change, and first data on the same screen took 6.8 seconds. I had measured the REST response while users waited for the first SSE data event. Taking the computation off the request path brought all three screens to about 23 ms. Unified Monitoring, part one. Also in Korean and Japanese.",
+          tags: ["Performance", "Method", "Verification"]
+        },
+        {
           title: "I Wrote a Generator So Six Runs Would Share One Condition",
           url: "writing/slow-screens-8-load-test-harness.html",
           source: "company", sourceLabel: "Company work",

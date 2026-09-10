@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Screen I Said Not to Fix Took 6.8 Seconds | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/monitoring-the-screen-i-said-not-to-fix.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/monitoring-the-screen-i-said-not-to-fix.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/monitoring-the-screen-i-said-not-to-fix.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/monitoring-the-screen-i-said-not-to-fix.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="The Screen I Said Not to Fix Took 6.8 Seconds | Kwanghun Lee" />
+  <meta property="og:description" content="I reviewed three monitoring screens, published that there was no case for a change, and first data on the same screen took 6.8 seconds. I had measured the REST response while users waited for the first SSE data event. Taking the computation off the request path brought all three screens to about 23 ms." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/monitoring-the-screen-i-said-not-to-fix.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="The Screen I Said Not to Fix Took 6.8 Seconds | Kwanghun Lee" />
+  <meta name="twitter:description" content="I reviewed three monitoring screens, published that there was no case for a change, and first data on the same screen took 6.8 seconds. I had measured the REST response while users waited for the first SSE data event. Taking the computation off the request path brought all three screens to about 23 ms." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="I reviewed three monitoring screens, published that there was no case for a change, and first data on the same screen took 6.8 seconds. I had measured the REST response while users waited for the first SSE data event. Taking the computation off the request path brought all three screens to about 23 ms." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en": "monitoring-the-screen-i-said-not-to-fix.html", "ko": "monitoring-the-screen-i-said-not-to-fix.ko.html", "ja": "monitoring-the-screen-i-said-not-to-fix.ja.html"}'>
+          <option value="ko">Korean</option>
+          <option value="en" selected>English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing</a>
+        <div class="article-meta"><span class="source-tag company notranslate">Company work</span></div>
+      </div>
+              <section class="page-hero">
+          <h1>The Screen I Said Not to Fix Took 6.8 Seconds<br><span class="h1-sub">I measured a boundary users were not waiting on. An internal cloud admin console. Unified Monitoring, part one</span></h1>
+          <p class="article-date">Sep 2026</p>
+        </section>
+
+        <aside class="article-aside" data-aside="writing" data-slug="monitoring-the-screen-i-said-not-to-fix"></aside>
+
+                <nav class="article-toc" aria-label="Table of contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-is-in-here">What is in here</a></li>
+            <li><a href="#which-screens">Which screens?</a></li>
+            <li><a href="#the-article-was-wrong">The article I published was wrong</a></li>
+            <li><a href="#where-i-measured">Where I measured was not where users waited</a></li>
+            <li><a href="#measured-again">Measured again, it looked like this</a></li>
+            <li><a href="#what-the-fix-was">The fix is one line</a></li>
+            <li><a href="#the-four-parts">The four parts that follow</a></li>
+            <li><a href="#what-this-does-not-claim">What this article does not claim</a></li>
+            <li><a href="#wrapping-up">Wrapping up</a></li>
+          </ul>
+        </nav>
+
+        <article class="article-body">
+
+        <p>I build the backend of an internal cloud admin console.</p>
+
+        <p>In <a href="slow-screens-7-nothing-to-fix.html">part seven</a> I reviewed three monitoring screens
+        and wrote that <strong>I could not find a case for changing anything.</strong> That article also
+        contains this sentence. <strong>“I decided not to add more cache. The place I was going to add it
+        was already a cheap path, and a cache there buys staleness and complexity.”</strong></p>
+
+        <p><strong>First data on that screen took 6.8 seconds.</strong> And the fix was
+        <strong>a cache in exactly that place.</strong> It became 23 ms.</p>
+
+        <p>This is the story of why that judgement was wrong, and of what I had failed to measure.
+        Four parts after this one go screen by screen.</p>
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>Anyone whose load test looks good while users keep saying the screen is slow</li>
+          <li>Anyone pushing first data over SSE or WebSocket</li>
+          <li>Anyone who has written off a path as “already cheap” and moved on</li>
+        </ul>
+
+        <h2 id="what-is-in-here">What is in here<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>An article I published reached the wrong conclusion.</strong> I wrote that there was no
+          case for a change, and first data on the same screen was 6.8 seconds.</li>
+          <li>What was wrong was not the arithmetic but <strong>where I measured.</strong> I measured the REST
+          response. The user was waiting for <strong>the first SSE <code>data</code> event.</strong></li>
+          <li>“The time-series store is cheap because it runs once every 15 seconds” was true
+          <strong>only of the periodic refresh.</strong> The same computation also ran
+          <strong>synchronously on every new connection.</strong></li>
+          <li>I fixed the three screens one at a time, then merged three caches into one. Medians went from
+          <strong>6,776 ms, 3,938 ms and 1,436 ms to about 23 ms each.</strong></li>
+        </ul>
+
+        <p>This is an internal product, so the code and the screens are not reproduced literally.
+        Product names, customers and internal addresses are out; the structure and the configured values stay.</p>
+
+        <blockquote><p>⚠️ <strong>One thing up front.</strong> These numbers are
+        <strong>30 runs by a single user</strong>, not production statistics. And between the review in
+        part seven (August) and this measurement (September)
+        <strong>someone else's improvement landed as well.</strong> I did not separate their contribution
+        from mine. It is in “what this article does not claim” below.</p></blockquote>
+
+        <h2 id="which-screens">Which screens?<a class="anchor" href="#which-screens" aria-label="Link to this section">#</a></h2>
+
+        <p>Unified monitoring has three screens. <strong>Dashboard, physical nodes, virtual resources.</strong>
+        All three take structure over REST and live values over SSE.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 250" role="img" aria-labelledby="mon-t mon-d" class="figure-svg">
+            <title id="mon-t">Three monitoring screens reading from the same two sources</title>
+            <desc id="mon-d">On the left, three screens are stacked vertically: dashboard, physical nodes and
+            virtual resources. An API server sits in the middle, with two branches leaving it. The upper branch
+            takes structure information over REST. The lower branch takes live values over SSE. On the right are
+            the infrastructure API and the time-series store, and a note says the three screens read the same two
+            sources separately.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="8" y="24" width="150" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="83" y="49" font-size="13" fill="#18121d" text-anchor="middle">Dashboard</text>
+              <rect x="8" y="82" width="150" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="83" y="107" font-size="13" fill="#18121d" text-anchor="middle">Physical nodes</text>
+              <rect x="8" y="140" width="150" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="83" y="165" font-size="13" fill="#18121d" text-anchor="middle">Virtual resources</text>
+
+              <rect x="248" y="72" width="150" height="60" rx="6" fill="none" stroke="#3b3344" stroke-width="2"/>
+              <text x="323" y="98" font-size="13.5" fill="#18121d" text-anchor="middle" font-weight="700">API server</text>
+              <text x="323" y="118" font-size="11.5" fill="#8a8a8a" text-anchor="middle">REST · SSE</text>
+
+              <path d="M158 44 H 248" fill="none" stroke="#8a8a8a" stroke-width="1.6" marker-end="url(#mon-ar)"/>
+              <path d="M158 102 H 248" fill="none" stroke="#8a8a8a" stroke-width="1.6" marker-end="url(#mon-ar)"/>
+              <path d="M158 160 H 248" fill="none" stroke="#8a8a8a" stroke-width="1.6" marker-end="url(#mon-ar)"/>
+
+              <rect x="498" y="24" width="200" height="44" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <text x="598" y="51" font-size="12.5" fill="#18121d" text-anchor="middle">infrastructure API</text>
+              <rect x="498" y="136" width="200" height="44" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="598" y="163" font-size="12.5" fill="#18121d" text-anchor="middle">time-series store</text>
+
+              <path d="M398 90 H 448 V 46 H 498" fill="none" stroke="#8a8a8a" stroke-width="1.6" marker-end="url(#mon-ar)"/>
+              <path d="M398 114 H 448 V 158 H 498" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#mon-arp)"/>
+              <text x="448" y="40" font-size="11.5" fill="#8a8a8a">REST</text>
+              <text x="448" y="200" font-size="11.5" fill="#d62976" font-weight="700">SSE</text>
+
+              <text x="360" y="232" font-size="11.5" fill="#8a8a8a" text-anchor="middle">three screens · same two sources · read separately</text>
+            </g>
+            <defs>
+              <marker id="mon-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="mon-arp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>Each screen opens its own SSE stream. That word “own” turns out to be the subject of the
+          last part in this series.</figcaption>
+        </figure>
+
+        <h2 id="the-article-was-wrong">The article I published was wrong<a class="anchor" href="#the-article-was-wrong" aria-label="Link to this section">#</a></h2>
+
+        <p>Here is what I wrote, next to what I measured.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">Part seven's judgement against this measurement.</caption>
+          <thead><tr><th></th><th>What part seven says</th><th>What I measured</th></tr></thead>
+          <tbody>
+            <tr><td>Conclusion</td><td>No case for changing anything</td><td><strong>First data, median 6,776 ms</strong></td></tr>
+            <tr><td>Cache</td><td>Not adding one. The path is already cheap</td><td><strong>Added one there. 23 ms</strong></td></tr>
+            <tr><td>Basis</td><td>Computed once per 15 s, broadcast to all</td><td>True of the tick. <strong>It also runs per connection</strong></td></tr>
+            <tr><td>Measurement</td><td>⚠️ I did not run a load test</td><td>Timed the first SSE <code>data</code> directly</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">The last line of part seven was <strong>“I did not run a load test. I judged it
+        from the code and never confirmed it by running one.”</strong> The limit it wrote down for itself is
+        the one that came true.</p>
+
+        <p>⚠️ One thing needs separating. <strong>“Cheap because it runs once every 15 seconds” is not a false
+        statement by itself.</strong> The periodic refresh really is independent of the number of users and
+        really does run once per tick. What was wrong was
+        <strong>treating that one sentence as an account of the whole screen.</strong></p>
+
+        <h2 id="where-i-measured">Where I measured was not where users waited<a class="anchor" href="#where-i-measured" aria-label="Link to this section">#</a></h2>
+
+        <p>The screen finished loading on this condition.</p>
+
+<pre data-lang="text"><code>1. take structure information over REST        about 20 ms
+2. EventSource connects
+3. a connection event arrives
+4. the first data event arrives                ← 6.8 seconds to here
+5. the front end drops the loading layer</code></pre>
+
+        <p>An ordinary HTTP sampler <strong>stops at 3 and calls it a success.</strong>
+        What the user waited for was 4.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="gap-t gap-d" class="figure-svg">
+            <title id="gap-t">The point the tool called done against the point the user stopped waiting</title>
+            <desc id="gap-d">A horizontal time axis. The upper bar is what the measuring tool saw: a short grey
+            span ending at connection and first event. The lower bar is what the user waited through: a long pink
+            span reaching the first data event. The two bars end far apart, and the space between them is labelled
+            as the stretch nobody was looking at.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="14" y="42" font-size="12" fill="#8a8a8a">measuring tool</text>
+              <rect x="140" y="28" width="120" height="22" rx="4" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="200" y="44" font-size="11.5" fill="#4a4a4a" text-anchor="middle">connect · first event</text>
+              <text x="268" y="44" font-size="11.5" fill="#8a8a8a">success</text>
+
+              <text x="14" y="112" font-size="12" fill="#d62976" font-weight="700">user</text>
+              <rect x="140" y="98" width="450" height="22" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="365" y="114" font-size="11.5" fill="#d62976" text-anchor="middle">to the first data event · about 6.8 s</text>
+
+              <path d="M260 56 V 92" fill="none" stroke="#8a8a8a" stroke-width="1.4" stroke-dasharray="4 3"/>
+              <path d="M590 56 V 92" fill="none" stroke="#d62976" stroke-width="1.4" stroke-dasharray="4 3"/>
+              <rect x="260" y="60" width="330" height="26" rx="4" fill="#f6f6f6" stroke="#c9c9c9" stroke-width="1" stroke-dasharray="5 4"/>
+              <text x="425" y="78" font-size="11.5" fill="#8a8a8a" text-anchor="middle">the stretch nobody watched</text>
+
+              <path d="M140 150 H 660" fill="none" stroke="#c9c9c9" stroke-width="1.2" marker-end="url(#gap-ar)"/>
+              <text x="672" y="154" font-size="11.5" fill="#8a8a8a">time</text>
+            </g>
+            <defs>
+              <marker id="gap-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>Where the tool writes “success” is not where the loading layer lifts.
+          The tool did not lie. <strong>I asked it a different question.</strong></figcaption>
+        </figure>
+
+        <p>So I wrote a small probe that attaches to the SSE stream, closes the connection on the first
+        <code>data</code> frame and records the elapsed time. Percentiles and Apdex came out of those values.</p>
+
+        <h2 id="measured-again">Measured again, it looked like this<a class="anchor" href="#measured-again" aria-label="Link to this section">#</a></h2>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">Scroll sideways to see the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">First-data median and p99 per screen, before and after.</caption>
+          <thead><tr><th>Screen</th><th>Median before</th><th>Median after</th><th>p99 before</th><th>p99 after</th></tr></thead>
+          <tbody>
+            <tr><td>Dashboard</td><td>about 6,776 ms</td><td><strong>about 23 ms</strong></td><td>about 8,607 ms</td><td>about 55 ms</td></tr>
+            <tr><td>Physical nodes</td><td>about 3,938 ms</td><td><strong>about 23 ms</strong></td><td>about 5,130 ms</td><td>about 43 ms</td></tr>
+            <tr><td>Virtual resources</td><td>about 1,436 ms</td><td><strong>about 23 ms</strong></td><td>about 1,742 ms</td><td>about 37 ms</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">The virtual resources row is the SSE side. That screen also had a REST path at
+        about 2,627 ms, and <strong>both had to be fixed before it got faster.</strong> That is part three.</p>
+
+        <h2 id="what-the-fix-was">The fix is one line<a class="anchor" href="#what-the-fix-was" aria-label="Link to this section">#</a></h2>
+
+        <p>I took the computation off the request path. A background worker builds a completed snapshot every
+        15 seconds, and a new connection is handed <strong>the last completed value immediately.</strong>
+        If a refresh fails, <strong>the previous value stays.</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 210" role="img" aria-labelledby="ss-t ss-d" class="figure-svg">
+            <title id="ss-t">The structure after the computation left the request path</title>
+            <desc id="ss-d">A worker running every 15 seconds sits at the top, with an arrow into a snapshot box
+            in the middle. A new connection sits at the bottom, with an arrow leaving the same snapshot box
+            straight into a response. A note on the worker's path says a failed refresh keeps the previous value,
+            and the new connection has no arrow leaving toward anything external.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="14" y="20" width="190" height="44" rx="6" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="109" y="47" font-size="12.5" fill="#18121d" text-anchor="middle">15 s worker · outbound reads</text>
+              <path d="M204 42 H 288" fill="none" stroke="#8a8a8a" stroke-width="1.6" marker-end="url(#ss-ar)"/>
+              <text x="246" y="32" font-size="11" fill="#8a8a8a" text-anchor="middle">swap when complete</text>
+
+              <rect x="288" y="76" width="164" height="56" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="370" y="100" font-size="13" fill="#18121d" text-anchor="middle" font-weight="700">snapshot</text>
+              <text x="370" y="120" font-size="11.5" fill="#d62976" text-anchor="middle">last completed value</text>
+
+              <rect x="14" y="146" width="190" height="44" rx="6" fill="none" stroke="#3b3344" stroke-width="1.6"/>
+              <text x="109" y="173" font-size="12.5" fill="#18121d" text-anchor="middle">new connection</text>
+              <path d="M204 168 H 288 V 132" fill="none" stroke="#3b3344" stroke-width="1.6" marker-end="url(#ss-ar2)"/>
+
+              <path d="M452 104 H 556" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#ss-arp)"/>
+              <rect x="556" y="82" width="150" height="44" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="631" y="109" font-size="12.5" fill="#18121d" text-anchor="middle">sent at once · 23 ms</text>
+
+              <text x="370" y="196" font-size="11.5" fill="#8a8a8a" text-anchor="middle">refresh fails · previous value kept</text>
+            </g>
+            <defs>
+              <marker id="ss-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+              <marker id="ss-ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/>
+              </marker>
+              <marker id="ss-arp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>The point is that a new connection never leaves the process.
+          Part seven <strong>read this structure as already present</strong>, and it was, for structure
+          information only.</figcaption>
+        </figure>
+
+        <p>The name for it is serve-stale: hand over the last value even if it is old.
+        It is a trade, <strong>accepting staleness to remove latency</strong>, and how far that trade is
+        allowed to go differs per screen. That is what the next four parts are about.</p>
+
+        <h2 id="the-four-parts">The four parts that follow<a class="anchor" href="#the-four-parts" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>Part one, the dashboard.</strong> How I found the boundary users actually wait on and how
+          the probe was built. From 6,776 ms to 10 ms.</li>
+          <li><strong>Part two, physical nodes.</strong> Moving the same pattern raised one question.
+          <strong>When the metric query returns an empty list, may that be published as a healthy zero?</strong></li>
+          <li><strong>Part three, virtual resources.</strong> Two bottlenecks, REST and SSE, so fixing one
+          left the screen where it was.</li>
+          <li><strong>Part four, the shared cache.</strong> Merging three caches into one turned
+          <strong>things that separation had been protecting by accident</strong> into explicit contracts.</li>
+        </ul>
+
+        <h2 id="what-this-does-not-claim">What this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>These are not production statistics.</strong> Thirty runs by a single user, with no
+          concurrency and no long-run distribution.</li>
+          <li><strong>I could not separate the contributions.</strong> Between the review in part seven (August)
+          and this measurement (September), someone else's improvement also landed. How much of the “before”
+          figure belongs to it <strong>was never measured apart.</strong></li>
+          <li><strong>Part seven was not wrong throughout.</strong> One of the things it decided to leave alone,
+          a query window that looks too wide, is still right to leave alone. What was wrong is
+          <strong>the judgement about cache and the basis behind it.</strong></li>
+          <li><strong>serve-stale is not always the answer.</strong> It holds only where an old value may be
+          shown. Drawing that line per screen is the subject of parts two and four.</li>
+          <li><strong>23 ms is not a constant.</strong> It is the cost of reading a snapshot from memory and
+          serialising it, and it moves with the size of the data.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="wrapping-up">Wrapping up<a class="anchor" href="#wrapping-up" aria-label="Link to this section">#</a></h2>
+
+          <ul>
+            <li><strong>“Already cheap” needs to say cheap for which path.</strong> The periodic refresh was
+            cheap and the connection path was not. Taking one sentence to cover both was the mistake.</li>
+            <li><strong>Check that where the tool says success is where the user stopped waiting.</strong>
+            If those differ, the space between them is invisible to everyone.</li>
+            <li><strong>A decision not to act is harder to check than a change.</strong> I wrote that in part
+            seven and then never built the instrument that would have checked it.</li>
+          </ul>
+
+          <p>If one line survives, this one.
+          <strong>“No case for a change” has to be written differently from “I did not measure.”</strong>
+          Part seven is an article that works hard to keep those apart, and it failed to keep them apart in
+          the one place that counted.</p>
+
+          <p>The next part is the dashboard. Thank you for reading.</p>
+        </div>
+
+
+</article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=1bed673a67"></script>
+  <script src="../assets/content.js?v=5f0f855c8c"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
