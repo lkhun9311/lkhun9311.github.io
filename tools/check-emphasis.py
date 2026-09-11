@@ -37,6 +37,11 @@ def main():
             continue
         checked += 1
         art = m.group(0)
+        # 예상 독자 상자에는 강조를 두지 않는다 — 세 줄짜리 상자에서는 아무 일도 안 한다.
+        for c in re.finditer(r'<ul class="callout">.*?</ul>', art, re.S):
+            n = len(STRONG.findall(c.group(0)))
+            if n:
+                fails.append("%s: 예상 독자 상자에 강조 %d개 — 여기는 두지 않는다" % (f, n))
         for c in CAPTION.finditer(art):
             n = len(STRONG.findall(c.group(1)))
             if n > PER_CAPTION:

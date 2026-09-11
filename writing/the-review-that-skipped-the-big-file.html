@@ -124,11 +124,11 @@
 
         <ul class="callout">
           <li>The document was cut with <code>head -c 60000</code> before being handed to the review tool.
-          That command <strong>keeps the first 60,000 bytes.</strong> It counts bytes, not characters.</li>
+          That command keeps the first 60,000 bytes. It counts bytes, not characters.</li>
           <li>Pulling out the four commits of the large design document that are over
           60,000 bytes and measuring them, all four are cut inside a character.
           Five, counting the copy I am working on now.</li>
-          <li>Given an argument like that, the tool <strong>ends with 2 without reaching a model.</strong>
+          <li>Given an argument like that, the tool ends with 2 without reaching a model.
           I reproduced it to check.</li>
           <li>Failure leaves three signals, and a different thing erased each one: the
           redirection that creates the output file up front, <code>2&gt;/dev/null</code>, and the
@@ -549,8 +549,8 @@ if [ "$STATUS" -ne 0 ] || [ ! -s "$OUT" ]; then
 fi</code></pre>
 
         <ul class="callout">
-          <li><strong>Only valid bytes survive the cut.</strong> The limit stays; only the fragment goes.</li>
-          <li><strong>The tool's stderr goes to a log file.</strong> The failure message carries the last two
+          <li>Only valid bytes survive the cut. The limit stays; only the fragment goes.</li>
+          <li>The tool's stderr goes to a log file. The failure message carries the last two
           lines of that log, bringing the reason to the screen.
           Only that one line's stderr goes to the log. The diagnostic from the
           <code>iconv</code> in front still leaks out.</li>
@@ -621,8 +621,8 @@ fi</code></pre>
         <h2 id="what-this-does-not-claim">Limits: what this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
         <ul class="callout">
-          <li><strong>The cause of the five zero-byte files is unconfirmed.</strong> stderr was being
-          discarded, so <strong>the reasons from that time are gone.</strong> What the reproduction shows is
+          <li>The cause of the five zero-byte files is unconfirmed. stderr was being
+          discarded, so the reasons from that time are gone. What the reproduction shows is
           one path that produces the same shape, not the cause of those five.
           The one from 13 July is not explained by that path.</li>
           <li>"Unread for weeks" is not proved. What is proved is
