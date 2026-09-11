@@ -1427,7 +1427,7 @@ footer a:hover {
   line-height: 1.35;
   font-weight: 500;
   letter-spacing: -0.03em;
-  color: var(--text-soft);
+  color: var(--muted);   /* 부제는 회색. 제목과 같은 검정이면 두 줄이 한 덩어리로 읽힌다 */
 }
 
 .lead {
@@ -1449,10 +1449,7 @@ footer a:hover {
 }
 
 .entry-row {
-  display: grid;
-  grid-template-columns: 178px minmax(0, 1fr);
-  gap: 0 26px;
-  align-items: baseline;
+  display: block;
   padding: 20px 12px 19px;
   border-bottom: 1px solid var(--line-soft);
   color: inherit;
@@ -1465,10 +1462,12 @@ footer a:hover {
   text-decoration: none;
 }
 
-/* 날짜와 배지는 왼쪽 칸에. 제목 줄 위에 얹으면 행마다 한 줄씩 더 먹고, 배지가 있는 행만
-   높아져서 균일함이 깨진다. */
+/* 날짜와 배지는 **제목 위**에 둔다(사용자 지시, 2026-09-11). 왼쪽 칸에 두면 제목이
+   178px 만큼 안으로 밀려 훑는 축이 두 개가 되고, 날짜가 제목과 같은 줄에 있어 「언제 쓴 글인가」와
+   「무슨 글인가」를 눈이 한 번에 못 읽는다. 위에 얹으면 행이 한 줄 높아지는 대신 축이 하나가 된다. */
 .entry-meta {
   display: flex;
+  margin: 0 0 7px;
   flex-wrap: wrap;
   align-items: center;
   gap: 6px 8px;
@@ -1493,10 +1492,11 @@ footer a:hover {
 .entry-row:hover .entry-title { color: var(--ig-pink); }
 
 /* 한 줄로 자른다. 요약이 세 줄이면 목록이 다시 글 무더기가 된다 — 여기서 요약의 일은
-   "이 글이 무엇인지" 한 번에 알려 주는 것뿐이다. */
+   "이 글이 무엇인지" 한 번에 알려 주는 것뿐이다.
+   색은 회색(--muted). --text-soft(#3b3344)는 거의 검정이라 제목과 한 덩어리로 읽힌다. */
 .entry-desc {
   margin: 0;
-  color: var(--text-soft);
+  color: var(--muted);
   font-size: 0.98rem;
   line-height: 1.5;
   white-space: nowrap;
@@ -1504,12 +1504,10 @@ footer a:hover {
   text-overflow: ellipsis;
 }
 
-/* 좁은 화면에서는 날짜를 제목 위로 올린다 — 178px 칸을 유지하면 제목이 설 자리가 없다.
+/* 좁은 화면에서는 여백만 줄인다. 날짜는 이미 제목 위에 있다.
    한 줄 자르기는 두 줄 자르기로 바꾼다. 좁은 폭에서 한 줄이면 남는 것이 문장 조각뿐이다. */
 @media (max-width: 720px) {
   .entry-row {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 5px;
     padding: 16px 4px 15px;
   }
   .entry-desc {

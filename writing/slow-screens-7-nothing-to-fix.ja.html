@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="モニタリングの性能レビューで、直す根拠が見つかりませんでした | Kwanghun Lee" />
-  <meta property="og:description" content="モニタリング画面 3 つをレビューしましたが、新しく最適化する根拠が見つかりませんでした。cache を足そうとした場所は削れるものが小さく、過剰に見えた設定 1 つはグラフのちらつきを防いでいました。負荷試験は回しておらず、なぜ回さなかったのかも書きます。" />
+  <meta property="og:description" content="モニタリング画面 3 つをレビューしましたが、新しく最適化する根拠が見つかりませんでした。Cache を足そうとした場所は削れるものが小さく、過剰に見えた設定 1 つはグラフのちらつきを防いでいました。負荷試験は回しておらず、なぜ回さなかったのかも書きます。" />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -27,11 +27,11 @@
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="モニタリングの性能レビューで、直す根拠が見つかりませんでした | Kwanghun Lee" />
-  <meta name="twitter:description" content="モニタリング画面 3 つをレビューしましたが、新しく最適化する根拠が見つかりませんでした。cache を足そうとした場所は削れるものが小さく、過剰に見えた設定 1 つはグラフのちらつきを防いでいました。負荷試験は回しておらず、なぜ回さなかったのかも書きます。" />
+  <meta name="twitter:description" content="モニタリング画面 3 つをレビューしましたが、新しく最適化する根拠が見つかりませんでした。Cache を足そうとした場所は削れるものが小さく、過剰に見えた設定 1 つはグラフのちらつきを防いでいました。負荷試験は回しておらず、なぜ回さなかったのかも書きます。" />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="モニタリング画面 3 つをレビューしましたが、新しく最適化する根拠が見つかりませんでした。cache を足そうとした場所は削れるものが小さく、過剰に見えた設定 1 つはグラフのちらつきを防いでいました。負荷試験は回しておらず、なぜ回さなかったのかも書きます。" />
+  <meta name="description" content="モニタリング画面 3 つをレビューしましたが、新しく最適化する根拠が見つかりませんでした。Cache を足そうとした場所は削れるものが小さく、過剰に見えた設定 1 つはグラフのちらつきを防いでいました。負荷試験は回しておらず、なぜ回さなかったのかも書きます。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+  <link rel="stylesheet" href="../assets/styles.css?v=5115091496" />
 </head>
 <body>
   <div class="topbar">
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">会社の業務</span></div>
       </div>
               <section class="page-hero">
-          <h1>モニタリングの性能レビューで、直す根拠が見つかりませんでした<br><span class="h1-sub">削れるものが小さい場所に cache を足すと、古さと複雑さだけが増えます。社内クラウド管理コンソール · 連載「遅い画面」⑦</span></h1>
+          <h1>モニタリングの性能レビューで、直す根拠が見つかりませんでした<br><span class="h1-sub">削れるものが小さい場所に Cache を足すと、古さと複雑さだけが増えます。社内クラウド管理コンソール · 連載「遅い画面」⑦</span></h1>
           <p class="article-date">2026年9月</p>
         </section>
 
@@ -85,7 +85,7 @@
             <li><a href="#どんな内容">どんな内容</a></li>
             <li><a href="#何を見たか">何を見たか</a></li>
             <li><a href="#すでに温かい">ダッシュボードと物理リソース: すでに裏で詰められていました</a></li>
-            <li><a href="#cacheを足さない">そこで cache をこれ以上足しませんでした</a></li>
+            <li><a href="#cacheを足さない">そこで Cache をこれ以上足しませんでした</a></li>
             <li><a href="#広い窓">過剰に見える設定を、あえて残しました</a></li>
             <li><a href="#負荷試験">負荷試験は回しませんでした</a></li>
             <li><a href="#確かめにくい">「やるな」で終わったレビューは確かめにくい</a></li>
@@ -96,7 +96,7 @@
 
         <article class="article-body">
 
-        <p>こんにちは。社内クラウド管理コンソールの backend を作っています。「モニタリングが遅い」という
+        <p>こんにちは。社内クラウド管理コンソールの Backend を作っています。「モニタリングが遅い」という
         報告を受けて、画面を 3 つ見直しました。</p>
 
         <p><strong>結論は「直すべきだと言える根拠が見つからなかった」でした。</strong>
@@ -105,7 +105,7 @@
 
         <blockquote><p>⚠️ <strong>この結論は後に誤りだと分かりました。</strong>
         同じ画面の最初のデータを測り直すと <strong>6.8 秒</strong>で、この記事が入れないと決めた場所に
-        cache を入れて <strong>23ms</strong> になりました。何を測っていなかったから間違えたのかは
+        Cache を入れて <strong>23ms</strong> になりました。何を測っていなかったから間違えたのかは
         <a href="monitoring-the-screen-i-said-not-to-fix.ja.html">「直す必要がないと書いた画面が 6.8 秒でした」</a>に
         書きました。以下の本文は<strong>当時のまま残します。</strong></p></blockquote>
 
@@ -114,7 +114,7 @@
         <ul class="callout">
           <li>「遅い」という報告を受けて、どこから見るか決めなければならない方</li>
           <li>負荷試験の結果が良く出たのに、なぜか腑に落ちなかった方</li>
-          <li>cache をもう 1 つ足すかどうか決める立場の方</li>
+          <li>Cache をもう 1 つ足すかどうか決める立場の方</li>
         </ul>
 
         <h2 id="どんな内容">どんな内容<a class="anchor" href="#どんな内容" aria-label="この節へのリンク">#</a></h2>
@@ -124,8 +124,8 @@
           遅い場所 1 つは <a href="slow-screens-4-client-per-loop.ja.html">④編</a>ですでに直してあり、
           残りでは <strong>直すべきだと言えるものが出てきませんでした。</strong>
           ⚠️「直すものが無い」とは別の言い方です。</li>
-          <li><strong>cache をこれ以上足しませんでした。</strong>足そうとした場所は
-          <strong>削れるものが小さく</strong>、そこに cache を入れると
+          <li><strong>Cache をこれ以上足しませんでした。</strong>足そうとした場所は
+          <strong>削れるものが小さく</strong>、そこに Cache を入れると
           <strong>古さと複雑さだけが増えます。</strong></li>
           <li><strong>過剰に見える設定 1 つは、あえてそのまま残しました。</strong>取得の窓が必要より広かったのですが、
           狭めると画面がちらつきました。</li>
@@ -150,8 +150,8 @@
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロールできる図">
             <svg viewBox="0 0 720 210" role="img" aria-labelledby="rev-t rev-d" xmlns="http://www.w3.org/2000/svg">
               <title id="rev-t">画面 3 つと、それぞれが値を読む場所</title>
-              <desc id="rev-d">左に画面が 3 つあります。ダッシュボードと物理リソースは backend の中の cache から値を
-              読み、その cache は 60 秒ごとに裏で自分を詰めます。仮想リソースは最初に開くとき、プロジェクトごとに
+              <desc id="rev-d">左に画面が 3 つあります。ダッシュボードと物理リソースは Backend の中の Cache から値を
+              読み、その Cache は 60 秒ごとに裏で自分を詰めます。仮想リソースは最初に開くとき、プロジェクトごとに
               認証とリソース取得を繰り返します。そのあとは 3 画面とも 15 秒ごとにサーバーが送る値を受け取り、
               その値は時系列ストアから計算されます。ピンクで示したのが遅かった区間、つまり仮想リソースの
               初期ロードです。</desc>
@@ -165,7 +165,7 @@
 
               <path d="M128 40 H 176" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#rv-ar)"/>
               <rect x="184" y="26" width="176" height="28" rx="5" fill="none" stroke="#4f5bd5" stroke-width="2"/>
-              <text x="272" y="45" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">更新 cache · 60 秒ごと</text>
+              <text x="272" y="45" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">更新 Cache · 60 秒ごと</text>
               <path d="M128 109 H 176" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#rv-arA)"/>
               <rect x="184" y="95" width="176" height="28" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="272" y="114" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">初期ロード · プロジェクトごとに反復</text>
@@ -197,7 +197,7 @@
 
         <h2 id="すでに温かい">ダッシュボードと物理リソース: すでに裏で詰められていました<a class="anchor" href="#すでに温かい" aria-label="この節へのリンク">#</a></h2>
 
-        <p>この 2 つはリクエストが来たときに外へ出ません。backend の中に値をあらかじめ置いておく場所(cache)が
+        <p>この 2 つはリクエストが来たときに外へ出ません。Backend の中に値をあらかじめ置いておく場所(Cache)が
         あり、そこから読みます。その場所は <strong>60 秒ごとに裏で自分を詰めます。</strong>
         置いた値は 5 分を過ぎたら捨てます。</p>
 
@@ -209,7 +209,7 @@
             <svg viewBox="0 0 720 176" role="img" aria-labelledby="bg-t bg-d" xmlns="http://www.w3.org/2000/svg">
               <title id="bg-t">リクエストごとに外へ出る構造と、裏で詰めておく構造</title>
               <desc id="bg-d">上のカードはリクエストが来るたびに外へ出る構造です。3 件のリクエストがそれぞれ外部の取得を
-              待ちます。下のカードは裏で 60 秒ごとに詰めておく構造で、3 件とも内側の cache からすぐ値を受け取り、
+              待ちます。下のカードは裏で 60 秒ごとに詰めておく構造で、3 件とも内側の Cache からすぐ値を受け取り、
               外部の取得はリクエストと無関係な時刻に別途起こります。</desc>
 
               <rect x="0" y="0" width="720" height="76" rx="10" fill="rgba(214,41,118,0.06)"/>
@@ -240,7 +240,7 @@
               </g>
               <path d="M414 139 H 452" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#bg-arB)"/>
               <rect x="460" y="128" width="118" height="22" rx="4" fill="none" stroke="#4f5bd5" stroke-width="2"/>
-              <text x="519" y="143" font-size="11.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">cache からすぐ</text>
+              <text x="519" y="143" font-size="11.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">Cache からすぐ</text>
               <rect x="592" y="128" width="118" height="22" rx="4" fill="none" stroke="#4f5bd5" stroke-width="1.5" stroke-dasharray="4 3"/>
               <text x="651" y="143" font-size="11.5" fill="#4f5bd5" text-anchor="middle">60 秒ごとに別途</text>
               <defs>
@@ -262,9 +262,9 @@
         <p>その前は <strong>回りながら寝る方式</strong>でした。ループの中で少し寝てまた確かめるコードで、
         先の作業ですでに取り除いてあります。今回のレビューは <strong>そのあとの状態</strong>を見たものです。</p>
 
-        <h2 id="cacheを足さない">そこで cache をこれ以上足しませんでした<a class="anchor" href="#cacheを足さない" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="cacheを足さない">そこで Cache をこれ以上足しませんでした<a class="anchor" href="#cacheを足さない" aria-label="この節へのリンク">#</a></h2>
 
-        <p>残った候補は <strong>15 秒ごとに計算するあの値</strong>でした。「これも cache すればいいのでは」が
+        <p>残った候補は <strong>15 秒ごとに計算するあの値</strong>でした。「これも Cache すればいいのでは」が
         自然な次の考えです。</p>
 
         <p>ところがその計算は <strong>15 秒に 1 回</strong>回ります。そして画面がいくつ開いていても
@@ -275,7 +275,7 @@
 <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると残りが見えます">
         <table>
-          <caption class="sr-only">ここに cache を入れて得るものと失うもの。</caption>
+          <caption class="sr-only">ここに Cache を入れて得るものと失うもの。</caption>
           <thead><tr><th>入れて得るもの</th><th>入れて失うもの</th></tr></thead>
           <tbody>
             <tr><td>15 秒に 1 回の計算が減る</td><td>値がいつ古くなるかを新たに扱う必要が出る</td></tr>
@@ -291,8 +291,8 @@
         使うのかは測っていません。<a href="slow-screens-4-client-per-loop.ja.html">④編</a>にも書いたとおり、
         頻度だけでは費用は決まりません。</p>
 
-        <blockquote><p><strong>削れるものが小さそうな場所に cache を入れると、得るものより扱うものが増えます。</strong>
-        cache は高いものを安くする道具です。ここでは高いという根拠が見つからず、だから入れませんでした。</p></blockquote>
+        <blockquote><p><strong>削れるものが小さそうな場所に Cache を入れると、得るものより扱うものが増えます。</strong>
+        Cache は高いものを安くする道具です。ここでは高いという根拠が見つからず、だから入れませんでした。</p></blockquote>
 
         <h2 id="広い窓">過剰に見える設定を、あえて残しました<a class="anchor" href="#広い窓" aria-label="この節へのリンク">#</a></h2>
 
@@ -361,7 +361,7 @@
         <p>ここがこの記事でいちばん居心地の悪いところです。</p>
 
         <p>直したなら前後を比べられます。<strong>直さなければ比べるものがありません。</strong>
-        cache を入れなかったから何も起きなかったのか、入れていればもっと良かったものを逃したのか、
+        Cache を入れなかったから何も起きなかったのか、入れていればもっと良かったものを逃したのか、
         <strong>このレビューでは分かりません。</strong></p>
 
         <p>そこでやったのが <strong>同じ対象を 2 回別々に見ること</strong>でした。記録には
@@ -384,7 +384,7 @@
           見ましたが、広く置く費用は測っていません。</li>
           <li><strong>これはその時点の判断です。</strong>リソースが増えたり画面が増えたりすれば、
           同じレビューが違う結論を出しえます。</li>
-          <li><strong>cache を入れなかった判断が、入れる側より良かったとは証明できません。</strong>
+          <li><strong>Cache を入れなかった判断が、入れる側より良かったとは証明できません。</strong>
           やっていないので比べる対象がありません。この記事はその限界を抱えています。</li>
         </ul>
 
@@ -396,7 +396,7 @@
         <ul>
           <li><strong>「遅い」という言葉は区間を指しません。</strong>どの画面のどの区間かを分けるのが先で、
           その仕分けが半分です。</li>
-          <li><strong>cache は高いものを安くする道具です。</strong>安い場所に入れれば古さと複雑さだけが残り、
+          <li><strong>Cache は高いものを安くする道具です。</strong>安い場所に入れれば古さと複雑さだけが残り、
           あるのに読まなければ無いより悪くなります。</li>
           <li><strong>測っていないものは、測っていないと書きます。</strong>ここまでの 7 編のうち 2 編は前後の
           実測値がなく、その事実自体を本文に書きました。</li>
@@ -421,8 +421,8 @@
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=772d75cdff"></script>
+  <script src="../assets/i18n.js?v=60def360be"></script>
+  <script src="../assets/content.js?v=738aaf3b4d"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

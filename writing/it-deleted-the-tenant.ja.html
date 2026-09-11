@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="GPU 入場制御は p99 を守らず、リクエストを捨てていました | Kwanghun Lee" />
-  <meta property="og:description" content="GPU 1 枚の上での 4-arm 実験。拒否 0 件だという arm の完了数が、プレミアムの要求数とぴったり同じだった。レポートの判定がすべて比だったため、有料の 4 回の反復の間それは見えなかった。" />
+  <meta property="og:description" content="GPU 1 枚の上での 4-arm 実験。拒否 0 件だという Arm の完了数が、プレミアムの要求数とぴったり同じだった。レポートの判定がすべて比だったため、有料の 4 回の反復の間それは見えなかった。" />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -27,11 +27,11 @@
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="GPU 入場制御は p99 を守らず、リクエストを捨てていました | Kwanghun Lee" />
-  <meta name="twitter:description" content="拒否 0 件だという arm の完了数が、プレミアムの要求数とぴったり同じだった。レポートの判定はすべて比だった。" />
+  <meta name="twitter:description" content="拒否 0 件だという Arm の完了数が、プレミアムの要求数とぴったり同じだった。レポートの判定はすべて比だった。" />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="GPU 1 枚の上での 4-arm 実験。拒否 0 件だという arm の完了数が、プレミアムの要求数とぴったり同じだった。レポートの判定がすべて比だったため、有料の 4 回の反復の間それは見えなかった。" />
+  <meta name="description" content="GPU 1 枚の上での 4-arm 実験。拒否 0 件だという Arm の完了数が、プレミアムの要求数とぴったり同じだった。レポートの判定がすべて比だったため、有料の 4 回の反復の間それは見えなかった。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+  <link rel="stylesheet" href="../assets/styles.css?v=5115091496" />
 </head>
 <body>
   <div class="topbar">
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag side notranslate">個人プロジェクト</span></div>
       </div>
       <section class="page-hero">
-        <h1>GPU 入場制御は p99 を守らず、リクエストを捨てていました<br><span class="h1-sub">GPU 1 枚を分け合うとき、入場制御がプレミアムを守るか測りました。個人プロジェクト Kubernetes GPU control plane</span></h1>
+        <h1>GPU 入場制御は p99 を守らず、リクエストを捨てていました<br><span class="h1-sub">GPU 1 枚を分け合うとき、入場制御がプレミアムを守るか測りました。個人プロジェクト Kubernetes GPU Control Plane</span></h1>
         <p class="article-date">2026年9月</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="it-deleted-the-tenant"></aside>
@@ -81,7 +81,7 @@
           <ul>
             <li><a href="#想定読者">想定読者</a></li>
             <li><a href="#この記事の内容">何の話ですか</a></li>
-            <li><a href="#falsifiable-arm">反証可能にする arm</a></li>
+            <li><a href="#falsifiable-arm">反証可能にする Arm</a></li>
             <li><a href="#the-numbers">数値</a></li>
             <li><a href="#three-sentences">3 つの文が同時に真ではありえない</a></li>
             <li><a href="#why-invisible">レポートがそれを見られなかった理由</a></li>
@@ -119,8 +119,8 @@
 
         <ul>
           <li>GPU 1 枚の上に<strong>プレミアムテナントと長いコンテキストを使う騒がしい隣人</strong>を同居させ、
-          ゲートウェイの KV cache 認識アドミッション制御がプレミアムの p99 を守るか測った。</li>
-          <li>答えは<strong>いいえ</strong>だった。拒否 0 件の arm の<strong>完了数がプレミアムの要求数と
+          ゲートウェイの KV Cache 認識アドミッション制御がプレミアムの p99 を守るか測った。</li>
+          <li>答えは<strong>いいえ</strong>だった。拒否 0 件の Arm の<strong>完了数がプレミアムの要求数と
           正確に一致した。</strong>守ったのではなく捨てていた。</li>
           <li>レポートが見落とした理由は<strong>判定がすべて比率</strong>だったからだ。分母も一緒に減れば
           比率は良くなる。</li>
@@ -130,16 +130,16 @@
           アドミッション制御一般についての主張ではない。</li>
         </ul>
 
-        <h2 id="falsifiable-arm">反証可能にする arm<a class="anchor" href="#falsifiable-arm" aria-label="このセクションへのリンク">#</a></h2>
+        <h2 id="falsifiable-arm">反証可能にする Arm<a class="anchor" href="#falsifiable-arm" aria-label="このセクションへのリンク">#</a></h2>
 
-        <p>arm は 4 つ。記録された 1 本の open-loop トレースを 4 通りの条件で再生する。</p>
+        <p>Arm は 4 つ。記録された 1 本の open-loop トレースを 4 通りの条件で再生する。</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
         <table>
-          <caption class="sr-only">4 つの arm と、それぞれが答える問い。</caption>
-          <thead><tr><th scope="col">arm</th><th scope="col">何か</th><th scope="col">何に答えるか</th></tr></thead>
+          <caption class="sr-only">4 つの Arm と、それぞれが答える問い。</caption>
+          <thead><tr><th scope="col">Arm</th><th scope="col">何か</th><th scope="col">何に答えるか</th></tr></thead>
           <tbody>
             <tr><td>R1</td><td>プレミアム単独、同じ到着スケジュール</td><td>競合がいなければどれだけ速いか</td></tr>
             <tr><td>off</td><td>両テナント、アドミッション制御なし</td><td>競合のコストはいくらか</td></tr>
@@ -158,10 +158,10 @@
         <ul>
           <li><strong>絶対保護</strong>: kv-aware の p99 が R1 の 1.25 倍以下</li>
           <li><strong>増分価値</strong>: kv-aware の p99 が static-cap の 0.90 倍以下(ブートストラップ信頼区間の上限も 1.0 未満)</li>
-          <li><strong>アドミッション一致</strong>: 競合する 2 arm の通過作業比率が凍結した許容範囲内</li>
+          <li><strong>アドミッション一致</strong>: 競合する 2 Arm の通過作業比率が凍結した許容範囲内</li>
         </ul>
 
-        <p>さらに、検査を読む<em>前に</em>実行を失格にする規則を別に置いた。比較対象の arm のいずれかでプレミアム完了が
+        <p>さらに、検査を読む<em>前に</em>実行を失格にする規則を別に置いた。比較対象の Arm のいずれかでプレミアム完了が
         0 件、テールが打ち切られている(プレミアムのタイムアウトが 1% 超)、または完了数が最小標本未満なら失格である。
         最後の下限は選んだ値ではなく導いた値だ — パーセンタイルが nearest-rank なので、
         <code>ceil(0.99n)-1</code> は 100 未満のすべての <code>n</code> で <code>n-1</code> に張り付く。その下では
@@ -169,13 +169,13 @@
 
         <h2 id="the-numbers">数値<a class="anchor" href="#the-numbers" aria-label="このセクションへのリンク">#</a></h2>
 
-        <p>2026-09-03 の実行。arm 4 つ、各 4 回反復、トレース 1 本、arm あたりプレミアム完了 1,840 件。</p>
+        <p>2026-09-03 の実行。Arm 4 つ、各 4 回反復、トレース 1 本、Arm あたりプレミアム完了 1,840 件。</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
         <table>
-          <caption class="sr-only">2026-09-03 の実行の arm 別結果。</caption>
+          <caption class="sr-only">2026-09-03 の実行の Arm 別結果。</caption>
           <thead><tr><th scope="col"></th><th scope="col">R1</th><th scope="col">off</th><th scope="col">static-cap</th><th scope="col">kv-aware</th></tr></thead>
           <tbody>
             <tr><td>TTFT p99 (ms)</td><td>82.2</td><td>10,595.3</td><td>81.2</td><td><strong>6,882.0</strong></td></tr>
@@ -192,7 +192,7 @@
         <strong>83.7 倍</strong>だった。このマイルストーンが立てようとしていた主張は撤回した。</p>
 
         <p>ところが<strong>3 つのうち 2 つは失敗ではなく無効である。</strong>増分価値とアドミッション一致は
-        どちらも <code>static-cap</code> を対照群として計算するが、その arm が対照群ではなかったからだ。
+        どちらも <code>static-cap</code> を対照群として計算するが、その Arm が対照群ではなかったからだ。
         <strong>意図したものを実際に比較した検査は絶対保護 1 つだけで、それが基準の 67 倍で失敗した。</strong></p>
 
         <p>なぜ対照群でなかったのかが、この記事の残りである。</p>
@@ -224,7 +224,7 @@
         <strong>約 10,000 トークン</strong>と見積もられる。バーストより大きいリクエストは
         <strong>どのバケットにも収まらない</strong>ので、ゲートウェイは 4 回の反復すべてでそれらを 413 で拒否した。</p>
 
-        <p>その結果 static-cap は<strong>対照群ではなく 2 つ目の隔離 arm</strong>になった。
+        <p>その結果 static-cap は<strong>対照群ではなく 2 つ目の隔離 Arm</strong>になった。
         <code>kv-aware</code> に対する比(84.760)が隔離に対する比(83.747)とほぼ同じになったのはそのためだ —
         2 つは同じものを測っていた。</p>
 
@@ -243,7 +243,7 @@
 
         <p><strong>2 つめ、レポートが出す判定がすべて比だった。</strong>絶対保護と増分価値はテール遅延の比、
         アドミッション一致は通した作業量の比である。ところがアドミッション一致でさえ
-        <em>2 つの arm がどれだけ近いか</em>を問うだけで、<strong>どちらかが 0 だという事実を名指ししない。</strong>
+        <em>2 つの Arm がどれだけ近いか</em>を問うだけで、<strong>どちらかが 0 だという事実を名指ししない。</strong>
         比だけを見ると「少なく処理して速くなった」と「同じだけ処理して速くなった」が区別できない。
         <strong>消えた分母は比からは見えない。</strong></p>
 
@@ -257,7 +257,7 @@
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
         <table>
           <caption class="sr-only">既に購入した証拠をスループット軸で採点し直した結果。</caption>
-          <thead><tr><th scope="col">arm</th><th scope="col">プレミアム TTFT p99</th><th scope="col">出力 tok/s</th><th scope="col">プレミアムのシェア</th><th scope="col">隣人のシェア</th></tr></thead>
+          <thead><tr><th scope="col">Arm</th><th scope="col">プレミアム TTFT p99</th><th scope="col">出力 tok/s</th><th scope="col">プレミアムのシェア</th><th scope="col">隣人のシェア</th></tr></thead>
           <tbody>
             <tr><td>R1(隔離)</td><td>82.2 ms</td><td>46.4</td><td>100%</td><td>—</td></tr>
             <tr><td>off</td><td>10,595.3 ms</td><td><strong>57.3</strong></td><td>80%</td><td>20%</td></tr>
@@ -268,7 +268,7 @@
         </div>
         </div>
 
-        <p>この軸で見ると、<strong>制御を何もかけていない <code>off</code> が「テールで勝った」arm より 24% 多く
+        <p>この軸で見ると、<strong>制御を何もかけていない <code>off</code> が「テールで勝った」Arm より 24% 多く
         トークンを出していた。</strong>そして static-cap は隔離の遅延<em>と</em>隔離のスループットを同時に一致させた
         が、それは隔離を再現したのであって競合を管理したのではない。</p>
 
@@ -328,7 +328,7 @@
         <blockquote><p>競合するテナントの作業を消さずにプレミアムのテールを守る設定はあるのか、そしてそれは守られる
         テナントに何をコストとして課すのか?</p></blockquote>
 
-        <p>この形をしているのは上の表のためだ。「テールを守れるか」は既に 2 つの arm が答えており、うち 1 つは競合作業を
+        <p>この形をしているのは上の表のためだ。「テールを守れるか」は既に 2 つの Arm が答えており、うち 1 つは競合作業を
         すべて捨てる方法で答えた。したがって残るのは<strong>保護の値段</strong>である。</p>
 
         <p>事前登録は実行を買う前に書く。結果を見てから基準を決めれば、どんな結果も成功として読めるからだ。この
@@ -338,8 +338,8 @@
         <h2 id="what-this-does-not-claim">この記事が主張しないこと<a class="anchor" href="#what-this-does-not-claim" aria-label="このセクションへのリンク">#</a></h2>
 
         <ul>
-          <li><strong>比較 arm の 1 つが無効だった。</strong><code>static-cap</code> は設定の誤りで何も通さず、
-          対照群ではなく 2 つ目の隔離 arm になった。そのため事前登録した検査 3 つのうち 2 つ(増分価値・
+          <li><strong>比較 Arm の 1 つが無効だった。</strong><code>static-cap</code> は設定の誤りで何も通さず、
+          対照群ではなく 2 つ目の隔離 Arm になった。そのため事前登録した検査 3 つのうち 2 つ(増分価値・
           アドミッション一致)は失敗ではなく<strong>無効</strong>である。有効に失敗したのは絶対保護 1 つだ。</li>
           <li><strong>マイクロテストは予算単独の効果ではない。</strong>予算 × スケジューリング方針の相互作用であり、
           6 セルのうち基準を通過したのは 1 つ、事前登録した判読のどれも成立しなかった。</li>
@@ -351,8 +351,8 @@
           指標は p99 だ。同じ軸ではない。</li>
           <li><strong>シリコンの異なるマイルストーン間の比較ではない。</strong>比較はカードクラス・モデル・dtype が
           同一の範囲内に留めており、後ろの 2 つは契約テストが強制する。</li>
-          <li><strong>コールドスタートについては何も言っていない。</strong>すべての arm が温まったエンジンを使う。</li>
-          <li><strong>このプロジェクトの他の部分は依然として偽の device plugin の上で動く。</strong>この記事の数値は
+          <li><strong>コールドスタートについては何も言っていない。</strong>すべての Arm が温まったエンジンを使う。</li>
+          <li><strong>このプロジェクトの他の部分は依然として偽の Device Plugin の上で動く。</strong>この記事の数値は
           実 GPU 実行から出たものであり、リポジトリの他の実行記録(キュー方針の実験、学習ジョブのアドミッション制御、
           障害の証跡)はそうではない。リポジトリは行ごとにそれを表記している。</li>
           <li><strong>進行中である。</strong>上で事前登録した実行が終われば最終節が変わる。</li>
@@ -386,8 +386,8 @@
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=772d75cdff"></script>
+  <script src="../assets/i18n.js?v=60def360be"></script>
+  <script src="../assets/content.js?v=738aaf3b4d"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

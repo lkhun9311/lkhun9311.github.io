@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="負荷条件を定数で固定して 6 回を同じに測りました | Kwanghun Lee" />
-  <meta property="og:description" content="画面 1 つを構成 6 通りで測るには、見たいもの以外は同じでなければなりません。宣言した負荷条件を定数に移して JMX を生成する harness を書きました。ところが結果が 1 つもなくても実行スクリプトは成功で終わり、どの回がどの構成だったかは道具の外にしか残りませんでした。" />
+  <meta property="og:description" content="画面 1 つを構成 6 通りで測るには、見たいもの以外は同じでなければなりません。宣言した負荷条件を定数に移して JMX を生成する Harness を書きました。ところが結果が 1 つもなくても実行スクリプトは成功で終わり、どの回がどの構成だったかは道具の外にしか残りませんでした。" />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -27,11 +27,11 @@
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="負荷条件を定数で固定して 6 回を同じに測りました | Kwanghun Lee" />
-  <meta name="twitter:description" content="画面 1 つを構成 6 通りで測るには、見たいもの以外は同じでなければなりません。宣言した負荷条件を定数に移して JMX を生成する harness を書きました。ところが結果が 1 つもなくても実行スクリプトは成功で終わり、どの回がどの構成だったかは道具の外にしか残りませんでした。" />
+  <meta name="twitter:description" content="画面 1 つを構成 6 通りで測るには、見たいもの以外は同じでなければなりません。宣言した負荷条件を定数に移して JMX を生成する Harness を書きました。ところが結果が 1 つもなくても実行スクリプトは成功で終わり、どの回がどの構成だったかは道具の外にしか残りませんでした。" />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="画面 1 つを構成 6 通りで測るには、見たいもの以外は同じでなければなりません。宣言した負荷条件を定数に移して JMX を生成する harness を書きました。ところが結果が 1 つもなくても実行スクリプトは成功で終わり、どの回がどの構成だったかは道具の外にしか残りませんでした。" />
+  <meta name="description" content="画面 1 つを構成 6 通りで測るには、見たいもの以外は同じでなければなりません。宣言した負荷条件を定数に移して JMX を生成する Harness を書きました。ところが結果が 1 つもなくても実行スクリプトは成功で終わり、どの回がどの構成だったかは道具の外にしか残りませんでした。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+  <link rel="stylesheet" href="../assets/styles.css?v=5115091496" />
 </head>
 <body>
   <div class="topbar">
@@ -99,10 +99,10 @@
 
         <article class="article-body">
 
-        <p>こんにちは。社内 cloud 管理 console の backend を作っています。
+        <p>こんにちは。社内 Cloud 管理 Console の Backend を作っています。
         <a href="slow-screens-1-volume-list.ja.html">①編</a>ではボリューム一覧の画面 1 つを置いて、
         <strong>構成を 6 通りに変えながら</strong>測りました。
-        ⚠️ 6 つが順に積み上がっているわけではありません。cache を入れてから外した箇所もあります。
+        ⚠️ 6 つが順に積み上がっているわけではありません。Cache を入れてから外した箇所もあります。
         同じ条件で測った画面はこれ以外に 3 つあります
         (<a href="parallelism-made-the-tail-worse.ja.html">⑤編</a>)。</p>
 
@@ -130,14 +130,14 @@
           <li>⚠️ ところが結果ファイルが<strong>1 つもなくても</strong>実行スクリプトは「完了」と表示して
           <strong>0 で終わりました。</strong>再現して確認しました。</li>
           <li>⚠️ そして<strong>どの回がどのコード構成だったか</strong>はレポートに残りません。
-          その対応づけは <strong>harness の外の文書</strong>がやっていました。</li>
+          その対応づけは <strong>Harness の外の文書</strong>がやっていました。</li>
         </ul>
 
         <h2 id="なぜ作った">構成 6 つを比べるには 6 回まわす必要があります<a class="anchor" href="#なぜ作った" aria-label="この節へのリンク">#</a></h2>
 
         <p>直す前と後だけ測っても<strong>何が効いたのかは分かりません。</strong>
-        そこでコード構成を 6 段階に分けてそれぞれ測りました。cache なしの順次、cache だけ、並列だけ、
-        cache と並列、そこにロジック最適化、最後に <code>refreshAfterWrite</code> までです。</p>
+        そこでコード構成を 6 段階に分けてそれぞれ測りました。Cache なしの順次、Cache だけ、並列だけ、
+        Cache と並列、そこにロジック最適化、最後に <code>refreshAfterWrite</code> までです。</p>
 
         <p>その結果が <a href="slow-screens-1-volume-list.ja.html">①編</a>の表で、
         そのうち並列化の 1 段階が尾をより長くした話が
@@ -149,7 +149,7 @@
         <p>⚠️ 6 つの構成が<strong>互いに 1 つずつだけ違うわけではありません。</strong>
         2 つが同時に変わった箇所もあります。だから
         <a href="parallelism-made-the-tail-worse.ja.html">⑤編</a>では
-        <strong>cache を固定した 2 行を選んで</strong>比べました。
+        <strong>Cache を固定した 2 行を選んで</strong>比べました。
         6 つとも測ってあれば<strong>そう選べます。</strong>前後 2 回だけでは選べません。</p>
 
         <p>⚠️ 画面で手で埋めること自体が誤りではありません。
@@ -172,7 +172,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
         <p>変わったのは<strong>条件がどこに住んでいるか</strong>です。以前は人の手と画面の中にあり、
         いまはファイルの中にあります。ファイルなら<strong>読めて、比べられる形</strong>になります。</p>
 
-        <p>⚠️ <strong>形になったというところまで</strong>です。この harness は回ごとにそのファイルを
+        <p>⚠️ <strong>形になったというところまで</strong>です。この Harness は回ごとにそのファイルを
         別に残しません。実際に回どうしを比べるには
         <strong>バージョン管理に入れるか回のフォルダにコピーする</strong>必要があり、どちらもしていません。</p>
 
@@ -189,18 +189,18 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
         前の編の「同じ条件」もその範囲で読んでください。</p></blockquote>
 
         <p>そして<strong>どのレポートがどの段階だったか</strong>は、当時別に書いておいた文書が
-        対応づけています。⚠️ <strong>harness が残したものどうしはつながっていません。</strong>
+        対応づけています。⚠️ <strong>Harness が残したものどうしはつながっていません。</strong>
         その文書を開けなければ<strong>この道具の成果物だけでは確認できません。</strong>
-        (デプロイ記録やコミット時刻から突き合わせる余地は残ります。それは harness がしてくれたことでは
+        (デプロイ記録やコミット時刻から突き合わせる余地は残ります。それは Harness がしてくれたことでは
         ありません。)</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 250" role="img" aria-labelledby="hn-t hn-d" class="figure-svg">
-            <title id="hn-t">harness の流れ</title>
-            <desc id="hn-d">上の列が harness です。左から、負荷条件の定数が入った生成器ファイル、それが作る
+            <title id="hn-t">Harness の流れ</title>
+            <desc id="hn-d">上の列が Harness です。左から、負荷条件の定数が入った生成器ファイル、それが作る
             JMX ファイル 1 つ、その JMX で JMeter を走らせる実行スクリプト、測定対象ごとの結果ファイル、
             そして回ごとの時刻フォルダの下にある対象ごとのレポートの順です。下に点線の箱で描いた
-            「サーバーコード構成」が離れて置かれ、harness のどの箱とも実線でつながっていません。右の
+            「サーバーコード構成」が離れて置かれ、Harness のどの箱とも実線でつながっていません。右の
             レポートからその箱へ向かうピンクの線は途中で切れていて、その位置にバツ印があります。</desc>
             <g font-family="Inter, sans-serif">
               <rect x="12" y="70" width="150" height="64" rx="7" fill="none" stroke="#d62976" stroke-width="2"/>
@@ -229,7 +229,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
 
               <rect x="12" y="182" width="150" height="46" rx="7" fill="none" stroke="#4a4a4a" stroke-width="2" stroke-dasharray="6 4"/>
               <text x="87" y="200" font-size="12" fill="#4a4a4a" font-weight="700" text-anchor="middle">サーバーコード構成</text>
-              <text x="87" y="218" font-size="11" fill="#8a8a8a" text-anchor="middle">harness の外で変わる</text>
+              <text x="87" y="218" font-size="11" fill="#8a8a8a" text-anchor="middle">Harness の外で変わる</text>
 
               <path d="M548 168 C 490 200, 450 208, 412 210" fill="none" stroke="#d62976" stroke-width="1.6" stroke-dasharray="5 4"/>
               <path d="M288 210 C 240 210, 200 206, 168 206" fill="none" stroke="#d62976" stroke-width="1.6"
@@ -249,7 +249,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
             </defs>
           </svg>
           <figcaption>結果ファイルの数は <code>GROUP</code> によって 1 個、5 個、10 個と変わります。
-          下の点線の箱が<strong>実際に 6 段階を作ったもの</strong>で、harness のどこにもつながっていません。
+          下の点線の箱が<strong>実際に 6 段階を作ったもの</strong>で、Harness のどこにもつながっていません。
           この切れたピンクの線がこの記事の後半の主題です。</figcaption>
         </figure>
 
@@ -258,7 +258,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
         <p>測定対象はボリューム側とスナップショット側の参照 API <strong>10 種</strong>でした。
         ⚠️ どれかということと経路は社内 API の表面なので書きません。</p>
 
-        <p><code>GROUP</code> がこの harness の取っ手です。
+        <p><code>GROUP</code> がこの Harness の取っ手です。
         <code>"01"</code> ならその 1 つだけ、<code>"volume"</code> ならボリューム側の 5 種、
         <code>"all"</code> なら全部です。</p>
 
@@ -266,16 +266,16 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
         はじめて、<strong>この道具が</strong>ほかの API まで一緒に叩かなくなります。</p></blockquote>
 
         <p>⚠️ その機器でほかの人やほかのプロセスが作る負荷まで消えるという意味ではありません。
-        <strong>harness が作らない</strong>というだけです。</p>
+        <strong>Harness が作らない</strong>というだけです。</p>
 
         <p>⚠️ そして<strong>「単独」は「独立」ではありません。</strong>
         リクエストに入れる資源 id は CSV ファイルから取り出すのですが、そのファイルを読む設定が
         <strong>試験計画の先頭に 1 つずつだけ</strong>あり、共有方式が<strong>「すべて」</strong>で、
-        最後まで読むと先頭に戻るようになっています。するとカーソル 1 つをすべての thread が分け合います。
+        最後まで読むと先頭に戻るようになっています。するとカーソル 1 つをすべての Thread が分け合います。
         順にまわる構造では<strong>前の束が止まった位置から次の束が引き継ぎます。</strong></p>
 
         <p>カーソルだけとは限りません。サーバーを立て直していなければ
-        <strong>cache に残ったものも、温まった JVM も前の束から引き継がれます。</strong>
+        <strong>Cache に残ったものも、温まった JVM も前の束から引き継がれます。</strong>
         ⚠️ 回のあいだにサーバーをどうしたかは<strong>記録にありません。</strong>
         確かなのは <strong>CSV のカーソル</strong>までです。</p>
 
@@ -294,7 +294,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
 &lt;boolProp name="ThreadGroup.scheduler"&gt;true&lt;/boolProp&gt;
 &lt;stringProp name="ThreadGroup.duration"&gt;600&lt;/stringProp&gt;</code></pre>
 
-        <p>最初の行が真なら thread の束が<strong>一度に 1 つずつ順に</strong>まわります。
+        <p>最初の行が真なら Thread の束が<strong>一度に 1 つずつ順に</strong>まわります。
         下の 4 つは<strong>繰り返しは無制限で時間が 600 秒</strong>という意味です。
         ⚠️ そのうち 2 行は<strong>同じことを 2 回</strong>言っています。<code>-1</code> がすでに
         「無制限」なので <code>continue_forever</code> が別に立っていても変わりません。</p>
@@ -346,7 +346,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
 
         <p>つまり <code>"all"</code> は<strong>10 種に同時に負荷をかける試験ではありません。</strong>
         <strong>一度に 1 つずつ測るのを 10 回つないだもの</strong>です。
-        ⚠️ 前の節に書いたとおりカーソルと cache と JVM はつながるので
+        ⚠️ 前の節に書いたとおりカーソルと Cache と JVM はつながるので
         <strong>10 回が互いに独立ではありません。</strong></p>
 
         <blockquote><p>⚠️ <strong>実際に 100 分かかったという記録はありません。</strong>
@@ -357,7 +357,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
         JMeter はリクエストとリクエストのあいだで時間を確認するだけで、
         <strong>進行中のリクエストは切りません。</strong>
         最後のリクエストが応答を長く待てばその束は 600 秒を超えて終わります。
-        <a href="slow-screens-1-volume-list.ja.html">①編</a>のように timeout が 10 分の画面なら
+        <a href="slow-screens-1-volume-list.ja.html">①編</a>のように Timeout が 10 分の画面なら
         その超過は小さくありません。</p>
 
         <h2 id="残さないもの">何を保存しないかが設計でした<a class="anchor" href="#残さないもの" aria-label="この節へのリンク">#</a></h2>
@@ -376,7 +376,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
 
         <p>偽なら結果が <strong>CSV で 1 行ずつ</strong>積まれます。
         そして <strong>CSV にはレスポンス本文を入れる欄がそもそもありません。</strong>
-        thread 50 個を 10 分まわす試験で本文まで積まれなかった理由がこれです。</p>
+        Thread 50 個を 10 分まわす試験で本文まで積まれなかった理由がこれです。</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
@@ -417,7 +417,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
           <img src="../assets/figures/volume-jmeter-after.png" alt="JMeter のレポート画面。Apdex 1.000、標本 7,658 件すべて成功、平均 5.34 ミリ秒、P99 23 ミリ秒、毎秒 12.82 件。" loading="lazy" width="645" height="317">
           <figcaption>回のフォルダの中にこういうレポートが測定対象の数だけできます。
           これは <a href="slow-screens-1-volume-list.ja.html">①編</a>に書いた最後の段階のものです。
-          6 段階の測定がすべてこの harness から出たと社内の記録に書かれています。
+          6 段階の測定がすべてこの Harness から出たと社内の記録に書かれています。
           リクエスト名の欄は社内の経路なので隠しました。</figcaption>
         </figure>
 
@@ -553,19 +553,19 @@ done
         <ul class="callout">
           <li><strong>負荷条件は揺れません。</strong>定数として置かれ、6 段階を測るあいだ触っていません。
           生成された JMX の中にもその値が書かれています。</li>
-          <li><strong>変わったのはサーバー側のコードで</strong>、それは <strong>harness の外</strong>です。
+          <li><strong>変わったのはサーバー側のコードで</strong>、それは <strong>Harness の外</strong>です。
           この道具は自分が何を測っているのか知りません。</li>
           <li><strong>回のフォルダは時刻でしか区別されません。</strong>
-          「このフォルダは cache なしの順次」と書かれた場所がありません。</li>
+          「このフォルダは Cache なしの順次」と書かれた場所がありません。</li>
         </ul>
 
-        <blockquote><p>この harness がしたことは<strong>「条件を揺らさないこと」</strong>で、
+        <blockquote><p>この Harness がしたことは<strong>「条件を揺らさないこと」</strong>で、
         しなかったことは<strong>「この結果がどの構成のものか印を付けること」</strong>です。
         2 つ目は人の記憶と別に書いておいた文書がやっていました。</p></blockquote>
 
         <p>⚠️ 「レポートに条件が何もない」という言い方は正確ではありません。
-        JMeter のレポートには開始・終了の時刻も、時間ごとの thread 数のグラフも、
-        リクエスト名ごとの統計もあります。<strong>thread をいくつまで上げたかは図から読めます。</strong>
+        JMeter のレポートには開始・終了の時刻も、時間ごとの Thread 数のグラフも、
+        リクエスト名ごとの統計もあります。<strong>Thread をいくつまで上げたかは図から読めます。</strong>
         ないのは<strong>実行に使った JMX と定数、そしてその回の名前</strong>です。</p>
 
         <p>直すのは難しくありません。生成した JMX と定数、そしてその回を呼ぶ名前を
@@ -600,10 +600,10 @@ done
           <li><strong>「手で合わせると条件が変わる」を実測していません。</strong>回のあいだで値が実際に
           ずれた記録も、ずれなかったという記録もありません。<strong>確認できないこと</strong>が
           道具を作った理由でした。</li>
-          <li><strong>この harness が条件をすべて固定するわけではありません。</strong>固定したのは
+          <li><strong>この Harness が条件をすべて固定するわけではありません。</strong>固定したのは
           呼ぶ側の条件です。データの量、JVM が温まっている度合い、その時刻にその機器に掛かっていた
           ほかの負荷は定数の外にあります。6 回を別々の時に回したなら、その差は結果の中にそのまま残っています。</li>
-          <li><strong>PowerShell 側は見ていません。</strong>この harness には Windows 用の実行スクリプトも
+          <li><strong>PowerShell 側は見ていません。</strong>この Harness には Windows 用の実行スクリプトも
           あるのですが、前の節で追及した空の結果・エラーストリーム・終了コードがそちらでどうなるかは
           <strong>確認していません。</strong>この記事の欠陥の指摘は bash 側に限られます。</li>
           <li><strong>「all」で 100 分を実際にまわした記録はありません。</strong>設定がそうだというところ
@@ -624,7 +624,7 @@ done
         <ul>
           <li><strong>条件がファイルにあるとあとで確認しやすくなります。</strong>手で合わせても
           書いておけば済みますが、書くことを人が覚えていなければなりません。
-          この harness はその記憶をなくしました。</li>
+          この Harness はその記憶をなくしました。</li>
           <li><strong>条件を固定することと、結果に名前を付けることは別です。</strong>
           どのフォルダがどの構成かは、やはり人が書いていました。</li>
           <li><strong>「完了」と出すスクリプトが何も作っていないことがあります。</strong>
@@ -650,8 +650,8 @@ done
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=772d75cdff"></script>
+  <script src="../assets/i18n.js?v=60def360be"></script>
+  <script src="../assets/content.js?v=738aaf3b4d"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

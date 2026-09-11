@@ -22,7 +22,7 @@
   <meta property="og:title" content="ウォームアップとは? | Kwanghun Lee" />
   <meta property="og:description" content="測定の先頭を捨てる区間。そこは定常状態ではない。" />
   <meta property="og:locale" content="ko_KR" />
-  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+  <link rel="stylesheet" href="../assets/styles.css?v=5115091496" />
 </head>
 <body>
   <div class="topbar">
@@ -78,7 +78,7 @@
         </nav>
       <article class="article-body">
 
-        <p class="term-oneline">測定の<strong>先頭を捨てる区間</strong>です。JIT コンパイル・connection pool の充填・cache が空の状態は定常状態ではないので、その区間を混ぜると二つの実行の差がウォームアップの長さの差として現れます。</p>
+        <p class="term-oneline">測定の<strong>先頭を捨てる区間</strong>です。JIT コンパイル・Connection Pool の充填・Cache が空の状態は定常状態ではないので、その区間を混ぜると二つの実行の差がウォームアップの長さの差として現れます。</p>
 
 
         <h2 id="원인">何が先頭を違うものにするのか<a class="anchor" href="#원인" aria-label="このセクションへのリンク">#</a></h2>
@@ -86,8 +86,8 @@
 
         <ul>
           <li><strong>JIT コンパイル</strong> — 最初はインタプリタで動き、よく呼ばれるコードから機械語にコンパイルされます。序盤は遅いです。</li>
-          <li><strong>connection pool の充填</strong> — pool が最小サイズから始まると、序盤のリクエストが connection を開く費用を払います。</li>
-          <li><strong>cache・バッファ</strong> — DB のバッファ cache が空だと、序盤のクエリはディスクを読みます。</li>
+          <li><strong>Connection Pool の充填</strong> — Pool が最小サイズから始まると、序盤のリクエストが Connection を開く費用を払います。</li>
+          <li><strong>Cache・バッファ</strong> — DB のバッファ Cache が空だと、序盤のクエリはディスクを読みます。</li>
         </ul>
         <h2 id="길이">どれだけ捨てるか<a class="anchor" href="#길이" aria-label="このセクションへのリンク">#</a></h2>
         <p>正解はなく、<strong>指標が平らになるまで</strong>が原則です。短い実行では 30 秒あたりがよくある出発点です。</p>
@@ -97,12 +97,12 @@
 
         <h2 id="쓰인-곳">このサイトで使われている記事<a class="anchor" href="#쓰인-곳" aria-label="このセクションへのリンク">#</a></h2>
         <ul>
-          <li><a href="../writing/a-pooler-fixes-only-one.ja.html">RDS Proxy では直せない connection 枯渇</a></li>
+          <li><a href="../writing/a-pooler-fixes-only-one.ja.html">RDS Proxy では直せない Connection 枯渇</a></li>
           </ul>
 
         <h2 id="함께-볼-용어">あわせて読む用語<a class="anchor" href="#함께-볼-용어" aria-label="このセクションへのリンク">#</a></h2>
         <ul>
-          <li><a href="load-test-harness.html">harness</a> — ウォームアップを引数で受け取る側</li>
+          <li><a href="load-test-harness.html">Harness</a> — ウォームアップを引数で受け取る側</li>
           <li><a href="percentile.html">p50 · p95 · p99</a> — ウォームアップが歪める値</li>
           </ul>
 
@@ -115,8 +115,8 @@
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=772d75cdff"></script>
+  <script src="../assets/i18n.js?v=60def360be"></script>
+  <script src="../assets/content.js?v=738aaf3b4d"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

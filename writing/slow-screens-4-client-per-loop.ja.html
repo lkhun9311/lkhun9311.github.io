@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="モニタリング画面がプロジェクトの数だけ認証していました | Kwanghun Lee" />
-  <meta property="og:description" content="時系列グラフを描く画面なのでクエリを疑いましたが、違いました。初期ロードがプロジェクトごとに client を作り直しており、使っていたファクトリは client を渡すたびに Keystone へ認証します。ただしこの記事には前後を測った数値がありません。なぜ無いのかが記事の半分です。" />
+  <meta property="og:description" content="時系列グラフを描く画面なのでクエリを疑いましたが、違いました。初期ロードがプロジェクトごとに Client を作り直しており、使っていたファクトリは Client を渡すたびに Keystone へ認証します。ただしこの記事には前後を測った数値がありません。なぜ無いのかが記事の半分です。" />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -27,11 +27,11 @@
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="モニタリング画面がプロジェクトの数だけ認証していました | Kwanghun Lee" />
-  <meta name="twitter:description" content="時系列グラフを描く画面なのでクエリを疑いましたが、違いました。初期ロードがプロジェクトごとに client を作り直しており、使っていたファクトリは client を渡すたびに Keystone へ認証します。ただしこの記事には前後を測った数値がありません。なぜ無いのかが記事の半分です。" />
+  <meta name="twitter:description" content="時系列グラフを描く画面なのでクエリを疑いましたが、違いました。初期ロードがプロジェクトごとに Client を作り直しており、使っていたファクトリは Client を渡すたびに Keystone へ認証します。ただしこの記事には前後を測った数値がありません。なぜ無いのかが記事の半分です。" />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="時系列グラフを描く画面なのでクエリを疑いましたが、違いました。初期ロードがプロジェクトごとに client を作り直しており、使っていたファクトリは client を渡すたびに Keystone へ認証します。ただしこの記事には前後を測った数値がありません。なぜ無いのかが記事の半分です。" />
+  <meta name="description" content="時系列グラフを描く画面なのでクエリを疑いましたが、違いました。初期ロードがプロジェクトごとに Client を作り直しており、使っていたファクトリは Client を渡すたびに Keystone へ認証します。ただしこの記事には前後を測った数値がありません。なぜ無いのかが記事の半分です。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+  <link rel="stylesheet" href="../assets/styles.css?v=5115091496" />
 </head>
 <body>
   <div class="topbar">
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">会社の業務</span></div>
       </div>
               <section class="page-hero">
-          <h1>モニタリング画面がプロジェクトの数だけ認証していました<br><span class="h1-sub">そのファクトリから client を得ることが、そのまま Keystone への認証でした。社内クラウド管理コンソール · 連載「遅い画面」④</span></h1>
+          <h1>モニタリング画面がプロジェクトの数だけ認証していました<br><span class="h1-sub">そのファクトリから Client を得ることが、そのまま Keystone への認証でした。社内クラウド管理コンソール · 連載「遅い画面」④</span></h1>
           <p class="article-date">2026年9月</p>
         </section>
 
@@ -85,8 +85,8 @@
             <li><a href="#どんな内容">どんな内容</a></li>
             <li><a href="#どんな画面">どんな画面</a></li>
             <li><a href="#まずクエリ">まずクエリを開きたくなります</a></li>
-            <li><a href="#原因">原因: client を得ることが、そのまま認証です</a></li>
-            <li><a href="#死んだcache">そして cache は読まれていませんでした</a></li>
+            <li><a href="#原因">原因: Client を得ることが、そのまま認証です</a></li>
+            <li><a href="#死んだcache">そして Cache は読まれていませんでした</a></li>
             <li><a href="#修正">修正: 認証をループの外に出しました</a></li>
             <li><a href="#測っていない">⚠️ ところが前後を測っていません</a></li>
             <li><a href="#負荷ツール">負荷ツールは、シナリオが送った経路しか測りません</a></li>
@@ -97,7 +97,7 @@
 
         <article class="article-body">
 
-        <p>こんにちは。社内クラウド管理コンソールの backend を作っています。モニタリング画面が遅い、という
+        <p>こんにちは。社内クラウド管理コンソールの Backend を作っています。モニタリング画面が遅い、という
         報告を受けました。</p>
 
         <p>⚠️ 先にお伝えします。<strong>この記事には修正前と後を測った数値がありません。</strong>
@@ -107,7 +107,7 @@
 
         <ul class="callout">
           <li>クラウド SDK に <code>getClient()</code> のような便利関数を用意して使っている方</li>
-          <li>ループの中で client を取るコードを見たことがある方</li>
+          <li>ループの中で Client を取るコードを見たことがある方</li>
           <li>画面が遅いとき、まずクエリを開く方</li>
         </ul>
 
@@ -115,12 +115,12 @@
 
         <ul>
           <li>時系列グラフを描く画面なので <strong>遅いのはクエリだと考えやすい</strong>のですが、違いました。</li>
-          <li>初期ロードが <strong>プロジェクト 1 個ごとに client を作り直して</strong>おり、
+          <li>初期ロードが <strong>プロジェクト 1 個ごとに Client を作り直して</strong>おり、
           <strong>使っていた <code>serviceClient()</code> は呼ぶたびに Keystone へ認証</strong>します。
           プロジェクトが N 個なら <strong>認証も N 回</strong>、しかも順番にです。</li>
-          <li>さらに cache があるのに <strong>読まれていませんでした。</strong>
-          「cache を入れた」と「cache を読む」は別の仕事です。</li>
-          <li>直したのは <strong>client を 1 つループの外で作って使い回した</strong>ことだけです。
+          <li>さらに Cache があるのに <strong>読まれていませんでした。</strong>
+          「Cache を入れた」と「Cache を読む」は別の仕事です。</li>
+          <li>直したのは <strong>Client を 1 つループの外で作って使い回した</strong>ことだけです。
           認証 N 回が 1 回になります。</li>
           <li>⚠️ <strong>ところがどれだけ速くなったかは分かりません。</strong>測っておらず、
           よく書かれる負荷シナリオでは <strong>この区間が試験に入りません。</strong></li>
@@ -145,8 +145,8 @@
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロールできる図">
             <svg viewBox="0 0 720 210" role="img" aria-labelledby="mon-t mon-d" xmlns="http://www.w3.org/2000/svg">
               <title id="mon-t">初期ロードと 15 秒ごとの push、2 つの経路</title>
-              <desc id="mon-d">上が初期ロードです。画面が REST で 1 回要求すると、backend がプロジェクトごとに
-              client を作って取得し、client を作るたびに Keystone 認証が 1 回ずつ起きます。ピンクで示した
+              <desc id="mon-d">上が初期ロードです。画面が REST で 1 回要求すると、Backend がプロジェクトごとに
+              Client を作って取得し、Client を作るたびに Keystone 認証が 1 回ずつ起きます。ピンクで示した
               区間です。下がその後の流れで、サーバーが 15 秒ごとに 1 回計算し、開いているすべての画面へ
               同じ値を送ります。こちらは青です。</desc>
 
@@ -155,10 +155,10 @@
               <path d="M112 40 H 150" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#mn-arA)"/>
               <text x="131" y="32" font-size="11.5" fill="#d62976" text-anchor="middle">REST 1 回</text>
               <rect x="158" y="24" width="126" height="32" rx="6" fill="none" stroke="#18121d" stroke-width="2"/>
-              <text x="221" y="44" font-size="12.5" fill="#18121d" font-weight="700" text-anchor="middle">backend</text>
+              <text x="221" y="44" font-size="12.5" fill="#18121d" font-weight="700" text-anchor="middle">Backend</text>
               <path d="M284 40 H 322" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#mn-arA)"/>
               <rect x="330" y="16" width="382" height="48" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="521" y="36" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">プロジェクトごとに client 生成 · それが Keystone 認証</text>
+              <text x="521" y="36" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">プロジェクトごとに Client 生成 · それが Keystone 認証</text>
               <text x="521" y="54" font-size="11.5" fill="#7b7186" text-anchor="middle">プロジェクト N 個 · 認証 N 回 · 順次</text>
               <rect x="158" y="76" width="554" height="18" rx="3" fill="rgba(214,41,118,0.18)" stroke="#d62976" stroke-width="1.5"/>
               <text x="435" y="90" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">初期ロード · ユーザーが待つ区間</text>
@@ -189,7 +189,7 @@
         <h2 id="まずクエリ">まずクエリを開きたくなります<a class="anchor" href="#まずクエリ" aria-label="この節へのリンク">#</a></h2>
 
         <p>「時系列グラフが遅い」と聞くと、まず手が伸びる場所があります。クエリです。式を整えて結果を
-        cache し、そのうえで負荷ツールでユーザーを増やして確かめる。
+        Cache し、そのうえで負荷ツールでユーザーを増やして確かめる。
         <strong>順番として自然ですが、ここでは遅い区間がそちらではありませんでした。</strong></p>
 
         <p>時系列の取得は <strong>15 秒に 1 回</strong>です。しかも開いている画面の数と関係なく 1 回です。
@@ -199,7 +199,7 @@
         <blockquote><p><strong>実行時間の長い関数が、そのままユーザーの待つ区間とは限りません。</strong>
         クエリは目につきやすいので、先に標的になります。</p></blockquote>
 
-        <h2 id="原因">原因: client を得ることが、そのまま認証です<a class="anchor" href="#原因" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="原因">原因: Client を得ることが、そのまま認証です<a class="anchor" href="#原因" aria-label="この節へのリンク">#</a></h2>
 
         <p>初期ロード側のコードはこうなっていました。</p>
 
@@ -213,12 +213,12 @@
         <p>読んでも何も問題が無いように見えます。便利関数を呼んで使うだけです。
         <strong>その関数が何をするかが、名前に書かれていません。</strong></p>
 
-        <blockquote><p><strong>このファクトリでは、client を得ることが認証することです。</strong>
+        <blockquote><p><strong>このファクトリでは、Client を得ることが認証することです。</strong>
         <code>serviceClient()</code> は設定ファイルのアカウントで Keystone につないでトークンを受け取り、
-        認証済みの client を返します。</p></blockquote>
+        認証済みの Client を返します。</p></blockquote>
 
         <p>⚠️ <strong>SDK 一般がそうだという話ではありません。</strong>同じライブラリにも、すでに持っている
-        トークンから client を作る道が別にあります。認証しているのは <strong>こちら側のファクトリの実装</strong>
+        トークンから Client を作る道が別にあります。認証しているのは <strong>こちら側のファクトリの実装</strong>
         であり、その事実が関数名に出ていなかった、というのがこの記事の話です。</p>
 
         <p>⚠️ そして <strong>これは社内文書 2 件で確認したこと</strong>です。<code>serviceClient()</code> の
@@ -240,8 +240,8 @@
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロールできる図">
             <svg viewBox="0 0 720 176" role="img" aria-labelledby="auth-t auth-d" xmlns="http://www.w3.org/2000/svg">
-              <title id="auth-t">client をループの中で作る場合と外で作る場合</title>
-              <desc id="auth-d">上のカードが修正前で、ループの中で client を作るためプロジェクト 4 個なら認証と取得が
+              <title id="auth-t">Client をループの中で作る場合と外で作る場合</title>
+              <desc id="auth-d">上のカードが修正前で、ループの中で Client を作るためプロジェクト 4 個なら認証と取得が
               交互に 8 回起きます。下のカードが修正後で、認証がループの前に 1 回だけあり、そのあとは取得が
               4 回続きます。</desc>
 
@@ -289,16 +289,16 @@
           下のカードで消えたのは取得ではなく認証です。</figcaption>
         </figure>
 
-        <h2 id="死んだcache">そして cache は読まれていませんでした<a class="anchor" href="#死んだcache" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="死んだcache">そして Cache は読まれていませんでした<a class="anchor" href="#死んだcache" aria-label="この節へのリンク">#</a></h2>
 
-        <p>同じ経路にクォータの cache がすでに入っていました。ところが <strong>読むコードがありませんでした。</strong>
+        <p>同じ経路にクォータの Cache がすでに入っていました。ところが <strong>読むコードがありませんでした。</strong>
         詰めるだけで、毎回 live 呼び出しをしていました。</p>
 
-        <blockquote><p><strong>「cache を入れた」と「cache を読む」は別の仕事です。</strong>
-        読まれない cache は無いより悪い。あると信じさせるからです。</p></blockquote>
+        <blockquote><p><strong>「Cache を入れた」と「Cache を読む」は別の仕事です。</strong>
+        読まれない Cache は無いより悪い。あると信じさせるからです。</p></blockquote>
 
-        <p>前の <a href="slow-screens-3-role-lookup.ja.html">③編</a>が「cache があるのに、その cache のせいで
-        遅かった」だとすれば、こちらは <strong>「cache があるのに誰も見ていなかった」</strong>です。</p>
+        <p>前の <a href="slow-screens-3-role-lookup.ja.html">③編</a>が「Cache があるのに、その Cache のせいで
+        遅かった」だとすれば、こちらは <strong>「Cache があるのに誰も見ていなかった」</strong>です。</p>
 
         <h2 id="修正">修正: 認証をループの外に出しました<a class="anchor" href="#修正" aria-label="この節へのリンク">#</a></h2>
 
@@ -318,26 +318,26 @@ for (String projectId : projects) {
         ループの中にあったものを外へ出しました。</p>
 
         <p>⚠️ 正確にします。<strong>認証が無くなったのではなく、リクエスト 1 件あたり N 回が 1 回になった</strong>
-        のです。client はこのメソッドの中で作られるので、<strong>次のリクエストはまた 1 回認証します。</strong></p>
+        のです。Client はこのメソッドの中で作られるので、<strong>次のリクエストはまた 1 回認証します。</strong></p>
 
         <p>そして <strong>その「1 回」にも条件が付きます。</strong>ループが回っている間にトークンが期限切れになれば、
         次の呼び出しは拒否されます。そのときライブラリが自分で認証し直して再試行するかは
         <strong>使うバージョンとコネクタ次第で、この記事は確認していません。</strong>
         トークンの有効期間がこのループの時間よりずっと長いので、表に出なかっただけです。</p>
 
-        <p>リクエストの間 client を持ち続ければ認証をさらに減らせます。
-        ⚠️ ただし <strong>そちらのほうが難しい</strong>です。この系統の client は現在のセッションを
-        thread に紐づける構造なので、1 つを複数のリクエスト thread で分け合うとセッションが混ざったり
+        <p>リクエストの間 Client を持ち続ければ認証をさらに減らせます。
+        ⚠️ ただし <strong>そちらのほうが難しい</strong>です。この系統の Client は現在のセッションを
+        Thread に紐づける構造なので、1 つを複数のリクエスト Thread で分け合うとセッションが混ざったり
         空になったりします。トークンの期限もそこからは自分で扱うことになります。
         <strong>この修正はそこまで行っていません。</strong></p>
 
-        <p>timeout を <strong>この client にだけ</strong>掛けたのも意図的です。全体の設定に掛けると、
+        <p>Timeout を <strong>この Client にだけ</strong>掛けたのも意図的です。全体の設定に掛けると、
         正常に長くかかる他の呼び出しまで切れます。<strong>遅い画面を直そうとして正常な機能を切る</strong>のが、
         よくある次の事故です。</p>
 
-        <p>⚠️ 2 つは別のものを制限します。connection timeout は <strong>接続を張るのに</strong>かかる時間を、
-        read timeout は <strong>送ってから応答を待つ</strong>時間を切ります。そしてこの client にだけ掛けても
-        <strong>この client が行う認証・取得にはすべて掛かります。</strong>防げるのは、他の client へ設定が
+        <p>⚠️ 2 つは別のものを制限します。Connection Timeout は <strong>接続を張るのに</strong>かかる時間を、
+        Read Timeout は <strong>送ってから応答を待つ</strong>時間を切ります。そしてこの Client にだけ掛けても
+        <strong>この Client が行う認証・取得にはすべて掛かります。</strong>防げるのは、他の Client へ設定が
         広がることだけです。⚠️ これはそうすると決めた <strong>意図</strong>で、全体に掛けたとき実際に何が
         切れるのかを確かめた記録はありません。</p>
 
@@ -427,7 +427,7 @@ for (String projectId : projects) {
           <strong>速度の改善幅を主張しません。</strong></li>
           <li><strong>認証 1 回がどれだけかを知りません。</strong>ですから「N−1 回分を払わずに済む」が
           何秒なのかも分かりません。</li>
-          <li><strong>client を得ることが認証だというのは社内文書 2 件で確認しました。</strong>
+          <li><strong>Client を得ることが認証だというのは社内文書 2 件で確認しました。</strong>
           <code>serviceClient()</code> の実装自体はリポジトリになく、この記事にも載せていません。
           使っているライブラリのバージョンやコネクタも確認できていません。</li>
           <li><strong>プロジェクトごとの取得はそのままです。</strong>無くしたのは認証の側で、取得は今も
@@ -444,8 +444,8 @@ for (String projectId : projects) {
 
         <ul>
           <li><strong>名前が費用を隠します。</strong><code>serviceClient()</code> はただのように見えて
-          ネットワークの往復です。<strong>ループの中で client を取るコードは、いつも一度疑う価値があります。</strong></li>
-          <li><strong>「cache を入れた」と「cache を読む」は別の仕事です。</strong></li>
+          ネットワークの往復です。<strong>ループの中で Client を取るコードは、いつも一度疑う価値があります。</strong></li>
+          <li><strong>「Cache を入れた」と「Cache を読む」は別の仕事です。</strong></li>
           <li><strong>負荷試験の結果は、シナリオが実際に送ったリクエストについてだけ有効です。</strong>
           軸が合わなければ平らなグラフが出て、そのグラフは踏まなかった経路について何も言いません。</li>
           <li><strong>直したのに測れなかったなら、測れなかったと書きます。</strong>コードで確かなことと
@@ -473,8 +473,8 @@ for (String projectId : projects) {
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=772d75cdff"></script>
+  <script src="../assets/i18n.js?v=60def360be"></script>
+  <script src="../assets/content.js?v=738aaf3b4d"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

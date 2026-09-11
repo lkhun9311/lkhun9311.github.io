@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mutation testing란? | Kwanghun Lee</title>
+  <title>Mutation testing란? | Kwanghun Lee</title>
   <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/notes/mutation-testing.html" />
   <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/notes/mutation-testing.ko.html" />
   <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/notes/mutation-testing.ja.html" />
@@ -19,10 +19,10 @@
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="mutation testing란? | Kwanghun Lee" />
+  <meta property="og:title" content="Mutation testing란? | Kwanghun Lee" />
   <meta property="og:description" content="코드를 일부러 망가뜨린 뒤 테스트가 빨간불이 되는지 보는 방법." />
   <meta property="og:locale" content="ko_KR" />
-  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+  <link rel="stylesheet" href="../assets/styles.css?v=5115091496" />
 </head>
 <body>
   <div class="topbar">
@@ -63,7 +63,7 @@
         <div class="article-meta"><span class="source-tag glossary notranslate">용어</span></div>
       </div>
       <section class="page-hero">
-        <h1>Mutation Testing: mutation testing란?</h1>
+        <h1>Mutation Testing: Mutation testing란?</h1>
         <p class="article-date">검증<span aria-hidden="true"> · </span><span class="notranslate">#Mutation Testing</span></p>
       </section>
       <aside class="article-aside" data-aside="notes" data-slug="mutation-testing"></aside>
@@ -94,7 +94,7 @@
         나는지 보는 것</strong>입니다.</p>
 
         <p>흔한 형태: 단언은 멀쩡히 있고 값도 맞게 검사하는데 그 단언이 <strong>이번에 막은 것을 안 겨누고</strong>
-        있습니다. 예를 들어 "호출이 transaction 밖인가"를 검사하는데 호출이 0건이면
+        있습니다. 예를 들어 "호출이 Transaction 밖인가"를 검사하는데 호출이 0건이면
         <code>containsOnly(false)</code>는 빈 리스트에 대해 참이라 <strong>공허하게 통과</strong>합니다.</p>
         <h2 id="방법">어떻게 하나<a class="anchor" href="#방법" aria-label="이 절로 가는 링크">#</a></h2>
         <p>도구를 쓸 수도 있지만(PIT 등), 실무에서 가장 값이 큰 것은 <strong>손으로 한 번 되돌려 보는 것</strong>입니다.</p>
@@ -104,25 +104,25 @@
 ③ 빨간불이 나면  → 가드가 그 수리를 지키고 있다
    초록불이 나면  → 지키는 가드가 없다. 지금 만든다.</pre>
 
-        <p>순서를 바꿔 <strong>mutation을 먼저 걸고</strong> 빨간불을 확인한 뒤 원복해 초록불을 보는 방법도 있습니다.
+        <p>순서를 바꿔 <strong>Mutation을 먼저 걸고</strong> 빨간불을 확인한 뒤 원복해 초록불을 보는 방법도 있습니다.
         가드를 새로 쓸 때 특히 좋습니다. 처음부터 "이 가드가 무엇을 잡는지"를 눈으로 보게 됩니다.</p>
         <h2 id="경로">경로마다 따로 걸어야 합니다<a class="anchor" href="#경로" aria-label="이 절로 가는 링크">#</a></h2>
         <p>한 번에 다 망가뜨리면 "빨간불 났으니 됐다"로 넘어가게 됩니다. <strong>하나씩 빼야</strong>
         어느 가드가 무엇을 지키는지 드러납니다.</p>
 
-        <p>실제 사례: 세 경로를 고치고 mutation을 걸었더니 두 경로는 해당 가드만 빨간불이 됐는데 세 번째 경로는
+        <p>실제 사례: 세 경로를 고치고 Mutation을 걸었더니 두 경로는 해당 가드만 빨간불이 됐는데 세 번째 경로는
         <strong>초록불</strong>이었습니다. 그 가드가 겨누는 조건이 테스트 안에서 만들어지지 않았기 때문이고
         조건을 만들어 준 뒤에야 빨간불을 봤습니다.</p>
 
         <h2 id="쓰인-곳">이 사이트에서 쓰인 곳<a class="anchor" href="#쓰인-곳" aria-label="이 절로 가는 링크">#</a></h2>
         <ul>
-          <li><a href="../writing/a-pooler-fixes-only-one.ko.html">RDS Proxy로는 못 고치는 connection 고갈: 가드 절</a></li>
+          <li><a href="../writing/a-pooler-fixes-only-one.ko.html">RDS Proxy로는 못 고치는 Connection 고갈: 가드 절</a></li>
           </ul>
 
         <h2 id="함께-볼-용어">함께 볼 용어<a class="anchor" href="#함께-볼-용어" aria-label="이 절로 가는 링크">#</a></h2>
         <ul>
           <li><a href="fail-closed.html">fail-closed</a>: 되돌려도 증상이 안 보이는 종류의 결함</li>
-          <li><a href="load-test-harness.html">harness</a>: 측정 도구에도 같은 규율이 필요하다</li>
+          <li><a href="load-test-harness.html">Harness</a>: 측정 도구에도 같은 규율이 필요하다</li>
           </ul>
 
       </article>
@@ -134,8 +134,8 @@
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=772d75cdff"></script>
+  <script src="../assets/i18n.js?v=60def360be"></script>
+  <script src="../assets/content.js?v=738aaf3b4d"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

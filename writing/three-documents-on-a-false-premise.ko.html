@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="2,255 커밋을 건너뛰는 버전 이관. 문서 추론으로는 어디서 깨질지 알 수 없어 격리 환경에 옛 버전을 세우고 한 번 깨뜨려 봤습니다. 그러자 제 앞선 문서 세 편의 전제가 틀렸다는 게 나왔습니다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+  <link rel="stylesheet" href="../assets/styles.css?v=5115091496" />
 </head>
 <body>
   <div class="topbar">
@@ -151,18 +151,18 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
 
         <h2 id="날짜순을-믿지-않았다">날짜순 정렬을 믿지 않았습니다<a class="anchor" href="#날짜순을-믿지-않았다" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>다음은 델타를 특정하는 일입니다. 구버전 baseline에 어떤 패치가 이미 들어 있고 무엇이 빠져 있는지를 알아야
-        합니다. baseline 스키마에서 마커 테이블의 존재 여부를 하나씩 확인했습니다.</p>
+        <p>다음은 델타를 특정하는 일입니다. 구버전 Baseline에 어떤 패치가 이미 들어 있고 무엇이 빠져 있는지를 알아야
+        합니다. Baseline 스키마에서 마커 테이블의 존재 여부를 하나씩 확인했습니다.</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
         <table>
-          <caption class="sr-only">구버전 baseline에 존재하는 마커 테이블과 그 의미.</caption>
-          <thead><tr><th scope="col">마커</th><th scope="col">baseline</th><th scope="col">의미</th></tr></thead>
+          <caption class="sr-only">구버전 Baseline에 존재하는 마커 테이블과 그 의미.</caption>
+          <thead><tr><th scope="col">마커</th><th scope="col">Baseline</th><th scope="col">의미</th></tr></thead>
           <tbody>
             <tr><td>설정 테이블</td><td>있음</td><td>—</td></tr>
-            <tr><td>차단 목록</td><td>있음</td><td>10월 패치가 baseline에 포함돼 있다</td></tr>
+            <tr><td>차단 목록</td><td>있음</td><td>10월 패치가 Baseline에 포함돼 있다</td></tr>
             <tr><td>스케줄러 테이블</td><td><strong>없음</strong></td><td>7월 배치 패치가 미적용</td></tr>
             <tr><td>배치 잡 정보</td><td><strong>없음</strong></td><td>신규 패치 하나가 이걸 참조한다. <strong>선행 없이는 실패</strong></td></tr>
           </tbody>
@@ -170,9 +170,9 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
         </div>
         </div>
 
-        <p>여기서 걸린 것이 하나 있습니다. baseline에 <strong>10월 패치는 있는데 그 앞의 7·8월 패치는 없었습니다.</strong></p>
+        <p>여기서 걸린 것이 하나 있습니다. Baseline에 <strong>10월 패치는 있는데 그 앞의 7·8월 패치는 없었습니다.</strong></p>
 
-        <p>즉 baseline은 어느 날짜까지 자른 스냅숏이 아니라 <strong>큐레이션</strong>입니다. 누군가가 그 라인에
+        <p>즉 Baseline은 어느 날짜까지 자른 스냅숏이 아니라 <strong>큐레이션</strong>입니다. 누군가가 그 라인에
         필요하다고 판단한 것만 골라 담은 것입니다. 그러면 "날짜순으로 정렬해서 그 뒤 것을 순서대로 적용한다"는
         방침은 <strong>안전을 전혀 보장하지 않습니다.</strong> 이미 들어간 것을 다시 넣거나, 앞서 들어갔어야 할 것을
         건너뛰게 됩니다.</p>
@@ -196,7 +196,7 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
         델타 목록을 만들고 순서를 정하고 멱등성을 따지고 있었습니다. 그 작업 전체가 <strong>다른 방식의 절차</strong>
         였습니다.</p>
 
-        <p>델타 실사가 무의미해진 것은 아닙니다. 어느 패치가 baseline에 들어 있는지는 재구축 후 이관에서도 필요한
+        <p>델타 실사가 무의미해진 것은 아닙니다. 어느 패치가 Baseline에 들어 있는지는 재구축 후 이관에서도 필요한
         정보입니다. 무의미해진 것은 <strong>"패치를 순서대로 적용하면 도착한다"는 결론</strong> 쪽입니다.</p>
 
         <p>세 편을 지우지 않고 <strong>각각에 정정 표기를 달았습니다.</strong> 지우면 왜 그렇게 생각했는지가 사라지고
@@ -284,7 +284,7 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
         <h2 id="그리고-하나가-터졌다">그리고 실제로 하나가 터졌습니다<a class="anchor" href="#그리고-하나가-터졌다" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>준비 기간에 커스터마이징 브랜치를 원격 최신으로 올렸습니다. 39 커밋이 한꺼번에 들어왔고
-        <strong>WAS가 기동 즉시 종료됐습니다.</strong> Tomcat 컨텍스트 초기화에서 cache 빈 생성에 실패하며 프로세스가
+        <strong>WAS가 기동 즉시 종료됐습니다.</strong> Tomcat 컨텍스트 초기화에서 Cache 빈 생성에 실패하며 프로세스가
         <code>exit 1</code>로 죽었습니다.</p>
 
 <pre data-lang="text"><code>No enum constant ConfigureKey.FEATURE_SETTINGS
@@ -388,7 +388,7 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
         <ul>
           <li><strong>절차서는 읽어서가 아니라 한 번 실패해 봐야 고쳐집니다.</strong> 문서만 읽어서 알게 된
           것은 하나뿐이었습니다.</li>
-          <li><strong>「날짜순으로 정렬해서 그 뒤 것을 적용한다」는 baseline이 날짜 컷일 때만 맞습니다.</strong>
+          <li><strong>「날짜순으로 정렬해서 그 뒤 것을 적용한다」는 Baseline이 날짜 컷일 때만 맞습니다.</strong>
           큐레이션이면 안전이 아니라 위험을 만듭니다.</li>
           <li><strong>틀린 전제는 지우지 말고 왜 틀렸는지를 남깁니다.</strong> 지우면 다음에 같은 자리에서
           같은 추론을 합니다.</li>
@@ -398,7 +398,7 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
 
         <p>남는 한 줄은 이것입니다. <strong>문서만 읽어서 알게 된 것은 하나뿐이었습니다</strong>. 방식이 패치 적용이
         아니라 재구축과 이관이라는 것. 그리고 그것조차 처음 훑을 때는 놓쳤고 절차 목록이 아니라 개요를 읽고서야
-        걸렸습니다. 나머지는 전부. 릴리스본이 같다는 것도, baseline이 날짜 컷이 아니라는 것도, 절차서가 없는 파일을
+        걸렸습니다. 나머지는 전부. 릴리스본이 같다는 것도, Baseline이 날짜 컷이 아니라는 것도, 절차서가 없는 파일을
         가리킨다는 것도. 실제로 무언가를 확인하다가 나왔습니다. 방식이 다르다는 것 하나는 문서를 <em>정독해서</em> 알았는데 그것도 처음 훑을 때는
         놓쳤던 것입니다. 운영 DB는 처음 시도하기에 가장 비싼 장소입니다.</p>
 
@@ -414,8 +414,8 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=772d75cdff"></script>
+  <script src="../assets/i18n.js?v=60def360be"></script>
+  <script src="../assets/content.js?v=738aaf3b4d"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

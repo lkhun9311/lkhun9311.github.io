@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="처리량 상한은 제 코드가 아니라 SDK에 있었습니다 | Kwanghun Lee" />
-  <meta property="og:description" content="콘텐츠 검열 경로의 처리량이 6.27 req/s에서 안 올라갔습니다. 쓰기를 2배로 올려도 DB pool을 3배로 키워도 그대로였습니다. 원인은 S3를 쓰려고 넣은 AWS SDK가 끌고 들어온 HTTP 클라이언트의 기본값 5였고 그 층은 컴파일 클래스패스에 없어서 읽어서는 찾을 수 없었습니다." />
+  <meta property="og:description" content="콘텐츠 검열 경로의 처리량이 6.27 req/s에서 안 올라갔습니다. 쓰기를 2배로 올려도 DB Pool을 3배로 키워도 그대로였습니다. 원인은 S3를 쓰려고 넣은 AWS SDK가 끌고 들어온 HTTP 클라이언트의 기본값 5였고 그 층은 컴파일 클래스패스에 없어서 읽어서는 찾을 수 없었습니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -29,9 +29,9 @@
   <meta name="twitter:title" content="처리량 상한은 제 코드가 아니라 SDK에 있었습니다 | Kwanghun Lee" />
   <meta name="twitter:description" content="아무도 고르지 않은 기본값 5가 콘텐츠 검열의 처리량 상한이었습니다. 읽어서는 찾을 수 없고 재야만 나오는 층에 대한 이야기입니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="콘텐츠 검열 경로의 처리량이 6.27 req/s에서 안 올라갔습니다. 쓰기를 2배로 올려도 DB pool을 3배로 키워도 그대로였습니다. 원인은 S3를 쓰려고 넣은 AWS SDK가 끌고 들어온 HTTP 클라이언트의 기본값 5였고 그 층은 컴파일 클래스패스에 없어서 읽어서는 찾을 수 없었습니다." />
+  <meta name="description" content="콘텐츠 검열 경로의 처리량이 6.27 req/s에서 안 올라갔습니다. 쓰기를 2배로 올려도 DB Pool을 3배로 키워도 그대로였습니다. 원인은 S3를 쓰려고 넣은 AWS SDK가 끌고 들어온 HTTP 클라이언트의 기본값 5였고 그 층은 컴파일 클래스패스에 없어서 읽어서는 찾을 수 없었습니다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+  <link rel="stylesheet" href="../assets/styles.css?v=5115091496" />
 </head>
 <body>
   <div class="topbar">
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag commercial notranslate">사업화 프로젝트</span><span class="repo-private notranslate" translate="no">Private</span></div>
       </div>
       <section class="page-hero">
-        <h1>처리량 상한은 제 코드가 아니라 SDK에 있었습니다<br><span class="h1-sub">S3를 붙이며 딸려 온 HTTP 클라이언트의 호스트당 connection이 5였습니다. 소셜 투표 플랫폼 콘텐츠 검열 경로</span></h1>
+        <h1>처리량 상한은 제 코드가 아니라 SDK에 있었습니다<br><span class="h1-sub">S3를 붙이며 딸려 온 HTTP 클라이언트의 호스트당 Connection이 5였습니다. 소셜 투표 플랫폼 콘텐츠 검열 경로</span></h1>
         <p class="article-date">2026년 9월</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="the-ceiling-was-not-in-the-code"></aside>
@@ -86,12 +86,12 @@
             <li><a href="#결론부터">결론부터 말씀드리자면</a></li>
             <li><a href="#쓰기는-가볍다">쓰기는 무겁지 않았습니다</a></li>
             <li><a href="#10에서-안-움직임">무엇을 바꿔도 10에서 안 움직였습니다</a></li>
-            <li><a href="#thread-덤프">thread 덤프가 어디서 멈췄는지 알려 줬습니다</a></li>
+            <li><a href="#thread-덤프">Thread 덤프가 어디서 멈췄는지 알려 줬습니다</a></li>
             <li><a href="#사슬">사슬을 거슬러 올라가면 S3가 나옵니다</a></li>
             <li><a href="#한-줄로-확인">한 줄 설정으로 확인했습니다</a></li>
             <li><a href="#그대로-두면">그런데 이대로 두면 안 됩니다</a></li>
             <li><a href="#상한을-정했습니다">그래서 상한을 정했습니다</a></li>
-            <li><a href="#timeout">첫 구현이 timeout을 날렸습니다</a></li>
+            <li><a href="#timeout">첫 구현이 Timeout을 날렸습니다</a></li>
             <li><a href="#설정은-실패하지-않는다">설정은 그 자체로 아무것도 실패시키지 않습니다</a></li>
             <li><a href="#redis">“Redis나 큐를 쓰면 되지 않나요?”</a></li>
             <li><a href="#주장하지-않는-것">이 글이 주장하지 않는 것</a></li>
@@ -100,11 +100,11 @@
         </nav>
       <article class="article-body">
 
-        <p>안녕하세요. <strong>소셜 투표 플랫폼</strong>을 만들고 있습니다. 지난 글에서 transaction 경계를 고치고
-        <a class="term" href="../notes/load-test-harness.html">harness</a>를 세워 수치를 만들었는데 그 harness가
+        <p>안녕하세요. <strong>소셜 투표 플랫폼</strong>을 만들고 있습니다. 지난 글에서 Transaction 경계를 고치고
+        <a class="term" href="../notes/load-test-harness.html">Harness</a>를 세워 수치를 만들었는데 그 Harness가
         곧바로 다음 질문을 던졌습니다. <em>“글 생성 처리량이 왜 6.27 req/s에서 안 올라가지?”</em></p>
 
-        <p>쓰기 thread를 2배로 올려도, DB connection pool을 3배로 키워도 그 숫자는 움직이지 않았습니다.
+        <p>쓰기 Thread를 2배로 올려도, DB Connection Pool을 3배로 키워도 그 숫자는 움직이지 않았습니다.
         범인은 <strong>제가 쓴 적도, 고른 적도, 이름을 본 적도 없는 라이브러리의 기본값</strong>이었습니다.</p>
 
 
@@ -112,17 +112,17 @@
 
         <ul class="callout">
           <li>Spring Boot에서 <code>RestClient</code>나 <code>RestTemplate</code>으로 외부 API를 부르고 있는 분</li>
-          <li>처리량이 어떤 숫자에서 딱 멈춰 있는데 thread도 DB pool도 늘려 봤지만 안 움직이는 분</li>
+          <li>처리량이 어떤 숫자에서 딱 멈춰 있는데 Thread도 DB Pool도 늘려 봤지만 안 움직이는 분</li>
           <li><em>“내가 안 넣은 라이브러리가 내 서비스 동작을 정하고 있나?”</em>가 궁금하신 분</li>
         </ul>
 
         <h2 id="무슨-내용">무슨 내용인가요?<a class="anchor" href="#무슨-내용" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul>
-          <li>콘텐츠 검열 경로의 처리량이 <strong>6.27 req/s</strong>에서 멈춰 있었습니다. 쓰기 thread를
-          2배로 올려도, DB connection pool을 3배로 키워도 그대로였습니다.</li>
+          <li>콘텐츠 검열 경로의 처리량이 <strong>6.27 req/s</strong>에서 멈춰 있었습니다. 쓰기 Thread를
+          2배로 올려도, DB Connection Pool을 3배로 키워도 그대로였습니다.</li>
           <li>원인은 <strong>S3를 쓰려고 넣은 AWS SDK가 끌고 들어온 HTTP 클라이언트</strong>의 기본값
-          <strong>“대상 호스트당 connection 5개”</strong>였습니다.</li>
+          <strong>“대상 호스트당 Connection 5개”</strong>였습니다.</li>
           <li>이 라이브러리는 <strong>런타임 클래스패스에만</strong> 있습니다. 코드 어디에도 이름이 나오지
           않아서 <strong>읽어서는 찾을 수 없고 재야만 나옵니다.</strong></li>
           <li>고친 방식은 <strong>상한을 없애는 것이 아니라 정하는 것</strong>이었습니다. 상한을 지우면
@@ -135,17 +135,17 @@
         <p><strong>코드는 비공개 저장소에 있습니다.</strong> 아직 출시 전이라 저장소를 열어 두지 않았습니다.
         그래서 이 글에는 GitHub 링크가 없습니다. 코드는 <strong>인용한 조각만</strong> 본문에 옮겼습니다.</p>
 
-        <p><strong>⚠️ 미리 말씀드릴 것이 있습니다.</strong> 이 글의 수치는 전부 <strong>로컬 harness로
-        잰 것</strong>입니다. 부하기·애플리케이션·외부 API stub·PostgreSQL이 <strong>전부 한 기계</strong>에서
+        <p><strong>⚠️ 미리 말씀드릴 것이 있습니다.</strong> 이 글의 수치는 전부 <strong>로컬 Harness로
+        잰 것</strong>입니다. 부하기·애플리케이션·외부 API Stub·PostgreSQL이 <strong>전부 한 기계</strong>에서
         CPU를 나눠 씁니다. 그래서 <strong>절대 처리량에는 의미가 없고 비교에만 의미가 있습니다.</strong>
-        외부 호출 800ms는 stub에 <strong>설정한 값</strong>이지 실제 지연 분포가 아니고
+        외부 호출 800ms는 Stub에 <strong>설정한 값</strong>이지 실제 지연 분포가 아니고
         <strong>조건당 1회 실행</strong>입니다.</p>
 
         <h2 id="어떤-경로">어떤 경로에서 생긴 일인가요?<a class="anchor" href="#어떤-경로" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>사업화를 목표로 만들고 있는 <strong>소셜 투표 플랫폼</strong>입니다. 사용자가 질문을 올리면 다른
         사람들이 투표하고 그 결과 차트를 앱 밖으로 공유합니다. Kotlin과 Spring Boot로 만든 단일
-        monolith이고 데이터베이스는 관리형 PostgreSQL 하나를 씁니다.</p>
+        Monolith이고 데이터베이스는 관리형 PostgreSQL 하나를 씁니다.</p>
 
         <p>사용자가 올린 글은 <strong>모더레이션 게이트</strong>를 통과해야 게시됩니다. 게이트는 네 겹이고
         그중 <strong>③ 유해분류</strong>와 <strong>④ 저격판정</strong> 두 겹이 외부 API를 부릅니다.
@@ -176,7 +176,7 @@
               <text x="432" y="92" font-size="12" fill="#d62976" text-anchor="middle">호출 ×2</text>
               <rect x="478" y="66" width="234" height="68" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="595" y="90" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">외부 검열 API</text>
-              <text x="595" y="110" font-size="13" fill="#7b7186" text-anchor="middle">harness에서는 800ms stub</text>
+              <text x="595" y="110" font-size="13" fill="#7b7186" text-anchor="middle">Harness에서는 800ms Stub</text>
 
               <path d="M288 126 V 176" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#g-ar)"/>
               <rect x="182" y="176" width="212" height="52" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
@@ -201,7 +201,7 @@
 
         <h2 id="db인-줄">처음엔 DB가 병목인 줄 알았습니다<a class="anchor" href="#db인-줄" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>harness가 처음 내놓은 수치는 이랬습니다. 쓰기 16 thread, DB connection pool 10, 외부 stub 지연 800ms.</p>
+        <p>Harness가 처음 내놓은 수치는 이랬습니다. 쓰기 16 Thread, DB Connection Pool 10, 외부 Stub 지연 800ms.</p>
 
         <div class="table-scroll"><div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표"><table>
           <thead><tr><th>지표</th><th>값</th></tr></thead>
@@ -215,14 +215,14 @@
 
         <p>가장 먼저 떠오른 가설은 흔한 쪽이었습니다.</p>
 
-        <blockquote><p>쓰기가 16개인데 DB connection pool이 10개니까, connection을 기다리느라 느린 것 아닐까?
+        <blockquote><p>쓰기가 16개인데 DB Connection Pool이 10개니까, Connection을 기다리느라 느린 것 아닐까?
         아니면 INSERT 자체가 무거운 것 아닐까? 그러면 쓰기를 큐로 빼거나 Redis를 붙여야 하나?</p></blockquote>
 
-        <p>세 가설 모두 <strong>틀렸습니다.</strong> 그리고 틀렸다는 것은 추론이 아니라 harness가 알려 줬습니다.</p>
+        <p>세 가설 모두 <strong>틀렸습니다.</strong> 그리고 틀렸다는 것은 추론이 아니라 Harness가 알려 줬습니다.</p>
 
         <h2 id="결론부터">결론부터 말씀드리자면<a class="anchor" href="#결론부터" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>병목은 DB도, INSERT도, 애플리케이션 thread도 아니었습니다.
+        <p>병목은 DB도, INSERT도, 애플리케이션 Thread도 아니었습니다.
         <strong>밖으로 나가는 HTTP 호출의 동시 실행이 10개로 묶여 있었습니다.</strong></p>
 
         <p>그리고 그 10은 이렇게 만들어진 숫자였습니다.</p>
@@ -239,7 +239,7 @@
 
         <h2 id="쓰기는-가볍다">쓰기는 무겁지 않았습니다<a class="anchor" href="#쓰기는-가볍다" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>“쓰기가 무거운가”는 harness로 바로 대답할 수 있는 질문이었습니다. 외부 stub의 지연을
+        <p>“쓰기가 무거운가”는 Harness로 바로 대답할 수 있는 질문이었습니다. 외부 Stub의 지연을
         <strong>0ms</strong>로 두고 나머지 조건을 그대로 두면 남는 것은 애플리케이션과 DB의
         순수한 쓰기 비용뿐입니다.</p>
 
@@ -256,30 +256,30 @@
         됩니다.</p>
 
         <p><strong>⚠️ 이 측정은 처음에 틀렸습니다.</strong> 지연 0을 요청했는데 <strong>이전 실행의 800ms
-        stub이 포트에 그대로 살아 있었습니다.</strong> harness에는 “stub이 정말 그 지연으로 응답하는가”를
+        Stub이 포트에 그대로 살아 있었습니다.</strong> Harness에는 “Stub이 정말 그 지연으로 응답하는가”를
         보는 왕복 검사가 있었는데 조건이 <code>왕복시간 &lt; 요청지연 × 0.8</code>이라서
         <strong>요청지연이 0이면 항상 거짓</strong>이 됩니다. 검사가 <strong>공허하게 통과</strong>한
         겁니다. 그래서 800ms 실행을 0ms 실행으로 기록해 놓고 결론을 냈습니다.</p>
 
-        <p>고친 방법은 시간이 아니라 <strong>신원</strong>을 보는 것이었습니다. stub이 자기 설정값을
+        <p>고친 방법은 시간이 아니라 <strong>신원</strong>을 보는 것이었습니다. Stub이 자기 설정값을
         보고하게 하고 그것을 요청값과 대조합니다.</p>
 
 <pre data-lang="shell"><code>$ curl -s localhost:18080/__stub/health
 {"ok": true, "delay_ms": 800, "jitter_ms": 0, "max_in_flight": 10}
 #            ↑ 요청한 값과 다르면 실행을 중단한다</code></pre>
 
-        <p>그리고 <strong>일부러 틀린 stub을 띄워 두고 돌려서</strong> 실행이 실제로 멈추는지 확인한 뒤에
+        <p>그리고 <strong>일부러 틀린 Stub을 띄워 두고 돌려서</strong> 실행이 실제로 멈추는지 확인한 뒤에
         다시 쟀습니다. 이 리포에서 가장 자주 나온 결함이 <strong>“실패했는데 통과처럼 보이는 검사”</strong>라,
         검사를 넣으면 일부러 실패시켜 보는 것을 규칙으로 두고 있습니다.</p>
 
         <h2 id="10에서-안-움직임">무엇을 바꿔도 10에서 안 움직였습니다<a class="anchor" href="#10에서-안-움직임" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>다음으로 <strong>stub에 계측을 넣었습니다.</strong> 요청이 들어올 때 세고 나갈 때 빼서,
+        <p>다음으로 <strong>Stub에 계측을 넣었습니다.</strong> 요청이 들어올 때 세고 나갈 때 빼서,
         <strong>동시에 처리 중인 외부 호출의 최고치</strong>를 기록하게 했습니다. 이 숫자 하나가
         나머지를 전부 설명합니다.</p>
 
         <div class="table-scroll"><div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표"><table>
-          <thead><tr><th>쓰기 thread</th><th>DB 풀</th><th>외부 호출 최고 동시 실행</th><th>글 생성 처리량</th><th>글 생성 p50</th></tr></thead>
+          <thead><tr><th>쓰기 Thread</th><th>DB 풀</th><th>외부 호출 최고 동시 실행</th><th>글 생성 처리량</th><th>글 생성 p50</th></tr></thead>
           <tbody>
             <tr><td>16</td><td>10</td><td><strong>10</strong></td><td>6.27 req/s</td><td>2,592 ms</td></tr>
             <tr><td>16</td><td><strong>30</strong></td><td><strong>10</strong></td><td>6.27 req/s</td><td>2,595 ms</td></tr>
@@ -291,57 +291,57 @@
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
             <svg viewBox="0 0 720 190" role="img" aria-labelledby="cap-t cap-d" xmlns="http://www.w3.org/2000/svg">
               <title id="cap-t">조건을 바꿔도 외부 호출 동시 실행은 10에서 움직이지 않는다</title>
-              <desc id="cap-d">세 가지 조건을 비교합니다. 쓰기 16에 DB pool 10, 쓰기 16에 DB pool 30, 쓰기 32에 DB pool 30입니다.
+              <desc id="cap-d">세 가지 조건을 비교합니다. 쓰기 16에 DB Pool 10, 쓰기 16에 DB Pool 30, 쓰기 32에 DB Pool 30입니다.
               세 경우 모두 외부 호출의 최고 동시 실행은 10으로 같고 처리량도 초당 6.27, 6.27, 6.26건으로 같습니다.
               달라지는 것은 응답시간뿐이어서 쓰기를 32로 올리면 중앙값이 2,592밀리초에서 5,119밀리초로 늘어납니다.
               늘린 만큼 일이 더 되는 것이 아니라 대기열만 길어졌다는 뜻입니다.</desc>
 
               <text x="8" y="22" font-size="14" fill="#7b7186">외부 호출 최고 동시 실행</text>
 
-              <text x="8" y="60" font-size="13" fill="#3b3344">쓰기 16 · pool 10</text>
+              <text x="8" y="60" font-size="13" fill="#3b3344">쓰기 16 · Pool 10</text>
               <rect x="150" y="46" width="120" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="280" y="60" font-size="13" fill="#d62976" font-weight="700">10</text>
               <text x="330" y="60" font-size="13" fill="#3b3344">6.27 req/s · p50 2,592 ms</text>
 
-              <text x="8" y="96" font-size="13" fill="#3b3344">쓰기 16 · pool 30</text>
+              <text x="8" y="96" font-size="13" fill="#3b3344">쓰기 16 · Pool 30</text>
               <rect x="150" y="82" width="120" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="280" y="96" font-size="13" fill="#d62976" font-weight="700">10</text>
               <text x="330" y="96" font-size="13" fill="#3b3344">6.27 req/s · p50 2,595 ms</text>
 
-              <text x="8" y="132" font-size="13" fill="#3b3344">쓰기 32 · pool 30</text>
+              <text x="8" y="132" font-size="13" fill="#3b3344">쓰기 32 · Pool 30</text>
               <rect x="150" y="118" width="120" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="280" y="132" font-size="13" fill="#d62976" font-weight="700">10</text>
               <text x="330" y="132" font-size="13" fill="#3b3344">6.26 req/s · p50 5,119 ms</text>
 
               <path d="M8 148 H 712" stroke="rgba(229,222,238,0.9)" stroke-width="1"/>
 
-              <text x="8" y="176" font-size="13" fill="#3b3344">stub 단독</text>
+              <text x="8" y="176" font-size="13" fill="#3b3344">Stub 단독</text>
               <rect x="150" y="162" width="384" height="18" rx="3" fill="none" stroke="#4f5bd5" stroke-width="2"/>
               <text x="544" y="176" font-size="13" fill="#4f5bd5" font-weight="700">32</text>
               <text x="580" y="176" font-size="13" fill="#3b3344">40 req/s</text>
             </svg>
           </div>
-          <figcaption>위 분홍 막대 세 줄은 조건을 바꿔도 동시 실행이 <strong>10에서 움직이지 않는다</strong>는 것입니다. 쓰기를 32로 올리면 늘어나는 것은 처리량이 아니라 대기 시간(p50)뿐입니다. 맨 아래 파란 막대는 같은 stub을 앱을 거치지 않고 직접 두드린 값으로, stub 자체는 32까지 받습니다. 그러니 상한은 <strong>앱 쪽</strong>에 있습니다.</figcaption>
+          <figcaption>위 분홍 막대 세 줄은 조건을 바꿔도 동시 실행이 <strong>10에서 움직이지 않는다</strong>는 것입니다. 쓰기를 32로 올리면 늘어나는 것은 처리량이 아니라 대기 시간(p50)뿐입니다. 맨 아래 파란 막대는 같은 Stub을 앱을 거치지 않고 직접 두드린 값으로, Stub 자체는 32까지 받습니다. 그러니 상한은 <strong>앱 쪽</strong>에 있습니다.</figcaption>
         </figure>
 
-        <p>표를 읽는 법은 이렇습니다. <strong>쓰기를 2배로 올려도, DB pool을 3배로 키워도 동시 실행은 10에서
+        <p>표를 읽는 법은 이렇습니다. <strong>쓰기를 2배로 올려도, DB Pool을 3배로 키워도 동시 실행은 10에서
         움직이지 않습니다.</strong> 늘어나는 것은 응답시간뿐입니다(2,592 → 5,119ms). 이건 전형적인
         <strong>대기열 신호</strong>입니다. 일이 더 되는 게 아니라 줄만 길어진 겁니다.</p>
 
-        <p>stub이 범인일 가능성은 따로 지웠습니다. 같은 stub을 앱 없이 32 worker로 20초 두드리면
-        <strong>동시 32 · 40 req/s</strong>를 냅니다. 그러니 10은 stub의 한계가 아니라
+        <p>Stub이 범인일 가능성은 따로 지웠습니다. 같은 Stub을 앱 없이 32 Worker로 20초 두드리면
+        <strong>동시 32 · 40 req/s</strong>를 냅니다. 그러니 10은 Stub의 한계가 아니라
         <strong>앱이 밖으로 나가는 길</strong>의 한계입니다.</p>
 
         <p>여기서 산수가 맞아떨어집니다. 글 1건이 호출 2개를 내므로 동시 10은
         <strong>동시에 검열 중인 글 5건</strong>입니다. 호출 한 번이 800ms니까
         5 ÷ 0.8초 = <strong>약 6.3 req/s</strong>. 관측된 6.27과 같습니다.</p>
 
-        <h2 id="thread-덤프">thread 덤프가 어디서 멈췄는지 알려 줬습니다<a class="anchor" href="#thread-덤프" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="thread-덤프">Thread 덤프가 어디서 멈췄는지 알려 줬습니다<a class="anchor" href="#thread-덤프" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>“앱 어딘가에 10이 있다”까지는 왔는데 그게 어디인지는 코드를 읽어서 찾지 못했습니다.
         <strong>제 코드에는 10도, 5도 적혀 있지 않기 때문입니다.</strong></p>
 
-        <p>그래서 부하가 걸린 상태에서 <strong>thread 덤프</strong>를 떴습니다. 톰캣 worker 16개 중
+        <p>그래서 부하가 걸린 상태에서 <strong>Thread 덤프</strong>를 떴습니다. 톰캣 Worker 16개 중
         <strong>5개는 소켓 입출력 중(RUNNABLE)</strong>이었고 <strong>11개는 park</strong> 상태였습니다.
         park 한 쪽의 스택이 답이었습니다.</p>
 
@@ -349,7 +349,7 @@
 at org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager$3.get(...)
 at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.acquireEndpoint(...)</code></pre>
 
-        <p><strong>Apache HttpClient 5의 connection pool에서 대기</strong>하고 있었습니다. 저는 이 라이브러리를
+        <p><strong>Apache HttpClient 5의 Connection Pool에서 대기</strong>하고 있었습니다. 저는 이 라이브러리를
         넣은 기억이 없었습니다.</p>
 
         <h2 id="사슬">사슬을 거슬러 올라가면 S3가 나옵니다<a class="anchor" href="#사슬" aria-label="이 절로 가는 링크">#</a></h2>
@@ -363,8 +363,8 @@ at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.acquireEndpoint(.
               <desc id="chain-d">파일 업로드에 쓰려고 AWS SDK의 S3 모듈을 넣었습니다. 그 모듈이 apache5-client를 끌고 오고
               apache5-client가 다시 httpclient5를 끌고 옵니다. 이 마지막 라이브러리는 런타임 클래스패스에만 있어서
               코드에서는 이름조차 보이지 않습니다. 그런데 Spring의 RestClient는 클래스패스에 Apache HttpClient가
-              있으면 그것을 골라 쓰고 그 connection pool의 기본값은 대상 호스트당 5개입니다. 같은 호스트를 보는 RestClient
-              두 개가 각자 자기 pool을 갖기 때문에 외부 호출 동시 실행이 5 더하기 5로 10이 됩니다.</desc>
+              있으면 그것을 골라 쓰고 그 Connection Pool의 기본값은 대상 호스트당 5개입니다. 같은 호스트를 보는 RestClient
+              두 개가 각자 자기 Pool을 갖기 때문에 외부 호출 동시 실행이 5 더하기 5로 10이 됩니다.</desc>
 
               <rect x="8" y="16" width="330" height="44" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
               <text x="24" y="43" font-size="14" fill="#18121d">파일 업로드를 하려고 넣은 <tspan font-weight="700">AWS SDK · S3</tspan></text>
@@ -385,7 +385,7 @@ at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.acquireEndpoint(.
 
               <path d="M40 252 V 276" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#c-arA)"/>
               <rect x="8" y="276" width="330" height="44" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="24" y="303" font-size="14" fill="#18121d" font-weight="700">connection pool 기본값 · 호스트당 5개</text>
+              <text x="24" y="303" font-size="14" fill="#18121d" font-weight="700">Connection Pool 기본값 · 호스트당 5개</text>
 
               <path d="M338 298 H 396" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#c-arA)"/>
               <rect x="404" y="270" width="308" height="56" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
@@ -449,7 +449,7 @@ spring:
         <strong>상대 서비스에 대한 부하</strong>이자 <strong>제 비용</strong>입니다. 유입 제어는 상한을
         없애는 것이 아니라 <strong>의도적으로 정하는 것</strong>입니다.</p>
 
-        <p>덧붙이면 이 저장소는 같은 형태의 결함을 이미 한 번 겪었습니다. 톰캣 thread 200과 connection pool
+        <p>덧붙이면 이 저장소는 같은 형태의 결함을 이미 한 번 겪었습니다. 톰캣 Thread 200과 Connection Pool
         기본값이 둘 다 프레임워크가 정한 값이었고 그 둘이 만든 동시성 정책은 <strong>정책이 아니었습니다.</strong>
         아웃바운드에도 같은 일이 있었고 이번에는 <strong>아무도 그 층을 보고 있지 않았습니다.</strong></p>
 
@@ -460,19 +460,19 @@ spring:
         <ol>
           <li><strong><code>httpclient5</code>를 명시 의존성으로 올립니다.</strong> 이미 런타임에 쓰고 있던
           라이브러리를 <em>이름으로</em> 적는 것이고 그래야 설정 코드를 쓸 수 있습니다.</li>
-          <li><strong>connection pool을 하나만 만들어 모든 <code>RestClient</code>가 공유하게 합니다.</strong>
-          클라이언트마다 자기 pool을 가지면 “호스트당 N”이 실제로는 “클라이언트 수 × N”이 됩니다.
+          <li><strong>Connection Pool을 하나만 만들어 모든 <code>RestClient</code>가 공유하게 합니다.</strong>
+          클라이언트마다 자기 Pool을 가지면 “호스트당 N”이 실제로는 “클라이언트 수 × N”이 됩니다.
           그게 5가 10이 되어 있던 이유입니다.</li>
         </ol>
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
             <svg viewBox="0 0 720 268" role="img" aria-labelledby="pool-t pool-d" xmlns="http://www.w3.org/2000/svg">
-              <title id="pool-t">클라이언트마다 pool을 갖는 경우와 pool 하나를 공유하는 경우</title>
+              <title id="pool-t">클라이언트마다 Pool을 갖는 경우와 Pool 하나를 공유하는 경우</title>
               <desc id="pool-d">카드 두 장이 같은 두 클라이언트를 각각 그린 것입니다. 위 카드가 수정 전으로,
-              유해분류용 RestClient와 저격판정용 RestClient가 각자 자기 connection pool을 가지고 각 pool의 기본 상한이
+              유해분류용 RestClient와 저격판정용 RestClient가 각자 자기 Connection Pool을 가지고 각 Pool의 기본 상한이
               5라서 실제 동시 실행은 5 더하기 5로 10이 됩니다. 적어 둔 숫자는 5인데 실제로 걸리는 상한은 10이라
-              둘이 어긋납니다. 아래 카드가 수정 후로, connection 매니저를 하나만 만들어 두 클라이언트가 함께 쓰므로
+              둘이 어긋납니다. 아래 카드가 수정 후로, Connection 매니저를 하나만 만들어 두 클라이언트가 함께 쓰므로
               호스트당 상한 50이 그대로 실제 상한이 됩니다.</desc>
 
               <rect x="0" y="0" width="720" height="128" rx="10" fill="rgba(214,41,118,0.06)"/>
@@ -485,9 +485,9 @@ spring:
               <path d="M178 64 H 214" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
               <path d="M178 102 H 214" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#p-ar)"/>
               <rect x="222" y="48" width="150" height="32" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="297" y="69" font-size="13" fill="#d62976" text-anchor="middle">자기 pool · 5</text>
+              <text x="297" y="69" font-size="13" fill="#d62976" text-anchor="middle">자기 Pool · 5</text>
               <rect x="222" y="86" width="150" height="32" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="297" y="107" font-size="13" fill="#d62976" text-anchor="middle">자기 pool · 5</text>
+              <text x="297" y="107" font-size="13" fill="#d62976" text-anchor="middle">자기 Pool · 5</text>
               <path d="M372 83 H 410" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#p-arA)"/>
               <rect x="418" y="56" width="292" height="54" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="564" y="80" font-size="14.5" fill="#18121d" font-weight="700" text-anchor="middle">실제 상한 5 + 5 = 10</text>
@@ -503,7 +503,7 @@ spring:
               <path d="M178 204 H 214" fill="none" stroke="#4f5bd5" stroke-width="1.5" marker-end="url(#p-arB)"/>
               <path d="M178 242 H 214" fill="none" stroke="#4f5bd5" stroke-width="1.5" marker-end="url(#p-arB)"/>
               <rect x="222" y="188" width="150" height="70" rx="5" fill="none" stroke="#4f5bd5" stroke-width="2"/>
-              <text x="297" y="217" font-size="13" fill="#4f5bd5" text-anchor="middle">공유 pool 하나</text>
+              <text x="297" y="217" font-size="13" fill="#4f5bd5" text-anchor="middle">공유 Pool 하나</text>
               <text x="297" y="237" font-size="13" fill="#4f5bd5" text-anchor="middle">호스트당 50</text>
               <path d="M372 223 H 410" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#p-arB)"/>
               <rect x="418" y="196" width="292" height="54" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
@@ -522,7 +522,7 @@ spring:
               </defs>
             </svg>
           </div>
-          <figcaption>카드 두 장이 같은 두 클라이언트를 각각 그린 것입니다. 같은 “호스트당 5”가 클라이언트 두 개에서는 <strong>10</strong>으로 동작합니다. pool을 하나로 모으면 적어 둔 숫자와 실제 상한이 같아집니다.</figcaption>
+          <figcaption>카드 두 장이 같은 두 클라이언트를 각각 그린 것입니다. 같은 “호스트당 5”가 클라이언트 두 개에서는 <strong>10</strong>으로 동작합니다. Pool을 하나로 모으면 적어 둔 숫자와 실제 상한이 같아집니다.</figcaption>
         </figure>
 
 <pre data-lang="kotlin"><code>@Configuration
@@ -555,7 +555,7 @@ class OutboundHttpConfig {
         <p>다시 쟀습니다. 조건은 앞과 동일합니다.</p>
 
         <div class="table-scroll"><div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표"><table>
-          <thead><tr><th>지표</th><th>전(전이 의존성 기본값)</th><th>후(공유 pool · 명시 상한)</th><th>배수</th></tr></thead>
+          <thead><tr><th>지표</th><th>전(전이 의존성 기본값)</th><th>후(공유 Pool · 명시 상한)</th><th>배수</th></tr></thead>
           <tbody>
             <tr><td>외부 호출 최고 동시 실행</td><td>10</td><td><strong>32</strong></td><td>3.2×</td></tr>
             <tr><td>글 생성 p50</td><td>2,592 ms</td><td><strong>805 ms</strong></td><td>3.22× 빠름</td></tr>
@@ -568,20 +568,20 @@ class OutboundHttpConfig {
         </table></div><p class="table-scroll-hint" aria-hidden="true">→ 표를 옆으로 넘길 수 있습니다</p></div>
 
         <p><strong>⚠️ 32는 새 상한이 아닙니다.</strong> 적어 둔 상한은 50인데 관측된 최고 동시 실행은 32입니다.
-        <strong>32는 부하의 모양이지 상한이 아닙니다</strong>. 쓰기 thread 16개가 글 1건당 호출 2개를 내므로
+        <strong>32는 부하의 모양이지 상한이 아닙니다</strong>. 쓰기 Thread 16개가 글 1건당 호출 2개를 내므로
         16 × 2 = 32입니다. 즉 이 실행에서 천장은 <strong>아웃바운드 풀에서 떠났고</strong> 지금 처리량을
-        정하는 것은 유입 동시성입니다. 50이 실제로 걸리는지는 쓰기 thread를 25 이상으로 올려야 보이는데
+        정하는 것은 유입 동시성입니다. 50이 실제로 걸리는지는 쓰기 Thread를 25 이상으로 올려야 보이는데
         <strong>재지 않았습니다.</strong></p>
 
         <p>그리고 <code>factory=jdk</code>(19.89 req/s)와 이 처방(19.89 req/s)은 <strong>처리량이 같습니다.</strong>
         둘을 가르는 것은 성능이 아니라 <strong>상한이 적혀 있는가</strong>입니다.</p>
 
-        <h2 id="timeout">첫 구현이 timeout을 날렸습니다<a class="anchor" href="#timeout" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="timeout">첫 구현이 Timeout을 날렸습니다<a class="anchor" href="#timeout" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>첫 구현은 <code>requestFactory</code>를 통째로 갈아치웠습니다. 그랬더니 스프링 자동설정이
-        붙여 주던 <code>spring.http.client.*</code> timeout이 <strong>같이 사라졌습니다.</strong></p>
+        붙여 주던 <code>spring.http.client.*</code> Timeout이 <strong>같이 사라졌습니다.</strong></p>
 
-        <p>이건 조용히 지나갈 수도 있는 종류의 사고입니다. timeout이 없어도 정상 응답은 정상적으로
+        <p>이건 조용히 지나갈 수도 있는 종류의 사고입니다. Timeout이 없어도 정상 응답은 정상적으로
         돌아오니까요. 문제는 <strong>응답이 안 오는 서버를 만났을 때</strong>만 드러납니다.</p>
 
         <p>다행히 이 저장소에는 그걸 겨누는 테스트가 이미 있었습니다.
@@ -611,20 +611,20 @@ assertThat(manager.getMaxPerRoute(route)).isEqualTo(37)
 assertThat(factories[0]).isSameAs(factories[1])</code></pre>
 
         <p>그리고 이 단언들이 정말 겨누고 있는지는
-        <a class="term" href="../notes/mutation-testing.html">mutation</a>으로 확인했습니다.
+        <a class="term" href="../notes/mutation-testing.html">Mutation</a>으로 확인했습니다.
         <code>setMaxConnPerRoute</code>를 지우면 첫 번째가 5를 보고 빨간불이 나고 팩토리를 빌더마다
         새로 만들면 두 번째가 빨간불이 납니다. <strong>둘 다 실제로 확인했습니다.</strong></p>
 
         <h2 id="redis">“Redis나 큐를 쓰면 되지 않나요?”<a class="anchor" href="#redis" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>이 작업을 하면서 실제로 받은 질문입니다. 아키텍처를 바꿔서 푸는 것이 맞지 않냐는
-        이야기였습니다. harness가 있으니 <strong>답을 고르기 전에 재는 순서</strong>로 갈 수 있었습니다.</p>
+        이야기였습니다. Harness가 있으니 <strong>답을 고르기 전에 재는 순서</strong>로 갈 수 있었습니다.</p>
 
         <div class="table-scroll"><div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표"><table>
           <thead><tr><th>후보</th><th>지금 병목(외부 동시 10)을 건드리나</th><th>판정</th></tr></thead>
           <tbody>
-            <tr><td>Redis cache(피드·통계)</td><td>✗ 읽기는 p50 4ms로 이미 빠릅니다</td><td>근거 없음</td></tr>
-            <tr><td>Redis cache(검열 판정)</td><td>△ 같은 본문이 반복될 때만. 사용자 글은 대개 유일합니다</td><td>중복률을 먼저 재기</td></tr>
+            <tr><td>Redis Cache(피드·통계)</td><td>✗ 읽기는 p50 4ms로 이미 빠릅니다</td><td>근거 없음</td></tr>
+            <tr><td>Redis Cache(검열 판정)</td><td>△ 같은 본문이 반복될 때만. 사용자 글은 대개 유일합니다</td><td>중복률을 먼저 재기</td></tr>
             <tr><td>큐잉(Redis · Kafka)</td><td>✗ 큐는 대기를 <strong>옮길 뿐</strong> 외부 상한을 늘리지 않습니다</td><td>그 자체로는 무효</td></tr>
             <tr><td>쓰기를 큐로 빼기</td><td>✗ 쓰기는 8ms입니다</td><td>고칠 것이 없음</td></tr>
             <tr><td><strong>아웃바운드 동시 실행을 명시</strong></td><td>✓ 천장을 직접 올립니다</td><td><strong>1순위</strong></td></tr>
@@ -636,19 +636,19 @@ assertThat(factories[0]).isSameAs(factories[1])</code></pre>
 
         <p>게이트는 fail-closed 라서 검열 전에 글이 보이면 안 됩니다. 그러니 가능한 형태는
         <em>“먼저 게시하고 나중에 검열”</em>이 아니라 <em>“검열이 끝날 때까지 게시되지 않는 비동기 작업”</em>
-        입니다. 지연을 <strong>없애는</strong> 게 아니라 요청 thread에서 <strong>떼어내는</strong> 것이고
+        입니다. 지연을 <strong>없애는</strong> 게 아니라 요청 Thread에서 <strong>떼어내는</strong> 것이고
         아웃바운드 상한은 그대로입니다. 대신 상태 표시·재시도·중복 방지·실패 통지가 전부 새로 생깁니다.</p>
 
         <p>그래서 <strong>언제 그 설계가 정당해지는지</strong>를 미리 적어 뒀습니다. 나중에 “느낌”으로
         도입하지 않기 위해서입니다. 상한을 의도적으로 올린 뒤에도 글 생성 p95가 목표를 넘거나,
-        외부 API의 p99가 자체 timeout에 근접하면 그때 비동기로 갑니다.</p>
+        외부 API의 p99가 자체 Timeout에 근접하면 그때 비동기로 갑니다.</p>
 
         <h2 id="주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul>
-          <li><strong>운영 수치가 아닙니다.</strong> 부하기·앱·stub·DB가 한 기계에서 CPU를 나눠 씁니다.
+          <li><strong>운영 수치가 아닙니다.</strong> 부하기·앱·Stub·DB가 한 기계에서 CPU를 나눠 씁니다.
           절대 처리량은 의미가 없고 비교만 의미가 있습니다.</li>
-          <li><strong>800ms는 stub에 설정한 값입니다.</strong> 실제 외부 API의 지연 분포가 아닙니다.
+          <li><strong>800ms는 Stub에 설정한 값입니다.</strong> 실제 외부 API의 지연 분포가 아닙니다.
           실제 이득은 그 분포에 달려 있습니다.</li>
           <li><strong>조건당 1회 실행입니다.</strong> 반복 실행으로 분산을 보지 않았습니다.</li>
           <li><strong>3.17배는 이 조건에 딸린 숫자입니다.</strong> 외부 호출 지연과 유입 동시성이 바뀌면
@@ -673,7 +673,7 @@ assertThat(factories[0]).isSameAs(factories[1])</code></pre>
 
           <ul>
             <li>처리량이 어떤 숫자에 붙어 움직이지 않으면 <strong>그 숫자를 만든 층</strong>을 먼저 찾아야
-            합니다. thread나 DB pool을 늘리는 것은 그다음입니다.</li>
+            합니다. Thread나 DB Pool을 늘리는 것은 그다음입니다.</li>
             <li>제가 고르지 않은 라이브러리가 <strong>제 서비스의 동시성 정책</strong>을 정하고 있었습니다.
             그 층은 런타임 클래스패스에만 있어서 <strong>읽어서는 찾을 수 없고 재야만 나옵니다.</strong></li>
             <li>상한을 <strong>없애는 것</strong>과 <strong>정하는 것</strong>은 다릅니다. 처리량은 똑같이
@@ -698,8 +698,8 @@ assertThat(factories[0]).isSameAs(factories[1])</code></pre>
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=772d75cdff"></script>
+  <script src="../assets/i18n.js?v=60def360be"></script>
+  <script src="../assets/content.js?v=738aaf3b4d"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
