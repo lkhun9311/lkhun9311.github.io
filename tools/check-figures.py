@@ -116,9 +116,6 @@ for f in sorted(glob.glob("writing/*.html") + glob.glob("notes/*.html")):
 #    그것들을 지금 실패로 만들면 검사기가 늘 빨간불이라 아무도 안 보게 된다. 그래서
 #    **아래 목록은 봐주고 그 밖의 글만 잠근다.** 목록은 줄기만 해야 한다 — 채워 넣은 글은 여기서 뺀다.
 FEW_FIGURES_OK = {
-    "writing/bugs-that-return-exit-code-zero.html",
-    "writing/gpu-quota-control-plane.html",
-    "writing/iaas-backend-performance.html",
 }
 
 few = []

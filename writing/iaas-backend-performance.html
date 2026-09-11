@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lessons from IaaS Backend Performance Optimization | Kwanghun Lee</title>
+  <title>Thirteen Write-Ups, and Two Results That Came Out Backwards | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -12,18 +12,18 @@
   <!-- og:start -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Lessons from IaaS Backend Performance Optimization | Kwanghun Lee" />
-  <meta property="og:description" content="AI Infrastructure Engineer · Building Kubernetes-native GPUaaS control planes, inference platforms, and reliable cloud backend systems." />
+  <meta property="og:title" content="Thirteen Write-Ups, and Two Results That Came Out Backwards | Kwanghun Lee" />
+  <meta property="og:description" content="Four screens that each looked like a slow query and were not, six configurations measured one at a time, and the two results that came out the opposite way round from what the review expected." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:url" content="https://lkhun9311.github.io/writing/iaas-backend-performance.html" />
   <meta property="og:locale" content="en_US" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Lessons from IaaS Backend Performance Optimization | Kwanghun Lee" />
-  <meta name="twitter:description" content="AI Infrastructure Engineer · Building Kubernetes-native GPUaaS control planes, inference platforms, and reliable cloud backend systems." />
+  <meta name="twitter:title" content="Thirteen Write-Ups, and Two Results That Came Out Backwards | Kwanghun Lee" />
+  <meta name="twitter:description" content="Four screens that each looked like a slow query and were not, six configurations measured one at a time, and the two results that came out the opposite way round from what the review expected." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="AI Infrastructure Engineer · Building Kubernetes-native GPUaaS control planes, inference platforms, and reliable cloud backend systems." />
+  <meta name="description" content="Four screens that each looked like a slow query and were not, six configurations measured one at a time, and the two results that came out the opposite way round from what the review expected." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=5115091496" />
 </head>
@@ -65,22 +65,232 @@
         <div class="article-meta"><span class="source-tag company notranslate">Company work</span></div>
       </div>
       <section class="page-hero">
-        <h1>Lessons from IaaS Backend Performance Optimization</h1>
-        <p class="article-date">Jan 2026</p>
+        <h1>Thirteen Write-Ups, and Two Results That Came Out Backwards<br><span class="h1-sub">A parallel version that measured slower, and a review that found nothing to fix on a 6.8-second screen. An internal cloud admin console on OpenStack</span></h1>
+        <p class="article-date">Sep 2026</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="iaas-backend-performance"></aside>
+              <nav class="article-toc" aria-label="Contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-this-is-about">What this is about</a></li>
+            <li><a href="#none-of-them-was-the-query">None of them was the query</a></li>
+            <li><a href="#six-runs-not-two">Six runs, not two</a></li>
+            <li><a href="#two-results-came-out-backwards">Two results came out backwards</a></li>
+            <li><a href="#what-the-monitoring-work-added">What unifying the monitoring path added</a></li>
+            <li><a href="#what-this-does-not-claim">What this does not claim</a></li>
+            <li><a href="#wrapping-up">Wrapping up</a></li>
+          </ul>
+        </nav>
+
       <article class="article-body">
-        <h2>Context</h2>
-      <p>Cloud control-plane screens can become slow when backend APIs repeatedly fan out to infrastructure services and return over-fetched data.</p>
-      <h2>Engineering lesson</h2>
-      <ul>
-        <li>Measure the user-visible path first: API latency, failure rate, p95/p99, and repeated calls.</li>
-        <li>Separate fresh operational data from data that can safely be cached for a short period.</li>
-        <li>Use parallelization carefully when remote calls are independent.</li>
-        <li>Show before/after numbers so the optimization is defensible.</li>
-      </ul>
-      <h2>Next evidence to add</h2>
-      <p>Architecture diagram, JMeter result summary, and anonymized before/after latency table.</p>
+        <p><strong>Scope.</strong> Backend work on an internal cloud admin console for an OpenStack-based
+        private cloud, written up as two series: eight parts on slow screens and five on unifying the
+        monitoring path. Product names, versions and customers are not written here. <strong>Every number
+        below was measured in an internal test environment, not against production traffic.</strong></p>
+
+        <p>Thirteen write-ups, and the single most useful thing in them is not any one fix. It is that
+        <strong>two results came out the opposite way round from what I expected</strong>, and neither was
+        caught by reading the code.</p>
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>You own a control-plane screen that fans out to several infrastructure APIs</li>
+          <li>You are about to report "we made it N times faster" and have to say which change did it</li>
+          <li>You have concluded a review with "nothing worth changing here"</li>
+        </ul>
+
+        <h2 id="what-this-is-about">What this is about<a class="anchor" href="#what-this-is-about" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li>Four screens, each of which <strong>looked like a slow query and was not</strong>. The causes
+          were a lock held across a network round trip, a saturated swap with 1,021 rows still marked
+          deleted, a cache that was written and never read, and authentication repeated once per project.</li>
+          <li>The run was split into <strong>six configurations measured one at a time</strong>, which is the
+          only reason one of the fixes could be identified as harmful on its own.</li>
+          <li><strong>Going parallel made the tail worse</strong>: with the cache held fixed, p99 moved from
+          42.6 s to 79.0 s.</li>
+          <li><strong>A review that concluded "nothing to fix" was wrong.</strong> The same screen's first
+          data measured 6.8 s later, and the fix that review declined took it to 23 ms.</li>
+          <li>⚠️ These are <strong>test-environment numbers under a declared load profile</strong>, mostly
+          single-user sequential for the monitoring work. They are not a capacity statement.</li>
+        </ul>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 300" role="img" aria-labelledby="bf-t bf-d" class="figure-svg">
+            <title id="bf-t">What each screen cost before the fix, on a log-free length scale</title>
+            <desc id="bf-d">Four horizontal bars, one per screen, each labelled with the value before and after. The volume list went from a ten-minute timeout to 23 milliseconds. The instance list went from 54 seconds to one. The role lookup went from 1,409 milliseconds to one. The monitoring screen went from 6.8 seconds to 23 milliseconds. A pink line underneath says none of these were database query time.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="176" y="70" font-size="11.5" fill="#d62976" text-anchor="end">volume list</text>
+              <rect x="190" y="50" width="430" height="28" rx="5" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="630" y="70" font-size="11.5" fill="#4a4a4a">10-minute timeout to 23 ms</text>
+              <text x="176" y="122" font-size="11.5" fill="#4f5bd5" text-anchor="end">instance list</text>
+              <rect x="190" y="102" width="38" height="28" rx="5" fill="none" stroke="#4f5bd5" stroke-width="1.8"/>
+              <text x="238" y="122" font-size="11.5" fill="#4a4a4a">54 s to 1 s</text>
+              <text x="176" y="174" font-size="11.5" fill="#4f5bd5" text-anchor="end">monitoring first data</text>
+              <rect x="190" y="154" width="18" height="28" rx="5" fill="none" stroke="#4f5bd5" stroke-width="1.8"/>
+              <text x="218" y="174" font-size="11.5" fill="#4a4a4a">6.8 s to 23 ms</text>
+              <text x="176" y="226" font-size="11.5" fill="#4f5bd5" text-anchor="end">role lookup</text>
+              <rect x="190" y="206" width="18" height="28" rx="5" fill="none" stroke="#4f5bd5" stroke-width="1.8"/>
+              <text x="218" y="226" font-size="11.5" fill="#4a4a4a">1,409 ms to 1 ms</text>
+              <text x="360" y="282" font-size="11.5" fill="#d62976" text-anchor="middle">none of these was database query time</text>
+            </g>
+          </svg>
+          <figcaption>Every one of these looked like a slow query at the start. <strong>None of them was.</strong> The causes were a lock held across a network call, a saturated swap, a cache nobody read, and a boundary measured on the wrong side.</figcaption>
+        </figure>
+
+        <h2 id="none-of-them-was-the-query">None of them was the query<a class="anchor" href="#none-of-them-was-the-query" aria-label="Link to this section">#</a></h2>
+
+        <p>The screens all render lists or time-series, so the query is the first suspect every time. In
+        four consecutive cases it was the wrong one.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">Each screen, what it looked like, and what the cause turned out to be.</caption>
+          <thead><tr><th scope="col">screen</th><th scope="col">first suspect</th><th scope="col">actual cause</th></tr></thead>
+          <tbody>
+            <tr><td><a href="slow-screens-1-volume-list.html">volume list</a></td><td>the query</td><td>a hand-rolled cache holding one key locked across an external call</td></tr>
+            <tr><td><a href="slow-screens-2-instance-list.html">instance list</a></td><td>application code</td><td>swap saturation and 1,021 rows left marked as deleted</td></tr>
+            <tr><td><a href="slow-screens-3-role-lookup.html">role lookup</a></td><td>the query</td><td>every unresolved project id re-fetched the whole list</td></tr>
+            <tr><td><a href="slow-screens-4-client-per-loop.html">monitoring screen</a></td><td>the time-series query</td><td>building a client was an authentication, once per project</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>The pattern is not "queries are fine". It is that <strong>a screen's latency lives wherever the
+        request waits</strong>, and a query is only one of the places it can wait. Three of the four above
+        were waiting on something the database never saw.</p>
+
+        <h2 id="six-runs-not-two">Six runs, not two<a class="anchor" href="#six-runs-not-two" aria-label="Link to this section">#</a></h2>
+
+        <p>Four changes went into the volume list. Measuring before and after would have produced one true
+        and useless sentence: p99 went from a ten-minute timeout to 23 ms.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="mm-t mm-d" class="figure-svg">
+            <title id="mm-t">Measuring before and after, against measuring one change at a time</title>
+            <desc id="mm-d">Two boxes side by side. The left is the before-and-after method: one number, and no way to tell which change produced it. The right is the six-configuration method: one variable moves per row, so a pair can be read. A pink line at the bottom says only the right-hand method can report a change that made things worse.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#8a8a8a" text-anchor="middle" font-weight="700">before and after</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">one pair of numbers</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">every change moves together</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">a harmful change hides inside a win</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">six configurations</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">one variable moves per row</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">adjacent rows form a pair</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">a harmful change shows as a worse row</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">only the right-hand method reports a change that hurt</text>
+            </g>
+          </svg>
+          <figcaption>Ship four fixes together and the report says "10 minutes to 23 milliseconds", which is true and useless for the next screen. <strong>Splitting the run into six configurations is what let one of those four be identified as harmful on its own.</strong></figcaption>
+        </figure>
+
+        <p>So the run was split into six configurations under one declared load profile, with the generator
+        producing the plan from constants rather than from a form filled in by hand. Adjacent rows then
+        differ by one variable, and a pair can be read.</p>
+
+        <p>That is what made the next section possible. <strong>A harmful change is invisible inside a win
+        unless something isolates it.</strong></p>
+
+        <h2 id="two-results-came-out-backwards">Two results came out backwards<a class="anchor" href="#two-results-came-out-backwards" aria-label="Link to this section">#</a></h2>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="bw-t bw-d" class="figure-svg">
+            <title id="bw-t">The two results that came out the opposite way round</title>
+            <desc id="bw-d">Two boxes side by side. The left is the parallel version, expected to be faster and measured slower: p99 went from 42.6 seconds to 79.0. The right is a performance review that concluded there was nothing worth fixing, on a screen whose first data later measured 6.8 seconds. A pink line at the bottom says both were published and both needed a later run to be caught.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">parallel was slower</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">expected: faster than sequential</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">measured: p99 42.6 s to 79.0 s</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">cause: a lock held across the call</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">"nothing to fix" was wrong</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">expected: little left to save</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">measured later: 6.8 s first data</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">cause: the wrong boundary was timed</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">both published · both caught by a later run</text>
+            </g>
+          </svg>
+          <figcaption>Neither was caught by review. The first needed a run that moved one variable; the second needed someone to time <strong>the boundary the user waits on</strong> rather than the one the API returns at.</figcaption>
+        </figure>
+
+        <p>The first is <a href="parallelism-made-the-tail-worse.html">the parallel version</a>. Replacing a
+        sequential loop with parallel calls is the obvious prescription, and with the cache configuration
+        held fixed it moved p99 from 42.6 s to 79.0 s. The external call sat inside
+        <code>computeIfAbsent</code>, so the bin stayed locked for the whole round trip and the threads
+        queued in front of it instead of working.</p>
+
+        <p>The second is worse, because it was a conclusion rather than a change.
+        <a href="slow-screens-7-nothing-to-fix.html">A performance review</a> looked at three monitoring
+        screens and found no case for adding a cache. The reasoning was sound for the path it examined: a
+        periodic refresh every fifteen seconds is already cheap. <strong>It was the wrong path.</strong> The
+        boundary a user waits on is the first data after connecting, and
+        <a href="monitoring-the-screen-i-said-not-to-fix.html">measuring that one</a> gave 6.8 s.</p>
+
+        <p>The correction sits on top of the original article rather than replacing it, because deleting the
+        wrong conclusion would delete the evidence of how it was reached.</p>
+
+        <h2 id="what-the-monitoring-work-added">What unifying the monitoring path added<a class="anchor" href="#what-the-monitoring-work-added" aria-label="Link to this section">#</a></h2>
+
+        <p>Fixing the three screens one at a time left them each fast and each collecting the same source
+        separately. Merging the three caches into one removed the duplicate collection and immediately
+        <a href="monitoring-one-shared-cache.html">produced a regression</a>: opening one screen erased
+        another's last value, and re-entry measured 5,115 ms.</p>
+
+        <p>The rules that separation had been keeping by accident all had to be written down. Two of them
+        are worth carrying to any shared cache:</p>
+
+        <ul>
+          <li><strong>A partial failure is carried per item.</strong> One source failing must not roll back
+          the items that succeeded.</li>
+          <li><strong><a href="monitoring-empty-is-not-zero.html">An empty list is not a zero.</a></strong>
+          Nothing there and nothing fetched arrive in the same shape, and publishing the second as the first
+          turns an outage into a confident report of zero nodes.</li>
+        </ul>
+
+        <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>These are test-environment numbers.</strong> Synthetic load in an isolated environment
+          under a declared profile. Real user distributions, data volumes and networks differ.</li>
+          <li><strong>Each configuration was measured once.</strong> No repetition, no variance, so only
+          multiple-fold differences are used as evidence anywhere in the series.</li>
+          <li><strong>Parallelism is not the problem.</strong> Parallelising code that holds a lock across
+          I/O is. None of the six configurations removed that condition, so the series cannot say what
+          parallelism is worth once it is gone.</li>
+          <li><strong>The monitoring measurements are single-user sequential.</strong> They say nothing about
+          how many concurrent users the screens hold.</li>
+          <li><strong>Nothing here is anonymised code.</strong> Snippets are quoted with internal identifiers
+          removed; screens and product names are not reproduced.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="wrapping-up">Wrapping up<a class="anchor" href="#wrapping-up" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>Measure the boundary the user waits on.</strong> A review can be internally correct and
+          still be about the wrong path, and that failure looks exactly like a finished review.</li>
+          <li><strong>Ship four changes, learn one fact.</strong> Splitting a run into configurations is what
+          turns "it got faster" into "this one did it, and that one hurt".</li>
+          <li><strong>A slow list is rarely a slow query.</strong> Look for where the request waits: a lock
+          held across I/O, an authentication inside a loop, a cache written and never read.</li>
+          <li><strong>Separation keeps contracts by accident.</strong> Merging caches is not a refactor; it
+          is the moment those contracts have to be written down.</li>
+        </ul>
+
+        <p>What is left is one line. <strong>The two results that came out backwards are the only two that
+        taught me anything transferable</strong>, and both of them needed a run that was designed to be able
+        to disagree with me.</p>
+
+        <p>Thank you for reading.</p>
+        </div>
       </article>
     </main>
     <footer class="notranslate">
@@ -91,9 +301,11 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=07ce86b446"></script>
-  <script src="../assets/content.js?v=2b20b6e120"></script>
+  <script src="../assets/content.js?v=750d932ece"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
   <script>
     (function () {
       var el = document.querySelector(".article-aside");

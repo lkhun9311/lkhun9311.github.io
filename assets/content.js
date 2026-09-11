@@ -428,6 +428,30 @@
           tags: ["Performance", "Method"]
         },
         {
+          title: "Reclaim Admitted the Owner in 120 ms. The Device Came 10 Seconds Later.",
+          url: "writing/gpu-quota-control-plane.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "A tenant GPU budget declared once and enforced where the work is admitted. Kueue reclaim measured both ways on one ledger: 0 wasted GPU-seconds against 39.3, and what the admission figure turned out not to mean. English only.",
+          tags: ["Kubernetes", "GPU", "Design"]
+        },
+        {
+          title: "A Stopped Kubelet Quarantined the Node in 46 Seconds",
+          url: "writing/gpu-node-readiness.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "Node readiness as an explicit CRD phase rather than an operational assumption. Observation first, then one taint, and four things declined on purpose. English only.",
+          tags: ["Kubernetes", "GPU", "Observability"]
+        },
+        {
+          title: "Thirteen Write-Ups, and Two Results That Came Out Backwards",
+          url: "writing/iaas-backend-performance.html",
+          source: "company", sourceLabel: "Company work",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "Four screens that each looked like a slow query and were not, six configurations measured one at a time, and the two results that came out the opposite way round from what the review expected. English only.",
+          tags: ["Performance", "Backend", "Method"]
+        },
+        {
           title: "Ten Bugs, Zero Failed Tests",
           url: "writing/bugs-that-return-exit-code-zero.html",
           source: "side", sourceLabel: "Personal project",
