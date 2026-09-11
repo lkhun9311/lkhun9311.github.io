@@ -145,6 +145,42 @@
           is about admission and trust boundaries, not about device behaviour.</li>
         </ul>
 
+        <figure class="diagram">
+          <svg viewBox="0 0 720 230" role="img" aria-labelledby="tb-t tb-d" class="figure-svg">
+            <title id="tb-t">The guard reads a field the tenant writes as if it were evidence</title>
+            <desc id="tb-d">On the left, a box lists three fields the tenant writes, in pink. A dashed vertical line in the middle is the trust boundary. A pink arrow crosses it into a blue box on the right, the guard. The guard reads those values and produces a verdict, shown at the far right.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="16" y="46" width="150" height="132" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="91" y="36" font-size="11.5" fill="#8a8a8a" text-anchor="middle">written by the tenant</text>
+              <text x="91" y="72" font-size="11" fill="#4a4a4a" text-anchor="middle">Pod and Job spec</text>
+              <text x="91" y="102" font-size="11" fill="#d62976" text-anchor="middle"><tspan font-family="ui-monospace, monospace">ownerReferences</tspan></text>
+              <text x="91" y="128" font-size="11" fill="#d62976" text-anchor="middle"><tspan font-family="ui-monospace, monospace">quota-exempt</tspan></text>
+              <text x="91" y="154" font-size="11" fill="#d62976" text-anchor="middle"><tspan font-family="ui-monospace, monospace">grace period</tspan></text>
+
+              <path d="M330 20 V 206" fill="none" stroke="#c9c9c9" stroke-width="1.4" stroke-dasharray="5 4"/>
+              <text x="330" y="14" font-size="11" fill="#8a8a8a" text-anchor="middle">trust boundary</text>
+
+              <path d="M170 112 H 322" fill="none" stroke="#d62976" stroke-width="1.8" marker-end="url(#tb-ar)"/>
+
+              <rect x="392" y="72" width="150" height="80" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="467" y="62" font-size="11.5" fill="#4f5bd5" text-anchor="middle">guard (admission)</text>
+              <text x="467" y="118" font-size="11" fill="#4a4a4a" text-anchor="middle">value read = evidence</text>
+
+              <path d="M546 112 H 664" fill="none" stroke="#4f5bd5" stroke-width="1.8" marker-end="url(#tb-ab)"/>
+              <text x="620" y="102" font-size="11" fill="#4f5bd5" text-anchor="middle">verdict</text>
+            </g>
+            <defs>
+              <marker id="tb-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+              <marker id="tb-ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>All four guards read a value from <strong>the box on the left</strong> as evidence. The checking code was correct; what was wrong was never counting the fact that <strong>the value came from the left of the boundary</strong>.</figcaption>
+        </figure>
+
         <h2 id="at-first-nothing-stopped-it">At first, nothing stopped it<a class="anchor" href="#at-first-nothing-stopped-it" aria-label="Link to this section">#</a></h2>
 
         <p>The design goes like this. Kueue's ClusterQueue is the single authority over a namespace's GPU
@@ -204,6 +240,37 @@ forged-owner   1/1   Running</code></pre>
         to a raw <code>admission.Handler</code> and take the request itself. <strong>When a convenient
         abstraction hands you something that does not line up with the trust boundary, you cannot use that
         abstraction.</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="or-t or-d" class="figure-svg">
+            <title id="or-t">How a self-written ownership marker is taken at face value</title>
+            <desc id="or-d">Four boxes run left to right, joined by grey arrows. The first is a Pod the tenant created, the second is the ownership marker the tenant wrote inside it, the third is the guard reading that as ownership, and the fourth is two devices that were never counted. A pink line underneath reads self-asserted.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">tenant</text>
+              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">create Pod request</text>
+              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#or-a)"/>
+              <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">self-asserted</text>
+              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle"><tspan font-family="ui-monospace, monospace">ownerReferences</tspan></text>
+              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#or-a)"/>
+              <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">guard</text>
+              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">reads owner = Job</text>
+              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#or-a)"/>
+              <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">result</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">2 devices, unaccounted</text>
+              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">one step that read a claim as a fact</text>
+            </g>
+            <defs>
+              <marker id="or-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption><code>ownerReferences</code> is <strong>a field the requester fills in</strong>. Kubernetes does not verify that it is true, so using it as evidence of ownership lets a tenant walk out of its own quota.</figcaption>
+        </figure>
 
         <h2 id="an-exemption-anyone-can-grant">An exemption anyone can grant is not an exemption<a class="anchor" href="#an-exemption-anyone-can-grant" aria-label="Link to this section">#</a></h2>
 
@@ -312,6 +379,36 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
         <p>④ says something different. <strong>The rule had been right all along; the moment it was applied was
         wrong.</strong> It was checking after the thing it existed to prevent had already happened. No amount of
         refining the rule removes that class of defect.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 230" role="img" aria-labelledby="rp-t rp-d" class="figure-svg">
+            <title id="rp-t">The three shapes of repair, ordered strongest first</title>
+            <desc id="rp-d">A vertical axis on the left runs from strong at the top to weak at the bottom. To its right, three boxes sit one above the other: replace the input, narrow who may supply it, cap the damage. An arrow leaves each box to the right, naming what it changes.</desc>
+            <g font-family="Inter, sans-serif">
+              <path d="M40 34 V 196" fill="none" stroke="#c9c9c9" stroke-width="1.4"/>
+              <text x="40" y="26" font-size="11" fill="#8a8a8a" text-anchor="middle">strong</text>
+              <text x="40" y="214" font-size="11" fill="#8a8a8a" text-anchor="middle">weak</text>
+              <rect x="64" y="48" width="248" height="40" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="188" y="73" font-size="11.5" fill="#4f5bd5" text-anchor="middle">1. replace the input</text>
+              <path d="M318 68 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rp-a)"/>
+              <text x="384" y="73" font-size="11.5" fill="#4a4a4a">untrusted value to trusted</text>
+              <rect x="64" y="104" width="248" height="40" rx="9" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="188" y="129" font-size="11.5" fill="#d62976" text-anchor="middle">2. narrow who may supply it</text>
+              <path d="M318 124 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rp-a)"/>
+              <text x="384" y="129" font-size="11.5" fill="#4a4a4a">anyone to a set without the tenant</text>
+              <rect x="64" y="160" width="248" height="40" rx="9" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="188" y="185" font-size="11.5" fill="#8a8a8a" text-anchor="middle">3. cap the damage</text>
+              <path d="M318 180 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rp-a)"/>
+              <text x="384" y="185" font-size="11.5" fill="#4a4a4a">unbounded to 120 seconds</text>
+            </g>
+            <defs>
+              <marker id="rp-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>1 and 2 <strong>remove the attack.</strong> 3 leaves the attack in place and only shrinks what it is worth, so it is <strong>the last resort when neither of the others is possible</strong>. Three of the four ended at 1 or 2.</figcaption>
+        </figure>
 
         <h2 id="a-claim-in-this-document-was-false">A claim in this document was false, and the guard was built on it<a class="anchor" href="#a-claim-in-this-document-was-false" aria-label="Link to this section">#</a></h2>
 

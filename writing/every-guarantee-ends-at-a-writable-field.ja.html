@@ -145,6 +145,42 @@
           この記事が扱うのはアドミッションと信頼境界であって、装置の挙動ではありません。</li>
         </ul>
 
+        <figure class="diagram">
+          <svg viewBox="0 0 720 230" role="img" aria-labelledby="tb-t tb-d" class="figure-svg">
+            <title id="tb-t">テナントが書くフィールドをガードが証拠として読む構造</title>
+            <desc id="tb-d">左の箱にテナント自身が書くフィールドが三つ、ピンクで並んでいます。中央の縦の点線が信頼境界です。ピンクの矢印がそれを越えて右の青い箱、つまりガードへ入ります。ガードはその値を読んで判定を出します。右端に判定が置かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="16" y="46" width="150" height="132" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="91" y="36" font-size="11.5" fill="#8a8a8a" text-anchor="middle">テナントが書く場所</text>
+              <text x="91" y="72" font-size="11" fill="#4a4a4a" text-anchor="middle">Pod · Job の仕様</text>
+              <text x="91" y="102" font-size="11" fill="#d62976" text-anchor="middle"><tspan font-family="ui-monospace, monospace">ownerReferences</tspan></text>
+              <text x="91" y="128" font-size="11" fill="#d62976" text-anchor="middle"><tspan font-family="ui-monospace, monospace">quota-exempt</tspan></text>
+              <text x="91" y="154" font-size="11" fill="#d62976" text-anchor="middle"><tspan font-family="ui-monospace, monospace">grace period</tspan></text>
+
+              <path d="M330 20 V 206" fill="none" stroke="#c9c9c9" stroke-width="1.4" stroke-dasharray="5 4"/>
+              <text x="330" y="14" font-size="11" fill="#8a8a8a" text-anchor="middle">信頼境界</text>
+
+              <path d="M170 112 H 322" fill="none" stroke="#d62976" stroke-width="1.8" marker-end="url(#tb-ar)"/>
+
+              <rect x="392" y="72" width="150" height="80" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="467" y="62" font-size="11.5" fill="#4f5bd5" text-anchor="middle">ガード(アドミッション)</text>
+              <text x="467" y="118" font-size="11" fill="#4a4a4a" text-anchor="middle">読んだ値 = 証拠</text>
+
+              <path d="M546 112 H 664" fill="none" stroke="#4f5bd5" stroke-width="1.8" marker-end="url(#tb-ab)"/>
+              <text x="620" y="102" font-size="11" fill="#4f5bd5" text-anchor="middle">判定</text>
+            </g>
+            <defs>
+              <marker id="tb-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+              <marker id="tb-ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>四つのガードはすべて<strong>左の箱の値</strong>を証拠として読んでいました。検査のコードは正しく、誤っていたのは、その値が<strong>境界の左から来たという事実</strong>を数えなかった側です。</figcaption>
+        </figure>
+
         <h2 id="nothing-stopped-it">最初は何も止めませんでした<a class="anchor" href="#nothing-stopped-it" aria-label="このセクションへのリンク">#</a></h2>
 
         <p>設計はこうです。テナントごとの GPU 予算の単一の権威は Kueue の ClusterQueue であり、コントローラは同じ装置が
@@ -204,6 +240,37 @@ forged-owner   1/1   Running</code></pre>
         <strong>オブジェクトしか</strong>渡してきません。ところが信じられないのがまさにそのオブジェクトです。だから
         生の <code>admission.Handler</code> まで降りて要求そのものを受け取る必要がありました。
         <strong>便利な抽象が渡してくるものが信頼境界と噛み合わないなら、その抽象は使えません。</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="or-t or-d" class="figure-svg">
+            <title id="or-t">要求者が書いた所有表示をガードがそのまま信じる流れ</title>
+            <desc id="or-d">左から箱が四つ、灰色の矢印でつながっています。一つ目はテナントが作った Pod、二つ目はその中にテナント自身が書いた所有表示、三つ目はそれを所有関係として読むガード、四つ目は計上されなかった装置 2 個です。下にピンクで自己申告と書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">テナント</text>
+              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">Pod 作成要求</text>
+              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#or-a)"/>
+              <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">自己申告</text>
+              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle"><tspan font-family="ui-monospace, monospace">ownerReferences</tspan></text>
+              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#or-a)"/>
+              <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">ガード</text>
+              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">所有者 = Job と読む</text>
+              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#or-a)"/>
+              <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">結果</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">計上されない装置 2 個</text>
+              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">主張を事実として読んだ一手</text>
+            </g>
+            <defs>
+              <marker id="or-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption><code>ownerReferences</code> は<strong>要求者が埋める欄</strong>です。Kubernetes はその値が真かどうかを確かめないので、これを所有関係の証拠に使うとテナントは自分のクォータを自分ですり抜けます。</figcaption>
+        </figure>
 
         <h2 id="exemption-anyone-can-grant">誰でも与えられる免除は免除ではありません<a class="anchor" href="#exemption-anyone-can-grant" aria-label="このセクションへのリンク">#</a></h2>
 
@@ -310,6 +377,36 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
 
         <p>④ は別のことを言っています。<strong>ルールは最初から正しく、適用される時点が間違っていました。</strong>
         防ごうとしていたことが既に起きた後に検査していました。この種の欠陥は、ルールをいくら精緻にしても消えません。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 230" role="img" aria-labelledby="rp-t rp-d" class="figure-svg">
+            <title id="rp-t">修理の三つの形を強い順に並べた梯子</title>
+            <desc id="rp-d">左に縦軸があり、上が強い、下が弱いです。軸の右に箱が三つ、上から下へ並びます。一つ目は入力の置き換え、二つ目は提供できる側を狭めること、三つ目は被害の上限です。箱ごとに右へ矢印が出て、何を変えるかが書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <path d="M40 34 V 196" fill="none" stroke="#c9c9c9" stroke-width="1.4"/>
+              <text x="40" y="26" font-size="11" fill="#8a8a8a" text-anchor="middle">強い</text>
+              <text x="40" y="214" font-size="11" fill="#8a8a8a" text-anchor="middle">弱い</text>
+              <rect x="64" y="48" width="248" height="40" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="188" y="73" font-size="11.5" fill="#4f5bd5" text-anchor="middle">① 入力の置き換え</text>
+              <path d="M318 68 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rp-a)"/>
+              <text x="384" y="73" font-size="11.5" fill="#4a4a4a">信じられない値 → 信じられる値</text>
+              <rect x="64" y="104" width="248" height="40" rx="9" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="188" y="129" font-size="11.5" fill="#d62976" text-anchor="middle">② 提供者の限定</text>
+              <path d="M318 124 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rp-a)"/>
+              <text x="384" y="129" font-size="11.5" fill="#4a4a4a">誰でも → テナントが入らない集合</text>
+              <rect x="64" y="160" width="248" height="40" rx="9" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="188" y="185" font-size="11.5" fill="#8a8a8a" text-anchor="middle">③ 被害の上限</text>
+              <path d="M318 180 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rp-a)"/>
+              <text x="384" y="185" font-size="11.5" fill="#4a4a4a">無制限 → 120 秒</text>
+            </g>
+            <defs>
+              <marker id="rp-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>① と ② は<strong>攻撃そのものを消します。</strong>③ は攻撃を残したまま値だけ削るので、<strong>どちらもできないときの最後の手段</strong>です。4 件のうち 3 件は ① か ② で終わりました。</figcaption>
+        </figure>
 
         <h2 id="a-claim-was-false">この文書の 1 つの主張が偽で、ガードはその上に建てられました<a class="anchor" href="#a-claim-was-false" aria-label="このセクションへのリンク">#</a></h2>
 
