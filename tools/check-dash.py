@@ -44,7 +44,7 @@ BASELINE = {
     "writing/a-pooler-fixes-only-one.html": 32,
     "writing/a-pooler-fixes-only-one.ja.html": 16,
     "writing/every-guarantee-ends-at-a-writable-field.html": 15,
-    "writing/every-guarantee-ends-at-a-writable-field.ja.html": 16,
+    "writing/every-guarantee-ends-at-a-writable-field.ja.html": 15,
     "writing/four-fixes-that-were-not-there.html": 14,
     "writing/it-deleted-the-tenant.html": 21,
     "writing/it-deleted-the-tenant.ja.html": 11,
