@@ -17,7 +17,8 @@ TERMS = ["connection pooler", "connection pool", "transaction pooling", "control
          "cache", "connection", "transaction", "thread", "backend", "harness", "pooler",
          "pooling", "pool", "timeout", "stub", "instance", "worker", "monolith", "mutation",
          "console", "cloud", "lock", "arm", "swap", "client", "baseline", "executor",
-         "payload", "loader", "plugin", "device", "polling", "producer"]
+         "payload", "loader", "plugin", "device", "polling", "producer",
+         "fail-closed", "fail-open"]
 PATS = [re.compile(r"(?<![A-Za-z0-9_/.-])" + t.replace(" ", r"\s+") + r"(?![A-Za-z0-9_/.-])")
         for t in TERMS]
 SKIP = re.compile(r"<pre\b.*?</pre>|<code\b.*?</code>|<script\b.*?</script>|<[^>]+>", re.S)
