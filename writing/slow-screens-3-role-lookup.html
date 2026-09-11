@@ -100,7 +100,7 @@
         <p>Hello. I write the backend of an internal cloud admin console. On the user detail screen,
         <strong>the role list spun for over a second</strong> without finishing.</p>
 
-        <p>⚠️ The <strong>1,409 ms in this article is not the screen’s response time.</strong> The timer in the
+        <p>The <strong>1,409 ms in this article is not the screen’s response time.</strong> The timer in the
         code starts after the database query returns, and covers only the stretch that turns
         role rows into DTOs. The database query, serialisation and transport all sit outside it.
         What the user waited is longer than this. Every number here is from that stretch.</p>
@@ -275,7 +275,7 @@
         The six unresolved rows sum to the total for this run. The eight resolved rows were
         0 ms.</p></blockquote>
 
-        <p>⚠️ This is one run at millisecond resolution, so “the rest is exactly zero” is more than it
+        <p>This is one run at millisecond resolution, so “the rest is exactly zero” is more than it
         supports. Building, filtering and sorting the DTOs happens outside each row's own span, and
         anything under a millisecond looks like this. What it does support is that
         at this resolution the six recorded spans summed to the total.</p>
@@ -361,7 +361,7 @@
         <p>The six unresolved rows were the same six ids in all three runs I have: one before
         the fix and two after, a day apart. That does not look like a cache that happened to be cold; it looks
         like positions that cannot be filled.
-        ⚠️ Three runs is three runs. I did not run it more than that.</p>
+        Three runs is three runs. I did not run it more than that.</p>
 
         <h2 id="the-fix">The fix: filter a list instead of asking for a key<a class="anchor" href="#the-fix" aria-label="Link to this section">#</a></h2>
 
@@ -382,7 +382,7 @@ var project = CacheBox.projects().stream()
         drops expired entries one by one. Only when what remains is
         completely empty does it call the external API.</p>
 
-        <p>⚠️ There is a trap in that. Partial expiry does not trigger it. If even one entry
+        <p>There is a trap in that. Partial expiry does not trigger it. If even one entry
         survives, the incomplete list is returned as it is, and a project that fell out in between is reported
         unresolved despite existing. In these runs the entries were filled together and expired
         together, so it did not show. Not showing is not the same as not being there.</p>
@@ -415,9 +415,9 @@ var project = CacheBox.projects().stream()
         </div>
         <p class="table-note">The middle column reads 6 on all three rows.
         Nothing here reduced how often a lookup fails. What changed is the two columns on the
-        right. ⚠️ All three rows are a single observation. No distribution was measured.</p>
+        right. All three rows are a single observation. No distribution was measured.</p>
 
-        <h2 id="what-it-cost">⚠️ What it cost: new projects show up late<a class="anchor" href="#what-it-cost" aria-label="Link to this section">#</a></h2>
+        <h2 id="what-it-cost">What it cost: new projects show up late<a class="anchor" href="#what-it-cost" aria-label="Link to this section">#</a></h2>
 
         <p>The old code had <strong>a use nobody was counting on.</strong> Meeting an unknown id, it refetched
         the list, so a project created moments ago showed up immediately. It was slow, and it
@@ -426,7 +426,7 @@ var project = CacheBox.projects().stream()
         <p>After the fix an unknown id does nothing at all. So a new project
         does not appear until the cache is refilled.</p>
 
-        <p>⚠️ And “until the cache is refilled” <strong>is not something I can pin at 10 minutes.</strong>
+        <p>And “until the cache is refilled” <strong>is not something I can pin at 10 minutes.</strong>
         Retention hangs on the write time recorded per entry, not on the list as a whole. And
         <code>project()</code> is still there, so one call to it from another screen refills every
         entry at once. That can push the timestamps forward and make a new project appear later, or

@@ -100,7 +100,7 @@
         <p>Hello. I write the backend of an internal cloud admin console. A report came in that the
         monitoring screen was slow.</p>
 
-        <p>⚠️ One thing first. <strong>This article has no before-and-after numbers.</strong>
+        <p>One thing first. <strong>This article has no before-and-after numbers.</strong>
         The previous three had them; this one does not. Why it does not is half the article.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
@@ -140,7 +140,7 @@
           <li><strong>The initial load</strong> is one REST request that collects quota and usage per project.</li>
           <li><strong>After that</strong> the server computes values every 15 seconds and pushes them to every
           open screen. Holding the connection open and sending from the server is called
-          SSE (Server-Sent Events). ⚠️ What is independent of the number of viewers is the
+          SSE (Server-Sent Events). What is independent of the number of viewers is the
           computation; serialising the result and writing it to each connection grows with
           the number of connections.</li>
         </ul>
@@ -197,7 +197,7 @@
         <strong>The order feels natural, and here the slow stretch was not on that side.</strong></p>
 
         <p>The time-series query runs <strong>once every 15 seconds</strong>, and once regardless of how many
-        screens are open. ⚠️ Frequency alone does not make it cheap. What it does mean is that
+        screens are open. Frequency alone does not make it cheap. What it does mean is that
         the record never pointed here as the place to look first.</p>
 
         <blockquote><p>A function that runs a long time is not automatically the stretch the user is
@@ -221,12 +221,12 @@
         <code>serviceClient()</code> connects to Keystone with the account from the config file, takes a token,
         and hands back a client that is already authenticated.</p></blockquote>
 
-        <p>⚠️ This is not a claim about SDKs in general. The same library has another route that
+        <p>This is not a claim about SDKs in general. The same library has another route that
         builds a client from a token you already hold. What authenticates here is
         our own factory's implementation, and the article is about that fact not being
         visible in the function's name.</p>
 
-        <p>⚠️ And this comes from two internal documents. The implementation of
+        <p>And this comes from two internal documents. The implementation of
         <code>serviceClient()</code> is not reproduced here, and what survives in the archive is not that
         implementation but the documents describing it.</p>
 
@@ -241,7 +241,7 @@
         <p>What the screen shows is a graph, and before drawing it the code was
         authenticating N times. More projects means
         proportionally more sequential authentications.
-        ⚠️ I will not go as far as saying response time grows by exactly that much.
+        I will not go as far as saying response time grows by exactly that much.
         How long one authentication takes, and whether it is the same every time, was never measured.</p>
 
         <figure class="diagram">
@@ -324,7 +324,7 @@ for (String projectId : projects) {
         <p>What changed is <strong>one place where <code>serviceClient()</code> is called.</strong>
         It moved from inside the loop to outside it.</p>
 
-        <p>⚠️ To be precise: <strong>authentication did not disappear, it went from N per request to one per
+        <p>To be precise: <strong>authentication did not disappear, it went from N per request to one per
         request.</strong> The client is built inside this method, so
         the next request authenticates again.</p>
 
@@ -334,7 +334,7 @@ for (String projectId : projects) {
         The token's lifetime is simply far longer than this loop takes, so it never showed.</p>
 
         <p>Holding the client between requests would cut authentication further.
-        ⚠️ That side is harder. Clients in this family tie the current session to a thread,
+        That side is harder. Clients in this family tie the current session to a thread,
         so sharing one across request threads can leave the session mixed up or missing. Token expiry becomes
         yours to handle from that point too. This fix did not go there.</p>
 
@@ -342,14 +342,14 @@ for (String projectId : projects) {
         configuration and legitimately long calls elsewhere get cut as well. Fixing a slow screen and
         breaking a working feature is a common next incident.</p>
 
-        <p>⚠️ The two limit different things. A connection timeout caps establishing the
+        <p>The two limit different things. A connection timeout caps establishing the
         connection; a read timeout caps waiting for a response after sending.
         And scoping them to this client still applies them to
         every authentication and query this client makes. What scoping prevents is the setting
-        spreading to other clients. ⚠️ This is the stated intent; there is no record of anyone
+        spreading to other clients. This is the stated intent; there is no record of anyone
         checking what actually breaks when it is set globally.</p>
 
-        <h2 id="not-measured">⚠️ And I never measured before and after<a class="anchor" href="#not-measured" aria-label="Link to this section">#</a></h2>
+        <h2 id="not-measured">And I never measured before and after<a class="anchor" href="#not-measured" aria-label="Link to this section">#</a></h2>
 
         <p>This is where the article parts company with the previous three.</p>
 
@@ -376,7 +376,7 @@ for (String projectId : projects) {
         </div>
         <p class="table-note">The left column is what reading the code gives you; the right is
         what only measuring gives you. This time there is only a left column.
-        ⚠️ The initial load still scales with the number of projects. The per-project queries
+        The initial load still scales with the number of projects. The per-project queries
         were untouched. What stopped scaling is the authentication.</p>
 
         <h2 id="the-load-test">A load test only measures the path its scenario sends<a class="anchor" href="#the-load-test" aria-label="Link to this section">#</a></h2>
@@ -394,7 +394,7 @@ for (String projectId : projects) {
         That is a property of the architecture, not evidence that the slow path was
         exercised.</p></blockquote>
 
-        <p>⚠️ This is not the tool's fault. Ten users each opening the screen would run the
+        <p>This is not the tool's fault. Ten users each opening the screen would run the
         initial load ten times. The load tool can reach that path perfectly well;
         a scenario written to hold a connection and receive pushes simply does not include it.
         Load-test results are valid only for the requests the scenario actually sent.</p>
@@ -421,14 +421,14 @@ for (String projectId : projects) {
               <text x="545" y="132" font-size="12" fill="#d62976" text-anchor="middle">1 project → N projects</text>
             </svg>
           </div>
-          <figcaption>⚠️ Not measurements but <strong>a sketch of the call counts the code implies.</strong>
+          <figcaption>Not measurements but <strong>a sketch of the call counts the code implies.</strong>
           The flat line on the left is not good news; it means that axis does not touch the repeated
           authentication.</figcaption>
         </figure>
 
         <p>Measuring it properly means changing the axis: raising the number of projects N and
         timing one initial load at each step, instead of raising concurrent users.
-        ⚠️ That is written down in the record as the thing to do, and
+        That is written down in the record as the thing to do, and
         there is no record of anyone doing it. That is why this article ends without a
         number.</p>
 

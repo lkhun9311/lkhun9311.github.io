@@ -191,14 +191,14 @@
 
         <p><strong>54초가 걸렸습니다.</strong></p>
 
-        <p>⚠️ 여기서 전후를 같은 요청으로 보장하지 못합니다. 기록에 남은 것은
+        <p>여기서 전후를 같은 요청으로 보장하지 못합니다. 기록에 남은 것은
         고치기 전이 <code>openstack server list</code>, 고친 뒤가
         <code>openstack server list --all-projects</code>입니다. 옵션이 다릅니다.
         그리고 고치기 전에는 터미널 갈무리가 없고 <strong>「54초」라는 숫자만</strong> 남아 있습니다.</p>
 
         <p>그래도 이 한 줄이 얻어 준 것이 있습니다. 관리 Console의 Backend를 거치지 않는 경로에서도
         54초가 걸렸다는 것입니다. 느린 구간이 compute API 아래에 적어도 하나 있다는
-        뜻입니다. ⚠️ 이것이 우리 Backend가 아무 지연도 보태지 않았다는 증명은 아닙니다.
+        뜻입니다. 이것이 우리 Backend가 아무 지연도 보태지 않았다는 증명은 아닙니다.
         그쪽은 따로 재지 않았습니다.</p>
 
         <blockquote><p>화면이 느릴 때 애플리케이션 코드부터 여는 것은 습관이지 진단이 아닙니다.
@@ -219,7 +219,7 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
         <p>여기서부터는 가설입니다. MariaDB가 읽어야 할 페이지가 Swap에 들어가 있으면
         메모리에서 끝날 읽기가 디스크 왕복이 됩니다. 그렇다면 질의는 그대로인데 느려집니다.</p>
 
-        <p>⚠️ 그 가설을 재지 않았습니다. <code>vmstat</code>도 <code>iostat</code>도
+        <p>그 가설을 재지 않았습니다. <code>vmstat</code>도 <code>iostat</code>도
         MariaDB 프로세스의 page fault도 남아 있지 않습니다. 그러니 이 글은
         「Swap이 꽉 차 있었다」와 「Swap을 비웠더니 빨라졌다」 두 사실만 말할 수 있고
         그 사이를 잇는 것은 코드가 아니라 짐작입니다.
@@ -311,7 +311,7 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
         <code>instances</code>만이 아니라 <code>instance_actions_events</code>·<code>instance_faults</code>·
         <code>instance_system_metadata</code>처럼 딸린 테이블에도 같은 것이 쌓여 있었습니다.</p>
 
-        <p>⚠️ 실행 계획은 남아 있지 않습니다. 사내 문서는 이것을 「풀 스캔」이라고 적었는데
+        <p>실행 계획은 남아 있지 않습니다. 사내 문서는 이것을 「풀 스캔」이라고 적었는데
         <code>EXPLAIN</code>을 떠 둔 기록이 없어 정말 전부를 훑었는지는 확인하지 못했습니다.
         확인한 것은 테이블이 20행이 아니라 1,041행을 담고 있었다까지입니다.</p>
 
@@ -327,7 +327,7 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
         <code>available</code>(새 프로세스가 Swap 없이 쓸 수 있다고 커널이 추정한 양)이 18GiB였으니
         8.0GiB가 들어갈 자리가 있었습니다.</p>
 
-        <p>⚠️ 그런데 이 한 줄에는 제가 그때 몰랐던 함정이 있습니다.
+        <p>그런데 이 한 줄에는 제가 그때 몰랐던 함정이 있습니다.
         <code>swapoff -a</code>는 등록된 Swap을 전부 끄고 메모리가 모자란 것 말고도
         여러 이유로 실패할 수 있습니다. 일부만 꺼져도 <code>swapoff</code>는 0이 아닌 값으로 끝나고
         <code>&amp;&amp;</code>는 앞이 0일 때만 뒤를 실행합니다. 즉 일이 반쯤 어그러지면
@@ -343,7 +343,7 @@ Swap:          8.0Gi     0B  8.0Gi</code></pre>
         <p>그리고 그 자리를 다 썼습니다. <code>available</code>이 18GiB에서
         <strong>10GiB</strong>가 됐습니다.</p>
 
-        <p>⚠️ 이 8GiB를 전부 Swap에서 올라온 몫이라고 못 박을 수는 없습니다.
+        <p>이 8GiB를 전부 Swap에서 올라온 몫이라고 못 박을 수는 없습니다.
         <code>free -h</code>는 반올림해서 보여 주고 <code>available</code>은 실제 사용량이 아니라
         추정치이며 그동안 다른 프로세스도 돌고 있었습니다.
         그리고 줄어든 것은 그 시점의 RAM 여유이지 Swap 용량이 아닙니다.
@@ -370,11 +370,11 @@ SET FOREIGN_KEY_CHECKS = 1;</code></pre>
 
         <p>애플리케이션 쪽도 같이 고쳤습니다. 전체 조회 API가
         <code>DELETED</code> 상태를 걸러내고 부르도록 바꿨습니다.
-        ⚠️ 다만 이것이 얼마나 막아 주는지는 재지 않았습니다.
+        다만 이것이 얼마나 막아 주는지는 재지 않았습니다.
         <code>openstack server list</code>는 원래도 삭제된 것을 빼고 부릅니다. 우리 Backend가
         그 전에 무엇을 보내고 있었고 바꾼 뒤에 무엇이 달라졌는지, 요청도 질의 계획도 남기지 않았습니다.</p>
 
-        <h2 id="하면-안-되는-것">⚠️ 이 명령은 운영에서 쓰면 안 됩니다<a class="anchor" href="#하면-안-되는-것" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="하면-안-되는-것">이 명령은 운영에서 쓰면 안 됩니다<a class="anchor" href="#하면-안-되는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>위의 <code>DELETE</code> 묶음은 <strong>제가 옳아서 쓴 것이 아닙니다.</strong>
         QA가 대시보드를 못 쓰고 있었고 지워진 데이터라 되살릴 필요가 없다고 판단해서 쓴 것입니다.
@@ -418,9 +418,9 @@ SET FOREIGN_KEY_CHECKS = 1;</code></pre>
         </div>
         </div>
         <p class="table-note">본 테이블에서 바로 지우지 않고 한 단계를 거칩니다.
-        본 테이블은 archive 시점에 이미 작아집니다. ⚠️ 기간은 전부 행이 삭제된 날을
+        본 테이블은 archive 시점에 이미 작아집니다. 기간은 전부 행이 삭제된 날을
         기준으로 셉니다. 30일에 archive 하고 90일에 purge 하면 shadow에 머무는 것은 60일입니다.
-        ⚠️ 그리고 shadow 테이블은 Nova가 보장하는 복구 수단이 아닙니다.
+        그리고 shadow 테이블은 Nova가 보장하는 복구 수단이 아닙니다.
         조회 경로에서 빼 두는 이력 보관용이고 모든 테이블에 shadow가 있는 것도 아닙니다.
         「지우기 전에 90일 되돌릴 수 있다」로 읽으면 안 됩니다.</p>
 
@@ -434,14 +434,14 @@ nova-manage db purge \
   --verbose --all-cells \
   --before "$(date -d '90 days ago' '+%Y-%m-%d')"</code></pre>
 
-        <p>⚠️ 제안서에는 <code>purge</code>에 <code>--all</code>이 붙어 있었습니다. 그건
+        <p>제안서에는 <code>purge</code>에 <code>--all</code>이 붙어 있었습니다. 그건
         「모든 shadow 테이블」이라는 뜻이 아니라 남은 것을 전부 지우라는 뜻이라
         <code>--before</code>와 같이 쓰면 의도가 서로 부딪힙니다. 뺐습니다.</p>
 
         <p>그리고 사람이 기억해서 하는 일로 두지 말자고 적었습니다. 부하가 낮은 새벽에
         조금씩 돌게 걸어 두는 안입니다.</p>
 
-        <p>⚠️ 그런데 제가 낸 제안서의 cron 예시가 제 보존 정책과 어긋나 있었습니다.
+        <p>그런데 제가 낸 제안서의 cron 예시가 제 보존 정책과 어긋나 있었습니다.
         이 글을 쓰면서 발견했습니다. 세 군데입니다.</p>
 
         <ul>
@@ -476,7 +476,7 @@ nova-manage db purge \
 <pre data-lang="bash"><code>mysqldump --single-transaction nova       &gt; nova_backup.sql
 mysqldump --single-transaction nova_cell0 &gt; nova_cell0_backup.sql</code></pre>
 
-        <p>⚠️ 이 백업으로는 모자랍니다. 제안서에 적은 그대로 옮겼는데
+        <p>이 백업으로는 모자랍니다. 제안서에 적은 그대로 옮겼는데
         <code>--all-cells</code>는 등록된 모든 cell DB를 건드리고(cell은 Nova가
         compute 자원을 나눠 담는 DB 단위입니다), Instance를 archive 할 때는
         <code>nova_api</code> 쪽 행도 같이 지워집니다. 두 개만 떠 두면 되돌릴 수 없습니다.
@@ -507,7 +507,7 @@ real    0m1.002s
 user    0m0.577s
 sys     0m0.048s</code></pre>
 
-        <p>화면은 Timeout이 나던 것이 뜨게 됐습니다. ⚠️ 화면 자체의 소요 시간은 재지 않았습니다.
+        <p>화면은 Timeout이 나던 것이 뜨게 됐습니다. 화면 자체의 소요 시간은 재지 않았습니다.
         고치기 전에는 끝나지 않아서 잴 수가 없었고 고친 뒤에는 따로 재지 않았습니다.
         54초는 CLI 측정치입니다.</p>
 

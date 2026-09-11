@@ -102,7 +102,7 @@
         <p>Hello. I work on the backend of an internal cloud admin console.
         In <a href="slow-screens-1-volume-list.html">part one</a> I took a single volume list screen and
         measured it under <strong>six configurations</strong>.
-        ⚠️ The six do not stack neatly on top of each other; there is a place where a cache is added and
+        The six do not stack neatly on top of each other; there is a place where a cache is added and
         then taken away again. Three more screens were measured under the same conditions
         (<a href="parallelism-made-the-tail-worse.html">part five</a>).</p>
 
@@ -149,13 +149,13 @@
         looking at has to match.</strong> Change one thing, hold the rest still. That is what makes a
         comparison a comparison.</p></blockquote>
 
-        <p>⚠️ The six do not each differ from the next by exactly one thing; there are
+        <p>The six do not each differ from the next by exactly one thing; there are
         places where two things moved together. That is why
         <a href="parallelism-made-the-tail-worse.html">part five</a> picks two rows that hold the
         cache constant and compares those. Measuring all six is what makes that choice available.
         Measuring only before and after does not.</p>
 
-        <p>⚠️ Filling the values in by hand is not wrong in itself. If you write down what you entered each
+        <p>Filling the values in by hand is not wrong in itself. If you write down what you entered each
         time and keep that note with the result, the comparison holds. The problem is not
         the hand, it is the missing note. I chose to remove the hand rather than add the note.</p>
 
@@ -174,7 +174,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
         <p>What changed is <strong>where the conditions live.</strong> They used to live in a person's hands
         and on a screen; now they live in a file. A file can be <strong>read, and compared.</strong></p>
 
-        <p>⚠️ Only in the sense that it now has that shape. This harness does not keep a
+        <p>Only in the sense that it now has that shape. This harness does not keep a
         copy of that file per run. To actually compare runs you would have to
         put it under version control or copy it into the run folder, and I did neither.</p>
 
@@ -184,14 +184,14 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
         <a href="parallelism-made-the-tail-worse.html">part five</a> can say the load conditions were the
         same in all six.</p>
 
-        <blockquote><p>⚠️ And that is as far as "the same" goes. What matched is the
+        <blockquote><p>And that is as far as "the same" goes. What matched is the
         declared load conditions, not the whole setting the test sat in. How much data had
         piled up, how warm the JVM was, what else was running on that machine at the time — all of that is
         outside these constants. Please read "the same conditions" in the earlier parts
         with that scope.</p></blockquote>
 
         <p>And which report belongs to which configuration is paired up by a document
-        written at the time. ⚠️ What the harness leaves behind is not linked together.
+        written at the time. What the harness leaves behind is not linked together.
         If that document cannot be opened, the output of this tool alone cannot answer it.
         (Deployment records and commit times leave some room to reconstruct it. That is not something the
         harness did for me.)</p>
@@ -260,7 +260,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
         <h2 id="one-at-a-time">Measuring one thing at a time was the point<a class="anchor" href="#one-at-a-time" aria-label="Link to this section">#</a></h2>
 
         <p>The targets were <strong>ten</strong> read APIs on the volume and snapshot side.
-        ⚠️ Which ones, and their paths, are internal API surface and are not written here.</p>
+        Which ones, and their paths, are internal API surface and are not written here.</p>
 
         <p><code>GROUP</code> is the handle on this harness. <code>"01"</code> runs that one,
         <code>"volume"</code> runs the five on the volume side, <code>"all"</code> runs everything.</p>
@@ -268,10 +268,10 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
         <blockquote><p>When one screen is slow, you have to <strong>pull out just what that screen calls</strong>
         so that this tool is not hammering the other APIs at the same time.</p></blockquote>
 
-        <p>⚠️ That does not mean load from other people or other processes on the machine is gone.
+        <p>That does not mean load from other people or other processes on the machine is gone.
         Only that the harness is not adding it.</p>
 
-        <p>⚠️ And "alone" is not "independent". The resource ids that go into the requests
+        <p>And "alone" is not "independent". The resource ids that go into the requests
         are pulled from a CSV file, and the config that reads that file sits
         once, at the top of the test plan, with sharing set to all and
         wrap-around on when it reaches the end. That means one cursor shared across every thread.
@@ -279,7 +279,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
         each group picks up where the previous one stopped.</p>
 
         <p>It may not stop at the cursor. If the server was not restarted in between, whatever is
-        left in its cache and however warm the JVM is carry over too. ⚠️ There is
+        left in its cache and however warm the JVM is carry over too. There is
         no record of what was done to the server between runs. What is certain reaches as
         far as the CSV cursor.</p>
 
@@ -299,13 +299,13 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
 
         <p>With the first line true, the thread groups run one at a time, in order.
         The four below mean <strong>the loop count is unlimited and the time is 600 seconds.</strong>
-        ⚠️ Two of them say the same thing twice: <code>-1</code> already means forever, so
+        Two of them say the same thing twice: <code>-1</code> already means forever, so
         <code>continue_forever</code> being on as well changes nothing.</p>
 
         <p>Had the loop count not been <code>-1</code>, the group would stop at
         whichever of count and time it reached first. Here the count is never reached, so
         <strong>the path by which it ends normally is that 600 seconds.</strong>
-        ⚠️ It can of course end sooner if something stops it from outside or an error policy fires.</p>
+        It can of course end sooner if something stops it from outside or an error policy fires.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 250" role="img" aria-labelledby="sz-t sz-d" class="figure-svg">
@@ -352,14 +352,14 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
 
         <p>So <code>"all"</code> is not a test that loads ten things at once.
         It is measuring one at a time, ten times over.
-        ⚠️ As the previous section said, the cursor and the cache and the JVM carry across, so
+        As the previous section said, the cursor and the cache and the JVM carry across, so
         the ten are not independent of each other.</p>
 
-        <blockquote><p>⚠️ There is no record that it ever took 100 minutes.
+        <blockquote><p>There is no record that it ever took 100 minutes.
         What I verified is that the configuration says so. Whether any run ever went through
         <code>"all"</code> to the end is not written down anywhere.</p></blockquote>
 
-        <p>⚠️ And it is 100 minutes as configured, not exactly 100 minutes.
+        <p>And it is 100 minutes as configured, not exactly 100 minutes.
         JMeter checks the time between requests; it does not cut off a request in flight.
         If the last request sits waiting for a response, that group ends past its 600 seconds.
         On a screen with a ten-minute timeout, like the one in
@@ -402,12 +402,12 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
         response message, not an assertion failure message. They are different columns and
         both are on. With only one of them, that screen does not appear.</p>
 
-        <p>⚠️ The test plan also carries <code>&lt;responseData&gt;false&lt;/responseData&gt;</code>.
+        <p>The test plan also carries <code>&lt;responseData&gt;false&lt;/responseData&gt;</code>.
         In CSV that line does nothing, because the format already cannot hold a body.
         It looks like it is holding something back, and the thing holding it back is the format.
         I found this out while writing this article.</p>
 
-        <blockquote><p>⚠️ And "saving bodies makes it slower" is a claim to make carefully.
+        <blockquote><p>And "saving bodies makes it slower" is a claim to make carefully.
         JMeter receives the whole response and fixes the sample's timing before it hands
         the result to whatever writes it out. The time spent writing to file is not simply added to that
         sample's response time. What can be said is that it
@@ -427,7 +427,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
           The request name column is an internal path and is masked.</figcaption>
         </figure>
 
-        <p>⚠️ To be exact about why the targets get separate folders: it is
+        <p>To be exact about why the targets get separate folders: it is
         <strong>not that a combined report hides them.</strong> A combined report does give you per-label
         rows. They are split so that the same target from two runs sits side by side —
         open two folders in the same place and there it is.</p>
@@ -465,7 +465,7 @@ reports produced: 0</code></pre>
 <pre data-lang="text"><code>jtl = [jmeter/results/*.jtl]
 not a file → continue</code></pre>
 
-        <p>⚠️ It depends on shell settings. When nothing matches, with
+        <p>It depends on shell settings. When nothing matches, with
         <code>nullglob</code> on the loop simply runs zero times.
         The outcome is the same — no reports built, and it still reaches the completion
         message. The only one that ends differently is <code>failglob</code>, which fails
@@ -531,7 +531,7 @@ done
           has to actually exist.</li>
         </ul>
 
-        <p>⚠️ This is still not enough. Things it does not catch:</p>
+        <p>This is still not enough. Things it does not catch:</p>
 
         <ul class="callout">
           <li>Matching counts pass. One expected target missing and one stray result file
@@ -545,7 +545,7 @@ done
           writable, sending stderr to <code>report.err</code> fails in the first place.</li>
         </ul>
 
-        <p>⚠️ And this corrected form is not what is in the internal repository.
+        <p>And this corrected form is not what is in the internal repository.
         I cannot reach that code now, so what is written here is how I would write it again.</p>
 
         <p>I checked it with a fake executable standing in for JMeter — twenty lines that
@@ -553,7 +553,7 @@ done
         <code>index.html</code>. With that I ran five cases: normal, zero results, fewer
         than expected, a zero return with an empty report, and a folder collision.
         All five stopped where they were meant to.
-        ⚠️ That is not a check against real JMeter; it is a check of
+        That is not a check against real JMeter; it is a check of
         the script's decision logic only.</p>
 
         <h2 id="nothing-names-the-run">Nothing says which run was which configuration<a class="anchor" href="#nothing-names-the-run" aria-label="Link to this section">#</a></h2>
@@ -573,14 +573,14 @@ done
         What it did not do is mark which configuration a result belongs to.
         That second part was being done by memory and by a separate document.</p></blockquote>
 
-        <p>⚠️ "There is no condition at all in the report" would not be accurate.
+        <p>"There is no condition at all in the report" would not be accurate.
         A JMeter report has start and end times, a graph of active threads over time, and per-label
         statistics. You can read the thread count off the chart.
         What is missing is the JMX and the constants used, and the name of the run.</p>
 
         <p>The fix is not hard: put the generated JMX, the constants, and a name for the run
         into the run folder alongside the results.
-        ⚠️ Even then it is not proof that this JMX is what actually ran.
+        Even then it is not proof that this JMX is what actually ran.
         What shrinks is "how much you have to ask a person later", not down to zero.</p>
 
         <h2 id="auth">The test had to stay authenticated for ten minutes<a class="anchor" href="#auth" aria-label="Link to this section">#</a></h2>
@@ -590,19 +590,19 @@ done
         <strong>how fast you get turned away.</strong></p>
 
         <p>So before writing the test I had to read <strong>what keeps this screen logged in.</strong>
-        ⚠️ What that was is not written here.</p>
+        What that was is not written here.</p>
 
         <blockquote><p>The authentication had to be understood before the tool could be
         built. Without it the obstacle is not writing the script, it is
         getting through ten minutes.</p></blockquote>
 
-        <p>⚠️ And ten minutes is the case where <code>GROUP</code> is a single target.
+        <p>And ten minutes is the case where <code>GROUP</code> is a single target.
         <code>"all"</code> is a 100-minute affair as configured, and whether authentication is
         obtained once and reused or obtained again per group over that stretch,
         I do not know. The test plan alone does not say, and there is no record of it being
         run that way.</p>
 
-        <p>⚠️ How to feed credentials to a load tool is something I have never properly solved.
+        <p>How to feed credentials to a load tool is something I have never properly solved.
         The reason it is not covered here is that I have no answer worth showing, and what
         was put in that place is not going in this article.</p>
 

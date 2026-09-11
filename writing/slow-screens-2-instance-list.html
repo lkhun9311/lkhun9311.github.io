@@ -195,14 +195,14 @@
 
         <p><strong>It took 54 seconds.</strong></p>
 
-        <p>⚠️ Before and after are not guaranteed to be the same request. What the record holds
+        <p>Before and after are not guaranteed to be the same request. What the record holds
         is <code>openstack server list</code> before and
         <code>openstack server list --all-projects</code> after. The options differ. And for the before run there
         is no terminal capture, only the number.</p>
 
         <p>Still, that one line bought something. <strong>A path that does not go through the admin console
         backend also took 54 seconds,</strong> which means there is at least one slow stretch below the
-        compute API. ⚠️ It is not proof that our backend added no delay of its own. I did not measure
+        compute API. It is not proof that our backend added no delay of its own. I did not measure
         that side.</p>
 
         <blockquote><p>Opening the application code first on a slow screen is a habit, not a diagnosis.
@@ -223,7 +223,7 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
         <p>From here on it is a hypothesis. If a page MariaDB needs sits in swap, a read that
         would have ended in memory becomes a round trip to disk. The query would be unchanged and slower.</p>
 
-        <p>⚠️ I never measured that hypothesis. There is no <code>vmstat</code>, no
+        <p>I never measured that hypothesis. There is no <code>vmstat</code>, no
         <code>iostat</code>, no page-fault record for the MariaDB process. So this article can state
         two facts: swap was full, and clearing it made things faster. What joins them is a
         guess, not evidence. The internal document’s “RAM 0.0001ms, swap 10–100ms” is likewise a cited order of
@@ -316,7 +316,7 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
         <code>instance_actions_events</code>, <code>instance_faults</code> and
         <code>instance_system_metadata</code>.</p>
 
-        <p>⚠️ No execution plan was kept. The internal document calls this a full scan, but
+        <p>No execution plan was kept. The internal document calls this a full scan, but
         there is no recorded <code>EXPLAIN</code>, so whether everything was really scanned is not something I
         verified. What was verified is that the table held 1,041 rows and not 20.</p>
 
@@ -331,7 +331,7 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
         starts killing processes to reclaim memory (the OOM killer). Here <code>available</code> (the kernel’s
         estimate of what a new process could use without swapping) was 18GiB, so there was room for 8.0GiB.</p>
 
-        <p>⚠️ And this one line has a trap I did not know about at the time.
+        <p>And this one line has a trap I did not know about at the time.
         <code>swapoff -a</code> turns off every registered swap, and it can fail for reasons
         other than memory. If only some of them come off, <code>swapoff</code> exits non-zero, and
         <code>&amp;&amp;</code> runs the second command only on a zero exit. So if it half fails,
@@ -346,7 +346,7 @@ Swap:          8.0Gi     0B  8.0Gi</code></pre>
         <p>And it used all of that room. <code>available</code> went from 18GiB to
         <strong>10GiB</strong>.</p>
 
-        <p>⚠️ That 8GiB cannot all be pinned on the swap-in. <code>free -h</code> rounds,
+        <p>That 8GiB cannot all be pinned on the swap-in. <code>free -h</code> rounds,
         <code>available</code> is an estimate rather than a usage figure, and other processes
         were running throughout. And what shrank is the RAM headroom at that moment, not the swap
         capacity. <code>swapon -a</code> put the 8.0GiB of swap back. Whether it fills again is
@@ -372,11 +372,11 @@ SET FOREIGN_KEY_CHECKS = 1;</code></pre>
 
         <p>The application side changed too. The list-all API now
         filters out the <code>DELETED</code> state when it asks.
-        ⚠️ How much that actually defends, though, I did not measure.
+        How much that actually defends, though, I did not measure.
         <code>openstack server list</code> already excludes deleted rows by default. What our backend was
         sending before, and what changed after, is recorded neither as a request nor as a query plan.</p>
 
-        <h2 id="not-in-production">⚠️ Do not run these in production<a class="anchor" href="#not-in-production" aria-label="Link to this section">#</a></h2>
+        <h2 id="not-in-production">Do not run these in production<a class="anchor" href="#not-in-production" aria-label="Link to this section">#</a></h2>
 
         <p>I did not run that block of <code>DELETE</code>s <strong>because it was right.</strong>
         QA could not use the dashboard, and I judged that deleted data did not need to survive.
@@ -422,9 +422,9 @@ SET FOREIGN_KEY_CHECKS = 1;</code></pre>
         </div>
         </div>
         <p class="table-note">Nothing is deleted straight out of the main table; there is a stage in
-        between, and the main table already shrinks at archive time. ⚠️ Every period here counts from
+        between, and the main table already shrinks at archive time. Every period here counts from
         the day the row was deleted. Archive at 30 days and purge at 90 and a row spends 60 days
-        in shadow. ⚠️ And shadow tables are not a recovery mechanism Nova guarantees.
+        in shadow. And shadow tables are not a recovery mechanism Nova guarantees.
         They are history kept out of the query path, and not every table has one. Do not read this as
         “90 days to undo”.</p>
 
@@ -438,14 +438,14 @@ nova-manage db purge \
   --verbose --all-cells \
   --before "$(date -d '90 days ago' '+%Y-%m-%d')"</code></pre>
 
-        <p>⚠️ The proposal had <code>--all</code> on <code>purge</code>. That does not mean “all shadow tables”;
+        <p>The proposal had <code>--all</code> on <code>purge</code>. That does not mean “all shadow tables”;
         it means delete everything left, which pulls against <code>--before</code>.
         It is gone here.</p>
 
         <p>And I wrote that this should not be something a person has to remember.
         The proposal runs it in small batches in the quiet hours.</p>
 
-        <p>⚠️ Except the cron example in my own proposal contradicted my own retention policy.
+        <p>Except the cron example in my own proposal contradicted my own retention policy.
         I found that writing this article. Three things.</p>
 
         <ul>
@@ -479,7 +479,7 @@ nova-manage db purge \
 <pre data-lang="bash"><code>mysqldump --single-transaction nova       &gt; nova_backup.sql
 mysqldump --single-transaction nova_cell0 &gt; nova_cell0_backup.sql</code></pre>
 
-        <p>⚠️ That backup is not enough. I copied it from the proposal as written, but
+        <p>That backup is not enough. I copied it from the proposal as written, but
         <code>--all-cells</code> touches every registered cell database (a cell is the database
         unit Nova splits compute resources across), and archiving instances also removes rows on the
         <code>nova_api</code> side. Two dumps will not restore that.
@@ -512,7 +512,7 @@ real    0m1.002s
 user    0m0.577s
 sys     0m0.048s</code></pre>
 
-        <p>The screen that used to time out now loads. ⚠️ I did not measure the screen itself.
+        <p>The screen that used to time out now loads. I did not measure the screen itself.
         Before the fix it never finished, so there was nothing to measure; after the fix I did not go back and
         time it. The 54 seconds is a CLI measurement.</p>
 
