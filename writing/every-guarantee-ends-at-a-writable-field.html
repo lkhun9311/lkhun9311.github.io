@@ -97,12 +97,12 @@
         <p><strong>Scope.</strong> Attacking and repairing multi-tenant quota enforcement in a personal
         project, a <a href="../projects/gpuaas-control-plane.html">Kubernetes-native GPU control plane</a>.
         The GPUs here are <strong>simulated — advertised by a fake device plugin</strong>. So the findings are
-        about <strong>Kubernetes admission and trust boundaries</strong>, not about how devices behave. And, as
-        the end of this says, <strong>the guard is currently enabled on no namespace at all.</strong></p>
+        about Kubernetes admission and trust boundaries, not about how devices behave. And, as
+        the end of this says, the guard is currently enabled on no namespace at all.</p>
 
         <p>Four defences turned out to be broken the same way. Every one was found
-        <strong>by attacking it rather than by reading it</strong>. They are collected here because
-        <strong>the pattern is the finding</strong>, not any one of them.</p>
+        by attacking it rather than by reading it. They are collected here because
+        the pattern is the finding, not any one of them.</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">scroll sideways for the rest</p>
@@ -136,12 +136,12 @@
           hold. It broke four times.</li>
           <li>Every break had the same shape. <strong>The tenant could write the value the check read.</strong>
           That field is the middle column of the table above.</li>
-          <li>The checking code had no bug in it. <strong>Each check was correct about what it read</strong>;
+          <li>The checking code had no bug in it. Each check was correct about what it read;
           what was wrong was treating that value as evidence about the tenant.</li>
-          <li>The four repairs do not look alike. Either you <strong>replace the input with one you can
-          trust</strong>, or you <strong>narrow who may supply it to a set the tenant is not in</strong>, or,
-          failing both, you <strong>cap the damage</strong>.</li>
-          <li>⚠️ <strong>The GPUs are simulated and the guard is enabled on no namespace today.</strong> This
+          <li>The four repairs do not look alike. Either you replace the input with one you can
+          trust, or you narrow who may supply it to a set the tenant is not in, or,
+          failing both, you cap the damage.</li>
+          <li>⚠️ The GPUs are simulated and the guard is enabled on no namespace today. This
           is about admission and trust boundaries, not about device behaviour.</li>
         </ul>
 
@@ -178,7 +178,7 @@
               </marker>
             </defs>
           </svg>
-          <figcaption>All four guards read a value from <strong>the box on the left</strong> as evidence. The checking code was correct; what was wrong was never counting the fact that <strong>the value came from the left of the boundary</strong>.</figcaption>
+          <figcaption>All four guards read a value from <strong>the box on the left</strong> as evidence. The checking code was correct; what was wrong was never counting the fact that the value came from the left of the boundary.</figcaption>
         </figure>
 
         <h2 id="at-first-nothing-stopped-it">At first, nothing stopped it<a class="anchor" href="#at-first-nothing-stopped-it" aria-label="Link to this section">#</a></h2>
@@ -205,11 +205,11 @@ bypass-probe   Running   platform-worker2   2
 $ kubectl -n serving get workloads
 (none)</code></pre>
 
-        <p>Created, scheduled, Running, holding two devices — and <strong>no Kueue Workload anywhere</strong>.
+        <p>Created, scheduled, Running, holding two devices — and no Kueue Workload anywhere.
         Nothing admitted it and nothing is counting it.</p>
 
-        <p>"Multi-tenant GPU quota" was <strong>not a boundary but a convention the platform's own controller
-        followed</strong>. A convention binds nobody who does not intend to follow it.</p>
+        <p>"Multi-tenant GPU quota" was not a boundary but a convention the platform's own controller
+        followed. A convention binds nobody who does not intend to follow it.</p>
 
         <h2 id="an-ownerreference-is-a-claim">An ownerReference is a claim, not a fact<a class="anchor" href="#an-ownerreference-is-a-claim" aria-label="Link to this section">#</a></h2>
 
@@ -231,15 +231,15 @@ forged-owner   1/1   Running</code></pre>
         Kubernetes does not check that the named owner had anything to do with it. Forging it needs one real
         Job's UID, which is readable in the same namespace.</p>
 
-        <p><strong>Fix.</strong> Believe the reference only <strong>when the Job controller presents it</strong>
-        by reading <code>req.UserInfo.Username</code>, <strong>a field in an admission request a tenant
-        cannot write</strong>.</p>
+        <p>Fix. Believe the reference only when the Job controller presents it
+        by reading <code>req.UserInfo.Username</code>, a field in an admission request a tenant
+        cannot write.</p>
 
         <p>That has an implementation consequence. The typed <code>Validator</code> interface hands you
-        <strong>only the object</strong>, and the object is exactly what cannot be trusted. So this had to drop
-        to a raw <code>admission.Handler</code> and take the request itself. <strong>When a convenient
+        only the object, and the object is exactly what cannot be trusted. So this had to drop
+        to a raw <code>admission.Handler</code> and take the request itself. When a convenient
         abstraction hands you something that does not line up with the trust boundary, you cannot use that
-        abstraction.</strong></p>
+        abstraction.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 200" role="img" aria-labelledby="or-t or-d" class="figure-svg">
@@ -280,15 +280,15 @@ forged-owner   1/1   Running</code></pre>
         budget — a device plugin, for instance. But <strong>a tenant can annotate its own Pod</strong>. That
         makes it the bypass with one extra step.</p>
 
-        <p><strong>Fix.</strong> Honour it only when the request comes from a <code>kube-system</code> service
+        <p>Fix. Honour it only when the request comes from a <code>kube-system</code> service
         account — a set a tenant cannot join. And a Pod admitted through it
-        <strong>emits a warning naming the annotation</strong>, so a device leaving the budget announces
+        emits a warning naming the annotation, so a device leaving the budget announces
         itself.</p>
 
         <h2 id="a-number-the-victim-chooses">The reclaim guarantee is bounded by a number the victim chooses<a class="anchor" href="#a-number-the-victim-chooses" aria-label="Link to this section">#</a></h2>
 
         <p>Quota reclaim works by preemption, preemption waits for termination, and termination waits for
-        <code>terminationGracePeriodSeconds</code> — <strong>a value set by the Pod being preempted</strong>.</p>
+        <code>terminationGracePeriodSeconds</code> — a value set by the Pod being preempted.</p>
 
         <p>Measured directly:</p>
 
@@ -307,19 +307,19 @@ forged-owner   1/1   Running</code></pre>
         </div>
 
         <p>Sweeping the parameter against a fixed 43 seconds of remaining work gives the model, and the knee
-        lands where predicted — <strong><code>held = min(remaining, grace)</code></strong>.</p>
+        lands where predicted — <code>held = min(remaining, grace)</code>.</p>
 
         <p>The same boundary was measured from the other side: an unresponsive workload
-        <strong>defeats reclaim entirely while its remaining service fits inside grace</strong>, and is cut off
+        defeats reclaim entirely while its remaining service fits inside grace, and is cut off
         at exactly grace once it does not.</p>
 
-        <p><strong>Fix — and this one differs from the first two.</strong> The grace period
-        <strong>genuinely belongs to the workload</strong>. Checkpointing before you die takes time, and that
+        <p>Fix — and this one differs from the first two. The grace period
+        genuinely belongs to the workload. Checkpointing before you die takes time, and that
         need is legitimate. So it could neither be replaced with something trusted nor restricted to a
         privileged set. <strong>Instead it was capped: 120 seconds for device holders.</strong></p>
 
         <p>Why not 30? A training step that checkpoints on SIGTERM needs longer, and refusing that
-        <strong>pushes tenants to ignore SIGTERM</strong> — which the measurement shows is exactly the case
+        pushes tenants to ignore SIGTERM — which the measurement shows is exactly the case
         that costs the owner most.</p>
 
         <h2 id="a-reservation-for-pods-that-cannot-exist">A reservation for Pods that can never exist<a class="anchor" href="#a-reservation-for-pods-that-cannot-exist" aria-label="Link to this section">#</a></h2>
@@ -334,16 +334,16 @@ forged-owner   1/1   Running</code></pre>
 <pre data-lang="text"><code>t=20s    used=2  admitted=2  job.status.failed=0
 t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
 
-        <p><code>backoffLimit</code> cannot end it. <strong>An admission rejection is not a Pod failure</strong>,
+        <p><code>backoffLimit</code> cannot end it. An admission rejection is not a Pod failure,
         so <code>failed</code> never leaves 0 and the retry never stops. A tenant submitting such Jobs
-        <strong>holds a budget indefinitely while running nothing</strong>.</p>
+        holds a budget indefinitely while running nothing.</p>
 
-        <p><strong>Fix.</strong> Apply the rules that decide a Pod's fate <strong>to the template that would
-        produce it, at the point where the reservation is made</strong>. A Job asking for devices is refused if
+        <p>Fix. Apply the rules that decide a Pod's fate to the template that would
+        produce it, at the point where the reservation is made. A Job asking for devices is refused if
         its template's grace exceeds the cap, or if it carries no queue label.</p>
 
-        <p>The label is checked <strong>at the Job</strong> — that is where Kueue reads it, and refusing at the
-        Pod would <strong>tell a user to fix a field their Pod does not have</strong>.</p>
+        <p>The label is checked at the Job — that is where Kueue reads it, and refusing at the
+        Pod would tell a user to fix a field their Pod does not have.</p>
 
         <p>Re-attacked after deploying: both Jobs <code>Forbidden</code>, <code>used</code> unchanged at 1, and
         an ordinary queued Job with grace 90 still runs.</p>
@@ -363,21 +363,21 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
           <caption class="sr-only">The four fixes and the form each took.</caption>
           <thead><tr><th scope="col">case</th><th scope="col">form</th><th scope="col">what it did</th></tr></thead>
           <tbody>
-            <tr><td>① ownerReference</td><td><strong>replace</strong></td><td>swapped the untrusted input for a trusted one — the requester is authenticated, the object is not</td></tr>
-            <tr><td>② exemption annotation</td><td><strong>restrict</strong></td><td>narrowed who may supply the input to a set the tenant cannot join</td></tr>
-            <tr><td>③ grace period</td><td><strong>bound</strong></td><td>could do neither, so it <em>bounded the damage</em>. The weakest of them and the honest one</td></tr>
-            <tr><td>④ Job reservation</td><td><strong>relocate</strong></td><td>kept the rule and moved the check to where the commitment is made</td></tr>
+            <tr><td>① ownerReference</td><td>replace</td><td>swapped the untrusted input for a trusted one — the requester is authenticated, the object is not</td></tr>
+            <tr><td>② exemption annotation</td><td>restrict</td><td>narrowed who may supply the input to a set the tenant cannot join</td></tr>
+            <tr><td>③ grace period</td><td>bound</td><td>could do neither, so it <em>bounded the damage</em>. The weakest of them and the honest one</td></tr>
+            <tr><td>④ Job reservation</td><td>relocate</td><td>kept the rule and moved the check to where the commitment is made</td></tr>
           </tbody>
         </table>
         </div>
         </div>
 
-        <p>③ is worth dwelling on. Reclaim is <strong>still not immediate</strong>, and no Kubernetes mechanism
-        makes it so. A cap did not solve the problem; it made <strong>how bad it can get finite</strong>. Write
+        <p>③ is worth dwelling on. Reclaim is still not immediate, and no Kubernetes mechanism
+        makes it so. A cap did not solve the problem; it made how bad it can get finite. Write
         a solution and a bound into the same column and the next reader takes it as solved.</p>
 
-        <p>④ says something different. <strong>The rule had been right all along; the moment it was applied was
-        wrong.</strong> It was checking after the thing it existed to prevent had already happened. No amount of
+        <p>④ says something different. The rule had been right all along; the moment it was applied was
+        wrong. It was checking after the thing it existed to prevent had already happened. No amount of
         refining the rule removes that class of defect.</p>
 
         <figure class="diagram">
@@ -407,7 +407,7 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
               </marker>
             </defs>
           </svg>
-          <figcaption>1 and 2 <strong>remove the attack.</strong> 3 leaves the attack in place and only shrinks what it is worth, so it is <strong>the last resort when neither of the others is possible</strong>. Three of the four ended at 1 or 2.</figcaption>
+          <figcaption>1 and 2 <strong>remove the attack.</strong> 3 leaves the attack in place and only shrinks what it is worth, so it is the last resort when neither of the others is possible. Three of the four ended at 1 or 2.</figcaption>
         </figure>
 
         <h2 id="a-claim-in-this-document-was-false">A claim in this document was false, and the guard was built on it<a class="anchor" href="#a-claim-in-this-document-was-false" aria-label="Link to this section">#</a></h2>
@@ -421,36 +421,36 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
         <strong>reading the first twelve lines of a truncated <code>grep</code></strong>, and it survived into
         the guard's design, its code comments, and the write-up.</p>
 
-        <p>What it changes is <strong>what the label means</strong>. A queue label is not a permission a tenant
-        grants itself; it is <strong>a bill</strong> — a request to charge that queue's budget. Which makes
+        <p>What it changes is what the label means. A queue label is not a permission a tenant
+        grants itself; it is a bill — a request to charge that queue's budget. Which makes
         "labelled, therefore admit" the same string check the guard existed to replace.</p>
 
         <p>And that leads to the project's current state. The guard rejects serving Pods, because serving Pods
         are owned by a ReplicaSet and the guard accepts only a Job. So
-        <strong>the <code>serving</code> namespace has been unlabelled again</strong>, and
-        <strong>no namespace in this repository is currently governed by it.</strong></p>
+        the <code>serving</code> namespace has been unlabelled again, and
+        no namespace in this repository is currently governed by it.</p>
 
-        <p>The honest state is: <strong>the enforcement mechanism is built, tested against forgery, and cannot
-        be turned on until serving genuinely has a quota to be charged against.</strong> The next step is not to
+        <p>The honest state is: the enforcement mechanism is built, tested against forgery, and cannot
+        be turned on until serving genuinely has a quota to be charged against. The next step is not to
         weaken the guard; it is to put serving on the quota path.</p>
 
         <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
         <ul>
-          <li><strong>Not a claim that this guard is protecting anything right now.</strong> As above, no
+          <li>Not a claim that this guard is protecting anything right now. As above, no
           namespace is currently governed by it.</li>
-          <li><strong>The GPUs are simulated.</strong> A fake device plugin advertises
+          <li>The GPUs are simulated. A fake device plugin advertises
           <code>nvidia.com/gpu</code>, and "2 devices" are those fake devices. The findings are about
-          <strong>admission and trust boundaries</strong>, not about how a real device is occupied.</li>
+          admission and trust boundaries, not about how a real device is occupied.</li>
           <li><strong>32s and 301s are observations in this cluster</strong>, and the model comes from a sweep
           against a fixed 43 seconds of remaining work. It does not follow that the same constants appear at
           other work lengths or other kubelet settings.</li>
           <li><strong>120 seconds is not derived from measurement.</strong> It is a judgement between two
           failure modes — denying a checkpoint versus holding a device longer — and what the measurement
           supports is only the part that says ignoring SIGTERM costs the owner most.</li>
-          <li><strong>Four is not all of them.</strong> Four is what attacking found; the surfaces nobody
+          <li>Four is not all of them. Four is what attacking found; the surfaces nobody
           attacked are still there. That the first guard passed ten unit specs and four live cases is the
-          reason to expect more: <strong>tests only try what you thought of.</strong></li>
+          reason to expect more: tests only try what you thought of.</li>
         </ul>
 
         <div class="wrapup">
@@ -461,14 +461,14 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
           so it cannot be evidence of ownership.</li>
           <li><strong>An annotation anyone can attach is not an exemption.</strong> It becomes one only when
           the set that may grant it excludes the tenant.</li>
-          <li><strong>If the victim picks how long reclamation takes, reclamation is not guaranteed.</strong>
+          <li>If the victim picks how long reclamation takes, reclamation is not guaranteed.
           The guard has to set that ceiling.</li>
-          <li><strong>Tests only try what I thought of.</strong> The first guard had already passed ten unit
+          <li>Tests only try what I thought of. The first guard had already passed ten unit
           specs and four live cases; attacking it then produced four more findings.</li>
         </ul>
 
-        <p>What is left is one line. <strong>When you write down a guarantee, write down which value it rests
-        on, and write who supplies that value beside it.</strong> A guarantee built on a value the tenant
+        <p>What is left is one line. When you write down a guarantee, write down which value it rests
+        on, and write who supplies that value beside it. A guarantee built on a value the tenant
         writes ends at that field, however correct the check is.</p>
 
         <p>Thank you for reading.</p>

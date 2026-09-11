@@ -93,19 +93,19 @@
         </nav>
       <article class="article-body">
 
-        <p><strong>Scope.</strong> This is milestone M5-b of a personal project, a
+        <p>Scope. This is milestone M5-b of a personal project, a
         <a href="../projects/gpuaas-control-plane.html">Kubernetes-native GPU control plane</a>. The numbers
         come from a run <strong>on a real GPU — one A10G — on 2026-09-03</strong> and an engine-level
         microtest on <strong>2026-09-04</strong>. The raw evidence for both is in the repository.
-        <strong>The project is in progress, and this article covers only what is settled as of
-        2026-09-05.</strong> One run has been pre-registered and not yet bought; its result changes the last
+        The project is in progress, and this article covers only what is settled as of
+        2026-09-05. One run has been pre-registered and not yet bought; its result changes the last
         section.</p>
 
         <p>What was being measured: when a premium tenant shares one GPU with a long-context noisy neighbour,
-        <strong>does the gateway's KV-cache-aware admission guard protect the premium tail?</strong></p>
+        does the gateway's KV-cache-aware admission guard protect the premium tail?</p>
 
-        <p>The answer was <strong>no</strong>. The more valuable finding was
-        <strong>why four paid repetitions could not see that</strong>.</p>
+        <p>The answer was no. The more valuable finding was
+        why four paid repetitions could not see that.</p>
 
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
@@ -122,12 +122,12 @@
           <li>I put a <strong>premium tenant and a long-context noisy neighbour</strong> on one GPU and
           measured whether the gateway's KV-cache-aware admission control protects the premium tenant's p99.</li>
           <li>It does not. The arm that rejected <strong>nothing</strong> had a completion count
-          <strong>exactly equal to the premium request count.</strong> It did not protect them; it dropped them.</li>
-          <li>The report missed it because <strong>every verdict was a ratio</strong>. Shrink the denominator
+          exactly equal to the premium request count. It did not protect them; it dropped them.</li>
+          <li>The report missed it because every verdict was a ratio. Shrink the denominator
           too and the ratio improves.</li>
-          <li>Finding that out cost no new money: a <strong>forty-cent microtest</strong> and a re-reading of
+          <li>Finding that out cost no new money: a forty-cent microtest and a re-reading of
           evidence already bought, along a different axis.</li>
-          <li>⚠️ What was falsified holds for <strong>one signal, one workload, one card</strong>. This is not
+          <li>⚠️ What was falsified holds for one signal, one workload, one card. This is not
           a claim about admission control in general.</li>
         </ul>
 
@@ -159,7 +159,7 @@
               </marker>
             </defs>
           </svg>
-          <figcaption>Admission control sits <strong>in front of the engine</strong>. Only admitted requests reach it, so reading the metric from the completed side means <strong>the requests the gate removed are not in the number at all.</strong></figcaption>
+          <figcaption>Admission control sits <strong>in front of the engine</strong>. Only admitted requests reach it, so reading the metric from the completed side means the requests the gate removed are not in the number at all.</figcaption>
         </figure>
 
         <h2 id="the-arm-that-makes-it-falsifiable">The arm that makes it falsifiable<a class="anchor" href="#the-arm-that-makes-it-falsifiable" aria-label="Link to this section">#</a></h2>
@@ -175,14 +175,14 @@
           <tbody>
             <tr><td>R1</td><td>premium alone, same arrival schedule</td><td>how fast is this with no competition</td></tr>
             <tr><td>off</td><td>both tenants, no admission control</td><td>what does contention cost</td></tr>
-            <tr><td><strong>static-cap</strong></td><td>pressure-blind token bucket. <strong>Meant to be tuned to admit the same work as kv-aware</strong></td><td><strong>is the guard doing anything a rate limit could not</strong></td></tr>
+            <tr><td><strong>static-cap</strong></td><td>pressure-blind token bucket. Meant to be tuned to admit the same work as kv-aware</td><td>is the guard doing anything a rate limit could not</td></tr>
             <tr><td>kv-aware</td><td>the KV-cache-aware guard</td><td>the arm under test</td></tr>
           </tbody>
         </table>
         </div>
         </div>
 
-        <p>The third row is what makes the experiment <strong>falsifiable</strong>. Without static-cap, "the
+        <p>The third row is what makes the experiment falsifiable. Without static-cap, "the
         guard lowered p99" is indistinguishable from "the guard shed load" — and
         <strong>shedding load lowers p99 under any policy whatsoever</strong>.</p>
 
@@ -190,9 +190,9 @@
         the result.</p>
 
         <ul>
-          <li><strong>absolute protection</strong>: kv-aware p99 at most 1.25x R1's</li>
-          <li><strong>incremental value</strong>: kv-aware p99 at most 0.90x static-cap's, with the bootstrap CI's upper bound below 1.0</li>
-          <li><strong>admission match</strong>: the two contended arms' admitted-work fractions within a frozen tolerance</li>
+          <li>absolute protection: kv-aware p99 at most 1.25x R1's</li>
+          <li>incremental value: kv-aware p99 at most 0.90x static-cap's, with the bootstrap CI's upper bound below 1.0</li>
+          <li>admission match: the two contended arms' admitted-work fractions within a frozen tolerance</li>
         </ul>
 
         <p>A separate rule disqualifies a run <em>before</em> any check is read: if a compared arm completed no
@@ -215,21 +215,21 @@
             <tr><td>TTFT p99 (ms)</td><td>82.2</td><td>10,595.3</td><td>81.2</td><td><strong>6,882.0</strong></td></tr>
             <tr><td>TTFT p50 (ms)</td><td>47.3</td><td>940.6</td><td>48.1</td><td>499.8</td></tr>
             <tr><td>premium completions</td><td>1,840</td><td>1,840</td><td><strong>1,840</strong></td><td>1,840</td></tr>
-            <tr><td>requests shed</td><td>—</td><td>0</td><td><strong>1,788 (413)</strong></td><td>274 (429)</td></tr>
-            <tr><td>admitted-work fraction</td><td>—</td><td>100.0%</td><td><strong>0.0%</strong></td><td>84.7%</td></tr>
+            <tr><td>requests shed</td><td>—</td><td>0</td><td>1,788 (413)</td><td>274 (429)</td></tr>
+            <tr><td>admitted-work fraction</td><td>—</td><td>100.0%</td><td>0.0%</td><td>84.7%</td></tr>
           </tbody>
         </table>
         </div>
         </div>
 
-        <p><strong>The report printed FAIL for all three pre-registered checks.</strong> Absolute protection came
-        in at <strong>83.7x</strong> against a bar of 1.25x. The claim this milestone was built to make was
+        <p>The report printed FAIL for all three pre-registered checks. Absolute protection came
+        in at 83.7x against a bar of 1.25x. The claim this milestone was built to make was
         withdrawn.</p>
 
-        <p>But <strong>two of the three are void rather than failed.</strong> Incremental value and admission
+        <p>But two of the three are void rather than failed. Incremental value and admission
         match are both computed against <code>static-cap</code> as the control — and that arm was not a
-        control. <strong>Only absolute protection compared what it was meant to compare, and it failed by a
-        factor of 67.</strong></p>
+        control. Only absolute protection compared what it was meant to compare, and it failed by a
+        factor of 67.</p>
 
         <p>Why it was not a control is the rest of this article.</p>
 
@@ -238,9 +238,9 @@
         <p>Read static-cap as three statements:</p>
 
         <ol>
-          <li>It rejected <strong>nothing</strong> (429 = 0).</li>
+          <li>It rejected nothing (429 = 0).</li>
           <li>Yet it completed half as much as <code>off</code>.</li>
-          <li>And its tail matches the <strong>isolation baseline</strong> — 81.2ms against 82.2ms.</li>
+          <li>And its tail matches the isolation baseline — 81.2ms against 82.2ms.</li>
         </ol>
 
         <p>A control was applied, it rejected nothing, and the outcome equals isolation. Those three cannot all
@@ -250,20 +250,20 @@
         run.</strong> And <code>off</code>'s 200 responses split into 1,840 premium plus 1,788 noisy. So
         static-cap <strong>rejected all 1,788 of them, without exception.</strong></p>
 
-        <p>The admitted-work fraction of <strong>0.0%</strong> is that statement in one number. static-cap
+        <p>The admitted-work fraction of 0.0% is that statement in one number. static-cap
         matched isolation's latency not because it made the engine efficient, but because
-        <strong>it deleted the competing tenant</strong>. It did not protect the tail; it removed what was
+        it deleted the competing tenant. It did not protect the tail; it removed what was
         producing one.</p>
 
-        <p>And why it deleted all of it was not policy but <strong>a configuration error</strong>, of two parts.
-        First, the runner passed the trace's <strong>request rate</strong> (1.568/s) to a flag measured in
-        <strong>tokens per second</strong>. Second, it <strong>never passed the burst flag at all</strong>, so
-        the burst stayed at the gateway's <strong>8,192 default</strong> while every noisy prompt in the trace
-        estimates at <strong>about 10,000 tokens</strong>. A request larger than the burst
-        <strong>can never fit any bucket</strong>, so the gateway refused all of them with 413, in all four
+        <p>And why it deleted all of it was not policy but a configuration error, of two parts.
+        First, the runner passed the trace's request rate (1.568/s) to a flag measured in
+        tokens per second. Second, it never passed the burst flag at all, so
+        the burst stayed at the gateway's 8,192 default while every noisy prompt in the trace
+        estimates at about 10,000 tokens. A request larger than the burst
+        can never fit any bucket, so the gateway refused all of them with 413, in all four
         repetitions.</p>
 
-        <p>So static-cap became <strong>a second isolation arm rather than a control</strong>. That is why the
+        <p>So static-cap became a second isolation arm rather than a control. That is why the
         ratio against <code>kv-aware</code> (84.760) came out nearly equal to the ratio against isolation
         (83.747) — the two were measuring the same thing.</p>
 
@@ -284,32 +284,32 @@
               <text x="360" y="230" font-size="11.5" fill="#d62976" text-anchor="middle">denominator shrinks · ratio improves</text>
             </g>
           </svg>
-          <figcaption>The rejection counter read zero and only the completion count fell. Because every verdict was a <strong>ratio</strong>, a denominator falling with the numerator looked like an improvement. <strong>Change what you count and the same run yields the opposite conclusion.</strong></figcaption>
+          <figcaption>The rejection counter read zero and only the completion count fell. Because every verdict was a <strong>ratio</strong>, a denominator falling with the numerator looked like an improvement. Change what you count and the same run yields the opposite conclusion.</figcaption>
         </figure>
 
         <h2 id="why-the-report-could-not-see-it">Why the report could not see it<a class="anchor" href="#why-the-report-could-not-see-it" aria-label="Link to this section">#</a></h2>
 
         <p>Two things stacked.</p>
 
-        <p><strong>First, the gateway splits rejection into two kinds.</strong> <code>429</code> means "come
+        <p>First, the gateway splits rejection into two kinds. <code>429</code> means "come
         back later"; <code>413</code> means "send something smaller". The distinction was deliberate — answering
         a request the bucket can never hold with a 429 makes the client
-        <strong>retry an arithmetically impossible request forever</strong>. As a design decision it is right.</p>
+        retry an arithmetically impossible request forever. As a design decision it is right.</p>
 
         <p>But the report counted <strong>only 429 as shedding</strong>. All 1,788 of static-cap's rejections
         were 413, so the row read "0 requests shed". A correct distinction
-        <strong>dropped one whole side out of the accounting</strong>.</p>
+        dropped one whole side out of the accounting.</p>
 
-        <p><strong>Second, every verdict the report produced was a ratio.</strong> Absolute protection and
+        <p>Second, every verdict the report produced was a ratio. Absolute protection and
         incremental value are ratios of tail latency; admission match is a ratio of admitted work. But even
         admission match only asks <em>how close the two arms are to each other</em> — it
-        <strong>never names the fact that one of them is zero</strong>. Look only at ratios and "went faster
+        never names the fact that one of them is zero. Look only at ratios and "went faster
         while doing less" reads identically to "went faster while doing the same".
-        <strong>A vanished denominator is not visible from a ratio.</strong></p>
+        A vanished denominator is not visible from a ratio.</p>
 
-        <p>Between them, this stayed invisible for <strong>four paid repetitions</strong>.</p>
+        <p>Between them, this stayed invisible for four paid repetitions.</p>
 
-        <p>What made it visible was not a new run. It was <strong>re-scoring evidence already bought</strong> —
+        <p>What made it visible was not a new run. It was re-scoring evidence already bought —
         attaching throughput and per-tenant share to the same 2026-09-03 raw data.</p>
 
         <div class="table-scroll">
@@ -321,19 +321,19 @@
           <tbody>
             <tr><td>R1 (isolated)</td><td>82.2 ms</td><td>46.4</td><td>100%</td><td>—</td></tr>
             <tr><td>off</td><td>10,595.3 ms</td><td><strong>57.3</strong></td><td>80%</td><td>20%</td></tr>
-            <tr><td>static-cap</td><td>81.2 ms</td><td>46.3</td><td>100%</td><td><strong>0%</strong></td></tr>
+            <tr><td>static-cap</td><td>81.2 ms</td><td>46.3</td><td>100%</td><td>0%</td></tr>
             <tr><td>kv-aware</td><td>6,882.0 ms</td><td>55.7</td><td>83%</td><td>17%</td></tr>
           </tbody>
         </table>
         </div>
         </div>
 
-        <p>On this axis, <strong>the arm with no control at all served 24% more tokens than the arm that "won"
-        on tail</strong>. And static-cap matched isolation's latency <em>and</em> isolation's throughput, which
+        <p>On this axis, the arm with no control at all served 24% more tokens than the arm that "won"
+        on tail. And static-cap matched isolation's latency <em>and</em> isolation's throughput, which
         is reproducing isolation rather than managing contention.</p>
 
-        <p>The lesson here is not about KV caches. <strong>A measurement that watches only the thing being
-        protected cannot show you what was removed to protect it.</strong></p>
+        <p>The lesson here is not about KV caches. A measurement that watches only the thing being
+        protected cannot show you what was removed to protect it.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 200" role="img" aria-labelledby="ts-t ts-d" class="figure-svg">
@@ -360,10 +360,10 @@
         <h2 id="forty-cents">Forty cents answered what three paid sessions could not<a class="anchor" href="#forty-cents" aria-label="Link to this section">#</a></h2>
 
         <p>Once the guard has failed, the next question is not "how do I fix the guard" but
-        <strong>"is this the layer to fix?"</strong> The gateway sits outside the engine and cannot see how the
+        "is this the layer to fix?" The gateway sits outside the engine and cannot see how the
         engine packs requests into batches.</p>
 
-        <p>So the next test removed the gateway entirely and changed <strong>only engine settings</strong>. One
+        <p>So the next test removed the gateway entirely and changed only engine settings. One
         long request and one short one, ten repetitions per cell, on a single instance rather than a cluster,
         in a public subnet where inbound transfer is free. <strong>It cost about $0.40.</strong></p>
 
@@ -382,27 +382,27 @@
         </div>
         </div>
 
-        <p><strong>Those two numbers need care side by side</strong> — 83.7x is a p99 over an arrival process with
+        <p>Those two numbers need care side by side — 83.7x is a p99 over an arrival process with
         many concurrent prefills; 1.57x is a median over ten repetitions of two requests. They are not the same
         axis, so "83.7 dropped to 1.57" is the wrong reading. What can be said is this:
-        <strong>the interference the gateway did nothing about comes out small on a far simpler load once only
-        the engine settings change.</strong> It was a different layer. Put a control plane on top of a misconfigured engine and what you measure is
+        the interference the gateway did nothing about comes out small on a far simpler load once only
+        the engine settings change. It was a different layer. Put a control plane on top of a misconfigured engine and what you measure is
         the misconfiguration, not the control plane.</p>
 
-        <p>The table has to be read precisely, though. <strong>This is not the effect of one budget; it is a
-        budget × policy interaction.</strong> Read the <code>priority</code> column alone and larger budgets get
+        <p>The table has to be read precisely, though. This is not the effect of one budget; it is a
+        budget × policy interaction. Read the <code>priority</code> column alone and larger budgets get
         worse; the <code>fcfs</code> column moves the other way. They meet at 8,192. And
-        <strong>only one of the six cells clears the bar</strong>, with the pattern still unexplained.</p>
+        only one of the six cells clears the bar, with the pattern still unexplained.</p>
 
-        <p>This microtest had its own pre-registered readings, and <strong>none of them held.</strong> The
+        <p>This microtest had its own pre-registered readings, and none of them held. The
         reading table could not express an interaction between two factors. Pre-registration stops a result
         being fitted after the fact; it does not stop
-        <strong>the registered reading table from failing to contain the result</strong>.</p>
+        the registered reading table from failing to contain the result.</p>
 
-        <p>The cost, written down: <strong>three paid sessions, roughly ten dollars of GPU and cluster time,
-        and the first two produced no valid measurement.</strong> Everything after that — the mechanism, the
+        <p>The cost, written down: three paid sessions, roughly ten dollars of GPU and cluster time,
+        and the first two produced no valid measurement. Everything after that — the mechanism, the
         re-scoring, two of my own explanations being falsified — came out of
-        <strong>evidence already bought</strong>. And the experiment that located the layer cost forty cents,
+        evidence already bought. And the experiment that located the layer cost forty cents,
         because the question had been narrowed to one that two requests could answer.</p>
 
         <h2 id="the-run-not-yet-bought">The run not yet bought<a class="anchor" href="#the-run-not-yet-bought" aria-label="Link to this section">#</a></h2>
@@ -419,7 +419,7 @@
 
         <p>The pre-registration is written before the run is bought, because a bar set after seeing the result
         can make any result a success. This project has already paid for that lesson once — a published result
-        was withdrawn, and the withdrawal came <strong>after the numbers were in hand</strong>, which is the
+        was withdrawn, and the withdrawal came after the numbers were in hand, which is the
         most expensive moment to discover you were measuring the wrong thing.</p>
 
         <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
@@ -429,21 +429,21 @@
           of a configuration error, making it a second isolation arm rather than a control. So two of the three
           pre-registered checks — incremental value and admission match — are <strong>void, not failed</strong>.
           The one that failed validly is absolute protection.</li>
-          <li><strong>The microtest is not the effect of a budget alone.</strong> It is a budget × scheduling
+          <li>The microtest is not the effect of a budget alone. It is a budget × scheduling
           policy interaction, one of six cells clears the bar, and none of the pre-registered readings held.</li>
-          <li><strong>Not a general claim that admission control cannot protect a tail.</strong> What was
-          falsified is <strong>one signal</strong> — reactive KV occupancy, a 0.85 engage threshold, a
+          <li>Not a general claim that admission control cannot protect a tail. What was
+          falsified is one signal — reactive KV occupancy, a 0.85 engage threshold, a
           30-second release — on one workload, one model and one card.</li>
-          <li><strong>Not a claim that engine settings fix this.</strong> The microtest is a median over ten
+          <li>Not a claim that engine settings fix this. The microtest is a median over ten
           repetitions of one long request and one short one. The four-arm run is an arrival process with many
           concurrent prefills, reported at p99. They are not the same axis.</li>
-          <li><strong>Not a comparison across milestones on different silicon.</strong> Comparisons stay within
+          <li>Not a comparison across milestones on different silicon. Comparisons stay within
           one card class, model and dtype; a contract test enforces the last two.</li>
-          <li><strong>It says nothing about cold starts.</strong> Every arm serves a warm engine.</li>
-          <li><strong>The rest of this project still runs on a fake device plugin.</strong> These numbers come
+          <li>It says nothing about cold starts. Every arm serves a warm engine.</li>
+          <li>The rest of this project still runs on a fake device plugin. These numbers come
           from real-GPU runs; the repository's other run records — the queue-policy lab, training admission,
           the failure evidence trail — do not, and the repository marks that per row.</li>
-          <li><strong>It is in progress.</strong> When the pre-registered run above completes, the last section
+          <li>It is in progress. When the pre-registered run above completes, the last section
           changes.</li>
         </ul>
 
@@ -455,13 +455,13 @@
           shrinking denominator looks like an improvement.</li>
           <li><strong>If three statements cannot all be true, one of them uses a different definition.</strong>
           Here it was counting 429 without counting 413.</li>
-          <li><strong>Do not put numbers from different axes side by side.</strong> 83.7x is a p99 under an
+          <li>Do not put numbers from different axes side by side. 83.7x is a p99 under an
           arrival process; 1.57x is a median of two requests repeated ten times.</li>
-          <li><strong>Re-reading evidence you already bought is cheaper than buying another run.</strong></li>
+          <li>Re-reading evidence you already bought is cheaper than buying another run.</li>
         </ul>
 
-        <p>What is left is one line. <strong>A metric that measures protection, without also counting what was
-        deleted, will read the deletion as a success.</strong> And finding that out cost no new money — it took
+        <p>What is left is one line. A metric that measures protection, without also counting what was
+        deleted, will read the deletion as a success. And finding that out cost no new money — it took
         re-reading evidence already bought along a different axis.</p>
 
         <p>Thank you for reading.</p>

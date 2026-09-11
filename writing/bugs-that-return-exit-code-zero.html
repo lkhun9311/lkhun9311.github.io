@@ -115,11 +115,11 @@
           <strong>ten defects.</strong></li>
           <li><strong>None of them failed a test, crashed a process, or returned a non-zero exit code.</strong>
           Nine came from reading results; one came from external review.</li>
-          <li>The pattern behind them is that the suite asserted on <strong>what the code did</strong> rather
-          than on <strong>what the contract promised</strong>, so agreements held by coincidence looked fine.</li>
+          <li>The pattern behind them is that the suite asserted on what the code did rather
+          than on what the contract promised, so agreements held by coincidence looked fine.</li>
           <li>Each case below lists what broke, how it was found, and the guard that holds it now.</li>
           <li>⚠️ Everything runs on a local three-node kind cluster against
-          <strong>simulated <code>nvidia.com/gpu</code> capacity</strong>, with a stub backend. This measures
+          simulated <code>nvidia.com/gpu</code> capacity, with a stub backend. This measures
           control-plane behaviour, not device behaviour.</li>
         </ul>
 
@@ -209,9 +209,9 @@
           admission, serving deployments, node health and tenant quota.</li>
           <li><strong>Workload</strong>: a Kueue object representing one job's claim on quota. Kueue creates
           it; the operator reads it to report admission status.</li>
-          <li><strong>Chaos run</strong>: a scripted fault injection with a steady-state gate that aborts if
+          <li>Chaos run: a scripted fault injection with a steady-state gate that aborts if
           preconditions do not hold.</li>
-          <li><strong>Mutation</strong>: deliberately breaking a rule to confirm a test fails. A guard that
+          <li>Mutation: deliberately breaking a rule to confirm a test fails. A guard that
           nothing can break is not verified.</li>
         </ul>
 
@@ -225,7 +225,7 @@
         while it happens. Compare against the gateway's Prometheus counters. The harness fails the run if the
         two disagree.</p>
 
-        <p><strong>What it printed.</strong></p>
+        <p>What it printed.</p>
 
 <pre data-lang="text"><code>first error   49.1ms after the delete
 recovered   3079.8ms after the delete
@@ -233,7 +233,7 @@ gateway 5xx: 9      client failures: 9</code></pre>
 
         <p>I reported the nine-and-nine as the headline result. It was a coincidence.</p>
 
-        <p><strong>The fault.</strong> <code>gpuaas_gateway_requests_total</code> is cumulative. The harness
+        <p>The fault. <code>gpuaas_gateway_requests_total</code> is cumulative. The harness
         read it once, after the run, and compared that absolute value against one run's client failures. They
         matched once. I found out only because I had written "this experiment is n=1" in a validity table and
         went back to close the gap:</p>
@@ -244,12 +244,12 @@ run 3:  counter = 31      while every run saw 9 failures</code></pre>
 
         <p>The comparison had never been a comparison.</p>
 
-        <p><strong>The fix.</strong> Record the counter before and after, compare the delta. Separately,
+        <p>The fix. Record the counter before and after, compare the delta. Separately,
         exclude client failures with curl code <code>000</code>, meaning no HTTP response arrived at all.
         Requiring a proxy to count a request that never reached it is an impossible standard, and that
         exclusion accounted for the entire residual gap.</p>
 
-        <p><strong>Evidence after the fix.</strong> Three runs, deltas matching exactly:</p>
+        <p>Evidence after the fix. Three runs, deltas matching exactly:</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">scroll sideways for the rest</p>
@@ -266,17 +266,17 @@ run 3:  counter = 31      while every run saw 9 failures</code></pre>
         </div>
         </div>
 
-        <p><strong>What the recovery number is not.</strong> The window contains Kubernetes endpoint
+        <p>What the recovery number is not. The window contains Kubernetes endpoint
         propagation, which this platform does not control. The gateway proxies to a Service, so it learns
         about the replacement pod exactly when kube-proxy does, and the two cannot be separated here. Across
         six runs recovery varied between 1.29s and 3.08s and I have not established why. The number I stand
         behind is the agreement, not the latency.</p>
 
-        <p><strong>Guard.</strong> The record now carries <code>requests5xxDelta</code> alongside the
+        <p>Guard. The record now carries <code>requests5xxDelta</code> alongside the
         cumulative value, and the harness refuses the run if the client saw failures the gateway did not
         account for.</p>
 
-        <p><strong>Transferable point.</strong> A single run cannot test an agreement between two observers.
+        <p>Transferable point. A single run cannot test an agreement between two observers.
         At n=1, coincidence and correctness are the same picture.</p>
 
         <p><a href="https://github.com/lkhun9311/gpu-platform-control-plane/blob/main/hack/chaos-fr002-serving-pod-killed.md" target="_blank" rel="noopener noreferrer">Write-up with the mistake kept in</a> ·
@@ -292,10 +292,10 @@ run 3:  counter = 31      while every run saw 9 failures</code></pre>
         reports no error, and changes nothing. A silent no-op is worse than a rejection, so I added a
         validating webhook.</p>
 
-        <p><strong>What I got right.</strong> The validator declines to intercept <code>DELETE</code>, and
+        <p>What I got right. The validator declines to intercept <code>DELETE</code>, and
         the comment says why: a webhook able to refuse one could strand an object nobody can remove.</p>
 
-        <p><strong>What I got wrong.</strong> The guard was on the wrong verb. A finalizer comes off with an
+        <p>What I got wrong. The guard was on the wrong verb. A finalizer comes off with an
         ordinary <code>UPDATE</code>. An object whose spec the validator rejects, such as an empty image on
         something created before the rule existed, could never complete the update that ends its deletion.</p>
 
@@ -303,14 +303,14 @@ run 3:  counter = 31      while every run saw 9 failures</code></pre>
         The object then sits in <code>Terminating</code> with no error anywhere until somebody notices it
         never went away. External code review caught this, not me.</p>
 
-        <p><strong>The fix and its guard.</strong> Updates pass once <code>DeletionTimestamp</code> is set.
+        <p>The fix and its guard. Updates pass once <code>DeletionTimestamp</code> is set.
         Two specs pin it, one against the validator and one through a real apiserver, plus a control asserting
         the same spec is still refused on a live object. Removing the bypass turns both red:</p>
 
 <pre data-lang="text"><code>admission webhook "vmltrainingjob.kb.io" denied the request:
   spec.image: Required value: a training image is required</code></pre>
 
-        <p><strong>Transferable point.</strong> I reasoned correctly about the danger and guarded the wrong
+        <p>Transferable point. I reasoned correctly about the danger and guarded the wrong
         operation. Reasoning about a risk is not the same as covering every path that reaches it.</p>
 
         <p><a href="https://github.com/lkhun9311/gpu-platform-control-plane/blob/main/internal/webhook/v1/mltrainingjob_webhook.go" target="_blank" rel="noopener noreferrer">Validator</a> ·
@@ -327,7 +327,7 @@ run 3:  counter = 31      while every run saw 9 failures</code></pre>
         properties of the cache alone. Against a read-through client those questions do not exist. The cost
         had not gone unmeasured; it had been unmeasurable.</p>
 
-        <p><strong>What the benchmark found.</strong> A lookup on the path every training job takes on the
+        <p>What the benchmark found. A lookup on the path every training job takes on the
         way in was O(N) in the number of queue objects sharing a namespace. With
         <code>MaxConcurrentReconciles</code> at its default of 1, a per-item cost proportional to namespace
         size drains the queue in O(N²).</p>
@@ -347,26 +347,26 @@ run 3:  counter = 31      while every run saw 9 failures</code></pre>
         </div>
         </div>
 
-        <p><strong>A control changed the diagnosis.</strong> Reading the code, I concluded a fallback branch
+        <p>A control changed the diagnosis. Reading the code, I concluded a fallback branch
         was the problem. The benchmark included a second case that never reaches that fallback, and it grew
         linearly too. So the label selector narrowed nothing: the controller-runtime cache indexes fields, not
         labels, and applies a label selector by walking the store. Deleting the fallback would have left the
         lookup O(N) while I reported it fixed.</p>
 
-        <p><strong>The fix.</strong> Both claims a queue object can carry, the job-uid label and its owner
+        <p>The fix. Both claims a queue object can carry, the job-uid label and its owner
         references, go into one field index, so a single indexed <code>List</code> replaces a full label walk
         plus a full namespace list.</p>
 
-        <p><strong>Why the ratio is the weaker evidence.</strong> A 1503x speedup only says something got
+        <p>Why the ratio is the weaker evidence. A 1503x speedup only says something got
         faster, which a warm cache also says. What a warm cache cannot explain: before the fix a miss cost
         about 20x a hit, and after it a miss is cheaper. A scan walks the whole store either way, so a miss
         can never come in under a hit. An index can, because the miss returns nothing to copy while the hit
         deep-copies the one object it matched. The inversion is the proof.</p>
 
-        <p><strong>Transferable point.</strong> Evidence for a performance fix should be a change in shape,
+        <p>Transferable point. Evidence for a performance fix should be a change in shape,
         not a ratio.</p>
 
-        <p><strong>Limits.</strong> Measured in envtest with the lookup isolated. Not measured under
+        <p>Limits. Measured in envtest with the lookup isolated. Not measured under
         concurrent reconcile load, which is where the O(N²) claim would actually be demonstrated.</p>
 
         <p><a href="https://github.com/lkhun9311/gpu-platform-control-plane/blob/main/internal/controller/scale_bench_test.go" target="_blank" rel="noopener noreferrer">Benchmark, including why it stands up its own cache</a></p>
@@ -467,7 +467,7 @@ run 3:  counter = 31      while every run saw 9 failures</code></pre>
         goroutine. In each of those the series disappears, the rule goes quiet, and the quiet looks like
         health.</p>
 
-        <p><strong>The fix.</strong> A gauge that does not depend on the guard working.
+        <p>The fix. A gauge that does not depend on the guard working.
         <code>admission_mode_active</code> is set once at process start from the mode the gateway actually
         resolved, so it is present before any request or scrape. That makes the missing case expressible:</p>
 
@@ -530,11 +530,11 @@ OUT=./ex/fr002.json ./hack/chaos-fr002-serving-pod-killed.sh
             <tr><td>Node-degradation detection 34.6 to 36.9s across 3 runs</td><td>measured, but it is Kubernetes' number, not the platform's</td></tr>
             <tr><td>Controller reaction to a degraded node</td><td><strong>not measured</strong>, below harness resolution, bound only</td></tr>
             <tr><td>Gateway p99</td><td><strong>not quotable</strong>, histogram top-bucket artifact</td></tr>
-            <tr><td>Queue drain under concurrent reconciles</td><td><strong>not measured</strong></td></tr>
+            <tr><td>Queue drain under concurrent reconciles</td><td>not measured</td></tr>
             <tr><td>One alert rule reaching <code>firing</code></td><td>measured, 5m04s ± 20s against a declared <code>for: 5m</code></td></tr>
-            <tr><td>The other four rules</td><td><strong>not measured</strong>; two cannot fire in this configuration and the rules now say why</td></tr>
-            <tr><td>Alert recovery, and any routing past Prometheus</td><td><strong>not measured</strong>, no Alertmanager here</td></tr>
-            <tr><td>Anything about real GPU behaviour</td><td><strong>nothing</strong></td></tr>
+            <tr><td>The other four rules</td><td>not measured; two cannot fire in this configuration and the rules now say why</td></tr>
+            <tr><td>Alert recovery, and any routing past Prometheus</td><td>not measured, no Alertmanager here</td></tr>
+            <tr><td>Anything about real GPU behaviour</td><td>nothing</td></tr>
           </tbody>
         </table>
         </div>
@@ -558,13 +558,13 @@ OUT=./ex/fr002.json ./hack/chaos-fr002-serving-pod-killed.sh
           under one, and none of them made it red.</li>
           <li><strong>Assert on the contract, not on the current behaviour.</strong> An agreement that holds by
           coincidence reads exactly like one that holds by design.</li>
-          <li><strong>A webhook that can refuse a delete is a webhook that can strand objects.</strong>
+          <li>A webhook that can refuse a delete is a webhook that can strand objects.
           Failure modes of the guard belong in the test plan too.</li>
-          <li><strong>Costs a suite cannot see are still costs.</strong> Nothing red means nothing measured.</li>
+          <li>Costs a suite cannot see are still costs. Nothing red means nothing measured.</li>
         </ul>
 
-        <p>What is left is one line. <strong>Exit code zero is a statement about the tests, not about the
-        system.</strong> The remaining gaps are ordered: queue behaviour under concurrent reconciles first,
+        <p>What is left is one line. Exit code zero is a statement about the tests, not about the
+        system. The remaining gaps are ordered: queue behaviour under concurrent reconciles first,
         then alert routing past Prometheus, then real hardware.</p>
 
         <p>Thank you for reading.</p>

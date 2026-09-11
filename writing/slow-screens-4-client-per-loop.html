@@ -117,17 +117,17 @@
           <li>The screen draws time-series graphs, so <strong>it is easy to assume the query is the slow
           part.</strong> It was not.</li>
           <li>The initial load <strong>built a new client for every project</strong>, and
-          <strong>the <code>serviceClient()</code> we used authenticates to Keystone on every call.</strong>
-          N projects means <strong>N authentications</strong>, one after another.</li>
-          <li>There was also a cache that <strong>nothing was reading.</strong>
+          the <code>serviceClient()</code> we used authenticates to Keystone on every call.
+          N projects means N authentications, one after another.</li>
+          <li>There was also a cache that nothing was reading.
           “We added a cache” and “we read the cache” are different things.</li>
-          <li>The fix was <strong>building one client outside the loop and reusing it.</strong>
+          <li>The fix was building one client outside the loop and reusing it.
           N authentications become one.</li>
-          <li>⚠️ <strong>How much faster it got, I do not know.</strong> It was never measured, and
-          the load-test scenario people usually write <strong>does not include this stretch.</strong></li>
+          <li>⚠️ How much faster it got, I do not know. It was never measured, and
+          the load-test scenario people usually write does not include this stretch.</li>
         </ul>
 
-        <p><strong>This is an internal product, so the code here is not the code that shipped.</strong>
+        <p>This is an internal product, so the code here is not the code that shipped.
         Product names, customers and internal addresses are gone; only the structure stays.
         Class and function names are generalised as far as the story needs.</p>
 
@@ -140,8 +140,8 @@
           <li><strong>The initial load</strong> is one REST request that collects quota and usage per project.</li>
           <li><strong>After that</strong> the server computes values every 15 seconds and pushes them to every
           open screen. Holding the connection open and sending from the server is called
-          <strong>SSE</strong> (Server-Sent Events). ⚠️ What is independent of the number of viewers is the
-          <strong>computation</strong>; serialising the result and writing it to each connection grows with
+          SSE (Server-Sent Events). ⚠️ What is independent of the number of viewers is the
+          computation; serialising the result and writing it to each connection grows with
           the number of connections.</li>
         </ul>
 
@@ -198,10 +198,10 @@
 
         <p>The time-series query runs <strong>once every 15 seconds</strong>, and once regardless of how many
         screens are open. ⚠️ Frequency alone does not make it cheap. What it does mean is that
-        <strong>the record never pointed here as the place to look first.</strong></p>
+        the record never pointed here as the place to look first.</p>
 
-        <blockquote><p><strong>A function that runs a long time is not automatically the stretch the user is
-        waiting on.</strong> Queries are visible, so they get targeted first.</p></blockquote>
+        <blockquote><p>A function that runs a long time is not automatically the stretch the user is
+        waiting on. Queries are visible, so they get targeted first.</p></blockquote>
 
         <h2 id="the-cause">The cause: getting a client is authenticating<a class="anchor" href="#the-cause" aria-label="Link to this section">#</a></h2>
 
@@ -221,26 +221,26 @@
         <code>serviceClient()</code> connects to Keystone with the account from the config file, takes a token,
         and hands back a client that is already authenticated.</p></blockquote>
 
-        <p>⚠️ <strong>This is not a claim about SDKs in general.</strong> The same library has another route that
+        <p>⚠️ This is not a claim about SDKs in general. The same library has another route that
         builds a client from a token you already hold. What authenticates here is
-        <strong>our own factory's implementation</strong>, and the article is about that fact not being
+        our own factory's implementation, and the article is about that fact not being
         visible in the function's name.</p>
 
-        <p>⚠️ And <strong>this comes from two internal documents.</strong> The implementation of
+        <p>⚠️ And this comes from two internal documents. The implementation of
         <code>serviceClient()</code> is not reproduced here, and what survives in the archive is not that
         implementation but the documents describing it.</p>
 
         <p>Which makes the loop run like this.</p>
 
         <ul>
-          <li>one project → <strong>one authentication round trip</strong> plus a few queries for it</li>
-          <li>N projects → <strong>N authentication round trips</strong> plus N × a few queries</li>
-          <li>and it runs <strong>in order</strong>. Each one has to finish before the next starts</li>
+          <li>one project → one authentication round trip plus a few queries for it</li>
+          <li>N projects → N authentication round trips plus N × a few queries</li>
+          <li>and it runs in order. Each one has to finish before the next starts</li>
         </ul>
 
         <p>What the screen shows is a graph, and before drawing it the code was
-        <strong>authenticating N times.</strong> More projects means
-        <strong>proportionally more sequential authentications.</strong>
+        authenticating N times. More projects means
+        proportionally more sequential authentications.
         ⚠️ I will not go as far as saying response time grows by exactly that much.
         How long one authentication takes, and whether it is the same every time, was never measured.</p>
 
@@ -305,7 +305,7 @@
         A cache nothing reads is worse than none, because it makes people believe there is one.</p></blockquote>
 
         <p>If <a href="slow-screens-3-role-lookup.html">part three</a> was “there was a cache and the cache was
-        why it was slow”, this one is <strong>“there was a cache and nobody looked at it”.</strong></p>
+        why it was slow”, this one is “there was a cache and nobody looked at it”.</p>
 
         <h2 id="the-fix">The fix: authentication moved out of the loop<a class="anchor" href="#the-fix" aria-label="Link to this section">#</a></h2>
 
@@ -326,27 +326,27 @@ for (String projectId : projects) {
 
         <p>⚠️ To be precise: <strong>authentication did not disappear, it went from N per request to one per
         request.</strong> The client is built inside this method, so
-        <strong>the next request authenticates again.</strong></p>
+        the next request authenticates again.</p>
 
-        <p>And <strong>even that “once” has conditions.</strong> If the token expires while the loop is running,
+        <p>And even that “once” has conditions. If the token expires while the loop is running,
         the next call is refused. Whether the library re-authenticates and retries on its own
-        <strong>depends on the version and connector in use, and I did not check.</strong>
+        depends on the version and connector in use, and I did not check.
         The token's lifetime is simply far longer than this loop takes, so it never showed.</p>
 
         <p>Holding the client between requests would cut authentication further.
-        ⚠️ <strong>That side is harder.</strong> Clients in this family tie the current session to a thread,
+        ⚠️ That side is harder. Clients in this family tie the current session to a thread,
         so sharing one across request threads can leave the session mixed up or missing. Token expiry becomes
-        yours to handle from that point too. <strong>This fix did not go there.</strong></p>
+        yours to handle from that point too. This fix did not go there.</p>
 
-        <p>Scoping the timeouts <strong>to this client only</strong> was deliberate too. Put them in the global
-        configuration and legitimately long calls elsewhere get cut as well. <strong>Fixing a slow screen and
-        breaking a working feature</strong> is a common next incident.</p>
+        <p>Scoping the timeouts to this client only was deliberate too. Put them in the global
+        configuration and legitimately long calls elsewhere get cut as well. Fixing a slow screen and
+        breaking a working feature is a common next incident.</p>
 
-        <p>⚠️ The two limit different things. A connection timeout caps <strong>establishing the
-        connection</strong>; a read timeout caps <strong>waiting for a response</strong> after sending.
+        <p>⚠️ The two limit different things. A connection timeout caps establishing the
+        connection; a read timeout caps waiting for a response after sending.
         And scoping them to this client still applies them to
-        <strong>every authentication and query this client makes.</strong> What scoping prevents is the setting
-        spreading to other clients. ⚠️ This is the stated <strong>intent</strong>; there is no record of anyone
+        every authentication and query this client makes. What scoping prevents is the setting
+        spreading to other clients. ⚠️ This is the stated intent; there is no record of anyone
         checking what actually breaks when it is set globally.</p>
 
         <h2 id="not-measured">⚠️ And I never measured before and after<a class="anchor" href="#not-measured" aria-label="Link to this section">#</a></h2>
@@ -357,7 +357,7 @@ for (String projectId : projects) {
         with N projects”; the other says “the initial load takes seconds to tens of seconds”.
         <strong>Neither says how it was measured, and there is no figure at all from after the fix.</strong></p>
 
-        <p>So this article <strong>cannot say “it got N times faster”.</strong> What it can say is what the code
+        <p>So this article cannot say “it got N times faster”. What it can say is what the code
         shows.</p>
 
         <div class="table-scroll">
@@ -374,9 +374,9 @@ for (String projectId : projects) {
         </table>
         </div>
         </div>
-        <p class="table-note">The left column is <strong>what reading the code gives you;</strong> the right is
-        <strong>what only measuring gives you.</strong> This time there is only a left column.
-        ⚠️ <strong>The initial load still scales with the number of projects.</strong> The per-project queries
+        <p class="table-note">The left column is what reading the code gives you; the right is
+        what only measuring gives you. This time there is only a left column.
+        ⚠️ The initial load still scales with the number of projects. The per-project queries
         were untouched. What stopped scaling is the authentication.</p>
 
         <h2 id="the-load-test">A load test only measures the path its scenario sends<a class="anchor" href="#the-load-test" aria-label="Link to this section">#</a></h2>
@@ -385,19 +385,19 @@ for (String projectId : projects) {
         <strong>the scenario people usually write leaves the slow stretch out of the test.</strong></p>
 
         <p>Turning on a load tool and ramping up concurrent users is the usual move. But the heavy stretch a
-        user waits on here is <strong>the one initial load</strong>, and after that the structure is
+        user waits on here is the one initial load, and after that the structure is
         <strong>the server computing once every 15 seconds and pushing the same values to every open
         screen.</strong></p>
 
-        <blockquote><p>Take it to ten users and <strong>the computation is still once per tick.</strong>
+        <blockquote><p>Take it to ten users and the computation is still once per tick.
         With a scenario that holds connections open, the graph reads “it scales perfectly”.
-        <strong>That is a property of the architecture, not evidence that the slow path was
-        exercised.</strong></p></blockquote>
+        That is a property of the architecture, not evidence that the slow path was
+        exercised.</p></blockquote>
 
-        <p>⚠️ <strong>This is not the tool's fault.</strong> Ten users each opening the screen would run the
+        <p>⚠️ This is not the tool's fault. Ten users each opening the screen would run the
         initial load ten times. The load tool can reach that path perfectly well;
-        <strong>a scenario written to hold a connection and receive pushes simply does not include it.</strong>
-        Load-test results are valid <strong>only for the requests the scenario actually sent.</strong></p>
+        a scenario written to hold a connection and receive pushes simply does not include it.
+        Load-test results are valid only for the requests the scenario actually sent.</p>
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
@@ -426,10 +426,10 @@ for (String projectId : projects) {
           authentication.</figcaption>
         </figure>
 
-        <p>Measuring it properly means <strong>changing the axis</strong>: raising the number of projects N and
+        <p>Measuring it properly means changing the axis: raising the number of projects N and
         timing one initial load at each step, instead of raising concurrent users.
         ⚠️ That is written down in the record as the thing to do, and
-        <strong>there is no record of anyone doing it.</strong> That is why this article ends without a
+        there is no record of anyone doing it. That is why this article ends without a
         number.</p>
 
         <h2 id="limits">Limits: what this article does not claim<a class="anchor" href="#limits" aria-label="Link to this section">#</a></h2>
@@ -438,14 +438,14 @@ for (String projectId : projects) {
           <li><strong>There are no before-and-after measurements.</strong> “5 to 10 seconds” and “seconds to tens
           of seconds” are two sentences from the internal record with no method attached, and there is no
           post-fix figure. <strong>No sentence in this article claims an improvement factor.</strong></li>
-          <li><strong>I do not know what one authentication costs.</strong> So “N−1 fewer of them” does not
+          <li>I do not know what one authentication costs. So “N−1 fewer of them” does not
           convert into seconds either.</li>
-          <li><strong>That getting a client authenticates comes from two internal documents.</strong>
+          <li>That getting a client authenticates comes from two internal documents.
           The implementation of <code>serviceClient()</code> is not in the archive and is not reproduced here,
           and I could not confirm the library version or connector in use.</li>
-          <li><strong>The per-project queries are unchanged.</strong> What went away is on the authentication side;
+          <li>The per-project queries are unchanged. What went away is on the authentication side;
           the queries still run once per project. Reducing those needs a different change.</li>
-          <li><strong>This is not an argument that load tools are useless.</strong> It is an argument that they are
+          <li>This is not an argument that load tools are useless. It is an argument that they are
           useless with the wrong axis. <a href="slow-screens-1-volume-list.html">Part one</a> used the same kind
           of tool to separate six configurations.</li>
         </ul>
@@ -458,20 +458,20 @@ for (String projectId : projects) {
         <ul>
           <li><strong>A name can hide a cost.</strong> <code>serviceClient()</code> looks free and is a network
           round trip. <strong>Code that gets a client inside a loop is always worth one look.</strong></li>
-          <li><strong>“We added a cache” and “we read the cache” are different things.</strong></li>
-          <li><strong>Load-test results are valid only for the requests the scenario actually sent.</strong>
+          <li>“We added a cache” and “we read the cache” are different things.</li>
+          <li>Load-test results are valid only for the requests the scenario actually sent.
           With the wrong axis you get a flat graph, and that graph says nothing about the path it never took.</li>
-          <li><strong>If you fixed it and could not measure it, write that.</strong> Separating what the code makes
+          <li>If you fixed it and could not measure it, write that. Separating what the code makes
           certain from what only measurement can settle at least tells the next person what to measure.</li>
         </ul>
 
         <p>If one line survives, this one:
-        <strong>before measuring, ask what the user is waiting on and whether this scenario sends a request
-        down that path.</strong> This time I found the slow stretch and fixed it, then never wrote a scenario
+        before measuring, ask what the user is waiting on and whether this scenario sends a request
+        down that path. This time I found the slow stretch and fixed it, then never wrote a scenario
         that went through it, so there is nothing to compare.</p>
 
-        <p>The next part takes that second question head on: a load test that <strong>split the change
-        into six configurations and measured each one under the same conditions</strong>
+        <p>The next part takes that second question head on: a load test that split the change
+        into six configurations and measured each one under the same conditions
         (<a href="parallelism-made-the-tail-worse.html">part five</a>).</p>
 
         <p>Thank you for reading.</p>

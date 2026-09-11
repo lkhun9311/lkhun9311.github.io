@@ -88,7 +88,7 @@
         <ul>
           <li><strong>세션 풀링</strong>: 클라이언트가 연결을 끊을 때까지 Connection을 붙들고 있습니다. 재사용이 거의 없습니다.</li>
           <li><strong>Transaction Pooling</strong>: Transaction 단위. 실무에서 가장 많이 쓰는 모드입니다.</li>
-          <li><strong>스테이트먼트 풀링</strong>: 쿼리 하나 단위. Transaction을 쓸 수 없습니다.</li>
+          <li>스테이트먼트 풀링: 쿼리 하나 단위. Transaction을 쓸 수 없습니다.</li>
         </ul>
         <h2 id="성질">핵심 성질: 언제 묶이나<a class="anchor" href="#성질" aria-label="이 절로 가는 링크">#</a></h2>
         <p>이 한 줄이 전부입니다.</p>
@@ -96,7 +96,7 @@
         <blockquote><p>Connection 재사용은 Transaction과 Transaction <strong>사이</strong>에서만 일어난다.
         Transaction이 열려 있는 동안에는 그 Connection이 그 클라이언트에 <strong>묶인다(pin)</strong>.</p></blockquote>
 
-        <p>당연한 이야기입니다. Transaction은 <strong>상태</strong>이고 열려 있는 중간에 다른 세션에 빌려주면 격리가 깨집니다.</p>
+        <p>당연한 이야기입니다. Transaction은 상태이고 열려 있는 중간에 다른 세션에 빌려주면 격리가 깨집니다.</p>
 
         <p>그래서 이렇게 됩니다.</p>
 
@@ -105,7 +105,7 @@
   → 앱 connection 1개당 DB connection 1개
   → pooler가 줄여 주는 게 없음</pre>
 
-        <p>즉 <strong>짧은 Transaction이 많을 때</strong> 값을 하는 도구입니다. Transaction 안에서 외부 API를 기다리는
+        <p>즉 짧은 Transaction이 많을 때 값을 하는 도구입니다. Transaction 안에서 외부 API를 기다리는
         코드에는 효과가 없습니다.</p>
         <h2 id="핀">핀(pin)이 걸리는 패턴<a class="anchor" href="#핀" aria-label="이 절로 가는 링크">#</a></h2>
         <p>아래 패턴이 코드에 있으면 Transaction이 끝나도 Connection이 계속 묶여, Pooler가 무력해집니다.</p>

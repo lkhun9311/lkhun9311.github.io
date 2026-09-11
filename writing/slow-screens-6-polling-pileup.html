@@ -102,7 +102,7 @@
         <strong>clicking “create volume” left a spinner instead of opening the dialog.</strong></p>
 
         <p>A button that does nothing <strong>reads as a front-end problem.</strong> Half right.
-        There was <strong>one cause on each side.</strong></p>
+        There was one cause on each side.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -116,23 +116,23 @@
 
         <ul>
           <li>The dialog failed to open because <strong>two things overlapped</strong>:
-          <strong>fetching everything up front</strong> and <strong>re-fetching every five seconds.</strong></li>
-          <li>The list query took <strong>over ten seconds</strong> while the screen re-fetched it
-          <strong>every five</strong>. The next one goes out before the previous one is done.</li>
-          <li>DevTools showed <strong>four requests still <code>(pending)</code>.</strong></li>
-          <li>The fix was <strong>pausing the refresh while a dialog is open</strong> and
-          <strong>fetching only what the user selected, when they select it.</strong></li>
-          <li>⚠️ <strong>But “requests piled up” is more than I verified.</strong> What the screenshot shows is
-          that <strong>four requests had not finished</strong> at that moment, and I never timed how long the
+          <strong>fetching everything up front</strong> and re-fetching every five seconds.</li>
+          <li>The list query took over ten seconds while the screen re-fetched it
+          every five. The next one goes out before the previous one is done.</li>
+          <li>DevTools showed four requests still <code>(pending)</code>.</li>
+          <li>The fix was pausing the refresh while a dialog is open and
+          fetching only what the user selected, when they select it.</li>
+          <li>⚠️ But “requests piled up” is more than I verified. What the screenshot shows is
+          that four requests had not finished at that moment, and I never timed how long the
           dialog took to open, before or after.</li>
-          <li>And <strong>those five seconds shaped a backend decision.</strong> They are the five in
+          <li>And those five seconds shaped a backend decision. They are the five in
           <a href="slow-screens-1-volume-list.html">part one</a>'s <code>refreshAfterWrite(5s)</code>.</li>
         </ul>
 
-        <p><strong>This is an internal product, so neither the screens nor the code are reproduced as they
-        are.</strong> Product names, customers and internal addresses are gone; only the structure stays.
+        <p>This is an internal product, so neither the screens nor the code are reproduced as they
+        are. Product names, customers and internal addresses are gone; only the structure stays.
         No screenshot containing the product UI is used, and the DevTools panel appears
-        <strong>cropped, with the request names masked.</strong></p>
+        cropped, with the request names masked.</p>
 
         <h2 id="the-screen">The screen<a class="anchor" href="#the-screen" aria-label="Link to this section">#</a></h2>
 
@@ -142,7 +142,7 @@
           <li><strong>The list re-fetches itself every five seconds.</strong> These resources change state, so the
           screen keeps itself current without anyone doing anything. That periodic re-fetch is called
           <strong>polling</strong>.</li>
-          <li><strong>Pressing the button opens a create dialog</strong> with a field for choosing a volume
+          <li>Pressing the button opens a create dialog with a field for choosing a volume
           source.</li>
         </ul>
 
@@ -164,13 +164,13 @@
         <p><code>(pending)</code> means <strong>not finished yet.</strong> Where it is waiting does not appear on
         this screen. It could be queued inside the browser, or sent and waiting on a response.</p>
 
-        <p>So <strong>the click was handled.</strong> The dialog had started to open and was stuck waiting for
+        <p>So the click was handled. The dialog had started to open and was stuck waiting for
         what it needed.</p>
 
-        <p>⚠️ <strong>That is as far as the screenshot goes.</strong> Which of these is the periodic refresh and
+        <p>⚠️ That is as far as the screenshot goes. Which of these is the periodic refresh and
         which belongs to the dialog, when each started, and where each spent its time —
-        <strong>this screen cannot separate any of that.</strong> The two causes below come
-        <strong>from the code and the internal record, not from this one capture.</strong></p>
+        this screen cannot separate any of that. The two causes below come
+        from the code and the internal record, not from this one capture.</p>
 
         <h2 id="cause-a">Cause 1: fetching everything up front<a class="anchor" href="#cause-a" aria-label="Link to this section">#</a></h2>
 
@@ -178,9 +178,9 @@
         the image list, and the volume type list. ⚠️ The first three were called <strong>one after
         another</strong> and the volume type separately. They did not all go out side by side.</p>
 
-        <p>But <strong>opening the dialog does not need all four.</strong> Choosing “volume” as the source needs
+        <p>But opening the dialog does not need all four. Choosing “volume” as the source needs
         the volume list; choosing “image” needs the image list.
-        <strong>Before anything is chosen, none of the volume, snapshot or image lists is needed.</strong></p>
+        Before anything is chosen, none of the volume, snapshot or image lists is needed.</p>
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
@@ -237,8 +237,8 @@
         </figure>
 
         <blockquote><p>Fetching something because it might be needed later is called
-        <strong>over-fetching</strong>. It looks like a win — it will be fast later — except
-        <strong>when the dialog never opens to reach that “later”.</strong></p></blockquote>
+        over-fetching. It looks like a win — it will be fast later — except
+        when the dialog never opens to reach that “later”.</p></blockquote>
 
         <h2 id="cause-b">Cause 2: the five-second refresh kept running<a class="anchor" href="#cause-b" aria-label="Link to this section">#</a></h2>
 
@@ -247,7 +247,7 @@
         <p>The list screen <strong>re-fetches the entire volume list every five seconds.</strong>
         And that refresh <strong>kept running while the dialog was open.</strong> Nothing told it to stop.</p>
 
-        <p>And that full list query took <strong>over ten seconds.</strong> So the next one goes out while the
+        <p>And that full list query took over ten seconds. So the next one goes out while the
         previous one is still running.</p>
 
         <figure class="diagram">
@@ -283,32 +283,32 @@
           five-second marks where a new request goes out. In the lower card the bars overlap.</figcaption>
         </figure>
 
-        <blockquote><p><strong>Call something that takes ten seconds every five seconds and they overlap.</strong>
+        <blockquote><p>Call something that takes ten seconds every five seconds and they overlap.
         The next one goes out before the previous finishes, so two of the same request are in flight at
         once.</p></blockquote>
 
-        <p>⚠️ <strong>One step past that and the evidence runs out.</strong> For “requests pile up without
-        bound” you need two more things, and <strong>neither is confirmed by this record.</strong></p>
+        <p>⚠️ One step past that and the evidence runs out. For “requests pile up without
+        bound” you need two more things, and neither is confirmed by this record.</p>
 
         <ul>
-          <li><strong>The refresh has to run on a fixed clock.</strong> An implementation that waits five seconds
+          <li>The refresh has to run on a fixed clock. An implementation that waits five seconds
           after the previous one finishes, or skips while one is in flight, never overlaps. What the record has
-          is the <strong>call site</strong> of <code>usePolling</code>, not what is inside it.</li>
-          <li><strong>The overlapping requests have to queue somewhere.</strong> If they simply go out alongside
+          is the call site of <code>usePolling</code>, not what is inside it.</li>
+          <li>The overlapping requests have to queue somewhere. If they simply go out alongside
           each other, the number in flight settles around two and stops growing. The browser's limit on
-          connections to one host could be that place, and <strong>I did not check.</strong></li>
+          connections to one host could be that place, and I did not check.</li>
         </ul>
 
-        <p>So what this article can say is that they <strong>overlap.</strong> The internal record called it
+        <p>So what this article can say is that they overlap. The internal record called it
         “accumulation”, and I read it that way at the time.
-        <strong>Looking again, that word claims more than was verified.</strong></p>
+        Looking again, that word claims more than was verified.</p>
 
-        <p>And at the same moment <strong>the dialog's own requests go out too</strong> — cause one.
-        ⚠️ There is <strong>no direct evidence</strong> that they waited behind the refresh requests.
+        <p>And at the same moment the dialog's own requests go out too — cause one.
+        ⚠️ There is no direct evidence that they waited behind the refresh requests.
         The screenshot shows neither when each request started nor where it spent its time.</p>
 
-        <p>⚠️ <strong>Browsers also cap how many connections they open to one host.</strong> A long queue could
-        run into that cap, but <strong>this article did not check.</strong> What it checked is that four
+        <p>⚠️ Browsers also cap how many connections they open to one host. A long queue could
+        run into that cap, but this article did not check. What it checked is that four
         requests were still <code>(pending)</code>.</p>
 
         <h2 id="the-fix">The fix: pause while open, fetch on selection<a class="anchor" href="#the-fix" aria-label="Link to this section">#</a></h2>
@@ -327,9 +327,9 @@ usePolling({
 
         <p>⚠️ What this condition prevents is <strong>the next refresh going out.</strong> It does not cancel a
         request already in flight. And whether <code>openDialogs</code> becomes true right after the click or
-        only once the data has arrived is <strong>not something the call site alone can tell you.</strong></p>
+        only once the data has arrived is not something the call site alone can tell you.</p>
 
-        <p><strong>Two. Fetch on selection instead of up front.</strong> Picking “snapshot” as the volume source
+        <p>Two. Fetch on selection instead of up front. Picking “snapshot” as the volume source
         fetches the snapshot list then, and only then. Anything already fetched is not fetched again.</p>
 
 <pre data-lang="tsx"><code>const loadSourceData = async (sourceValue: string) =&gt; {
@@ -341,8 +341,8 @@ usePolling({
   ...
 };</code></pre>
 
-        <p>Fetching when it is needed is called <strong>lazy loading</strong>.
-        ⚠️ Depending on the choice it is <strong>not always exactly one request</strong>: picking “image” or
+        <p>Fetching when it is needed is called lazy loading.
+        ⚠️ Depending on the choice it is not always exactly one request: picking “image” or
         “empty volume” also needs the volume type list, so one more goes out.</p>
 
         <h2 id="a-bonus">A bonus: the options show even when a list fails<a class="anchor" href="#a-bonus" aria-label="Link to this section">#</a></h2>
@@ -354,8 +354,8 @@ usePolling({
         <p>The options are fixed: volume, snapshot, image, empty volume. That is not something to ask a server
         for. It became a constant array.</p>
 
-        <blockquote><p><strong>Fetch an unchanging value from a server and a failed call takes the screen with
-        it.</strong> Now a failed list still leaves <strong>the options visible</strong>, and the failure shows
+        <blockquote><p>Fetch an unchanging value from a server and a failed call takes the screen with
+        it. Now a failed list still leaves the options visible, and the failure shows
         up only on that one item.</p></blockquote>
 
         <h2 id="the-five-seconds">Those five seconds shaped a backend decision<a class="anchor" href="#the-five-seconds" aria-label="Link to this section">#</a></h2>
@@ -368,13 +368,13 @@ usePolling({
 
         <p>⚠️ <strong>That does not mean “fresh within five seconds”.</strong> As
         <a href="slow-screens-1-volume-list.html">part one</a> says, <code>refreshAfterWrite</code> is not a
-        ceiling but <strong>the condition that starts a refresh</strong>, and if nobody asks, nothing refreshes.
-        What was decided here was <strong>what to line the interval up with</strong>, not a ceiling on
+        ceiling but the condition that starts a refresh, and if nobody asks, nothing refreshes.
+        What was decided here was what to line the interval up with, not a ceiling on
         staleness.</p>
 
         <blockquote><p>The front end's refresh interval set what the backend lined its own refresh up against.
-        These were not two numbers chosen independently — <strong>one was the reason for the
-        other.</strong></p></blockquote>
+        These were not two numbers chosen independently — one was the reason for the
+        other.</p></blockquote>
 
         <h2 id="which-side">So which side needed fixing<a class="anchor" href="#which-side" aria-label="Link to this section">#</a></h2>
 
@@ -396,7 +396,7 @@ usePolling({
         </div>
         </div>
         <p class="table-note">The symptom appeared in one place and <strong>the causes sat one on each
-        side.</strong> Not two people on the same day but <strong>one person on both sides</strong>, which is
+        side.</strong> Not two people on the same day but one person on both sides, which is
         how the five seconds carried across.</p>
 
         <h2 id="limits">Limits: what this article does not claim<a class="anchor" href="#limits" aria-label="Link to this section">#</a></h2>
@@ -405,15 +405,15 @@ usePolling({
           <li><strong>I never timed how long the dialog took to open, before or after.</strong> What the record has
           is the sentence “it opens right away on click”, which is something someone watched.
           <strong>I cannot say it went from N seconds to M.</strong></li>
-          <li><strong>“Over ten seconds” is the source's sentence.</strong> How it was measured is not recorded.</li>
-          <li><strong>The four pending requests are a single observation.</strong> That is how it was at that
+          <li>“Over ten seconds” is the source's sentence. How it was measured is not recorded.</li>
+          <li>The four pending requests are a single observation. That is how it was at that
           instant, not that it was four every time.</li>
-          <li><strong>Pausing the refresh has a cost.</strong> While the dialog is open the list behind it goes
+          <li>Pausing the refresh has a cost. While the dialog is open the list behind it goes
           stale, so leaving it open a long time can make things jump when it closes.
           ⚠️ The source does not record that cost, and I did not measure it either.</li>
-          <li><strong>Whether it hit a connection limit, I do not know.</strong> A long queue could run into the
+          <li>Whether it hit a connection limit, I do not know. A long queue could run into the
           browser's cap on connections to one host, and I did not check.</li>
-          <li><strong>The front-end fix did not fix the backend.</strong> The slow list query was fixed separately
+          <li>The front-end fix did not fix the backend. The slow list query was fixed separately
           in <a href="slow-screens-1-volume-list.html">part one</a>. This article sits on top of that and only
           covers why the dialog would not open.</li>
         </ul>
@@ -428,17 +428,17 @@ usePolling({
           seconds every five and the same request overlaps itself.</li>
           <li><strong>Polling needs a condition to stop on.</strong> If the screen is not in front of anyone, or a
           dialog is open, it does not have to run.</li>
-          <li><strong>Prefetching is not free, and unchanging options should not be asked of a server.</strong>
+          <li>Prefetching is not free, and unchanging options should not be asked of a server.
           The first adds requests at the same moment; the second takes the screen down with the server.</li>
-          <li><strong>One side's number becomes the other side's reason.</strong> The front end's five seconds is
+          <li>One side's number becomes the other side's reason. The front end's five seconds is
           what the backend cache lined its refresh up against.</li>
         </ul>
 
         <p>If one line survives, this one:
-        <strong>a symptom appearing in one place does not put the cause there.</strong>
+        a symptom appearing in one place does not put the cause there.
         The dialog failed to open in the front end, and half the reason it failed was in the backend.</p>
 
-        <p>The next part is a review that <strong>found no case for changing anything</strong>, and why the
+        <p>The next part is a review that found no case for changing anything, and why the
         flat graph I expected there was never actually run.</p>
 
         <p>Thank you for reading.</p>

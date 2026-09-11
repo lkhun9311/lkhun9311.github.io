@@ -101,12 +101,12 @@
         <strong>the role list spun for over a second</strong> without finishing.</p>
 
         <p>⚠️ The <strong>1,409 ms in this article is not the screen’s response time.</strong> The timer in the
-        code starts <strong>after</strong> the database query returns, and covers only the stretch that turns
+        code starts after the database query returns, and covers only the stretch that turns
         role rows into DTOs. The database query, serialisation and transport all sit outside it.
-        <strong>What the user waited is longer than this.</strong> Every number here is from that stretch.</p>
+        What the user waited is longer than this. Every number here is from that stretch.</p>
 
-        <p>This screen <strong>already had a cache.</strong> So this article is not “we added a cache and it got
-        faster” but <strong>“there was a cache, and the cache was why it was slow”.</strong></p>
+        <p>This screen already had a cache. So this article is not “we added a cache and it got
+        faster” but “there was a cache, and the cache was why it was slow”.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -120,35 +120,35 @@
 
         <ul>
           <li>One screen request brings back 14 role rows, and each row
-          <strong>resolves one project id.</strong> <strong>Eight resolve, six do not.</strong></li>
+          resolves one project id. Eight resolve, six do not.</li>
           <li><strong>The eight that resolve cost 0 ms each.</strong> Add up the six that do not and you get
-          <strong>1,409 ms</strong>, <strong>the same figure the timer recorded for the whole stretch in this
-          run.</strong></li>
-          <li>The cause is that <strong><code>CacheBox.project()</code> pulled the entire project list again
-          every time it failed to resolve one.</strong> And those six ids
-          <strong>are not in that list however many times you fetch it.</strong></li>
-          <li>After the fix the same stretch takes <strong>1 ms</strong>. ⚠️ But
-          <strong>six rows still fail to resolve.</strong> What went down is not how often it fails but
-          <strong>what a failure costs.</strong></li>
+          <strong>1,409 ms</strong>, the same figure the timer recorded for the whole stretch in this
+          run.</li>
+          <li>The cause is that <code>CacheBox.project()</code> pulled the entire project list again
+          every time it failed to resolve one. And those six ids
+          are not in that list however many times you fetch it.</li>
+          <li>After the fix the same stretch takes 1 ms. ⚠️ But
+          six rows still fail to resolve. What went down is not how often it fails but
+          what a failure costs.</li>
         </ul>
 
-        <p>⚠️ The log says <code>[Hit]</code> and <code>[Miss]</code>, but <strong>it is not measuring anything
-        inside the cache.</strong> Those labels come from whether a call to <code>CacheBox</code> returned a
+        <p>⚠️ The log says <code>[Hit]</code> and <code>[Miss]</code>, but it is not measuring anything
+        inside the cache. Those labels come from whether a call to <code>CacheBox</code> returned a
         project. A read can hit the cache perfectly and still be logged <code>[Miss]</code> because the id is
-        not in the list. Below I will call them <strong>resolved and unresolved.</strong></p>
+        not in the list. Below I will call them resolved and unresolved.</p>
 
-        <p><strong>This is an internal product, so neither the code nor the logs are reproduced as they
-        are.</strong> Product names, customers and internal addresses are gone; the structure and the numbers
-        stay. The logs appear with <strong>the logger name and the project ids masked.</strong>
-        The milliseconds are as recorded. ⚠️ The per-row milliseconds were <strong>transcribed by hand from log
-        screenshots pasted into the internal document.</strong> What the document states as text are the
+        <p>This is an internal product, so neither the code nor the logs are reproduced as they
+        are. Product names, customers and internal addresses are gone; the structure and the numbers
+        stay. The logs appear with the logger name and the project ids masked.
+        The milliseconds are as recorded. ⚠️ The per-row milliseconds were transcribed by hand from log
+        screenshots pasted into the internal document. What the document states as text are the
         totals: 1,409 ms, 250 ms, 1 ms.</p>
 
         <h2 id="the-screen">The screen<a class="anchor" href="#the-screen" aria-label="Link to this section">#</a></h2>
 
         <p>Open one user and the lower half shows a table of <strong>which role they hold in which
-        project.</strong> The roles live in our own database; <strong>the project names live on the OpenStack
-        side</strong>, specifically in <strong>Keystone</strong>, the service that owns users and projects
+        project.</strong> The roles live in our own database; the project names live on the OpenStack
+        side, specifically in Keystone, the service that owns users and projects
         there. So every role row has to resolve a project.</p>
 
         <p>There was a cache at that resolving step. Hand-rolled (the same <code>CacheManager</code> that
@@ -272,13 +272,13 @@
         <p>There is only one thing to do with that.</p>
 
         <blockquote><p><strong>247 + 235 + 238 + 228 + 233 + 228 = 1,409</strong><br>
-        The six unresolved rows sum to <strong>the total for this run.</strong> The eight resolved rows were
+        The six unresolved rows sum to the total for this run. The eight resolved rows were
         0 ms.</p></blockquote>
 
-        <p>⚠️ This is one run at millisecond resolution, so <strong>“the rest is exactly zero” is more than it
-        supports.</strong> Building, filtering and sorting the DTOs happens outside each row's own span, and
+        <p>⚠️ This is one run at millisecond resolution, so “the rest is exactly zero” is more than it
+        supports. Building, filtering and sorting the DTOs happens outside each row's own span, and
         anything under a millisecond looks like this. What it does support is that
-        <strong>at this resolution the six recorded spans summed to the total.</strong></p>
+        at this resolution the six recorded spans summed to the total.</p>
 
         <p>It still settles where to look. The question is not “why isn't the cache helping” but
         <strong>“why does one unresolved row cost 235 ms”.</strong></p>
@@ -338,34 +338,34 @@
         shape a cache naturally takes the first time you write one, and <strong>for the first call it is
         right.</strong></p>
 
-        <p>The problem is <strong>a key that filling the cache will never produce.</strong></p>
+        <p>The problem is a key that filling the cache will never produce.</p>
 
         <h2 id="never-found">Those six were not there to be found<a class="anchor" href="#never-found" aria-label="Link to this section">#</a></h2>
 
-        <p>The role table lives in <strong>our database</strong> and the projects live in
-        <strong>OpenStack.</strong> Delete a project on the OpenStack side and <strong>the row in our role table
-        stays exactly where it was.</strong> The project id it points at now exists nowhere.</p>
+        <p>The role table lives in our database and the projects live in
+        OpenStack. Delete a project on the OpenStack side and the row in our role table
+        stays exactly where it was. The project id it points at now exists nowhere.</p>
 
         <p>Which makes the code above run like this.</p>
 
         <ol>
           <li>look in the cache → not there</li>
           <li>fetch the whole list again → <strong>235 ms</strong></li>
-          <li>look again → <strong>still not there</strong>, because the project is gone</li>
+          <li>look again → still not there, because the project is gone</li>
           <li>the next row hits another missing id → <strong>back to step 1</strong></li>
         </ol>
 
-        <blockquote><p><strong>Every missing id fetched the entire project list afresh.</strong>
+        <blockquote><p>Every missing id fetched the entire project list afresh.
         And since those six ids are not in the list however fresh it is, the next row fetches it again.</p></blockquote>
 
-        <p>The six unresolved rows were <strong>the same six ids in all three runs I have</strong>: one before
+        <p>The six unresolved rows were the same six ids in all three runs I have: one before
         the fix and two after, a day apart. That does not look like a cache that happened to be cold; it looks
-        like <strong>positions that cannot be filled.</strong>
+        like positions that cannot be filled.
         ⚠️ Three runs is three runs. I did not run it more than that.</p>
 
         <h2 id="the-fix">The fix: filter a list instead of asking for a key<a class="anchor" href="#the-fix" aria-label="Link to this section">#</a></h2>
 
-        <p>What changed is <strong>one thing: how it looks the project up.</strong></p>
+        <p>What changed is one thing: how it looks the project up.</p>
 
 <pre data-lang="java"><code>// before: ask the cache for one key. if absent, call the external API
 var project = CacheBox.project(roleAssignment.getProjectId());
@@ -376,15 +376,15 @@ var project = CacheBox.projects().stream()
         .findFirst();</code></pre>
 
         <p><code>projects()</code> can call the external API too. What differs is that
-        <strong>“this id is absent” is no longer the condition that triggers the call.</strong></p>
+        “this id is absent” is no longer the condition that triggers the call.</p>
 
         <p>Precisely: <code>projects()</code> takes the list from the cache, and while doing so it
-        <strong>drops expired entries one by one.</strong> Only when what remains is
-        <strong>completely empty</strong> does it call the external API.</p>
+        drops expired entries one by one. Only when what remains is
+        completely empty does it call the external API.</p>
 
-        <p>⚠️ There is a trap in that. <strong>Partial expiry does not trigger it.</strong> If even one entry
+        <p>⚠️ There is a trap in that. Partial expiry does not trigger it. If even one entry
         survives, the incomplete list is returned as it is, and a project that fell out in between is reported
-        <strong>unresolved despite existing.</strong> In these runs the entries were filled together and expired
+        unresolved despite existing. In these runs the entries were filled together and expired
         together, so it did not show. Not showing is not the same as not being there.</p>
 
         <p>The log shows it directly. One run with the cache expired:</p>
@@ -396,7 +396,7 @@ var project = CacheBox.projects().stream()
 [Miss] projectId=project-J   elapsed    0 ms
 [Result] Total elapsed time: 250 ms</code></pre>
 
-        <p><strong>Six rows still fail to resolve.</strong> Five of them now cost 0 ms.
+        <p>Six rows still fail to resolve. Five of them now cost 0 ms.
         With the cache valid the first one is 0 ms as well and <strong>the total is 1 ms.</strong></p>
 
         <div class="table-scroll">
@@ -408,68 +408,68 @@ var project = CacheBox.projects().stream()
           <tbody>
             <tr><td>before the fix</td><td>14</td><td>6</td><td>228–247 ms</td><td><strong>1,409 ms</strong></td></tr>
             <tr><td>after · cache expired</td><td>14</td><td>6</td><td>246 ms for the first only</td><td>250 ms</td></tr>
-            <tr><td>after · cache valid</td><td>14</td><td>6</td><td>0 ms</td><td><strong>1 ms</strong></td></tr>
+            <tr><td>after · cache valid</td><td>14</td><td>6</td><td>0 ms</td><td>1 ms</td></tr>
           </tbody>
         </table>
         </div>
         </div>
-        <p class="table-note">The middle column reads <strong>6</strong> on all three rows.
-        <strong>Nothing here reduced how often a lookup fails.</strong> What changed is the two columns on the
-        right. ⚠️ All three rows are <strong>a single observation.</strong> No distribution was measured.</p>
+        <p class="table-note">The middle column reads 6 on all three rows.
+        Nothing here reduced how often a lookup fails. What changed is the two columns on the
+        right. ⚠️ All three rows are a single observation. No distribution was measured.</p>
 
         <h2 id="what-it-cost">⚠️ What it cost: new projects show up late<a class="anchor" href="#what-it-cost" aria-label="Link to this section">#</a></h2>
 
         <p>The old code had <strong>a use nobody was counting on.</strong> Meeting an unknown id, it refetched
-        the list, so <strong>a project created moments ago showed up immediately.</strong> It was slow, and it
+        the list, so a project created moments ago showed up immediately. It was slow, and it
         was current.</p>
 
         <p>After the fix an unknown id does nothing at all. So a new project
-        <strong>does not appear until the cache is refilled.</strong></p>
+        does not appear until the cache is refilled.</p>
 
         <p>⚠️ And “until the cache is refilled” <strong>is not something I can pin at 10 minutes.</strong>
-        Retention hangs on <strong>the write time recorded per entry,</strong> not on the list as a whole. And
-        <code>project()</code> is still there, so <strong>one call to it from another screen refills every
-        entry at once.</strong> That can push the timestamps forward and make a new project appear later, or
+        Retention hangs on the write time recorded per entry, not on the list as a whole. And
+        <code>project()</code> is still there, so one call to it from another screen refills every
+        entry at once. That can push the timestamps forward and make a new project appear later, or
         land at just the right moment and make it appear sooner. What I can say is that
-        <strong>absent any other refill, it shows up on the first lookup after the last entry expires.</strong></p>
+        absent any other refill, it shows up on the first lookup after the last entry expires.</p>
 
-        <blockquote><p>The latency was not removed. <strong>It was traded against freshness.</strong>
+        <blockquote><p>The latency was not removed. It was traded against freshness.
         This screen is a list a person reads, so ten minutes was acceptable.
-        <strong>Not every screen can make that trade.</strong></p></blockquote>
+        Not every screen can make that trade.</p></blockquote>
 
         <h2 id="still-there">And the data condition is still there<a class="anchor" href="#still-there" aria-label="Link to this section">#</a></h2>
 
         <p>The <strong>direct cause</strong> of the delay was the <strong>lookup policy</strong> that refetched
-        the whole list on every failure. The <strong>data condition that made it run six times</strong> was six
+        the whole list on every failure. The data condition that made it run six times was six
         role rows pointing at projects that no longer exist. Those are two different things.</p>
 
-        <p>I fixed <strong>the first one.</strong> The second <strong>is still there.</strong> Those rows are
+        <p>I fixed the first one. The second is still there. Those rows are
         merely no longer expensive; they have not gone away. Making our role table clean itself up when a
         project is deleted on the OpenStack side is the actual job, and it was not part of this work.</p>
 
         <h2 id="limits">Limits: what this article does not claim<a class="anchor" href="#limits" aria-label="Link to this section">#</a></h2>
 
         <ul>
-          <li><strong>The measurement is <code>System.currentTimeMillis()</code> plus <code>log.info</code>.</strong>
+          <li>The measurement is <code>System.currentTimeMillis()</code> plus <code>log.info</code>.
           <code>currentTimeMillis()</code> is not a monotonic clock; change the system time and the value moves.
-          One log call sits <strong>inside</strong> each row's span while the one after it falls outside.
+          One log call sits inside each row's span while the one after it falls outside.
           <strong>0 ms means “under a millisecond”,</strong> not “free”. Doing this properly means
           <code>System.nanoTime()</code> or a timer metric, and counting external API calls separately.</li>
-          <li><strong>These are single runs.</strong> One log per state, with no repetition and no distribution.
+          <li>These are single runs. One log per state, with no repetition and no distribution.
           The 235 ms is just the average of those six.</li>
           <li><strong>Why one list call costs 235 ms is not something I dug into.</strong> Network, Keystone-side
           processing, the number of projects. None of those were separated.</li>
-          <li><strong>The record does not say how many projects there were.</strong> So whether the list was slow
+          <li>The record does not say how many projects there were. So whether the list was slow
           because it was large, or because the call itself is expensive, is not something this log settles.</li>
-          <li><strong>The fixed code is not finished either.</strong> It calls <code>projects()</code> once per role
+          <li>The fixed code is not finished either. It calls <code>projects()</code> once per role
           row. While the cache is warm that is 0 ms and invisible, but with many rows
-          <strong>the cost of scanning the list repeatedly</strong> remains. Hoisting it out of the loop would
+          the cost of scanning the list repeatedly remains. Hoisting it out of the loop would
           be better.</li>
-          <li><strong>This cache still carries part one's problem.</strong> <code>projects()</code> takes no
-          lock, so if several requests arrive the moment the cache empties, <strong>each of them calls the
-          external API.</strong> ⚠️ That comes from reading the code, not from this log. These runs opened one
+          <li>This cache still carries part one's problem. <code>projects()</code> takes no
+          lock, so if several requests arrive the moment the cache empties, each of them calls the
+          external API. ⚠️ That comes from reading the code, not from this log. These runs opened one
           user, so there were no concurrent requests.</li>
-          <li><strong>Not production statistics.</strong> These are logs from opening one user in a test
+          <li>Not production statistics. These are logs from opening one user in a test
           environment.</li>
         </ul>
 
@@ -482,15 +482,15 @@ var project = CacheBox.projects().stream()
           <li><strong>Having a cache and being fast are different things.</strong> Here every resolved row was
           0 ms and the span was still 1,409 ms.</li>
           <li><strong>What you do on a failed lookup is half of cache design.</strong> “If it is absent, refetch
-          everything” is right for the first call and <strong>the worst possible choice in front of an id that
-          refilling will never produce.</strong></li>
-          <li><strong>There are two things you can reduce:</strong> how <strong>often</strong> a lookup fails,
-          and what a failure <strong>costs.</strong> This work reduced the second and left the first alone.</li>
-          <li><strong>Write down what the speed cost you.</strong> Here it cost ten minutes of freshness.</li>
+          everything” is right for the first call and the worst possible choice in front of an id that
+          refilling will never produce.</li>
+          <li>There are two things you can reduce: how often a lookup fails,
+          and what a failure costs. This work reduced the second and left the first alone.</li>
+          <li>Write down what the speed cost you. Here it cost ten minutes of freshness.</li>
         </ul>
 
         <p>If one line survives, this one:
-        <strong>it only needed adding up a log that was already being written.</strong>
+        it only needed adding up a log that was already being written.
         Until I added those six rows up, I was staring at “why isn't the cache helping”.</p>
 
         <p>Thank you for reading.</p>

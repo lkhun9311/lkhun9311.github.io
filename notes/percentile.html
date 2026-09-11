@@ -87,26 +87,26 @@
         the average is 65 ms. That reads as "65 ms, fine", when in fact <strong>one person in a hundred waited six seconds</strong>.</p>
 
         <p>That one person is a different person each time, and a user who makes several requests eventually meets that
-        stretch. So the experience is set by the <strong>tail</strong>, not the average.</p>
+        stretch. So the experience is set by the tail, not the average.</p>
         <h2 id="계산">There are two ways to compute it<a class="anchor" href="#계산" aria-label="Link to this section">#</a></h2>
         <p>The same data gives a different p95 in different tools, because the definitions differ.</p>
 
         <ul>
           <li><strong>Nearest-rank</strong> — take the <code>ceil(0.95 × N)</code>-th value of the sorted sample as it is.
           The result is always <strong>a value that was actually observed</strong>.</li>
-          <li><strong>Linear interpolation</strong> — fill between the two neighbouring values proportionally. The result may be a value never observed.</li>
+          <li>Linear interpolation — fill between the two neighbouring values proportionally. The result may be a value never observed.</li>
         </ul>
 
-        <p>Mix the two and you are comparing values with different definitions. So the summariser <strong>uses one and
-        prints which one it used.</strong> For a sample of 1..20, nearest-rank p95 is the <code>ceil(19) = 19</code>th value = 19.</p>
+        <p>Mix the two and you are comparing values with different definitions. So the summariser uses one and
+        prints which one it used. For a sample of 1..20, nearest-rank p95 is the <code>ceil(19) = 19</code>th value = 19.</p>
         <h2 id="어디">Which one to read<a class="anchor" href="#어디" aria-label="Link to this section">#</a></h2>
         <p><strong>p50 says "this is normal"; p95 and p99 say "this is what bad looks like".</strong> You need both.</p>
 
-        <p>When p50 and p95 are close the system is <strong>steady</strong> — every request is handled much the same.
-        A low p50 with a far larger p95 is the signature of a <strong>queue</strong>: most are served quickly and some are standing in line.</p>
+        <p>When p50 and p95 are close the system is steady — every request is handled much the same.
+        A low p50 with a far larger p95 is the signature of a queue: most are served quickly and some are standing in line.</p>
 
         <p>A real example: in a run where the connection pool was exhausted, the feed read went from a p50 of 4 ms to 6,047 ms
-        while the <strong>error rate stayed at 0%</strong>. It was <strong>waiting</strong>, not failing. Read the error rate alone
+        while the <strong>error rate stayed at 0%</strong>. It was waiting, not failing. Read the error rate alone
         and nothing looks wrong.</p>
 
         <h2 id="쓰인-곳">Where it is used on this site<a class="anchor" href="#쓰인-곳" aria-label="Link to this section">#</a></h2>

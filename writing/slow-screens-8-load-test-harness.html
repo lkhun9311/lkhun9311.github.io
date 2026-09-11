@@ -108,7 +108,7 @@
 
         <p>To see what each configuration contributed, <strong>everything but the thing you are looking at
         has to match.</strong> This article is about the tool that took on the "keep the load conditions
-        the same" half of that, and about <strong>what that tool did not do.</strong></p>
+        the same" half of that, and about what that tool did not do.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -125,13 +125,13 @@
           from them. Those values were never touched between runs, so
           <strong>the declared load conditions are identical across all six.</strong>
           ⚠️ That does not mean the environment was.</li>
-          <li>I made the <strong>ten</strong> measurement targets runnable one at a time, so the tool
+          <li>I made the ten measurement targets runnable one at a time, so the tool
           would not hit the other APIs alongside.</li>
-          <li>I left the result format as <strong>CSV</strong>. That format has no column for a response body.</li>
-          <li>⚠️ And yet, with <strong>no result files at all</strong>, the run script printed "done" and
-          <strong>exited zero.</strong> I reproduced it to check.</li>
-          <li>⚠️ And <strong>which run was which code configuration</strong> is nowhere in the reports.
-          That pairing was being done by <strong>a document outside the harness.</strong></li>
+          <li>I left the result format as CSV. That format has no column for a response body.</li>
+          <li>⚠️ And yet, with no result files at all, the run script printed "done" and
+          exited zero. I reproduced it to check.</li>
+          <li>⚠️ And which run was which code configuration is nowhere in the reports.
+          That pairing was being done by a document outside the harness.</li>
         </ul>
 
         <h2 id="why-i-built-it">Six configurations mean six runs<a class="anchor" href="#why-i-built-it" aria-label="Link to this section">#</a></h2>
@@ -149,15 +149,15 @@
         looking at has to match.</strong> Change one thing, hold the rest still. That is what makes a
         comparison a comparison.</p></blockquote>
 
-        <p>⚠️ The six do <strong>not</strong> each differ from the next by exactly one thing; there are
+        <p>⚠️ The six do not each differ from the next by exactly one thing; there are
         places where two things moved together. That is why
-        <a href="parallelism-made-the-tail-worse.html">part five</a> <strong>picks two rows that hold the
-        cache constant</strong> and compares those. Measuring all six is what makes that choice available.
+        <a href="parallelism-made-the-tail-worse.html">part five</a> picks two rows that hold the
+        cache constant and compares those. Measuring all six is what makes that choice available.
         Measuring only before and after does not.</p>
 
         <p>⚠️ Filling the values in by hand is not wrong in itself. If you write down what you entered each
-        time and <strong>keep that note with the result</strong>, the comparison holds. The problem is not
-        the hand, it is <strong>the missing note.</strong> I chose to remove the hand rather than add the note.</p>
+        time and keep that note with the result, the comparison holds. The problem is not
+        the hand, it is the missing note. I chose to remove the hand rather than add the note.</p>
 
         <h2 id="conditions-as-constants">I moved the conditions into constants<a class="anchor" href="#conditions-as-constants" aria-label="Link to this section">#</a></h2>
 
@@ -174,25 +174,25 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
         <p>What changed is <strong>where the conditions live.</strong> They used to live in a person's hands
         and on a screen; now they live in a file. A file can be <strong>read, and compared.</strong></p>
 
-        <p>⚠️ <strong>Only in the sense that it now has that shape.</strong> This harness does not keep a
+        <p>⚠️ Only in the sense that it now has that shape. This harness does not keep a
         copy of that file per run. To actually compare runs you would have to
-        <strong>put it under version control or copy it into the run folder</strong>, and I did neither.</p>
+        put it under version control or copy it into the run folder, and I did neither.</p>
 
-        <p>Across the six configurations <strong>these constants were never changed.</strong> What changed
+        <p>Across the six configurations these constants were never changed. What changed
         was the server-side code. That is the basis on which
         <a href="slow-screens-1-volume-list.html">part one</a> and
         <a href="parallelism-made-the-tail-worse.html">part five</a> can say the load conditions were the
         same in all six.</p>
 
-        <blockquote><p>⚠️ <strong>And that is as far as "the same" goes.</strong> What matched is the
-        <strong>declared load conditions</strong>, not the whole setting the test sat in. How much data had
+        <blockquote><p>⚠️ And that is as far as "the same" goes. What matched is the
+        declared load conditions, not the whole setting the test sat in. How much data had
         piled up, how warm the JVM was, what else was running on that machine at the time — all of that is
-        <strong>outside these constants.</strong> Please read "the same conditions" in the earlier parts
+        outside these constants. Please read "the same conditions" in the earlier parts
         with that scope.</p></blockquote>
 
-        <p>And <strong>which report belongs to which configuration</strong> is paired up by a document
-        written at the time. ⚠️ <strong>What the harness leaves behind is not linked together.</strong>
-        If that document cannot be opened, <strong>the output of this tool alone cannot answer it.</strong>
+        <p>And which report belongs to which configuration is paired up by a document
+        written at the time. ⚠️ What the harness leaves behind is not linked together.
+        If that document cannot be opened, the output of this tool alone cannot answer it.
         (Deployment records and commit times leave some room to reconstruct it. That is not something the
         harness did for me.)</p>
 
@@ -266,22 +266,22 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
         <code>"volume"</code> runs the five on the volume side, <code>"all"</code> runs everything.</p>
 
         <blockquote><p>When one screen is slow, you have to <strong>pull out just what that screen calls</strong>
-        so that <strong>this tool</strong> is not hammering the other APIs at the same time.</p></blockquote>
+        so that this tool is not hammering the other APIs at the same time.</p></blockquote>
 
         <p>⚠️ That does not mean load from other people or other processes on the machine is gone.
-        Only that <strong>the harness is not adding it.</strong></p>
+        Only that the harness is not adding it.</p>
 
-        <p>⚠️ And <strong>"alone" is not "independent".</strong> The resource ids that go into the requests
+        <p>⚠️ And "alone" is not "independent". The resource ids that go into the requests
         are pulled from a CSV file, and the config that reads that file sits
-        <strong>once, at the top of the test plan</strong>, with sharing set to <strong>all</strong> and
+        once, at the top of the test plan, with sharing set to all and
         wrap-around on when it reaches the end. That means one cursor shared across every thread.
         With the groups running one after another,
-        <strong>each group picks up where the previous one stopped.</strong></p>
+        each group picks up where the previous one stopped.</p>
 
-        <p>It may not stop at the cursor. If the server was not restarted in between, <strong>whatever is
-        left in its cache and however warm the JVM is carry over too.</strong> ⚠️ There is
-        <strong>no record</strong> of what was done to the server between runs. What is certain reaches as
-        far as <strong>the CSV cursor.</strong></p>
+        <p>It may not stop at the cursor. If the server was not restarted in between, whatever is
+        left in its cache and however warm the JVM is carry over too. ⚠️ There is
+        no record of what was done to the server between runs. What is certain reaches as
+        far as the CSV cursor.</p>
 
         <h2 id="what-all-means">"all" does not mean at the same time<a class="anchor" href="#what-all-means" aria-label="Link to this section">#</a></h2>
 
@@ -297,13 +297,13 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
 &lt;boolProp name="ThreadGroup.scheduler"&gt;true&lt;/boolProp&gt;
 &lt;stringProp name="ThreadGroup.duration"&gt;600&lt;/stringProp&gt;</code></pre>
 
-        <p>With the first line true, the thread groups run <strong>one at a time, in order.</strong>
+        <p>With the first line true, the thread groups run one at a time, in order.
         The four below mean <strong>the loop count is unlimited and the time is 600 seconds.</strong>
-        ⚠️ Two of them <strong>say the same thing twice</strong>: <code>-1</code> already means forever, so
+        ⚠️ Two of them say the same thing twice: <code>-1</code> already means forever, so
         <code>continue_forever</code> being on as well changes nothing.</p>
 
         <p>Had the loop count not been <code>-1</code>, the group would stop at
-        <strong>whichever of count and time it reached first.</strong> Here the count is never reached, so
+        whichever of count and time it reached first. Here the count is never reached, so
         <strong>the path by which it ends normally is that 600 seconds.</strong>
         ⚠️ It can of course end sooner if something stops it from outside or an error policy fires.</p>
 
@@ -350,17 +350,17 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
           below they run end to end. Only five bars are drawn.</figcaption>
         </figure>
 
-        <p>So <code>"all"</code> is <strong>not a test that loads ten things at once.</strong>
-        It is <strong>measuring one at a time, ten times over.</strong>
+        <p>So <code>"all"</code> is not a test that loads ten things at once.
+        It is measuring one at a time, ten times over.
         ⚠️ As the previous section said, the cursor and the cache and the JVM carry across, so
-        <strong>the ten are not independent of each other.</strong></p>
+        the ten are not independent of each other.</p>
 
-        <blockquote><p>⚠️ <strong>There is no record that it ever took 100 minutes.</strong>
+        <blockquote><p>⚠️ There is no record that it ever took 100 minutes.
         What I verified is that the configuration says so. Whether any run ever went through
         <code>"all"</code> to the end is not written down anywhere.</p></blockquote>
 
-        <p>⚠️ And it is <strong>100 minutes as configured</strong>, not exactly 100 minutes.
-        JMeter checks the time between requests; it <strong>does not cut off a request in flight.</strong>
+        <p>⚠️ And it is 100 minutes as configured, not exactly 100 minutes.
+        JMeter checks the time between requests; it does not cut off a request in flight.
         If the last request sits waiting for a response, that group ends past its 600 seconds.
         On a screen with a ten-minute timeout, like the one in
         <a href="slow-screens-1-volume-list.html">part one</a>, that overshoot is not small.</p>
@@ -380,7 +380,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
 &lt;responseData&gt;false&lt;/responseData&gt;</code></pre>
 
         <p>False on the first line means results accumulate <strong>one CSV line at a time.</strong>
-        And <strong>CSV has no column that can hold a response body at all.</strong> That is why a test
+        And CSV has no column that can hold a response body at all. That is why a test
         running 50 threads for ten minutes did not pile up bodies.</p>
 
         <div class="table-scroll">
@@ -390,29 +390,29 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
           <caption class="sr-only">What the result file keeps and what it leaves out.</caption>
           <thead><tr><th>Kept</th><th>Left out</th></tr></thead>
           <tbody>
-            <tr><td>Elapsed time · latency · timestamp · success</td><td><strong>Response body</strong> (CSV has no place for it)</td></tr>
+            <tr><td>Elapsed time · latency · timestamp · success</td><td>Response body (CSV has no place for it)</td></tr>
             <tr><td>Label · status code · byte counts</td><td>Sampler data · request headers · response headers</td></tr>
-            <tr><td><strong>Response message</strong> and <strong>assertion failure message</strong></td><td>Encoding</td></tr>
+            <tr><td>Response message and assertion failure message</td><td>Encoding</td></tr>
           </tbody>
         </table>
         </div>
         </div>
-        <p class="table-note">The <strong>two</strong> items in the last left-hand cell matter.
+        <p class="table-note">The two items in the last left-hand cell matter.
         The <code>Read timed out</code> in <a href="slow-screens-1-volume-list.html">part one</a> is a
-        <strong>response message</strong>, not an assertion failure message. They are different columns and
-        <strong>both are on.</strong> With only one of them, that screen does not appear.</p>
+        response message, not an assertion failure message. They are different columns and
+        both are on. With only one of them, that screen does not appear.</p>
 
         <p>⚠️ The test plan also carries <code>&lt;responseData&gt;false&lt;/responseData&gt;</code>.
-        <strong>In CSV that line does nothing</strong>, because the format already cannot hold a body.
-        <strong>It looks like it is holding something back, and the thing holding it back is the format.</strong>
+        In CSV that line does nothing, because the format already cannot hold a body.
+        It looks like it is holding something back, and the thing holding it back is the format.
         I found this out while writing this article.</p>
 
-        <blockquote><p>⚠️ And "saving bodies makes it slower" is a claim to make <strong>carefully.</strong>
-        JMeter receives the whole response and <strong>fixes the sample's timing</strong> before it hands
+        <blockquote><p>⚠️ And "saving bodies makes it slower" is a claim to make carefully.
+        JMeter receives the whole response and fixes the sample's timing before it hands
         the result to whatever writes it out. The time spent writing to file is not simply added to that
         sample's response time. What can be said is that it
-        <strong>uses more CPU and disk on the machine generating the load</strong>, and that this can shake
-        the result through throughput. <strong>How much it shakes it was never measured.</strong></p></blockquote>
+        uses more CPU and disk on the machine generating the load, and that this can shake
+        the result through throughput. How much it shakes it was never measured.</p></blockquote>
 
         <h2 id="keeping-runs">Reports pile up per run, the raw data does not<a class="anchor" href="#keeping-runs" aria-label="Link to this section">#</a></h2>
 
@@ -429,14 +429,14 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
 
         <p>⚠️ To be exact about why the targets get separate folders: it is
         <strong>not that a combined report hides them.</strong> A combined report does give you per-label
-        rows. They are split so that <strong>the same target from two runs sits side by side</strong> —
+        rows. They are split so that the same target from two runs sits side by side —
         open two folders in the same place and there it is.</p>
 
-        <p>But <strong>the raw data does not survive.</strong> The run script deletes the previous result
+        <p>But the raw data does not survive. The run script deletes the previous result
         files as it starts. Reports pile up per run;
-        <strong>the raw files disappear the moment the next run begins.</strong>
-        If you later want to re-aggregate at a different percentile, <strong>there is nothing to work from.</strong>
-        I nearly titled this section "runs are preserved". What is preserved is <strong>the reports.</strong></p>
+        the raw files disappear the moment the next run begins.
+        If you later want to re-aggregate at a different percentile, there is nothing to work from.
+        I nearly titled this section "runs are preserved". What is preserved is the reports.</p>
 
         <h2 id="silent-success">It finished successfully with nothing produced<a class="anchor" href="#silent-success" aria-label="Link to this section">#</a></h2>
 
@@ -459,24 +459,24 @@ reports produced: 0</code></pre>
         <p><strong>It prints "test finished", tells you where the reports are, and exits zero.</strong>
         What it produced is one empty folder.</p>
 
-        <p>The reason is that <strong>in a default bash</strong>, when nothing matches, the loop variable
-        gets <strong>the pattern itself rather than a filename.</strong></p>
+        <p>The reason is that in a default bash, when nothing matches, the loop variable
+        gets the pattern itself rather than a filename.</p>
 
 <pre data-lang="text"><code>jtl = [jmeter/results/*.jtl]
 not a file → continue</code></pre>
 
-        <p>⚠️ It depends on shell settings. <strong>When nothing matches</strong>, with
+        <p>⚠️ It depends on shell settings. When nothing matches, with
         <code>nullglob</code> on the loop simply runs zero times.
-        <strong>The outcome is the same</strong> — no reports built, and it still reaches the completion
-        message. <strong>The only one that ends differently is <code>failglob</code></strong>, which fails
+        The outcome is the same — no reports built, and it still reaches the completion
+        message. The only one that ends differently is <code>failglob</code>, which fails
         before entering the loop.</p>
 
         <p><code>[ -f "$jtl" ] || continue</code> filters that pattern out.
-        <strong>It also filters out "nothing was produced".</strong></p>
+        It also filters out "nothing was produced".</p>
 
-        <blockquote><p><strong>By exit code and completion message alone, "it never ran" and "it went fine"
-        are indistinguishable.</strong> Open the folder and they differ. But whatever runs this
-        automatically <strong>does not open the folder.</strong> In a tool whose purpose is comparison, that
+        <blockquote><p>By exit code and completion message alone, "it never ran" and "it went fine"
+        are indistinguishable. Open the folder and they differ. But whatever runs this
+        automatically does not open the folder. In a tool whose purpose is comparison, that
         is not a small defect.</p></blockquote>
 
         <p>There is a second problem on the same line: <code>2&gt;/dev/null</code>.
@@ -490,20 +490,20 @@ ERROR: Data exporter ... cannot generate report: empty file
 exit code: 1</code></pre>
 
         <p>Both do end in failure. <code>set -e</code> is on and this is
-        <strong>not one of the positions that get a pass</strong>, so a failure kills it.
+        not one of the positions that get a pass, so a failure kills it.
         Being inside a loop has nothing to do with it.</p>
 
-        <p>The positions that do get a pass are elsewhere: the <strong>condition</strong> of an
-        <code>if</code> or a <code>while</code>, a command that is <strong>not the last</strong> in an
+        <p>The positions that do get a pass are elsewhere: the condition of an
+        <code>if</code> or a <code>while</code>, a command that is not the last in an
         <code>&amp;&amp;</code> or <code>||</code> list, a command prefixed with <code>!</code>, and a
-        <strong>non-final member of a pipeline</strong>.
-        <strong>It is not "what it is inside", it is "which position".</strong></p>
+        non-final member of a pipeline.
+        It is not "what it is inside", it is "which position".</p>
 
-        <p>What differs is <strong>whether it dies silently or leaves a reason.</strong>
-        In the reproduction that message came out <strong>on stderr only</strong>, so the first case left
+        <p>What differs is whether it dies silently or leaves a reason.
+        In the reproduction that message came out on stderr only, so the first case left
         nothing at all on screen.</p>
 
-        <p>If I wrote it again I would do this: check the count <strong>against the expected count</strong>,
+        <p>If I wrote it again I would do this: check the count against the expected count,
         confirm the report actually appeared, and send stderr to a log file instead of throwing it away.</p>
 
 <pre data-lang="bash"><code>made=0
@@ -521,40 +521,40 @@ done
         <p>Four things changed.</p>
 
         <ul class="callout">
-          <li><code>dir</code> is computed <strong>inside the loop.</strong> Set once outside, the second
-          report meets a <strong>non-empty folder</strong> and fails. JMeter requires that folder to be empty.</li>
-          <li>Not <code>-gt 0</code> but <strong><code>-eq "$EXPECTED"</code></strong>. Expect ten, get one,
-          and <code>-gt 0</code> still passes. <strong>That is the dangerous case.</strong></li>
+          <li><code>dir</code> is computed inside the loop. Set once outside, the second
+          report meets a non-empty folder and fails. JMeter requires that folder to be empty.</li>
+          <li>Not <code>-gt 0</code> but <code>-eq "$EXPECTED"</code>. Expect ten, get one,
+          and <code>-gt 0</code> still passes. That is the dangerous case.</li>
           <li>JMeter returning zero does not mean a report exists, so it also checks
-          <strong>whether <code>index.html</code> is non-empty.</strong></li>
-          <li>stderr goes to <strong>a log inside the run folder.</strong> The file the message points at
+          whether <code>index.html</code> is non-empty.</li>
+          <li>stderr goes to a log inside the run folder. The file the message points at
           has to actually exist.</li>
         </ul>
 
-        <p>⚠️ <strong>This is still not enough.</strong> Things it does not catch:</p>
+        <p>⚠️ This is still not enough. Things it does not catch:</p>
 
         <ul class="callout">
-          <li><strong>Matching counts pass.</strong> One expected target missing and one stray result file
+          <li>Matching counts pass. One expected target missing and one stray result file
           present still totals the same. It should compare the list of names.</li>
-          <li><strong>A one-byte <code>index.html</code> passes.</strong> A report is many files and this
+          <li>A one-byte <code>index.html</code> passes. A report is many files and this
           looks at one of them.</li>
-          <li><strong>Dying on the tenth leaves the first nine.</strong> That folder
-          <strong>looks like a completed run.</strong> Better to write a marker when everything finishes, or
+          <li>Dying on the tenth leaves the first nine. That folder
+          looks like a completed run. Better to write a marker when everything finishes, or
           build into a temporary folder and rename at the end.</li>
-          <li><strong>The log the message points at may not exist.</strong> If the run folder is not
+          <li>The log the message points at may not exist. If the run folder is not
           writable, sending stderr to <code>report.err</code> fails in the first place.</li>
         </ul>
 
-        <p>⚠️ And <strong>this corrected form is not what is in the internal repository.</strong>
-        I cannot reach that code now, so what is written here is <strong>how I would write it again.</strong></p>
+        <p>⚠️ And this corrected form is not what is in the internal repository.
+        I cannot reach that code now, so what is written here is how I would write it again.</p>
 
-        <p>I checked it with <strong>a fake executable standing in for JMeter</strong> — twenty lines that
+        <p>I checked it with a fake executable standing in for JMeter — twenty lines that
         refuse when the <code>-o</code> target is non-empty and otherwise create one
-        <code>index.html</code>. With that I ran <strong>five cases</strong>: normal, zero results, fewer
+        <code>index.html</code>. With that I ran five cases: normal, zero results, fewer
         than expected, a zero return with an empty report, and a folder collision.
-        <strong>All five stopped where they were meant to.</strong>
+        All five stopped where they were meant to.
         ⚠️ That is not a check against real JMeter; it is a check of
-        <strong>the script's decision logic only.</strong></p>
+        the script's decision logic only.</p>
 
         <h2 id="nothing-names-the-run">Nothing says which run was which configuration<a class="anchor" href="#nothing-names-the-run" aria-label="Link to this section">#</a></h2>
 
@@ -564,23 +564,23 @@ done
           <li><strong>The load conditions do not move.</strong> They are pinned as constants and were not
           touched across the six. The generated JMX carries the same values.</li>
           <li><strong>What changed was the server-side code</strong>, and that is
-          <strong>outside the harness.</strong> This tool does not know what it is measuring.</li>
-          <li><strong>Run folders are told apart only by the clock.</strong> Nothing says
+          outside the harness. This tool does not know what it is measuring.</li>
+          <li>Run folders are told apart only by the clock. Nothing says
           "this folder is no cache, sequential".</li>
         </ul>
 
-        <blockquote><p>What this harness did is <strong>keep the conditions from drifting.</strong>
-        What it did not do is <strong>mark which configuration a result belongs to.</strong>
+        <blockquote><p>What this harness did is keep the conditions from drifting.
+        What it did not do is mark which configuration a result belongs to.
         That second part was being done by memory and by a separate document.</p></blockquote>
 
         <p>⚠️ "There is no condition at all in the report" would not be accurate.
         A JMeter report has start and end times, a graph of active threads over time, and per-label
-        statistics. <strong>You can read the thread count off the chart.</strong>
-        What is missing is <strong>the JMX and the constants used, and the name of the run.</strong></p>
+        statistics. You can read the thread count off the chart.
+        What is missing is the JMX and the constants used, and the name of the run.</p>
 
         <p>The fix is not hard: put the generated JMX, the constants, and a name for the run
-        <strong>into the run folder alongside the results.</strong>
-        ⚠️ Even then it is not <strong>proof that this JMX is what actually ran.</strong>
+        into the run folder alongside the results.
+        ⚠️ Even then it is not proof that this JMX is what actually ran.
         What shrinks is "how much you have to ask a person later", not down to zero.</p>
 
         <h2 id="auth">The test had to stay authenticated for ten minutes<a class="anchor" href="#auth" aria-label="Link to this section">#</a></h2>
@@ -592,18 +592,18 @@ done
         <p>So before writing the test I had to read <strong>what keeps this screen logged in.</strong>
         ⚠️ What that was is not written here.</p>
 
-        <blockquote><p>The authentication had to be understood <strong>before</strong> the tool could be
+        <blockquote><p>The authentication had to be understood before the tool could be
         built. Without it the obstacle is not writing the script, it is
-        <strong>getting through ten minutes.</strong></p></blockquote>
+        getting through ten minutes.</p></blockquote>
 
         <p>⚠️ And ten minutes is the case where <code>GROUP</code> is a single target.
         <code>"all"</code> is a 100-minute affair as configured, and whether authentication is
-        <strong>obtained once and reused or obtained again per group</strong> over that stretch,
-        <strong>I do not know.</strong> The test plan alone does not say, and there is no record of it being
+        obtained once and reused or obtained again per group over that stretch,
+        I do not know. The test plan alone does not say, and there is no record of it being
         run that way.</p>
 
-        <p>⚠️ How to feed credentials to a load tool is something <strong>I have never properly solved.</strong>
-        The reason it is not covered here is that <strong>I have no answer worth showing</strong>, and what
+        <p>⚠️ How to feed credentials to a load tool is something I have never properly solved.
+        The reason it is not covered here is that I have no answer worth showing, and what
         was put in that place is not going in this article.</p>
 
         <h2 id="what-this-does-not-claim">Limits: what this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
@@ -611,19 +611,19 @@ done
         <ul class="callout">
           <li><strong>"Doing it by hand makes the conditions drift" was never measured.</strong> There is no
           record of the values diverging between runs, and none of them matching either.
-          <strong>Not being able to check</strong> is what made me build the tool.</li>
-          <li><strong>This harness does not pin every condition.</strong> What it pins is the calling side.
+          Not being able to check is what made me build the tool.</li>
+          <li>This harness does not pin every condition. What it pins is the calling side.
           The volume of data, how warm the JVM was, whatever else was on that machine at that hour — all
           outside the constants. If the six runs happened at different times, that difference is still
           sitting inside the results.</li>
-          <li><strong>I did not look at the PowerShell side.</strong> The harness also has a Windows runner,
+          <li>I did not look at the PowerShell side. The harness also has a Windows runner,
           and how the empty-result case, the error stream and the exit code behave there is
-          <strong>unverified.</strong> The defects in this article apply to the bash side.</li>
+          unverified. The defects in this article apply to the bash side.</li>
           <li><strong>There is no record of "all" actually running for 100 minutes.</strong> The
           configuration says so; that is the extent of it, and that 100 is a nominal figure.</li>
-          <li><strong>The corrected script is a proposal.</strong> It is not in the internal code; it is a
+          <li>The corrected script is a proposal. It is not in the internal code; it is a
           form checked in a separate environment.</li>
-          <li><strong>No general claim about tool choice.</strong> JMeter was picked because the reports
+          <li>No general claim about tool choice. JMeter was picked because the reports
           come with it and it was already in use. If you want scenarios written as code, something else fits.</li>
         </ul>
 
@@ -636,22 +636,22 @@ done
         <strong>the instrument written in order to be able to say something was fixed.</strong></p>
 
         <ul>
-          <li><strong>Conditions in a file are easier to check afterwards.</strong> You can do it by hand
+          <li>Conditions in a file are easier to check afterwards. You can do it by hand
           and write it down, but then a person has to remember to write it down. This harness removed the
           remembering.</li>
-          <li><strong>Pinning the conditions and naming the results are different jobs.</strong>
+          <li>Pinning the conditions and naming the results are different jobs.
           Which folder was which configuration was still written by a person.</li>
-          <li><strong>A script that prints "done" may have produced nothing.</strong> Without checking
+          <li>A script that prints "done" may have produced nothing. Without checking
           against an expected count, the exit code does not tell them apart.</li>
-          <li><strong>Throw stderr away and it dies without a reason.</strong> The death itself shows in the
+          <li>Throw stderr away and it dies without a reason. The death itself shows in the
           exit code; where and why does not.</li>
         </ul>
 
         <p>If one line survives, it is this.
-        <strong>Building an instrument steadies the conditions you measure under, but whether the
-        instrument did its job is a separate thing to look at.</strong>
-        I looked <strong>four months after I started using it</strong>, and the way I looked was
-        <strong>running it once with no result files.</strong></p>
+        Building an instrument steadies the conditions you measure under, but whether the
+        instrument did its job is a separate thing to look at.
+        I looked four months after I started using it, and the way I looked was
+        running it once with no result files.</p>
 
         <p>Eight parts, and that is the end of the series. Thank you for reading.</p>
         </div>

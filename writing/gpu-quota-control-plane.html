@@ -111,11 +111,11 @@
           <li>Kueue's <code>reclaimWithinCohort</code> knob was measured both ways on the same ledger.
           <strong>Reclaim off wasted nothing and made the owner wait 10.1 s. Reclaim on admitted the owner in
           about 120 ms and discarded 39.3 GPU-seconds.</strong></li>
-          <li>⚠️ <strong>The first published reading of that second number was wrong about why.</strong> An
+          <li>⚠️ The first published reading of that second number was wrong about why. An
           adversarial review produced a control experiment: the borrower never stopped, finished its work,
           and was not credited for it. The waste was re-execution.</li>
           <li>The same correction moved the owner's real start from 120 ms to about 10 s, because the borrower
-          still held the device. <strong>Admission is a reservation, not access.</strong></li>
+          still held the device. Admission is a reservation, not access.</li>
           <li>Where this quota is actually enforced, four guarantees were later broken by attacking them.
           That is <a href="every-guarantee-ends-at-a-writable-field.html">its own article</a>.</li>
         </ul>
@@ -246,32 +246,32 @@
 
         <p>Twelve kind runs that the runner's own gates accepted carried the banner
         <code>device: NOT OBSERVED</code>, which means every GPU-second in them is a second of
-        <strong>reservation</strong>. A later paid session on four A10Gs ran eight more that passed
+        reservation. A later paid session on four A10Gs ran eight more that passed
         <code>-require-device</code>.</p>
 
         <p>Owner wait separated by <strong>28.8 s</strong> there against <strong>29.0 s</strong> on kind, so
         the result survived its own instrument. A follow-up study then separated reservation from use
-        directly: two sets of runs reserved <strong>51.084</strong> and <strong>50.802</strong> GPU-seconds,
-        the same to within a twentieth of their floor, while the card did <strong>48.115</strong> and
-        <strong>12.193</strong> observed device-seconds. <strong>A factor of four, with every
-        reservation-based figure unchanged.</strong></p>
+        directly: two sets of runs reserved 51.084 and 50.802 GPU-seconds,
+        the same to within a twentieth of their floor, while the card did 48.115 and
+        12.193 observed device-seconds. A factor of four, with every
+        reservation-based figure unchanged.</p>
 
         <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
         <ul>
           <li><strong>The quota sync is not a scheduler.</strong> Kueue admits; this project provides the
           <code>MLTrainingJob</code> abstraction and the status translation on top of it.</li>
-          <li><strong>The gateway limiter has never been deployed.</strong> It is built and unit-tested. An
+          <li>The gateway limiter has never been deployed. It is built and unit-tested. An
           architecture diagram that shows it in the request path is describing a design, not a system.</li>
-          <li><strong>Neither reclaim number is a distribution.</strong> They are one pair of arms with a
+          <li>Neither reclaim number is a distribution. They are one pair of arms with a
           fixed borrower duration, and the 39.3 in particular scales with how long the borrower had been
           running.</li>
           <li><strong>The 120 ms was never device access.</strong> That is the correction above, and quoting
           it as a latency would repeat the error this article exists to record.</li>
-          <li><strong>Enforcement is not the same as being unbreakable.</strong> Four guarantees built on
+          <li>Enforcement is not the same as being unbreakable. Four guarantees built on
           this quota were later broken by attacking them, each because a check read a field the tenant
           writes.</li>
-          <li><strong>The ledger and the CLI are designed only.</strong> There is no code for either.</li>
+          <li>The ledger and the CLI are designed only. There is no code for either.</li>
         </ul>
 
         <div class="wrapup">
@@ -282,13 +282,13 @@
           inference are admitted by different engines, and one shared counter would double-count the cards.</li>
           <li><strong>A queue policy compared on admission latency alone always picks the reclaiming
           one.</strong> The cost is in a different column of the same ledger.</li>
-          <li><strong>Measure waste to the actual stop, not to the decision.</strong> The grace window is
+          <li>Measure waste to the actual stop, not to the decision. The grace window is
           work too.</li>
-          <li><strong>Admission is a reservation.</strong> A workload can be admitted while the device is
+          <li>Admission is a reservation. A workload can be admitted while the device is
           still held by somebody else, and every reservation-based number stays the same while that is true.</li>
         </ul>
 
-        <p>What is left is one line. <strong>The number survived the correction and the story did not</strong>,
+        <p>What is left is one line. The number survived the correction and the story did not,
         which is the ordinary shape of a measurement being right for the wrong reason. Keeping the first
         version next to the correction is the only way the next reader can tell which part was load-bearing.</p>
 

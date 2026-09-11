@@ -94,19 +94,19 @@
         </nav>
       <article class="article-body">
 
-        <p><strong>Scope.</strong> Cost and account operations on the AWS lab account behind a personal
+        <p>Scope. Cost and account operations on the AWS lab account behind a personal
         project, a <a href="../projects/gpuaas-control-plane.html">Kubernetes-native GPU control plane</a>.
         The figures come from mixed sources — <strong>$14.56 and $0.40 come from billing and
-        accounting</strong>, <strong>the ~$8 is my own estimate</strong>, and <strong>$0.05 and $0.18 are
-        billed time multiplied by the hourly rate</strong>. Either way this is personal-lab scale, not
+        accounting</strong>, <strong>the ~$8 is my own estimate</strong>, and $0.05 and $0.18 are
+        billed time multiplied by the hourly rate. Either way this is personal-lab scale, not
         production. Account and policy identifiers are omitted.</p>
 
         <p>On a personal project that rents GPUs, the frightening failure is not a wrong experiment. It is
-        <strong>leaving something switched on</strong>. So I built several layers of control: a service
+        leaving something switched on. So I built several layers of control: a service
         control policy, a TTL scale-down schedule, a monthly budget, ephemeral apply and destroy.</p>
 
         <p>After a month of running it, the rehearsal had caught a policy defect and the TTL had proved it fires.
-        But <strong>exactly one of them had ever caught an error in the cost itself.</strong> And that one was
+        But exactly one of them had ever caught an error in the cost itself. And that one was
         not in the code.</p>
 
 
@@ -125,11 +125,11 @@
           <strong>forgetting something left running</strong>. So I built four layers of control.</li>
           <li>A service control policy, a TTL scale-down, a monthly budget alert, and temporary apply/destroy.
           After a month, <strong>the only one that caught a cost error was the budget alert.</strong></li>
-          <li>An item <strong>entirely missing from my estimate</strong> was on the bill, and the alert made it
+          <li>An item entirely missing from my estimate was on the bill, and the alert made it
           visible by putting my estimate and the real charge side by side.</li>
-          <li>And Terraform <strong>nearly deleted that alert without saying so.</strong> It was created
+          <li>And Terraform nearly deleted that alert without saying so. It was created
           outside the state file, so the next plan listed it for destruction.</li>
-          <li>⚠️ A budget alert is a <strong>detective control</strong>. It reports spend, it does not stop it.
+          <li>⚠️ A budget alert is a detective control. It reports spend, it does not stop it.
           The amounts are personal-lab sized, small enough that one wrong item stood out.</li>
         </ul>
 
@@ -138,14 +138,14 @@
         <p>The monthly budget ceiling is thirty dollars. The threshold a budget notification defaults to is
         80% of that. But this project's spend <strong>arrives in three-hour bursts</strong>. A paid GPU session
         starts and finishes within an afternoon, and a month-scale threshold says something only
-        <strong>after that session is already over</strong>.</p>
+        after that session is already over.</p>
 
         <p>So the early warning sits at <strong>10%</strong>. On a thirty dollar budget that fires at three
-        dollars, roughly the price of one paid session. Then <strong>the first session of a month reports what
-        it cost while the next one can still be reconsidered.</strong></p>
+        dollars, roughly the price of one paid session. Then the first session of a month reports what
+        it cost while the next one can still be reconsidered.</p>
 
         <p>The question when choosing a threshold is not "what percentage is reasonable" but
-        <strong>"when this fires, is there still a decision left to change?"</strong> At this spend shape, 80%
+        "when this fires, is there still a decision left to change?" At this spend shape, 80%
         does not satisfy that.</p>
 
         <figure class="diagram">
@@ -179,7 +179,7 @@
               </marker>
             </defs>
           </svg>
-          <figcaption>Four layers were built and <strong>only the top one caught a cost error</strong>. The bottom two were built and <strong>never checked for whether they fire.</strong></figcaption>
+          <figcaption>Four layers were built and <strong>only the top one caught a cost error</strong>. The bottom two were built and never checked for whether they fire.</figcaption>
         </figure>
 
         <h2 id="the-line-item-i-had-omitted">The line item my estimate had omitted<a class="anchor" href="#the-line-item-i-had-omitted" aria-label="Link to this section">#</a></h2>
@@ -201,14 +201,14 @@
         </div>
 
         <p>Chasing the gap led to <strong>NAT gateway data-processing charges</strong>. I had been counting
-        instance hours and the EKS charge, but <strong>the cost of bytes crossing the NAT was not in my
-        estimate at all</strong>.</p>
+        instance hours and the EKS charge, but the cost of bytes crossing the NAT was not in my
+        estimate at all.</p>
 
-        <p>Why it was invisible is clear enough. My estimate was a list of <strong>what I had switched
-        on</strong> — the GPU instance, the EKS control plane, the NAT gateway — things with an hourly rate.
+        <p>Why it was invisible is clear enough. My estimate was a list of what I had switched
+        on — the GPU instance, the EKS control plane, the NAT gateway — things with an hourly rate.
         But a NAT gateway bills an hourly rate <em>and</em> a rate per byte processed, and that second line
-        grows every time an image is pulled. <strong>A list of what you switched on does not count what the
-        things you switched on are doing.</strong></p>
+        grows every time an image is pulled. A list of what you switched on does not count what the
+        things you switched on are doing.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 248" role="img" aria-labelledby="ep-t ep-d" class="figure-svg">
@@ -227,7 +227,7 @@
               <text x="360" y="230" font-size="11.5" fill="#d62976" text-anchor="middle">when the threshold is hit · no decision left</text>
             </g>
           </svg>
-          <figcaption>80% is a warning only if it fires while a decision is still changeable. On this spend shape, 24 dollars is reached <strong>after the experiment is already over</strong>, so what arrives then is not a warning but a <strong>receipt</strong>.</figcaption>
+          <figcaption>80% is a warning only if it fires while a decision is still changeable. On this spend shape, 24 dollars is reached <strong>after the experiment is already over</strong>, so what arrives then is not a warning but a receipt.</figcaption>
         </figure>
 
         <h2 id="terraform-nearly-deleted-it">And Terraform nearly deleted it<a class="anchor" href="#terraform-nearly-deleted-it" aria-label="Link to this section">#</a></h2>
@@ -237,35 +237,35 @@
 
         <p>Days later, running a <code>plan</code> before adding image mirror repositories, the notification
         block showed up as <strong>absent from the configuration and present in the account</strong>. Applying
-        that plan would have removed it <strong>silently, as a side effect of an unrelated change</strong>.</p>
+        that plan would have removed it silently, as a side effect of an unrelated change.</p>
 
-        <p>What was about to be deleted happened to be <strong>the only control that has ever caught a cost
-        error in this account</strong>.</p>
+        <p>What was about to be deleted happened to be the only control that has ever caught a cost
+        error in this account.</p>
 
-        <p>This is a shape the project keeps producing: <strong>a value living in one place and not the other,
-        with nothing comparing them.</strong> Something made quickly in a console is not in the code, and a
+        <p>This is a shape the project keeps producing: a value living in one place and not the other,
+        with nothing comparing them. Something made quickly in a console is not in the code, and a
         tool that treats the code as the truth sees anything absent from it as something to remove. So when the
-        alert was moved into Terraform, <strong>the reason it exists and the fact that it was nearly deleted
-        went in as a comment beside it</strong> — for whoever next considers removing that block.</p>
+        alert was moved into Terraform, the reason it exists and the fact that it was nearly deleted
+        went in as a comment beside it — for whoever next considers removing that block.</p>
 
         <h2 id="the-same-bytes-for-free">Moving the same 15.6GB for free<a class="anchor" href="#the-same-bytes-for-free" aria-label="Link to this section">#</a></h2>
 
         <p>Once the NAT line was visible, the shape of the next experiment changed.</p>
 
         <p>The question on 2026-09-04 was about vLLM scheduler settings. No gateway, no Kubernetes —
-        <strong>one instance is enough</strong>. And then a single fact decides most of the cost.</p>
+        one instance is enough. And then a single fact decides most of the cost.</p>
 
         <blockquote><p>An instance in a default subnet talks through the internet gateway on a public IP, and
-        <strong>inbound transfer is free.</strong></p></blockquote>
+        inbound transfer is free.</p></blockquote>
 
         <p>Until then paid runs had been pulling container images and model weights —
         <strong>about 15.6GB</strong> for one cold node — across a NAT at <strong>$0.059 per GB</strong>.
         (The NAT data-processing charge for the first three sessions came to
-        <strong>roughly 92GB and $5.43</strong> in total. Three runs of 15.6GB does not account for that, and I
+        roughly 92GB and $5.43 in total. Three runs of 15.6GB does not account for that, and I
         did not reconcile the gap.) Moving to one instance in a public subnet
-        removed that line entirely, and that day's experiment finished at <strong>about $0.40</strong>.</p>
+        removed that line entirely, and that day's experiment finished at about $0.40.</p>
 
-        <p>What changed was not an algorithm but <strong>the path the bytes take</strong>. And that path only
+        <p>What changed was not an algorithm but the path the bytes take. And that path only
         became visible because an alert forced me to read the bill by line item.</p>
 
         <figure class="diagram">
@@ -286,16 +286,16 @@
               <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">the same 15.6 GB · a different bill</text>
             </g>
           </svg>
-          <figcaption>The bytes being moved are the same. What changed is <strong>the path the bytes travel</strong>, and that path was settled by <strong>one line about the shape of the experiment</strong>.</figcaption>
+          <figcaption>The bytes being moved are the same. What changed is <strong>the path the bytes travel</strong>, and that path was settled by one line about the shape of the experiment.</figcaption>
         </figure>
 
         <h2 id="the-rehearsal-that-failed">The rehearsal that failed, twenty minutes and five cents<a class="anchor" href="#the-rehearsal-that-failed" aria-label="Link to this section">#</a></h2>
 
-        <p>Before the first paid GPU session I ran a rehearsal <strong>with no GPU switched on</strong>: apply
+        <p>Before the first paid GPU session I ran a rehearsal with no GPU switched on: apply
         the cluster and immediately destroy it. The point was not performance but
-        <strong>whether the procedure reaches the end</strong>.</p>
+        whether the procedure reaches the end.</p>
 
-        <p><strong>The apply failed</strong>, on a service control policy I had attached the day before.</p>
+        <p>The apply failed, on a service control policy I had attached the day before.</p>
 
 <pre data-lang="text"><code>Error: creating EC2 Launch Template: UnauthorizedOperation
   ec2:CreateLaunchTemplate ... explicit deny in a service control policy</code></pre>
@@ -310,14 +310,14 @@
 
         <p>Two things stacked.</p>
 
-        <p><strong>One. A negated IAM condition operator is true when the key is absent.</strong>
+        <p>One. A negated IAM condition operator is true when the key is absent.
         <code>StringNotLike</code> does not only mean "this value differs from the list"; it is also satisfied
         when the key is not there at all.</p>
 
-        <p><strong>Two. An EKS managed node group carries the instance type on the node group, not in the
-        launch template.</strong> So <code>ec2:InstanceType</code> was absent.</p>
+        <p>Two. An EKS managed node group carries the instance type on the node group, not in the
+        launch template. So <code>ec2:InstanceType</code> was absent.</p>
 
-        <p>Together, the statement did not restrict instance families — <strong>it blocked the service</strong>.
+        <p>Together, the statement did not restrict instance families — it blocked the service.
         <code>g5.*</code> was in the allow list and a g5 node group still could not be created.</p>
 
         <p>Meeting that in a rehearsal cost this:</p>
@@ -336,13 +336,13 @@
         </div>
         </div>
 
-        <p>About forty billed minutes across both, <strong>roughly $0.18</strong>; the first alone was twenty
-        minutes at about <strong>$0.05</strong>. (Both are billed time multiplied by the hourly rate, not
+        <p>About forty billed minutes across both, roughly $0.18; the first alone was twenty
+        minutes at about $0.05. (Both are billed time multiplied by the hourly rate, not
         reconciled against the bill's line items.)</p>
 
-        <p>Had that policy defect first appeared <strong>during a paid GPU session</strong>, I would have been
+        <p>Had that policy defect first appeared during a paid GPU session, I would have been
         debugging it with the card running. The value of a rehearsal is not that it succeeded; it is that
-        <strong>the failure happened somewhere cheap</strong>.</p>
+        the failure happened somewhere cheap.</p>
 
         <h2 id="the-alarm-nobody-had-heard">The alarm nobody had heard ring<a class="anchor" href="#the-alarm-nobody-had-heard" aria-label="Link to this section">#</a></h2>
 
@@ -351,33 +351,33 @@
 
         <p>The next day I traced what that sentence rested on and found <strong>nothing</strong>. All I had
         checked was that the schedule read <code>ENABLED</code>. That means AWS <strong>accepted</strong> it —
-        not that it <strong>emits a call</strong> when the time comes. Whether the role assumption works,
+        not that it emits a call when the time comes. Whether the role assumption works,
         whether the policy permits the call, what shape the payload has: none of it verified.</p>
 
         <p>But verifying it properly means renting a GPU and waiting for the interval to pass.
-        <strong>Spending money to verify the thing that exists to control spending.</strong></p>
+        Spending money to verify the thing that exists to control spending.</p>
 
-        <p>The way out was in where the failure lands. What I want to know is <strong>whether a call goes
-        out</strong>, not whether it succeeds. Which means <strong>the target does not have to exist.</strong></p>
+        <p>The way out was in where the failure lands. What I want to know is whether a call goes
+        out, not whether it succeeds. Which means the target does not have to exist.</p>
 
         <p>I scheduled it two minutes out against a cluster and node group name that do not exist, with zero
         retries and delete-on-completion.</p>
 
-        <p><strong>The first piece of evidence was the schedule disappearing.</strong> Delete-on-completion
+        <p>The first piece of evidence was the schedule disappearing. Delete-on-completion
         happens only after the call has run; a schedule that never fired stays.</p>
 
-        <p><strong>The second was the audit log.</strong></p>
+        <p>The second was the audit log.</p>
 
 <pre data-lang="text"><code>principal : assumed-role/gpu-platform-ttl-scaledown/...
 request   : {"scalingConfig": {"minSize": 0, "desiredSize": 0}, ...}
 error     : ResourceNotFoundException</code></pre>
 
         <p>The role was assumed, the policy let the call through, and the payload matched what the script
-        writes. <strong>The only thing that failed was the target</strong>, and the target was deliberately a
-        name that does not exist so that nothing would be spent. <strong>The cost was zero dollars.</strong></p>
+        writes. The only thing that failed was the target, and the target was deliberately a
+        name that does not exist so that nothing would be spent. The cost was zero dollars.</p>
 
-        <p>Stating the verified boundary exactly: <strong>the schedule assumes its role on time and emits a
-        call of that shape</strong>. That a real node group then goes to zero is not something this experiment
+        <p>Stating the verified boundary exactly: the schedule assumes its role on time and emits a
+        call of that shape. That a real node group then goes to zero is not something this experiment
         showed.</p>
 
         <h2 id="the-only-way-in-was-root">The only way in was root<a class="anchor" href="#the-only-way-in-was-root" aria-label="Link to this section">#</a></h2>
@@ -388,41 +388,41 @@ error     : ResourceNotFoundException</code></pre>
         Identity Center.</p>
 
         <p>To be exact: AWS does have an <strong>alternative verification path</strong> using the registered
-        email and phone, and I knew it existed. But <strong>I never confirmed that it works</strong> — the
+        email and phone, and I knew it existed. But I never confirmed that it works — the
         sign-in eventually succeeded, so it was never needed. An emergency path you have not tested is hard to
         count as one you have.</p>
 
-        <p>Not because the configuration was wrong. Because <strong>the way in I had built was exactly
-        one.</strong> Setting up Identity Center, I assigned the permission set
-        <strong>to the lab account only</strong>.</p>
+        <p>Not because the configuration was wrong. Because the way in I had built was exactly
+        one. Setting up Identity Center, I assigned the permission set
+        to the lab account only.</p>
 
         <p>Not assigning the management account was an omission rather than a decision. I had thought "no
-        workloads live there, so there is nothing to do there" — but <strong>managing the organisation, the
-        SCPs and Identity Center is exactly what happens there</strong>. An account with no workloads is not an
+        workloads live there, so there is nothing to do there" — but managing the organisation, the
+        SCPs and Identity Center is exactly what happens there. An account with no workloads is not an
         account that needs no access.</p>
 
         <p>Fixing it took three minutes. Noticing took two days, and what made me notice was
-        <strong>an MFA code happening not to match</strong>.</p>
+        an MFA code happening not to match.</p>
 
         <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
         <ul>
           <li><strong>Not a claim that the TTL prevented a cost incident.</strong> What was verified is that
           the schedule emits a call on time; the target was deliberately a name that does not exist. And the
-          control's scope is <strong>scaling a node group to zero</strong>, not capping account-wide spend.</li>
+          control's scope is scaling a node group to zero, not capping account-wide spend.</li>
           <li><strong>$0.05 and $0.18 are not bill line items.</strong> They are billed time multiplied by the
           hourly rate. $14.56 and $0.40 come from billing and accounting, but this article
-          <strong>did not reconcile either against the billing ledger separately</strong>.</li>
-          <li><strong>The SCP defect was not fixed by patching the condition.</strong> That call cannot be
+          did not reconcile either against the billing ledger separately.</li>
+          <li>The SCP defect was not fixed by patching the condition. That call cannot be
           restricted to instance families through that condition key, so the statement itself was removed.</li>
-          <li><strong>The SCP defect is specific to this organisation's setup.</strong> That an absent
+          <li>The SCP defect is specific to this organisation's setup. That an absent
           condition key satisfies a negated operator is general; which key is absent depends on the service
           and the call path.</li>
-          <li><strong>This is personal-lab scale.</strong> Half the reason the controls were useful here is
+          <li>This is personal-lab scale. Half the reason the controls were useful here is
           that the spend is small enough for a single line item's error to stand out.</li>
-          <li><strong>A budget alert is a detective control.</strong> It does not prevent spend; it reports it.
+          <li>A budget alert is a detective control. It does not prevent spend; it reports it.
           The claim here is not that it is powerful, but the observation that
-          <strong>of several layers, it was the one that caught something</strong>.</li>
+          of several layers, it was the one that caught something.</li>
         </ul>
 
         <div class="wrapup">
@@ -433,15 +433,15 @@ error     : ResourceNotFoundException</code></pre>
           changeable with the remaining 20%.</li>
           <li><strong>An item missing from an estimate will not surface by re-reading the estimate.</strong>
           It surfaces next to the bill.</li>
-          <li><strong>Anything created outside the state file is on the next plan's delete list.</strong></li>
-          <li><strong>Building a control and confirming it fires are different pieces of work.</strong>
+          <li>Anything created outside the state file is on the next plan's delete list.</li>
+          <li>Building a control and confirming it fires are different pieces of work.
           Most controls make the list without the second one.</li>
         </ul>
 
-        <p>What is left is one line. <strong>Building a control and confirming that the control fires are
-        different pieces of work, and most controls get onto the list without the second one.</strong> And the
-        one on my list that caught a cost error was the simplest — <strong>an alert that put my estimate and the
-        real bill side by side</strong>.</p>
+        <p>What is left is one line. Building a control and confirming that the control fires are
+        different pieces of work, and most controls get onto the list without the second one. And the
+        one on my list that caught a cost error was the simplest — an alert that put my estimate and the
+        real bill side by side.</p>
 
         <p>Thank you for reading.</p>
         </div>

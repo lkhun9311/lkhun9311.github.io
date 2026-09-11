@@ -88,7 +88,7 @@
         <ul>
           <li><strong>セッションプーリング</strong> — クライアントが切断するまで Connection を握ります。再利用はほとんどありません。</li>
           <li><strong>Transaction Pooling</strong> — Transaction 単位。実務でいちばん使われるモードです。</li>
-          <li><strong>ステートメントプーリング</strong> — クエリ一つ単位。Transaction は使えません。</li>
+          <li>ステートメントプーリング — クエリ一つ単位。Transaction は使えません。</li>
         </ul>
         <h2 id="성질">核心的な性質 — いつ固定されるか<a class="anchor" href="#성질" aria-label="このセクションへのリンク">#</a></h2>
         <p>この一行がすべてです。</p>
@@ -96,7 +96,7 @@
         <blockquote><p>Connection の再利用は Transaction と Transaction の<strong>あいだ</strong>でしか起きない。
         Transaction が開いているあいだ、その Connection はそのクライアントに<strong>固定される(pin)</strong>。</p></blockquote>
 
-        <p>当然の話です。Transaction は<strong>状態</strong>であり、開いている途中で別のセッションに貸せば分離が壊れます。</p>
+        <p>当然の話です。Transaction は状態であり、開いている途中で別のセッションに貸せば分離が壊れます。</p>
 
         <p>そこでこうなります。</p>
 
@@ -105,7 +105,7 @@
   → アプリの connection 1 本につき DB の connection 1 本
   → pooler がまとめる余地がない</pre>
 
-        <p>つまり<strong>短い Transaction が多いとき</strong>に値打ちがある道具です。Transaction の中で外部 API を待つ
+        <p>つまり短い Transaction が多いときに値打ちがある道具です。Transaction の中で外部 API を待つ
         コードには効きません。</p>
         <h2 id="핀">ピン(pin)がかかるパターン<a class="anchor" href="#핀" aria-label="このセクションへのリンク">#</a></h2>
         <p>次のパターンがコードにあると、Transaction が終わっても Connection は固定されたままで、Pooler は無力になります。</p>

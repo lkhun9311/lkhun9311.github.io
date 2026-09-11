@@ -103,7 +103,7 @@
         at the time.</p>
 
         <p>This was not code that could fail on 20 rows. So this article
-        <strong>starts without opening a single source file.</strong></p>
+        starts without opening a single source file.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -118,21 +118,21 @@
         <ul>
           <li><strong>The CLI took 54 seconds for the same list.</strong> Which puts the slow stretch below
           our backend.</li>
-          <li>Two abnormal things showed up together. <strong>Swap was full</strong> at 8.0GiB of 8.0GiB, and the
+          <li>Two abnormal things showed up together. Swap was full at 8.0GiB of 8.0GiB, and the
           <code>instances</code> table still held <strong>1,021 rows that were only marked deleted.</strong></li>
-          <li>After the fix the CLI query went from <strong>54 seconds to 1.002 seconds.</strong></li>
-          <li>⚠️ But <strong>the commands I used are not ones you should run in production.</strong>
+          <li>After the fix the CLI query went from 54 seconds to 1.002 seconds.</li>
+          <li>⚠️ But the commands I used are not ones you should run in production.
           A month later I wrote up the proper answer for the same problem. This article carries both.</li>
         </ul>
 
-        <p><strong>This is an internal product, so neither the code nor the screens are reproduced as they
-        are.</strong> Product names, customers and internal addresses are gone; the structure and the numbers
-        stay. The screenshot of the console <strong>is not used at all</strong>. The product is the whole
+        <p>This is an internal product, so neither the code nor the screens are reproduced as they
+        are. Product names, customers and internal addresses are gone; the structure and the numbers
+        stay. The screenshot of the console is not used at all. The product is the whole
         picture there. Terminal output appears with the host name masked.</p>
 
-        <p><strong>⚠️ One thing up front.</strong> The numbers below are <strong>measurements from a QA test
-        environment</strong>, not production statistics. And as you will see, <strong>two fixes went in at once,
-        so how much each one cut off the query time was never measured separately.</strong></p>
+        <p>⚠️ One thing up front. The numbers below are measurements from a QA test
+        environment, not production statistics. And as you will see, two fixes went in at once,
+        so how much each one cut off the query time was never measured separately.</p>
 
         <h2 id="the-screen">The screen<a class="anchor" href="#the-screen" aria-label="Link to this section">#</a></h2>
 
@@ -189,24 +189,24 @@
         <h2 id="the-fork">The fork: the CLI took 54 seconds too<a class="anchor" href="#the-fork" aria-label="Link to this section">#</a></h2>
 
         <p>The first thing I did about a screen that would not load was
-        <strong>ask for the same thing down a different path.</strong></p>
+        ask for the same thing down a different path.</p>
 
 <pre data-lang="bash"><code>$ openstack server list</code></pre>
 
         <p><strong>It took 54 seconds.</strong></p>
 
-        <p>⚠️ <strong>Before and after are not guaranteed to be the same request.</strong> What the record holds
+        <p>⚠️ Before and after are not guaranteed to be the same request. What the record holds
         is <code>openstack server list</code> before and
         <code>openstack server list --all-projects</code> after. The options differ. And for the before run there
-        is no terminal capture, <strong>only the number.</strong></p>
+        is no terminal capture, only the number.</p>
 
         <p>Still, that one line bought something. <strong>A path that does not go through the admin console
-        backend also took 54 seconds,</strong> which means there is <strong>at least one slow stretch below the
-        compute API.</strong> ⚠️ It is not proof that our backend added no delay of its own. I did not measure
+        backend also took 54 seconds,</strong> which means there is at least one slow stretch below the
+        compute API. ⚠️ It is not proof that our backend added no delay of its own. I did not measure
         that side.</p>
 
         <blockquote><p>Opening the application code first on a slow screen is a habit, not a diagnosis.
-        <strong>Ask the same question down a second path and there is less left to search.</strong></p></blockquote>
+        Ask the same question down a second path and there is less left to search.</p></blockquote>
 
         <h2 id="cause-a">Cause 1: swap was full, all 8.0GiB of it<a class="anchor" href="#cause-a" aria-label="Link to this section">#</a></h2>
 
@@ -220,12 +220,12 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
         <p><strong>Swap is using 8.0GiB out of 8.0GiB.</strong> What is left is 2.0MiB. That much is
         <strong>observed.</strong></p>
 
-        <p>From here on it is a <strong>hypothesis.</strong> If a page MariaDB needs sits in swap, a read that
+        <p>From here on it is a hypothesis. If a page MariaDB needs sits in swap, a read that
         would have ended in memory becomes a round trip to disk. The query would be unchanged and slower.</p>
 
-        <p>⚠️ <strong>I never measured that hypothesis.</strong> There is no <code>vmstat</code>, no
+        <p>⚠️ I never measured that hypothesis. There is no <code>vmstat</code>, no
         <code>iostat</code>, no page-fault record for the MariaDB process. So this article can state
-        <strong>two facts: swap was full, and clearing it made things faster.</strong> What joins them is a
+        two facts: swap was full, and clearing it made things faster. What joins them is a
         guess, not evidence. The internal document’s “RAM 0.0001ms, swap 10–100ms” is likewise a cited order of
         magnitude, not a measurement from this machine.</p>
 
@@ -277,7 +277,7 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
 
         <h2 id="cause-b">Cause 2: 1,021 rows marked deleted and still there<a class="anchor" href="#cause-b" aria-label="Link to this section">#</a></h2>
 
-        <p>Next, the table. When Nova deletes an instance it <strong>does not remove the row.</strong>
+        <p>Next, the table. When Nova deletes an instance it does not remove the row.
         It changes the <code>deleted</code> column. A soft delete.</p>
 
 <pre data-lang="sql"><code>SELECT deleted, COUNT(*) FROM instances GROUP BY deleted;</code></pre>
@@ -289,9 +289,9 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
           this screen, so it is used as it is.</figcaption>
         </figure>
 
-        <p>And here <strong>the source document misread its own screenshot.</strong> It says
+        <p>And here the source document misread its own screenshot. It says
         “a full scan of 1,022 rows”. But <code>1022 rows in set</code> is
-        <strong>not a row count. It is the number of groups <code>GROUP BY</code> returned.</strong></p>
+        not a row count. It is the number of groups <code>GROUP BY</code> returned.</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">Scroll sideways to see the rest</p>
@@ -306,19 +306,19 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
         </table>
         </div>
         </div>
-        <p class="table-note">A soft-deleted Nova <code>instances</code> row gets <strong>its own id</strong>
+        <p class="table-note">A soft-deleted Nova <code>instances</code> row gets its own id
         written into <code>deleted</code> (this is not a claim about every service or every table). Each deleted
         row therefore carries a different value, and one group appears per row. The screenshot shows it: only <code>deleted = 0</code> has <code>COUNT(*) = 20</code>, every other
-        group has 1. The <strong>1,041</strong> in the summary table is the row count, and that one is right.</p>
+        group has 1. The 1,041 in the summary table is the row count, and that one is right.</p>
 
         <p>So the screen wanted 20 rows and the table held 1,041. And not only <code>instances</code>:
         the same had piled up in the tables hanging off it, such as
         <code>instance_actions_events</code>, <code>instance_faults</code> and
         <code>instance_system_metadata</code>.</p>
 
-        <p>⚠️ <strong>No execution plan was kept.</strong> The internal document calls this a full scan, but
+        <p>⚠️ No execution plan was kept. The internal document calls this a full scan, but
         there is no recorded <code>EXPLAIN</code>, so whether everything was really scanned is not something I
-        verified. What was verified is <strong>that the table held 1,041 rows and not 20.</strong></p>
+        verified. What was verified is that the table held 1,041 rows and not 20.</p>
 
         <h2 id="the-fix">The fix: I used commands I could not undo<a class="anchor" href="#the-fix" aria-label="Link to this section">#</a></h2>
 
@@ -327,15 +327,15 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
 <pre data-lang="bash"><code>$ swapoff -a &amp;&amp; swapon -a</code></pre>
 
         <p>This command <strong>pulls everything in swap back into RAM.</strong> Which means
-        <strong>RAM has to have room for it.</strong> If it does not, <code>swapoff</code> fails or the kernel
+        RAM has to have room for it. If it does not, <code>swapoff</code> fails or the kernel
         starts killing processes to reclaim memory (the OOM killer). Here <code>available</code> (the kernel’s
         estimate of what a new process could use without swapping) was 18GiB, so there was room for 8.0GiB.</p>
 
-        <p>⚠️ And <strong>this one line has a trap I did not know about at the time.</strong>
-        <code>swapoff -a</code> turns off <strong>every registered swap</strong>, and it can fail for reasons
+        <p>⚠️ And this one line has a trap I did not know about at the time.
+        <code>swapoff -a</code> turns off every registered swap, and it can fail for reasons
         other than memory. If only some of them come off, <code>swapoff</code> exits non-zero, and
-        <code>&amp;&amp;</code> runs the second command only on a zero exit. So <strong>if it half fails,
-        <code>swapon -a</code> never runs at all and swap stays off.</strong> On a production box this is a
+        <code>&amp;&amp;</code> runs the second command only on a zero exit. So if it half fails,
+        <code>swapon -a</code> never runs at all and swap stays off. On a production box this is a
         command to touch only after checking headroom, checking each device separately, and having a way back.</p>
 
 <pre data-lang="text"><code>[root@host ~]# free -h
@@ -343,13 +343,13 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
 Mem:            62Gi   51Gi  787Mi    1.3Gi        11Gi        10Gi
 Swap:          8.0Gi     0B  8.0Gi</code></pre>
 
-        <p><strong>And it used all of that room.</strong> <code>available</code> went from 18GiB to
+        <p>And it used all of that room. <code>available</code> went from 18GiB to
         <strong>10GiB</strong>.</p>
 
         <p>⚠️ That 8GiB cannot all be pinned on the swap-in. <code>free -h</code> rounds,
-        <code>available</code> is an <strong>estimate</strong> rather than a usage figure, and other processes
-        were running throughout. And <strong>what shrank is the RAM headroom at that moment, not the swap
-        capacity.</strong> <code>swapon -a</code> put the 8.0GiB of swap back. Whether it fills again is
+        <code>available</code> is an estimate rather than a usage figure, and other processes
+        were running throughout. And what shrank is the RAM headroom at that moment, not the swap
+        capacity. <code>swapon -a</code> put the 8.0GiB of swap back. Whether it fills again is
         something I did not measure afterwards.</p>
 
         <p>Then the table.</p>
@@ -371,8 +371,8 @@ SET FOREIGN_KEY_CHECKS = 1;</code></pre>
         </figure>
 
         <p>The application side changed too. The list-all API now
-        <strong>filters out the <code>DELETED</code> state</strong> when it asks.
-        ⚠️ How much that actually defends, though, <strong>I did not measure.</strong>
+        filters out the <code>DELETED</code> state when it asks.
+        ⚠️ How much that actually defends, though, I did not measure.
         <code>openstack server list</code> already excludes deleted rows by default. What our backend was
         sending before, and what changed after, is recorded neither as a request nor as a query plan.</p>
 
@@ -383,28 +383,28 @@ SET FOREIGN_KEY_CHECKS = 1;</code></pre>
         Even if that judgement was correct, <strong>the method was bad.</strong></p>
 
         <ul>
-          <li><strong>I turned foreign key checks off.</strong> This is not a “be careful with the order”
-          problem. In a session with checks off, <strong>every reference violation simply passes,</strong> and
-          <strong>switching them back on does not go back and validate what already happened.</strong>
+          <li>I turned foreign key checks off. This is not a “be careful with the order”
+          problem. In a session with checks off, every reference violation simply passes, and
+          switching them back on does not go back and validate what already happened.
           A child table I missed, another write landing in between, an execution cut short. Any of these can
           leave rows with broken references, and you find out much later.</li>
-          <li><strong>I did not take a backup first.</strong> “It does not need to survive” is a safe judgement
+          <li>I did not take a backup first. “It does not need to survive” is a safe judgement
           only while you can still undo it.</li>
-          <li><strong>It does not stop this recurring.</strong> Soft deletes keep accumulating. What I cleared,
+          <li>It does not stop this recurring. Soft deletes keep accumulating. What I cleared,
           I cleared up to that day.</li>
         </ul>
 
-        <p>So a month later I <strong>wrote the proper answer down separately.</strong></p>
+        <p>So a month later I wrote the proper answer down separately.</p>
 
         <h2 id="the-real-answer">A month later: the answer was already in the docs<a class="anchor" href="#the-real-answer" aria-label="Link to this section">#</a></h2>
 
         <p>The OpenStack documentation has a section called <strong>Soft Delete and Shadow Tables.</strong>
         That accumulated deleted rows affect performance, and that you should archive and purge them
-        periodically, <strong>were already written there.</strong> Deleting by hand was what I did instead of
+        periodically, were already written there. Deleting by hand was what I did instead of
         reading it.</p>
 
-        <p>What the document describes is <strong>moving rows aside rather than deleting them out of the main
-        table.</strong> The place they move to is a <strong>shadow table</strong>: a table of the same shape whose
+        <p>What the document describes is moving rows aside rather than deleting them out of the main
+        table. The place they move to is a shadow table: a table of the same shape whose
         name starts with <code>shadow_</code>, sitting outside the query path.</p>
 
         <div class="table-scroll">
@@ -421,10 +421,10 @@ SET FOREIGN_KEY_CHECKS = 1;</code></pre>
         </table>
         </div>
         </div>
-        <p class="table-note">Nothing is deleted straight out of the main table; <strong>there is a stage in
-        between,</strong> and the main table already shrinks at archive time. ⚠️ Every period here counts from
-        <strong>the day the row was deleted.</strong> Archive at 30 days and purge at 90 and a row spends 60 days
-        in shadow. ⚠️ And <strong>shadow tables are not a recovery mechanism Nova guarantees.</strong>
+        <p class="table-note">Nothing is deleted straight out of the main table; there is a stage in
+        between, and the main table already shrinks at archive time. ⚠️ Every period here counts from
+        the day the row was deleted. Archive at 30 days and purge at 90 and a row spends 60 days
+        in shadow. ⚠️ And shadow tables are not a recovery mechanism Nova guarantees.
         They are history kept out of the query path, and not every table has one. Do not read this as
         “90 days to undo”.</p>
 
@@ -439,21 +439,21 @@ nova-manage db purge \
   --before "$(date -d '90 days ago' '+%Y-%m-%d')"</code></pre>
 
         <p>⚠️ The proposal had <code>--all</code> on <code>purge</code>. That does not mean “all shadow tables”;
-        it means <strong>delete everything left</strong>, which pulls against <code>--before</code>.
+        it means delete everything left, which pulls against <code>--before</code>.
         It is gone here.</p>
 
-        <p>And I wrote that <strong>this should not be something a person has to remember.</strong>
+        <p>And I wrote that this should not be something a person has to remember.
         The proposal runs it in small batches in the quiet hours.</p>
 
-        <p>⚠️ <strong>Except the cron example in my own proposal contradicted my own retention policy.</strong>
+        <p>⚠️ Except the cron example in my own proposal contradicted my own retention policy.
         I found that writing this article. Three things.</p>
 
         <ul>
-          <li><strong><code>--before</code> was missing.</strong> The table above promises 30 days, and the cron
-          moves <strong>rows deleted yesterday</strong> that same night.</li>
-          <li><strong><code>--sleep</code> only means something alongside <code>--until-complete</code>.</strong>
+          <li><code>--before</code> was missing. The table above promises 30 days, and the cron
+          moves rows deleted yesterday that same night.</li>
+          <li><code>--sleep</code> only means something alongside <code>--until-complete</code>.
           In this shape the command runs one batch and exits, so there is nowhere to sleep.</li>
-          <li><strong>There was no purge cron.</strong> Archive alone lets shadow grow forever. The main table
+          <li>There was no purge cron. Archive alone lets shadow grow forever. The main table
           shrinks and the disk does not.</li>
         </ul>
 
@@ -479,12 +479,12 @@ nova-manage db purge \
 <pre data-lang="bash"><code>mysqldump --single-transaction nova       &gt; nova_backup.sql
 mysqldump --single-transaction nova_cell0 &gt; nova_cell0_backup.sql</code></pre>
 
-        <p>⚠️ <strong>That backup is not enough.</strong> I copied it from the proposal as written, but
-        <code>--all-cells</code> touches <strong>every registered cell database</strong> (a cell is the database
+        <p>⚠️ That backup is not enough. I copied it from the proposal as written, but
+        <code>--all-cells</code> touches every registered cell database (a cell is the database
         unit Nova splits compute resources across), and archiving instances also removes rows on the
         <code>nova_api</code> side. Two dumps will not restore that.
-        <strong>List the cells first, then dump every database in that list along with
-        <code>nova_api</code>.</strong></p>
+        List the cells first, then dump every database in that list along with
+        <code>nova_api</code>.</p>
 
         <h2 id="measurement">Measurement: what changed, by how much<a class="anchor" href="#measurement" aria-label="Link to this section">#</a></h2>
 
@@ -495,15 +495,15 @@ mysqldump --single-transaction nova_cell0 &gt; nova_cell0_backup.sql</code></pre
           <caption class="sr-only">Listing all instances, before and after.</caption>
           <thead><tr><th>Metric</th><th>Before</th><th>After</th></tr></thead>
           <tbody>
-            <tr><td><strong>CLI query time</strong></td><td>54 s</td><td><strong>1.002 s</strong></td></tr>
+            <tr><td>CLI query time</td><td>54 s</td><td><strong>1.002 s</strong></td></tr>
             <tr><td>swap in use</td><td>8.0GiB (100%)</td><td><strong>0B</strong></td></tr>
-            <tr><td><code>instances</code> rows</td><td>1,041</td><td><strong>20</strong></td></tr>
+            <tr><td><code>instances</code> rows</td><td>1,041</td><td>20</td></tr>
             <tr><td>RAM <code>available</code></td><td>18GiB</td><td>10GiB</td></tr>
           </tbody>
         </table>
         </div>
         </div>
-        <p class="table-note">The last row is <strong>a number that got worse.</strong> It stays in the
+        <p class="table-note">The last row is a number that got worse. It stays in the
         table.</p>
 
 <pre data-lang="text"><code>[root@host ~]# time openstack server list --all-projects
@@ -512,34 +512,34 @@ real    0m1.002s
 user    0m0.577s
 sys     0m0.048s</code></pre>
 
-        <p>The screen that used to time out now loads. ⚠️ <strong>I did not measure the screen itself.</strong>
+        <p>The screen that used to time out now loads. ⚠️ I did not measure the screen itself.
         Before the fix it never finished, so there was nothing to measure; after the fix I did not go back and
-        time it. <strong>The 54 seconds is a CLI measurement.</strong></p>
+        time it. The 54 seconds is a CLI measurement.</p>
 
         <h2 id="limits">Limits: what this article does not claim<a class="anchor" href="#limits" aria-label="Link to this section">#</a></h2>
 
         <ul>
-          <li><strong>How much each of the two changes cut, I cannot separate.</strong> Clearing swap and
-          deleting rows went in together, and whether they <strong>affected each other</strong> is also unknown.
+          <li>How much each of the two changes cut, I cannot separate. Clearing swap and
+          deleting rows went in together, and whether they affected each other is also unknown.
           Seeing that would take four combinations run separately, and I ran none of them.
           Measuring six configurations separately in
           <a href="slow-screens-1-volume-list.html">the previous part</a> was exactly for this, and here the
           situation was urgent enough that I did not.</li>
           <li><strong>I am not claiming 1,041 rows caused 54 seconds.</strong> Nor that they did not.
-          The row count was never varied on its own, so <strong>there is nothing here to decide it with.</strong></li>
-          <li><strong>Clearing swap did not remove a cause.</strong> It reversed the state at that moment.
-          ⚠️ And <strong>I never checked what was holding that much memory.</strong> So this article cannot say
+          The row count was never varied on its own, so there is nothing here to decide it with.</li>
+          <li>Clearing swap did not remove a cause. It reversed the state at that moment.
+          ⚠️ And I never checked what was holding that much memory. So this article cannot say
           “add RAM” or “tune MariaDB” either. The first step would be finding which process held what.</li>
           <li><strong>“Under 500 ms once the cache applies” is the source’s sentence.</strong> No measurement
           behind it survives in the record, so it is not in the table.</li>
-          <li><strong>These are not production numbers.</strong> They are measurements from a QA test
+          <li>These are not production numbers. They are measurements from a QA test
           environment.</li>
-          <li><strong>The second half is a proposal, not a result.</strong> Archive, purge and cron are what I
-          <strong>proposed</strong> in a document; I have no record that any of it was actually scheduled and
+          <li>The second half is a proposal, not a result. Archive, purge and cron are what I
+          proposed in a document; I have no record that any of it was actually scheduled and
           ran. The only part of this article with measurements attached is the first half, the hurried fix.</li>
-          <li><strong>It may not be only about OpenStack.</strong> Any system that leaves deleted rows in the
+          <li>It may not be only about OpenStack. Any system that leaves deleted rows in the
           main table can hit something similar, depending on its schema and query plans.
-          What this article verified, though, is <strong>one machine.</strong></li>
+          What this article verified, though, is one machine.</li>
         </ul>
 
         <div class="wrapup">
@@ -553,18 +553,18 @@ sys     0m0.048s</code></pre>
           <li><strong>Deleted data is still in the main table.</strong> A soft delete looks like a deletion and
           is not one. How many of those rows a query actually reads depends on the schema and the plan, and
           that has to be checked separately.</li>
-          <li><strong>With swap full, judgements above it get hard to trust.</strong> The query is unchanged
+          <li>With swap full, judgements above it get hard to trust. The query is unchanged
           while what a single read costs may not be, and confirming that means measuring the memory side.</li>
-          <li><strong>Do not leave an emergency command standing as the answer.</strong> If you do not write
+          <li>Do not leave an emergency command standing as the answer. If you do not write
           that down, the next person learns it as the procedure.</li>
         </ul>
 
         <p>If one line survives, this one:
-        <strong>fixing it and fixing it properly are different things.</strong>
+        fixing it and fixing it properly are different things.
         The commands that turned 54 seconds into one second were not the answer I wrote up a month later.</p>
 
-        <p>The next part is another screen in the same product. That time <strong>a cache was already
-        there</strong> and that cache was the reason the screen was slow.</p>
+        <p>The next part is another screen in the same product. That time a cache was already
+        there and that cache was the reason the screen was slow.</p>
 
         <p>Thank you for reading.</p>
         </div>

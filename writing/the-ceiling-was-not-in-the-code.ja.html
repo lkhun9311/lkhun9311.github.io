@@ -123,24 +123,24 @@
           <li>コンテンツ検閲経路のスループットが <strong>6.27 req/s</strong> で止まっていました。書き込み Thread を
           2倍にしても、DB Pool を3倍にしても同じでした。</li>
           <li>原因は <strong>S3 を使うために入れた AWS SDK が連れてきた HTTP クライアント</strong>の既定値
-          <strong>「対象ホストあたり connection5本」</strong>でした。</li>
-          <li>このライブラリは<strong>ランタイムのクラスパスにしかありません。</strong>コードのどこにも名前が出ないので、
-          <strong>読んでも見つからず、測ってはじめて出てきます。</strong></li>
-          <li>直し方は<strong>上限をなくすことではなく、決めること</strong>でした。上限を消してもスループットは同じだけ
-          上がりますが、それは<strong>誰も選んでいない 5</strong> を <strong>誰も選んでいない無限大</strong>に
+          「対象ホストあたり connection5本」でした。</li>
+          <li>このライブラリはランタイムのクラスパスにしかありません。コードのどこにも名前が出ないので、
+          読んでも見つからず、測ってはじめて出てきます。</li>
+          <li>直し方は上限をなくすことではなく、決めることでした。上限を消してもスループットは同じだけ
+          上がりますが、それは誰も選んでいない 5 を 誰も選んでいない無限大に
           替えるだけです。</li>
-          <li>結果は外部呼び出しの同時実行 <strong>10 → 32</strong>、投稿作成 p50 <strong>2,592 → 805ms</strong>、
-          スループット <strong>6.27 → 19.89 req/s</strong>(3.17倍)、エラー率 <strong>0%</strong> でした。</li>
+          <li>結果は外部呼び出しの同時実行 10 → 32、投稿作成 p50 2,592 → 805ms、
+          スループット 6.27 → 19.89 req/s(3.17倍)、エラー率 0% でした。</li>
         </ul>
 
-        <p><strong>コードは非公開リポジトリにあります。</strong>まだリリース前なのでリポジトリを開けていません。
-        そのためこの記事に GitHub リンクはありません。コードは<strong>引用した断片だけ</strong>を本文に載せています。</p>
+        <p>コードは非公開リポジトリにあります。まだリリース前なのでリポジトリを開けていません。
+        そのためこの記事に GitHub リンクはありません。コードは引用した断片だけを本文に載せています。</p>
 
-        <p><strong>⚠️ 先にお伝えすることがあります。</strong>この記事の数値はすべて<strong>ローカルの Harness で
-        測ったもの</strong>です。負荷ツール・アプリケーション・外部 API の Stub ・PostgreSQL が
-        <strong>すべて同じマシン</strong>で CPU を分け合っています。ですから
-        <strong>絶対スループットには意味がなく、比較にだけ意味があります。</strong>外部呼び出しの 800ms は
- Stub に<strong>設定した値</strong>であって実際の遅延分布ではなく、<strong>条件ごとに1回の実行</strong>です。</p>
+        <p>⚠️ 先にお伝えすることがあります。この記事の数値はすべてローカルの Harness で
+        測ったものです。負荷ツール・アプリケーション・外部 API の Stub ・PostgreSQL が
+        すべて同じマシンで CPU を分け合っています。ですから
+        絶対スループットには意味がなく、比較にだけ意味があります。外部呼び出しの 800ms は
+ Stub に設定した値であって実際の遅延分布ではなく、条件ごとに1回の実行です。</p>
 
         <h2 id="どの経路">どの経路の話ですか?<a class="anchor" href="#どの経路" aria-label="このセクションへのリンク">#</a></h2>
 
@@ -149,7 +149,7 @@
  Monolith で、データベースはマネージドの PostgreSQL 一つです。</p>
 
         <p>投稿は<strong>モデレーションゲート</strong>を通らないと公開されません。ゲートは四層あり、そのうち
-        <strong>③ 有害分類</strong>と<strong>④ 攻撃判定</strong>の二層が外部 API を呼びます。ゲートは
+        ③ 有害分類と④ 攻撃判定の二層が外部 API を呼びます。ゲートは
         <a class="term" href="../notes/fail-closed.html">Fail-closed</a> なので、この呼び出しが失敗すると投稿は
         公開されません。</p>
 
@@ -194,10 +194,10 @@
               </defs>
             </svg>
           </div>
-          <figcaption>四層のうち前の二つはアプリ内で完結し、後ろの二つだけが外へ出ます。ピンクが外へ出る経路で、投稿一件が<strong>外部呼び出しを二つ</strong>作ります。どれか一つでも止めれば投稿は公開されない <strong>Fail-closed</strong> の構造です。</figcaption>
+          <figcaption>四層のうち前の二つはアプリ内で完結し、後ろの二つだけが外へ出ます。ピンクが外へ出る経路で、投稿一件が<strong>外部呼び出しを二つ</strong>作ります。どれか一つでも止めれば投稿は公開されない Fail-closed の構造です。</figcaption>
         </figure>
 
-        <p>図が語っていないことを一つ添えると、<strong>③ と ④ は同じホストへ出ます。</strong>この事実が後で
+        <p>図が語っていないことを一つ添えると、③ と ④ は同じホストへ出ます。この事実が後で
         「ホストあたり5」という既定値と出会って問題になります。</p>
 
         <h2 id="dbだと思った">最初は DB がボトルネックだと思っていました<a class="anchor" href="#dbだと思った" aria-label="このセクションへのリンク">#</a></h2>
@@ -236,7 +236,7 @@
               → 同じホストを見る RestClient 2つ × 5 = 同時10</code></pre>
 
         <p><strong>この連鎖で私が選んだのは一行目だけです。</strong>ファイルアップロードのために S3 を足しただけなのに、
-        それが連れてきた HTTP クライアントを通じて<strong>コンテンツ検閲のスループット上限</strong>を決めていました。</p>
+        それが連れてきた HTTP クライアントを通じてコンテンツ検閲のスループット上限を決めていました。</p>
 
         <h2 id="書き込みは軽い">書き込みは重くありませんでした<a class="anchor" href="#書き込みは軽い" aria-label="このセクションへのリンク">#</a></h2>
 
@@ -247,43 +247,43 @@
           <thead><tr><th>条件</th><th>投稿作成 p50</th><th>投稿作成スループット</th></tr></thead>
           <tbody>
             <tr><td>外部遅延 800ms</td><td>2,592 ms</td><td>6.27 req/s</td></tr>
-            <tr><td><strong>外部遅延 0ms</strong></td><td><strong>8 ms</strong></td><td><strong>1,398 req/s</strong></td></tr>
+            <tr><td><strong>外部遅延 0ms</strong></td><td>8 ms</td><td>1,398 req/s</td></tr>
           </tbody>
         </table></div><p class="table-scroll-hint" aria-hidden="true">→ 表は横にスクロールできます</p></div>
 
-        <p><strong>INSERT の経路そのものは8ミリ秒です。</strong>毎秒1,398件を受けます。書き込みはこのシステムの問題では
-        ありませんでしたし、したがって書き込みをキューに逃がす設計は<strong>壊れていないところを直す作業</strong>に
+        <p>INSERT の経路そのものは8ミリ秒です。毎秒1,398件を受けます。書き込みはこのシステムの問題では
+        ありませんでしたし、したがって書き込みをキューに逃がす設計は壊れていないところを直す作業に
         なります。</p>
 
-        <p><strong>⚠️ この測定は最初、間違っていました。</strong>遅延0を要求したのに、
-        <strong>前の実行の 800ms Stub がポートに生きたまま残っていました。</strong>Harness には「 Stub は本当に
+        <p>⚠️ この測定は最初、間違っていました。遅延0を要求したのに、
+        前の実行の 800ms Stub がポートに生きたまま残っていました。Harness には「 Stub は本当に
         その遅延で応答しているか」を見る往復検査があったのですが、条件が
-        <code>往復時間 &lt; 要求遅延 × 0.8</code> だったので、<strong>要求遅延が0なら常に偽</strong>になります。
-        検査が<strong>空虚に通過</strong>したわけです。そのせいで 800ms の実行を 0ms の実行として記録し、
+        <code>往復時間 &lt; 要求遅延 × 0.8</code> だったので、要求遅延が0なら常に偽になります。
+        検査が空虚に通過したわけです。そのせいで 800ms の実行を 0ms の実行として記録し、
         そこから結論を出していました。</p>
 
-        <p>直し方は時間ではなく<strong>身元</strong>を見ることでした。 Stub に自分の設定値を報告させ、それを要求値と
+        <p>直し方は時間ではなく身元を見ることでした。 Stub に自分の設定値を報告させ、それを要求値と
         突き合わせます。</p>
 
 <pre data-lang="shell"><code>$ curl -s localhost:18080/__stub/health
 {"ok": true, "delay_ms": 800, "jitter_ms": 0, "max_in_flight": 10}
 #            ↑ 要求した値と違えば実行を中止する</code></pre>
 
-        <p>そのうえで<strong>わざと違う Stub を立てて回し</strong>、実行が実際に止まることを確認してから測り直しました。
-        このリポジトリで最も多い欠陥は<strong>「失敗したのに通過に見える検査」</strong>なので、検査を入れたらわざと
+        <p>そのうえでわざと違う Stub を立てて回し、実行が実際に止まることを確認してから測り直しました。
+        このリポジトリで最も多い欠陥は「失敗したのに通過に見える検査」なので、検査を入れたらわざと
         失敗させてみる、というのを規則にしています。</p>
 
         <h2 id="10から動かない">何を変えても 10 から動きませんでした<a class="anchor" href="#10から動かない" aria-label="このセクションへのリンク">#</a></h2>
 
-        <p>次に<strong>Stub に計測を入れました。</strong>リクエストが入るときに数え、出るときに引いて、
-        <strong>同時に処理中の外部呼び出しの最大値</strong>を記録させます。この数字ひとつが残り全部を説明します。</p>
+        <p>次にStub に計測を入れました。リクエストが入るときに数え、出るときに引いて、
+        同時に処理中の外部呼び出しの最大値を記録させます。この数字ひとつが残り全部を説明します。</p>
 
         <div class="table-scroll"><div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表"><table>
           <thead><tr><th>書き込み Thread</th><th>DB Pool</th><th>外部呼び出しの最大同時実行</th><th>投稿スループット</th><th>投稿 p50</th></tr></thead>
           <tbody>
             <tr><td>16</td><td>10</td><td><strong>10</strong></td><td>6.27 req/s</td><td>2,592 ms</td></tr>
-            <tr><td>16</td><td><strong>30</strong></td><td><strong>10</strong></td><td>6.27 req/s</td><td>2,595 ms</td></tr>
-            <tr><td><strong>32</strong></td><td>30</td><td><strong>10</strong></td><td>6.26 req/s</td><td>5,119 ms</td></tr>
+            <tr><td>16</td><td><strong>30</strong></td><td>10</td><td>6.27 req/s</td><td>2,595 ms</td></tr>
+            <tr><td>32</td><td>30</td><td>10</td><td>6.26 req/s</td><td>5,119 ms</td></tr>
           </tbody>
         </table></div><p class="table-scroll-hint" aria-hidden="true">→ 表は横にスクロールできます</p></div>
 
@@ -320,34 +320,34 @@
               <text x="580" y="176" font-size="13" fill="#3b3344">40 req/s</text>
             </svg>
           </div>
-          <figcaption>上のピンクの棒三本は条件を変えても同時実行が<strong>10から動かない</strong>ことを示します。書き込みを32に上げても増えるのはスループットではなく待ち時間（p50）だけです。一番下の青い棒は同じ Stub をアプリ抜きで直接叩いた値で、 Stub 自体は32まで受けます。ですから上限は<strong>アプリ側</strong>にあります。</figcaption>
+          <figcaption>上のピンクの棒三本は条件を変えても同時実行が<strong>10から動かない</strong>ことを示します。書き込みを32に上げても増えるのはスループットではなく待ち時間（p50）だけです。一番下の青い棒は同じ Stub をアプリ抜きで直接叩いた値で、 Stub 自体は32まで受けます。ですから上限はアプリ側にあります。</figcaption>
         </figure>
 
-        <p>表の読み方はこうです。<strong>書き込みを2倍にしても、DB Pool を3倍にしても同時実行は10から動きません。</strong>
-        伸びるのは応答時間だけです(2,592 → 5,119ms)。これは典型的な<strong>待ち行列の兆候</strong>です —
+        <p>表の読み方はこうです。書き込みを2倍にしても、DB Pool を3倍にしても同時実行は10から動きません。
+        伸びるのは応答時間だけです(2,592 → 5,119ms)。これは典型的な待ち行列の兆候です —
         仕事が増えたのではなく、列が長くなっただけです。</p>
 
         <p>Stub が犯人である可能性は別に消しました。同じ Stub をアプリ抜きで32worker ・20秒叩くと
-        <strong>同時32 · 40 req/s</strong> を出します。ですから10は Stub の限界ではなく、
-        <strong>アプリが外へ出る道</strong>の限界です。</p>
+        同時32 · 40 req/s を出します。ですから10は Stub の限界ではなく、
+        アプリが外へ出る道の限界です。</p>
 
-        <p>ここで算数が合います。投稿1件が呼び出し2つを出すので、同時10は<strong>同時に検閲中の投稿5件</strong>です。
-        呼び出し1回が 800ms なので 5 ÷ 0.8秒 = <strong>約 6.3 req/s</strong>。観測された 6.27 と一致します。</p>
+        <p>ここで算数が合います。投稿1件が呼び出し2つを出すので、同時10は同時に検閲中の投稿5件です。
+        呼び出し1回が 800ms なので 5 ÷ 0.8秒 = 約 6.3 req/s。観測された 6.27 と一致します。</p>
 
         <h2 id="threadダンプ">Thread ダンプがどこで止まっているか教えてくれました<a class="anchor" href="#threadダンプ" aria-label="このセクションへのリンク">#</a></h2>
 
         <p>「アプリのどこかに10がある」ところまでは来たものの、それがどこかはコードを読んでも見つかりませんでした。
         <strong>私のコードには10も5も書かれていないからです。</strong></p>
 
-        <p>そこで負荷がかかった状態で<strong>Thread ダンプ</strong>を取りました。Tomcat worker16のうち
-        <strong>5つはソケット入出力中(RUNNABLE)</strong>、<strong>11は park</strong> でした。park 側のスタックが
+        <p>そこで負荷がかかった状態でThread ダンプを取りました。Tomcat worker16のうち
+        <strong>5つはソケット入出力中(RUNNABLE)</strong>、11は park でした。park 側のスタックが
         答えでした。</p>
 
 <pre data-lang="text"><code>at org.apache.hc.core5.pool.StrictConnPool$1.get(StrictConnPool.java:183)
 at org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager$3.get(...)
 at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.acquireEndpoint(...)</code></pre>
 
-        <p><strong>Apache HttpClient 5 の Connection Pool で待って</strong>いました。私はこのライブラリを入れた
+        <p>Apache HttpClient 5 の Connection Pool で待っていました。私はこのライブラリを入れた
         覚えがありませんでした。</p>
 
         <h2 id="連鎖">連鎖をさかのぼると S3 に着きます<a class="anchor" href="#連鎖" aria-label="このセクションへのリンク">#</a></h2>
@@ -407,11 +407,11 @@ at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.acquireEndpoint(.
         <code>Unresolved reference 'hc'</code> で止まりました。</p>
 
         <p>ですからこの層は<strong>読んでも見つかりません。</strong>コード検索でもレビューでも出てきません。
-        <strong>測ってはじめて出てきます。</strong></p>
+        測ってはじめて出てきます。</p>
 
         <h2 id="一行で確認">一行の設定で確認しました<a class="anchor" href="#一行で確認" aria-label="このセクションへのリンク">#</a></h2>
 
-        <p>仮説が正しいかは一行で確認できました。Spring に<strong>Apache ではなく JDK クライアントを使え</strong>と
+        <p>仮説が正しいかは一行で確認できました。Spring にApache ではなく JDK クライアントを使えと
         指定し、他の条件はすべてそのままにします。</p>
 
 <pre data-lang="yaml"><code># application.yml — 診断のための一行
@@ -425,13 +425,13 @@ spring:
           <tbody>
             <tr><td>外部呼び出しの最大同時実行</td><td>10</td><td><strong>32</strong></td><td>3.2×</td></tr>
             <tr><td>投稿作成 p50</td><td>2,592 ms</td><td><strong>806 ms</strong></td><td>3.2倍速い</td></tr>
-            <tr><td>投稿作成スループット</td><td>6.27 req/s</td><td><strong>19.89 req/s</strong></td><td><strong>3.17×</strong></td></tr>
+            <tr><td>投稿作成スループット</td><td>6.27 req/s</td><td>19.89 req/s</td><td>3.17×</td></tr>
             <tr><td>フィード取得 p50</td><td>4 ms</td><td>5 ms</td><td>—</td></tr>
             <tr><td>エラー率</td><td>0%</td><td>0.09%(1,093件中1件)</td><td>—</td></tr>
           </tbody>
         </table></div><p class="table-scroll-hint" aria-hidden="true">→ 表は横にスクロールできます</p></div>
 
-        <p>806ms はもう<strong>外部呼び出しそのもの</strong>です。手前にあった待ちが消えました。仮説は当たっていました。</p>
+        <p>806ms はもう外部呼び出しそのものです。手前にあった待ちが消えました。仮説は当たっていました。</p>
 
         <h2 id="このままではだめ">ただし、このままにしてはいけません<a class="anchor" href="#このままではだめ" aria-label="このセクションへのリンク">#</a></h2>
 
@@ -442,12 +442,12 @@ spring:
         この記事がずっと言ってきたことと正反対です。</p>
 
         <p>上限がなければ、負荷が集中したとき外部 API へ無制限の同時呼び出しが出ます。それは
-        <strong>相手のサービスへの負荷</strong>であり<strong>私の費用</strong>です。流入制御は上限をなくすことではなく、
-        <strong>意図して決めること</strong>です。</p>
+        相手のサービスへの負荷であり私の費用です。流入制御は上限をなくすことではなく、
+        意図して決めることです。</p>
 
         <p>付け加えると、このリポジトリは同じ形の欠陥をすでに一度経験しています。Tomcat thread200と Connection Pool が
-        どちらもフレームワークの既定値で、その二つが作った並行性の方針は<strong>方針ではありませんでした。</strong>
-        アウトバウンドにも同じことがあり、今回は<strong>誰もその層を見ていませんでした。</strong></p>
+        どちらもフレームワークの既定値で、その二つが作った並行性の方針は方針ではありませんでした。
+        アウトバウンドにも同じことがあり、今回は誰もその層を見ていませんでした。</p>
 
         <h2 id="上限を決めた">そこで上限を決めました<a class="anchor" href="#上限を決めた" aria-label="このセクションへのリンク">#</a></h2>
 
@@ -456,7 +456,7 @@ spring:
         <ol>
           <li><strong><code>httpclient5</code> を明示的な依存に格上げします。</strong>すでにランタイムで使っていた
           ライブラリを<em>名前で</em>書くということで、そうしてはじめて設定コードが書けます。</li>
-          <li><strong>Connection Pool を一つだけ作り、すべての <code>RestClient</code> で共有します。</strong>
+          <li>Connection Pool を一つだけ作り、すべての <code>RestClient</code> で共有します。
           クライアントごとに自分の Pool を持つと「ホストあたり N」が実際には「クライアント数 × N」になります。
           それが5が10になっていた理由です。</li>
         </ol>
@@ -539,11 +539,11 @@ class OutboundHttpConfig {
     }
 }</code></pre>
 
-        <p>⚠️ 上のコードのプロパティ接頭辞は<strong>中立的な名前に置き換えてあります。</strong>
+        <p>⚠️ 上のコードのプロパティ接頭辞は中立的な名前に置き換えてあります。
         それ以外はソースのままです。</p>
 
         <p><strong>50 という数字の根拠</strong>もコメントに書きました。投稿1件が呼び出し2つを出すので50は
-        <strong>同時に検閲中の投稿25件</strong>にあたり、外部呼び出しが 800ms なら毎秒およそ31件まで受けます。
+        同時に検閲中の投稿25件にあたり、外部呼び出しが 800ms なら毎秒およそ31件まで受けます。
         いま立てているどのトラフィック想定よりも大きく、しかし無限ではありません。</p>
 
         <p>もう一度測りました。条件は前と同一です。</p>
@@ -551,24 +551,24 @@ class OutboundHttpConfig {
         <div class="table-scroll"><div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表"><table>
           <thead><tr><th>指標</th><th>前(推移的依存の既定値)</th><th>後(共有 Pool · 明示上限)</th><th>倍率</th></tr></thead>
           <tbody>
-            <tr><td>外部呼び出しの最大同時実行</td><td>10</td><td><strong>32</strong></td><td>3.2×</td></tr>
-            <tr><td>投稿作成 p50</td><td>2,592 ms</td><td><strong>805 ms</strong></td><td>3.22倍速い</td></tr>
+            <tr><td>外部呼び出しの最大同時実行</td><td>10</td><td>32</td><td>3.2×</td></tr>
+            <tr><td>投稿作成 p50</td><td>2,592 ms</td><td>805 ms</td><td>3.22倍速い</td></tr>
             <tr><td>投稿作成 p95</td><td>2,637 ms</td><td>809 ms</td><td>3.26×</td></tr>
             <tr><td>投稿作成 p99</td><td>2,640 ms</td><td>811 ms</td><td>3.26×</td></tr>
-            <tr><td><strong>投稿作成スループット</strong></td><td>6.27 req/s</td><td><strong>19.89 req/s</strong></td><td><strong>3.17×</strong></td></tr>
+            <tr><td>投稿作成スループット</td><td>6.27 req/s</td><td>19.89 req/s</td><td>3.17×</td></tr>
             <tr><td>フィード取得 p50</td><td>4 ms</td><td>5 ms</td><td>—</td></tr>
-            <tr><td>エラー率</td><td>0%</td><td><strong>0%</strong></td><td>—</td></tr>
+            <tr><td>エラー率</td><td>0%</td><td>0%</td><td>—</td></tr>
           </tbody>
         </table></div><p class="table-scroll-hint" aria-hidden="true">→ 表は横にスクロールできます</p></div>
 
-        <p><strong>⚠️ 32 は新しい上限ではありません。</strong>書いた上限は50なのに観測された最大同時実行は32です。
-        <strong>32 は負荷の形であって上限ではありません</strong> — 書き込み thread16が投稿1件あたり呼び出し2つを
-        出すので 16 × 2 = 32 です。つまりこの実行で天井は<strong>アウトバウンドの Pool から離れており</strong>、
+        <p>⚠️ 32 は新しい上限ではありません。書いた上限は50なのに観測された最大同時実行は32です。
+        32 は負荷の形であって上限ではありません — 書き込み thread16が投稿1件あたり呼び出し2つを
+        出すので 16 × 2 = 32 です。つまりこの実行で天井はアウトバウンドの Pool から離れており、
         いまスループットを決めているのは流入の並行度です。50 が実際に効くかは書き込み Thread を25以上に上げないと
-        見えませんが、<strong>測っていません。</strong></p>
+        見えませんが、測っていません。</p>
 
-        <p>そして <code>factory=jdk</code>(19.89 req/s)とこの処方(19.89 req/s)は<strong>スループットが同じです。</strong>
-        二つを分けるのは性能ではなく、<strong>上限が書かれているかどうか</strong>です。</p>
+        <p>そして <code>factory=jdk</code>(19.89 req/s)とこの処方(19.89 req/s)はスループットが同じです。
+        二つを分けるのは性能ではなく、上限が書かれているかどうかです。</p>
 
         <h2 id="timeout">最初の実装は Timeout を消してしまいました<a class="anchor" href="#timeout" aria-label="このセクションへのリンク">#</a></h2>
 
@@ -576,13 +576,13 @@ class OutboundHttpConfig {
         <code>spring.http.client.*</code> の Timeout も<strong>一緒に消えました。</strong></p>
 
         <p>これは静かに通り過ぎうる種類の事故です。 Timeout がなくても正常な応答は正常に返ってきます。
-        問題は<strong>応答が返らないサーバーに出会ったとき</strong>だけ現れます。</p>
+        問題は応答が返らないサーバーに出会ったときだけ現れます。</p>
 
         <p>幸い、このリポジトリにはそれを狙うテストがすでにありました。
-        <strong>「応答のないサーバーにぶら下がらない」</strong>というガードが<strong>40秒で失敗しました。</strong>
+        「応答のないサーバーにぶら下がらない」というガードが<strong>40秒で失敗しました。</strong>
         そのガードがなければ、無限待ちが静かに戻ってきていたはずです。</p>
 
-        <p>直し方は値を複製しないことでした。<strong>同じプロパティキーを読みます。</strong>複製すれば、いつか片方だけが
+        <p>直し方は値を複製しないことでした。同じプロパティキーを読みます。複製すれば、いつか片方だけが
         変わる日が来ます。</p>
 
         <h2 id="設定は失敗しない">設定はそれ自体では何も失敗させません<a class="anchor" href="#設定は失敗しない" aria-label="このセクションへのリンク">#</a></h2>
@@ -592,7 +592,7 @@ class OutboundHttpConfig {
         戻るだけです。</p>
 
         <p>そしてその「静かに戻った既定値」こそが、この記事全体の原因でした。ですから値が
-        <strong>実際に付いたか</strong>を断言するテストを二つ入れました。</p>
+        実際に付いたかを断言するテストを二つ入れました。</p>
 
 <pre data-lang="kotlin"><code>// ① 既定値(5)ではなく、こちらが与えた値が付かなければならない。
 assertThat(manager.defaultMaxPerRoute).isEqualTo(37)
@@ -607,7 +607,7 @@ assertThat(factories[0]).isSameAs(factories[1])</code></pre>
         <p>この断言が本当に狙っているかは
         <a class="term" href="../notes/mutation-testing.html">Mutation</a>で確認しました。
         <code>setMaxConnPerRoute</code> を消すと一つ目が5を見て赤くなり、ファクトリをビルダーごとに作り直すと
-        二つ目が赤くなります。<strong>どちらも実際に確認しました。</strong></p>
+        二つ目が赤くなります。どちらも実際に確認しました。</p>
 
         <h2 id="redisはどうか">「Redis やキューを使えばいいのでは?」<a class="anchor" href="#redisはどうか" aria-label="このセクションへのリンク">#</a></h2>
 
@@ -621,41 +621,41 @@ assertThat(factories[0]).isSameAs(factories[1])</code></pre>
             <tr><td>Redis Cache(検閲判定)</td><td>△ 同じ本文が繰り返されるときだけ。ユーザー投稿はたいてい一意</td><td>まず重複率を測る</td></tr>
             <tr><td>キューイング(Redis · Kafka)</td><td>✗ キューは待ちを<strong>移すだけ</strong>で外部上限は上げない</td><td>それ自体では無効</td></tr>
             <tr><td>書き込みをキューへ</td><td>✗ 書き込みは 8ms</td><td>直すものがない</td></tr>
-            <tr><td><strong>アウトバウンドの同時実行を明示</strong></td><td>✓ 天井を直接上げる</td><td><strong>最優先</strong></td></tr>
+            <tr><td>アウトバウンドの同時実行を明示</td><td>✓ 天井を直接上げる</td><td>最優先</td></tr>
           </tbody>
         </table></div><p class="table-scroll-hint" aria-hidden="true">→ 表は横にスクロールできます</p></div>
 
-        <p>キューイングについてだけもう一つ書きます。<strong>検閲をキューに逃がすことは実際に何かを変えます。</strong>
-        ただし変わるのは性能ではなく<strong>プロダクトの約束</strong>です。</p>
+        <p>キューイングについてだけもう一つ書きます。検閲をキューに逃がすことは実際に何かを変えます。
+        ただし変わるのは性能ではなくプロダクトの約束です。</p>
 
         <p>ゲートは Fail-closed なので、検閲前に投稿が見えてはいけません。ですから取りうる形は
         <em>「先に公開して後から検閲」</em>ではなく<em>「検閲が終わるまで公開されない非同期ジョブ」</em>です。
-        遅延を<strong>なくす</strong>のではなくリクエスト Thread から<strong>切り離す</strong>だけで、アウトバウンドの
+        遅延をなくすのではなくリクエスト Thread から切り離すだけで、アウトバウンドの
         上限はそのままです。代わりに状態表示・再試行・重複防止・失敗通知がすべて新しく必要になります。</p>
 
-        <p>そこで<strong>いつその設計が正当になるか</strong>を先に書いておきました。あとで「感覚」で導入しないためです —
+        <p>そこでいつその設計が正当になるかを先に書いておきました。あとで「感覚」で導入しないためです —
         上限を意図的に上げたあとでも投稿作成 p95 が目標を超えるか、外部 API の p99 が自前の Timeout に近づいたら、
         そのとき非同期にします。</p>
 
         <h2 id="主張しないこと">この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="このセクションへのリンク">#</a></h2>
 
         <ul>
-          <li><strong>本番の数値ではありません。</strong>負荷ツール・アプリ・ Stub ・DB が一台で CPU を分け合っています。
+          <li>本番の数値ではありません。負荷ツール・アプリ・ Stub ・DB が一台で CPU を分け合っています。
           絶対スループットに意味はなく、比較にだけ意味があります。</li>
           <li><strong>800ms は Stub に設定した値です。</strong>実際の外部 API の遅延分布ではありません。実際の利得は
           その分布次第です。</li>
           <li><strong>条件ごとに1回の実行です。</strong>繰り返して分散を見ていません。</li>
-          <li><strong>3.17倍はこの条件に付随する数字です。</strong>外部呼び出しの遅延と流入の並行度が変われば同じ倍率には
+          <li>3.17倍はこの条件に付随する数字です。外部呼び出しの遅延と流入の並行度が変われば同じ倍率には
           なりません。</li>
-          <li><strong><code>max-per-route = 50</code> は実トラフィックで測った値ではありません。</strong>
+          <li><code>max-per-route = 50</code> は実トラフィックで測った値ではありません。
           「誰も選んでいない5」を「根拠を書いた50」に替えたもので、実測ができたら決め直します。</li>
-          <li><strong>50 が実際に効くところは見ていません。</strong>この負荷では流入が先に32で縛られます。</li>
-          <li><strong>障害は起きていません。</strong>リリース前の点検で出たもので、運用でこの上限に当たった記録は
+          <li>50 が実際に効くところは見ていません。この負荷では流入が先に32で縛られます。</li>
+          <li>障害は起きていません。リリース前の点検で出たもので、運用でこの上限に当たった記録は
           ありません。</li>
-          <li><strong>AWS SDK や Apache HttpClient を責める記事ではありません。</strong>ライブラリは自分の既定値を
-          持つ自由があります。問題は<strong>その既定値が私のサービスの方針になっていて、誰も知らなかった</strong>という
+          <li>AWS SDK や Apache HttpClient を責める記事ではありません。ライブラリは自分の既定値を
+          持つ自由があります。問題はその既定値が私のサービスの方針になっていて、誰も知らなかったという
           点にあります。</li>
-          <li><strong>まだマージしていません。</strong>セキュリティゲートに触れる経路なので、リポジトリの規約どおり
+          <li>まだマージしていません。セキュリティゲートに触れる経路なので、リポジトリの規約どおり
           書面レビューが先です。</li>
         </ul>
 
@@ -668,16 +668,16 @@ assertThat(factories[0]).isSameAs(factories[1])</code></pre>
             <li>スループットがある数字に張り付いて動かないなら、まず<strong>その数字を作った層</strong>を探します。
  Thread や DB Pool を増やすのはその次です。</li>
             <li>私が選んでいないライブラリが<strong>私のサービスの並行性の方針</strong>を決めていました。その層は
-            ランタイムのクラスパスにしかないので、<strong>読んでも見つからず、測ってはじめて出てきます。</strong></li>
-            <li>上限を<strong>なくすこと</strong>と<strong>決めること</strong>は違います。スループットは同じだけ上がりますが、
+            ランタイムのクラスパスにしかないので、読んでも見つからず、測ってはじめて出てきます。</li>
+            <li>上限をなくすことと決めることは違います。スループットは同じだけ上がりますが、
             一方には数字が書かれていて、もう一方にはありません。</li>
-            <li>設定で直したものは<strong>消しても何も失敗しません。</strong>だからこそ値が付いたということ自体を
+            <li>設定で直したものは消しても何も失敗しません。だからこそ値が付いたということ自体を
             断言する必要があります。</li>
           </ul>
 
           <p>最後に一行だけ残すなら、これです。
-          <strong>誰も選んでいない既定値も、方針のように振る舞います。</strong>
-          ただしそれは誰も責任を負わない方針で、たいていは<strong>測るまで存在にすら気づきません。</strong></p>
+          誰も選んでいない既定値も、方針のように振る舞います。
+          ただしそれは誰も責任を負わない方針で、たいていは測るまで存在にすら気づきません。</p>
 
           <p>お読みいただきありがとうございました。</p>
         </div>

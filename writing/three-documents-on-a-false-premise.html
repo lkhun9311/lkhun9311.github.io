@@ -96,23 +96,23 @@
 
         <p><strong>Scope.</strong> In July 2026 I prepared an upgrade of a customer's live OpenStack-based
         private cloud portal to a release <strong>2,255 commits ahead</strong> of the one they were running. I
-        do not name the product, the version numbers, the customer, or ticket IDs. <strong>What I actually did
-        was the isolated reproduction and the procedure and runbooks</strong> — this is not a record of me
+        do not name the product, the version numbers, the customer, or ticket IDs. What I actually did
+        was the isolated reproduction and the procedure and runbooks — this is not a record of me
         performing the production cutover. The numbers come from mixed sources — the migration results
-        (3 of 3, 0 failures) are from the <strong>isolated container</strong>; the commit counts, the release
-        comparison and the 48-table column check are <strong>repository and schema surveys</strong>; the
-        startup failure is <strong>local troubleshooting</strong>.</p>
+        (3 of 3, 0 failures) are from the isolated container; the commit counts, the release
+        comparison and the 48-table column check are repository and schema surveys; the
+        startup failure is local troubleshooting.</p>
 
         <p>The shape of the job: two breaking changes — the authentication model changed and reset every
         user's password, and two database schemas were merged into one. It is a production database, so there
         is no zero-downtime path and a rollback route is mandatory. And
-        <strong>the official migration guide was written against a version one step above the one in the
-        field.</strong></p>
+        the official migration guide was written against a version one step above the one in the
+        field.</p>
 
         <p>The natural way to write a procedure here is to read the documents and reason. That is how I wrote
-        three of them. And <strong>the premise of all three was wrong.</strong> I did not learn that by reasoning
+        three of them. And the premise of all three was wrong. I did not learn that by reasoning
         more carefully. I learned it by standing the old version up in an isolated environment and running
-        <strong>the part that could be reproduced</strong> end to end — and, in the middle of that, by reading
+        the part that could be reproduced end to end — and, in the middle of that, by reading
         the guide again, properly this time.</p>
 
 
@@ -131,12 +131,12 @@
           breaking changes, a production database, so a rollback path was mandatory.</li>
           <li>While preparing it I found that <strong>three documents I had already written rested on a false
           premise.</strong> The official path is not sequential patching; it is
-          <strong>rebuilding a new database and migrating the data.</strong></li>
-          <li>Skimming did not surface that. It came from reading the <strong>overview</strong> rather than the
-          procedure list, and everything else came out of <strong>actually checking something.</strong></li>
-          <li>So I stood the old version up in an isolated environment and <strong>broke it once on
-          purpose.</strong> A startup failure did fire, and an item left as "needs confirmation" resolved with it.</li>
-          <li>⚠️ What I did here ends at <strong>reproduction and runbook preparation</strong>. This is not a
+          rebuilding a new database and migrating the data.</li>
+          <li>Skimming did not surface that. It came from reading the overview rather than the
+          procedure list, and everything else came out of actually checking something.</li>
+          <li>So I stood the old version up in an isolated environment and broke it once on
+          purpose. A startup failure did fire, and an item left as "needs confirmation" resolved with it.</li>
+          <li>⚠️ What I did here ends at reproduction and runbook preparation. This is not a
           record of me performing the upgrade on site.</li>
         </ul>
 
@@ -175,7 +175,7 @@ find . -type f -exec md5sum {} \;       # every file matches on both sides</code
               <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">where three runbooks stood · the left</text>
             </g>
           </svg>
-          <figcaption>The two differ <strong>starting at the rollback path</strong>. When the premise is wrong, the procedure built on it does not get fixed sentence by sentence. <strong>All three had to be rewritten.</strong></figcaption>
+          <figcaption>The two differ <strong>starting at the rollback path</strong>. When the premise is wrong, the procedure built on it does not get fixed sentence by sentence. All three had to be rewritten.</figcaption>
         </figure>
 
         <h2 id="i-did-not-trust-date-order">I did not trust date order<a class="anchor" href="#i-did-not-trust-date-order" aria-label="Link to this section">#</a></h2>
@@ -193,28 +193,28 @@ find . -type f -exec md5sum {} \;       # every file matches on both sides</code
             <tr><td>settings table</td><td>present</td><td>—</td></tr>
             <tr><td>blocklist table</td><td>present</td><td>the October patch is folded into the baseline</td></tr>
             <tr><td>scheduler tables</td><td><strong>absent</strong></td><td>the July batch patch was never applied</td></tr>
-            <tr><td>batch job info</td><td><strong>absent</strong></td><td>a new patch references it — <strong>it fails without the prerequisite</strong></td></tr>
+            <tr><td>batch job info</td><td><strong>absent</strong></td><td>a new patch references it — it fails without the prerequisite</td></tr>
           </tbody>
         </table>
         </div>
         </div>
 
-        <p>One thing caught here. The baseline had <strong>the October patch but not the July and August ones
-        before it.</strong></p>
+        <p>One thing caught here. The baseline had the October patch but not the July and August ones
+        before it.</p>
 
-        <p>So the baseline is not a snapshot cut at some date. It is a <strong>curation</strong> — somebody
+        <p>So the baseline is not a snapshot cut at some date. It is a curation — somebody
         picked what that line needed. Which means the policy "sort by date and apply everything after the cut"
-        <strong>guarantees nothing</strong>. You either re-apply something already in, or skip something that
+        guarantees nothing. You either re-apply something already in, or skip something that
         should have gone first.</p>
 
         <p>I concluded that the exact list, ordering and idempotency of the delta had to be
-        <strong>established by reproduction, not by inference</strong>. That is the direct reason the
+        established by reproduction, not by inference. That is the direct reason the
         reproduction script exists.</p>
 
         <p>The survey also closed an item an earlier document had left open as "needs checking". The old
-        release build's patch folder <strong>did not contain the intermediate-version migration SQL at
-        all</strong> — so that migration was not included, it had to be part of the delta, and being the
-        earliest by date it had to be <strong>applied first</strong>.</p>
+        release build's patch folder did not contain the intermediate-version migration SQL at
+        all — so that migration was not included, it had to be part of the delta, and being the
+        earliest by date it had to be applied first.</p>
 
         <h2 id="the-method-itself-was-different">The method itself was different<a class="anchor" href="#the-method-itself-was-different" aria-label="Link to this section">#</a></h2>
 
@@ -225,21 +225,21 @@ find . -type f -exec md5sum {} \;       # every file matches on both sides</code
 
         <p>All three documents I had written assumed <strong>"apply the patches in order"</strong>. I had been
         building a delta list, deciding an ordering, reasoning about idempotency. That whole body of work was
-        <strong>the procedure for a different method</strong>.</p>
+        the procedure for a different method.</p>
 
         <p>The delta survey did not become worthless — knowing which patches are in the baseline still matters
-        for a rebuild-and-migrate. What became worthless was <strong>the conclusion that applying patches in
-        order gets you there</strong>.</p>
+        for a rebuild-and-migrate. What became worthless was the conclusion that applying patches in
+        order gets you there.</p>
 
-        <p>I did not delete the three documents. I <strong>annotated each with the correction.</strong> Delete
+        <p>I did not delete the three documents. I annotated each with the correction. Delete
         them and the reasoning disappears with them, and the next person at that fork reasons their way to the
         same place. Leave them and the document carries "this premise was wrong, for this reason".</p>
 
         <p>The lesson is not "read the guide first". The guide was there from the beginning and I did look at
-        it — more precisely, I <strong>skimmed</strong> it. The sentence about the method was in the overview,
+        it — more precisely, I skimmed it. The sentence about the method was in the overview,
         not in the procedure list, and I had gone straight to the procedure list.
-        <strong>What you went to a document for and what the document is trying to tell you are not always the
-        same thing.</strong></p>
+        What you went to a document for and what the document is trying to tell you are not always the
+        same thing.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 258" role="img" aria-labelledby="bl-t bl-d" class="figure-svg">
@@ -268,7 +268,7 @@ find . -type f -exec md5sum {} \;       # every file matches on both sides</code
               </marker>
             </defs>
           </svg>
-          <figcaption>If the baseline were cut by date, "apply what follows, in date order" would be safe. If it is a <strong>curation</strong>, the same rule <strong>manufactures risk rather than safety</strong>. The missing scheduler table was the evidence.</figcaption>
+          <figcaption>If the baseline were cut by date, "apply what follows, in date order" would be safe. If it is a <strong>curation</strong>, the same rule manufactures risk rather than safety. The missing scheduler table was the evidence.</figcaption>
         </figure>
 
         <h2 id="deliberately-imprecise">The part I made deliberately imprecise<a class="anchor" href="#deliberately-imprecise" aria-label="Link to this section">#</a></h2>
@@ -286,13 +286,13 @@ find . -type f -exec md5sum {} \;       # every file matches on both sides</code
 
         <p>In the migration step I made a deliberately imprecise choice. The guide specifies the column mapping
         in a table, and I did not have that table at the time. So the script copies
-        <strong>only the intersection of columns present in both the source and target</strong>, with
+        only the intersection of columns present in both the source and target, with
         <code>INSERT IGNORE</code>.</p>
 
-        <p>This is not a correct migration. That was <strong>the point</strong>. The script's job is not to
-        move data correctly; it is to <strong>expose which tables break</strong>. It absorbs schema drift and
+        <p>This is not a correct migration. That was the point. The script's job is not to
+        move data correctly; it is to expose which tables break. It absorbs schema drift and
         keeps going, and the tables that fail land in the log — so
-        <strong>the failure log becomes a candidate list of schema gaps</strong>. Not a complete one — tables
+        the failure log becomes a candidate list of schema gaps. Not a complete one — tables
         absent from the target are skipped, and <code>INSERT IGNORE</code> absorbs missing columns and coercion
         warnings without calling them failures. What surfaces is <em>what breaks</em>, not <em>everything that
         differs</em>.</p>
@@ -307,9 +307,9 @@ find . -type f -exec md5sum {} \;       # every file matches on both sides</code
           <caption class="sr-only">Three kinds of planted test data and what each verifies.</caption>
           <thead><tr><th scope="col">planted</th><th scope="col">verifies</th></tr></thead>
           <tbody>
-            <tr><td>one alarm row in one schema, destined for the other</td><td>that <strong>cross-schema</strong> migration happens</td></tr>
-            <tr><td>a settings value set away from its default</td><td>that the <strong>value</strong> follows</td></tr>
-            <tr><td>a marker string in a menu description field</td><td>that the <strong>field</strong> follows</td></tr>
+            <tr><td>one alarm row in one schema, destined for the other</td><td>that cross-schema migration happens</td></tr>
+            <tr><td>a settings value set away from its default</td><td>that the value follows</td></tr>
+            <tr><td>a marker string in a menu description field</td><td>that the field follows</td></tr>
           </tbody>
         </table>
         </div>
@@ -347,7 +347,7 @@ find . -type f -exec md5sum {} \;       # every file matches on both sides</code
 
         <p>This is the same class of problem as
         <a href="bugs-that-return-exit-code-zero.html">Ten Bugs, Zero Failed Tests</a>.
-        <strong>Verification that cannot distinguish "did not run" from "passed" is worse than none</strong> —
+        Verification that cannot distinguish "did not run" from "passed" is worse than none —
         because it makes you believe there is some.</p>
 
         <h2 id="and-one-of-them-blew-up">And one of them did blow up<a class="anchor" href="#and-one-of-them-blew-up" aria-label="Link to this section">#</a></h2>
@@ -364,17 +364,17 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
         the history: a feature had been rolled back, and that commit removed
         <strong>the enum constant, the patch SQL and the seed row</strong> together.</p>
 
-        <p>The code dropped the enum. But <strong>the existing database still had a row carrying that
-        value.</strong> On boot the ORM tries to map that row onto the enum, fails, and a failed context load
+        <p>The code dropped the enum. But the existing database still had a row carrying that
+        value. On boot the ORM tries to map that row onto the enum, fails, and a failed context load
         means the application cannot start at all.</p>
 
-        <p>What matters is what comes next. This class of defect surfaces <strong>one per restart</strong> —
+        <p>What matters is what comes next. This class of defect surfaces one per restart —
         clear the first mine and the next one appears. So I compared three local databases against the code's
-        enum constants <strong>exhaustively</strong>, established that this was the only stale key remaining,
+        enum constants exhaustively, established that this was the only stale key remaining,
         and only then deleted it.</p>
 
         <p>The value of the incident is not the one-line <code>DELETE</code>. Tracing it exposed
-        <strong>three defects in the field deployment procedure</strong>.</p>
+        three defects in the field deployment procedure.</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">scroll sideways for the rest</p>
@@ -383,7 +383,7 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
           <caption class="sr-only">Three defects found and corrected in the field deployment procedure.</caption>
           <thead><tr><th scope="col">defect</th><th scope="col">what would have happened in the field</th></tr></thead>
           <tbody>
-            <tr><td>instructs applying <strong>a patch file that does not exist</strong> (it was reverted out of the target release)</td><td>the file is not found and the run stops there</td></tr>
+            <tr><td>instructs applying a patch file that does not exist (it was reverted out of the target release)</td><td>the file is not found and the run stops there</td></tr>
             <tr><td>no step to delete the stale row</td><td>the same startup failure, this time in production</td></tr>
             <tr><td>no container recreation command in the rollback path</td><td>the rollback only half completes</td></tr>
           </tbody>
@@ -391,7 +391,7 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
         </div>
         </div>
 
-        <p>None of the three came from reading. They came from <strong>failing once for real</strong>. Until
+        <p>None of the three came from reading. They came from failing once for real. Until
         then the procedure looked internally consistent. You find out that it points at a file that does not
         exist at the moment you go looking for the file.</p>
 
@@ -423,22 +423,22 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
               </marker>
             </defs>
           </svg>
-          <figcaption>Breaking it once <strong>resolved an item</strong> that had been left as "needs confirmation": the old release's patch folder had <strong>no intermediate-version SQL at all.</strong></figcaption>
+          <figcaption>Breaking it once <strong>resolved an item</strong> that had been left as "needs confirmation": the old release's patch folder had no intermediate-version SQL at all.</figcaption>
         </figure>
 
         <h2 id="i-answered-by-counting">"Isn't a fresh install easier?" — I answered by counting<a class="anchor" href="#i-answered-by-counting" aria-label="Link to this section">#</a></h2>
 
         <p>A reasonable suggestion came up during preparation. <em>If migrating is this involved, wouldn't a
         fresh install be simpler?</em> It was plausible — this site had exactly
-        <strong>one</strong> custom account, which makes the most tedious part of a migration trivial.</p>
+        one custom account, which makes the most tedious part of a migration trivial.</p>
 
-        <p>The way to answer was <strong>to count what gets deleted first</strong>.</p>
+        <p>The way to answer was to count what gets deleted first.</p>
 
         <p>What gets deleted is accumulated billing and metering history, plus audit and activity logs. Both
-        are <strong>impossible to recompute</strong>: the source events are gone, so the only path back is
+        are impossible to recompute: the source events are gone, so the only path back is
         migrating them from a backup. Meanwhile the actual VMs, volumes and networks are owned by OpenStack
         rather than by this portal, and the portal resynchronises them from the API, so
-        <strong>they were never at risk in the first place</strong>.</p>
+        they were never at risk in the first place.</p>
 
         <p>That left "but migrating is hard". I answered that by measuring. For every table that had to be
         preserved, I compared the old and new columns through <code>information_schema</code>.</p>
@@ -457,18 +457,18 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
         </div>
         </div>
 
-        <p><strong>Zero columns added or dropped across 48 tables.</strong> An identical column set makes an
+        <p>Zero columns added or dropped across 48 tables. An identical column set makes an
         <code>INSERT ... SELECT</code> path plausible — but this compared the set of column names and nothing
         else. Whether types, lengths, ordering, nullability, defaults, keys, foreign keys and triggers match is
         a question this comparison does not answer. The one confirmed difference is that the billing and
-        metering tables <strong>change which schema they live in</strong>.</p>
+        metering tables change which schema they live in.</p>
 
-        <p>A vague worry — "migrating is hard" — was <strong>settled by one number</strong>, and the direction
+        <p>A vague worry — "migrating is hard" — was settled by one number, and the direction
         was decided: migrate, do not reinstall.</p>
 
         <p>Nothing in that section is technically impressive; it is a few
-        <code>information_schema</code> queries. The point is <strong>working out which part of a disagreement
-        is countable</strong>. "Migration is hard" is not countable. "How many columns changed" is.</p>
+        <code>information_schema</code> queries. The point is working out which part of a disagreement
+        is countable. "Migration is hard" is not countable. "How many columns changed" is.</p>
 
         <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
@@ -476,15 +476,15 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
           <li><strong>Not a claim that I completed the production migration.</strong> What I did was verify the
           reproducible part of the path and prepare the field procedure and installation runbooks. Not
           <strong>the whole path</strong> — the authentication stretch was not reproduced, as below.</li>
-          <li><strong>Zero migration failures means "the script counted zero tables as failed"</strong>, in an
+          <li>Zero migration failures means "the script counted zero tables as failed", in an
           isolated environment. It does not mean the migration was correct or lossless. I noted in the
           document that reproducing against a real field dump would be the accurate test, and that was left as
           follow-up work. It was not done.</li>
-          <li><strong>Copying the intersection of columns is not a correct migration method.</strong> It was
+          <li>Copying the intersection of columns is not a correct migration method. It was
           built that way as a smoke test; a correct column mapping has to follow the guide's table.</li>
-          <li><strong>The authentication stretch is unverified.</strong> No identity CLI locally, so it could
+          <li>The authentication stretch is unverified. No identity CLI locally, so it could
           not be reproduced, and the script leaves SKIP/WARN in its place.</li>
-          <li><strong>Zero column change means no columns were added or dropped</strong>, and is a fact about
+          <li>Zero column change means no columns were added or dropped, and is a fact about
           those two versions. It does not mean types, lengths, ordering, nullability, defaults, keys, foreign
           keys and triggers are identical, and how far the comparison went was not established from the
           sources behind this article. Nor does it claim this product's history tables never change.</li>
@@ -498,13 +498,13 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
           came from the documents alone.</li>
           <li><strong>"Sort by date and apply what follows" is only correct if the baseline is a date cut.</strong>
           If it is a curation, that rule manufactures risk rather than safety.</li>
-          <li><strong>Do not delete a false premise; record why it was false.</strong> Delete it and the next
+          <li>Do not delete a false premise; record why it was false. Delete it and the next
           person makes the same inference in the same place.</li>
-          <li><strong>"Migration is hard" is not countable; "the schema moves" is.</strong> When opinions
+          <li>"Migration is hard" is not countable; "the schema moves" is. When opinions
           differ, move to what can be counted.</li>
         </ul>
 
-        <p>What is left is one line. <strong>Exactly one thing here was learned from the documents alone</strong> —
+        <p>What is left is one line. Exactly one thing here was learned from the documents alone —
         that the method is a rebuild and a migration rather than sequential patching. And even that was missed
         on the first pass, and only surfaced from reading the overview rather than the procedure list.
         Everything else — that the two release copies were identical, that the baseline was a curation rather
