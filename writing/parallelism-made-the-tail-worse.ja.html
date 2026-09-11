@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>thread を増やしたらテールが伸びた | Kwanghun Lee</title>
+  <title>ボリューム一覧を並列にしたら P99 が 2 倍悪化しました | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="thread を増やしたらテールが伸びた | Kwanghun Lee" />
+  <meta property="og:title" content="ボリューム一覧を並列にしたら P99 が 2 倍悪化しました | Kwanghun Lee" />
   <meta property="og:description" content="cache 設定を固定したまま逐次を並列に変えると、P99 が 42.6 秒から 79.0 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンが lock される。6 構成を同条件で測って初めて見えたこと。" />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
@@ -24,7 +24,7 @@
   <meta property="og:url" content="https://lkhun9311.github.io/writing/parallelism-made-the-tail-worse.ja.html" />
   <meta property="og:locale" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="thread を増やしたらテールが伸びた | Kwanghun Lee" />
+  <meta name="twitter:title" content="ボリューム一覧を並列にしたら P99 が 2 倍悪化しました | Kwanghun Lee" />
   <meta name="twitter:description" content="cache を固定したまま並列化すると、P99 が 42.6 秒から 79.0 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンが lock される。" />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="cache 設定を固定したまま逐次を並列に変えると、P99 が 42.6 秒から 79.0 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンが lock される。6 構成を同条件で測って初めて見えたこと。" />
@@ -70,7 +70,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">会社の業務</span></div>
       </div>
       <section class="page-hero">
-        <h1>thread を増やしたらテールが伸びた<br><span class="h1-sub">cache を固定して測ると P99 が 42.6 秒から 79.0 秒になりました。社内クラウド管理コンソール · 連載「遅い画面」⑤</span></h1>
+        <h1>ボリューム一覧を並列にしたら P99 が 2 倍悪化しました<br><span class="h1-sub">computeIfAbsent の中で外部 API を呼ぶと、その bin が固定されます。社内クラウド管理コンソール · 連載「遅い画面」⑤</span></h1>
         <p class="article-date">2026年9月</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="parallelism-made-the-tail-worse"></aside>
@@ -438,7 +438,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=41a879d99c"></script>
+  <script src="../assets/content.js?v=3077e28c81"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
