@@ -150,6 +150,40 @@
         an <strong>accident</strong>. Blur the two and the next regression gets swallowed as
         <em>"a risk we already accepted".</em></p>
 
+        <figure class="diagram">
+          <svg viewBox="0 0 720 314" role="img" aria-labelledby="ax-t ax-d" class="figure-svg">
+            <title id="ax-t">Which axes had suppression wired to them</title>
+            <desc id="ax-d">A vertical axis on the left runs from suppressed at the top to not suppressed at the bottom. To its right, four boxes: gender, age, region, time. An arrow leaves each box naming the state of that axis. Only the bottom one, time, is pink.</desc>
+            <g font-family="Inter, sans-serif">
+              <path d="M40 34 V 280" fill="none" stroke="#c9c9c9" stroke-width="1.4"/>
+              <text x="40" y="26" font-size="11" fill="#8a8a8a" text-anchor="middle">suppressed</text>
+              <text x="40" y="298" font-size="11" fill="#8a8a8a" text-anchor="middle">not suppressed</text>
+              <rect x="64" y="48" width="248" height="40" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="188" y="73" font-size="11.5" fill="#4f5bd5" text-anchor="middle">gender axis</text>
+              <path d="M318 68 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#ax-a)"/>
+              <text x="384" y="73" font-size="11.5" fill="#4a4a4a">min-n suppression at five</text>
+              <rect x="64" y="104" width="248" height="40" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="188" y="129" font-size="11.5" fill="#4f5bd5" text-anchor="middle">age axis</text>
+              <path d="M318 124 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#ax-a)"/>
+              <text x="384" y="129" font-size="11.5" fill="#4a4a4a">min-n suppression at five</text>
+              <rect x="64" y="160" width="248" height="40" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="188" y="185" font-size="11.5" fill="#4f5bd5" text-anchor="middle">region axis</text>
+              <path d="M318 180 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#ax-a)"/>
+              <text x="384" y="185" font-size="11.5" fill="#4a4a4a">min-n suppression at ten</text>
+              <rect x="64" y="216" width="248" height="40" rx="9" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="188" y="241" font-size="11.5" fill="#d62976" text-anchor="middle">time axis</text>
+              <path d="M318 236 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#ax-a)"/>
+              <text x="384" y="241" font-size="11.5" fill="#4a4a4a">no suppression · added later</text>
+            </g>
+            <defs>
+              <marker id="ax-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>Write the defence <strong>per axis</strong> and a new axis arrives with nothing on it. The time axis came in with the trend graph, and <strong>nobody wired min-n to it at the same time.</strong></figcaption>
+        </figure>
+
         <h2 id="delay-is-the-defence">Delay is not a cost, it is the defence<a class="anchor" href="#delay-is-the-defence" aria-label="Link to this section">#</a></h2>
 
         <p>The biggest gain of the session came out of a discussion about caching.</p>
@@ -352,6 +386,27 @@
 
         <p>What was adopted instead was turning the trend volume into a <strong>rounded integer share</strong>. It was
         the one field on the publication path that passed through neither rounding nor suppression.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="od-t od-d" class="figure-svg">
+            <title id="od-t">A constraint that holds per snapshot against the difference between two</title>
+            <desc id="od-d">Two boxes side by side. The left is the occupancy constraint: within one snapshot every cell has at least five people. The right is the difference constraint: no such condition applies to the difference between two snapshots. A pink line at the bottom says the leak is on the right.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">occupancy · within one snapshot</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">09:00 snapshot · every cell at least 5</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">09:15 snapshot · every cell at least 5</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">both hold</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">difference · between two snapshots</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">09:15 values minus 09:00 values</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">the difference can be one vote</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">no condition at all</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">the leak is on the right</text>
+            </g>
+          </svg>
+          <figcaption>Each snapshot can be <strong>true on its own</strong> while the <strong>difference</strong> between them points at one person. An occupancy constraint does not imply a constraint on the difference.</figcaption>
+        </figure>
 
         <h2 id="the-facts-a-review-rests-on">The facts the review rested on were wrong<a class="anchor" href="#the-facts-a-review-rests-on" aria-label="Link to this section">#</a></h2>
 

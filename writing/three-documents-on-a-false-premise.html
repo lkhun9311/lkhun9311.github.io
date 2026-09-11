@@ -157,6 +157,27 @@ find . -type f -exec md5sum {} \;       # every file matches on both sides</code
         condition of a reproduction is that the starting point is pinned, and that is something you check
         rather than assume.</p>
 
+        <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="mg-t mg-d" class="figure-svg">
+            <title id="mg-t">The method I assumed against the official path</title>
+            <desc id="mg-d">Two boxes side by side. The left is the method I assumed: apply the patches in order. The right is the actual official path: build a new database and migrate the data. A pink line at the bottom says three runbooks stood on the left-hand box.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#8a8a8a" text-anchor="middle" font-weight="700">the method I assumed</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">leave the site database in place</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">apply the patch folder in date order</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">roll back by reversing them</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">the official path</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">stand up a new database</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">migrate the data across</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">roll back by keeping the old one</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">where three runbooks stood · the left</text>
+            </g>
+          </svg>
+          <figcaption>The two differ <strong>starting at the rollback path</strong>. When the premise is wrong, the procedure built on it does not get fixed sentence by sentence. <strong>All three had to be rewritten.</strong></figcaption>
+        </figure>
+
         <h2 id="i-did-not-trust-date-order">I did not trust date order<a class="anchor" href="#i-did-not-trust-date-order" aria-label="Link to this section">#</a></h2>
 
         <p>Next was identifying the delta: which patches the old baseline already contains and which it does
@@ -219,6 +240,36 @@ find . -type f -exec md5sum {} \;       # every file matches on both sides</code
         not in the procedure list, and I had gone straight to the procedure list.
         <strong>What you went to a document for and what the document is trying to tell you are not always the
         same thing.</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 258" role="img" aria-labelledby="bl-t bl-d" class="figure-svg">
+            <title id="bl-t">Reading the baseline as a date cut, against what it actually is</title>
+            <desc id="bl-d">A vertical axis on the left runs from how I read it at the top to what it actually is at the bottom. To its right, three boxes: assuming a date cut, a curated selection, and the risk that follows. An arrow leaves each box naming the consequence.</desc>
+            <g font-family="Inter, sans-serif">
+              <path d="M40 34 V 224" fill="none" stroke="#c9c9c9" stroke-width="1.4"/>
+              <text x="40" y="26" font-size="11" fill="#8a8a8a" text-anchor="middle">how I read it</text>
+              <text x="40" y="242" font-size="11" fill="#8a8a8a" text-anchor="middle">what it is</text>
+              <rect x="64" y="48" width="248" height="40" rx="9" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="188" y="73" font-size="11.5" fill="#8a8a8a" text-anchor="middle">assumed a date cut</text>
+              <path d="M318 68 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#bl-a)"/>
+              <text x="384" y="73" font-size="11.5" fill="#4a4a4a">applying what follows in order is safe</text>
+              <rect x="64" y="104" width="248" height="40" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="188" y="129" font-size="11.5" fill="#4f5bd5" text-anchor="middle">actually a curation</text>
+              <path d="M318 124 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#bl-a)"/>
+              <text x="384" y="129" font-size="11.5" fill="#4a4a4a">only what someone judged necessary</text>
+              <rect x="64" y="160" width="248" height="40" rx="9" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="188" y="185" font-size="11.5" fill="#d62976" text-anchor="middle">the risk that follows</text>
+              <path d="M318 180 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#bl-a)"/>
+              <text x="384" y="185" font-size="11.5" fill="#4a4a4a">a prerequisite patch gets skipped</text>
+            </g>
+            <defs>
+              <marker id="bl-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>If the baseline were cut by date, "apply what follows, in date order" would be safe. If it is a <strong>curation</strong>, the same rule <strong>manufactures risk rather than safety</strong>. The missing scheduler table was the evidence.</figcaption>
+        </figure>
 
         <h2 id="deliberately-imprecise">The part I made deliberately imprecise<a class="anchor" href="#deliberately-imprecise" aria-label="Link to this section">#</a></h2>
 
@@ -343,6 +394,37 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
         <p>None of the three came from reading. They came from <strong>failing once for real</strong>. Until
         then the procedure looked internally consistent. You find out that it points at a file that does not
         exist at the moment you go looking for the file.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="rp2-t rp2-d" class="figure-svg">
+            <title id="rp2-t">Standing the old version up in isolation and breaking it once</title>
+            <desc id="rp2-d">Four boxes run left to right, joined by grey arrows: the old version reproduced in an isolated container, the migration run, one startup failure, and a "needs confirmation" item resolving with it. A pink line underneath says this did not come from reading the documents.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">isolated container</text>
+              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">old version reproduced</text>
+              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#rp2-a)"/>
+              <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">migration run</text>
+              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">3 of 3 · 0 failures</text>
+              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#rp2-a)"/>
+              <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">one startup failure</text>
+              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">it really broke</text>
+              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#rp2-a)"/>
+              <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">open item resolved</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">no intermediate SQL</text>
+              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">not something reading alone produced</text>
+            </g>
+            <defs>
+              <marker id="rp2-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>Breaking it once <strong>resolved an item</strong> that had been left as "needs confirmation": the old release's patch folder had <strong>no intermediate-version SQL at all.</strong></figcaption>
+        </figure>
 
         <h2 id="i-answered-by-counting">"Isn't a fresh install easier?" — I answered by counting<a class="anchor" href="#i-answered-by-counting" aria-label="Link to this section">#</a></h2>
 

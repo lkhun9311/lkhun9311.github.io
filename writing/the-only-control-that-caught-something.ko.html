@@ -143,6 +143,40 @@
         <p>임계값을 고르는 기준은 "몇 퍼센트가 적당한가"가 아니라 <strong>"이 임계가 울렸을 때 아직 바꿀 수 있는
         결정이 남아 있는가"</strong>입니다. 80%는 이 지출 모양에서 그 조건을 만족하지 못합니다.</p>
 
+        <figure class="diagram">
+          <svg viewBox="0 0 720 314" role="img" aria-labelledby="ct-t ct-d" class="figure-svg">
+            <title id="ct-t">안전장치 네 겹과 각각이 실제로 한 일</title>
+            <desc id="ct-d">왼쪽에 세로축이 있고 위가 실제로 잡음, 아래가 울린 적 없음입니다. 축 오른쪽에 상자가 넷 위에서 아래로 놓여 있습니다. 예산 알람, 일부러 실패시킨 리허설, TTL 예약 종료, 서비스 제어 정책 순서입니다. 상자마다 오른쪽으로 화살표가 나가 그것이 한 일이 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <path d="M40 34 V 280" fill="none" stroke="#c9c9c9" stroke-width="1.4"/>
+              <text x="40" y="26" font-size="11" fill="#8a8a8a" text-anchor="middle">실제로 잡음</text>
+              <text x="40" y="298" font-size="11" fill="#8a8a8a" text-anchor="middle">울린 적 없음</text>
+              <rect x="64" y="48" width="248" height="40" rx="9" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="188" y="73" font-size="11.5" fill="#d62976" text-anchor="middle">예산 알람</text>
+              <path d="M318 68 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#ct-a)"/>
+              <text x="384" y="73" font-size="11.5" fill="#4a4a4a">추정에서 빠진 항목을 찾음</text>
+              <rect x="64" y="104" width="248" height="40" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="188" y="129" font-size="11.5" fill="#4f5bd5" text-anchor="middle">일부러 실패시킨 리허설</text>
+              <path d="M318 124 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#ct-a)"/>
+              <text x="384" y="129" font-size="11.5" fill="#4a4a4a">정책 결함을 찾음</text>
+              <rect x="64" y="160" width="248" height="40" rx="9" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="188" y="185" font-size="11.5" fill="#8a8a8a" text-anchor="middle">TTL 예약 종료</text>
+              <path d="M318 180 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#ct-a)"/>
+              <text x="384" y="185" font-size="11.5" fill="#4a4a4a">발화는 증명 · 오류는 못 잡음</text>
+              <rect x="64" y="216" width="248" height="40" rx="9" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="188" y="241" font-size="11.5" fill="#8a8a8a" text-anchor="middle">서비스 제어 정책</text>
+              <path d="M318 236 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#ct-a)"/>
+              <text x="384" y="241" font-size="11.5" fill="#4a4a4a">울린 적 없음</text>
+            </g>
+            <defs>
+              <marker id="ct-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>네 겹을 만들었는데 <strong>비용 오류를 잡은 것은 맨 위 하나</strong>였습니다. 아래 둘은 만들어 두고 <strong>울리는지 확인한 적이 없었습니다.</strong></figcaption>
+        </figure>
+
         <h2 id="추정에서-통째로-빠진-항목">추정에서 통째로 빠져 있던 항목<a class="anchor" href="#추정에서-통째로-빠진-항목" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>2026-09-03, 세 번째 유료 세션 뒤에 그 알람이 울렸습니다.</p>
@@ -168,6 +202,26 @@
         EKS 컨트롤 플레인, NAT 게이트웨이. 시간당 단가가 있는 것들입니다. 그런데 NAT는 시간당 요금과
         <strong>처리한 바이트당 요금</strong>을 따로 받습니다. 컨테이너 이미지를 당길 때마다 그 항목이 자랍니다.
         <strong>켠 것을 세는 목록은, 켠 것이 무엇을 하는지는 세지 않습니다.</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 248" role="img" aria-labelledby="ep-t ep-d" class="figure-svg">
+            <title id="ep-t">월 예산과 임계와 실제 지출을 나란히 놓은 막대</title>
+            <desc id="ep-d">가로 막대가 셋 있습니다. 맨 위는 월 예산 30달러로 가장 깁니다. 가운데는 80퍼센트 임계인 24달러입니다. 맨 아래는 실제 지출 14.56달러입니다. 아래에 분홍색으로 임계에 닿을 때 남은 결정이 없다고 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="176" y="70" font-size="11.5" fill="#8a8a8a" text-anchor="end">월 예산</text>
+              <rect x="190" y="50" width="430" height="28" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.8"/>
+              <text x="630" y="70" font-size="11.5" fill="#4a4a4a">30달러</text>
+              <text x="176" y="122" font-size="11.5" fill="#d62976" text-anchor="end">80% 임계</text>
+              <rect x="190" y="102" width="344" height="28" rx="5" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="544" y="122" font-size="11.5" fill="#4a4a4a">24달러 · 경보가 울리는 선</text>
+              <text x="176" y="174" font-size="11.5" fill="#4f5bd5" text-anchor="end">실제 지출</text>
+              <rect x="190" y="154" width="208" height="28" rx="5" fill="none" stroke="#4f5bd5" stroke-width="1.8"/>
+              <text x="408" y="174" font-size="11.5" fill="#4a4a4a">14.56달러</text>
+              <text x="360" y="230" font-size="11.5" fill="#d62976" text-anchor="middle">임계에 닿는 시점 · 남은 결정 없음</text>
+            </g>
+          </svg>
+          <figcaption>80%는 「아직 바꿀 수 있는 결정이 남아 있을 때」 울려야 경보입니다. 이 지출 모양에서는 24달러에 닿는 시점이 <strong>이미 실험이 끝난 뒤</strong>라, 그때 받는 알림은 경보가 아니라 <strong>영수증</strong>입니다.</figcaption>
+        </figure>
 
         <h2 id="terraform이-그걸-지울-뻔했다">그리고 Terraform이 그걸 지울 뻔했습니다<a class="anchor" href="#terraform이-그걸-지울-뻔했다" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -201,6 +255,27 @@
 
         <p>바꾼 것은 알고리즘이 아니라 <strong>바이트가 지나가는 경로</strong>입니다. 그리고 그 경로가 보이게 된 것은
         알람이 청구서를 항목별로 읽게 만들었기 때문입니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="ng-t ng-d" class="figure-svg">
+            <title id="ng-t">같은 바이트가 어느 경로로 나가느냐로 요금이 갈리는 그림</title>
+            <desc id="ng-d">상자가 둘 나란히 있습니다. 왼쪽은 NAT 게이트웨이 경로이고 아래에 처리 요금과 데이터 요금이 적혀 있습니다. 오른쪽은 인터넷 게이트웨이 경로이고 아래에 인바운드 무료와 Instance 한 대라고 적혀 있습니다. 맨 아래에 분홍색으로 같은 15.6GB라고 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">NAT 게이트웨이 경로</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">시간당 요금 + 처리 바이트 요금</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">게이트웨이와 쿠버네티스가 전제</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">추정에서 통째로 빠져 있던 항목</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">인터넷 게이트웨이 경로</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">인바운드 전송 무료</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">공인 IP를 가진 Instance 한 대</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">같은 실험이 그대로 돌아감</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">같은 15.6GB · 다른 청구</text>
+            </g>
+          </svg>
+          <figcaption>옮기는 바이트는 같습니다. 바뀐 것은 <strong>바이트가 지나가는 경로</strong>이고 그 경로는 <strong>실험의 모양을 한 줄 바꾸는 것</strong>으로 정해졌습니다.</figcaption>
+        </figure>
 
         <h2 id="일부러-실패한-리허설">일부러 실패한 리허설, 20분 5센트<a class="anchor" href="#일부러-실패한-리허설" aria-label="이 절로 가는 링크">#</a></h2>
 

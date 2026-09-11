@@ -148,6 +148,40 @@
         のは正当な<strong>決定</strong>です。しかし署名された制約が記録なしに解けているのは<strong>事故</strong>です。
         二つを混ぜると、次の回帰を<em>「どうせ受け入れ済みのリスク」</em>として飲み込んでしまいます。</p>
 
+        <figure class="diagram">
+          <svg viewBox="0 0 720 314" role="img" aria-labelledby="ax-t ax-d" class="figure-svg">
+            <title id="ax-t">どの軸に抑制が掛かっていたかを軸ごとに示す図</title>
+            <desc id="ax-d">左に縦軸があり、上が抑制の掛かった軸、下が掛かっていない軸です。軸の右に箱が四つ、上から下へ並びます。性別、年齢、地域、時間です。箱ごとに右へ矢印が出て、その軸の状態が書かれています。一番下の時間の軸だけがピンクです。</desc>
+            <g font-family="Inter, sans-serif">
+              <path d="M40 34 V 280" fill="none" stroke="#c9c9c9" stroke-width="1.4"/>
+              <text x="40" y="26" font-size="11" fill="#8a8a8a" text-anchor="middle">抑制あり</text>
+              <text x="40" y="298" font-size="11" fill="#8a8a8a" text-anchor="middle">抑制なし</text>
+              <rect x="64" y="48" width="248" height="40" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="188" y="73" font-size="11.5" fill="#4f5bd5" text-anchor="middle">性別の軸</text>
+              <path d="M318 68 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#ax-a)"/>
+              <text x="384" y="73" font-size="11.5" fill="#4a4a4a">min-n 5 人で抑制</text>
+              <rect x="64" y="104" width="248" height="40" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="188" y="129" font-size="11.5" fill="#4f5bd5" text-anchor="middle">年齢の軸</text>
+              <path d="M318 124 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#ax-a)"/>
+              <text x="384" y="129" font-size="11.5" fill="#4a4a4a">min-n 5 人で抑制</text>
+              <rect x="64" y="160" width="248" height="40" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="188" y="185" font-size="11.5" fill="#4f5bd5" text-anchor="middle">地域の軸</text>
+              <path d="M318 180 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#ax-a)"/>
+              <text x="384" y="185" font-size="11.5" fill="#4a4a4a">min-n 10 人で抑制</text>
+              <rect x="64" y="216" width="248" height="40" rx="9" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="188" y="241" font-size="11.5" fill="#d62976" text-anchor="middle">時間の軸</text>
+              <path d="M318 236 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#ax-a)"/>
+              <text x="384" y="241" font-size="11.5" fill="#4a4a4a">抑制なし · 後から追加</text>
+            </g>
+            <defs>
+              <marker id="ax-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>防御を<strong>軸ごとに</strong>書いておくと、軸が一つ増えたときその軸には何もありません。時間の軸は推移グラフを入れるときに生まれ、<strong>そのとき min-n を一緒に入れた人がいませんでした。</strong></figcaption>
+        </figure>
+
         <h2 id="遅延が防御だ">遅延はコストではなく防御です<a class="anchor" href="#遅延が防御だ" aria-label="この節へのリンク">#</a></h2>
 
         <p>キャッシュを議論していて、このセッション最大の収穫が出ました。</p>
@@ -342,6 +376,27 @@
 
         <p>代わりに採ったのは、推移ボリュームを<strong>丸めた整数の占有率</strong>に変えることでした。公開経路で
         丸めも抑制も通らない唯一のフィールドがそれでした。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="od-t od-d" class="figure-svg">
+            <title id="od-t">スナップショットごとに真な制約と、二つの差を分けた図</title>
+            <desc id="od-d">箱が二つ並んでいます。左は占有制約で、一つのスナップショット内で各セルが 5 人以上という条件が書かれています。右は差分制約で、二つのスナップショットの差にはその条件が無いことが書かれています。一番下にピンクで、漏れるのは右と書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">占有制約 · スナップショット一つ</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">09:00 のスナップショット · 各セル 5 人以上</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">09:15 のスナップショット · 各セル 5 人以上</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">どちらも真</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">差分制約 · 二つの間</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">09:15 の値から 09:00 の値を引く</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">差は 1 票でありうる</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">条件が何も無い</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">漏れるのは右</text>
+            </g>
+          </svg>
+          <figcaption>各スナップショットが<strong>それぞれ真</strong>でも、その<strong>差</strong>は一人を指しえます。占有制約は差分制約を含意しません。</figcaption>
+        </figure>
 
         <h2 id="レビューが挙げた事実">レビューが根拠に挙げた事実が誤っていました<a class="anchor" href="#レビューが挙げた事実" aria-label="この節へのリンク">#</a></h2>
 

@@ -120,18 +120,6 @@ FEW_FIGURES_OK = {
     "writing/gpu-node-readiness.html",
     "writing/gpu-quota-control-plane.html",
     "writing/iaas-backend-performance.html",
-    "writing/parallelism-made-the-tail-worse.html",
-    "writing/parallelism-made-the-tail-worse.ja.html",
-    "writing/parallelism-made-the-tail-worse.ko.html",
-    "writing/the-only-control-that-caught-something.html",
-    "writing/the-only-control-that-caught-something.ja.html",
-    "writing/the-only-control-that-caught-something.ko.html",
-    "writing/three-documents-on-a-false-premise.html",
-    "writing/three-documents-on-a-false-premise.ja.html",
-    "writing/three-documents-on-a-false-premise.ko.html",
-    "writing/until-the-guarantee-was-a-sentence.html",
-    "writing/until-the-guarantee-was-a-sentence.ja.html",
-    "writing/until-the-guarantee-was-a-sentence.ko.html",
 }
 
 few = []
