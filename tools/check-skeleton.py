@@ -54,8 +54,12 @@ def main():
         missing = []
         if not (set(auds) & ids):
             missing.append(auds[0])
-        if not (set(whats) & ids):
-            missing.append(whats[0])
+        # 규약 29(2026-09-12): 「무슨 내용인가요?」 절을 꼭 두지 않아도 된다.
+        # **도입부 산문이 그 일을 하면** 된다 — 23편이 같은 절 제목으로 시작하면 뼈대가 아니라 틀이다.
+        # 첫 <h2> 앞에 문단이 셋 이상이면 도입부가 맥락을 준 것으로 본다.
+        lead = art[:art.find("<h2")] if "<h2" in art else ""
+        if not (set(whats) & ids) and lead.count("<p>") < 3:
+            missing.append(whats[0] + " (또는 도입부 문단 3개)")
         if not (set(wraps) & ids) or "wrapup" not in art:
             missing.append(wraps[0])
         if missing:
