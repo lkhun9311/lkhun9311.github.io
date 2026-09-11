@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="2,255 コミットを飛び越えるバージョン移行。文書からの推論ではどこで壊れるか分からないので、隔離環境に旧バージョンを立てて一度壊してみた。すると私が先に書いた文書 3 本の前提が誤りだと分かった。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+  <link rel="stylesheet" href="../assets/styles.css?v=5115091496" />
 </head>
 <body>
   <div class="topbar">
@@ -151,18 +151,18 @@ find . -type f -exec md5sum {} \;          # 両方の全ファイルで md5 が
 
         <h2 id="date-order">日付順を信じなかった<a class="anchor" href="#date-order" aria-label="このセクションへのリンク">#</a></h2>
 
-        <p>次はデルタの特定である。旧バージョンの baseline にどのパッチが既に入っていて何が抜けているかを知る必要が
-        ある。baseline スキーマでマーカーテーブルの有無を 1 つずつ確認した。</p>
+        <p>次はデルタの特定である。旧バージョンの Baseline にどのパッチが既に入っていて何が抜けているかを知る必要が
+        ある。Baseline スキーマでマーカーテーブルの有無を 1 つずつ確認した。</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
         <table>
-          <caption class="sr-only">旧 baseline に存在するマーカーテーブルとその意味。</caption>
-          <thead><tr><th scope="col">マーカー</th><th scope="col">baseline</th><th scope="col">意味</th></tr></thead>
+          <caption class="sr-only">旧 Baseline に存在するマーカーテーブルとその意味。</caption>
+          <thead><tr><th scope="col">マーカー</th><th scope="col">Baseline</th><th scope="col">意味</th></tr></thead>
           <tbody>
             <tr><td>設定テーブル</td><td>あり</td><td>—</td></tr>
-            <tr><td>ブロックリスト</td><td>あり</td><td>10 月のパッチが baseline に含まれている</td></tr>
+            <tr><td>ブロックリスト</td><td>あり</td><td>10 月のパッチが Baseline に含まれている</td></tr>
             <tr><td>スケジューラ関連</td><td><strong>なし</strong></td><td>7 月のバッチパッチが未適用</td></tr>
             <tr><td>バッチジョブ情報</td><td><strong>なし</strong></td><td>新しいパッチがこれを参照する — <strong>先行なしでは失敗する</strong></td></tr>
           </tbody>
@@ -170,10 +170,10 @@ find . -type f -exec md5sum {} \;          # 両方の全ファイルで md5 が
         </div>
         </div>
 
-        <p>ここで引っかかったものがある。baseline に<strong>10 月のパッチはあるのに、その前の 7・8 月のものが
+        <p>ここで引っかかったものがある。Baseline に<strong>10 月のパッチはあるのに、その前の 7・8 月のものが
         なかった。</strong></p>
 
-        <p>つまり baseline はある日付で切ったスナップショットではなく<strong>キュレーション</strong>だ。誰かがその
+        <p>つまり Baseline はある日付で切ったスナップショットではなく<strong>キュレーション</strong>だ。誰かがその
         ラインに必要だと判断したものだけを選んで入れている。すると「日付順に並べてその後のものを順に適用する」という
         方針は<strong>安全を何も保証しない。</strong>既に入っているものを再度入れるか、先に入るべきだったものを
         飛ばすことになる。</p>
@@ -196,7 +196,7 @@ find . -type f -exec md5sum {} \;          # 両方の全ファイルで md5 が
         <p>私が先に書いた文書 3 本はすべて<strong>「パッチを順に適用する」</strong>を前提にしていた。デルタ一覧を作り、
         順序を決め、冪等性を検討していた。その作業全体が<strong>別の方式の手順</strong>だった。</p>
 
-        <p>デルタの実査が無意味になったわけではない。どのパッチが baseline に入っているかは、再構築と移行でも必要な
+        <p>デルタの実査が無意味になったわけではない。どのパッチが Baseline に入っているかは、再構築と移行でも必要な
         情報である。無意味になったのは<strong>「パッチを順に適用すれば到達する」という結論</strong>のほうだ。</p>
 
         <p>3 本は消さずに<strong>それぞれに訂正の注記を付けた。</strong>消すとなぜそう考えたのかが失われ、次に同じ
@@ -389,7 +389,7 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
         <ul>
           <li><strong>手順書は読んで直るのではなく、一度失敗して直る。</strong>文書だけを読んで分かったことは
           1 つだけだった。</li>
-          <li><strong>「日付順に並べてその後を当てる」は baseline が日付で切られているときだけ正しい。</strong>
+          <li><strong>「日付順に並べてその後を当てる」は Baseline が日付で切られているときだけ正しい。</strong>
           キュレーションなら、その規則は安全ではなく危険を作る。</li>
           <li><strong>誤った前提は消さず、なぜ誤りだったかを残す。</strong>消すと次に同じ場所で同じ推論をする。</li>
           <li><strong>「移行が難しい」は数えられないが「スキーマの位置が変わる」は数えられる。</strong>
@@ -398,7 +398,7 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
 
         <p>残る 1 行はこれである。<strong>文書だけを読んで分かったことは 1 つだけだった</strong> — 方式がパッチの
         順次適用ではなく再構築と移行だということ。しかもそれさえ最初にざっと見たときには見落としており、手順一覧では
-        なく概要を読んで初めて引っかかった。残りはすべて — リリース版が同一であることも、baseline が日付で切った
+        なく概要を読んで初めて引っかかった。残りはすべて — リリース版が同一であることも、Baseline が日付で切った
         ものではないことも、手順書が存在しないファイルを指していることも — 実際に何かを確認する中で出てきた。ただ 1 つ、方式が違うことは文書を<em>精読して</em>分かったのだが、
         それも最初にざっと見たときには見落としていた。本番 DB は、初めて試すのに最も高くつく場所である。</p>
 
@@ -414,8 +414,8 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=772d75cdff"></script>
+  <script src="../assets/i18n.js?v=60def360be"></script>
+  <script src="../assets/content.js?v=738aaf3b4d"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

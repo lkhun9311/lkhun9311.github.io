@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="物理ノード画面に同じ serve-stale のパターンを移す途中で「空の結果を 0 台として公開してよいのか」で止まりました。空の結果を五つに分け、二つだけを新しい値として公開し、残りは最後の正常値を保つようにしました。中央値 3,938ms が 23ms になりました。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+  <link rel="stylesheet" href="../assets/styles.css?v=5115091496" />
 </head>
 <body>
   <div class="topbar">
@@ -95,7 +95,7 @@
 
         <article class="article-body">
 
-        <p>社内クラウド管理コンソールの backend を作っています。
+        <p>社内クラウド管理コンソールの Backend を作っています。
         <a href="monitoring-three-races-in-one-cache.ja.html">②編</a>でダッシュボードの計算を
         リクエスト経路の外に移しました。同じパターンを物理ノード画面にそのまま移せばよさそうでした。</p>
 
@@ -130,11 +130,11 @@
         <blockquote><p>⚠️ <strong>この編には、最初にできていなかったことが入っています。</strong>
         物理ノードの実装では、この五つの分岐が<strong>完全ではありませんでした。</strong>
         「取得は成功したが結果が空」を正常と見る余地が残っており、それを
-        <strong>⑤編の共有 cache の作業でようやく</strong>共通の判定に引き上げました。</p></blockquote>
+        <strong>⑤編の共有 Cache の作業でようやく</strong>共通の判定に引き上げました。</p></blockquote>
 
         <h2 id="同じパターン">同じパターン、違う問い<a class="anchor" href="#同じパターン" aria-label="このセクションへのリンク">#</a></h2>
 
-        <p>構造はダッシュボードと同じです。後ろで回る worker が 15 秒ごとに完成スナップショットを作り、
+        <p>構造はダッシュボードと同じです。後ろで回る Worker が 15 秒ごとに完成スナップショットを作り、
         新しい接続には最後の値をすぐに送ります。改善前の最初のデータはこうでした。</p>
 
         <div class="table-scroll">
@@ -229,7 +229,7 @@ else:                              NO_VALID_METRICS</code></pre>
 
         <h2 id="到着順">到着の順序もデータです<a class="anchor" href="#到着順" aria-label="このセクションへのリンク">#</a></h2>
 
-        <p>接続の直後に cache された値が出て、ほぼ同時に新しい配信が届くことがあります。
+        <p>接続の直後に Cache された値が出て、ほぼ同時に新しい配信が届くことがあります。
         非同期リスナーの実行順序は保証されないので、<strong>より古い応答が新しい配信より遅く</strong>
         届くことがあります。すると画面が巻き戻ります。</p>
 
@@ -278,7 +278,7 @@ else:                              NO_VALID_METRICS</code></pre>
         <h2 id="値と信頼度">値と信頼度を別々に描きます<a class="anchor" href="#値と信頼度" aria-label="このセクションへのリンク">#</a></h2>
 
         <p>最後の正常値を見せているあいだ、利用者がそれを最新だと誤解してはいけません。
-        そこで payload にこの四つを別々に載せました。</p>
+        そこで Payload にこの四つを別々に載せました。</p>
 
         <ul>
           <li>データと<strong>そのデータが作られた時刻</strong></li>
@@ -289,7 +289,7 @@ else:                              NO_VALID_METRICS</code></pre>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 190" role="img" aria-labelledby="pl-t pl-d" class="figure-svg">
-            <title id="pl-t">値と収集状態を別々に載せた payload の四つの枠</title>
+            <title id="pl-t">値と収集状態を別々に載せた Payload の四つの枠</title>
             <desc id="pl-d">横に四つの枠が並んでいます。一つ目はデータと作られた時刻で、ピンクです。
             二つ目は最後の収集試行の状態と時刻です。三つ目は前の値を引き継いでいるかを示す劣化表示です。
             四つ目は順序を決める世代番号です。下には、劣化表示が立っておらず結果が空のときだけ
@@ -332,7 +332,7 @@ else:                              NO_VALID_METRICS</code></pre>
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると残りが見えます">
         <table>
           <caption class="sr-only">物理ノードの最初のデータの改善前後。</caption>
-          <thead><tr><th>指標</th><th>改善前</th><th>共有 cache 反映後</th></tr></thead>
+          <thead><tr><th>指標</th><th>改善前</th><th>共有 Cache 反映後</th></tr></thead>
           <tbody>
             <tr><td>中央値</td><td>約 3,938ms</td><td><strong>約 23ms</strong></td></tr>
             <tr><td>p95</td><td>約 4,968ms</td><td>約 40ms</td></tr>
@@ -343,16 +343,16 @@ else:                              NO_VALID_METRICS</code></pre>
         </table>
         </div>
         </div>
-        <p class="table-note">⚠️「改善後」は<strong>⑤編の共有 cache まで入った状態</strong>で測った値です。
+        <p class="table-note">⚠️「改善後」は<strong>⑤編の共有 Cache まで入った状態</strong>で測った値です。
         この編の変更だけで測った値ではありません。画面ごとの改善の直後にも数十 ms の範囲でしたが、
         <strong>その時点の表は別に残していません。</strong></p>
 
         <h2 id="主張しないこと">この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="このセクションへのリンク">#</a></h2>
 
         <ul>
-          <li><strong>運用統計ではありません。</strong>最初のデータの遅延を見る逐次 harness であって、
+          <li><strong>運用統計ではありません。</strong>最初のデータの遅延を見る逐次 Harness であって、
           同時利用者の負荷試験ではありません。</li>
-          <li><strong>この編の寄与だけを測っていません。</strong>表の「改善後」には⑤編の共有 cache が
+          <li><strong>この編の寄与だけを測っていません。</strong>表の「改善後」には⑤編の共有 Cache が
           一緒に入っています。</li>
           <li><strong>この五つの分岐が最初から完全だったとは言いません。</strong>
           物理ノードの時点では「取得成功かつ結果が空」を正常と見る余地が残っており、
@@ -391,8 +391,8 @@ else:                              NO_VALID_METRICS</code></pre>
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=772d75cdff"></script>
+  <script src="../assets/i18n.js?v=60def360be"></script>
+  <script src="../assets/content.js?v=738aaf3b4d"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

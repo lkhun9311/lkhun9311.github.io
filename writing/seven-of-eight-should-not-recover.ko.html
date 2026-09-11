@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="스위치 장애로 살아 있는 컴퓨트 노드가 장애로 판정돼 복구가 대량 실행됐습니다. 감지를 정교하게 만드는 대신 신호에 자격을 매겼고 시나리오 여덟 중 일곱이 보류로 남았습니다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+  <link rel="stylesheet" href="../assets/styles.css?v=5115091496" />
 </head>
 <body>
   <div class="topbar">
@@ -86,20 +86,20 @@
             <li><a href="#두-개의-질문">"장애인가"와 "지금 해도 되는가"는 다른 질문입니다</a></li>
             <li><a href="#여덟-중-일곱">여덟 중 일곱</a></li>
             <li><a href="#펜싱-없이는-복구도-없다">펜싱 없이는 복구도 없다, 그리고 5초</a></li>
-            <li><a href="#db-lock은-분산-합의가-아니다">DB lock은 분산 합의가 아닙니다</a></li>
+            <li><a href="#db-lock은-분산-합의가-아니다">DB Lock은 분산 합의가 아닙니다</a></li>
             <li><a href="#이-글이-주장하지-않는-것">이 글이 주장하지 않는 것</a></li>
             <li><a href="#마치며">마치며</a></li>
           </ul>
         </nav>
       <article class="article-body">
 
-        <p><strong>범위.</strong> 2026년 3월, OpenStack 기반 프라이빗 클라우드 제품의 instance HA(고가용성) 장애
+        <p><strong>범위.</strong> 2026년 3월, OpenStack 기반 프라이빗 클라우드 제품의 Instance HA(고가용성) 장애
         대응을 다시 설계한 기록입니다. 제품명·버전·고객사·티켓 번호는 쓰지 않습니다.
         <strong>산출물은 설계서이고 구현은 다른 팀원이 이어받았습니다.</strong> 그러므로 이 글에는 "이렇게 고쳐서
         장애가 줄었다"는 사후 측정이 없습니다. 있는 것은 판정 체계와, 그 체계로 시나리오를 하나씩 판정한 결과입니다.</p>
 
         <p>사건은 한 줄입니다. <strong>L2/L3 스위치가 죽자, 멀쩡히 돌아가던 컴퓨트 노드가 장애로 판정돼 복구가
-        대량으로 실행됐습니다.</strong> instance HA에서 복구란 Nova Evacuate. 다른 노드에서 같은 VM을 다시 띄우는
+        대량으로 실행됐습니다.</strong> Instance HA에서 복구란 Nova Evacuate. 다른 노드에서 같은 VM을 다시 띄우는
         것입니다. 원본이 살아 있는 채 복제본이 같은 볼륨에 붙으면 두 쪽이 동시에 씁니다.</p>
 
         <p>재설계의 결론은 감지 정확도를 올리는 것이 아니었습니다. <strong>신호마다 무엇을 증언할 자격이 있는지를
@@ -272,7 +272,7 @@ Compute-02 → VM-A 복구 완료      → /dev/vdb에 쓴다   (신규 attach)<
           <tbody>
             <tr><td>iSCSI</td><td>SCSI-3 PR이 있지만 원본 연결이 정리되기 전에 신규 접근이 들어오면 충돌 가능</td></tr>
             <tr><td><strong>LVM</strong></td><td><strong>SCSI PR 미지원.</strong> 동시 쓰기 시 VG/LV 메타데이터 손상 위험이 높다</td></tr>
-            <tr><td>NFS</td><td>파일 lock 기반이라 동시 mount/write 시 일관성을 보장할 수 없다</td></tr>
+            <tr><td>NFS</td><td>파일 Lock 기반이라 동시 mount/write 시 일관성을 보장할 수 없다</td></tr>
           </tbody>
         </table>
         </div>
@@ -288,7 +288,7 @@ Compute-02 → VM-A 복구 완료      → /dev/vdb에 쓴다   (신규 attach)<
 
         <p>2번이 있는 이유는 단순합니다. <strong>전원을 내린 직후에 상태를 조회하면 아직 off가 아닙니다.</strong>
         대기 없이 확인하면 "off가 아님"으로 읽혀 펜싱 실패로 오판하거나, 반대로 낙관적으로 넘어갑니다. 5초는 그
-        하한이고 상한은 별도의 펜싱 timeout으로 둡니다.</p>
+        하한이고 상한은 별도의 펜싱 Timeout으로 둡니다.</p>
 
         <p>그리고 이 절차 전체를 무력화하는 전제 조건이 하나 있었습니다. <strong>펜싱은 IPMI로 하는데 BMC가
         MGMT와 같은 물리 스위치에 있으면 스위치가 죽을 때 IPMI도 같이 죽습니다.</strong> 펜싱이 필요한 바로 그
@@ -313,19 +313,19 @@ Compute-02 → VM-A 복구 완료      → /dev/vdb에 쓴다   (신규 attach)<
         사고 당시 BMC 네트워크는 아예 없었습니다. 그래서 이 항목은 설계의 한 절이 아니라
         <strong>전제 조건</strong>으로 못 박았습니다. 이게 없으면 위 판정 체계의 마지막 한 칸도 실행할 수 없습니다.</p>
 
-        <h2 id="db-lock은-분산-합의가-아니다">DB lock은 분산 합의가 아닙니다<a class="anchor" href="#db-lock은-분산-합의가-아니다" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="db-lock은-분산-합의가-아니다">DB Lock은 분산 합의가 아닙니다<a class="anchor" href="#db-lock은-분산-합의가-아니다" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>판정 체계를 정한 다음 남은 질문은 "그 판정을 누가, 어디서 실행하는가"였습니다. 사내에 이미 Galera가 있어
-        그 위에 DB lock(ShedLock)을 얹자는 흐름이 있었습니다. 세 방식을 같은 축으로 비교했습니다.</p>
+        그 위에 DB Lock(ShedLock)을 얹자는 흐름이 있었습니다. 세 방식을 같은 축으로 비교했습니다.</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
         <table>
           <caption class="sr-only">실행 제어 방식 세 가지 비교.</caption>
-          <thead><tr><th scope="col">항목</th><th scope="col">Galera + DB lock</th><th scope="col">etcd + 펜싱</th><th scope="col">Pacemaker + Corosync</th></tr></thead>
+          <thead><tr><th scope="col">항목</th><th scope="col">Galera + DB Lock</th><th scope="col">etcd + 펜싱</th><th scope="col">Pacemaker + Corosync</th></tr></thead>
           <tbody>
-            <tr><td>합의 방식</td><td>DB lock</td><td><strong>Raft</strong></td><td><strong>Totem</strong></td></tr>
+            <tr><td>합의 방식</td><td>DB Lock</td><td><strong>Raft</strong></td><td><strong>Totem</strong></td></tr>
             <tr><td>Split-Brain 방지</td><td>낮음</td><td>중간</td><td><strong>높음</strong></td></tr>
             <tr><td>감지 시간</td><td>~30초</td><td>~10초</td><td><strong>~5초</strong></td></tr>
             <tr><td>STONITH</td><td>없음</td><td>없음</td><td><strong>내장</strong></td></tr>
@@ -337,8 +337,8 @@ Compute-02 → VM-A 복구 완료      → /dev/vdb에 쓴다   (신규 attach)<
         </div>
         </div>
 
-        <p>결론을 정한 것은 첫 줄입니다. <strong>DB lock은 분산 합의가 아닙니다.</strong> lock은 중복 실행을 줄이지만
-        네트워크가 분단됐을 때 <strong>양쪽이 각자 lock을 잡는 것</strong>을 막지 못합니다. 이 문제의 목적이
+        <p>결론을 정한 것은 첫 줄입니다. <strong>DB Lock은 분산 합의가 아닙니다.</strong> Lock은 중복 실행을 줄이지만
+        네트워크가 분단됐을 때 <strong>양쪽이 각자 Lock을 잡는 것</strong>을 막지 못합니다. 이 문제의 목적이
         Split-Brain 방지인데 그것을 구조적으로 막지 못하면 싸다는 이유만으로는 목적을 달성하지 못합니다. 그래서
         평가표에 "임시 대응"으로 남겼습니다.</p>
 
@@ -399,8 +399,8 @@ Compute-02 → VM-A 복구 완료      → /dev/vdb에 쓴다   (신규 attach)<
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=772d75cdff"></script>
+  <script src="../assets/i18n.js?v=60def360be"></script>
+  <script src="../assets/content.js?v=738aaf3b4d"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

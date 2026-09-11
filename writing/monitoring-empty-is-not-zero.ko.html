@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="물리 노드 화면에 같은 serve-stale 패턴을 옮기다가 「빈 결과를 0대로 발행해도 되는가」에서 멈췄습니다. 빈 결과를 다섯 갈래로 갈라 둘만 새 값으로 발행하고 나머지는 마지막 정상값을 유지하도록 했습니다. 중앙값 3,938ms가 23ms가 됐습니다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+  <link rel="stylesheet" href="../assets/styles.css?v=5115091496" />
 </head>
 <body>
   <div class="topbar">
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span></div>
       </div>
               <section class="page-hero">
-          <h1>빈 목록이 노드 0대인지 조회 실패인지 몰랐습니다<br><span class="h1-sub">대상이 없어서 빈 것과 못 가져와서 빈 것이 같은 모양으로 옵니다. 사내 cloud 관리 console · 통합 모니터링 연작 ③</span></h1>
+          <h1>빈 목록이 노드 0대인지 조회 실패인지 몰랐습니다<br><span class="h1-sub">대상이 없어서 빈 것과 못 가져와서 빈 것이 같은 모양으로 옵니다. 사내 Cloud 관리 Console · 통합 모니터링 연작 ③</span></h1>
           <p class="article-date">2026년 9월</p>
         </section>
 
@@ -95,7 +95,7 @@
 
         <article class="article-body">
 
-        <p>안녕하세요. 사내 cloud 관리 console의 backend를 만들고 있습니다.
+        <p>안녕하세요. 사내 Cloud 관리 Console의 Backend를 만들고 있습니다.
         <a href="monitoring-three-races-in-one-cache.ko.html">②편</a>에서 대시보드의 계산을
         요청 경로 밖으로 옮겼습니다. 같은 패턴을 물리 노드 화면에 그대로 옮기면 될 것 같았습니다.</p>
 
@@ -131,11 +131,11 @@
         <blockquote><p>⚠️ <strong>이 편에는 제가 처음에 못 한 것이 들어 있습니다.</strong>
         물리 노드 구현에서는 이 다섯 갈래가 <strong>완전하지 않았습니다.</strong>
         「가져오기는 성공했는데 결과가 빈 경우」를 정상으로 볼 여지가 남아 있었고
-        그것을 <strong>⑤편의 공유 cache 작업에서야</strong> 공통 판정으로 끌어올렸습니다.</p></blockquote>
+        그것을 <strong>⑤편의 공유 Cache 작업에서야</strong> 공통 판정으로 끌어올렸습니다.</p></blockquote>
 
         <h2 id="같은-패턴">같은 패턴, 다른 질문<a class="anchor" href="#같은-패턴" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>구조는 대시보드와 같습니다. 뒤에서 도는 worker가 15초마다 완성 스냅샷을 만들고
+        <p>구조는 대시보드와 같습니다. 뒤에서 도는 Worker가 15초마다 완성 스냅샷을 만들고
         새 접속에는 마지막 값을 즉시 보냅니다. 개선 전 첫 데이터는 이랬습니다.</p>
 
         <div class="table-scroll">
@@ -231,7 +231,7 @@ else:                              NO_VALID_METRICS</code></pre>
 
         <h2 id="순서도-데이터">도착 순서도 데이터입니다<a class="anchor" href="#순서도-데이터" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>접속 직후 cache된 값이 나가고 거의 동시에 새 방송이 도착할 수 있습니다.
+        <p>접속 직후 Cache된 값이 나가고 거의 동시에 새 방송이 도착할 수 있습니다.
         비동기 리스너의 실행 순서는 보장되지 않으므로 <strong>더 오래된 응답이 새 방송보다 늦게</strong>
         도착할 수 있습니다. 그러면 화면이 뒤로 갑니다.</p>
 
@@ -280,7 +280,7 @@ else:                              NO_VALID_METRICS</code></pre>
         <h2 id="값과-신뢰도">값과 신뢰도를 따로 그립니다<a class="anchor" href="#값과-신뢰도" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>마지막 정상값을 보여 주는 동안 사용자가 그것을 최신으로 오해하면 안 됩니다.
-        그래서 payload에 이 넷을 따로 실었습니다.</p>
+        그래서 Payload에 이 넷을 따로 실었습니다.</p>
 
         <ul>
           <li>데이터와 <strong>그 데이터가 만들어진 시각</strong></li>
@@ -291,7 +291,7 @@ else:                              NO_VALID_METRICS</code></pre>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 190" role="img" aria-labelledby="pl-t pl-d" class="figure-svg">
-            <title id="pl-t">값과 수집 상태를 따로 실은 payload의 네 칸</title>
+            <title id="pl-t">값과 수집 상태를 따로 실은 Payload의 네 칸</title>
             <desc id="pl-d">가로로 네 칸이 나란히 있습니다. 첫째 칸은 데이터와 만든 시각이고 분홍색입니다.
             둘째 칸은 마지막 수집 시도의 상태와 시각입니다. 셋째 칸은 이전 값을 이어 쓰는지 나타내는 저하 표시입니다.
             넷째 칸은 순서를 정하는 세대 번호입니다. 아래에는 저하 표시가 꺼져 있고 결과가 빈 경우에만
@@ -334,7 +334,7 @@ else:                              NO_VALID_METRICS</code></pre>
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
         <table>
           <caption class="sr-only">물리 노드 첫 데이터의 개선 전후.</caption>
-          <thead><tr><th>지표</th><th>개선 전</th><th>공유 cache 반영 후</th></tr></thead>
+          <thead><tr><th>지표</th><th>개선 전</th><th>공유 Cache 반영 후</th></tr></thead>
           <tbody>
             <tr><td>중앙값</td><td>약 3,938ms</td><td><strong>약 23ms</strong></td></tr>
             <tr><td>p95</td><td>약 4,968ms</td><td>약 40ms</td></tr>
@@ -345,16 +345,16 @@ else:                              NO_VALID_METRICS</code></pre>
         </table>
         </div>
         </div>
-        <p class="table-note">⚠️ 「개선 후」는 <strong>⑤편의 공유 cache까지 들어간 상태</strong>에서 잰 값입니다.
+        <p class="table-note">⚠️ 「개선 후」는 <strong>⑤편의 공유 Cache까지 들어간 상태</strong>에서 잰 값입니다.
         이 편의 변경만으로 잰 값이 아닙니다. 개별 화면 개선 직후에도 수십 ms 범위였지만
         <strong>그 시점의 표는 따로 남기지 않았습니다.</strong></p>
 
         <h2 id="주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul>
-          <li><strong>운영 통계가 아닙니다.</strong> 첫 데이터 지연을 보는 순차 harness이고
+          <li><strong>운영 통계가 아닙니다.</strong> 첫 데이터 지연을 보는 순차 Harness이고
           동시 사용자 부하 테스트가 아닙니다.</li>
-          <li><strong>이 편의 기여분만 재지 않았습니다.</strong> 표의 「개선 후」에는 ⑤편의 공유 cache가
+          <li><strong>이 편의 기여분만 재지 않았습니다.</strong> 표의 「개선 후」에는 ⑤편의 공유 Cache가
           같이 들어 있습니다.</li>
           <li><strong>이 다섯 갈래가 처음부터 완전했다고 말하지 않습니다.</strong>
           물리 노드 구현 시점에는 「가져오기 성공 + 빈 결과」를 정상으로 볼 여지가 남아 있었고
@@ -393,8 +393,8 @@ else:                              NO_VALID_METRICS</code></pre>
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=772d75cdff"></script>
+  <script src="../assets/i18n.js?v=60def360be"></script>
+  <script src="../assets/content.js?v=738aaf3b4d"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

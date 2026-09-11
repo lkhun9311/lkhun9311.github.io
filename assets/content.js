@@ -72,11 +72,11 @@
           text_ja: "「スループットの上限はコードになかった」を三言語で公開しました。上限は AWS SDK が引き連れてきたライブラリの「ホストあたり5」という既定値でした。" },
         { date: "2026-09-05", dateLabel: "Sep 5, 2026",
           text: "Corrected the connection-exhaustion article: the claims without numbers were replaced with harness measurements, and what is still unmeasured is now said so.",
-          text_ko: "connection 고갈 글을 정정했습니다. 수치 없이 하던 주장을 harness 실측으로 바꾸고 아직 재지 않은 것은 재지 않았다고 적었습니다.",
-          text_ja: "connection 枯渇の記事を訂正しました。数字のない主張を harness の実測に置き換え、まだ測っていないものは測っていないと書きました。" },
+          text_ko: "Connection 고갈 글을 정정했습니다. 수치 없이 하던 주장을 Harness 실측으로 바꾸고 아직 재지 않은 것은 재지 않았다고 적었습니다.",
+          text_ja: "Connection 枯渇の記事を訂正しました。数字のない主張を Harness の実測に置き換え、まだ測っていないものは測っていないと書きました。" },
         { date: "2026-02-06", dateLabel: "Feb 6, 2026",
           text: "Started building a Kubernetes-native GPUaaS platform control plane.",
-          text_ko: "Kubernetes 기반 GPUaaS 플랫폼 control plane를 만들기 시작했습니다.",
+          text_ko: "Kubernetes 기반 GPUaaS 플랫폼 Control Plane를 만들기 시작했습니다.",
           text_ja: "Kubernetes ネイティブな GPUaaS プラットフォームのコントロールプレーンを作り始めました。" },
         { date: "2026-02-01", dateLabel: "Feb 1, 2026",
           text: "Built this technical homepage with GitHub Pages.",
@@ -102,8 +102,8 @@
           dateLabel: "Sep 5, 2026",
           private: true,
           desc: "A Kotlin and Spring Boot service where people post a question, others vote anonymously, and the results are published as aggregates \u2014 totals, per-option counts, demographic axes and a trend over time. Min-n suppression and rounded shares narrow what a published change can reveal; the guarantee is written down as a sentence, and so are its limits, since small samples can still be identifiable. Pre-launch work covered transaction boundaries, the connection budget, and a moderation gate that runs outside the transaction.",
-          desc_ko: "질문을 올리면 다른 사람들이 익명으로 투표하고 결과는 집계로 공개되는 Kotlin · Spring Boot 서비스입니다. 총계 · 선택지별 수 · 인구 축 · 시간 추이를 냅니다. 최소 표본 억제와 반올림으로 공개된 변화가 드러내는 것을 좁혔고 보장선을 문장으로 적어 두되 그 한계도 같이 적었습니다. 표본이 작으면 식별 가능성이 남기 때문입니다. 출시 전에는 transaction 경계와 connection 예산, transaction 밖에서 도는 모더레이션 게이트를 다뤘습니다.",
-          desc_ja: "質問を投稿すると他の人が匿名で投票し、結果は集計として公開される Kotlin・Spring Boot のサービスです。総数・選択肢ごとの数・人口軸・時間推移を出します。最小標本の抑制と丸めで公開された変化が明かすものを狭め、保証線を文として書き、その限界も併記しました。標本が小さければ識別可能性は残るからです。公開前は transaction の境界と connection の予算、transaction の外で回るモデレーションゲートを扱いました。",
+          desc_ko: "질문을 올리면 다른 사람들이 익명으로 투표하고 결과는 집계로 공개되는 Kotlin · Spring Boot 서비스입니다. 총계 · 선택지별 수 · 인구 축 · 시간 추이를 냅니다. 최소 표본 억제와 반올림으로 공개된 변화가 드러내는 것을 좁혔고 보장선을 문장으로 적어 두되 그 한계도 같이 적었습니다. 표본이 작으면 식별 가능성이 남기 때문입니다. 출시 전에는 Transaction 경계와 Connection 예산, Transaction 밖에서 도는 모더레이션 게이트를 다뤘습니다.",
+          desc_ja: "質問を投稿すると他の人が匿名で投票し、結果は集計として公開される Kotlin・Spring Boot のサービスです。総数・選択肢ごとの数・人口軸・時間推移を出します。最小標本の抑制と丸めで公開された変化が明かすものを狭め、保証線を文として書き、その限界も併記しました。標本が小さければ識別可能性は残るからです。公開前は Transaction の境界と Connection の予算、Transaction の外で回るモデレーションゲートを扱いました。",
 
           tags: ["Backend", "Privacy", "Postgres"],
           stacks: [["Kotlin", "kotlin"], ["Spring Boot", "spring"], ["PostgreSQL", "postgres"], ["Flyway", "flyway"], ["Operations", "operations"]]
@@ -111,7 +111,7 @@
         {
           label: "Main Project",
           title: "GPUaaS Platform Control Plane: Kubernetes-native AI Infrastructure",
-          title_ko: "GPUaaS 플랫폼 control plane: Kubernetes 기반 AI 인프라",
+          title_ko: "GPUaaS 플랫폼 Control Plane: Kubernetes 기반 AI 인프라",
           title_ja: "GPUaaS プラットフォームのコントロールプレーン: Kubernetes ネイティブな AI インフラ",
           authors: "Solo",
           date: "2026-02-06",
@@ -119,7 +119,7 @@
           url: "projects/gpuaas-control-plane.html",
             github: "https://github.com/lkhun9311/gpu-platform-control-plane",
           desc: "A control-plane project for GPU-based AI workloads, focused on node readiness, tenant-level GPU governance, admission control, inference workload management, and operational observability.",
-          desc_ko: "GPU 기반 AI 워크로드를 위한 control plane 프로젝트입니다. 노드 준비 상태, 테넌트 단위 GPU 거버넌스, 어드미션 제어, 추론 워크로드 관리, 운영 관측을 다룹니다.",
+          desc_ko: "GPU 기반 AI 워크로드를 위한 Control Plane 프로젝트입니다. 노드 준비 상태, 테넌트 단위 GPU 거버넌스, 어드미션 제어, 추론 워크로드 관리, 운영 관측을 다룹니다.",
           desc_ja: "GPU ベースの AI ワークロードのためのコントロールプレーンのプロジェクトです。ノードの準備状態、テナント単位の GPU ガバナンス、アドミッション制御、推論ワークロード管理、運用の可観測性を扱います。",
           tags: ["GPU", "Kubernetes", "Control Plane"],
           stacks: [["Kubernetes", "kubernetes"], ["Python", "python"], ["Go", "go"], ["GPU", "gpu"], ["vLLM", "vllm"], ["Prometheus", "prometheus"], ["Grafana", "grafana"], ["AWS", "aws"]]
@@ -127,7 +127,7 @@
         {
           label: "Company Work",
           title: "IaaS Backend Engineering: Cloud Control Plane and Operations",
-          title_ko: "IaaS 백엔드 엔지니어링: 클라우드 control plane과 운영",
+          title_ko: "IaaS 백엔드 엔지니어링: 클라우드 Control Plane과 운영",
           title_ja: "IaaS バックエンドエンジニアリング: クラウドのコントロールプレーンと運用",
           authors: "Company",
           date: "2026-01-28",
@@ -167,7 +167,7 @@
           title: "The Throughput Ceiling Was in an SDK, Not My Code",
           url: "writing/the-ceiling-was-not-in-the-code.html",
           title_ko: "처리량 상한은 제 코드가 아니라 SDK에 있었습니다",
-          desc_ko: "콘텐츠 검열 경로의 처리량이 6.27 req/s에서 안 올라갔습니다. 쓰기를 2배로 올려도 DB pool을 3배로 키워도 그대로였습니다. 원인은 S3를 쓰려고 넣은 AWS SDK가 끌고 들어온 HTTP 클라이언트의 기본값 5였고 그 층은 컴파일 클래스패스에 없어서 읽어서는 찾을 수 없었습니다.",
+          desc_ko: "콘텐츠 검열 경로의 처리량이 6.27 req/s에서 안 올라갔습니다. 쓰기를 2배로 올려도 DB Pool을 3배로 키워도 그대로였습니다. 원인은 S3를 쓰려고 넣은 AWS SDK가 끌고 들어온 HTTP 클라이언트의 기본값 5였고 그 층은 컴파일 클래스패스에 없어서 읽어서는 찾을 수 없었습니다.",
           title_ja: "スループットの上限は私のコードではなく SDK にありました",
           desc_ja: "投稿作成のスループットが 6.27 req/s から動きませんでした。書き込みスレッドを2倍にしても、DB プールを3倍にしても同じです。原因は S3 を使うために入れた AWS SDK が連れてきた HTTP クライアントの既定値「ホストあたり5」でした。この層はランタイムのクラスパスにしかなく、コードを読んでも見つかりません。",
           date: "2026-09", dateLabel: "Sep 2026",
@@ -178,9 +178,9 @@
         {
           title: "Adding RDS Proxy Would Not Have Fixed the Exhaustion",
           url: "writing/a-pooler-fixes-only-one.html",
-          title_ko: "RDS Proxy를 세워도 connection 고갈은 안 풀립니다",
-          desc_ko: "출시 전 소셜 투표 플랫폼을 점검하다가 connection pooler를 붙이려고 했습니다. 그런데 connection 고갈에는 원인이 두 가지 있고 connection pooler는 그중 하나만 고칩니다. 왜 못 고치는지는 제품 문서가 아니라 transaction pooling의 정의에서 나옵니다.",
-          title_ja: "RDS Proxy を立てても connection 枯渇は解けません",
+          title_ko: "RDS Proxy를 세워도 Connection 고갈은 안 풀립니다",
+          desc_ko: "출시 전 소셜 투표 플랫폼을 점검하다가 Connection Pooler를 붙이려고 했습니다. 그런데 Connection 고갈에는 원인이 두 가지 있고 Connection Pooler는 그중 하나만 고칩니다. 왜 못 고치는지는 제품 문서가 아니라 Transaction Pooling의 정의에서 나옵니다.",
+          title_ja: "RDS Proxy を立てても Connection 枯渇は解けません",
           desc_ja: "リリース前のソーシャル投票プラットフォームを点検していて、コネクションプーラーを前に立てようとしました。ところがコネクション枯渇には原因が二つあり、プーラーはそのうち一つしか直しません。なぜ直せないのかは製品ドキュメントではなくトランザクションプーリングの定義から出てきます。",
           date: "2026-09", dateLabel: "Sep 2026",
           source: "commercial", sourceLabel: "Commercial project",
@@ -216,9 +216,9 @@
           url: "writing/it-deleted-the-tenant.html",
           source: "side", sourceLabel: "Personal project",
           title_ko: "GPU 입장 제어가 p99를 지킨 게 아니라 요청을 버렸습니다",
-          desc_ko: "GPU 한 장 위의 4-arm 실험. 거절을 0건 했다는 arm이 완료 수는 프리미엄 요청 수와 정확히 같았습니다. 리포트의 판정이 전부 비율이라 유료 반복 4회 동안 아무도 그것을 보지 못했습니다.",
+          desc_ko: "GPU 한 장 위의 4-arm 실험. 거절을 0건 했다는 Arm이 완료 수는 프리미엄 요청 수와 정확히 같았습니다. 리포트의 판정이 전부 비율이라 유료 반복 4회 동안 아무도 그것을 보지 못했습니다.",
           title_ja: "GPU 入場制御は p99 を守らず、リクエストを捨てていました",
-          desc_ja: "GPU 1 枚の上での 4-arm 実験。拒否 0 件だという arm の完了数が、プレミアムの要求数とぴったり同じだった。レポートの判定がすべて比だったため、4 回の有料実行の間それは見えなかった。",
+          desc_ja: "GPU 1 枚の上での 4-arm 実験。拒否 0 件だという Arm の完了数が、プレミアムの要求数とぴったり同じだった。レポートの判定がすべて比だったため、4 回の有料実行の間それは見えなかった。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "A four-arm experiment on one A10G. The arm that rejected nothing completed exactly the premium request count, and every check was a tail ratio. Also in Korean and Japanese.",
           tags: ["GPU", "Method", "Observability"]
@@ -275,10 +275,10 @@
           title: "Merging Three Caches Made Them Erase Each Other",
           url: "writing/monitoring-one-shared-cache.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "cache 셋을 하나로 합치자 서로의 값을 지웠습니다",
-          desc_ko: "세 화면이 같은 원천을 따로 수집하고 있어 cache 셋을 하나로 합쳤습니다. 합치자마자 한 화면만 열어 두면 다른 화면의 마지막 값이 사라지는 회귀가 나왔습니다. 분리된 cache가 말없이 갖고 있던 계약이 사라진 것이고 아무도 그것을 적어 둔 적이 없었습니다. 연작 「통합 모니터링」 ⑤, 마지막 편.",
-          title_ja: "cache 三つを一つにまとめたら互いの値を消しました",
-          desc_ja: "三画面が同じ源を別々に収集していたので cache 三つを一つにまとめました。まとめた直後に、一つの画面だけ開いていると別の画面の最後の値が消える回帰が出ました。分離された cache が黙って持っていた契約が消えたのであり、誰もそれを書き残していませんでした。連載「統合モニタリング」⑤、最終編。",
+          title_ko: "Cache 셋을 하나로 합치자 서로의 값을 지웠습니다",
+          desc_ko: "세 화면이 같은 원천을 따로 수집하고 있어 Cache 셋을 하나로 합쳤습니다. 합치자마자 한 화면만 열어 두면 다른 화면의 마지막 값이 사라지는 회귀가 나왔습니다. 분리된 Cache가 말없이 갖고 있던 계약이 사라진 것이고 아무도 그것을 적어 둔 적이 없었습니다. 연작 「통합 모니터링」 ⑤, 마지막 편.",
+          title_ja: "Cache 三つを一つにまとめたら互いの値を消しました",
+          desc_ja: "三画面が同じ源を別々に収集していたので Cache 三つを一つにまとめました。まとめた直後に、一つの画面だけ開いていると別の画面の最後の値が消える回帰が出ました。分離された Cache が黙って持っていた契約が消えたのであり、誰もそれを書き残していませんでした。連載「統合モニタリング」⑤、最終編。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "The three screens were collecting the same source separately, so the three caches became one. Merging produced a regression at once: with only one screen open, another screen's last value disappeared. The contract the separated caches had been keeping silently was gone, and nobody had ever written it down. Unified Monitoring, part five and last. Also in Korean and Japanese.",
           tags: ["Concurrency", "Reliability", "Method"]
@@ -311,10 +311,10 @@
           title: "Adding One Cache to a Monitoring Screen Created Three Races",
           url: "writing/monitoring-three-races-in-one-cache.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "모니터링 화면에 cache를 넣자 경합이 셋 생겼습니다",
-          desc_ko: "대시보드의 첫 데이터가 6.8초였던 이유는 접속이 곧 계산이었기 때문입니다. 요청 경로에서 계산을 떼어 내 10ms가 됐는데 그 과정에서 갱신이 취소되는 것·같은 값을 전체에 여러 번 뿌리는 것·timeout 하나가 남의 쿼리를 끊는 것, 경합 셋이 나왔습니다. 연작 「통합 모니터링」 ②.",
-          title_ja: "モニタリング画面に cache を入れたら競合が三つ生まれました",
-          desc_ja: "ダッシュボードの最初のデータが 6.8 秒だった理由は、接続がそのまま計算だったからです。リクエスト経路から計算を外して 10ms になりましたが、その過程で更新が取り消されること・同じ値を全体に何度も配ること・timeout 一つが他人のクエリを切ることという競合が三つ出てきました。連載「統合モニタリング」②。",
+          title_ko: "모니터링 화면에 Cache를 넣자 경합이 셋 생겼습니다",
+          desc_ko: "대시보드의 첫 데이터가 6.8초였던 이유는 접속이 곧 계산이었기 때문입니다. 요청 경로에서 계산을 떼어 내 10ms가 됐는데 그 과정에서 갱신이 취소되는 것·같은 값을 전체에 여러 번 뿌리는 것·Timeout 하나가 남의 쿼리를 끊는 것, 경합 셋이 나왔습니다. 연작 「통합 모니터링」 ②.",
+          title_ja: "モニタリング画面に Cache を入れたら競合が三つ生まれました",
+          desc_ja: "ダッシュボードの最初のデータが 6.8 秒だった理由は、接続がそのまま計算だったからです。リクエスト経路から計算を外して 10ms になりましたが、その過程で更新が取り消されること・同じ値を全体に何度も配ること・Timeout 一つが他人のクエリを切ることという競合が三つ出てきました。連載「統合モニタリング」②。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "First data on the dashboard took 6.8 seconds because connecting was computing. Moving the computation off the request path brought it to 10 ms, and along the way three races appeared: a cancelled refresh, the same value broadcast many times, and one timeout cutting somebody else's query. Unified Monitoring, part two. Also in Korean and Japanese.",
           tags: ["Performance", "Concurrency", "Method"]
@@ -336,9 +336,9 @@
           url: "writing/slow-screens-8-load-test-harness.html",
           source: "company", sourceLabel: "Company work",
           title_ko: "부하 조건을 상수로 고정해 여섯 번을 같게 쟀습니다",
-          desc_ko: "구성 6가지를 비교하려면 같은 조건으로 6번을 돌려야 합니다. 부하 조건을 상수로 옮겨 JMX를 생성하는 harness를 짰습니다. 그런데 결과 파일이 하나도 없어도 실행 스크립트는 「완료」를 찍고 0으로 끝났고 어느 회차가 어느 구성이었는지는 도구 밖에만 남았습니다. 연작 「느린 화면」 ⑧, 마지막 편.",
+          desc_ko: "구성 6가지를 비교하려면 같은 조건으로 6번을 돌려야 합니다. 부하 조건을 상수로 옮겨 JMX를 생성하는 Harness를 짰습니다. 그런데 결과 파일이 하나도 없어도 실행 스크립트는 「완료」를 찍고 0으로 끝났고 어느 회차가 어느 구성이었는지는 도구 밖에만 남았습니다. 연작 「느린 화면」 ⑧, 마지막 편.",
           title_ja: "負荷条件を定数で固定して 6 回を同じに測りました",
-          desc_ja: "構成 6 通りを比べるには同じ条件で 6 回まわす必要があります。負荷条件を定数に移して JMX を生成する harness を書きました。ところが結果ファイルが 1 つもなくても実行スクリプトは「完了」と出して 0 で終わり、どの回がどの構成だったかは道具の外にしか残りませんでした。連載「遅い画面」⑧、最終編。",
+          desc_ja: "構成 6 通りを比べるには同じ条件で 6 回まわす必要があります。負荷条件を定数に移して JMX を生成する Harness を書きました。ところが結果ファイルが 1 つもなくても実行スクリプトは「完了」と出して 0 で終わり、どの回がどの構成だったかは道具の外にしか残りませんでした。連載「遅い画面」⑧、最終編。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "Comparing six configurations means six runs under the same conditions. I moved the load conditions into constants and generated the JMX from them. Then I found the run script printing a completion message and exiting zero with no result files at all, and nothing in the output naming which run was which. Slow Screens, part eight and last. Also in Korean and Japanese.",
           tags: ["Performance", "Tooling", "Method"]
@@ -348,9 +348,9 @@
           url: "writing/slow-screens-7-nothing-to-fix.html",
           source: "company", sourceLabel: "Company work",
           title_ko: "모니터링 성능 검토에서 고칠 근거를 못 찾았습니다",
-          desc_ko: "모니터링 화면 3개를 검토했는데 새로 최적화할 근거를 못 찾았습니다. cache를 더 넣으려던 자리는 줄일 것이 작아 보였고 과해 보이던 설정 하나는 화면 깜빡임을 막고 있었습니다. 부하 테스트는 돌리지 않았고 왜 안 돌렸는지도 적었습니다. 연작 「느린 화면」 ⑦.",
+          desc_ko: "모니터링 화면 3개를 검토했는데 새로 최적화할 근거를 못 찾았습니다. Cache를 더 넣으려던 자리는 줄일 것이 작아 보였고 과해 보이던 설정 하나는 화면 깜빡임을 막고 있었습니다. 부하 테스트는 돌리지 않았고 왜 안 돌렸는지도 적었습니다. 연작 「느린 화면」 ⑦.",
           title_ja: "モニタリングの性能レビューで、直す根拠が見つかりませんでした",
-          desc_ja: "モニタリング画面 3 つをレビューしましたが、新しく最適化する根拠が見つかりませんでした。cache を足そうとした場所は削れるものが小さく、過剰に見えた設定 1 つはグラフのちらつきを防いでいました。負荷試験は回しておらず、なぜ回さなかったのかも書きます。連載「遅い画面」⑦。",
+          desc_ja: "モニタリング画面 3 つをレビューしましたが、新しく最適化する根拠が見つかりませんでした。Cache を足そうとした場所は削れるものが小さく、過剰に見えた設定 1 つはグラフのちらつきを防いでいました。負荷試験は回しておらず、なぜ回さなかったのかも書きます。連載「遅い画面」⑦。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "I reviewed three monitoring screens and found no case for a new optimisation. Where a cache would have gone there was little to save, and a setting that looked excessive was keeping the graph from flickering. I never ran a load test, and the article says why. Slow Screens, part seven. Also in Korean and Japanese.",
           tags: ["Performance", "Method"]
@@ -360,9 +360,9 @@
           url: "writing/slow-screens-6-polling-pileup.html",
           source: "company", sourceLabel: "Company work",
           title_ko: "볼륨 생성 창이 안 열린 이유는 2개였습니다",
-          desc_ko: "버튼을 눌러도 창이 안 열리고 로딩만 돌았습니다. 개발자 도구에는 끝나지 않은 요청이 4건 남아 있었습니다. 목록 조회가 10초 넘게 걸리는데 화면은 5초마다 다시 불렀고 창이 열려 있는 동안에도 멈추지 않았습니다. 그리고 그 5초가 backend cache 결정의 근거가 됐습니다. 연작 「느린 화면」 ⑥.",
+          desc_ko: "버튼을 눌러도 창이 안 열리고 로딩만 돌았습니다. 개발자 도구에는 끝나지 않은 요청이 4건 남아 있었습니다. 목록 조회가 10초 넘게 걸리는데 화면은 5초마다 다시 불렀고 창이 열려 있는 동안에도 멈추지 않았습니다. 그리고 그 5초가 Backend Cache 결정의 근거가 됐습니다. 연작 「느린 화면」 ⑥.",
           title_ja: "ボリューム作成ダイアログが開かなかった理由は 2 つでした",
-          desc_ja: "ボタンを押してもダイアログが開かず、ローディングだけが回っていました。開発者ツールには未完了のリクエストが 4 件。一覧の取得に 10 秒以上かかるのに画面は 5 秒ごとに取り直し、ダイアログが開いているあいだも止まりませんでした。そしてその 5 秒が backend cache の判断の根拠になりました。連載「遅い画面」⑥。",
+          desc_ja: "ボタンを押してもダイアログが開かず、ローディングだけが回っていました。開発者ツールには未完了のリクエストが 4 件。一覧の取得に 10 秒以上かかるのに画面は 5 秒ごとに取り直し、ダイアログが開いているあいだも止まりませんでした。そしてその 5 秒が Backend Cache の判断の根拠になりました。連載「遅い画面」⑥。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "Clicking the create button left the dialog spinning. DevTools showed four requests still pending. The list query took over ten seconds while the screen re-fetched it every five, and kept doing so while the dialog was open — and those five seconds became the reason behind a backend cache setting. Slow Screens, part six. Also in Korean and Japanese.",
           tags: ["Frontend", "Performance", "Method"]
@@ -372,9 +372,9 @@
           url: "writing/slow-screens-4-client-per-loop.html",
           source: "company", sourceLabel: "Company work",
           title_ko: "모니터링 화면이 프로젝트 수만큼 인증했습니다",
-          desc_ko: "시계열 그래프를 그리는 화면이라 쿼리를 의심했는데 아니었습니다. 초기 로드가 프로젝트마다 client를 새로 만들고 있었고 우리가 쓰던 팩터리는 client를 줄 때마다 Keystone에 인증합니다. 다만 이 글에는 전후를 잰 숫자가 없습니다. 왜 없는지가 글의 절반입니다. 연작 「느린 화면」 ④.",
+          desc_ko: "시계열 그래프를 그리는 화면이라 쿼리를 의심했는데 아니었습니다. 초기 로드가 프로젝트마다 Client를 새로 만들고 있었고 우리가 쓰던 팩터리는 Client를 줄 때마다 Keystone에 인증합니다. 다만 이 글에는 전후를 잰 숫자가 없습니다. 왜 없는지가 글의 절반입니다. 연작 「느린 화면」 ④.",
           title_ja: "モニタリング画面がプロジェクトの数だけ認証していました",
-          desc_ja: "時系列グラフを描く画面なのでクエリを疑いましたが違いました。初期ロードがプロジェクトごとに client を作り直しており、使っていたファクトリは client を渡すたびに Keystone へ認証します。ただしこの記事には前後を測った数値がありません。なぜ無いのかが記事の半分です。連載「遅い画面」④。",
+          desc_ja: "時系列グラフを描く画面なのでクエリを疑いましたが違いました。初期ロードがプロジェクトごとに Client を作り直しており、使っていたファクトリは Client を渡すたびに Keystone へ認証します。ただしこの記事には前後を測った数値がありません。なぜ無いのかが記事の半分です。連載「遅い画面」④。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "It draws time-series graphs, so the query looked like the suspect. It was not. The initial load built a new client per project, and that factory authenticates to Keystone every time it hands one out. This article has no before-and-after numbers, and why it does not is half the story. Slow Screens, part four. Also in Korean and Japanese.",
           tags: ["Performance", "Backend", "Method"]
@@ -384,9 +384,9 @@
           url: "writing/slow-screens-3-role-lookup.html",
           source: "company", sourceLabel: "Company work",
           title_ko: "역할 조회 1,409ms가 1ms가 됐습니다",
-          desc_ko: "화면에 cache가 이미 있었는데 그 cache 때문에 느렸습니다. 찾은 8줄은 전부 0ms였고 못 찾은 6줄을 더하면 1,409ms로 타이머가 찍은 총계와 같았습니다. 못 찾을 때마다 프로젝트 전체 목록을 다시 부르고 있었는데 그 6개 id는 다시 받아도 없는 프로젝트였습니다. 연작 「느린 화면」 ③.",
+          desc_ko: "화면에 Cache가 이미 있었는데 그 Cache 때문에 느렸습니다. 찾은 8줄은 전부 0ms였고 못 찾은 6줄을 더하면 1,409ms로 타이머가 찍은 총계와 같았습니다. 못 찾을 때마다 프로젝트 전체 목록을 다시 부르고 있었는데 그 6개 id는 다시 받아도 없는 프로젝트였습니다. 연작 「느린 화면」 ③.",
           title_ja: "ロール取得の 1,409ms が 1ms になりました",
-          desc_ja: "画面にはすでに cache があり、その cache のせいで遅くなっていました。解決できた 8 行はすべて 0ms、できなかった 6 行を足すと 1,409ms でタイマーの合計と同じでした。解決できないたびにプロジェクト全件を取り直しており、その 6 つの id は取り直しても存在しません。連載「遅い画面」③。",
+          desc_ja: "画面にはすでに Cache があり、その Cache のせいで遅くなっていました。解決できた 8 行はすべて 0ms、できなかった 6 行を足すと 1,409ms でタイマーの合計と同じでした。解決できないたびにプロジェクト全件を取り直しており、その 6 つの id は取り直しても存在しません。連載「遅い画面」③。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "The screen already had a cache, and the cache was why it was slow. The eight rows that resolved cost 0 ms; the six that did not sum to 1,409 ms, the whole recorded span. Every failed lookup refetched the entire project list, and those six ids were never in it. Slow Screens, part three. Also in Korean and Japanese.",
           tags: ["Performance", "Backend", "Method"]
@@ -395,10 +395,10 @@
           title: "Listing Instances Went from 54 Seconds to One",
           url: "writing/slow-screens-2-instance-list.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "instance 목록 조회가 54초에서 1초가 됐습니다",
-          desc_ko: "instance는 20개인데 목록이 timeout이 났습니다. CLI로 불러도 54초여서 느린 구간이 backend 아래에 있다는 것까지는 알았습니다. swap이 8.0GiB 전부 차 있었고 instances 테이블에는 삭제 표시만 된 행이 1,021개 남아 있었습니다. 그리고 제가 쓴 명령은 운영에서 쓰면 안 되는 것이었습니다. 연작 「느린 화면」 ②.",
-          title_ja: "instance 一覧が 54 秒から 1 秒になりました",
-          desc_ja: "instance は 20 個なのに一覧が timeout しました。同じ取得を CLI で実行しても 54 秒で、コードが容疑から外れました。swap が 8.0GiB すべて埋まり、instances テーブルには削除の印だけが付いた行が 1,021 件。そして私が使ったコマンドは本番で使ってはいけないものでした。連載「遅い画面」②。",
+          title_ko: "Instance 목록 조회가 54초에서 1초가 됐습니다",
+          desc_ko: "Instance는 20개인데 목록이 Timeout이 났습니다. CLI로 불러도 54초여서 느린 구간이 Backend 아래에 있다는 것까지는 알았습니다. Swap이 8.0GiB 전부 차 있었고 instances 테이블에는 삭제 표시만 된 행이 1,021개 남아 있었습니다. 그리고 제가 쓴 명령은 운영에서 쓰면 안 되는 것이었습니다. 연작 「느린 화면」 ②.",
+          title_ja: "Instance 一覧が 54 秒から 1 秒になりました",
+          desc_ja: "Instance は 20 個なのに一覧が Timeout しました。同じ取得を CLI で実行しても 54 秒で、コードが容疑から外れました。Swap が 8.0GiB すべて埋まり、instances テーブルには削除の印だけが付いた行が 1,021 件。そして私が使ったコマンドは本番で使ってはいけないものでした。連載「遅い画面」②。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "Twenty instances, and the list screen timed out. The same query from the CLI also took 54 seconds, which ruled the application code out. Swap was full and the instances table held 1,021 rows only marked deleted. The commands that fixed it are not ones to run in production, and this article says so. Slow Screens, part two. Also in Korean and Japanese.",
           tags: ["Performance", "Backend", "Method"]
@@ -408,9 +408,9 @@
           url: "writing/slow-screens-1-volume-list.html",
           source: "company", sourceLabel: "Company work",
           title_ko: "볼륨 목록 P99가 10분에서 23ms가 됐습니다",
-          desc_ko: "관리 볼륨 목록이 6번에 5번 timeout이 났습니다. 고친 뒤 구성을 6가지로 나눠 같은 부하로 따로 쟀더니, 초를 가장 많이 줄인 것은 cache 하나였고 병렬화는 중앙값과 꼬리를 반대 방향으로 움직였습니다. 연작 「느린 화면」 ①.",
-          title_ja: "ボリューム一覧の P99 が 10 分の timeout から 23ms になりました",
-          desc_ja: "管理ボリューム一覧が 6 回に 5 回 timeout しました。直したあと構成を 6 通りに分けて同じ負荷で測ると、秒を最も減らしたのは cache 1 つで、並列化は中央値と裾を逆方向に動かしました。連載「遅い画面」①。",
+          desc_ko: "관리 볼륨 목록이 6번에 5번 Timeout이 났습니다. 고친 뒤 구성을 6가지로 나눠 같은 부하로 따로 쟀더니, 초를 가장 많이 줄인 것은 Cache 하나였고 병렬화는 중앙값과 꼬리를 반대 방향으로 움직였습니다. 연작 「느린 화면」 ①.",
+          title_ja: "ボリューム一覧の P99 が 10 分の Timeout から 23ms になりました",
+          desc_ja: "管理ボリューム一覧が 6 回に 5 回 Timeout しました。直したあと構成を 6 通りに分けて同じ負荷で測ると、秒を最も減らしたのは Cache 1 つで、並列化は中央値と裾を逆方向に動かしました。連載「遅い画面」①。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "An admin volume list timed out five runs out of six. Measured across six configurations under the same load: one cache bought the largest drop in seconds, and parallelising moved the median and the tail in opposite directions. Slow Screens, part one. Also in Korean and Japanese.",
           tags: ["Performance", "Backend", "Method"]
@@ -420,7 +420,7 @@
           url: "writing/parallelism-made-the-tail-worse.html",
           source: "company", sourceLabel: "Company work",
           title_ko: "볼륨 목록을 병렬로 바꾸자 P99가 2배 나빠졌습니다",
-          desc_ko: "cache 설정을 고정한 채 순차를 병렬로 바꾸니 P99가 42.6초에서 79.0초로 나빠졌습니다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다. 여섯 구성을 같은 조건으로 재고 나서야 보였습니다. 연작 「느린 화면」 ⑤.",
+          desc_ko: "Cache 설정을 고정한 채 순차를 병렬로 바꾸니 P99가 42.6초에서 79.0초로 나빠졌습니다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다. 여섯 구성을 같은 조건으로 재고 나서야 보였습니다. 연작 「느린 화면」 ⑤.",
           title_ja: "ボリューム一覧を並列にしたら P99 が 2 倍悪化しました",
           desc_ja: "キャッシュ設定を固定したまま逐次を並列に変えると、p99 が 42.6 秒から 79.0 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンがロックされる。6 構成を同条件で測って初めて見えたこと。連載「遅い画面」⑤。",
           date: "2026-09", dateLabel: "Sep 2026",
@@ -471,8 +471,8 @@
           url: "notes/connection-pooler.html",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "A middle server that folds thousands of app connections into dozens of database connections. RDS Proxy, PgBouncer.",
-          desc_ko: "앱 connection 수천 개를 DB connection 수십 개로 묶어 주는 중간 서버. RDS Proxy·PgBouncer 등.",
-          desc_ja: "アプリの connection 数千本を DB の connection 数十本にまとめる中間サーバ。RDS Proxy・PgBouncer など。",
+          desc_ko: "앱 Connection 수천 개를 DB Connection 수십 개로 묶어 주는 중간 서버. RDS Proxy·PgBouncer 등.",
+          desc_ja: "アプリの Connection 数千本を DB の Connection 数十本にまとめる中間サーバ。RDS Proxy・PgBouncer など。",
           tags: ["Connection Pooler", "Database"]
         },
         {
@@ -480,8 +480,8 @@
           url: "notes/transaction-pooling.html",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "The mode in which a connection pooler lends out a connection per transaction and takes it back.",
-          desc_ko: "connection pooler가 transaction 단위로 connection을 빌려주고 돌려받는 방식.",
-          desc_ja: "connection pooler が transaction 単位で connection を貸し出して返してもらう方式。",
+          desc_ko: "Connection Pooler가 Transaction 단위로 Connection을 빌려주고 돌려받는 방식.",
+          desc_ja: "Connection Pooler が Transaction 単位で Connection を貸し出して返してもらう方式。",
           tags: ["Transaction Pooling", "Database"]
         },
         {
@@ -489,8 +489,8 @@
           url: "notes/connection-pool.html",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "The list of database connections an app holds in order to reuse them. HikariCP by default in Spring Boot.",
-          desc_ko: "앱이 DB connection을 재사용하려고 들고 있는 목록. Spring Boot 기본은 HikariCP.",
-          desc_ja: "アプリが DB connection を再利用するために持っている一覧。Spring Boot の既定は HikariCP。",
+          desc_ko: "앱이 DB Connection을 재사용하려고 들고 있는 목록. Spring Boot 기본은 HikariCP.",
+          desc_ja: "アプリが DB Connection を再利用するために持っている一覧。Spring Boot の既定は HikariCP。",
           tags: ["Connection Pool", "Database"]
         },
         {
@@ -607,7 +607,7 @@
      카드 격자였을 때는 열세 장이 전부 같은 무게로 서 있고 카드마다 요약이 네댓 줄이라
      "먼저 읽을 것"이 보이지 않았다. 행으로 바꾸면 제목이 왼쪽 한 줄로 정렬돼 훑는 축이 하나가
      되고, 요약을 한 줄로 자르면 행 높이가 균일해져 눈이 흔들리지 않는다. 테두리도 사라진다.
-     날짜·배지는 왼쪽 칸에 따로 두어 제목 줄을 밀어내지 않게 한다. */
+     날짜·배지는 **제목 위**에 둔다(사용자 지시, 2026-09-11). 왼쪽 칸에 두면 훑는 축이 둘이 된다. */
   function cardArticle(it) {
     return (
       '<a class="entry-row" href="' + BASE + esc(it.url) + '">' +

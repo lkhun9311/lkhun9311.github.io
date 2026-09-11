@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="개인 AWS GPU 랩 계정의 비용 통제 기록. 손으로 만든 예산 알람 하나가 제 추정에서 통째로 빠져 있던 항목을 찾아냈고 Terraform이 그 알람을 조용히 지울 뻔했습니다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+  <link rel="stylesheet" href="../assets/styles.css?v=5115091496" />
 </head>
 <body>
   <div class="topbar">
@@ -161,10 +161,10 @@
         </div>
         </div>
 
-        <p>차액을 추적하니 <strong>NAT 게이트웨이의 데이터 처리 요금</strong>이었습니다. instance 시간과 EKS 요금은
+        <p>차액을 추적하니 <strong>NAT 게이트웨이의 데이터 처리 요금</strong>이었습니다. Instance 시간과 EKS 요금은
         세고 있었지만 <strong>바이트가 NAT를 지나가는 비용은 추정에 아예 없었습니다.</strong></p>
 
-        <p>이게 왜 안 보였는지는 명확합니다. 내 추정은 <strong>내가 켠 것</strong>의 목록이었습니다. GPU instance,
+        <p>이게 왜 안 보였는지는 명확합니다. 내 추정은 <strong>내가 켠 것</strong>의 목록이었습니다. GPU Instance,
         EKS 컨트롤 플레인, NAT 게이트웨이. 시간당 단가가 있는 것들입니다. 그런데 NAT는 시간당 요금과
         <strong>처리한 바이트당 요금</strong>을 따로 받습니다. 컨테이너 이미지를 당길 때마다 그 항목이 자랍니다.
         <strong>켠 것을 세는 목록은, 켠 것이 무엇을 하는지는 세지 않습니다.</strong></p>
@@ -189,14 +189,14 @@
         <p>NAT 항목이 보이자 다음 실험의 모양이 바뀌었습니다.</p>
 
         <p>2026-09-04의 질문은 vLLM 스케줄러 설정에 관한 것이었습니다. 게이트웨이도 쿠버네티스도 필요 없고
-        <strong>instance 한 대면 됩니다.</strong> 그러면 비용의 대부분은 이 한 줄에서 정해집니다.</p>
+        <strong>Instance 한 대면 됩니다.</strong> 그러면 비용의 대부분은 이 한 줄에서 정해집니다.</p>
 
-        <blockquote><p>기본 서브넷의 instance는 공인 IP로 인터넷 게이트웨이를 통해 통신하며
+        <blockquote><p>기본 서브넷의 Instance는 공인 IP로 인터넷 게이트웨이를 통해 통신하며
         <strong>인바운드 전송은 무료입니다.</strong></p></blockquote>
 
         <p>그때까지 유료 실행은 컨테이너 이미지와 모델 가중치. 콜드 노드 한 대 기준 <strong>약 15.6GB</strong>를 GB당 <strong>$0.059</strong>인 NAT로 내려받고 있었습니다. (첫 세 세션의 NAT 데이터 처리 청구는 합계
         <strong>약 92GB · $5.43</strong>입니다. 세션당 15.6GB 세 번으로는 그 총량이 설명되지 않고 나는 그 차이를
-        대조하지 않았습니다.) 퍼블릭 서브넷의 instance 한 대로 옮기자 그 항목이
+        대조하지 않았습니다.) 퍼블릭 서브넷의 Instance 한 대로 옮기자 그 항목이
         사라졌고 그날 실험은 <strong>약 $0.40</strong>로 끝났습니다.</p>
 
         <p>바꾼 것은 알고리즘이 아니라 <strong>바이트가 지나가는 경로</strong>입니다. 그리고 그 경로가 보이게 된 것은
@@ -212,7 +212,7 @@
 <pre data-lang="text"><code>Error: creating EC2 Launch Template: UnauthorizedOperation
   ec2:CreateLaunchTemplate ... explicit deny in a service control policy</code></pre>
 
-        <p>문제의 문장은 instance 타입을 허용 목록으로 제한하려는 것이었습니다.</p>
+        <p>문제의 문장은 Instance 타입을 허용 목록으로 제한하려는 것이었습니다.</p>
 
 <pre data-lang="json"><code>{
   "Effect": "Deny",
@@ -225,10 +225,10 @@
         <p><strong>하나. IAM의 부정 조건 연산자는 키가 없으면 참입니다.</strong> <code>StringNotLike</code>는
         "이 값이 목록과 다르면"이 아니라, 키가 아예 없어도 참이 됩니다.</p>
 
-        <p><strong>둘. EKS 관리형 노드그룹은 instance 타입을 노드그룹에 두고 시작 템플릿에는 넣지 않습니다.</strong>
+        <p><strong>둘. EKS 관리형 노드그룹은 Instance 타입을 노드그룹에 두고 시작 템플릿에는 넣지 않습니다.</strong>
         그래서 <code>ec2:InstanceType</code> 키가 부재했습니다.</p>
 
-        <p>두 가지가 겹쳐서, 이 문장은 <strong>instance 패밀리를 제한한 것이 아니라 서비스를 통째로 차단</strong>했습니다.
+        <p>두 가지가 겹쳐서, 이 문장은 <strong>Instance 패밀리를 제한한 것이 아니라 서비스를 통째로 차단</strong>했습니다.
         허용 목록에 <code>g5.*</code>를 적어 뒀는데도 g5 노드그룹을 만들 수 없었습니다.</p>
 
         <p>이걸 리허설에서 만난 값은 이렇습니다.</p>
@@ -315,7 +315,7 @@
           <li><strong>$0.05·$0.18은 청구서 항목이 아닙니다.</strong> 과금 시간에 시간당 단가를 곱한 계산값입니다.
           $14.56과 $0.40은 청구·집계에서 나온 값이지만 이 글은 그 둘을 <strong>청구 원장과 따로 대조하지는
           않았습니다.</strong></li>
-          <li><strong>SCP 결함은 조건을 보완해 고친 것이 아닙니다.</strong> 그 호출에서는 해당 조건 키로 instance
+          <li><strong>SCP 결함은 조건을 보완해 고친 것이 아닙니다.</strong> 그 호출에서는 해당 조건 키로 Instance
           패밀리를 제한할 수 없어, 그 문장 자체를 제거했습니다.</li>
           <li><strong>SCP 결함은 이 조직 구성에서의 것</strong>입니다. 조건 키의 부재가 부정 연산자를 참으로 만든다는
           것은 일반적이지만 어떤 키가 부재하는지는 서비스와 호출 경로마다 다릅니다.</li>
@@ -355,8 +355,8 @@
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=772d75cdff"></script>
+  <script src="../assets/i18n.js?v=60def360be"></script>
+  <script src="../assets/content.js?v=738aaf3b4d"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="ユーザー画面のロール一覧が 1 秒を超えていました。解決できた 8 行はすべて 0ms、解決できなかった 6 行を足すと 1,409ms で、タイマーが記録した区間の合計と同じでした。解決できない project id ごとにプロジェクト全件を取り直しており、その 6 つの id は何度取り直しても入っていませんでした。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+  <link rel="stylesheet" href="../assets/styles.css?v=5115091496" />
 </head>
 <body>
   <div class="topbar">
@@ -97,7 +97,7 @@
 
         <article class="article-body">
 
-        <p>こんにちは。社内クラウド管理コンソールの backend を作っています。ユーザー詳細画面で
+        <p>こんにちは。社内クラウド管理コンソールの Backend を作っています。ユーザー詳細画面で
         <strong>ロール一覧が 1 秒を超えて読み込み中のまま</strong>でした。</p>
 
         <p>⚠️ この記事の <strong>1,409ms は画面の応答時間ではありません。</strong>コードに入れたタイマーが
@@ -105,14 +105,14 @@
         DB の取得もシリアライズも転送もその外です。<strong>ユーザーが待った時間はこれより長い</strong>です。
         この記事の数値はすべてその区間の値です。</p>
 
-        <p>この画面には <strong>すでに cache がありました。</strong>ですからこの記事は
-        「cache を入れたら速くなった」ではなく <strong>「cache があるのに、その cache のせいで遅かった」</strong>です。</p>
+        <p>この画面には <strong>すでに Cache がありました。</strong>ですからこの記事は
+        「Cache を入れたら速くなった」ではなく <strong>「Cache があるのに、その Cache のせいで遅かった」</strong>です。</p>
 
         <h2 id="想定読者">想定読者<a class="anchor" href="#想定読者" aria-label="この節へのリンク">#</a></h2>
 
         <ul class="callout">
-          <li>cache を入れたのに、期待したほど速くならない画面を見たことがある方</li>
-          <li>cache が引けなかったとき <strong>何を取り直すか</strong>を決めたことがある方</li>
+          <li>Cache を入れたのに、期待したほど速くならない画面を見たことがある方</li>
+          <li>Cache が引けなかったとき <strong>何を取り直すか</strong>を決めたことがある方</li>
           <li>存在しないものを探す取得がある、と気づかず通り過ぎたことがある方</li>
         </ul>
 
@@ -132,9 +132,9 @@
           <strong>解決できなかったときにかかる時間</strong>です。</li>
         </ul>
 
-        <p>⚠️ ログには <code>[Hit]</code>・<code>[Miss]</code> と出ますが、<strong>これは cache の中を
+        <p>⚠️ ログには <code>[Hit]</code>・<code>[Miss]</code> と出ますが、<strong>これは Cache の中を
         測ったものではありません。</strong><code>CacheBox</code> を呼んだ結果プロジェクトが返ったかどうかで
-        付けた名前です。cache からきちんと読めたのに、その id が一覧にないので <code>[Miss]</code> になる
+        付けた名前です。Cache からきちんと読めたのに、その id が一覧にないので <code>[Miss]</code> になる
         こともあります。以下では <strong>「解決できた・できなかった」</strong>と呼びます。</p>
 
         <p><strong>社内製品なのでコードもログもそのまま載せていません。</strong>製品名・顧客名・内部アドレスは
@@ -149,7 +149,7 @@
         正確には、OpenStack でユーザーとプロジェクトを受け持つ <strong>Keystone</strong> です。
         ですからロール 1 行ごとにプロジェクトを 1 回引く必要があります。</p>
 
-        <p>その引く場所に cache がありました。自作で
+        <p>その引く場所に Cache がありました。自作で
         (<a href="slow-screens-1-volume-list.ja.html">前編①</a>に出てくるあの <code>CacheManager</code> です)、
         保持期間は <strong>10 分</strong>でした。</p>
 
@@ -157,16 +157,16 @@
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロールできる図">
             <svg viewBox="0 0 720 176" role="img" aria-labelledby="svc3-t svc3-d" xmlns="http://www.w3.org/2000/svg">
               <title id="svc3-t">ロール 1 行がプロジェクト名に届くまで</title>
-              <desc id="svc3-d">左で画面が 1 人のロール一覧を要求すると、backend はまず自分たちの DB の
+              <desc id="svc3-d">左で画面が 1 人のロール一覧を要求すると、Backend はまず自分たちの DB の
               ロール表を 1 回読み、ロール 14 行を受け取ります。その次がこの記事の区間です。行ごとに
-              project id を持って cache に尋ね、cache が答えられなければ Keystone のプロジェクト一覧 API へ
+              project id を持って Cache に尋ね、Cache が答えられなければ Keystone のプロジェクト一覧 API へ
               出ます。ピンクで示したのが外へ出る経路です。</desc>
 
               <rect x="8" y="30" width="112" height="34" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
               <text x="64" y="52" font-size="12.5" fill="#18121d" text-anchor="middle">ユーザー画面</text>
               <path d="M120 47 H 158" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#v3-ar)"/>
               <rect x="166" y="30" width="132" height="34" rx="6" fill="none" stroke="#18121d" stroke-width="2"/>
-              <text x="232" y="52" font-size="12.5" fill="#18121d" font-weight="700" text-anchor="middle">管理コンソール backend</text>
+              <text x="232" y="52" font-size="12.5" fill="#18121d" font-weight="700" text-anchor="middle">管理コンソール Backend</text>
               <path d="M298 47 H 336" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#v3-ar)"/>
               <rect x="344" y="30" width="120" height="34" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
               <text x="404" y="46" font-size="12.5" fill="#18121d" text-anchor="middle">自分たちの DB · ロール表</text>
@@ -175,7 +175,7 @@
               <path d="M232 64 V 96" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#v3-arA)"/>
               <text x="244" y="86" font-size="12" fill="#d62976" font-weight="700">行ごとに 1 回</text>
               <rect x="166" y="96" width="132" height="34" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="232" y="112" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">自作の cache</text>
+              <text x="232" y="112" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">自作の Cache</text>
               <text x="232" y="126" font-size="11.5" fill="#7b7186" text-anchor="middle">保持 10 分</text>
               <path d="M298 113 H 336" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#v3-arA)"/>
               <rect x="344" y="96" width="240" height="34" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
@@ -201,7 +201,7 @@
             <svg viewBox="0 0 720 210" role="img" aria-labelledby="miss-t miss-d" xmlns="http://www.w3.org/2000/svg">
               <title id="miss-t">解決できない 1 件が呼ぶもの、修正前と後</title>
               <desc id="miss-d">上のカードが修正前です。キーを 1 つ探して無ければ、プロジェクト全件を外部 API から
-              取り直して cache を詰め、そのキーをもう一度探します。下のカードが修正後で、一覧を cache から
+              取り直して Cache を詰め、そのキーをもう一度探します。下のカードが修正後で、一覧を Cache から
               1 回受け取り、その中でキーを絞ります。無ければ無いまま終わり、外部 API を呼びません。</desc>
 
               <rect x="0" y="0" width="720" height="94" rx="10" fill="rgba(214,41,118,0.06)"/>
@@ -272,7 +272,7 @@
         DTO を作り、絞り、並べる費用は各行の区間の外にあり、それが 1ms 未満ならこう見えます。
         言えるのは <strong>この分解能で 6 行の記録値の合計が総計と同じだった</strong>ということです。</p>
 
-        <p>それでも見る場所は決まります。問うべきは「cache がなぜ効かないのか」ではなく
+        <p>それでも見る場所は決まります。問うべきは「Cache がなぜ効かないのか」ではなく
         <strong>「解決できない 1 行がなぜ 235ms なのか」</strong>です。</p>
 
         <figure class="diagram">
@@ -325,7 +325,7 @@
     return project;
 }</code></pre>
 
-        <p>読むともっともらしく見えます。<strong>無ければ詰めて、もう一度見る。</strong>cache を初めて書くときに
+        <p>読むともっともらしく見えます。<strong>無ければ詰めて、もう一度見る。</strong>Cache を初めて書くときに
         自然に出てくる形で、実際 <strong>最初の 1 回はこれで正しい</strong>のです。</p>
 
         <p>問題は <strong>「詰めても現れないキー」</strong>があるときです。</p>
@@ -339,7 +339,7 @@
         <p>すると上のコードはこう回ります。</p>
 
         <ol>
-          <li>cache で引く → 無い</li>
+          <li>Cache で引く → 無い</li>
           <li>全件を取り直す → <strong>235ms</strong></li>
           <li>もう一度引く → <strong>やはり無い</strong>。消えたプロジェクトだからです</li>
           <li>次の行でまた無い id に当たる → <strong>1 に戻る</strong></li>
@@ -349,7 +349,7 @@
         取り直してもその 6 つの id は一覧に無いので、次の行でも同じように取り直します。</p></blockquote>
 
         <p>解決できなかった 6 行は <strong>手元にある 3 回の実行すべてで同じ 6 つの id</strong> でした。
-        修正前 1 回と修正後 2 回で、日付も 1 日違います。たまたま cache が冷えていたのではなく、
+        修正前 1 回と修正後 2 回で、日付も 1 日違います。たまたま Cache が冷えていたのではなく、
         <strong>埋まりようのない場所</strong>に見えます。⚠️ 3 回は 3 回です。それ以上は回していません。</p>
 
         <h2 id="修正">修正: キーで引かず、一覧を絞りました<a class="anchor" href="#修正" aria-label="この節へのリンク">#</a></h2>
@@ -367,7 +367,7 @@ var project = CacheBox.projects().stream()
         <p><code>projects()</code> も外部 API を呼ぶことがあります。違うのは
         <strong>「その id が無い」がもう外部 API を呼ぶ条件ではない</strong>という点です。</p>
 
-        <p>正確にはこうです。<code>projects()</code> は cache から一覧を受け取りますが、そのときに
+        <p>正確にはこうです。<code>projects()</code> は Cache から一覧を受け取りますが、そのときに
         <strong>期限切れの項目を 1 つずつ取り除きます。</strong>そうして残ったものが
         <strong>完全に空のときだけ</strong>外部 API を呼びます。</p>
 
@@ -376,7 +376,7 @@ var project = CacheBox.projects().stream()
         <strong>存在するのに「解決できない」</strong>になります。今回の実行では項目がまとめて詰められ
         まとめて期限切れになるので表に出ませんでした。出なかっただけで、無いという意味ではありません。</p>
 
-        <p>ログがそのまま示します。cache が期限切れの状態で 1 回回すと、</p>
+        <p>ログがそのまま示します。Cache が期限切れの状態で 1 回回すと、</p>
 
 <pre data-lang="text"><code>[Miss] projectId=project-A   elapsed  246 ms   ← 一覧を取りに行く呼び出し
 [Miss] projectId=project-B   elapsed    0 ms
@@ -386,18 +386,18 @@ var project = CacheBox.projects().stream()
 [Result] Total elapsed time: 250 ms</code></pre>
 
         <p><strong>解決できない行は今も 6 行です。</strong>ところがそのうち 5 回が 0ms です。
-        cache が有効な状態では最初の 1 回も 0ms になり、<strong>合計が 1ms</strong> になります。</p>
+        Cache が有効な状態では最初の 1 回も 0ms になり、<strong>合計が 1ms</strong> になります。</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると残りが見えます">
         <table>
-          <caption class="sr-only">ロール取得 1 件の、cache 状態ごとの時間。</caption>
+          <caption class="sr-only">ロール取得 1 件の、Cache 状態ごとの時間。</caption>
           <thead><tr><th>状態</th><th>ロール行</th><th>解決できない</th><th>解決できない 1 行の時間</th><th>区間の合計</th></tr></thead>
           <tbody>
             <tr><td>修正前</td><td>14</td><td>6</td><td>228〜247ms</td><td><strong>1,409ms</strong></td></tr>
-            <tr><td>修正後 · cache 期限切れ</td><td>14</td><td>6</td><td>最初の 1 件だけ 246ms</td><td>250ms</td></tr>
-            <tr><td>修正後 · cache 有効</td><td>14</td><td>6</td><td>0ms</td><td><strong>1ms</strong></td></tr>
+            <tr><td>修正後 · Cache 期限切れ</td><td>14</td><td>6</td><td>最初の 1 件だけ 246ms</td><td>250ms</td></tr>
+            <tr><td>修正後 · Cache 有効</td><td>14</td><td>6</td><td>0ms</td><td><strong>1ms</strong></td></tr>
           </tbody>
         </table>
         </div>
@@ -413,7 +413,7 @@ var project = CacheBox.projects().stream()
         遅い代わりに、最新でした。</p>
 
         <p>直したあとは、知らない id に当たっても何もしません。ですから新しいプロジェクトは
-        <strong>cache が詰め直されるまで見えません。</strong></p>
+        <strong>Cache が詰め直されるまで見えません。</strong></p>
 
         <p>⚠️ その「詰め直されるまで」を <strong>10 分だと断言はできません。</strong>
         保持期間は一覧単位ではなく <strong>項目ごとに記録された保存時刻</strong>に掛かります。そして
@@ -452,10 +452,10 @@ var project = CacheBox.projects().stream()
           <li><strong>プロジェクトが何個だったかは記録にありません。</strong>ですから「一覧が大きくて遅い」のか
           「呼び出し自体が高い」のかも、このログでは分かりません。</li>
           <li><strong>直したコードも完全ではありません。</strong><code>projects()</code> をロール 1 行ごとに
-          1 回呼びます。cache が温かいうちは 0ms で表に出ませんが、行がとても多くなると
+          1 回呼びます。Cache が温かいうちは 0ms で表に出ませんが、行がとても多くなると
           <strong>一覧を繰り返し走査する費用</strong>が残ります。ループの外に 1 回だけ出すほうが良いです。</li>
-          <li><strong>この cache は前編①の問題をそのまま抱えています。</strong><code>projects()</code> に
-          ロックが無いので、cache が空になる瞬間にリクエストが複数入ると <strong>それぞれが外部 API を
+          <li><strong>この Cache は前編①の問題をそのまま抱えています。</strong><code>projects()</code> に
+          ロックが無いので、Cache が空になる瞬間にリクエストが複数入ると <strong>それぞれが外部 API を
           呼びます。</strong>⚠️ コードを読んで言っていることで、このログで確認したものではありません。
           ユーザーを 1 人開いた実行なので、同時リクエストはありませんでした。</li>
           <li><strong>運用統計ではありません。</strong>試験環境でユーザーを 1 人開いたログです。</li>
@@ -467,9 +467,9 @@ var project = CacheBox.projects().stream()
         <p>まとめるとこうです。</p>
 
         <ul>
-          <li><strong>cache があることと速いことは別です。</strong>ここでは解決できた行がすべて 0ms なのに
+          <li><strong>Cache があることと速いことは別です。</strong>ここでは解決できた行がすべて 0ms なのに
           区間は 1,409ms でした。</li>
-          <li><strong>解決できなかったとき何をするかが cache 設計の半分です。</strong>「無ければ全部取り直す」は
+          <li><strong>解決できなかったとき何をするかが Cache 設計の半分です。</strong>「無ければ全部取り直す」は
           最初の 1 回には正しく、<strong>詰めても現れない id の前では最も悪い選択</strong>です。</li>
           <li><strong>減らせるものは 2 つです。</strong>解決できない <strong>回数</strong>と、解決できなかった
           ときの <strong>処理時間</strong>。今回減らしたのは後ろで、前はそのままです。</li>
@@ -479,7 +479,7 @@ var project = CacheBox.projects().stream()
 
         <p>最後に 1 行だけ残すなら、これです。
         <strong>すでに書かれていたログを、足してみるだけの仕事でした。</strong>
-        その 6 行を足すまでは「cache がなぜ効かないのか」を覗き込んでいました。</p>
+        その 6 行を足すまでは「Cache がなぜ効かないのか」を覗き込んでいました。</p>
 
         <p>お読みいただきありがとうございました。</p>
         </div>
@@ -493,8 +493,8 @@ var project = CacheBox.projects().stream()
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=772d75cdff"></script>
+  <script src="../assets/i18n.js?v=60def360be"></script>
+  <script src="../assets/content.js?v=738aaf3b4d"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

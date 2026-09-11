@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>cache 三つを一つにまとめたら互いの値を消しました | Kwanghun Lee</title>
+  <title>Cache 三つを一つにまとめたら互いの値を消しました | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="cache 三つを一つにまとめたら互いの値を消しました | Kwanghun Lee" />
-  <meta property="og:description" content="三画面が同じ源を別々に収集していたので cache 三つを一つにまとめました。まとめた直後に、一つの画面だけ開いていると別の画面の最後の値が消える回帰が出ました。分離された cache が黙って持っていた契約が消えたのであり、誰もそれを書き残していませんでした。連載の最終編です。" />
+  <meta property="og:title" content="Cache 三つを一つにまとめたら互いの値を消しました | Kwanghun Lee" />
+  <meta property="og:description" content="三画面が同じ源を別々に収集していたので Cache 三つを一つにまとめました。まとめた直後に、一つの画面だけ開いていると別の画面の最後の値が消える回帰が出ました。分離された Cache が黙って持っていた契約が消えたのであり、誰もそれを書き残していませんでした。連載の最終編です。" />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -26,12 +26,12 @@
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="cache 三つを一つにまとめたら互いの値を消しました | Kwanghun Lee" />
-  <meta name="twitter:description" content="三画面が同じ源を別々に収集していたので cache 三つを一つにまとめました。まとめた直後に、一つの画面だけ開いていると別の画面の最後の値が消える回帰が出ました。分離された cache が黙って持っていた契約が消えたのであり、誰もそれを書き残していませんでした。連載の最終編です。" />
+  <meta name="twitter:title" content="Cache 三つを一つにまとめたら互いの値を消しました | Kwanghun Lee" />
+  <meta name="twitter:description" content="三画面が同じ源を別々に収集していたので Cache 三つを一つにまとめました。まとめた直後に、一つの画面だけ開いていると別の画面の最後の値が消える回帰が出ました。分離された Cache が黙って持っていた契約が消えたのであり、誰もそれを書き残していませんでした。連載の最終編です。" />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="三画面が同じ源を別々に収集していたので cache 三つを一つにまとめました。まとめた直後に、一つの画面だけ開いていると別の画面の最後の値が消える回帰が出ました。分離された cache が黙って持っていた契約が消えたのであり、誰もそれを書き残していませんでした。連載の最終編です。" />
+  <meta name="description" content="三画面が同じ源を別々に収集していたので Cache 三つを一つにまとめました。まとめた直後に、一つの画面だけ開いていると別の画面の最後の値が消える回帰が出ました。分離された Cache が黙って持っていた契約が消えたのであり、誰もそれを書き残していませんでした。連載の最終編です。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+  <link rel="stylesheet" href="../assets/styles.css?v=5115091496" />
 </head>
 <body>
   <div class="topbar">
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">会社の業務</span></div>
       </div>
               <section class="page-hero">
-          <h1>cache 三つを一つにまとめたら互いの値を消しました<br><span class="h1-sub">分かれていたとき偶然守られていた規則を、すべてコードに書く必要がありました。社内クラウド管理コンソール · 連載「統合モニタリング」⑤</span></h1>
+          <h1>Cache 三つを一つにまとめたら互いの値を消しました<br><span class="h1-sub">分かれていたとき偶然守られていた規則を、すべてコードに書く必要がありました。社内クラウド管理コンソール · 連載「統合モニタリング」⑤</span></h1>
           <p class="article-date">2026年9月</p>
         </section>
 
@@ -96,13 +96,13 @@
 
         <article class="article-body">
 
-        <p>社内クラウド管理コンソールの backend を作っています。
+        <p>社内クラウド管理コンソールの Backend を作っています。
         <a href="monitoring-two-gates-one-screen.ja.html">④編</a>までで三つの画面をそれぞれ直しました。
         最初のデータはどれも速くなったのに、<strong>同じ源を画面ごとに別々に収集</strong>していました。</p>
 
-        <p>ノードのメトリックはダッシュボードと物理ノードが重ねて読み、 instance のメトリックは
+        <p>ノードのメトリックはダッシュボードと物理ノードが重ねて読み、 Instance のメトリックは
         ダッシュボードと仮想リソースが重ねて読んでいました。
-        <strong>cache 三つを一つにまとめれば重複はなくなります。</strong></p>
+        <strong>Cache 三つを一つにまとめれば重複はなくなります。</strong></p>
 
         <p>実際の作業は、データ構造三つを一つにするよりずっと大きなものでした。
         <strong>別々だったから偶然守られていたこと</strong>が、すべて明示すべき契約になったからです。</p>
@@ -110,7 +110,7 @@
         <h2 id="想定読者">この記事の想定読者<a class="anchor" href="#想定読者" aria-label="このセクションへのリンク">#</a></h2>
 
         <ul class="callout">
-          <li>似た cache をいくつか一つにまとめようとしている方</li>
+          <li>似た Cache をいくつか一つにまとめようとしている方</li>
           <li>複数の消費者が<strong>同じ源</strong>をそれぞれ読んでいる構造をお持ちの方</li>
           <li>「オブジェクト数を減らすリファクタリング」で始めて、契約を書き直すことになった方</li>
         </ul>
@@ -120,10 +120,10 @@
         <ul>
           <li>統合前に問題が三つありました。
           <strong>重複収集 · 可変 DTO の共有 · 障害を空の値として確定すること。</strong></li>
-          <li><strong>部分的な失敗は項目ごとに</strong>引き継ぎます。 instance だけ失敗したからといって、
+          <li><strong>部分的な失敗は項目ごとに</strong>引き継ぎます。 Instance だけ失敗したからといって、
           成功したノードまで前の世代に戻したりしません。</li>
           <li>まとめた直後に<strong>回帰が出ました。</strong>一つの画面だけ開いていると、
-          別の画面の最後の値が<strong>cache から消えました。</strong>再入場が 5,115ms でした。</li>
+          別の画面の最後の値が<strong>Cache から消えました。</strong>再入場が 5,115ms でした。</li>
           <li>遅い消費者を収集から切り離しました。<strong>ただし同期送信そのものが消えたわけではありません。</strong></li>
         </ul>
 
@@ -132,16 +132,16 @@
 
         <h2 id="統合前の三つ">統合前の構造が持っていた三つ<a class="anchor" href="#統合前の三つ" aria-label="このセクションへのリンク">#</a></h2>
 
-        <p><strong>一つ目、重複収集。</strong>三画面の 15 秒周期が重なると、同じノードと instance を
+        <p><strong>一つ目、重複収集。</strong>三画面の 15 秒周期が重なると、同じノードと Instance を
         何度も読みます。画面が増えるほど源の負荷が<strong>消費者の数に比例</strong>します。</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 240" role="img" aria-labelledby="dp-t dp-d" class="figure-svg">
-            <title id="dp-t">画面ごとに同じ源を読んでいた構造と単一 producer に変えた構造</title>
+            <title id="dp-t">画面ごとに同じ源を読んでいた構造と単一 Producer に変えた構造</title>
             <desc id="dp-d">上半分は統合前です。ダッシュボード・物理ノード・仮想リソースの三画面からそれぞれ
             矢印が出て同じ時系列ストアへ向かい、矢印が五本あって重複だと書かれています。
-            下半分は統合後です。単一 producer だけが時系列ストアへ矢印を送り、
-            三画面はその producer が作ったスナップショットを読みます。</desc>
+            下半分は統合後です。単一 Producer だけが時系列ストアへ矢印を送り、
+            三画面はその Producer が作ったスナップショットを読みます。</desc>
             <g font-family="Inter, sans-serif">
               <text x="14" y="30" font-size="11.5" fill="#8a8a8a">統合前</text>
               <rect x="86" y="16" width="112" height="26" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
@@ -172,7 +172,7 @@
               <path d="M198 191 H 248" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#dp-ar)"/>
               <path d="M198 223 H 248" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#dp-ar)"/>
               <rect x="248" y="172" width="132" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="2"/>
-              <text x="314" y="196" font-size="11.5" fill="#18121d" text-anchor="middle">単一 producer</text>
+              <text x="314" y="196" font-size="11.5" fill="#18121d" text-anchor="middle">単一 Producer</text>
               <path d="M380 192 H 420" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#dp-arp)"/>
               <rect x="420" y="172" width="150" height="40" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="495" y="196" font-size="11.5" fill="#18121d" text-anchor="middle">時系列ストア</text>
@@ -191,9 +191,9 @@
           この図だけ見ると<strong>まとめることは得しかないように見えます。</strong></figcaption>
         </figure>
 
-        <p><strong>二つ目、可変 DTO の共有。</strong>構造 cache が返したオブジェクトを、画面ごとに
-        <strong>その場で</strong>メトリックで埋めていました。ある thread が値を変えているあいだに別の
-        thread が直列化すると、<strong>一つの payload に別々の時点が混ざります。</strong>
+        <p><strong>二つ目、可変 DTO の共有。</strong>構造 Cache が返したオブジェクトを、画面ごとに
+        <strong>その場で</strong>メトリックで埋めていました。ある Thread が値を変えているあいだに別の
+        Thread が直列化すると、<strong>一つの Payload に別々の時点が混ざります。</strong>
         原子的な参照でポインタを入れ替えても、<strong>中のオブジェクトが共有かつ可変なら不変スナップショットでは
         ありません。</strong></p>
 
@@ -203,9 +203,9 @@
 
         <h2 id="部分的な失敗">部分的な失敗は項目ごとに引き継ぎます<a class="anchor" href="#部分的な失敗" aria-label="このセクションへのリンク">#</a></h2>
 
-        <p>ダッシュボードはノードと instance の結果を<strong>合わせて</strong>見せます。
- instance のメトリックだけ失敗したからといって<strong>成功したノードまで前の世代に戻す</strong>と、
-        依存先一つの障害が画面全体を古くします。逆に空の instance 一覧を新しい値として受け取ると、
+        <p>ダッシュボードはノードと Instance の結果を<strong>合わせて</strong>見せます。
+ Instance のメトリックだけ失敗したからといって<strong>成功したノードまで前の世代に戻す</strong>と、
+        依存先一つの障害が画面全体を古くします。逆に空の Instance 一覧を新しい値として受け取ると、
         実際の VM 数を 0 で塗り替えます。</p>
 
         <p>そこで③編の五つの分岐を<strong>共通の判定</strong>に引き上げ、項目ごとに適用しました。</p>
@@ -219,20 +219,20 @@ NO_VALID_METRICS   前のデータを引き継ぎ + 劣化表示</code></pre>
         <figure class="diagram">
           <svg viewBox="0 0 720 210" role="img" aria-labelledby="pf-t pf-d" class="figure-svg">
             <title id="pf-t">一つの画面の中で項目ごとに違う判定をした結果</title>
-            <desc id="pf-d">一つの payload の箱の中に項目が二つあります。上のノードの項目は成功なので
-            新しい世代で公開され、ピンクです。下の instance の項目は取得失敗なので前の値を引き継ぎ、
-            劣化表示が付いていて灰色です。右には、画面はノードを新しい値で、 instance を古い表示とともに
+            <desc id="pf-d">一つの Payload の箱の中に項目が二つあります。上のノードの項目は成功なので
+            新しい世代で公開され、ピンクです。下の Instance の項目は取得失敗なので前の値を引き継ぎ、
+            劣化表示が付いていて灰色です。右には、画面はノードを新しい値で、 Instance を古い表示とともに
             描くと書かれています。</desc>
             <g font-family="Inter, sans-serif">
               <rect x="24" y="24" width="346" height="146" rx="8" fill="none" stroke="#3b3344" stroke-width="1.6"/>
-              <text x="197" y="48" font-size="12" fill="#18121d" text-anchor="middle" font-weight="700">一つの payload · 同じ世代</text>
+              <text x="197" y="48" font-size="12" fill="#18121d" text-anchor="middle" font-weight="700">一つの Payload · 同じ世代</text>
 
               <rect x="48" y="62" width="298" height="42" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="72" y="88" font-size="11.5" fill="#18121d">ノード</text>
               <text x="200" y="88" font-size="11.5" fill="#d62976">FRESH · 新しい世代</text>
 
               <rect x="48" y="116" width="298" height="42" rx="6" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
-              <text x="72" y="142" font-size="11.5" fill="#18121d">instance</text>
+              <text x="72" y="142" font-size="11.5" fill="#18121d">Instance</text>
               <text x="200" y="142" font-size="11.5" fill="#8a8a8a">FETCH_FAILED · 引き継ぎ</text>
 
               <path d="M370 84 H 440" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#pf-arp)"/>
@@ -259,16 +259,16 @@ NO_VALID_METRICS   前のデータを引き継ぎ + 劣化表示</code></pre>
 
         <p>統合後にいちばん目立ったのは<strong>ページを移ってから戻ったとき</strong>でした。</p>
 
-        <p>単一 producer は<strong>いま購読されている経路だけ</strong>を計算してマップ一つで公開し、
+        <p>単一 Producer は<strong>いま購読されている経路だけ</strong>を計算してマップ一つで公開し、
         公開のときに<strong>前のマップをまるごと入れ替えて</strong>いました。物理ノードの画面だけ開いた状態で
         更新が回ると、最新の世代にはノードだけが残ります。
-        <strong>前のダッシュボードの値は cache から消えます。</strong></p>
+        <strong>前のダッシュボードの値は Cache から消えます。</strong></p>
 
         <p>そのあとダッシュボードに接続すると、すぐ送る値が無いので
         <strong>収集を一周待ちます。</strong>測ると<strong>約 5,115ms</strong>で、
         すぐにもう一度接続すると 16ms でした。</p>
 
-        <blockquote><p>分離された cache が<strong>黙って持っていた契約</strong>はこれでした。
+        <blockquote><p>分離された Cache が<strong>黙って持っていた契約</strong>はこれでした。
         <strong>「別の経路の更新が自分の最後の値を消さない。」</strong>
         まとめたことでその契約が消え、誰もそれを書き残していませんでした。</p></blockquote>
 
@@ -332,24 +332,24 @@ lastPageByPath[経路]   各経路の最後に成功した payload
 
         <h2 id="遅い消費者">遅い消費者を収集から切り離しました<a class="anchor" href="#遅い消費者" aria-label="このセクションへのリンク">#</a></h2>
 
-        <p>SSE の送信は遅いクライアントで詰まることがあります。収集の lock を配信が終わるまで握っていると、
+        <p>SSE の送信は遅いクライアントで詰まることがあります。収集の Lock を配信が終わるまで握っていると、
         <strong>一つのクライアントのネットワークが次の収集を遅らせます。</strong>
         そこで新しい世代を公開した直後に収集トークンを手放し、送信は別のコンポーネントに渡しました。</p>
 
-        <p>ところが通常の実行キューにセッションごとの処理を入れると、小さな pool では
+        <p>ところが通常の実行キューにセッションごとの処理を入れると、小さな Pool では
         <strong>前のセッションだけが繰り返し受け入れられ、後ろのセッションが拒否され続ける飢餓</strong>が
-        起こりえました。送信器は準備 deque と常駐 worker を使います。</p>
+        起こりえました。送信器は準備 deque と常駐 Worker を使います。</p>
 
         <ul>
-          <li>セッションごとに待ちの payload は<strong>いちばん大きい世代を一つだけ</strong>持ちます。</li>
+          <li>セッションごとに待ちの Payload は<strong>いちばん大きい世代を一つだけ</strong>持ちます。</li>
           <li>セッションはキューに<strong>一度だけ</strong>入ります。</li>
-          <li>worker が一度送ったあと新しい待ちがあれば<strong>末尾に入れ直します。</strong></li>
+          <li>Worker が一度送ったあと新しい待ちがあれば<strong>末尾に入れ直します。</strong></li>
           <li>すでに送った世代以下の値は捨てます。</li>
           <li>終了したセッションは送信の直前にもう一度確認します。</li>
         </ul>
 
         <blockquote><p>⚠️ <strong>同期送信そのものが消えたわけではありません。</strong>
-        同時に詰まったセッションの数が worker の数を超えれば、送信は依然として遅れます。
+        同時に詰まったセッションの数が Worker の数を超えれば、送信は依然として遅れます。
         非同期 I/O や遅いセッションの先制的な追い出しは<strong>別の課題として残しました。</strong></p></blockquote>
 
         <h2 id="統合結果">統合の結果<a class="anchor" href="#統合結果" aria-label="このセクションへのリンク">#</a></h2>
@@ -375,17 +375,17 @@ lastPageByPath[経路]   各経路の最後に成功した payload
 
         <h2 id="確認すること">共有状態をまとめるときに確認すること<a class="anchor" href="#確認すること" aria-label="このセクションへのリンク">#</a></h2>
 
-        <p>cache の統合は<strong>オブジェクト数を減らすリファクタリングではありません。</strong>
+        <p>Cache の統合は<strong>オブジェクト数を減らすリファクタリングではありません。</strong>
         次の問いに答える必要があります。</p>
 
         <ul>
           <li>いま購読していない消費者の<strong>最後の値は保たれるか</strong></li>
           <li>ある源の失敗が<strong>別の源の成功を戻すか</strong></li>
           <li>空の値は<strong>正常な 0 か、判断不能か</strong></li>
-          <li>payload の<strong>中のオブジェクトまで</strong>世代ごとに不変か</li>
+          <li>Payload の<strong>中のオブジェクトまで</strong>世代ごとに不変か</li>
           <li>新しい値と古い値が<strong>逆転して送られうるか</strong></li>
-          <li>遅い消費者が<strong>producer を止めるか</strong></li>
-          <li>プロセスが複数なら<strong>producer も複数か</strong></li>
+          <li>遅い消費者が<strong>Producer を止めるか</strong></li>
+          <li>プロセスが複数なら<strong>Producer も複数か</strong></li>
         </ul>
 
         <h2 id="主張しないこと">この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="このセクションへのリンク">#</a></h2>
@@ -395,8 +395,8 @@ lastPageByPath[経路]   各経路の最後に成功した payload
           <li><strong>仮想リソースの最終値は直接比較ではありません。</strong>測り直しの時点で一部の
           メトリックが無い環境だったため、④編の個別測定を基準にしています。</li>
           <li><strong>遅い消費者の問題を解決したとは言いません。</strong>収集から切り離しただけで、
-          同時に詰まったセッションが worker の数を超えれば送信は依然として遅れます。</li>
-          <li><strong>producer が複数の場合は扱っていません。</strong>上の問いの最後の項目が
+          同時に詰まったセッションが Worker の数を超えれば送信は依然として遅れます。</li>
+          <li><strong>Producer が複数の場合は扱っていません。</strong>上の問いの最後の項目が
           そのまま残っています。</li>
         </ul>
 
@@ -432,8 +432,8 @@ lastPageByPath[経路]   各経路の最後に成功した payload
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=772d75cdff"></script>
+  <script src="../assets/i18n.js?v=60def360be"></script>
+  <script src="../assets/content.js?v=738aaf3b4d"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

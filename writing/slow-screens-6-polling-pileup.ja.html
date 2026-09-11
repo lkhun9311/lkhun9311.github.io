@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="作成ボタンを押してもダイアログが開かず、ローディングだけが回っていました。開発者ツールには未完了のリクエストが 4 件残っていました。一覧の取得に 10 秒以上かかるのに画面は 5 秒ごとに取り直しており、ダイアログが開いているあいだも止まりませんでした。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
+  <link rel="stylesheet" href="../assets/styles.css?v=5115091496" />
 </head>
 <body>
   <div class="topbar">
@@ -89,7 +89,7 @@
             <li><a href="#原因2">原因 ②: 開いているあいだも 5 秒ごとに呼んでいました</a></li>
             <li><a href="#修正">修正: 開いていれば止め、選んだときに取る</a></li>
             <li><a href="#おまけ">おまけ: 一覧が取れなくても選択肢は見えるように</a></li>
-            <li><a href="#5秒">この 5 秒が backend の判断の根拠になりました</a></li>
+            <li><a href="#5秒">この 5 秒が Backend の判断の根拠になりました</a></li>
             <li><a href="#どちら">ではどちらを直すべきだったか</a></li>
             <li><a href="#限界">限界: この記事が主張しないこと</a></li>
             <li><a href="#おわりに">おわりに</a></li>
@@ -107,7 +107,7 @@
         <h2 id="想定読者">想定読者<a class="anchor" href="#想定読者" aria-label="この節へのリンク">#</a></h2>
 
         <ul class="callout">
-          <li>一覧画面に定期的な再取得(polling)を掛けている方</li>
+          <li>一覧画面に定期的な再取得(Polling)を掛けている方</li>
           <li>ダイアログを開くとき、必要そうなデータを先に取っておく方</li>
           <li>画面の症状を見て、どちら側が原因かを切り分ける必要があった方</li>
         </ul>
@@ -125,7 +125,7 @@
           <li>⚠️ <strong>ただし「リクエストが溜まった」までは確認できていません。</strong>
           スクリーンショットが示すのは、その時点で <strong>未完了が 4 件</strong>というところまでで、
           ダイアログが開くまでの時間も前後で測っていません。</li>
-          <li>そして <strong>この「5 秒」が backend の判断の根拠になりました。</strong>
+          <li>そして <strong>この「5 秒」が Backend の判断の根拠になりました。</strong>
           <a href="slow-screens-1-volume-list.ja.html">①編</a>に出てくる <code>refreshAfterWrite(5s)</code> の
           その 5 秒です。</li>
         </ul>
@@ -140,7 +140,7 @@
 
         <ul>
           <li><strong>一覧は 5 秒ごとに自分で取り直します。</strong>状態が変わるリソースなので、放っておいても
-          最新に見えるようにするためです。この定期的な再取得を <strong>polling</strong> と呼びます。</li>
+          最新に見えるようにするためです。この定期的な再取得を <strong>Polling</strong> と呼びます。</li>
           <li><strong>ボタンを押すと作成ダイアログが開きます。</strong>そこにボリュームソースを選ぶ欄があります。</li>
         </ul>
 
@@ -355,25 +355,25 @@ usePolling({
         使えなくなります。</strong>いまは一覧が取れなくても <strong>選択肢は見え</strong>、取れなかったことは
         その項目でだけ表に出ます。</p></blockquote>
 
-        <h2 id="5秒">この 5 秒が backend の判断の根拠になりました<a class="anchor" href="#5秒" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="5秒">この 5 秒が Backend の判断の根拠になりました<a class="anchor" href="#5秒" aria-label="この節へのリンク">#</a></h2>
 
-        <p>同じ日に backend 側でボリューム一覧 cache の更新周期を決める必要がありました。
+        <p>同じ日に Backend 側でボリューム一覧 Cache の更新周期を決める必要がありました。
         <a href="slow-screens-1-volume-list.ja.html">①編</a>に出てくる <code>refreshAfterWrite(5s)</code> です。</p>
 
         <p><strong>その 5 秒はここから来ました。</strong>画面が 5 秒ごとに一覧を取り直しているので、
-        cache の更新を始める基準もその周期に合わせよう、ということでした。チームでそう合意しました。</p>
+        Cache の更新を始める基準もその周期に合わせよう、ということでした。チームでそう合意しました。</p>
 
         <p>⚠️ <strong>それは「5 秒以内に必ず最新になる」という意味ではありません。</strong>
         <a href="slow-screens-1-volume-list.ja.html">①編</a>に書いたとおり <code>refreshAfterWrite</code> は
         上限ではなく <strong>更新を始める条件</strong>で、誰も引かなければ更新も起きません。
         ここで決めたのは <strong>周期をどこに合わせるか</strong>であって、古さの天井ではありませんでした。</p>
 
-        <blockquote><p>フロントの再取得周期が、backend が自分の更新を合わせる基準を決めました。
+        <blockquote><p>フロントの再取得周期が、Backend が自分の更新を合わせる基準を決めました。
         別々に決められる値ではなく、<strong>片方がもう片方の根拠</strong>でした。</p></blockquote>
 
         <h2 id="どちら">ではどちらを直すべきだったか<a class="anchor" href="#どちら" aria-label="この節へのリンク">#</a></h2>
 
-        <p>「backend が 10 秒かかるのが問題では」というのが当然の問いです。そのとおりです。
+        <p>「Backend が 10 秒かかるのが問題では」というのが当然の問いです。そのとおりです。
         <strong>そしてそれだけ直しても足りませんでした。</strong></p>
 
         <div class="table-scroll">
@@ -383,7 +383,7 @@ usePolling({
           <caption class="sr-only">片方だけ直したときに残るもの。</caption>
           <thead><tr><th>直した側</th><th>残るもの</th></tr></thead>
           <tbody>
-            <tr><td>backend だけ</td><td>ダイアログが使わないものまで 4 つ取ってくるのはそのまま</td></tr>
+            <tr><td>Backend だけ</td><td>ダイアログが使わないものまで 4 つ取ってくるのはそのまま</td></tr>
             <tr><td>フロントだけ</td><td>一覧の取得が 10 秒以上かかるのはそのまま</td></tr>
             <tr><td>両方</td><td>ダイアログがすぐ開き、一覧も速くなる</td></tr>
           </tbody>
@@ -402,12 +402,12 @@ usePolling({
           <li><strong>「10 秒以上」は原本の文です。</strong>どう測った値かは書かれていません。</li>
           <li><strong>未完了 4 件のスクリーンショットは 1 回の観測です。</strong>その瞬間そうだった、ということで、
           毎回 4 件だったという意味ではありません。</li>
-          <li><strong>polling を止めることには代償があります。</strong>ダイアログが開いているあいだ、後ろの一覧は
+          <li><strong>Polling を止めることには代償があります。</strong>ダイアログが開いているあいだ、後ろの一覧は
           古くなります。長く開けておくと、閉じたときに一度跳ねて見えることがあります。
           ⚠️ 原本にはこの代償が書かれておらず、私もそのとき測っていません。</li>
           <li><strong>接続数の上限に当たったかは分かりません。</strong>列が長くなればブラウザが同じサーバーへ
           同時に開く接続数の上限にも当たりえますが、確認していません。</li>
-          <li><strong>フロントの修正が backend を直したわけではありません。</strong>一覧の取得が遅いことは
+          <li><strong>フロントの修正が Backend を直したわけではありません。</strong>一覧の取得が遅いことは
           <a href="slow-screens-1-volume-list.ja.html">①編</a>で別に直しました。この記事はその上で、
           なぜダイアログが開かなかったのかだけを扱います。</li>
         </ul>
@@ -420,17 +420,17 @@ usePolling({
         <ul>
           <li><strong>周期を決めるときは、いちばん遅い応答も一緒に見ます。</strong>10 秒かかるものを 5 秒ごとに
           呼べば、同じリクエストが重なります。</li>
-          <li><strong>polling には止める条件が要ります。</strong>画面が前に無いときや、ダイアログが開いている
+          <li><strong>Polling には止める条件が要ります。</strong>画面が前に無いときや、ダイアログが開いている
           あいだは呼ばなくてかまいません。</li>
           <li><strong>先に取っておくのはただではなく、変わらない選択肢はサーバーに訊きません。</strong>
           前者は同じ時点のリクエストを増やし、後者はサーバーが落ちたとき一緒に使えなくなります。</li>
-          <li><strong>片方の数値がもう片方の判断の根拠になります。</strong>フロントの 5 秒が、backend の cache が
+          <li><strong>片方の数値がもう片方の判断の根拠になります。</strong>フロントの 5 秒が、Backend の Cache が
           更新周期を合わせる基準になりました。</li>
         </ul>
 
         <p>最後に 1 行だけ残すなら、これです。
         <strong>症状が 1 か所に出たからといって、原因もそこにあるとは限りません。</strong>
-        ダイアログはフロントで開かなかったのに、開かなかった理由の半分は backend にありました。</p>
+        ダイアログはフロントで開かなかったのに、開かなかった理由の半分は Backend にありました。</p>
 
         <p>次回は<strong>モニタリング画面をレビューしても直す根拠が見つからなかった</strong>話です。
         そこで予想した平らなグラフを<strong>なぜ実際に走らせて確かめなかったのか</strong>も書きます。</p>
@@ -447,8 +447,8 @@ usePolling({
   </div>
 
   <script>window.CONTENT_BASE = "../";</script>
-  <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=772d75cdff"></script>
+  <script src="../assets/i18n.js?v=60def360be"></script>
+  <script src="../assets/content.js?v=738aaf3b4d"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
