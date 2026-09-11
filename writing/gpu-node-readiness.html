@@ -288,12 +288,14 @@
           <figcaption>A throwaway kind cluster with a worker is the machine whose disruption nobody minds. Stopping that worker's kubelet produced the three transitions above with the verdict <code>Recovered</code>. <strong>The script stopped a kubelet and read the CR. It did not write any of the phases.</strong></figcaption>
         </figure>
 
-        <p>The 46 seconds is not the controller being slow. It is the interval before Kubernetes itself marks
-        the node not ready, which is the signal the reconciler is waiting on. <strong>Choosing readiness as
-        the trigger bought simplicity and paid for it in exactly that window</strong>, and the number makes
-        the trade visible instead of arguable.</p>
+        <p>The 46 seconds is almost certainly not the controller. The reconciler acts on the node's
+        readiness condition, and Kubernetes does not flip that the moment a kubelet stops: it waits out a
+        grace period first. <strong>Choosing readiness as the trigger bought simplicity and paid for it in
+        that window</strong>, and the number makes the trade visible instead of arguable.</p>
 
-        <p>The 2 seconds on the way back is the reconciler, because by then the signal is already there.</p>
+        <p>⚠️ <strong>That attribution is read from the design, not measured.</strong> The run recorded three
+        phase transitions and their times. It did not record which component spent the 46 seconds, and
+        nothing here instrumented the node controller to find out.</p>
 
         <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
