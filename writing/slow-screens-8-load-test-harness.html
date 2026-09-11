@@ -121,9 +121,9 @@
         <h2 id="what-is-in-here">What this is about<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
 
         <ul class="callout">
-          <li>I moved the load conditions into <strong>constants in code</strong> and generated the JMX
+          <li>I moved the load conditions into constants in code and generated the JMX
           from them. Those values were never touched between runs, so
-          <strong>the declared load conditions are identical across all six.</strong>
+          the declared load conditions are identical across all six.
           ⚠️ That does not mean the environment was.</li>
           <li>I made the ten measurement targets runnable one at a time, so the tool
           would not hit the other APIs alongside.</li>
@@ -561,9 +561,9 @@ done
         <p>This is the broken pink line in the earlier diagram. Put together:</p>
 
         <ul class="callout">
-          <li><strong>The load conditions do not move.</strong> They are pinned as constants and were not
+          <li>The load conditions do not move. They are pinned as constants and were not
           touched across the six. The generated JMX carries the same values.</li>
-          <li><strong>What changed was the server-side code</strong>, and that is
+          <li>What changed was the server-side code, and that is
           outside the harness. This tool does not know what it is measuring.</li>
           <li>Run folders are told apart only by the clock. Nothing says
           "this folder is no cache, sequential".</li>
@@ -609,7 +609,7 @@ done
         <h2 id="what-this-does-not-claim">Limits: what this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
         <ul class="callout">
-          <li><strong>"Doing it by hand makes the conditions drift" was never measured.</strong> There is no
+          <li>"Doing it by hand makes the conditions drift" was never measured. There is no
           record of the values diverging between runs, and none of them matching either.
           Not being able to check is what made me build the tool.</li>
           <li>This harness does not pin every condition. What it pins is the calling side.
@@ -619,7 +619,7 @@ done
           <li>I did not look at the PowerShell side. The harness also has a Windows runner,
           and how the empty-result case, the error stream and the exit code behave there is
           unverified. The defects in this article apply to the bash side.</li>
-          <li><strong>There is no record of "all" actually running for 100 minutes.</strong> The
+          <li>There is no record of "all" actually running for 100 minutes. The
           configuration says so; that is the extent of it, and that 100 is a nominal figure.</li>
           <li>The corrected script is a proposal. It is not in the internal code; it is a
           form checked in a separate environment.</li>
