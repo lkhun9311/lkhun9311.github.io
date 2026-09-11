@@ -72,19 +72,21 @@
         <div class="article-meta"><span class="source-tag company notranslate">Company work</span></div>
       </div>
       <section class="page-hero">
-        <h1>Adding Threads Made the Tail Longer<br><span class="h1-sub">With the cache held fixed, p99 went from 42.6s to 79.0s. Six configurations under load</span></h1>
+        <h1>Adding Threads Made the Tail Longer<br><span class="h1-sub">With the cache held fixed, p99 went from 42.6s to 79.0s. An internal cloud admin console. Slow Screens, part five</span></h1>
         <p class="article-date">Sep 2026</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="parallelism-made-the-tail-worse"></aside>
         <nav class="article-toc" aria-label="Contents">
           <p class="toc-label">Contents</p>
           <ul>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
             <li><a href="#six-rows">Six rows</a></li>
             <li><a href="#why-3-is-worse-than-2">Why ③ is worse than ②</a></li>
             <li><a href="#not-caching-absence">The second defect: absence was never cached</a></li>
             <li><a href="#which-fix-actually-mattered">Which fix actually mattered</a></li>
             <li><a href="#before-and-after-only">What a before-and-after would have reported</a></li>
             <li><a href="#what-this-does-not-claim">What this does not claim</a></li>
+            <li><a href="#wrapping-up">Wrapping up</a></li>
           </ul>
         </nav>
       <article class="article-body">
@@ -104,6 +106,14 @@
         sequential to parallel took p99 from <strong>42.6s to 79.0s</strong>. This is about what that one cell
         told me, and about <strong>the test design that made the cell visible at all</strong>.</p>
 
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>You have shipped several changes together and measured only before and after</li>
+          <li>You expect a sequential loop to get faster once it runs in parallel</li>
+          <li>You have seen an external call inside <code>computeIfAbsent</code></li>
+        </ul>
 
         <h2 id="six-rows">Six rows<a class="anchor" href="#six-rows" aria-label="Link to this section">#</a></h2>
 
@@ -410,9 +420,31 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
           objective.</li>
         </ul>
 
+        <div class="wrapup">
+        <h2 id="wrapping-up">Wrapping up<a class="anchor" href="#wrapping-up" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>Ship every change at once and all you keep is "it got faster."</strong> Which change
+          bought how much only comes out if you split the configurations and measure each one.</li>
+          <li><strong>Hold a lock across a network round trip and going parallel only adds waiters.</strong>
+          More threads make the queue in front of that bin longer, not shorter.</li>
+          <li><strong>If the data structure cannot tell "no value" from "not asked yet,"</strong> the cache
+          freezes an empty result into the answer.</li>
+          <li><strong>The table pointed at the code.</strong> Parallel being worse with the cache held fixed
+          meant the bottleneck was a serialization point rather than throughput, so I went looking for a lock.</li>
+        </ul>
+
         <p>What is left is one line. <strong>If you changed several things, which one changed the outcome has
         to be measured separately.</strong> And when you do measure it, occasionally the change you were
         proudest of turns out to have been harmful on its own.</p>
+
+        <p>The previous part hoisted authentication out of the loop
+        (<a href="slow-screens-4-client-per-loop.html">part four</a>); the next one is about a screen that
+        re-fetched a list before the previous fetch had finished
+        (<a href="slow-screens-6-polling-pileup.html">part six</a>).</p>
+
+        <p>Thank you for reading.</p>
+        </div>
 
       </article>
     </main>
@@ -424,7 +456,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=8f7393b1c8"></script>
+  <script src="../assets/content.js?v=41a879d99c"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

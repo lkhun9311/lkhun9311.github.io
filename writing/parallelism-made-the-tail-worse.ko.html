@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>thread를 늘렸더니 꼬리가 길어졌다 | Kwanghun Lee</title>
+  <title>thread를 늘렸더니 꼬리가 길어졌습니다 | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="thread를 늘렸더니 꼬리가 길어졌다 | Kwanghun Lee" />
+  <meta property="og:title" content="thread를 늘렸더니 꼬리가 길어졌습니다 | Kwanghun Lee" />
   <meta property="og:description" content="cache 설정을 고정한 채 순차를 병렬로 바꾸니 P99가 42.6초에서 79.0초로 악화됐다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠긴다. 여섯 구성을 같은 조건으로 재고 나서야 보인 것." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
@@ -26,7 +26,7 @@
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="thread를 늘렸더니 꼬리가 길어졌다 | Kwanghun Lee" />
+  <meta name="twitter:title" content="thread를 늘렸더니 꼬리가 길어졌습니다 | Kwanghun Lee" />
   <meta name="twitter:description" content="cache를 고정한 채 병렬화하니 P99가 42.6초에서 79.0초로 악화됐다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠긴다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="cache 설정을 고정한 채 순차를 병렬로 바꾸니 P99가 42.6초에서 79.0초로 악화됐다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠긴다. 여섯 구성을 같은 조건으로 재고 나서야 보인 것." />
@@ -72,40 +72,50 @@
         <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span></div>
       </div>
       <section class="page-hero">
-        <h1>thread를 늘렸더니 꼬리가 길어졌다<br><span class="h1-sub">cache를 고정한 채 재니 P99가 42.6초에서 79.0초였습니다. 여섯 구성 부하 시험</span></h1>
+        <h1>thread를 늘렸더니 꼬리가 길어졌습니다<br><span class="h1-sub">cache를 고정한 채 재니 P99가 42.6초에서 79.0초였습니다. 사내 cloud 관리 console · 느린 화면 연작 ⑤</span></h1>
         <p class="article-date">2026년 9월</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="parallelism-made-the-tail-worse"></aside>
         <nav class="article-toc" aria-label="목차">
           <p class="toc-label">목차</p>
           <ul>
+            <li><a href="#예상-독자">이 글의 예상 독자</a></li>
             <li><a href="#여섯-줄">여섯 줄</a></li>
             <li><a href="#왜-3이-2보다-나쁜가">왜 ③이 ②보다 나쁜가</a></li>
             <li><a href="#없음을-cache하지-않았다">두 번째 결함: "없음"을 cache에 담지 않았다</a></li>
             <li><a href="#무엇이-실제로-컸는가">고친 것 중 무엇이 실제로 컸는가</a></li>
             <li><a href="#전후만-쟀다면">전후만 쟀다면 무엇을 잘못 보고했을까</a></li>
             <li><a href="#이-글이-주장하지-않는-것">이 글이 주장하지 않는 것</a></li>
+            <li><a href="#마치며">마치며</a></li>
           </ul>
         </nav>
       <article class="article-body">
 
         <p><strong>범위.</strong> 2026년 5월, OpenStack 기반 프라이빗 클라우드 관리 콘솔의
-        <strong>볼륨 목록 화면</strong>을 고친 기록이다. 제품명·버전·고객사는 쓰지 않는다. 아래 숫자는 전부 <strong>사내 시험 환경에서 JMeter로 잰
-        값</strong>이고 프로덕션 트래픽이 아니다. 부하 조건은 여섯 구성 모두 동일하다.         <strong>동시 사용자 50명 · Ramp-Up 2분 · 지속 10분 · Think Time 2~5초</strong>. 코드는 실제 코드를
-        인용하되 사내 식별자는 지웠다.</p>
+        <strong>볼륨 목록 화면</strong>을 고친 기록입니다. 제품명·버전·고객사는 쓰지 않습니다. 아래 숫자는 전부 <strong>사내 테스트 환경에서 JMeter로 잰
+        값</strong>이고 프로덕션 트래픽이 아닙니다. 부하 조건은 여섯 구성 모두 동일합니다.         <strong>동시 사용자 50명 · Ramp-Up 2분 · 지속 10분 · Think Time 2~5초</strong>. 코드는 실제 코드를
+        인용하되 사내 식별자는 지웠습니다.</p>
 
-        <p>화면은 볼륨이 늘수록 선형으로 느려지다가 결국 10분 Timeout으로 죽었다. 원인은 볼륨 하나마다 외부
-        API를 순차로 부르는 루프였고 처방은 뻔해 보였다. <strong>병렬로 돌리면 된다.</strong></p>
+        <p>화면은 볼륨이 늘수록 선형으로 느려지다가 결국 10분 Timeout으로 죽었습니다. 원인은 볼륨 하나마다 외부
+        API를 순차로 부르는 루프였고 처방은 뻔해 보였습니다. <strong>병렬로 돌리면 됩니다.</strong></p>
 
-        <p>병렬로 돌리자 <strong>더 느려졌다.</strong> cache 설정을 고정한 채 순차를 병렬로 바꾸니 P99가
-        <strong>42.6초에서 79.0초</strong>가 됐다. 이 글은 그 한 칸이 무엇을 알려줬는지, 그리고
-        <strong>그 한 칸을 볼 수 있게 만든 시험 설계</strong>에 대한 것이다.</p>
+        <p>병렬로 돌리자 <strong>더 느려졌습니다.</strong> cache 설정을 고정한 채 순차를 병렬로 바꾸니 P99가
+        <strong>42.6초에서 79.0초</strong>가 됐습니다. 이 글은 그 한 칸이 무엇을 알려줬는지, 그리고
+        <strong>그 한 칸을 볼 수 있게 만든 테스트 설계</strong>에 대한 것입니다.</p>
 
+
+        <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li>조치를 여러 개 한꺼번에 넣고 전후만 재신 적이 있는 분</li>
+          <li>순차 반복문을 병렬로 바꾸면 빨라질 것이라고 보시는 분</li>
+          <li><code>computeIfAbsent</code> 안에서 외부 API를 부르는 코드를 보신 적이 있는 분</li>
+        </ul>
 
         <h2 id="여섯-줄">여섯 줄<a class="anchor" href="#여섯-줄" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>조치를 한꺼번에 넣고 전후를 재면 "빨라졌다"는 사실 하나만 남는다. 무엇이 얼마나 기여했는지는
-        모른다. 그래서 구성을 여섯 단계로 나눠 <strong>같은 조건으로 각각</strong> 쟀다.</p>
+        <p>조치를 한꺼번에 넣고 전후를 재면 "빨라졌다"는 사실 하나만 남습니다. 무엇이 얼마나 기여했는지는
+        모릅니다. 그래서 구성을 여섯 단계로 나눠 <strong>같은 조건으로 각각</strong> 쟀습니다.</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
@@ -125,21 +135,21 @@
         </div>
         </div>
 
-        <p>단위는 밀리초다. ①의 600,017ms는 측정값이 아니라 <strong>10분 Timeout 상한에 붙은 값</strong>이다.         그 구성은 요청의 83.3%가 끝나지 못했다. 끝나지 못한 요청의 지연은 "600초"가 아니라 <strong>모른다</strong>가
-        정답이고 표의 그 칸은 그렇게 읽어야 한다.</p>
+        <p>단위는 밀리초입니다. ①의 600,017ms는 측정값이 아니라 <strong>10분 Timeout 상한에 붙은 값</strong>입니다.         그 구성은 요청의 83.3%가 끝나지 못했습니다. 끝나지 못한 요청의 지연은 "600초"가 아니라 <strong>모른다</strong>가
+        정답이고 표의 그 칸은 그렇게 읽어야 합니다.</p>
 
-        <p>③이 ②보다 나쁘다는 게 먼저 눈에 걸린다. 42.6초 대 129.9초다. 그런데
+        <p>③이 ②보다 나쁘다는 게 먼저 눈에 걸립니다. 42.6초 대 129.9초입니다. 그런데
         <strong>이 두 줄은 서로의 대조군이 아니다</strong>. ②는 cache 5초에 순차이고 ③은 cache 없음에 병렬이라
-        <strong>두 변수가 동시에 바뀐다.</strong> 이 차이에서 병렬화의 효과만 떼어낼 수 없다.</p>
+        <strong>두 변수가 동시에 바뀝니다.</strong> 이 차이에서 병렬화의 효과만 떼어낼 수 없습니다.</p>
 
-        <p>cache를 고정한 쌍은 <strong>②와 ④</strong>다. 둘 다 cache 5초이고 순차냐 병렬이냐만 다르다.</p>
+        <p>cache를 고정한 쌍은 <strong>②와 ④</strong>다. 둘 다 cache 5초이고 순차냐 병렬이냐만 다릅니다.</p>
 
-        <p><strong>P99가 42.6초에서 79.0초로 올랐다.</strong> thread를 늘렸는데 꼬리가 1.85배가 됐다.
-        이것이 이 실험에서 병렬화 단독의 효과로 말할 수 있는 전부이고 방향은 분명하다. 해로웠다.</p>
+        <p><strong>P99가 42.6초에서 79.0초로 올랐습니다.</strong> thread를 늘렸는데 꼬리가 1.85배가 됐습니다.
+        이것이 이 실험에서 병렬화 단독의 효과로 말할 수 있는 전부이고 방향은 분명합니다. 해로웠습니다.</p>
 
         <h2 id="왜-3이-2보다-나쁜가">왜 ③이 ②보다 나쁜가<a class="anchor" href="#왜-3이-2보다-나쁜가" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>병렬화한 코드는 이렇게 생겼다.</p>
+        <p>병렬화한 코드는 이렇게 생겼습니다.</p>
 
 <pre data-lang="java"><code>final Map&lt;String, VolumeGroup&gt; groupCache = new ConcurrentHashMap&lt;&gt;();
 
@@ -156,29 +166,29 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
     .map(CompletableFuture::join)
     .collect(Collectors.toList());</code></pre>
 
-        <p><code>ConcurrentHashMap</code>을 썼으니 안전하다고 생각하기 쉽다. 안전한 것은 맞다. 문제는 안전성이
+        <p><code>ConcurrentHashMap</code>을 썼으니 안전하다고 생각하기 쉽습니다. 안전한 것은 맞습니다. 문제는 안전성이
         아니라 <strong>그 안전성을 무엇으로 사는가</strong>다.</p>
 
-        <p><code>computeIfAbsent</code>는 매핑 함수를 <strong>해당 키가 속한 버킷을 잠근 채</strong> 실행한다.
-        매핑 함수가 맵을 읽고 끝나는 계산이면 그 구간은 나노초 단위다. 여기서는 그 자리에서
-        <strong>네트워크 왕복</strong>을 한다.</p>
+        <p><code>computeIfAbsent</code>는 매핑 함수를 <strong>해당 키가 속한 버킷을 잠근 채</strong> 실행합니다.
+        매핑 함수가 맵을 읽고 끝나는 계산이면 그 구간은 나노초 단위입니다. 여기서는 그 자리에서
+        <strong>네트워크 왕복</strong>을 합니다.</p>
 
-        <p>그러면 이런 일이 벌어진다. 같은 그룹에 속한 볼륨이 M 개면 executor에 제출된 M 개의 thread가
-        <strong>같은 키</strong>로 <code>computeIfAbsent</code>에 들어온다. 하나가 외부 호출을 하는 동안 나머지
-        M−1 개는 그 버킷 앞에 줄을 선다. 순차 코드에서는 한 줄로 서서 기다리던 것이
-        <strong>병렬 코드에서도 한 줄로 서고 thread pool 자리는 그동안 묶여 있다.</strong> 얻은 것은 없고
-        컨텍스트 스위칭과 pool 고갈만 늘었다.</p>
+        <p>그러면 이런 일이 벌어집니다. 같은 그룹에 속한 볼륨이 M 개면 executor에 제출된 M 개의 thread가
+        <strong>같은 키</strong>로 <code>computeIfAbsent</code>에 들어옵니다. 하나가 외부 호출을 하는 동안 나머지
+        M−1 개는 그 버킷 앞에 줄을 섭니다. 순차 코드에서는 한 줄로 서서 기다리던 것이
+        <strong>병렬 코드에서도 한 줄로 서고 thread pool 자리는 그동안 묶여 있습니다.</strong> 얻은 것은 없고
+        컨텍스트 스위칭과 pool 고갈만 늘었습니다.</p>
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
             <svg viewBox="0 0 720 312" role="img" aria-labelledby="cia-t cia-d" xmlns="http://www.w3.org/2000/svg">
               <title id="cia-t">computeIfAbsent 안의 외부 호출이 버킷을 잠그는 구조</title>
-              <desc id="cia-d">같은 그룹 ID를 키로 쓰는 작업 넷이 executor thread 넷으로 병렬 제출된다. 네 thread는 같은 키이므로
-              같은 버킷 하나로 모인다. T1이 그 버킷을 잡은 채 매핑 함수 안에서 외부 API를 호출하고 네트워크 왕복이 끝날
-              때까지 버킷은 잠겨 있다. T2·T3·T4는 그 앞에서 줄을 서며 그동안 thread pool 자리를 계속 점유한다. 다른 키가 속한
-              버킷은 잠기지 않으므로 그쪽 작업은 진행할 수 있다. 매핑 함수는 한 번만 실행되고 값이 게시되면 대기가 풀린다.
+              <desc id="cia-d">같은 그룹 ID를 키로 쓰는 작업 넷이 executor thread 넷으로 병렬 제출됩니다. 네 thread는 같은 키이므로
+              같은 버킷 하나로 모입니다. T1이 그 버킷을 잡은 채 매핑 함수 안에서 외부 API를 호출하고 네트워크 왕복이 끝날
+              때까지 버킷은 잠겨 있습니다. T2·T3·T4는 그 앞에서 줄을 서며 그동안 thread pool 자리를 계속 점유합니다. 다른 키가 속한
+              버킷은 잠기지 않으므로 그쪽 작업은 진행할 수 있습니다. 매핑 함수는 한 번만 실행되고 값이 게시되면 대기가 풀립니다.
               즉 호출 횟수가 늘어나는 것이 아니라, 순차 코드에 있던 줄서기가 그대로 남은 채 pool 점유와 컨텍스트 스위칭만
-              추가된다.</desc>
+              추가됩니다.</desc>
 
               <g fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5">
                 <rect x="8" y="46" width="188" height="256" rx="8"/>
@@ -250,25 +260,25 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
               </defs>
             </svg>
           </div>
-          <figcaption>같은 키의 요청은 버킷 하나에 모인다. 실선이 호출 중인 T1, 점선이 대기 중인 T2·T3·T4다. 매핑 함수 안의 외부 호출이 그 버킷을 왕복 시간만큼 잡고 있고 나머지 thread는 pool 자리를 쥔 채 기다린다. 다른 키의 버킷은 잠기지 않는다. 매핑 함수는 <strong>한 번만</strong> 실행되고 값이 게시되면 대기가 풀린다. 즉 늘어난 것은 호출 횟수가 아니라 <strong>pool 점유와 컨텍스트 스위칭</strong>이고 줄서기는 그대로 남는다.</figcaption>
+          <figcaption>같은 키의 요청은 버킷 하나에 모입니다. 실선이 호출 중인 T1, 점선이 대기 중인 T2·T3·T4입니다. 매핑 함수 안의 외부 호출이 그 버킷을 왕복 시간만큼 잡고 있고 나머지 thread는 pool 자리를 쥔 채 기다립니다. 다른 키의 버킷은 잠기지 않습니다. 매핑 함수는 <strong>한 번만</strong> 실행되고 값이 게시되면 대기가 풀립니다. 즉 늘어난 것은 호출 횟수가 아니라 <strong>pool 점유와 컨텍스트 스위칭</strong>이고 줄서기는 그대로 남습니다.</figcaption>
         </figure>
 
-        <p>그래서 ③은 ②보다 나쁘다. ②는 5초 cache 덕분에 외부 호출 횟수 자체가 적었고 ③은 cache가 없어
-        모든 요청이 그 잠긴 자리를 통과해야 했다.</p>
+        <p>그래서 ③은 ②보다 나쁩니다. ②는 5초 cache 덕분에 외부 호출 횟수 자체가 적었고 ③은 cache가 없어
+        모든 요청이 그 잠긴 자리를 통과해야 했습니다.</p>
 
-        <blockquote><p><strong>용어 하나.</strong> 이 구조를 "세그먼트 lock"이라고 부르는 문서를 자주 본다.
+        <blockquote><p><strong>용어 하나.</strong> 이 구조를 "세그먼트 lock"이라고 부르는 문서를 자주 봅니다.
         세그먼트는 <strong>Java 7 시절 용어</strong>다. Java 8 이후 <code>ConcurrentHashMap</code>은 세그먼트를
-        없애고 <strong>버킷(bin) 단위</strong>로 잠근다. 잠김의 범위가 더 좁아졌을 뿐, <em>매핑 함수가 도는 동안
-        그 자리가 잠긴다</em>는 사실은 그대로다. lock 범위가 좁아진 것이 <strong>lock 안에서 I/O를 해도 된다는
-        뜻은 아니다.</strong></p></blockquote>
+        없애고 <strong>버킷(bin) 단위</strong>로 잠급니다. 잠김의 범위가 더 좁아졌을 뿐, <em>매핑 함수가 도는 동안
+        그 자리가 잠긴다</em>는 사실은 그대로입니다. lock 범위가 좁아진 것이 <strong>lock 안에서 I/O를 해도 된다는
+        뜻은 아닙니다.</strong></p></blockquote>
 
-        <p>고치는 방법은 lock을 직접 다루는 걸 그만두는 것이다. Caffeine의 <code>LoadingCache</code>는
-        cache 미스에서 <strong>키마다 로더를 정확히 한 번만</strong> 실행하고 나머지 호출자는 그 결과를 기다린다.
-        같은 "한 번만 부른다"를 보장하면서, 기다리는 쪽이 맵의 버킷을 붙들고 있지 않는다.</p>
+        <p>고치는 방법은 lock을 직접 다루는 걸 그만두는 것입니다. Caffeine의 <code>LoadingCache</code>는
+        cache 미스에서 <strong>키마다 로더를 정확히 한 번만</strong> 실행하고 나머지 호출자는 그 결과를 기다립니다.
+        같은 "한 번만 부른다"를 보장하면서, 기다리는 쪽이 맵의 버킷을 붙들고 있지 않습니다.</p>
 
         <h2 id="없음을-cache하지-않았다">두 번째 결함: "없음"을 cache에 담지 않았다<a class="anchor" href="#없음을-cache하지-않았다" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>같은 화면의 다른 경로에는 직접 만든 cache가 하나 더 있었다.</p>
+        <p>같은 화면의 다른 경로에는 직접 만든 cache가 하나 더 있었습니다.</p>
 
 <pre data-lang="java"><code>public static List&lt;Message&gt; messages(final String resourceId) {
     CacheManager manager = CacheManager.getInstance().init(Message.class, 10);
@@ -281,26 +291,26 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
     ...
 }</code></pre>
 
-        <p>결함이 두 겹이다.</p>
+        <p>결함이 두 겹입니다.</p>
 
         <p><strong>하나.</strong> 병렬화된 N 개 thread가 <code>isEmpty()</code> 검사를 동시에 통과하면
-        <strong>N 개가 전부</strong> 외부 API를 부른다. 흔한 cache stampede다.</p>
+        <strong>N 개가 전부</strong> 외부 API를 부릅니다. 흔한 cache stampede입니다.</p>
 
-        <p><strong>둘.</strong> 조회 결과가 0건이면 <code>forEach</code>가 한 번도 돌지 않는다. 그러면
-        <strong>cache에 아무것도 저장되지 않는다.</strong> 다음 요청도 cache를 비어 있다고 보고 또 부른다.
-        "없음"이라는 답을 cache하지 않은 것이다. 그리고 이 경로에서는 0건이 흔한 답이었다. 즉
-        <strong>가장 빈번한 경우에 cache가 전혀 작동하지 않았다.</strong></p>
+        <p><strong>둘.</strong> 조회 결과가 0건이면 <code>forEach</code>가 한 번도 돌지 않습니다. 그러면
+        <strong>cache에 아무것도 저장되지 않습니다.</strong> 다음 요청도 cache를 비어 있다고 보고 또 부릅니다.
+        "없음"이라는 답을 cache하지 않은 것입니다. 그리고 이 경로에서는 0건이 흔한 답이었습니다. 즉
+        <strong>가장 빈번한 경우에 cache가 전혀 작동하지 않았습니다.</strong></p>
 
-        <p>여기서도 처방은 같다. Caffeine은 로더가 빈 리스트를 돌려줘도 <strong>그 빈 리스트를 값으로 cache</strong>한다.
-        "값이 없다"와 "아직 안 물어봤다"를 자료구조가 구분해 준다. 직접 만든 cache는 그 둘을 같은
-        <code>isEmpty()</code>로 뭉갰다.</p>
+        <p>여기서도 처방은 같습니다. Caffeine은 로더가 빈 리스트를 돌려줘도 <strong>그 빈 리스트를 값으로 cache</strong>합니다.
+        "값이 없다"와 "아직 안 물어봤다"를 자료구조가 구분해 줍니다. 직접 만든 cache는 그 둘을 같은
+        <code>isEmpty()</code>로 뭉갰습니다.</p>
 
-        <p>이 두 결함은 성질이 다르다. 첫째는 <strong>정확성은 맞는데 느린</strong> 결함이고 둘째는
-        <strong>cache가 있다고 믿게 만드는</strong> 결함이다. 둘째가 더 오래 살아남았던 이유는 명백하다.         코드에 cache가 있었고 아무도 그 cache가 채워지는지 세어 보지 않았다.</p>
+        <p>이 두 결함은 성질이 다릅니다. 첫째는 <strong>정확성은 맞는데 느린</strong> 결함이고 둘째는
+        <strong>cache가 있다고 믿게 만드는</strong> 결함입니다. 둘째가 더 오래 살아남았던 이유는 명백합니다.         코드에 cache가 있었고 아무도 그 cache가 채워지는지 세어 보지 않았습니다.</p>
 
         <h2 id="무엇이-실제로-컸는가">고친 것 중 무엇이 실제로 컸는가<a class="anchor" href="#무엇이-실제로-컸는가" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>여섯 줄을 인접한 쌍으로 읽으면 각 조치의 기여가 분리된다.</p>
+        <p>여섯 줄을 인접한 쌍으로 읽으면 각 조치의 기여가 분리됩니다.</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
@@ -319,17 +329,17 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         </div>
         </div>
 
-        <p>마지막 한 단계가 <strong>배수로는</strong> 가장 컸다. 6.9초에서 23ms로 약 300배다.
-        <strong>절대량으로는 ④→⑤ 가 더 크다</strong>(약 72.1초 감소 대 약 6.84초). 둘 다 참이고 어느 쪽을
-        "가장 컸다"고 부를지는 척도가 정한다. 다만 어느 척도로 보든 그 단계는 <strong>맨 마지막에 넣은
-        것</strong>이라, 전후만 쟀다면 앞선 네 조치의 공으로 돌아갔을 것이다.</p>
+        <p>마지막 한 단계가 <strong>배수로는</strong> 가장 컸습니다. 6.9초에서 23ms로 약 300배입니다.
+        <strong>절대량으로는 ④→⑤ 가 더 큽니다</strong>(약 72.1초 감소 대 약 6.84초). 둘 다 참이고 어느 쪽을
+        "가장 컸다"고 부를지는 척도가 정합니다. 다만 어느 척도로 보든 그 단계는 <strong>맨 마지막에 넣은
+        것</strong>이라, 전후만 쟀다면 앞선 네 조치의 공으로 돌아갔을 것입니다.</p>
 
-        <p>⑤→⑥ 이 왜 그렇게 큰가. ⑤까지는 만료된 cache를 읽으려는 요청이 <strong>새로 채워질 때까지 기다린다.</strong>
-        Caffeine의 refresh는 만료 시점에 기존 값을 계속 돌려주면서 <strong>백그라운드에서 갱신</strong>한다.
+        <p>⑤→⑥ 이 왜 그렇게 큰가. ⑤까지는 만료된 cache를 읽으려는 요청이 <strong>새로 채워질 때까지 기다립니다.</strong>
+        Caffeine의 refresh는 만료 시점에 기존 값을 계속 돌려주면서 <strong>백그라운드에서 갱신</strong>합니다.
         즉 마지막 단계가 없앤 것은 조회 비용이 아니라 <strong>갱신을 기다리는 시간</strong>이었고 그 시간이
-        꼬리 지연의 대부분이었다.</p>
+        꼬리 지연의 대부분이었습니다.</p>
 
-        <p>같은 처방을 나머지 세 화면에도 적용했다. 네 화면 모두 같은 부하 조건에서 잰 값이다.</p>
+        <p>같은 처방을 나머지 세 화면에도 적용했습니다. 네 화면 모두 같은 부하 조건에서 잰 값입니다.</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
@@ -349,51 +359,74 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
 
         <h2 id="전후만-쟀다면">전후만 쟀다면 무엇을 잘못 보고했을까<a class="anchor" href="#전후만-쟀다면" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>①과 ⑥만 쟀다면 보고서는 이렇게 나왔을 것이다. <em>"cache와 병렬화를 적용해 오류율 83.3%를 0%로,
+        <p>①과 ⑥만 쟀다면 보고서는 이렇게 나왔을 것입니다. <em>"cache와 병렬화를 적용해 오류율 83.3%를 0%로,
         P99를 10분에서 23ms로 개선했다."</em></p>
 
-        <p>모든 숫자가 참이다. 그리고 <strong>병렬화가 기여했다는 함의는 거짓</strong>이다. 병렬화는 단독으로는
-        해로웠다. cache를 고정해도 병렬이 순차보다 나빴으므로 이 실험은 병렬화의 양의 기여를 보이지 않는다. 그 사실을 모른 채 다른 화면에 "여기도 병렬화하자"를 처방했다면
-        같은 함정에 다시 들어갔을 것이다.</p>
+        <p>모든 숫자가 참입니다. 그리고 <strong>병렬화가 기여했다는 함의는 거짓</strong>입니다. 병렬화는 단독으로는
+        해로웠습니다. cache를 고정해도 병렬이 순차보다 나빴으므로 이 실험은 병렬화의 양의 기여를 보이지 않습니다. 그 사실을 모른 채 다른 화면에 "여기도 병렬화하자"를 처방했다면
+        같은 함정에 다시 들어갔을 것입니다.</p>
 
-        <p>실제로 이 표는 진단 근거로도 쓰였다. cache를 고정한 채 병렬화가 악화라는 것은 <strong>병목이 CPU나
+        <p>실제로 이 표는 진단 근거로도 쓰였습니다. cache를 고정한 채 병렬화가 악화라는 것은 <strong>병목이 CPU나
         처리량이 아니라 직렬화 지점</strong>이라는 뜻이고 그래서 코드에서 lock을 찾았고 <code>computeIfAbsent</code> 안의 외부
-        호출이 나왔다. 표가 코드를 가리켰다.</p>
+        호출이 나왔습니다. 표가 코드를 가리켰습니다.</p>
 
-        <p>예상되는 반문 두 가지를 미리 적어 둔다.</p>
+        <p>예상되는 반문 두 가지를 미리 적어 둡니다.</p>
 
-        <p><strong>"그냥 thread pool을 키우면 되지 않나?"</strong>. 병목이 lock이면 thread를 늘려도 대기자만 늘어난다.
-        ②↔④ 가 정확히 그 실험이다. 같은 cache 설정에서 순차보다 병렬이 느렸다.</p>
+        <p><strong>"그냥 thread pool을 키우면 되지 않나?"</strong>. 병목이 lock이면 thread를 늘려도 대기자만 늘어납니다.
+        ②↔④ 가 정확히 그 실험입니다. 같은 cache 설정에서 순차보다 병렬이 느렸습니다.</p>
 
-        <p><strong>"Median 4ms는 cache 히트라 당연한 것 아닌가?"</strong>. 맞다. 그래서 Median만 보지 않는다.
-        같은 줄의 P99가 23ms이고 Apdex가 1.000이다. Apdex는 만족·용인·불만족을 가중해 세는 값이라
-        중앙값이 아니라 분포 전체를 본다. 다만 1.000이라는 표기가 표본 전체를 증명하지는 않는다(아래 유보).</p>
+        <p><strong>"Median 4ms는 cache 히트라 당연한 것 아닌가?"</strong>. 맞습니다. 그래서 Median만 보지 않습니다.
+        같은 줄의 P99가 23ms이고 Apdex가 1.000입니다. Apdex는 만족·용인·불만족을 가중해 세는 값이라
+        중앙값이 아니라 분포 전체를 봅니다. 다만 1.000이라는 표기가 표본 전체를 증명하지는 않습니다(아래 유보).</p>
 
         <h2 id="이-글이-주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#이-글이-주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul>
-          <li><strong>병렬화가 나쁘다는 주장이 아니다.</strong> lock 안에서 I/O를 하는 코드를 병렬화하면 나쁘다.
+          <li><strong>병렬화가 나쁘다는 주장이 아닙니다.</strong> lock 안에서 I/O를 하는 코드를 병렬화하면 나쁩니다.
           다만 이 여섯 구성 안에 <strong>그 조건을 없앤 병렬 구성이 없으므로</strong> 없앴을 때 병렬화가
-          값을 하는지는 이 실험이 보이지 않는다. ③→④ 는 cache만 바뀐 쌍이라 그 답이 아니다.</li>
-          <li><strong>프로덕션 측정이 아니다.</strong> 사내 시험 환경에서 합성 부하로 잰 값이다. 실제 사용자
-          분포·데이터 규모·네트워크는 다르다.</li>
-          <li><strong>②와 ③은 서로의 대조군이 아니다.</strong> cache와 실행 방식이 동시에 바뀌므로 그
-          차이(42.6초 → 129.9초)에서 어느 쪽 효과인지 나눌 수 없다. 이 글이 병렬화 단독의 근거로 쓰는 것은
-          cache를 고정한 ②→④ 뿐이다.</li>
-          <li><strong>Apdex 1.000은 표본 전체가 만족 임계 안이라는 증명이 아니다.</strong> 도구 표기가 소수
-          셋째 자리 반올림이면 소수의 tolerating 표본이 있어도 1.000으로 보인다. 반올림 전 원시값은
-          확인하지 않았다.</li>
-          <li><strong>구성마다 한 번씩만 쟀다.</strong> 반복 측정으로 분산을 낸 것이 아니라서, 인접한 두 구성의
-          차이가 작을 때는 그 차이를 근거로 삼지 않았다. 이 글이 근거로 쓰는 것은 ②→④ 처럼
-          <strong>배 단위의 차이</strong>뿐이다.</li>
-          <li><strong>①의 600초는 지연이 아니다.</strong> Timeout 상한이다. ①의 P99를 "600초"로 인용하면
-          측정하지 못한 것을 측정한 척하는 것이 된다.</li>
-          <li><strong>Apdex 임계는 도구 기본값</strong>을 그대로 썼다. 서비스 수준 목표를 별도로 정의해 맞춘 값이
-          아니다.</li>
+          값을 하는지는 이 실험이 보이지 않습니다. ③→④ 는 cache만 바뀐 쌍이라 그 답이 아닙니다.</li>
+          <li><strong>프로덕션 측정이 아닙니다.</strong> 사내 테스트 환경에서 합성 부하로 잰 값입니다. 실제 사용자
+          분포·데이터 규모·네트워크는 다릅니다.</li>
+          <li><strong>②와 ③은 서로의 대조군이 아닙니다.</strong> cache와 실행 방식이 동시에 바뀌므로 그
+          차이(42.6초 → 129.9초)에서 어느 쪽 효과인지 나눌 수 없습니다. 이 글이 병렬화 단독의 근거로 쓰는 것은
+          cache를 고정한 ②→④ 뿐입니다.</li>
+          <li><strong>Apdex 1.000은 표본 전체가 만족 임계 안이라는 증명이 아닙니다.</strong> 도구 표기가 소수
+          셋째 자리 반올림이면 소수의 tolerating 표본이 있어도 1.000으로 보입니다. 반올림 전 원시값은
+          확인하지 않았습니다.</li>
+          <li><strong>구성마다 한 번씩만 쟀습니다.</strong> 반복 측정으로 분산을 낸 것이 아니라서, 인접한 두 구성의
+          차이가 작을 때는 그 차이를 근거로 삼지 않았습니다. 이 글이 근거로 쓰는 것은 ②→④ 처럼
+          <strong>배 단위의 차이</strong>뿐입니다.</li>
+          <li><strong>①의 600초는 지연이 아닙니다.</strong> Timeout 상한입니다. ①의 P99를 "600초"로 인용하면
+          측정하지 못한 것을 측정한 척하는 것이 됩니다.</li>
+          <li><strong>Apdex 임계는 도구 기본값</strong>을 그대로 썼습니다. 서비스 수준 목표를 별도로 정의해 맞춘 값이
+          아닙니다.</li>
         </ul>
 
-        <p>남는 한 줄은 이것이다. <strong>고친 것이 여러 개면 무엇이 고쳤는지는 따로 재야 나온다.</strong>
-        그리고 그렇게 재면 가끔, 좋아졌다고 믿었던 조치가 혼자서는 해로웠다는 게 나온다.</p>
+        <div class="wrapup">
+        <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>정리하면 이렇습니다.</p>
+
+        <ul>
+          <li><strong>조치를 한꺼번에 넣으면 「빨라졌다」 하나만 남습니다.</strong> 무엇이 얼마나 기여했는지는
+          구성을 갈라서 각각 재야 나옵니다.</li>
+          <li><strong>lock을 쥔 채 네트워크 왕복을 하면 병렬화는 대기자만 늘립니다.</strong> thread를 늘려도
+          같은 버킷 앞의 줄이 길어질 뿐입니다.</li>
+          <li><strong>「값이 없다」와 「아직 안 물어봤다」를 자료구조가 구분하지 못하면</strong> cache가 빈 결과를
+          정답으로 굳혀 버립니다.</li>
+          <li><strong>표가 코드를 가리킵니다.</strong> cache를 고정한 채 병렬이 더 나빴다는 것은 병목이
+          처리량이 아니라 직렬화 지점이라는 뜻이었고 그래서 lock을 찾으러 갔습니다.</li>
+        </ul>
+
+        <p>남는 한 줄은 이것입니다. <strong>고친 것이 여러 개면 무엇이 고쳤는지는 따로 재야 나옵니다.</strong>
+        그리고 그렇게 재면 가끔, 좋아졌다고 믿었던 조치가 혼자서는 해로웠다는 게 나옵니다.</p>
+
+        <p>앞 편은 인증을 반복문 밖으로 꺼낸
+        <a href="slow-screens-4-client-per-loop.ko.html">④편</a>이고 다음 편은 목록 조회가 끝나기도 전에
+        화면이 다시 부르던 <a href="slow-screens-6-polling-pileup.ko.html">⑥편</a>입니다.</p>
+
+        <p>읽어 주셔서 감사합니다.</p>
+        </div>
 
       </article>
     </main>
@@ -405,7 +438,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=8f7393b1c8"></script>
+  <script src="../assets/content.js?v=41a879d99c"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
