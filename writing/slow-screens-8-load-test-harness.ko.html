@@ -113,7 +113,7 @@
         <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul class="callout">
-          <li>부하 시험을 화면에서 설정해 돌려 본 적 있는 분</li>
+          <li>부하 테스트를 화면에서 설정해 돌려 본 적 있는 분</li>
           <li>측정을 여러 번 하는데 회차마다 조건이 같은지 자신이 없는 분</li>
           <li>자동화 스크립트를 짜 두고 「돌긴 도는데」로 넘어간 적 있는 분</li>
         </ul>
@@ -179,7 +179,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
         「부하 조건은 6번 모두 같다」고 적을 수 있는 근거가 이것입니다.</p>
 
         <blockquote><p>⚠️ <strong>그 「같다」는 여기까지입니다.</strong> 같은 것은
-        <strong>선언한 부하 조건</strong>이지 시험이 놓인 환경 전체가 아닙니다.
+        <strong>선언한 부하 조건</strong>이지 테스트가 놓인 환경 전체가 아닙니다.
         데이터가 얼마나 쌓여 있었는지, JVM이 얼마나 데워져 있었는지, 그 시각에 그 장비에 무엇이 더
         돌고 있었는지는 <strong>이 상수 밖입니다.</strong> 앞 편들의 「같은 조건」도 그 범위로 읽어
         주십시오.</p></blockquote>
@@ -265,7 +265,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
 
         <p>⚠️ 다만 <strong>「단독」이 「독립」은 아닙니다.</strong>
         요청에 넣을 자원 id는 CSV 파일에서 꺼내 쓰는데 그 파일을 읽는 설정이
-        <strong>시험 계획 맨 위에 하나씩만</strong> 있고 공유 방식이 <strong>「전부」</strong>로,
+        <strong>테스트 계획 맨 위에 하나씩만</strong> 있고 공유 방식이 <strong>「전부」</strong>로,
         끝까지 읽으면 처음으로 돌아가게 돼 있습니다. 그러면 커서 하나를 모든 thread가 나눠 씁니다.
         차례로 도는 구조에서는 <strong>앞 묶음이 멈춘 자리부터 다음 묶음이 이어 받습니다.</strong></p>
 
@@ -275,7 +275,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
 
         <h2 id="all의-뜻">「all」은 동시에 돈다는 뜻이 아닙니다<a class="anchor" href="#all의-뜻" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>생성된 JMX를 다시 읽다가 걸린 것이 있습니다. 시험 계획에, 그리고 묶음마다
+        <p>생성된 JMX를 다시 읽다가 걸린 것이 있습니다. 테스트 계획에, 그리고 묶음마다
         이 값들이 들어 있습니다.</p>
 
 <pre data-lang="text"><code>&lt;!-- 시험 계획 --&gt;
@@ -338,7 +338,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
           막대는 다섯 개만 그렸습니다.</figcaption>
         </figure>
 
-        <p>그러니까 <code>"all"</code>은 <strong>10가지에 동시에 부하를 주는 시험이 아닙니다.</strong>
+        <p>그러니까 <code>"all"</code>은 <strong>10가지에 동시에 부하를 주는 테스트가 아닙니다.</strong>
         <strong>한 번에 하나씩 재는 것을 10번 이어 붙인 것</strong>입니다.
         ⚠️ 앞 절에 적었듯 커서와 cache와 JVM은 이어지므로 <strong>10번이 서로 독립은 아닙니다.</strong></p>
 
@@ -368,7 +368,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
 
         <p>거짓이면 결과가 <strong>CSV 한 줄씩</strong> 쌓입니다.
         그리고 <strong>CSV에는 응답 본문을 담을 칸이 아예 없습니다.</strong>
-        thread 50개를 10분 굴리는 시험에서 본문까지 쌓이지 않은 이유가 이겁니다.</p>
+        thread 50개를 10분 굴리는 테스트에서 본문까지 쌓이지 않은 이유가 이겁니다.</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
@@ -389,7 +389,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
         <strong>응답 메시지</strong>지 검증 실패 메시지가 아닙니다.
         둘은 다른 칸이고 <strong>둘 다 켜 뒀습니다.</strong> 하나만 켰으면 그 화면은 안 나옵니다.</p>
 
-        <p>⚠️ 그런데 시험 계획에는 <code>&lt;responseData&gt;false&lt;/responseData&gt;</code>도 같이 적혀 있습니다.
+        <p>⚠️ 그런데 테스트 계획에는 <code>&lt;responseData&gt;false&lt;/responseData&gt;</code>도 같이 적혀 있습니다.
         <strong>CSV에서는 그 줄이 하는 일이 없습니다.</strong> 형식이 이미 본문을 못 담으니까요.
         <strong>무언가를 막고 있는 것처럼 보이지만 막고 있는 것은 형식입니다.</strong>
         이 글을 쓰면서 알았습니다.</p>
@@ -567,20 +567,20 @@ done
 
         <h2 id="인증">10분을 버티는 인증이 필요했습니다<a class="anchor" href="#인증" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>부하 시험은 10분을 끊기지 않고 돌아야 합니다.
+        <p>부하 테스트는 10분을 끊기지 않고 돌아야 합니다.
         중간에 인증이 만료돼 거절이 나오기 시작하면 그때부터의 숫자는 응답 시간이 아니라
         <strong>거절당하는 속도</strong>입니다.</p>
 
-        <p>그래서 시험을 짜기 전에 <strong>이 화면이 무엇으로 로그인 상태를 유지하는지</strong>부터
+        <p>그래서 테스트를 짜기 전에 <strong>이 화면이 무엇으로 로그인 상태를 유지하는지</strong>부터
         읽어야 했습니다. ⚠️ 무엇이었는지는 적지 않습니다.</p>
 
-        <blockquote><p>부하 시험을 만들기 전에 <strong>인증 구조를 먼저 알아야 했습니다.</strong>
+        <blockquote><p>부하 테스트를 만들기 전에 <strong>인증 구조를 먼저 알아야 했습니다.</strong>
         모르면 도구를 짜는 게 아니라 <strong>10분을 버티는 것부터</strong> 막힙니다.</p></blockquote>
 
         <p>⚠️ 그리고 10분은 <code>GROUP</code>이 하나일 때 이야기입니다.
         <code>"all"</code>은 설정상 100분짜리인데, 그동안 인증을 <strong>한 번 얻어 계속 쓰는지
         묶음마다 다시 얻는지</strong> 저는 <strong>모릅니다.</strong>
-        시험 계획만으로는 안 나오고 그렇게 돌려 본 기록도 없습니다.</p>
+        테스트 계획만으로는 안 나오고 그렇게 돌려 본 기록도 없습니다.</p>
 
         <p>⚠️ 자격 증명을 부하 도구에 어떻게 넣을지는 <strong>제대로 푼 적이 없습니다.</strong>
         이 글에서 다루지 않는 이유는 <strong>자랑할 만한 답이 없어서</strong>이고
@@ -642,7 +642,7 @@ done
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=8f7393b1c8"></script>
+  <script src="../assets/content.js?v=41a879d99c"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

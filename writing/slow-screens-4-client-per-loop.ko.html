@@ -124,7 +124,7 @@
           <li>고친 것은 <strong>client 하나를 반복문 밖에서 만들어 재사용</strong>한 것뿐입니다.
           인증 N번이 1번이 됩니다.</li>
           <li>⚠️ <strong>그런데 얼마나 빨라졌는지는 모릅니다.</strong> 재지 않았고
-          흔히 쓰는 부하 시나리오로는 <strong>이 구간이 시험에 안 들어갑니다.</strong></li>
+          흔히 쓰는 부하 시나리오로는 <strong>이 구간이 테스트에 안 들어갑니다.</strong></li>
         </ul>
 
         <p><strong>사내 제품이라 코드를 그대로 옮기지 않았습니다.</strong> 제품명·고객사·내부 주소는 빼고
@@ -376,7 +376,7 @@ for (String projectId : projects) {
         <h2 id="부하-도구">부하 도구는 시나리오가 밟은 경로만 잽니다<a class="anchor" href="#부하-도구" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>「그럼 재면 되지 않나」가 다음 질문입니다. 그런데 이 화면은
-        <strong>흔히 쓰는 시나리오로는 느린 구간이 시험에 안 들어갑니다.</strong></p>
+        <strong>흔히 쓰는 시나리오로는 느린 구간이 테스트에 안 들어갑니다.</strong></p>
 
         <p>부하 도구를 켜고 동시 사용자를 늘리는 것이 보통 하는 일입니다. 그런데 이 화면에서
         사용자가 기다리는 무거운 구간은 <strong>초기 로드 1회</strong>이고 그 뒤는
@@ -389,7 +389,7 @@ for (String projectId : projects) {
         <p>⚠️ <strong>도구 탓이 아닙니다.</strong> 사용자 10명이 각자 화면을 새로 열면 초기 로드도 10번
         돕니다. 즉 부하 도구가 그 경로를 못 밟는 것이 아니라,
         <strong>연결을 유지하며 push를 받는 쪽으로 시나리오를 쓰면 그 경로가 시나리오에 안 들어간다</strong>는
-        이야기입니다. 부하 시험 결과는 <strong>시나리오가 실제로 보낸 요청에 대해서만</strong> 유효합니다.</p>
+        이야기입니다. 부하 테스트 결과는 <strong>시나리오가 실제로 보낸 요청에 대해서만</strong> 유효합니다.</p>
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
@@ -449,7 +449,7 @@ for (String projectId : projects) {
           <li><strong>이름이 비용을 숨깁니다.</strong> <code>serviceClient()</code>는 공짜처럼 생겼는데
           네트워크 왕복입니다. <strong>반복문 안에서 client를 얻는 코드는 항상 한 번 의심할 값</strong>이 있습니다.</li>
           <li><strong>「cache를 넣었다」와 「cache를 읽는다」는 다른 일입니다.</strong></li>
-          <li><strong>부하 시험 결과는 시나리오가 실제로 보낸 요청에 대해서만 유효합니다.</strong>
+          <li><strong>부하 테스트 결과는 시나리오가 실제로 보낸 요청에 대해서만 유효합니다.</strong>
           축이 맞지 않으면 평평한 그래프가 나오고 그 그래프는 안 밟은 경로에 대해 아무것도 말하지 않습니다.</li>
           <li><strong>고쳤는데 못 쟀으면 못 쟀다고 씁니다.</strong> 코드에서 확실한 것과
           재야 아는 것을 갈라 놓으면 적어도 다음 사람이 무엇을 재야 하는지는 압니다.</li>
@@ -461,7 +461,7 @@ for (String projectId : projects) {
         그 구간을 지나가는 시나리오를 쓰지 않아 전후를 못 쟀습니다.</p>
 
         <p>다음 편은 그 두 번째 질문을 정면으로 다룹니다. <strong>구성을 여섯 단계로 나눠 같은
-        조건으로 각각 잰</strong> 시험 이야기입니다. 이 이름을 붙이기 전에 발행해서 제목에 번호가 없는
+        조건으로 각각 잰</strong> 테스트 이야기이고
         <a href="parallelism-made-the-tail-worse.ko.html">⑤편</a>입니다.</p>
 
         <p>읽어 주셔서 감사합니다.</p>
@@ -477,7 +477,7 @@ for (String projectId : projects) {
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=8f7393b1c8"></script>
+  <script src="../assets/content.js?v=41a879d99c"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

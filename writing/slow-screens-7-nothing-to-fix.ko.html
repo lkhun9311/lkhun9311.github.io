@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="모니터링 성능 검토에서 고칠 근거를 못 찾았습니다 | Kwanghun Lee" />
-  <meta property="og:description" content="모니터링 화면 3개를 검토했는데 새로 최적화할 근거를 못 찾았습니다. cache를 더 넣으려던 자리는 줄일 것이 작아 보였고 과해 보이던 설정 하나는 화면 깜빡임을 막고 있었습니다. 부하 시험은 돌리지 않았고 왜 안 돌렸는지도 적었습니다." />
+  <meta property="og:description" content="모니터링 화면 3개를 검토했는데 새로 최적화할 근거를 못 찾았습니다. cache를 더 넣으려던 자리는 줄일 것이 작아 보였고 과해 보이던 설정 하나는 화면 깜빡임을 막고 있었습니다. 부하 테스트는 돌리지 않았고 왜 안 돌렸는지도 적었습니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -27,9 +27,9 @@
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="모니터링 성능 검토에서 고칠 근거를 못 찾았습니다 | Kwanghun Lee" />
-  <meta name="twitter:description" content="모니터링 화면 3개를 검토했는데 새로 최적화할 근거를 못 찾았습니다. cache를 더 넣으려던 자리는 줄일 것이 작아 보였고 과해 보이던 설정 하나는 화면 깜빡임을 막고 있었습니다. 부하 시험은 돌리지 않았고 왜 안 돌렸는지도 적었습니다." />
+  <meta name="twitter:description" content="모니터링 화면 3개를 검토했는데 새로 최적화할 근거를 못 찾았습니다. cache를 더 넣으려던 자리는 줄일 것이 작아 보였고 과해 보이던 설정 하나는 화면 깜빡임을 막고 있었습니다. 부하 테스트는 돌리지 않았고 왜 안 돌렸는지도 적었습니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="모니터링 화면 3개를 검토했는데 새로 최적화할 근거를 못 찾았습니다. cache를 더 넣으려던 자리는 줄일 것이 작아 보였고 과해 보이던 설정 하나는 화면 깜빡임을 막고 있었습니다. 부하 시험은 돌리지 않았고 왜 안 돌렸는지도 적었습니다." />
+  <meta name="description" content="모니터링 화면 3개를 검토했는데 새로 최적화할 근거를 못 찾았습니다. cache를 더 넣으려던 자리는 줄일 것이 작아 보였고 과해 보이던 설정 하나는 화면 깜빡임을 막고 있었습니다. 부하 테스트는 돌리지 않았고 왜 안 돌렸는지도 적었습니다." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
 </head>
@@ -87,7 +87,7 @@
             <li><a href="#이미-빠른-곳">대시보드와 물리 자원: 이미 뒤에서 채워지고 있었습니다</a></li>
             <li><a href="#cache-안-넣음">그래서 cache를 더 넣지 않았습니다</a></li>
             <li><a href="#과한-설정">과해 보이는 설정을 일부러 뒀습니다</a></li>
-            <li><a href="#부하-시험">부하 시험은 돌리지 않았습니다</a></li>
+            <li><a href="#부하-테스트">부하 테스트는 돌리지 않았습니다</a></li>
             <li><a href="#확인이-어렵다">「하지 마라」로 끝난 검토는 확인하기 어렵습니다</a></li>
             <li><a href="#주장하지-않는-것">한계: 이 글이 주장하지 않는 것</a></li>
             <li><a href="#마치며">마치며</a></li>
@@ -113,7 +113,7 @@
 
         <ul class="callout">
           <li>「느리다」는 보고를 받고 어디부터 볼지 정해야 하는 분</li>
-          <li>부하 시험 결과가 좋게 나왔는데 왠지 미덥지 않았던 분</li>
+          <li>부하 테스트 결과가 좋게 나왔는데 왠지 미덥지 않았던 분</li>
           <li>cache를 더 넣을지 말지 정해야 하는 분</li>
         </ul>
 
@@ -128,7 +128,7 @@
           <strong>이미 싼 경로</strong>였고 거기에 cache를 넣으면 <strong>낡음과 복잡도만 늘어납니다.</strong></li>
           <li><strong>과해 보이는 설정 하나는 일부러 그대로 뒀습니다.</strong> 조회 창이 필요보다 넓었는데
           좁히면 화면이 깜빡였습니다.</li>
-          <li>⚠️ <strong>그리고 부하 시험을 돌리지 않았습니다.</strong> 흔한 시나리오로는 이 구조에서
+          <li>⚠️ <strong>그리고 부하 테스트를 돌리지 않았습니다.</strong> 흔한 시나리오로는 이 구조에서
           평평한 그래프가 나올 것이라고 <strong>코드를 보고 판단했고 실제로 돌려서 확인하지는
           않았습니다.</strong></li>
           <li>「하지 마라」로 끝난 검토는 <strong>맞았는지 확인하기가 어렵습니다.</strong>
@@ -342,7 +342,7 @@
         <p>그대로 뒀습니다. <strong>과해 보이는 값이 실은 무언가를 막고 있는 경우</strong>가 있고
         여기가 그랬습니다.</p>
 
-        <h2 id="부하-시험">부하 시험은 돌리지 않았습니다<a class="anchor" href="#부하-시험" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="부하-테스트">부하 테스트는 돌리지 않았습니다<a class="anchor" href="#부하-테스트" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>보통 여기서 부하 도구를 켭니다. 안 켰습니다. 이유는
         <a href="slow-screens-4-client-per-loop.ko.html">④편</a>에 자세히 썼고 여기서는 두 줄로 줄입니다.</p>
@@ -378,9 +378,9 @@
         <h2 id="주장하지-않는-것">한계: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul>
-          <li><strong>부하 시험을 돌린 기록이 없습니다.</strong> 「사용자를 늘려도 평평하다」는
+          <li><strong>부하 테스트를 돌린 기록이 없습니다.</strong> 「사용자를 늘려도 평평하다」는
           <strong>코드를 보고 한 예상</strong>이지 관측이 아닙니다. 이 글의 어떤 문장도
-          부하 시험 결과를 인용하지 않습니다.</li>
+          부하 테스트 결과를 인용하지 않습니다.</li>
           <li><strong>「이미 싸다」는 잰 값이 아닙니다.</strong> 15초에 한 번이고 접속자 수와 무관하다는
           <strong>빈도와 구조</strong>가 근거입니다. 그 계산이 몇 ms인지는 모릅니다.</li>
           <li><strong>180초가 「크게 안 비싸다」도 잰 값이 아닙니다.</strong> 좁혔을 때 깜빡였다는 것은
@@ -394,7 +394,7 @@
         <div class="wrapup">
         <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>여기까지 일곱 편을 정리하면 이렇습니다. ⑤편은 이 이름을 붙이기 전에 발행해서 제목에 번호가 없습니다.</p>
+        <p>여기까지 일곱 편을 정리하면 이렇습니다.</p>
 
         <ul>
           <li><strong>「느리다」는 말은 구간을 가리키지 않습니다.</strong> 어느 화면의 어느 구간인지
@@ -425,7 +425,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=8f7393b1c8"></script>
+  <script src="../assets/content.js?v=41a879d99c"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="볼륨 목록 P99가 10분에서 23ms가 됐습니다 | Kwanghun Lee" />
-  <meta property="og:description" content="볼륨 목록 조회를 6단계로 나눠 쟀습니다. 순차를 병렬로 바꾸자 중앙값은 21배 빨라지고 P99는 1.9배 느려졌습니다. 코드에서는 cache의 키 하나를 잠근 채 외부 API를 기다리고 있었는데 이 시험만으로는 그것이 원인이라고 가르지 못합니다." />
+  <meta property="og:description" content="볼륨 목록 조회를 6단계로 나눠 쟀습니다. 순차를 병렬로 바꾸자 중앙값은 21배 빨라지고 P99는 1.9배 느려졌습니다. 코드에서는 cache의 키 하나를 잠근 채 외부 API를 기다리고 있었는데 이 테스트만으로는 그것이 원인이라고 가르지 못합니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -27,9 +27,9 @@
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="볼륨 목록 P99가 10분에서 23ms가 됐습니다 | Kwanghun Lee" />
-  <meta name="twitter:description" content="볼륨 목록 조회를 6단계로 나눠 쟀습니다. 순차를 병렬로 바꾸자 중앙값은 21배 빨라지고 P99는 1.9배 느려졌습니다. 코드에서는 cache의 키 하나를 잠근 채 외부 API를 기다리고 있었는데 이 시험만으로는 그것이 원인이라고 가르지 못합니다." />
+  <meta name="twitter:description" content="볼륨 목록 조회를 6단계로 나눠 쟀습니다. 순차를 병렬로 바꾸자 중앙값은 21배 빨라지고 P99는 1.9배 느려졌습니다. 코드에서는 cache의 키 하나를 잠근 채 외부 API를 기다리고 있었는데 이 테스트만으로는 그것이 원인이라고 가르지 못합니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="볼륨 목록 조회를 6단계로 나눠 쟀습니다. 순차를 병렬로 바꾸자 중앙값은 21배 빨라지고 P99는 1.9배 느려졌습니다. 코드에서는 cache의 키 하나를 잠근 채 외부 API를 기다리고 있었는데 이 시험만으로는 그것이 원인이라고 가르지 못합니다." />
+  <meta name="description" content="볼륨 목록 조회를 6단계로 나눠 쟀습니다. 순차를 병렬로 바꾸자 중앙값은 21배 빨라지고 P99는 1.9배 느려졌습니다. 코드에서는 cache의 키 하나를 잠근 채 외부 API를 기다리고 있었는데 이 테스트만으로는 그것이 원인이라고 가르지 못합니다." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=04dd6279c6" />
 </head>
@@ -132,8 +132,8 @@
         <p><strong>사내 제품이라 코드를 그대로 옮기지 않았습니다.</strong> 제품명·고객사·내부 주소는 빼고
         구조와 수치만 남겼습니다. 클래스 이름은 이야기에 필요한 만큼만 일반화해서 씁니다.</p>
 
-        <p><strong>⚠️ 미리 말씀드릴 것이 있습니다.</strong> 아래 수치는 <strong>격리된 시험 환경에서 JMeter로
-        잰 값</strong>이지 운영 통계가 아닙니다. 「10분」은 부하 시험의 timeout 상한에 걸린 값이고
+        <p><strong>⚠️ 미리 말씀드릴 것이 있습니다.</strong> 아래 수치는 <strong>격리된 테스트 환경에서 JMeter로
+        잰 값</strong>이지 운영 통계가 아닙니다. 「10분」은 부하 테스트의 timeout 상한에 걸린 값이고
         실제 운영에서 사용자가 10분을 기다렸다는 뜻이 아닙니다.</p>
 
         <h2 id="어떤-화면">어떤 화면인가요?<a class="anchor" href="#어떤-화면" aria-label="이 절로 가는 링크">#</a></h2>
@@ -197,7 +197,7 @@
   오류 메시지 조회 N회
 = 외부 API 호출 3N회</code></pre>
 
-        <p>볼륨이 늘수록 <strong>선형으로</strong> 느려집니다. 시험 환경에서 이 화면은
+        <p>볼륨이 늘수록 <strong>선형으로</strong> 느려집니다. 테스트 환경에서 이 화면은
         <strong>10분을 넘겨 timeout</strong>이 났고 오류율이 <strong>83.3%</strong>였습니다.</p>
 
         <h2 id="가설">가설: 순차 호출이 문제인 줄 알았습니다<a class="anchor" href="#가설" aria-label="이 절로 가는 링크">#</a></h2>
@@ -227,7 +227,7 @@
 <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
         <table>
-          <caption class="sr-only">관리 볼륨 화면의 6단계 부하 시험 결과.</caption>
+          <caption class="sr-only">관리 볼륨 화면의 6단계 부하 테스트 결과.</caption>
           <thead><tr><th>단계</th><th>표본</th><th>오류율</th><th>중앙값</th><th>평균</th><th>P99</th><th>TPS</th></tr></thead>
           <tbody>
             <tr><td>① cache 없음 · 순차</td><td>54</td><td><strong>83.3%</strong></td><td>600.0초</td><td>579.0초</td><td>600.0초<br>(timeout)</td><td>0.06</td></tr>
@@ -380,10 +380,10 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         <p>기다리는 동안에도 그 thread들은 <strong>executor의 자리를 쥐고 있습니다.</strong>
         그래서 다른 볼륨의 task가 밀립니다.</p>
 
-        <p>⚠️ <strong>이 인과는 코드를 읽어서 세운 것이지 시험이 증명한 것이 아닙니다.</strong>
-        6단계 시험이 보여 주는 것은 「cache를 고정한 채 병렬로 바꾸니 나빠졌다」까지입니다.
+        <p>⚠️ <strong>이 인과는 코드를 읽어서 세운 것이지 테스트가 증명한 것이 아닙니다.</strong>
+        6단계 테스트가 보여 주는 것은 「cache를 고정한 채 병렬로 바꾸니 나빠졌다」까지입니다.
         그 악화가 lock 경합 때문인지, thread 전환 비용인지, 외부 API 쪽 제한인지는
-        <strong>이 시험으로는 가르지 못합니다.</strong> 가르려면 lock을 뺀 병렬 arm을 따로 돌려야 하는데
+        <strong>이 테스트로는 가르지 못합니다.</strong> 가르려면 lock을 뺀 병렬 arm을 따로 돌려야 하는데
         그건 하지 않았습니다.</p>
 
         <h2 id="원인-2">원인 ②: 0건을 cache에 담지 않았습니다<a class="anchor" href="#원인-2" aria-label="이 절로 가는 링크">#</a></h2>
@@ -539,7 +539,7 @@ if (messages == null || messages.isEmpty()) {
         병렬로 바꾸자 <strong>중앙값은 21배 빨라지고 P99는 1.9배 느려졌습니다.</strong>
         줄이 짧아진 것이 아니라 <strong>분포가 벌어진 것</strong>입니다.
         ⚠️ 요청이 어떤 순서로 끝났는지는 재지 않았습니다. 두 백분위가 반대로 움직였다는 것까지가
-        이 시험이 말하는 전부입니다.</p>
+        이 테스트가 말하는 전부입니다.</p>
 
         <p>같은 이유로 executor를 키우는 것도 답이 아닙니다. 줄이 짧아지는 게 아니라
         <strong>줄 서는 사람이 자리를 더 많이 차지</strong>합니다.</p>
@@ -579,7 +579,7 @@ if (messages == null || messages.isEmpty()) {
 
         <figure class="diagram">
           <img src="../assets/figures/volume-jmeter-after.png" alt="고친 뒤 JMeter 리포트. Apdex 1.000, 표본 7,658건 전부 성공, 평균 5.34밀리초, P99 23밀리초, 초당 12.82건." loading="lazy" width="645" height="317">
-          <figcaption>고친 뒤(단계 ⑥)입니다. 시험 지속 시간 설정은 같고 <strong>끝난 표본이 54건에서
+          <figcaption>고친 뒤(단계 ⑥)입니다. 테스트 지속 시간 설정은 같고 <strong>끝난 표본이 54건에서
           7,658건</strong>이 됐습니다. 처리량으로는 0.06에서 12.82건/초입니다. 중앙값 4ms, P99 23ms,
           Apdex 1.000입니다.</figcaption>
         </figure>
@@ -587,11 +587,11 @@ if (messages == null || messages.isEmpty()) {
         <h2 id="주장하지-않는-것">한계: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul>
-          <li><strong>운영 수치가 아닙니다.</strong> 격리된 시험 환경에서 JMeter로 잰 값입니다.
-          「10분」은 부하 시험의 timeout 상한이지 사용자가 실제로 기다린 시간이 아닙니다.</li>
+          <li><strong>운영 수치가 아닙니다.</strong> 격리된 테스트 환경에서 JMeter로 잰 값입니다.
+          「10분」은 부하 테스트의 timeout 상한이지 사용자가 실제로 기다린 시간이 아닙니다.</li>
           <li><strong>병렬화가 나쁘다는 이야기가 아닙니다.</strong> 이 코드에서 병렬화가 해로웠던 이유로
           <strong>lock 안의 네트워크</strong>를 의심했고 그 lock을 걷어낸 뒤에는 병렬화가 값을 합니다.
-          다만 의심의 근거는 코드이지 이 시험이 아닙니다.</li>
+          다만 의심의 근거는 코드이지 이 테스트가 아닙니다.</li>
           <li><strong>Caffeine이어야 하는 것도 아닙니다.</strong> 필요한 성질은 「키마다 loader 하나」이지
           특정 라이브러리가 아닙니다. 직접 짜도 되지만 직접 짠 것이 이 글의 원인이었습니다.</li>
           <li><strong>네 화면의 수치를 한 원인으로 돌리지 않습니다.</strong> 화면마다 곁가지 원인이 조금씩
@@ -600,7 +600,7 @@ if (messages == null || messages.isEmpty()) {
           원본이 cache hit로 설명한 것은 중앙값 4ms 쪽입니다.</li>
           <li><strong>⑤와 ⑥의 개선을 하나씩 귀속할 수 없습니다.</strong> 원본은 ⑤를
           <code>addMoreInfo() optimized</code> 라고만 적었고 그 안에 여러 수정이 함께 들어갔습니다.</li>
-          <li><strong>병렬이 나빠진 이유는 이 시험이 가르지 못합니다.</strong> lock 경합이라는 설명은
+          <li><strong>병렬이 나빠진 이유는 이 테스트가 가르지 못합니다.</strong> lock 경합이라는 설명은
           코드를 읽어 세운 것입니다.</li>
         </ul>
 
@@ -637,7 +637,7 @@ if (messages == null || messages.isEmpty()) {
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=1bed673a67"></script>
-  <script src="../assets/content.js?v=8f7393b1c8"></script>
+  <script src="../assets/content.js?v=41a879d99c"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
