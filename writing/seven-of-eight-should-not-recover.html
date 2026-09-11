@@ -164,6 +164,37 @@
         <p>Call that a detection failure and the prescription comes out wrong. Detection did not fail — the
         heartbeat arrived. What failed was that <strong>nobody had decided whose word counts</strong>.</p>
 
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="sw-t sw-d" class="figure-svg">
+            <title id="sw-t">How one switch failure became bulk recovery</title>
+            <desc id="sw-d">Four boxes run left to right, joined by grey arrows: the switch failure, controller-to-controller traffic cut, an isolated controller deciding the compute node is down, and bulk evacuation. A pink line underneath says the compute nodes were alive the whole time.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">switch failure</text>
+              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">controller and data links cut</text>
+              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#sw-a)"/>
+              <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">quorum lost</text>
+              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">no agreement</text>
+              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#sw-a)"/>
+              <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">isolated controller</text>
+              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">declares compute down</text>
+              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#sw-a)"/>
+              <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">bulk evacuate</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">two writers, one volume</text>
+              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">management link healthy · heartbeats still arriving</text>
+            </g>
+            <defs>
+              <marker id="sw-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>What was cut was <strong>controller-to-controller traffic</strong>; the management link to the compute nodes was fine. So "I am alive" and "it is dead" were in the system <strong>at the same time</strong>, and the old logic took the second one.</figcaption>
+        </figure>
+
         <h2 id="entitlement-not-accuracy">Not accuracy — entitlement<a class="anchor" href="#entitlement-not-accuracy" aria-label="Link to this section">#</a></h2>
 
         <p>Four signals were given a confidence grade and, more importantly, a <strong>role</strong>.</p>
@@ -191,6 +222,40 @@
         <p>So the principle was written down: <strong>only the compute node can say whether the compute node is
         alive.</strong> Every other signal either corroborates that statement, or explains <em>why the statement
         did not arrive</em>.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 314" role="img" aria-labelledby="sg-t sg-d" class="figure-svg">
+            <title id="sg-t">The four signals, ordered by how much they can be trusted</title>
+            <desc id="sg-d">A vertical axis on the left runs from high trust at the top to low at the bottom. To its right, four boxes sit one above the other: agent heartbeat, controller quorum, network heartbeat, external reachability probe. An arrow leaves each box to the right, naming what that signal is entitled to testify to.</desc>
+            <g font-family="Inter, sans-serif">
+              <path d="M40 34 V 280" fill="none" stroke="#c9c9c9" stroke-width="1.4"/>
+              <text x="40" y="26" font-size="11" fill="#8a8a8a" text-anchor="middle">high</text>
+              <text x="40" y="298" font-size="11" fill="#8a8a8a" text-anchor="middle">low</text>
+              <rect x="64" y="48" width="248" height="40" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="188" y="73" font-size="11.5" fill="#4f5bd5" text-anchor="middle">agent heartbeat</text>
+              <path d="M318 68 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#sg-a)"/>
+              <text x="384" y="73" font-size="11.5" fill="#4a4a4a">the real state of the compute node</text>
+              <rect x="64" y="104" width="248" height="40" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="188" y="129" font-size="11.5" fill="#4f5bd5" text-anchor="middle">controller quorum</text>
+              <path d="M318 124 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#sg-a)"/>
+              <text x="384" y="129" font-size="11.5" fill="#4a4a4a">whether the controllers can agree</text>
+              <rect x="64" y="160" width="248" height="40" rx="9" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="188" y="185" font-size="11.5" fill="#d62976" text-anchor="middle">network heartbeat</text>
+              <path d="M318 180 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#sg-a)"/>
+              <text x="384" y="185" font-size="11.5" fill="#4a4a4a">the link between controller and compute</text>
+              <rect x="64" y="216" width="248" height="40" rx="9" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="188" y="241" font-size="11.5" fill="#8a8a8a" text-anchor="middle">external reachability probe</text>
+              <path d="M318 236 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#sg-a)"/>
+              <text x="384" y="241" font-size="11.5" fill="#4a4a4a">whether the controller itself is isolated</text>
+            </g>
+            <defs>
+              <marker id="sg-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>The last row is the whole design. The reachability probe only observes <strong>the direction out of the controller</strong>. Judge a compute node by it and you read <strong>the observer's isolation as the subject's failure</strong>.</figcaption>
+        </figure>
 
         <h2 id="two-different-questions">"Is it broken" and "is it safe to act" are different questions<a class="anchor" href="#two-different-questions" aria-label="Link to this section">#</a></h2>
 
@@ -222,6 +287,27 @@
         compute failure</strong>. Storage conditions live in Phase 2, so they never pollute detection. Losing
         sight of storage is not evidence that the compute node died; it is evidence that
         <em>now is not the time to recover</em>.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="tq-t tq-d" class="figure-svg">
+            <title id="tq-t">The two questions that had been mixed into one verdict</title>
+            <desc id="tq-d">Two boxes sit side by side. The left one is the question "is this a failure?", with the signals that can support it listed underneath. The right one is "is it safe to act now?", with fencing, quorum and volume state underneath. A pink line at the bottom says mixing them into one verdict contaminates both.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">is this a failure?</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">has the agent heartbeat stopped?</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">if so, since when?</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">does another signal explain it?</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">is it safe to act now?</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">is fencing possible?</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">is the controller inside quorum?</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">does only one side hold the volume?</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">mixed into one verdict · both contaminated</text>
+            </g>
+          </svg>
+          <figcaption>The old verdict held both kinds in <strong>one expression</strong>. Once separated, seven of the eight scenarios failed on the right-hand side. <strong>It really was a failure, and acting now was still wrong</strong> that often.</figcaption>
+        </figure>
 
         <h2 id="seven-of-eight">Seven of eight<a class="anchor" href="#seven-of-eight" aria-label="Link to this section">#</a></h2>
 
