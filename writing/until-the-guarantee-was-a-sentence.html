@@ -79,6 +79,8 @@
         <nav class="article-toc" aria-label="Table of contents">
           <p class="toc-label">Contents</p>
           <ul>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-this-is-about">What this is about</a></li>
             <li><a href="#defence-per-dimension">A defence written per dimension breaks when a dimension is added</a></li>
             <li><a href="#delay-is-the-defence">Delay is not a cost, it is the defence</a></li>
             <li><a href="#stopping-condition">It took five tickets to ask for a stopping condition</a></li>
@@ -88,6 +90,7 @@
             <li><a href="#the-disproof-run">The disproof run caught my own measurement first</a></li>
             <li><a href="#three-reviewers-agreed">Three reviewers agreed and were wrong together</a></li>
             <li><a href="#what-this-does-not-claim">What this article does not claim</a></li>
+            <li><a href="#wrapping-up">Wrapping up</a></li>
           </ul>
         </nav>
       <article class="article-body">
@@ -100,6 +103,29 @@
         <p>This track consumed five tickets and still would not end. Each fix sent the full review off to find
         another one. What ended it was not a sixth repair but <strong>writing the guarantee as a sentence</strong>.</p>
 
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>You publish aggregates or statistics on a screen</li>
+          <li>You already have a suppression rule like "hide groups under n"</li>
+          <li>Every fix produces a new finding and you cannot tell when it ends</li>
+        </ul>
+
+        <h2 id="what-this-is-about">What this is about<a class="anchor" href="#what-this-is-about" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li>A polling app publishes results as totals, per option, and by gender, age, region and trend.
+          I found the places a person could be re-identified <strong>by attacking my own code.</strong></li>
+          <li>The defence was <strong>min-n</strong> (suppress a cell under five people), but it was
+          <strong>wired to the demographic axes only, and the time axis arrived later.</strong></li>
+          <li>A defence written per axis <strong>breaks automatically when an axis is added.</strong>
+          Plugging one cell at a time has no end.</li>
+          <li>The track ate five tickets and still did not close. What closed it was not a sixth repair but
+          <strong>writing the guarantee as one sentence.</strong></li>
+          <li>⚠️ No real attack was ever observed, and <strong>k=5 and the threshold of 30 are estimates,
+          not measurements.</strong> This is not differential privacy.</li>
+        </ul>
 
         <h2 id="defence-per-dimension">A defence written per dimension breaks when a dimension is added<a class="anchor" href="#defence-per-dimension" aria-label="Link to this section">#</a></h2>
 
@@ -441,10 +467,26 @@ after    trendVolume = [100,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
           doing it.</strong></li>
         </ul>
 
+        <div class="wrapup">
+        <h2 id="wrapping-up">Wrapping up<a class="anchor" href="#wrapping-up" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>Defend per axis and the next axis breaks it.</strong> The defence belongs on
+          <strong>everything an outsider can observe</strong>, not on one axis at a time.</li>
+          <li><strong>A per-snapshot constraint does not imply a constraint on the difference.</strong>
+          True in every snapshot, still leaking between two of them.</li>
+          <li><strong>The batch that delays publication is itself the defence.</strong> A knob added to cut
+          server load was setting the size of the anonymity set.</li>
+          <li><strong>Recording why something was not done matters more than not doing it.</strong> An argument
+          you never measured makes the case stronger by being removed.</li>
+        </ul>
+
         <p>The line that remains is this. <strong>The track did not end until the guarantee was a sentence.</strong>
         Digging for residual leaks has no stopping condition, and the stopping condition comes from a
         <strong>sentence</strong>, not from a list of defects.</p>
 
+        <p>Thank you for reading.</p>
+        </div>
 
       </article>
     </main>

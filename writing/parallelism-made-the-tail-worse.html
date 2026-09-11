@@ -80,6 +80,7 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-this-is-about">What this is about</a></li>
             <li><a href="#six-rows">Six rows</a></li>
             <li><a href="#why-3-is-worse-than-2">Why ③ is worse than ②</a></li>
             <li><a href="#not-caching-absence">The second defect: absence was never cached</a></li>
@@ -113,6 +114,21 @@
           <li>You have shipped several changes together and measured only before and after</li>
           <li>You expect a sequential loop to get faster once it runs in parallel</li>
           <li>You have seen an external call inside <code>computeIfAbsent</code></li>
+        </ul>
+
+        <h2 id="what-this-is-about">What this is about<a class="anchor" href="#what-this-is-about" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li>The volume list screen called an external API <strong>once per volume, sequentially</strong>.
+          The prescription looked obvious: run it in parallel.</li>
+          <li>Going parallel made it <strong>slower</strong>. With the cache configuration held fixed, p99 went
+          from <strong>42.6s to 79.0s</strong>.</li>
+          <li>The cause was calling the external API inside the mapping function of
+          <code>computeIfAbsent</code>. That bin stays <strong>locked</strong> for the whole round trip.</li>
+          <li>The reason that single cell was visible at all: the changes were not shipped together.
+          <strong>Six configurations were measured one at a time under the same conditions.</strong></li>
+          <li>⚠️ Measured with JMeter in an internal test environment, <strong>once per configuration.</strong>
+          Only multiple-fold differences are used as evidence.</li>
         </ul>
 
         <h2 id="six-rows">Six rows<a class="anchor" href="#six-rows" aria-label="Link to this section">#</a></h2>
