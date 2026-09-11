@@ -79,6 +79,8 @@
         <nav class="article-toc" aria-label="Contents">
           <p class="toc-label">Contents</p>
           <ul>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-this-is-about">What this is about</a></li>
             <li><a href="#at-first-nothing-stopped-it">At first, nothing stopped it</a></li>
             <li><a href="#an-ownerreference-is-a-claim">An ownerReference is a claim, not a fact</a></li>
             <li><a href="#an-exemption-anyone-can-grant">An exemption anyone can grant is not an exemption</a></li>
@@ -87,6 +89,7 @@
             <li><a href="#why-the-four-fixes-differ">Why the four fixes take different forms</a></li>
             <li><a href="#a-claim-in-this-document-was-false">A claim in this document was false, and the guard was built on it</a></li>
             <li><a href="#what-this-does-not-claim">What this does not claim</a></li>
+            <li><a href="#wrapping-up">Wrapping up</a></li>
           </ul>
         </nav>
       <article class="article-body">
@@ -117,6 +120,30 @@
         </div>
         </div>
 
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>You build the side that enforces per-tenant resource limits on Kubernetes</li>
+          <li>You guarantee "this is blocked" with an admission webhook or a controller</li>
+          <li>You have had a check whose code was right and whose guarantee still broke</li>
+        </ul>
+
+        <h2 id="what-this-is-about">What this is about<a class="anchor" href="#what-this-is-about" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li>I <strong>attacked my own quota guard</strong>, the one that decides how many GPUs a tenant may
+          hold. It broke four times.</li>
+          <li>Every break had the same shape. <strong>The tenant could write the value the check read.</strong>
+          That field is the middle column of the table above.</li>
+          <li>The checking code had no bug in it. <strong>Each check was correct about what it read</strong>;
+          what was wrong was treating that value as evidence about the tenant.</li>
+          <li>The four repairs do not look alike. Either you <strong>replace the input with one you can
+          trust</strong>, or you <strong>narrow who may supply it to a set the tenant is not in</strong>, or,
+          failing both, you <strong>cap the damage</strong>.</li>
+          <li>⚠️ <strong>The GPUs are simulated and the guard is enabled on no namespace today.</strong> This
+          is about admission and trust boundaries, not about device behaviour.</li>
+        </ul>
 
         <h2 id="at-first-nothing-stopped-it">At first, nothing stopped it<a class="anchor" href="#at-first-nothing-stopped-it" aria-label="Link to this section">#</a></h2>
 
@@ -329,9 +356,26 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
           reason to expect more: <strong>tests only try what you thought of.</strong></li>
         </ul>
 
+        <div class="wrapup">
+        <h2 id="wrapping-up">Wrapping up<a class="anchor" href="#wrapping-up" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>An <code>ownerReference</code> is a claim, not a fact.</strong> The requester writes it,
+          so it cannot be evidence of ownership.</li>
+          <li><strong>An annotation anyone can attach is not an exemption.</strong> It becomes one only when
+          the set that may grant it excludes the tenant.</li>
+          <li><strong>If the victim picks how long reclamation takes, reclamation is not guaranteed.</strong>
+          The guard has to set that ceiling.</li>
+          <li><strong>Tests only try what I thought of.</strong> The first guard had already passed ten unit
+          specs and four live cases; attacking it then produced four more findings.</li>
+        </ul>
+
         <p>What is left is one line. <strong>When you write down a guarantee, write down which value it rests
         on, and write who supplies that value beside it.</strong> A guarantee built on a value the tenant
         writes ends at that field, however correct the check is.</p>
+
+        <p>Thank you for reading.</p>
+        </div>
 
       </article>
     </main>
