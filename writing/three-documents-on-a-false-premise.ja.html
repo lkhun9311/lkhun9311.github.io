@@ -79,6 +79,8 @@
         <nav class="article-toc" aria-label="目次">
           <p class="toc-label">目次</p>
           <ul>
+            <li><a href="#想定読者">想定読者</a></li>
+            <li><a href="#この記事の内容">何の話ですか</a></li>
             <li><a href="#are-they-same">そもそも同じものか</a></li>
             <li><a href="#date-order">日付順を信じなかった</a></li>
             <li><a href="#method-differs">方式そのものが違っていた</a></li>
@@ -87,6 +89,7 @@
             <li><a href="#one-blew-up">そして実際に 1 つ壊れた</a></li>
             <li><a href="#answered-by-counting">「新規インストールのほうが楽では」に数えて答えた</a></li>
             <li><a href="#what-this-does-not-claim">この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
           </ul>
         </nav>
       <article class="article-body">
@@ -107,6 +110,29 @@
         旧バージョンを立てて<strong>再現できる区間を</strong>最後まで通してみたからであり、その途中でガイドを
         今度はきちんと読み直したからだ。</p>
 
+
+        <h2 id="想定読者">想定読者<a class="anchor" href="#想定読者" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>稼働中の顧客現場の製品を上位バージョンへ上げる作業を持っている方</li>
+          <li>アップグレード手順書を文書だけ読んで書いたことがある方</li>
+          <li>「パッチを日付順に当てればよい」を前提にしている方</li>
+        </ul>
+
+        <h2 id="この記事の内容">何の話ですか<a class="anchor" href="#この記事の内容" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li>現場で動くポータルを<strong>2,255 コミット先</strong>へ上げるため、手順書とランブックを用意した。
+          breaking change が 2 つ、本番 DB なのでロールバック経路が必須だった。</li>
+          <li>用意する中で、自分が先に書いた<strong>手順書 3 本の前提が誤っていた</strong>と分かった。公式の
+          経路はパッチの順次適用ではなく、<strong>新 DB を再構築してデータを移行</strong>することだった。</li>
+          <li>ざっと読んでも出てこなかった。手順一覧ではなく<strong>概要</strong>を読んで初めて引っかかり、
+          残りはすべて<strong>実際に確認する中で</strong>出てきた。</li>
+          <li>そこで隔離環境に旧バージョンを立てて<strong>一度わざと壊した。</strong>起動失敗が実際に 1 つ出て、
+          そのとき「要確認」で残していた項目も一緒に解けた。</li>
+          <li>⚠️ ここでやったのは<strong>隔離環境での再現と手順準備まで</strong>である。現場適用を自分が
+          実施した記録ではない。</li>
+        </ul>
 
         <h2 id="are-they-same">そもそも同じものか<a class="anchor" href="#are-they-same" aria-label="このセクションへのリンク">#</a></h2>
 
@@ -357,11 +383,27 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
           意味でもない。</li>
         </ul>
 
+        <div class="wrapup">
+        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>手順書は読んで直るのではなく、一度失敗して直る。</strong>文書だけを読んで分かったことは
+          1 つだけだった。</li>
+          <li><strong>「日付順に並べてその後を当てる」は baseline が日付で切られているときだけ正しい。</strong>
+          キュレーションなら、その規則は安全ではなく危険を作る。</li>
+          <li><strong>誤った前提は消さず、なぜ誤りだったかを残す。</strong>消すと次に同じ場所で同じ推論をする。</li>
+          <li><strong>「移行が難しい」は数えられないが「スキーマの位置が変わる」は数えられる。</strong>
+          意見が割れたら数えられるものへ移す。</li>
+        </ul>
+
         <p>残る 1 行はこれである。<strong>文書だけを読んで分かったことは 1 つだけだった</strong> — 方式がパッチの
         順次適用ではなく再構築と移行だということ。しかもそれさえ最初にざっと見たときには見落としており、手順一覧では
         なく概要を読んで初めて引っかかった。残りはすべて — リリース版が同一であることも、baseline が日付で切った
         ものではないことも、手順書が存在しないファイルを指していることも — 実際に何かを確認する中で出てきた。ただ 1 つ、方式が違うことは文書を<em>精読して</em>分かったのだが、
         それも最初にざっと見たときには見落としていた。本番 DB は、初めて試すのに最も高くつく場所である。</p>
+
+        <p>お読みいただきありがとうございました。</p>
+        </div>
 
       </article>
     </main>

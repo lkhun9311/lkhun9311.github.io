@@ -78,6 +78,7 @@
           <p class="toc-label">目次</p>
           <ul>
             <li><a href="#想定読者">想定読者</a></li>
+            <li><a href="#この記事の内容">何の話ですか</a></li>
             <li><a href="#six-rows">6 行</a></li>
             <li><a href="#why-3-is-worse-than-2">なぜ ③ は ② より悪いのか</a></li>
             <li><a href="#not-caching-absence">2 つ目の欠陥: 「無い」を cache していなかった</a></li>
@@ -110,6 +111,21 @@
           <li>対策をまとめて入れて、前後だけを測ったことがある方</li>
           <li>逐次のループを並列にすれば速くなると考えている方</li>
           <li><code>computeIfAbsent</code> の中で外部 API を呼ぶコードを見たことがある方</li>
+        </ul>
+
+        <h2 id="この記事の内容">何の話ですか<a class="anchor" href="#この記事の内容" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li>ボリューム一覧画面が、ボリューム 1 件ごとに外部 API を<strong>逐次で</strong>呼んでいた。
+          処方は自明に見えた。並列にすればよい。</li>
+          <li>並列にすると<strong>もっと遅くなった。</strong>cache 設定を固定したまま逐次を並列に変えると、
+          P99 が <strong>42.6 秒から 79.0 秒</strong>になった。</li>
+          <li>原因は <code>computeIfAbsent</code> のマッピング関数の中で外部 API を呼んだことだ。
+          その場所が<strong>ロックされたまま</strong>ネットワーク往復を待つ。</li>
+          <li>その 1 マスが見えたのは、対策をまとめて入れず<strong>構成を 6 段階に分けて同じ条件で
+          それぞれ測った</strong>からである。</li>
+          <li>⚠️ 社内テスト環境で JMeter により測定し、<strong>構成ごとに 1 回ずつしか測っていない。</strong>
+          根拠に使うのは倍単位の差だけである。</li>
         </ul>
 
         <h2 id="six-rows">6 行<a class="anchor" href="#six-rows" aria-label="このセクションへのリンク">#</a></h2>

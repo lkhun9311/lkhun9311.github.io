@@ -79,6 +79,8 @@
         <nav class="article-toc" aria-label="Contents">
           <p class="toc-label">Contents</p>
           <ul>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-this-is-about">What this is about</a></li>
             <li><a href="#eighty-percent-is-not-early">80% is not an early warning</a></li>
             <li><a href="#the-line-item-i-had-omitted">The line item my estimate had omitted</a></li>
             <li><a href="#terraform-nearly-deleted-it">And Terraform nearly deleted it</a></li>
@@ -87,6 +89,7 @@
             <li><a href="#the-alarm-nobody-had-heard">The alarm nobody had heard ring</a></li>
             <li><a href="#the-only-way-in-was-root">The only way in was root</a></li>
             <li><a href="#what-this-does-not-claim">What this does not claim</a></li>
+            <li><a href="#wrapping-up">Wrapping up</a></li>
           </ul>
         </nav>
       <article class="article-body">
@@ -106,6 +109,29 @@
         But <strong>exactly one of them had ever caught an error in the cost itself.</strong> And that one was
         not in the code.</p>
 
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>You rent GPUs in the cloud on a personal card</li>
+          <li>You have layered several safeguards: budget alerts, policies, scheduled shutdowns</li>
+          <li>You have not yet checked whether those safeguards <strong>actually fire</strong></li>
+        </ul>
+
+        <h2 id="what-this-is-about">What this is about<a class="anchor" href="#what-this-is-about" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li>On a personal project renting GPUs, the thing to fear is not a wrong experiment but
+          <strong>forgetting something left running</strong>. So I built four layers of control.</li>
+          <li>A service control policy, a TTL scale-down, a monthly budget alert, and temporary apply/destroy.
+          After a month, <strong>the only one that caught a cost error was the budget alert.</strong></li>
+          <li>An item <strong>entirely missing from my estimate</strong> was on the bill, and the alert made it
+          visible by putting my estimate and the real charge side by side.</li>
+          <li>And Terraform <strong>nearly deleted that alert without saying so.</strong> It was created
+          outside the state file, so the next plan listed it for destruction.</li>
+          <li>⚠️ A budget alert is a <strong>detective control</strong>. It reports spend, it does not stop it.
+          The amounts are personal-lab sized, small enough that one wrong item stood out.</li>
+        </ul>
 
         <h2 id="eighty-percent-is-not-early">80% is not an early warning<a class="anchor" href="#eighty-percent-is-not-early" aria-label="Link to this section">#</a></h2>
 
@@ -324,10 +350,26 @@ error     : ResourceNotFoundException</code></pre>
           <strong>of several layers, it was the one that caught something</strong>.</li>
         </ul>
 
+        <div class="wrapup">
+        <h2 id="wrapping-up">Wrapping up<a class="anchor" href="#wrapping-up" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>80% is not an early warning.</strong> It is a warning only if a decision is still
+          changeable with the remaining 20%.</li>
+          <li><strong>An item missing from an estimate will not surface by re-reading the estimate.</strong>
+          It surfaces next to the bill.</li>
+          <li><strong>Anything created outside the state file is on the next plan's delete list.</strong></li>
+          <li><strong>Building a control and confirming it fires are different pieces of work.</strong>
+          Most controls make the list without the second one.</li>
+        </ul>
+
         <p>What is left is one line. <strong>Building a control and confirming that the control fires are
         different pieces of work, and most controls get onto the list without the second one.</strong> And the
         one on my list that caught a cost error was the simplest — <strong>an alert that put my estimate and the
         real bill side by side</strong>.</p>
+
+        <p>Thank you for reading.</p>
+        </div>
 
       </article>
     </main>

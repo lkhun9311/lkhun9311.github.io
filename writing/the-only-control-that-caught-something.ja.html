@@ -79,6 +79,8 @@
         <nav class="article-toc" aria-label="目次">
           <p class="toc-label">目次</p>
           <ul>
+            <li><a href="#想定読者">想定読者</a></li>
+            <li><a href="#この記事の内容">何の話ですか</a></li>
             <li><a href="#eighty-percent">80% は早期警告ではない</a></li>
             <li><a href="#omitted-line-item">見積りから丸ごと抜けていた項目</a></li>
             <li><a href="#terraform-nearly-deleted">そして Terraform がそれを消すところだった</a></li>
@@ -87,6 +89,7 @@
             <li><a href="#alarm-never-heard">鳴るか確かめていなかった警報</a></li>
             <li><a href="#only-way-in-root">入口がルート 1 つしか無かった</a></li>
             <li><a href="#what-this-does-not-claim">この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
           </ul>
         </nav>
       <article class="article-body">
@@ -105,6 +108,29 @@
         <strong>コストそのものの誤りを捕まえたのはそのうち 1 つだけ</strong>だった。そしてその 1 つはコードに
         無かった。</p>
 
+
+        <h2 id="想定読者">想定読者<a class="anchor" href="#想定読者" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>個人のカードでクラウドの GPU を借りて実験している方</li>
+          <li>予算アラート・ポリシー・予約停止などの安全装置を何層か掛けている方</li>
+          <li>その安全装置が<strong>実際に鳴るか</strong>はまだ確かめていない方</li>
+        </ul>
+
+        <h2 id="この記事の内容">何の話ですか<a class="anchor" href="#この記事の内容" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li>GPU を借りて実験する個人プロジェクトで最も怖いのは、実験が外れることではなく
+          <strong>付けっぱなしを忘れること</strong>である。そこで安全装置を 4 層作った。</li>
+          <li>サービスコントロールポリシー・TTL による停止・月次予算アラート・一時的な apply と destroy。
+          1 か月回してみると、<strong>コストの誤りを実際に捕まえたのは予算アラート 1 つ</strong>だった。</li>
+          <li>私の見積りから<strong>丸ごと抜けていた項目</strong>が請求にあり、アラートが見積りと請求を
+          並べてくれたので見えた。</li>
+          <li>そして Terraform がそのアラートを<strong>黙って消しかけた。</strong>state ファイルの外で
+          作った資源なので、次の plan では削除として並んでいた。</li>
+          <li>⚠️ 予算アラートは<strong>発見的統制</strong>である。支出を止めず、報告するだけだ。
+          金額も個人ラボ規模で、小さいからこそ 1 項目の誤差が目立った面がある。</li>
+        </ul>
 
         <h2 id="eighty-percent">80% は早期警告ではない<a class="anchor" href="#eighty-percent" aria-label="このセクションへのリンク">#</a></h2>
 
@@ -302,9 +328,23 @@
           観測である。</li>
         </ul>
 
+        <div class="wrapup">
+        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>80% は早期警告ではない。</strong>残り 20% で変えられる決定があって初めて警告になる。</li>
+          <li><strong>見積りから抜けた項目は、見積りを読み直しても出てこない。</strong>請求と並べると出てくる。</li>
+          <li><strong>state ファイルの外で作った資源は、次の plan の削除一覧にある。</strong></li>
+          <li><strong>統制を作ったことと、それが鳴るのを確認したことは別の仕事である。</strong>
+          ほとんどは後者をしないまま一覧に載る。</li>
+        </ul>
+
         <p>残る 1 行はこれである。<strong>統制を作ったことと、その統制が発火するのを確認したことは別の仕事であり、
         ほとんどの統制は後者をしないまま一覧に載る。</strong>そして私の一覧でコストの誤りを捕まえたのは最も単純なもの —
         <strong>私の見積りと実際の請求を並べてくれたアラート</strong> — だった。</p>
+
+        <p>お読みいただきありがとうございました。</p>
+        </div>
 
       </article>
     </main>

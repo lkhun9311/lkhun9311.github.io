@@ -80,6 +80,7 @@
           <p class="toc-label">목차</p>
           <ul>
             <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+            <li><a href="#무슨-내용">무슨 내용인가요?</a></li>
             <li><a href="#여섯-줄">여섯 줄</a></li>
             <li><a href="#왜-3이-2보다-나쁜가">왜 ③이 ②보다 나쁜가</a></li>
             <li><a href="#없음을-cache하지-않았다">두 번째 결함: "없음"을 cache에 담지 않았습니다</a></li>
@@ -110,6 +111,21 @@
           <li>조치를 여러 개 한꺼번에 넣고 전후만 재신 적이 있는 분</li>
           <li>순차 반복문을 병렬로 바꾸면 빨라질 것이라고 보시는 분</li>
           <li><code>computeIfAbsent</code> 안에서 외부 API를 부르는 코드를 보신 적이 있는 분</li>
+        </ul>
+
+        <h2 id="무슨-내용">무슨 내용인가요?<a class="anchor" href="#무슨-내용" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul>
+          <li>볼륨 목록 화면이 볼륨 하나마다 외부 API를 <strong>순차로</strong> 부르고 있었습니다.
+          처방은 뻔해 보였습니다. 병렬로 돌리면 됩니다.</li>
+          <li>병렬로 돌리자 <strong>더 느려졌습니다.</strong> cache 설정을 고정한 채 순차를 병렬로 바꾸니
+          P99가 <strong>42.6초에서 79.0초</strong>가 됐습니다.</li>
+          <li>원인은 <code>computeIfAbsent</code>의 매핑 함수 안에서 외부 API를 부른 것이었습니다.
+          그 자리가 <strong>잠긴 채</strong> 네트워크 왕복을 기다립니다.</li>
+          <li>그 한 칸을 볼 수 있었던 이유는 조치를 한꺼번에 넣지 않고 <strong>구성을 여섯 단계로 나눠
+          같은 조건으로 각각 쟀기</strong> 때문입니다.</li>
+          <li>⚠️ 사내 테스트 환경에서 JMeter로 잰 값이고 <strong>구성마다 한 번씩만 쟀습니다.</strong>
+          근거로 쓰는 것은 배 단위의 차이뿐입니다.</li>
         </ul>
 
         <h2 id="여섯-줄">여섯 줄<a class="anchor" href="#여섯-줄" aria-label="이 절로 가는 링크">#</a></h2>
