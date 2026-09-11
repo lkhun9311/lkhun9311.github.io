@@ -49,8 +49,27 @@ MASK = [re.compile(p, re.S) for p in (
     r"<pre\b.*?</pre>", r"<table\b.*?</table>", r"<code\b.*?</code>",
     r"「[^」]*」", r"“[^”]*”", r"\"[^\"<>]{0,400}\"",
 )]
-# 니다·세요·십시오 로 끝나지 않는 `다.` 가 평서체다.
-PLAIN = re.compile(r"(?<![니\s])다\s*[.](?!\d)")
+# 합니다체의 종결은 **받침 ㅂ + 니다** 다 — 합니다·입니다·있습니다·봅니다.
+# ⚠️ 「니다 로 끝나면 합니다체」로 두면 **아니다** 가 통째로 빠진다. 이 글들에서
+# 제일 흔한 평서체가 그것이었고(41 곳) 검사기가 한 번도 못 봤다.
+_PLAIN_DA = re.compile(r"다\s*[.](?!\d)")
+
+
+def _is_polite(text, i):
+    """text[i] == '다' 일 때 그 앞이 받침 ㅂ + 니 인가."""
+    if i < 2 or text[i - 1] != "니":
+        return False
+    c = ord(text[i - 2]) - 0xAC00
+    return 0 <= c <= 11171 and (c % 28) == 17  # 받침 ㅂ
+
+
+def _plain_spans(text):
+    for m in _PLAIN_DA.finditer(text):
+        i = m.start()
+        if i and text[i - 1] in " \t\n":
+            continue
+        if not _is_polite(text, i):
+            yield m
 
 
 def count(path):
@@ -67,7 +86,7 @@ def count(path):
     art = re.sub(r"</?(?:strong|em|code|b|i|span|a|sup|sub)\b[^>]*>", "", art)
     txt = re.sub(r"<[^>]+>", " ", art)
     hits = [re.sub(r"\s+", " ", txt[max(0, h.start() - 60):h.end()]).strip()
-            for h in PLAIN.finditer(txt)]
+            for h in _plain_spans(txt)]
     return len(hits), hits
 
 
