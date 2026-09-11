@@ -164,11 +164,11 @@
           tags: ["Privacy", "Security", "Method"]
         },
         {
-          title: "The Throughput Ceiling Was in an SDK, Not My Code",
+          title: "The Moderation Throughput Ceiling Was an SDK Default",
           url: "writing/the-ceiling-was-not-in-the-code.html",
-          title_ko: "처리량 상한은 제 코드가 아니라 SDK에 있었습니다",
+          title_ko: "콘텐츠 검열 처리량 상한이 SDK 기본값에 있었습니다",
           desc_ko: "콘텐츠 검열 경로의 처리량이 6.27 req/s에서 안 올라갔습니다. 쓰기를 2배로 올려도 DB Pool을 3배로 키워도 그대로였습니다. 원인은 S3를 쓰려고 넣은 AWS SDK가 끌고 들어온 HTTP 클라이언트의 기본값 5였고 그 층은 컴파일 클래스패스에 없어서 읽어서는 찾을 수 없었습니다.",
-          title_ja: "スループットの上限は私のコードではなく SDK にありました",
+          title_ja: "検閲経路のスループット上限は SDK の既定値でした",
           desc_ja: "投稿作成のスループットが 6.27 req/s から動きませんでした。書き込みスレッドを2倍にしても、DB プールを3倍にしても同じです。原因は S3 を使うために入れた AWS SDK が連れてきた HTTP クライアントの既定値「ホストあたり5」でした。この層はランタイムのクラスパスにしかなく、コードを読んでも見つかりません。",
           date: "2026-09", dateLabel: "Sep 2026",
           source: "commercial", sourceLabel: "Commercial project",
@@ -248,12 +248,12 @@
           tags: ["Reliability", "Method"]
         },
         {
-          title: "Four Fixes I Reported Were Not in the Commits",
+          title: "Four GPU Guard Fixes I Reported Were Not in the Commits",
           url: "writing/four-fixes-that-were-not-there.html",
           source: "side", sourceLabel: "Personal project",
-          title_ko: "고쳤다고 보고한 4건이 커밋에 없었습니다",
+          title_ko: "고쳤다고 보고한 GPU 가드 4건이 커밋에 없었습니다",
           desc_ko: "처음으로 돈을 내고 GPU를 빌리기 직전에, 완료로 보고한 가드 4건이 코드에서는 그 모습이 아니었습니다. 셋은 과금이 계속되는 것을 막는 장치입니다. 저장소에 물어보니 넷 다 제 커밋에서 처음 들어왔는데 git은 잃어버린 편집과 하지 않은 편집을 가르지 못합니다. 나머지를 세는 스크립트를 짰더니 이번엔 판정식이 틀렸습니다.",
-          title_ja: "直したと報告した 4 件がコミットにありませんでした",
+          title_ja: "直したと報告した GPU ガード 4 件がコミットにありませんでした",
           desc_ja: "はじめてお金を払って GPU を借りる直前に、完了と報告したガード 4 件がコードではその姿ではありませんでした。3 つは課金が続くのを止める装置です。リポジトリに聞くと 4 つとも私のコミットではじめて入っていましたが、git は失った編集と書かなかった編集を分けられません。残りを数えるスクリプトを書いたら、今度は判定式が誤っていました。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "Right before renting a GPU with real money for the first time, four guards I had reported complete did not look that way in the code. Three of them stop billing from continuing. The repository says all four first appear in my own commits, though git cannot tell a lost edit from one never made. Then I wrote a script to count the rest, and its own test was wrong. Also in Korean and Japanese.",
@@ -272,12 +272,12 @@
           tags: ["Tooling", "Method", "Verification"]
         },
         {
-          title: "Merging Three Caches Made Them Erase Each Other",
+          title: "Merging Three Monitoring Caches Made Them Erase Each Other",
           url: "writing/monitoring-one-shared-cache.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "Cache 셋을 하나로 합치자 서로의 값을 지웠습니다",
+          title_ko: "모니터링 Cache 셋을 합치자 서로의 값을 지웠습니다",
           desc_ko: "세 화면이 같은 원천을 따로 수집하고 있어 Cache 셋을 하나로 합쳤습니다. 합치자마자 한 화면만 열어 두면 다른 화면의 마지막 값이 사라지는 회귀가 나왔습니다. 분리된 Cache가 말없이 갖고 있던 계약이 사라진 것이고 아무도 그것을 적어 둔 적이 없었습니다. 연작 「통합 모니터링」 ⑤, 마지막 편.",
-          title_ja: "Cache 三つを一つにまとめたら互いの値を消しました",
+          title_ja: "モニタリングの Cache 三つをまとめたら互いの値を消しました",
           desc_ja: "三画面が同じ源を別々に収集していたので Cache 三つを一つにまとめました。まとめた直後に、一つの画面だけ開いていると別の画面の最後の値が消える回帰が出ました。分離された Cache が黙って持っていた契約が消えたのであり、誰もそれを書き残していませんでした。連載「統合モニタリング」⑤、最終編。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "The three screens were collecting the same source separately, so the three caches became one. Merging produced a regression at once: with only one screen open, another screen's last value disappeared. The contract the separated caches had been keeping silently was gone, and nobody had ever written it down. Unified Monitoring, part five and last. Also in Korean and Japanese.",
@@ -380,12 +380,12 @@
           tags: ["Performance", "Backend", "Method"]
         },
         {
-          title: "A Role Lookup Went From 1,409 ms to 1 ms",
+          title: "A Project Role Lookup Went From 1,409 ms to 1 ms",
           url: "writing/slow-screens-3-role-lookup.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "역할 조회 1,409ms가 1ms가 됐습니다",
+          title_ko: "프로젝트 역할 조회 1,409ms가 1ms가 됐습니다",
           desc_ko: "화면에 Cache가 이미 있었는데 그 Cache 때문에 느렸습니다. 찾은 8줄은 전부 0ms였고 못 찾은 6줄을 더하면 1,409ms로 타이머가 찍은 총계와 같았습니다. 못 찾을 때마다 프로젝트 전체 목록을 다시 부르고 있었는데 그 6개 id는 다시 받아도 없는 프로젝트였습니다. 연작 「느린 화면」 ③.",
-          title_ja: "ロール取得の 1,409ms が 1ms になりました",
+          title_ja: "プロジェクトのロール取得が 1,409ms から 1ms になりました",
           desc_ja: "画面にはすでに Cache があり、その Cache のせいで遅くなっていました。解決できた 8 行はすべて 0ms、できなかった 6 行を足すと 1,409ms でタイマーの合計と同じでした。解決できないたびにプロジェクト全件を取り直しており、その 6 つの id は取り直しても存在しません。連載「遅い画面」③。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "The screen already had a cache, and the cache was why it was slow. The eight rows that resolved cost 0 ms; the six that did not sum to 1,409 ms, the whole recorded span. Every failed lookup refetched the entire project list, and those six ids were never in it. Slow Screens, part three. Also in Korean and Japanese.",
@@ -506,9 +506,9 @@
           title: "Fail-closed",
           url: "notes/fail-closed.html",
           date: "2026-09", dateLabel: "Sep 2026",
-          desc: "A design that falls towards blocking when it breaks. The opposite is fail-open.",
-          desc_ko: "고장 났을 때 막는 쪽으로 넘어지는 설계. 반대는 fail-open.",
-          desc_ja: "壊れたときに止める側へ倒れる設計。反対は fail-open。",
+          desc: "A design that falls towards blocking when it breaks. The opposite is Fail-open.",
+          desc_ko: "고장 났을 때 막는 쪽으로 넘어지는 설계. 반대는 Fail-open.",
+          desc_ja: "壊れたときに止める側へ倒れる設計。反対は Fail-open。",
           tags: ["Fail-closed", "Design"]
         },
         {
