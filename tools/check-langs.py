@@ -67,6 +67,21 @@ def main():
             if ids != toc:
                 fail.append(f"{rel}: 목차/앵커 불일치 {sorted(set(ids) ^ set(toc))}")
 
+            # 목차 글자와 제목 글자가 같은가. 목차는 <article> 밖에 있어서 본문을 고치는
+            # 손질이 전부 비껴간다 — 실제로 규약 13(쉼표)·15(용어)·1(문체) 수정이 제목에만
+            # 들어가고 목차에는 옛 문장이 남아 있었다. id 만 보는 위 검사는 이걸 못 본다.
+            am = re.search(r"<article\b.*?</article>", s, re.S)
+            if am:
+                heads = {}
+                for m in re.finditer(r'<h[23][^>]*id="([^"]+)"[^>]*>(.*?)</h[23]>', am.group(0), re.S):
+                    t = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", m.group(2))).strip()
+                    heads[m.group(1)] = t.rstrip("#").strip()
+                for m in re.finditer(r'<li><a href="#([^"]+)">(.*?)</a></li>', s[:am.start()], re.S):
+                    t = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", m.group(2))).strip()
+                    if m.group(1) in heads and heads[m.group(1)] != t:
+                        fail.append(f"{rel}: 목차 글자와 제목 글자가 다르다 #{m.group(1)}"
+                                    f" — 목차 {t!r} / 제목 {heads[m.group(1)]!r}")
+
             for lang, target in auth.items():
                 if not (f.parent / target).exists():
                     fail.append(f"{rel}: data-authored[{lang}] → {target} 없음")

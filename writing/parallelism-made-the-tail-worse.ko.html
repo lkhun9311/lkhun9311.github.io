@@ -142,7 +142,7 @@
         <strong>이 두 줄은 서로의 대조군이 아니다</strong>. ②는 cache 5초에 순차이고 ③은 cache 없음에 병렬이라
         <strong>두 변수가 동시에 바뀝니다.</strong> 이 차이에서 병렬화의 효과만 떼어낼 수 없습니다.</p>
 
-        <p>cache를 고정한 쌍은 <strong>②와 ④</strong>다. 둘 다 cache 5초이고 순차냐 병렬이냐만 다릅니다.</p>
+        <p>cache를 고정한 쌍은 <strong>②와 ④</strong>입니다. 둘 다 cache 5초이고 순차냐 병렬이냐만 다릅니다.</p>
 
         <p><strong>P99가 42.6초에서 79.0초로 올랐습니다.</strong> thread를 늘렸는데 꼬리가 1.85배가 됐습니다.
         이것이 이 실험에서 병렬화 단독의 효과로 말할 수 있는 전부이고 방향은 분명합니다. 해로웠습니다.</p>
@@ -167,7 +167,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
     .collect(Collectors.toList());</code></pre>
 
         <p><code>ConcurrentHashMap</code>을 썼으니 안전하다고 생각하기 쉽습니다. 안전한 것은 맞습니다. 문제는 안전성이
-        아니라 <strong>그 안전성을 무엇으로 사는가</strong>다.</p>
+        아니라 <strong>그 안전성을 무엇으로 사는가</strong>입니다.</p>
 
         <p><code>computeIfAbsent</code>는 매핑 함수를 <strong>해당 키가 속한 버킷을 잠근 채</strong> 실행합니다.
         매핑 함수가 맵을 읽고 끝나는 계산이면 그 구간은 나노초 단위입니다. 여기서는 그 자리에서
@@ -267,7 +267,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         모든 요청이 그 잠긴 자리를 통과해야 했습니다.</p>
 
         <blockquote><p><strong>용어 하나.</strong> 이 구조를 "세그먼트 lock"이라고 부르는 문서를 자주 봅니다.
-        세그먼트는 <strong>Java 7 시절 용어</strong>다. Java 8 이후 <code>ConcurrentHashMap</code>은 세그먼트를
+        세그먼트는 <strong>Java 7 시절 용어</strong>입니다. Java 8 이후 <code>ConcurrentHashMap</code>은 세그먼트를
         없애고 <strong>버킷(bin) 단위</strong>로 잠급니다. 잠김의 범위가 더 좁아졌을 뿐, <em>매핑 함수가 도는 동안
         그 자리가 잠긴다</em>는 사실은 그대로입니다. lock 범위가 좁아진 것이 <strong>lock 안에서 I/O를 해도 된다는
         뜻은 아닙니다.</strong></p></blockquote>
