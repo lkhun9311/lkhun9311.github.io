@@ -149,6 +149,27 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
         <strong>"내 스크립트가 틀렸나, 출발점이 달랐나"를 구별할 수 없게 되기 때문</strong>입니다. 재현의 첫 조건은
         출발점이 고정되는 것이고 그건 확인해야 아는 것이지 가정할 것이 아닙니다.</p>
 
+        <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="mg-t mg-d" class="figure-svg">
+            <title id="mg-t">내가 전제한 방식과 실제 공식 경로의 대비</title>
+            <desc id="mg-d">상자가 둘 나란히 있습니다. 왼쪽은 내가 전제한 방식으로 패치를 순서대로 적용하는 것입니다. 오른쪽은 실제 공식 경로로 신규 DB를 재구축하고 데이터를 이관하는 것입니다. 맨 아래에 분홍색으로 절차서 세 편이 왼쪽 위에 서 있었다고 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#8a8a8a" text-anchor="middle" font-weight="700">내가 전제한 방식</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">현장 DB 유지</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">날짜순 patch 적용</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">역순 적용으로 롤백</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">실제 공식 경로</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">신규 DB 재구축</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">데이터 이관</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">옛 DB를 둔 채 전환</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">절차서 세 편이 선 자리 · 왼쪽</text>
+            </g>
+          </svg>
+          <figcaption>두 방식은 <strong>롤백 경로부터</strong> 다릅니다. 전제가 틀리면 그 위에 쓴 절차는 문장 단위로 고쳐지지 않습니다. <strong>세 편을 다시 써야 했습니다.</strong></figcaption>
+        </figure>
+
         <h2 id="날짜순을-믿지-않았다">날짜순 정렬을 믿지 않았습니다<a class="anchor" href="#날짜순을-믿지-않았다" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>다음은 델타를 특정하는 일입니다. 구버전 Baseline에 어떤 패치가 이미 들어 있고 무엇이 빠져 있는지를 알아야
@@ -205,6 +226,36 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
         <p>여기서 얻은 교훈은 "가이드를 먼저 읽어라"가 아닙니다. 가이드는 처음부터 있었고 나도 봤습니다. 정확히 말하면
         <strong>훑어봤습니다.</strong> 방식이 다르다는 문장은 절차 목록 안이 아니라 개요에 있었고 나는 절차 목록부터
         읽었습니다. 문서에서 <strong>내가 찾으러 간 것</strong>과 <strong>문서가 말하려는 것</strong>은 다를 수 있습니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 258" role="img" aria-labelledby="bl-t bl-d" class="figure-svg">
+            <title id="bl-t">Baseline을 날짜 컷으로 읽었을 때와 실제 모양의 차이</title>
+            <desc id="bl-d">왼쪽에 세로축이 있고 위가 내가 읽은 방식, 아래가 실제 모양입니다. 축 오른쪽에 상자가 셋 위에서 아래로 놓여 있습니다. 날짜 컷 가정, 골라 담은 큐레이션, 그래서 생기는 위험입니다. 상자마다 오른쪽으로 화살표가 나가 결과가 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <path d="M40 34 V 224" fill="none" stroke="#c9c9c9" stroke-width="1.4"/>
+              <text x="40" y="26" font-size="11" fill="#8a8a8a" text-anchor="middle">내가 읽은 방식</text>
+              <text x="40" y="242" font-size="11" fill="#8a8a8a" text-anchor="middle">실제 모양</text>
+              <rect x="64" y="48" width="248" height="40" rx="9" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="188" y="73" font-size="11.5" fill="#8a8a8a" text-anchor="middle">날짜 컷 가정</text>
+              <path d="M318 68 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#bl-a)"/>
+              <text x="384" y="73" font-size="11.5" fill="#4a4a4a">그 뒤 것을 순서대로 적용하면 안전</text>
+              <rect x="64" y="104" width="248" height="40" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="188" y="129" font-size="11.5" fill="#4f5bd5" text-anchor="middle">실제는 큐레이션</text>
+              <path d="M318 124 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#bl-a)"/>
+              <text x="384" y="129" font-size="11.5" fill="#4a4a4a">필요하다고 판단한 것만 골라 담음</text>
+              <rect x="64" y="160" width="248" height="40" rx="9" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="188" y="185" font-size="11.5" fill="#d62976" text-anchor="middle">그래서 생기는 위험</text>
+              <path d="M318 180 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#bl-a)"/>
+              <text x="384" y="185" font-size="11.5" fill="#4a4a4a">안 담긴 선행 패치를 건너뜀</text>
+            </g>
+            <defs>
+              <marker id="bl-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>Baseline이 날짜로 잘려 있다면 「그 뒤 것을 날짜순으로」가 안전합니다. <strong>골라 담은 것</strong>이면 같은 규칙이 <strong>안전이 아니라 위험을 만듭니다.</strong> 스케줄러 테이블이 없는 것이 그 증거였습니다.</figcaption>
+        </figure>
 
         <h2 id="일부러-부정확하게">일부러 부정확하게 만든 부분<a class="anchor" href="#일부러-부정확하게" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -321,6 +372,37 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
 
         <p>3건 모두 문서를 읽어서가 아니라 <strong>실제로 한 번 실패해 봐서</strong> 나왔습니다. 절차서는 그때까지
         내부적으로 일관돼 보였습니다. 존재하지 않는 파일을 지시하고 있다는 것은 그 파일을 찾으러 갈 때 알게 됩니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="rp2-t rp2-d" class="figure-svg">
+            <title id="rp2-t">격리 환경에 옛 버전을 세우고 한 번 깨뜨려 본 흐름</title>
+            <desc id="rp2-d">왼쪽부터 상자가 넷, 회색 화살표로 이어집니다. 첫째는 격리 컨테이너에 옛 버전을 세움, 둘째는 상위 버전으로 이관, 셋째는 기동 실패 한 건, 넷째는 확인 필요 항목이 같이 풀림입니다. 아래에 분홍색으로 문서만 읽어서는 안 나온 것이라고 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">격리 컨테이너</text>
+              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">옛 버전 재현</text>
+              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#rp2-a)"/>
+              <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">이관 실행</text>
+              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">3/3 · FAIL 0</text>
+              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#rp2-a)"/>
+              <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">기동 실패 1건</text>
+              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">실제로 터짐</text>
+              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#rp2-a)"/>
+              <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">확인 필요 해소</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">마이그레이션 SQL 부재</text>
+              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">문서만 읽어서는 안 나온 것</text>
+            </g>
+            <defs>
+              <marker id="rp2-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>한 번 깨뜨려 보니 「확인 필요」로 남겨 둔 항목이 <strong>같이 풀렸습니다.</strong> 구버전 릴리스본의 patch 폴더에 <strong>중간 버전 SQL이 아예 없었습니다.</strong></figcaption>
+        </figure>
 
         <h2 id="세어서-답했다">"신규 설치가 편하지 않나"에 세어서 답했습니다<a class="anchor" href="#세어서-답했다" aria-label="이 절로 가는 링크">#</a></h2>
 

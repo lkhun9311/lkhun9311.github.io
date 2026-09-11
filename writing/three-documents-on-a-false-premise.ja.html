@@ -149,6 +149,27 @@ find . -type f -exec md5sum {} \;          # 両方の全ファイルで md5 が
         <strong>「私のスクリプトが間違っているのか、出発点が違ったのか」を切り分けられなくなる</strong>からです。再現の
         第一条件は出発点が固定されていることであり、それは確認して知ることであって仮定することではありません。</p>
 
+        <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="mg-t mg-d" class="figure-svg">
+            <title id="mg-t">私が前提した方式と実際の公式経路の対比</title>
+            <desc id="mg-d">箱が二つ並んでいます。左は私が前提した方式で、パッチを順に当てるものです。右は実際の公式経路で、新しい DB を再構築してデータを移行するものです。一番下にピンクで、手順書 3 本が左の上に立っていたと書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#8a8a8a" text-anchor="middle" font-weight="700">私が前提した方式</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">現場 DB の維持</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">patch フォルダを日付順に当てる</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">逆順適用によるロールバック</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">実際の公式経路</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">新 DB の再構築</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">データの移行</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">旧 DB を残したままの切替</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">手順書 3 本が立っていた場所 · 左</text>
+            </g>
+          </svg>
+          <figcaption>二つは<strong>ロールバック経路から</strong>違います。前提が誤っていると、その上に書いた手順は文単位では直りません。<strong>3 本とも書き直す必要がありました。</strong></figcaption>
+        </figure>
+
         <h2 id="date-order">日付順を信じませんでした<a class="anchor" href="#date-order" aria-label="このセクションへのリンク">#</a></h2>
 
         <p>次はデルタの特定です。旧バージョンの Baseline にどのパッチが既に入っていて何が抜けているかを知る必要が
@@ -205,6 +226,36 @@ find . -type f -exec md5sum {} \;          # 両方の全ファイルで md5 が
         <p>ここで得た教訓は「ガイドを先に読め」ではありません。ガイドは最初からあったし、私も見ました。正確に言えば
         <strong>ざっと見ました。</strong>方式が違うという一文は手順一覧の中ではなく概要にあり、私は手順一覧から読みました。
         <strong>文書に何を探しに行ったかと、文書が何を伝えようとしているかは違うことがあります。</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 258" role="img" aria-labelledby="bl-t bl-d" class="figure-svg">
+            <title id="bl-t">Baseline を日付で切ったものと読んだ場合と、実際の形の差</title>
+            <desc id="bl-d">左に縦軸があり、上が私の読み方、下が実際の形です。軸の右に箱が三つ、上から下へ並びます。日付切りの仮定、選んで詰めたキュレーション、そこから生じる危険です。箱ごとに右へ矢印が出て、結果が書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <path d="M40 34 V 224" fill="none" stroke="#c9c9c9" stroke-width="1.4"/>
+              <text x="40" y="26" font-size="11" fill="#8a8a8a" text-anchor="middle">私の読み方</text>
+              <text x="40" y="242" font-size="11" fill="#8a8a8a" text-anchor="middle">実際の形</text>
+              <rect x="64" y="48" width="248" height="40" rx="9" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="188" y="73" font-size="11.5" fill="#8a8a8a" text-anchor="middle">日付切りの仮定</text>
+              <path d="M318 68 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#bl-a)"/>
+              <text x="384" y="73" font-size="11.5" fill="#4a4a4a">その後を順に当てれば安全</text>
+              <rect x="64" y="104" width="248" height="40" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="188" y="129" font-size="11.5" fill="#4f5bd5" text-anchor="middle">実際はキュレーション</text>
+              <path d="M318 124 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#bl-a)"/>
+              <text x="384" y="129" font-size="11.5" fill="#4a4a4a">必要と判断したものだけを収録</text>
+              <rect x="64" y="160" width="248" height="40" rx="9" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="188" y="185" font-size="11.5" fill="#d62976" text-anchor="middle">そこから生じる危険</text>
+              <path d="M318 180 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#bl-a)"/>
+              <text x="384" y="185" font-size="11.5" fill="#4a4a4a">入っていない先行パッチを飛ばす</text>
+            </g>
+            <defs>
+              <marker id="bl-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>Baseline が日付で切られているなら「その後を日付順に」は安全です。<strong>選んで詰めたもの</strong>なら、同じ規則が<strong>安全ではなく危険を作ります。</strong>スケジューラのテーブルが無いことがその証拠でした。</figcaption>
+        </figure>
 
         <h2 id="deliberately-imprecise">わざと不正確にした部分<a class="anchor" href="#deliberately-imprecise" aria-label="このセクションへのリンク">#</a></h2>
 
@@ -321,6 +372,37 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
 
         <p>3 件とも文書を読んで出てきたのではなく、<strong>実際に一度失敗して</strong>出てきました。手順書はそれまで内部的に
         は一貫して見えていました。存在しないファイルを指示していることは、そのファイルを探しに行ったときに分かります。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="rp2-t rp2-d" class="figure-svg">
+            <title id="rp2-t">隔離環境に旧バージョンを立てて一度壊してみた流れ</title>
+            <desc id="rp2-d">左から箱が四つ、灰色の矢印でつながります。一つ目は隔離コンテナでの旧バージョン再現、二つ目は移行の実行、三つ目は起動失敗 1 件、四つ目は要確認項目が一緒に解けたことです。下にピンクで、文書だけを読んでは出てこないものと書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">隔離コンテナ</text>
+              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">旧バージョンの再現</text>
+              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#rp2-a)"/>
+              <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">移行の実行</text>
+              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">3/3 · FAIL 0</text>
+              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#rp2-a)"/>
+              <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">起動失敗 1 件</text>
+              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">実際に壊れた</text>
+              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#rp2-a)"/>
+              <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">要確認の解消</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">中間バージョンの SQL 不在</text>
+              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">文書だけを読んでは出てこないもの</text>
+            </g>
+            <defs>
+              <marker id="rp2-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>一度壊してみると「要確認」で残していた項目が<strong>一緒に解けました。</strong>旧リリース版のpatch フォルダに<strong>中間バージョンの SQL がそもそもありませんでした。</strong></figcaption>
+        </figure>
 
         <h2 id="answered-by-counting">「新規インストールのほうが楽では」に数えて答えました<a class="anchor" href="#answered-by-counting" aria-label="このセクションへのリンク">#</a></h2>
 

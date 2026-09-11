@@ -144,6 +144,40 @@
         <p>しきい値を選ぶ基準は「何パーセントが妥当か」ではなく、<strong>「これが鳴ったとき、まだ変えられる決定が
         残っているか」</strong>です。この支出の形では 80% はその条件を満たしません。</p>
 
+        <figure class="diagram">
+          <svg viewBox="0 0 720 314" role="img" aria-labelledby="ct-t ct-d" class="figure-svg">
+            <title id="ct-t">四層の安全装置と、それぞれが実際にしたこと</title>
+            <desc id="ct-d">左に縦軸があり、上が実際に捕まえた、下が鳴ったことがないです。軸の右に箱が四つ、上から下へ並びます。予算アラート、わざと失敗させたリハーサル、TTL による停止、サービスコントロールポリシーの順です。箱ごとに右へ矢印が出て、それがしたことが書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <path d="M40 34 V 280" fill="none" stroke="#c9c9c9" stroke-width="1.4"/>
+              <text x="40" y="26" font-size="11" fill="#8a8a8a" text-anchor="middle">実際に捕まえた</text>
+              <text x="40" y="298" font-size="11" fill="#8a8a8a" text-anchor="middle">鳴ったことがない</text>
+              <rect x="64" y="48" width="248" height="40" rx="9" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="188" y="73" font-size="11.5" fill="#d62976" text-anchor="middle">予算アラート</text>
+              <path d="M318 68 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#ct-a)"/>
+              <text x="384" y="73" font-size="11.5" fill="#4a4a4a">見積りから抜けた項目を発見</text>
+              <rect x="64" y="104" width="248" height="40" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="188" y="129" font-size="11.5" fill="#4f5bd5" text-anchor="middle">わざと失敗させたリハーサル</text>
+              <path d="M318 124 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#ct-a)"/>
+              <text x="384" y="129" font-size="11.5" fill="#4a4a4a">ポリシーの欠陥を発見</text>
+              <rect x="64" y="160" width="248" height="40" rx="9" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="188" y="185" font-size="11.5" fill="#8a8a8a" text-anchor="middle">TTL による停止</text>
+              <path d="M318 180 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#ct-a)"/>
+              <text x="384" y="185" font-size="11.5" fill="#4a4a4a">発火は証明 · 誤りは捕まえず</text>
+              <rect x="64" y="216" width="248" height="40" rx="9" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="188" y="241" font-size="11.5" fill="#8a8a8a" text-anchor="middle">サービスコントロールポリシー</text>
+              <path d="M318 236 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#ct-a)"/>
+              <text x="384" y="241" font-size="11.5" fill="#4a4a4a">鳴ったことがない</text>
+            </g>
+            <defs>
+              <marker id="ct-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>四層を作って、<strong>コストの誤りを捕まえたのは一番上の一つ</strong>でした。下の二つは作っただけで、<strong>鳴るかどうかを確かめたことがありませんでした。</strong></figcaption>
+        </figure>
+
         <h2 id="omitted-line-item">見積りから丸ごと抜けていた項目<a class="anchor" href="#omitted-line-item" aria-label="このセクションへのリンク">#</a></h2>
 
         <p>2026-09-03、3 回目の有料セッションの後にそのアラートが鳴りました。</p>
@@ -169,6 +203,26 @@
         EKS コントロールプレーン、NAT ゲートウェイ — 時間単価があるものです。ところが NAT は時間料金<em>と</em>
         処理したバイトあたりの料金を別に取り、コンテナイメージを引くたびにその行が伸びます。
         <strong>点けたものを数える一覧は、点けたものが何をしているかを数えません。</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 248" role="img" aria-labelledby="ep-t ep-d" class="figure-svg">
+            <title id="ep-t">月次予算としきい値と実際の支出を並べた棒</title>
+            <desc id="ep-d">横棒が三つあります。一番上は月次予算 30 ドルで最も長いです。真ん中は 80 パーセントのしきい値 24 ドルです。一番下は実際の支出 14.56 ドルです。下にピンクで、しきい値に届く時点では残っている決定が無いと書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="176" y="70" font-size="11.5" fill="#8a8a8a" text-anchor="end">月次予算</text>
+              <rect x="190" y="50" width="430" height="28" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.8"/>
+              <text x="630" y="70" font-size="11.5" fill="#4a4a4a">30 ドル</text>
+              <text x="176" y="122" font-size="11.5" fill="#d62976" text-anchor="end">80% しきい値</text>
+              <rect x="190" y="102" width="344" height="28" rx="5" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="544" y="122" font-size="11.5" fill="#4a4a4a">24 ドル · アラートが鳴る線</text>
+              <text x="176" y="174" font-size="11.5" fill="#4f5bd5" text-anchor="end">実際の支出</text>
+              <rect x="190" y="154" width="208" height="28" rx="5" fill="none" stroke="#4f5bd5" stroke-width="1.8"/>
+              <text x="408" y="174" font-size="11.5" fill="#4a4a4a">14.56 ドル</text>
+              <text x="360" y="230" font-size="11.5" fill="#d62976" text-anchor="middle">しきい値に届く時点 · 残る決定なし</text>
+            </g>
+          </svg>
+          <figcaption>80% は「まだ変えられる決定が残っているとき」に鳴って初めて警告です。この支出の形では 24 ドルに届くのが<strong>実験が終わったあと</strong>なので、そこで届く通知は警告ではなく<strong>領収書</strong>です。</figcaption>
+        </figure>
 
         <h2 id="terraform-nearly-deleted">そして Terraform がそれを消すところでした<a class="anchor" href="#terraform-nearly-deleted" aria-label="このセクションへのリンク">#</a></h2>
 
@@ -204,6 +258,27 @@
 
         <p>変えたのはアルゴリズムではなく<strong>バイトが通る経路</strong>です。そしてその経路が見えるように
         なったのは、アラートが請求書を項目別に読ませたからです。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="ng-t ng-d" class="figure-svg">
+            <title id="ng-t">同じバイトが、どの経路で出るかで料金が分かれる図</title>
+            <desc id="ng-d">箱が二つ並んでいます。左は NAT ゲートウェイ経路で、下に時間課金と処理バイト課金が並びます。右はインターネットゲートウェイ経路で、下にインバウンド無料と Instance 1 台が並びます。一番下にピンクで同じ 15.6GB と書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">NAT ゲートウェイ経路</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">時間課金 + 処理バイト課金</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">ゲートウェイと Kubernetes が前提</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">見積りから丸ごと抜けていた項目</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">インターネットゲートウェイ経路</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">インバウンド転送は無料</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">パブリック IP を持つ Instance 1 台</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">同じ実験がそのまま回る</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">同じ 15.6GB · 違う請求</text>
+            </g>
+          </svg>
+          <figcaption>運ぶバイトは同じです。変わったのは<strong>バイトが通る経路</strong>であり、その経路は<strong>実験の形を一行変えること</strong>で決まりました。</figcaption>
+        </figure>
 
         <h2 id="rehearsal-that-failed">わざと失敗したリハーサル、20 分 5 セント<a class="anchor" href="#rehearsal-that-failed" aria-label="このセクションへのリンク">#</a></h2>
 

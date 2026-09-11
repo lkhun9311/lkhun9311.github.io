@@ -219,7 +219,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
                 <text x="590" y="34">外部 API</text>
               </g>
 
-              <!-- thread 넷. T1 만 실선 = 호출 중. 나머지는 점선 = 대기하면서 풀 자리를 쥔 상태 -->
+              <!-- Thread 넷. T1 만 실선 = 호출 중. 나머지는 점선 = 대기하면서 풀 자리를 쥔 상태 -->
               <rect x="24" y="62" width="156" height="48" rx="6" fill="none" stroke="#3b3344" stroke-width="2"/>
               <g fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4">
                 <rect x="24" y="122" width="156" height="48" rx="6"/>
@@ -293,6 +293,29 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         ミス時に<strong>キーごとにローダーをちょうど 1 回だけ</strong>実行し、他の呼び出し側はその結果を待ちます。同じ
         「1 回だけ呼ぶ」保証でありながら、待つ側がマップのビンを掴んでいません。</p>
 
+        <figure class="diagram">
+          <svg viewBox="0 0 720 300" role="img" aria-labelledby="p9-t p9-d" class="figure-svg">
+            <title id="p9-t">6 構成のうち 4 行の P99 を並べた棒</title>
+            <desc id="p9-d">横棒が四つあります。上から Cache 無し逐次、Cache 無し並列、Cache 5 秒逐次、Cache 5 秒並列の順です。Cache を固定した二つの組がそれぞれ同じ色でまとまっています。下にピンクで、Cache を固定した組だけが比較できると書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="176" y="70" font-size="11.5" fill="#8a8a8a" text-anchor="end">① Cache 無し · 逐次</text>
+              <rect x="190" y="50" width="430" height="28" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.8"/>
+              <text x="630" y="70" font-size="11.5" fill="#4a4a4a">600 秒 · Timeout 上限</text>
+              <text x="176" y="122" font-size="11.5" fill="#8a8a8a" text-anchor="end">③ Cache 無し · 並列</text>
+              <rect x="190" y="102" width="92" height="28" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.8"/>
+              <text x="292" y="122" font-size="11.5" fill="#4a4a4a">129.9 秒</text>
+              <text x="176" y="174" font-size="11.5" fill="#4f5bd5" text-anchor="end">② Cache 5 秒 · 逐次</text>
+              <rect x="190" y="154" width="30" height="28" rx="5" fill="none" stroke="#4f5bd5" stroke-width="1.8"/>
+              <text x="230" y="174" font-size="11.5" fill="#4a4a4a">42.6 秒</text>
+              <text x="176" y="226" font-size="11.5" fill="#d62976" text-anchor="end">④ Cache 5 秒 · 並列</text>
+              <rect x="190" y="206" width="56" height="28" rx="5" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="256" y="226" font-size="11.5" fill="#4a4a4a">79.0 秒 · 1.85 倍</text>
+              <text x="360" y="282" font-size="11.5" fill="#d62976" text-anchor="middle">Cache を固定した組 · ② と ④</text>
+            </g>
+          </svg>
+          <figcaption>② と ③ は<strong>Cache と実行方式が同時に</strong>変わるので比較できません。一つだけ違う組は② と ④ で、そこでは<strong>並列の方が 1.85 倍悪くなりました。</strong></figcaption>
+        </figure>
+
         <h2 id="not-caching-absence">2 つ目の欠陥: 「無い」を Cache していませんでした<a class="anchor" href="#not-caching-absence" aria-label="このセクションへのリンク">#</a></h2>
 
         <p>同じ画面の別経路には、自前の Cache がもう 1 つありました。</p>
@@ -325,6 +348,27 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         <p>この 2 つの欠陥は性質が違います。1 つ目は<strong>正しいが遅い</strong>欠陥であり、2 つ目は
         <strong>Cache があると信じ込ませる</strong>欠陥です。2 つ目のほうが長く生き延びた理由は明白です。
         コードに Cache があり、その Cache が埋まっているかを誰も数えませんでした。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="bk-t bk-d" class="figure-svg">
+            <title id="bk-t">逐次と並列が同じ bin の前でどう違うかを分けた図</title>
+            <desc id="bk-d">箱が二つ並んでいます。左は逐次実行で、一度に一つが外部 API を呼ぶと書かれています。右は並列実行で、四つの Thread が同じ bin の前に並ぶと書かれています。一番下にピンクで、行列はそのままで Pool の占有だけが増えると書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">逐次実行</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">一度に一つが外部 API を呼ぶ</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">待っているものは無い</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">Thread Pool の枠 1 つ</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">並列実行</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">同じキー → 同じ bin 一つ</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">四つの Thread がその前に並ぶ</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">Thread Pool の枠 4 つを占有</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">行列はそのまま · Pool 占有だけ増加</text>
+            </g>
+          </svg>
+          <figcaption><code>computeIfAbsent</code> はマッピング関数を<strong>bin をロックしたまま</strong>実行します。その中でネットワーク往復をすると、同じキーの要求は<strong>並列コードでも一列に並びます。</strong></figcaption>
+        </figure>
 
         <h2 id="which-fix-actually-mattered">どの修正が実際に効いたのか<a class="anchor" href="#which-fix-actually-mattered" aria-label="このセクションへのリンク">#</a></h2>
 
