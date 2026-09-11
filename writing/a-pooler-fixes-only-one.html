@@ -389,7 +389,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
 
         <p>What made this particularly sharp was the timing. This service's growth engine is
         “sharing the result chart”, which means the day sharing spikes could be the day the service
-        stalls. ⚠️ It has not launched, and no such day has actually come.
+        stalls. It has not launched, and no such day has actually come.
         This is a prediction from the structure, not an observed incident.</p>
 
         <h2 id="why-a-pooler-cannot">Why a pooler cannot fix the second one<a class="anchor" href="#why-a-pooler-cannot" aria-label="Link to this section">#</a></h2>
@@ -768,7 +768,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
 
         <h2 id="overlapping-the-calls">Measuring produced the next question<a class="anchor" href="#overlapping-the-calls" aria-label="Link to this section">#</a></h2>
 
-        <p>⚠️ This change is not merged yet. It touches the security gate, so a written
+        <p>This change is not merged yet. It touches the security gate, so a written
         review comes first. The numbers below were measured on the branch.</p>
 
         <p>Having numbers produced the next question on its own — <strong>why is post-create p50 exactly twice
@@ -822,7 +822,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         Not using a fixed-size pool is the point — a pool size is a new concurrency cap, and it
         would put the very thing this article is about, a cap nobody chose, back into the moderation path.</p>
 
-        <p>⚠️ When I wrote that sentence I was already inside such a cap. I had not made a new
+        <p>When I wrote that sentence I was already inside such a cap. I had not made a new
         one, but the “five per host” of the HTTP client the AWS SDK pulled in was already sitting on that path.
         I only learned that three weeks later.</p>
 
@@ -831,7 +831,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         rises. So both are awaited (abandoning the loser means the cost is paid and nobody reads the result),
         and ③'s exception wins over ④'s — the same response the sequential version produced.</p>
 
-        <p>⚠️ It costs something. Sequentially, if ③ blocked, ④ was never called. Now ④ runs
+        <p>It costs something. Sequentially, if ③ blocked, ④ was never called. Now ④ runs
         even when ③ blocks. The increase is ③'s block rate × ④'s unit price, which at today's low
         block rate is roughly $0.0002 more per post. It is not an unconditional number. If the block rate rises
         it has to be worked out again.</p>
@@ -861,10 +861,10 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         sat at the same ceiling of 6.26 req/s, and since the outbound call was not the
         bottleneck at that point, halving it changed no total.</p>
 
-        <p>⚠️ This paragraph was wrong once. It first said the ceiling was the load generator,
+        <p>This paragraph was wrong once. It first said the ceiling was the load generator,
         the app, the stub and the database sharing one machine's CPU. Chasing that ceiling three weeks later
         showed it was not CPU but the outbound HTTP concurrency limit: raising writers to 32
-        and the database pool to 30 left 6.26 unmoved. ⚠️ That on its own does not separate it
+        and the database pool to 30 left 6.26 unmoved. That on its own does not separate it
         from CPU saturation, since both predict that nothing moves. What separated them was hitting the stub
         directly (32 concurrent in 0.81 s) and instrumenting it (in-flight calls pinned at exactly ten).
         That hunt is written

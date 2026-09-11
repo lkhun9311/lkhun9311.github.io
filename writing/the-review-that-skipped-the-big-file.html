@@ -107,7 +107,7 @@
         <strong>it turned out to be cut through the middle of a character</strong>, and an argument like
         that is rejected before it ever reaches a model.</p>
 
-        <p>⚠️ Let me say this at the top. What this article measured is "what happens when
+        <p>Let me say this at the top. What this article measured is "what happens when
         the documents that survive today are cut by that command". What the hook actually received back
         then, and how it actually ended, is not recorded anywhere. The gap between the two
         is inference, and I will keep marking which is which.</p>
@@ -143,7 +143,7 @@
         design document makes an outside tool read it and pull out
         <strong>the five most serious problems.</strong> The result is saved under a timestamped filename.</p>
 
-        <p>⚠️ <strong>"Editing" is narrower than it sounds.</strong> The hook only fires for one particular
+        <p><strong>"Editing" is narrower than it sounds.</strong> The hook only fires for one particular
         editing tool. Change the file from a shell or through some other path and it
         never runs at all. That comes back later.</p>
 
@@ -165,7 +165,7 @@ exit 0</code></pre>
 
         <blockquote><p>The defect this article is about lives in those eight lines.
         Every one of them went in for a plausible reason.
-        ⚠️ Except the last one, which is outside the code. It comes later.</p></blockquote>
+        Except the last one, which is outside the code. It comes later.</p></blockquote>
 
         <h2 id="inside-a-character">The cut landed inside a character<a class="anchor" href="#inside-a-character" aria-label="Link to this section">#</a></h2>
 
@@ -256,9 +256,9 @@ git cat-file -p "$blob" | head -c 60000 | iconv -f UTF-8 -t UTF-8 &gt; /dev/null
         <p class="table-note">All six originals are valid. So the breakage in the right-hand
         column comes from the cut. All four commits over 60,000 bytes are
         affected, five counting the working copy.
-        ⚠️ I was about to write "it catches about half the time" and deleted it after measuring.</p>
+        I was about to write "it catches about half the time" and deleted it after measuring.</p>
 
-        <blockquote><p>⚠️ This table proves exactly this much:
+        <blockquote><p>This table proves exactly this much:
         "cutting this blob with this command produces invalid UTF-8".
         Not that the hook actually received that blob, nor how it ended if it did.
         There were more intermediate states between commits and they are not preserved.
@@ -316,7 +316,7 @@ $ timeout 60 echo "&lt;broken argument&gt;"             → 125</code></pre>
         </table>
         </div>
         </div>
-        <p class="table-note">⚠️ The hook before the fix had no <code>timeout</code>.
+        <p class="table-note">The hook before the fix had no <code>timeout</code>.
         So the value at the time would have been 2. The 125 is
         a value I produced while measuring now, and I nearly wrote it down as what happened
         back then.</p>
@@ -330,7 +330,7 @@ $ timeout 60 echo "&lt;broken argument&gt;"             → 125</code></pre>
 
         <p>The failure itself is loud. The exit code is not zero and the message is plain.
         That it never reached <strong>me</strong> is down to three things I put in.
-        ⚠️ <strong>They are not layers over the same thing.</strong> Failure leaves three signals and
+        <strong>They are not layers over the same thing.</strong> Failure leaves three signals and
         a different thing erased each one.</p>
 
         <figure class="diagram">
@@ -386,7 +386,7 @@ $ timeout 60 echo "&lt;broken argument&gt;"             → 125</code></pre>
         Normally "there is no result file" would be the signal that something failed, and
         that signal never appears.</p>
 
-        <blockquote><p>⚠️ It is not that all three are required to hide it.
+        <blockquote><p>It is not that all three are required to hide it.
         Remove only <code>2&gt;/dev/null</code> and the reason survives; remove only <code>exit 0</code>
         and the caller receives a non-zero value.</p></blockquote>
 
@@ -416,7 +416,7 @@ $ timeout 60 echo "&lt;broken argument&gt;"             → 125</code></pre>
         </table>
         </div>
         </div>
-        <p class="table-note">⚠️ The table is counted; the meaning is not.
+        <p class="table-note">The table is counted; the meaning is not.
         Whether a zero-byte file means "called and failed" cannot be known, because stderr was being
         discarded. Failing to find the executable would look the same. And an absent file is not
         evidence that nothing was called.</p>
@@ -484,7 +484,7 @@ $ timeout 60 echo "&lt;broken argument&gt;"             → 125</code></pre>
           the large document starts being cut, and the circles carry on for a while after it.</figcaption>
         </figure>
 
-        <p>⚠️ And laid out like this, the odd spots stand out. The zero-byte files do,
+        <p>And laid out like this, the odd spots stand out. The zero-byte files do,
         and so does a gap of more than two weeks. The reason I did not see them is that
         I never laid them out like this. I checked, now and then, only that
         the file count was going up. Not the sizes, not the gaps between dates.</p>
@@ -496,7 +496,7 @@ $ timeout 60 echo "&lt;broken argument&gt;"             → 125</code></pre>
         <p>In early August reviews with content kept coming. There were two design documents
         then, and the newer one was 31,965 bytes — under 60,000, so nothing to cut. The
         content of those reviews was about that newer document too.
-        ⚠️ The output does not record a filename, so that is a guess from reading the
+        The output does not record a filename, so that is a guess from reading the
         content, and which review looked at which document cannot be told from the output.</p>
 
         <blockquote><p>So the folder looked even healthier.
@@ -521,16 +521,16 @@ $ timeout 60 echo "&lt;broken argument&gt;"             → 125</code></pre>
         <blockquote><p>The difference is one byte. Drop the one fragment of a split
         character and the tool reads the document and answers.</p></blockquote>
 
-        <p>⚠️ Those numbers are the size of the slice, not the size of the argument that
+        <p>Those numbers are the size of the slice, not the size of the argument that
         actually went over. Instructions and a filename go in front, and command substitution
         strips every trailing newline. So even a document under 60,000 bytes
         is not byte-for-byte identical inside the variable.</p>
 
-        <p>⚠️ <code>-c</code> does not only drop the tail. It drops invalid bytes anywhere
+        <p><code>-c</code> does not only drop the tail. It drops invalid bytes anywhere
         in the input, so corruption in the middle of a document is quietly deleted too.
         Here that is what I want; in general it is not.</p>
 
-        <p>⚠️ And the <code>iconv</code> on this machine (GNU libc 2.43) prints a diagnostic and
+        <p>And the <code>iconv</code> on this machine (GNU libc 2.43) prints a diagnostic and
         <strong>ends with 1</strong> while dropping the tail. That is not a warning, it is
         ending in failure. The hook does not look at that status. Had the script been
         running under <code>set -e</code>, it would have died before ever calling the tool.</p>
@@ -552,27 +552,27 @@ fi</code></pre>
           <li><strong>Only valid bytes survive the cut.</strong> The limit stays; only the fragment goes.</li>
           <li><strong>The tool's stderr goes to a log file.</strong> The failure message carries the last two
           lines of that log, bringing the reason to the screen.
-          ⚠️ Only that one line's stderr goes to the log. The diagnostic from the
+          Only that one line's stderr goes to the log. The diagnostic from the
           <code>iconv</code> in front still leaks out.</li>
           <li>A failure deletes the zero-byte file, so it cannot be mistaken for "reviewed".</li>
           <li><code>&lt; /dev/null</code> was added. This hook runs behind the edit, so if
           the tool ever sat waiting on standard input, it could hang without anyone noticing.
-          ⚠️ The instruction goes in as an argument, so it does not normally wait. This guards the case where
+          The instruction goes in as an argument, so it does not normally wait. This guards the case where
           an inherited input is still open.</li>
         </ul>
 
-        <p>⚠️ Even this fixed version does not report failure properly.
+        <p>Even this fixed version does not report failure properly.
         The failure branch ends with <code>echo</code>, so the script exits zero again.
         To a caller that does not watch the output it is still a success. Of the three things above,
         the third is still unfixed.</p>
 
-        <p>⚠️ And names collide. The error log is a single file, so overlapping runs
+        <p>And names collide. The error log is a single file, so overlapping runs
         overwrite each other and the wrong cause gets attached. The result filename is a
         second-resolution timestamp, so two runs in the same second each truncate and write,
         mixing or corrupting it. The process id is now in the name, which covers the result
         side only; the log side is still open.</p>
 
-        <p>⚠️ The result file still does not say which document was read.
+        <p>The result file still does not say which document was read.
         The filename is only a timestamp.</p>
 
         <blockquote><p>"A review ran" and "this document was reviewed" are different statements,
@@ -603,7 +603,7 @@ fi</code></pre>
         other result files were still accumulating. A far less visible shape, and
         that is why it lasted longer.</p>
 
-        <p>⚠️ I also no longer know what I was looking at when I wrote "zero". I may simply
+        <p>I also no longer know what I was looking at when I wrote "zero". I may simply
         not have looked, or looked at a different folder.
         That there is no record of checking is all that can be verified now.</p>
 

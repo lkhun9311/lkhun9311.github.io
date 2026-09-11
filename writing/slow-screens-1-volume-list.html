@@ -305,7 +305,7 @@
         which took 1.0 s to 5.3 ms. Both sentences are mean-based. Measured by the median the
         ranking changes.</p>
 
-        <p>⚠️ What inside configuration 5 bought what cannot be separated from this record.
+        <p>What inside configuration 5 bought what cannot be separated from this record.
         The source says only <code>addMoreInfo() optimized</code>. That it was a bundle of changes inside the
         function that builds one volume is as far as I could verify.</p>
 
@@ -358,7 +358,7 @@
               </defs>
             </svg>
           </div>
-          <figcaption>⚠️ <strong>The difference between the two cards is not whether threads queue.</strong>
+          <figcaption><strong>The difference between the two cards is not whether threads queue.</strong>
           A synchronous <code>LoadingCache.get</code> also makes the rest wait until the loader returns.
           What differs is whether they wait holding the map’s lock. In the upper card the bin
           that key lives in is locked, so other keys in the same bin are affected as well.</figcaption>
@@ -390,7 +390,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         <p>And while they wait, those threads <strong>are still holding executor seats.</strong>
         So tasks for other volumes queue behind them.</p>
 
-        <p>⚠️ This causal story comes from reading the code, not from what the test proved.
+        <p>This causal story comes from reading the code, not from what the test proved.
         What the six configurations show is “hold the cache fixed, go parallel, it got worse” and no further.
         Whether that came from lock contention, thread switching cost, or a limit on the external API side,
         this test cannot separate. Separating them would need a parallel arm with the lock
@@ -399,7 +399,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         <h2 id="cause-b">Cause 2: an empty result was never cached<a class="anchor" href="#cause-b" aria-label="Link to this section">#</a></h2>
 
         <p>The hand-rolled cache had one more defect, on the path that reads error messages.
-        ⚠️ This one <strong>was written up on a sibling screen of the same product (project volumes),</strong>
+        This one <strong>was written up on a sibling screen of the same product (project volumes),</strong>
         and I include it here because the structure is identical. The six-configuration table above is the
         admin volume screen.</p>
 
@@ -416,7 +416,7 @@ if (messages == null || messages.isEmpty()) {
         <ul>
           <li><strong>Zero rows means nothing is stored,</strong> because <code>forEach</code> never runs.
           When a query returns nothing, that answer never reaches the cache, so the next request calls
-          the external API again. ⚠️ The source does not record how often the result was empty.
+          the external API again. The source does not record how often the result was empty.
           That the structure behaves this way is as far as I verified.</li>
           <li>There is a gap between the check and the store. If several threads pass
           <code>isEmpty()</code> at once, all of them call the external API.</li>
@@ -483,13 +483,13 @@ if (messages == null || messages.isEmpty()) {
         <p>If the mapping function is a memory computation, that is microseconds. Here it was
         a network round trip. Not milliseconds, but tens to hundreds of them.</p>
 
-        <p>⚠️ The internal document calls this a “segment lock”, which is not accurate.
+        <p>The internal document calls this a “segment lock”, which is not accurate.
         Segments are the Java 7 implementation; since Java 8 <code>ConcurrentHashMap</code> locks
         per bin. Use the wrong name and the next person goes looking in the wrong place.</p>
 
         <h2 id="the-fix">The fix: not better locking, but removing the reason to lock<a class="anchor" href="#the-fix" aria-label="Link to this section">#</a></h2>
 
-        <p>⚠️ One thing first. <strong><code>computeIfAbsent</code> also runs the mapping function once per
+        <p>One thing first. <strong><code>computeIfAbsent</code> also runs the mapping function once per
         key and makes the rest wait.</strong> Switching to Caffeine’s <code>LoadingCache</code> does not remove
         the queue. The difference is not whether threads queue but <strong>whether they queue holding the map’s
         lock</strong>, and that difference alone does not turn ten minutes into 23 ms.
@@ -502,7 +502,7 @@ if (messages == null || messages.isEmpty()) {
 
         <p>What configuration 6 added is a refresh policy. Instead of dropping a stale value
         and making the next caller repopulate it, it hands back the old value and reloads behind them.
-        ⚠️ That behaviour only appears once a value is there. The first request for a key waits
+        That behaviour only appears once a value is there. The first request for a key waits
         for the loader to finish.</p>
 
         <p>Five things actually changed on this screen.</p>
@@ -516,7 +516,7 @@ if (messages == null || messages.isEmpty()) {
           <code>CompletableFuture.runAsync</code>. It does not block startup.
           Which makes it not a device that removes the cold start but one that lowers the odds of
           meeting it. A request arriving before warming finishes still loads for itself, and the same
-          holds if warming fails. ⚠️ The design document describes this step as “synchronous warming”, but the
+          holds if warming fails. The design document describes this step as “synchronous warming”, but the
           code says <code>runAsync</code>. I wrote down the code, not the document.</li>
           <li>Creating or deleting a volume invalidates the cache, without leaving it empty.
           The existing value stays while a fresh read happens behind it and swaps in atomically.</li>
@@ -550,7 +550,7 @@ if (messages == null || messages.isEmpty()) {
         <p>What blocks is not the thread count but a single key. More threads only means more
         of them standing in front of that key. Configurations 2 and 4 part company exactly there: going parallel
         made <strong>the median 21x faster and P99 1.9x slower.</strong> The queue did not get shorter,
-        the distribution got wider. ⚠️ I did not measure the order in which requests finished.
+        the distribution got wider. I did not measure the order in which requests finished.
         That two percentiles moved in opposite directions is everything this test says.</p>
 
         <p>Growing the executor fails for the same reason. The queue does not shorten;

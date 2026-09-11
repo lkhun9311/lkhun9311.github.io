@@ -263,7 +263,7 @@
         are not this system's problem, which means moving writes onto a queue would be
         repairing something that is not broken.</p>
 
-        <p>⚠️ This measurement was wrong the first time. I asked for zero latency, but
+        <p>This measurement was wrong the first time. I asked for zero latency, but
         the previous run's 800 ms stub was still alive on the port. The harness had a
         round-trip check for “is the stub really answering with that latency,” and its condition was
         <code>round trip &lt; requested latency × 0.8</code> — which is always false when the requested
@@ -555,7 +555,7 @@ class OutboundHttpConfig {
     }
 }</code></pre>
 
-        <p>⚠️ The property prefix above is renamed to a neutral one.
+        <p>The property prefix above is renamed to a neutral one.
         Everything else is the source as it stands.</p>
 
         <p><strong>The reasoning behind 50</strong> is written into the comment. One post makes two calls, so
@@ -578,7 +578,7 @@ class OutboundHttpConfig {
           </tbody>
         </table></div><p class="table-scroll-hint" aria-hidden="true">→ the table scrolls sideways</p></div>
 
-        <p>⚠️ The 32 is not a new limit. The written limit is fifty; the observed peak is
+        <p>The 32 is not a new limit. The written limit is fifty; the observed peak is
         thirty-two. Thirty-two is the shape of the load, not a ceiling — sixteen write threads
         making two calls per post is 16 × 2 = 32. In other words the ceiling has left the outbound
         pool, and what sets throughput now is inbound concurrency. Whether fifty ever binds would

@@ -104,12 +104,12 @@
         <p><strong>What I had reported as fixed did not look that way in the code.</strong>
         Not one of them — four.</p>
 
-        <p>⚠️ Scope first. <strong>This project is still in flight.</strong>
+        <p>Scope first. <strong>This project is still in flight.</strong>
         What this article treats as finished is the discovery of that day and how I checked it,
         not the state the guards are in now.
         In fact twelve more came out of the code I fixed that day, and that is below too.</p>
 
-        <p>⚠️ And I separate what I measured from what only exists as a record.
+        <p>And I separate what I measured from what only exists as a record.
         What I re-ran while writing this: three repository searches, two versions of one
         function, <code>curl</code>'s exit code, and one shell variable.
         The two false positives among the eighteen checks, and the twelve findings, are that day's
@@ -209,12 +209,12 @@ the card starts billing here   4243faf   parent 0 → 1</code></pre>
         <code>HEAD</code>, and the dates are <strong>31 August and 1 September 2026</strong>,
         all my own commits.</p>
 
-        <blockquote><p>⚠️ And the strings I picked are not all executable code.
+        <blockquote><p>And the strings I picked are not all executable code.
         The third, <code>the card starts billing here</code>, is a message printed to the
         screen. That message was absent; "the guard was absent" does not follow from that
         alone.</p></blockquote>
 
-        <blockquote><p>⚠️ What this search answers is "that string was not in an earlier commit on
+        <blockquote><p>What this search answers is "that string was not in an earlier commit on
         that path" and no further. Without <code>--all</code> it only sees
         history reachable from the current branch, and without <code>--follow</code> a path
         restriction loses history from before a rename.
@@ -240,7 +240,7 @@ gpu_scale_down() {
         In the second it is not there, and instead a comment says
         <strong>"at the bottom, after the size has been read back as 0".</strong></p>
 
-        <p>⚠️ But a comment is a statement of intent, not evidence of what happens.
+        <p>But a comment is a statement of intent, not evidence of what happens.
         The thing the next section warns about has to be honoured here first. Here is the bottom of the
         second version.</p>
 
@@ -261,7 +261,7 @@ gpu_scale_down() {
         First version: the function's first line. Second: after the read-back.
         The one that changed the order is the second — my commit.</p>
 
-        <blockquote><p>⚠️ This is the order written in the source. Both versions are
+        <blockquote><p>This is the order written in the source. Both versions are
         straight-line code inside the same function so I take the execution order to match,
         but I did not run it to confirm.</p></blockquote>
 
@@ -270,7 +270,7 @@ gpu_scale_down() {
         <p>This is where "so I never made the edit" must not follow.
         An uncommitted edit leaves nothing in the commit history.
         If I really wrote it and lost it, the history looks exactly as it does now.
-        ⚠️ Content that reached <code>git add</code> can leave traces elsewhere,
+        Content that reached <code>git add</code> can leave traces elsewhere,
         but I did not go looking for them at the time.</p>
 
         <figure class="diagram">
@@ -321,9 +321,9 @@ gpu_scale_down() {
         <p>Exactly one thing is settled for both cases:
         up to the moment I reported, that guard was not present as a commit.</p>
 
-        <p>⚠️ "I did not check when I reported" does not follow from that.
+        <p>"I did not check when I reported" does not follow from that.
         I might really have written it, checked it, and lost it before committing.
-        ⚠️ And uncommitted code is not code that does not run: these are shell scripts I run
+        And uncommitted code is not code that does not run: these are shell scripts I run
         on my own laptop, so whatever is in the working tree runs as it is.</p>
 
         <p>What does remain is this: it was not left as durable history.
@@ -357,7 +357,7 @@ gpu_scale_down() {
 
         <p>The largest distortion of a number that day was elsewhere: the code meant to measure how long the
         model takes to produce its first token.
-        ⚠️ Strictly it measured time to the first byte, and that first byte may be a
+        Strictly it measured time to the first byte, and that first byte may be a
         response header. I have never confirmed the two are the same.</p>
 
         <p>The old code discarded the response body and did not look at the exit status,
@@ -391,7 +391,7 @@ arrival rate it would derive: 2,826/s
 normal (when it takes 1.4 s): 1.142/s
                               → 2,475×</code></pre>
 
-        <p>⚠️ These two arrival rates are derived values, not measurements.
+        <p>These two arrival rates are derived values, not measurements.
         Both have the shape of some constant divided by the response time (rate times time
         gives 1.6 on both sides), and I did not check what that constant is.</p>
 
@@ -442,21 +442,21 @@ normal (when it takes 1.4 s): 1.142/s
           </svg>
           <figcaption>Bar length is <strong>not to scale.</strong> The real ratio is 2,475×, so drawing both
           truthfully would make the error side invisible.
-          ⚠️ Nor is filling that empty middle with an exit-status check enough — the reason is just above.</figcaption>
+          Nor is filling that empty middle with an exit-status check enough — the reason is just above.</figcaption>
         </figure>
 
         <p>This arrival rate is the single input that sets the load and the run time of every
         experimental condition. If it greatly exceeds what the card can actually do,
         the tail-latency samples get truncated.</p>
 
-        <blockquote><p>⚠️ The only thing reproduced in this section is <code>curl</code>'s
+        <blockquote><p>The only thing reproduced in this section is <code>curl</code>'s
         behaviour. The numbers, and "so I fixed it", are that day's record.
         What verdict a run at that value would have received was not checked then either.</p></blockquote>
 
         <p>The KV capacity check beside it had the same character: it printed the engine's reported
         value and the predicted one side by side and never compared them — with
         "refuse if it is nothing like the prediction" written at the top of the file.
-        ⚠️ This is also that day's record.</p>
+        This is also that day's record.</p>
 
         <h2 id="the-checker-was-wrong">I wrote a script to count the rest, and its test was wrong<a class="anchor" href="#the-checker-was-wrong" aria-label="Link to this section">#</a></h2>
 
@@ -521,11 +521,11 @@ normal (when it takes 1.4 s): 1.142/s
         and recorded that the two ❌ were false positives of the test, not defects in the
         implementation.</p>
 
-        <p>⚠️ What the third ❌ was is not in the record.
+        <p>What the third ❌ was is not in the record.
         I wrote down only that two were false positives and never wrote the remaining one.
         There is no way to know now. Even the record of checking the checker has a gap in it.</p>
 
-        <p>⚠️ The two false positives in this section and the <code>desiredSize=1</code> comment story are
+        <p>The two false positives in this section and the <code>desiredSize=1</code> comment story are
         that day's record and were not reproduced this time.</p>
 
         <h2 id="one-name">One name let a test pass in silence<a class="anchor" href="#one-name" aria-label="Link to this section">#</a></h2>
@@ -541,15 +541,15 @@ $ bash -c 'MY_GROUPS=(a b c); echo "${MY_GROUPS[*]}"'
 a b c                                       &lt;- with another name it goes in</code></pre>
 
         <p><strong>The assignment is swallowed in silence.</strong> On this version there is no error and no
-        warning. ⚠️ It differs by bash version. Older documentation says an assignment like
+        warning. It differs by bash version. Older documentation says an assignment like
         this returns a non-zero status. I checked this one version.</p>
 
-        <p>⚠️ That is as far as this reproduction goes. What follows is that day's record.
+        <p>That is as far as this reproduction goes. What follows is that day's record.
         A test that was supposed to detect "another card is already running"
         passed without ever seeing the value I had put in.</p>
 
         <blockquote><p>The code was fine and the test lied.
-        ⚠️ This and the two false positives above have different causes.
+        This and the two false positives above have different causes.
         One counted a comment as code, one had a nonsense test expression, this one never received its value.
         What they share is only that the result looked green.
         The check did run. It just ran without the value I meant to put in.
@@ -578,10 +578,10 @@ a b c                                       &lt;- with another name it goes in</
         </div>
         <p class="table-note">The first put the listing call inside a command substitution and
         discarded stderr while never looking at the exit status.
-        ⚠️ A command substitution does not destroy the exit status — the assignment inherits it
+        A command substitution does not destroy the exit status — the assignment inherits it
         and the caller did not look. According to the record, expired credentials, a
         permissions error and a network failure therefore all produced an empty list.
-        ⚠️ That is the record; what the tool actually emits was not checked this time.
+        That is the record; what the tool actually emits was not checked this time.
         An empty list is indistinguishable from "nothing else is running".
         A guard built for the moment something is wrong with the account
         passes at exactly that moment.</p>
@@ -590,7 +590,7 @@ a b c                                       &lt;- with another name it goes in</
         The moment authentication expires mid-session, exactly the moment to stop,
         the guard stops guarding — with the remote schedule still armed.</p></blockquote>
 
-        <p>⚠️ These twelve were not reproduced in this session; they are that day's commit
+        <p>These twelve were not reproduced in this session; they are that day's commit
         record. The two carried into the text are what that record says.</p>
 
         <h2 id="what-this-does-not-claim">Limits: what this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
@@ -648,7 +648,7 @@ a b c                                       &lt;- with another name it goes in</
         four guards that did not look the way I had reported, right before a paid run.
         Three were devices that stop billing from continuing.</p>
 
-        <p>⚠️ And after fixing those, twelve more came out of the same places.
+        <p>And after fixing those, twelve more came out of the same places.
         This is not a story about things being closed; it is a story about how to check.
         The project is still in flight.</p>
 

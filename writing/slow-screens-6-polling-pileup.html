@@ -156,7 +156,7 @@
         <figure class="diagram">
           <img src="../assets/figures/modal-pending-requests.png" alt="The browser DevTools network tab. The upper eight requests finished with status 200; the lower four are pending. All request names are masked." loading="lazy" width="640" height="500">
           <figcaption>At the moment of the capture, <strong>four requests had not finished</strong>
-          (the red box). The eight above them returned 200. ⚠️ The request names are internal API surface, so
+          (the red box). The eight above them returned 200. The request names are internal API surface, so
           they are masked as <code>req-A</code> and so on, and the half of the screenshot showing the product UI
           is cropped away. Status, type and timings are as captured.</figcaption>
         </figure>
@@ -167,7 +167,7 @@
         <p>So the click was handled. The dialog had started to open and was stuck waiting for
         what it needed.</p>
 
-        <p>⚠️ That is as far as the screenshot goes. Which of these is the periodic refresh and
+        <p>That is as far as the screenshot goes. Which of these is the periodic refresh and
         which belongs to the dialog, when each started, and where each spent its time —
         this screen cannot separate any of that. The two causes below come
         from the code and the internal record, not from this one capture.</p>
@@ -175,7 +175,7 @@
         <h2 id="cause-a">Cause 1: fetching everything up front<a class="anchor" href="#cause-a" aria-label="Link to this section">#</a></h2>
 
         <p>Opening the dialog fetched <strong>four things</strong>: the volume list, the volume snapshot list,
-        the image list, and the volume type list. ⚠️ The first three were called <strong>one after
+        the image list, and the volume type list. The first three were called <strong>one after
         another</strong> and the volume type separately. They did not all go out side by side.</p>
 
         <p>But opening the dialog does not need all four. Choosing “volume” as the source needs
@@ -287,7 +287,7 @@
         The next one goes out before the previous finishes, so two of the same request are in flight at
         once.</p></blockquote>
 
-        <p>⚠️ One step past that and the evidence runs out. For “requests pile up without
+        <p>One step past that and the evidence runs out. For “requests pile up without
         bound” you need two more things, and neither is confirmed by this record.</p>
 
         <ul>
@@ -304,10 +304,10 @@
         Looking again, that word claims more than was verified.</p>
 
         <p>And at the same moment the dialog's own requests go out too — cause one.
-        ⚠️ There is no direct evidence that they waited behind the refresh requests.
+        There is no direct evidence that they waited behind the refresh requests.
         The screenshot shows neither when each request started nor where it spent its time.</p>
 
-        <p>⚠️ Browsers also cap how many connections they open to one host. A long queue could
+        <p>Browsers also cap how many connections they open to one host. A long queue could
         run into that cap, but this article did not check. What it checked is that four
         requests were still <code>(pending)</code>.</p>
 
@@ -325,7 +325,7 @@ usePolling({
   pollingCondition: isLoadingDataExist &amp;&amp; !isAnyDialogOpen,
 });</code></pre>
 
-        <p>⚠️ What this condition prevents is <strong>the next refresh going out.</strong> It does not cancel a
+        <p>What this condition prevents is <strong>the next refresh going out.</strong> It does not cancel a
         request already in flight. And whether <code>openDialogs</code> becomes true right after the click or
         only once the data has arrived is not something the call site alone can tell you.</p>
 
@@ -342,7 +342,7 @@ usePolling({
 };</code></pre>
 
         <p>Fetching when it is needed is called lazy loading.
-        ⚠️ Depending on the choice it is not always exactly one request: picking “image” or
+        Depending on the choice it is not always exactly one request: picking “image” or
         “empty volume” also needs the volume type list, so one more goes out.</p>
 
         <h2 id="a-bonus">A bonus: the options show even when a list fails<a class="anchor" href="#a-bonus" aria-label="Link to this section">#</a></h2>
@@ -366,7 +366,7 @@ usePolling({
         <p><strong>Those five seconds came from here.</strong> The screen re-fetches the list every five seconds,
         so the trigger for refreshing the cache was lined up with that interval. The team agreed on it.</p>
 
-        <p>⚠️ <strong>That does not mean “fresh within five seconds”.</strong> As
+        <p><strong>That does not mean “fresh within five seconds”.</strong> As
         <a href="slow-screens-1-volume-list.html">part one</a> says, <code>refreshAfterWrite</code> is not a
         ceiling but the condition that starts a refresh, and if nobody asks, nothing refreshes.
         What was decided here was what to line the interval up with, not a ceiling on
