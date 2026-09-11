@@ -145,6 +145,42 @@
           이 글이 말하는 것은 입장 제어와 신뢰 경계이지 장치 동작이 아닙니다.</li>
         </ul>
 
+        <figure class="diagram">
+          <svg viewBox="0 0 720 230" role="img" aria-labelledby="tb-t tb-d" class="figure-svg">
+            <title id="tb-t">테넌트가 쓰는 필드를 가드가 증거로 읽는 구조</title>
+            <desc id="tb-d">왼쪽 상자에 테넌트가 직접 쓰는 필드 셋이 분홍색으로 적혀 있습니다. 가운데 세로 점선이 신뢰 경계입니다. 분홍 화살표가 그 경계를 넘어 오른쪽 파란 상자인 가드로 들어갑니다. 가드는 그 값을 읽어 판정을 냅니다. 오른쪽 끝에 판정 결과가 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="16" y="46" width="150" height="132" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="91" y="36" font-size="11.5" fill="#8a8a8a" text-anchor="middle">테넌트가 쓰는 곳</text>
+              <text x="91" y="72" font-size="11" fill="#4a4a4a" text-anchor="middle">Pod · Job 명세</text>
+              <text x="91" y="102" font-size="11" fill="#d62976" text-anchor="middle"><tspan font-family="ui-monospace, monospace">ownerReferences</tspan></text>
+              <text x="91" y="128" font-size="11" fill="#d62976" text-anchor="middle"><tspan font-family="ui-monospace, monospace">quota-exempt</tspan></text>
+              <text x="91" y="154" font-size="11" fill="#d62976" text-anchor="middle"><tspan font-family="ui-monospace, monospace">grace period</tspan></text>
+
+              <path d="M330 20 V 206" fill="none" stroke="#c9c9c9" stroke-width="1.4" stroke-dasharray="5 4"/>
+              <text x="330" y="14" font-size="11" fill="#8a8a8a" text-anchor="middle">신뢰 경계</text>
+
+              <path d="M170 112 H 322" fill="none" stroke="#d62976" stroke-width="1.8" marker-end="url(#tb-ar)"/>
+
+              <rect x="392" y="72" width="150" height="80" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="467" y="62" font-size="11.5" fill="#4f5bd5" text-anchor="middle">가드(입장 제어)</text>
+              <text x="467" y="118" font-size="11" fill="#4a4a4a" text-anchor="middle">읽은 값 = 증거</text>
+
+              <path d="M546 112 H 664" fill="none" stroke="#4f5bd5" stroke-width="1.8" marker-end="url(#tb-ab)"/>
+              <text x="620" y="102" font-size="11" fill="#4f5bd5" text-anchor="middle">판정</text>
+            </g>
+            <defs>
+              <marker id="tb-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+              <marker id="tb-ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>가드 넷이 전부 <strong>왼쪽 상자의 값</strong>을 증거로 읽었습니다. 검사 코드는 옳았고 틀린 것은 그 값이 <strong>경계 왼쪽에서 왔다는 사실</strong>을 세지 않은 쪽입니다.</figcaption>
+        </figure>
+
         <h2 id="처음엔-아무것도-막지-않았다">처음엔 아무것도 막지 않았습니다<a class="anchor" href="#처음엔-아무것도-막지-않았다" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>설계는 이렇습니다. 테넌트별 GPU 예산의 단일 권위는 Kueue의 ClusterQueue이고 컨트롤러는 같은 장치가
@@ -202,6 +238,37 @@ forged-owner   1/1   Running</code></pre>
         <strong>객체만</strong> 넘겨줍니다. 그런데 믿을 수 없는 것이 바로 그 객체입니다. 그래서 원시
         <code>admission.Handler</code>로 내려가 요청 자체를 받아야 했습니다. <strong>편한 추상화가 넘겨주는 것이
         신뢰 경계와 맞지 않으면 그 추상화를 쓸 수 없습니다.</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="or-t or-d" class="figure-svg">
+            <title id="or-t">요청자가 쓴 소유 표시를 가드가 그대로 믿는 흐름</title>
+            <desc id="or-d">왼쪽부터 상자가 넷 있고 회색 화살표로 이어집니다. 첫째는 테넌트가 만든 Pod, 둘째는 그 Pod 안에 테넌트가 직접 적은 소유 표시, 셋째는 그것을 소유 관계로 읽는 가드, 넷째는 그래서 계상되지 않은 장치 2개입니다. 아래에 분홍색으로 자기 신고라고 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">테넌트</text>
+              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">Pod 생성 요청</text>
+              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#or-a)"/>
+              <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">자기 신고</text>
+              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle"><tspan font-family="ui-monospace, monospace">ownerReferences</tspan></text>
+              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#or-a)"/>
+              <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">가드</text>
+              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">소유자 = Job으로 읽음</text>
+              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#or-a)"/>
+              <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">결과</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">계상 안 된 장치 2개</text>
+              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">주장을 사실로 읽은 한 칸</text>
+            </g>
+            <defs>
+              <marker id="or-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption><code>ownerReferences</code>는 <strong>요청자가 채우는 칸</strong>입니다. 쿠버네티스는 그 값이 참인지 확인하지 않으므로 이것을 소유 관계의 증거로 쓰면 테넌트가 자기 쿼터를 스스로 빠져나갑니다.</figcaption>
+        </figure>
 
         <h2 id="아무나-줄-수-있는-면제">아무나 줄 수 있는 면제는 면제가 아닙니다<a class="anchor" href="#아무나-줄-수-있는-면제" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -303,6 +370,36 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
 
         <p>④ 는 다른 이야기를 합니다. <strong>규칙은 처음부터 옳았고 적용되는 시점이 틀렸습니다.</strong> 막으려던
         일이 이미 벌어진 뒤에 검사하고 있었습니다. 이런 결함은 규칙을 아무리 정교하게 다듬어도 안 없어집니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 230" role="img" aria-labelledby="rp-t rp-d" class="figure-svg">
+            <title id="rp-t">수리 세 형태를 강한 순서로 세운 사다리</title>
+            <desc id="rp-d">왼쪽에 세로축이 있고 위가 강함, 아래가 약함입니다. 축 오른쪽에 상자가 셋 위에서 아래로 놓여 있습니다. 첫째는 입력 교체, 둘째는 제공자 축소, 셋째는 피해 상한입니다. 상자마다 오른쪽으로 화살표가 나가 무엇을 바꾸는지가 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <path d="M40 34 V 196" fill="none" stroke="#c9c9c9" stroke-width="1.4"/>
+              <text x="40" y="26" font-size="11" fill="#8a8a8a" text-anchor="middle">강함</text>
+              <text x="40" y="214" font-size="11" fill="#8a8a8a" text-anchor="middle">약함</text>
+              <rect x="64" y="48" width="248" height="40" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="188" y="73" font-size="11.5" fill="#4f5bd5" text-anchor="middle">① 입력 교체</text>
+              <path d="M318 68 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rp-a)"/>
+              <text x="384" y="73" font-size="11.5" fill="#4a4a4a">못 믿을 값 → 믿을 값</text>
+              <rect x="64" y="104" width="248" height="40" rx="9" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="188" y="129" font-size="11.5" fill="#d62976" text-anchor="middle">② 제공자 축소</text>
+              <path d="M318 124 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rp-a)"/>
+              <text x="384" y="129" font-size="11.5" fill="#4a4a4a">누구나 → 테넌트가 없는 집합</text>
+              <rect x="64" y="160" width="248" height="40" rx="9" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="188" y="185" font-size="11.5" fill="#8a8a8a" text-anchor="middle">③ 피해 상한</text>
+              <path d="M318 180 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rp-a)"/>
+              <text x="384" y="185" font-size="11.5" fill="#4a4a4a">무제한 → 120초</text>
+            </g>
+            <defs>
+              <marker id="rp-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>①과 ②는 <strong>공격 자체를 없앱니다.</strong> ③은 공격을 남겨 둔 채 값만 줄이므로 <strong>둘 다 못 할 때의 마지막 수단</strong>입니다. 네 건 중 셋이 ①이나 ②로 끝났습니다.</figcaption>
+        </figure>
 
         <h2 id="이-문서의-한-주장이-거짓이었다">이 문서의 한 주장이 거짓이었고 가드는 그 위에 지어졌습니다<a class="anchor" href="#이-문서의-한-주장이-거짓이었다" aria-label="이 절로 가는 링크">#</a></h2>
 
