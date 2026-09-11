@@ -117,7 +117,6 @@ for f in sorted(glob.glob("writing/*.html") + glob.glob("notes/*.html")):
 #    **아래 목록은 봐주고 그 밖의 글만 잠근다.** 목록은 줄기만 해야 한다 — 채워 넣은 글은 여기서 뺀다.
 FEW_FIGURES_OK = {
     "writing/bugs-that-return-exit-code-zero.html",
-    "writing/gpu-node-readiness.html",
     "writing/gpu-quota-control-plane.html",
     "writing/iaas-backend-performance.html",
 }

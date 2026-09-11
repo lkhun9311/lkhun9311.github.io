@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GPU Node Readiness for Kubernetes-native GPU Platforms | Kwanghun Lee</title>
+  <title>A Stopped Kubelet Quarantined the Node in 46 Seconds | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -12,18 +12,18 @@
   <!-- og:start -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="GPU Node Readiness for Kubernetes-native GPU Platforms | Kwanghun Lee" />
-  <meta property="og:description" content="AI Infrastructure Engineer · Building Kubernetes-native GPUaaS control planes, inference platforms, and reliable cloud backend systems." />
+  <meta property="og:title" content="A Stopped Kubelet Quarantined the Node in 46 Seconds | Kwanghun Lee" />
+  <meta property="og:description" content="Node readiness as an explicit CRD phase rather than an operational assumption. Observation first, then one taint. Stopping a worker kubelet produced Ready, Quarantine and Ready at 0s, 46s and 48s." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:url" content="https://lkhun9311.github.io/writing/gpu-node-readiness.html" />
   <meta property="og:locale" content="en_US" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="GPU Node Readiness for Kubernetes-native GPU Platforms | Kwanghun Lee" />
-  <meta name="twitter:description" content="AI Infrastructure Engineer · Building Kubernetes-native GPUaaS control planes, inference platforms, and reliable cloud backend systems." />
+  <meta name="twitter:title" content="A Stopped Kubelet Quarantined the Node in 46 Seconds | Kwanghun Lee" />
+  <meta name="twitter:description" content="Node readiness as an explicit CRD phase rather than an operational assumption. Observation first, then one taint. Stopping a worker kubelet produced Ready, Quarantine and Ready at 0s, 46s and 48s." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="AI Infrastructure Engineer · Building Kubernetes-native GPUaaS control planes, inference platforms, and reliable cloud backend systems." />
+  <meta name="description" content="Node readiness as an explicit CRD phase rather than an operational assumption. Observation first, then one taint. Stopping a worker kubelet produced Ready, Quarantine and Ready at 0s, 46s and 48s." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=5115091496" />
 </head>
@@ -65,21 +65,276 @@
         <div class="article-meta"><span class="source-tag side notranslate">Personal project</span></div>
       </div>
       <section class="page-hero">
-        <h1>GPU Node Readiness for Kubernetes-native GPU Platforms</h1>
-        <p class="article-date">Feb 2026</p>
+        <h1>A Stopped Kubelet Quarantined the Node in 46 Seconds<br><span class="h1-sub">NodeHealth reflects the node condition and applies one taint. The GPU-level intake above it is still a target. A personal project, a Kubernetes GPU control plane</span></h1>
+        <p class="article-date">Sep 2026</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="gpu-node-readiness"></aside>
+              <nav class="article-toc" aria-label="Contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-this-is-about">What this is about</a></li>
+            <li><a href="#what-ready-has-to-mean">What "ready" has to mean for a GPU node</a></li>
+            <li><a href="#observe-first-enforce-second">Observe first, enforce second</a></li>
+            <li><a href="#one-taint-and-four-declines">One taint, and four things declined</a></li>
+            <li><a href="#what-stopping-a-kubelet-produced">What stopping a kubelet produced</a></li>
+            <li><a href="#what-this-does-not-claim">What this does not claim</a></li>
+            <li><a href="#wrapping-up">Wrapping up</a></li>
+          </ul>
+        </nav>
+
       <article class="article-body">
-        <h2>Problem</h2>
-      <p>GPU workloads fail expensively when nodes are admitted before driver, device plugin, CUDA runtime, DCGM exporter, and scheduling labels are actually ready.</p>
-      <h2>Control-plane direction</h2>
-      <ul>
-        <li>Represent node readiness as an explicit condition rather than an implicit operational assumption.</li>
-        <li>Validate NVIDIA driver, nvidia-smi, device plugin resources, DCGM metrics, and CUDA smoke tests.</li>
-        <li>Attach labels and taints only after the readiness controller has enough evidence.</li>
-      </ul>
-      <h2>Next evidence to add</h2>
-      <p>Controller logs, Grafana panels, failure injection results, and a short runbook for node quarantine / re-admission.</p>
+        <p><strong>Scope.</strong> This is the node-readiness slice of a personal project, a
+        <a href="../projects/gpuaas-control-plane.html">Kubernetes-native GPU control plane</a>. Everything below
+        runs on a local kind cluster against <strong>simulated <code>nvidia.com/gpu</code> capacity</strong>.
+        The controller behaviour is real; the GPU-level checks it wants to run are not, and the article says
+        which is which at every step.</p>
+
+        <p>A GPU workload that lands on a node whose driver is not loaded does not fail politely. It fails
+        after the scheduler has already committed the pod, on the most expensive hardware in the cluster.
+        So the question is not "is the node up" but <strong>"has anything checked the things a GPU workload
+        actually needs"</strong>.</p>
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>You admit GPU nodes to a cluster and have wondered what "ready" is supposed to mean</li>
+          <li>You have a controller that reflects state and are deciding whether it should also enforce</li>
+          <li>You have to say, in writing, what your platform does not automate</li>
+        </ul>
+
+        <h2 id="what-this-is-about">What this is about<a class="anchor" href="#what-this-is-about" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li>Node readiness is represented as a <strong>CRD with an explicit phase</strong>
+          (<code>NodeHealth</code>) rather than as an operational assumption.</li>
+          <li>The reconciler was built in two steps on purpose: <strong>observe first, enforce second.</strong>
+          Observation is idempotent and recovers from drift; enforcement adds exactly one taint.</li>
+          <li>Four things were <strong>declined</strong> rather than postponed: cordon, a grace period, a
+          fault-signal trigger, and automatic draining. Each has a reason below.</li>
+          <li>Stopping a worker's kubelet produced <code>Ready</code> → <code>Quarantine</code> →
+          <code>Ready</code> at <strong>0s, 46s and 48s</strong>, with the verdict <code>Recovered</code>.</li>
+          <li>⚠️ <strong>The GPU-level intake is a target, not code.</strong> DCGM, fio, iperf3 and an NCCL
+          baseline all need a real GPU node. When DCGM is unavailable the controller falls back to the
+          Kubernetes node condition <strong>and records that the GPU checks were not run</strong>.</li>
+        </ul>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="nl-t nl-d" class="figure-svg">
+            <title id="nl-t">The lifecycle a GPU node moves through before and after it serves</title>
+            <desc id="nl-d">Four boxes run left to right, joined by grey arrows: register and intake, certify, serve and monitor, quarantine and re-intake. The last box has an arrow curving back to the second. A pink line underneath says only the last two are implemented today.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">register · intake</text>
+              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">driver, DCGM, storage, network</text>
+              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#nl-a)"/>
+              <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">certify</text>
+              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">signed off as Ready</text>
+              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#nl-a)"/>
+              <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">serve · monitor</text>
+              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">controller observes readiness</text>
+              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#nl-a)"/>
+              <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">quarantine · re-intake</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">taint, then re-run intake</text>
+              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">implemented today · the right-hand pair</text>
+            </g>
+            <defs>
+              <marker id="nl-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>A GPU node is treated as an asset with an intake, not as a server that either answers or does not. <strong>The two boxes on the right exist in code. The two on the left are a runbook, not a controller</strong>. The checks they name need a real GPU node to run against.</figcaption>
+        </figure>
+
+        <h2 id="what-ready-has-to-mean">What "ready" has to mean for a GPU node<a class="anchor" href="#what-ready-has-to-mean" aria-label="Link to this section">#</a></h2>
+
+        <p>The Kubernetes <code>Ready</code> condition says the kubelet is talking to the API server. For a
+        CPU workload that is close enough. For a GPU workload it is not a claim about the device at all.</p>
+
+        <p>So <code>NodeHealth</code> carries its own phase, and the intake that would populate it is written
+        as a runbook with tools attached, so that the gap between what is checked and what is assumed stays
+        visible.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">The intake stages, the tools each one needs, and what it produces.</caption>
+          <thead><tr><th scope="col">stage</th><th scope="col">check</th><th scope="col">tools</th><th scope="col">state</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td>pre-flight</td><td><code>nvidia-smi</code>, runtime, GPU Operator</td><td>target</td></tr>
+            <tr><td>1</td><td>GPU health</td><td>DCGM, gpu-burn</td><td>target</td></tr>
+            <tr><td>2</td><td>storage / network</td><td>fio, iperf3</td><td>target</td></tr>
+            <tr><td>3</td><td>NCCL all-reduce</td><td>single node, 2 GPU</td><td>target</td></tr>
+            <tr><td>4</td><td>sign-off</td><td><code>NodeHealth</code> update</td><td><strong>implemented</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>Only the last row is code today. That is worth stating plainly rather than letting a lifecycle
+        diagram imply otherwise: <strong>the controller signs off on evidence it currently gets from one
+        source</strong>, the node's own readiness condition.</p>
+
+        <h2 id="observe-first-enforce-second">Observe first, enforce second<a class="anchor" href="#observe-first-enforce-second" aria-label="Link to this section">#</a></h2>
+
+        <p>The first version of the reconciler did not taint anything. It read the target node and reflected
+        readiness into status: phase, a <code>Ready</code> condition, <code>observedGeneration</code>, and a
+        finalizer whose cleanup was a logged no-op.</p>
+
+        <p>That sounds like a smaller milestone than it is. Splitting it this way is what made the following
+        three properties testable on their own, before any of them could be confused with enforcement:</p>
+
+        <ul>
+          <li><strong>Idempotency.</strong> Status is written only when the computed status differs from the
+          stored one. A reconcile that changes nothing performs no write.</li>
+          <li><strong>Drift recovery.</strong> Edit the status by hand and the next reconcile restores it. A
+          node change triggers the same path.</li>
+          <li><strong>Finalizer lifecycle.</strong> Added on create, removed on delete after cleanup runs.
+          At this point cleanup had nothing to remove, which is exactly why it was worth writing then.</li>
+        </ul>
+
+        <p>Enforcement arrived next, and the finalizer's cleanup stopped being a no-op: it now removes the
+        taint when the <code>NodeHealth</code> object is deleted.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 242" role="img" aria-labelledby="ch-t ch-d" class="figure-svg">
+            <title id="ch-t">What the controller does, against what it deliberately does not</title>
+            <desc id="ch-d">Two boxes side by side. The left lists what the reconciler does: a single taint, immediate quarantine, readiness as the trigger. The right lists what was declined: cordon, a grace period, a fault-signal trigger, and automatic draining. A pink line at the bottom says each of the four on the right was a decision, not an omission.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="138" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">what it does</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">one taint, ours only</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">quarantine immediately</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">readiness as the trigger</text>
+              <text x="204" y="160" font-size="11.5" fill="#4a4a4a" text-anchor="middle">finalizer removes the taint</text>
+              <rect x="392" y="54" width="328" height="138" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">what it declines</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">cordon (spec.unschedulable)</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">grace period / flap damping</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">fault-signal trigger</text>
+              <text x="556" y="160" font-size="11.5" fill="#4a4a4a" text-anchor="middle">automatic drain</text>
+              <text x="360" y="218" font-size="11.5" fill="#d62976" text-anchor="middle">each of the four on the right · a decision, not an omission</text>
+            </g>
+          </svg>
+          <figcaption>Declining automatic drain is the one that matters operationally. The platform can tell you <strong>what</strong> to drain; evicting running work stays behind an operator approval. <strong>The maturity claimed here is "knows the operational risk", not "auto-drains".</strong></figcaption>
+        </figure>
+
+        <h2 id="one-taint-and-four-declines">One taint, and four things declined<a class="anchor" href="#one-taint-and-four-declines" aria-label="Link to this section">#</a></h2>
+
+        <p>When the target node is not ready, the reconciler applies
+        <code>platform.lkhun9311.github.io/unhealthy=true:NoSchedule</code> and drives the phase to
+        <code>Quarantine</code>. When the node recovers, the taint is removed. It manages
+        <strong>only that taint</strong> and never touches another.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">scroll sideways for the rest</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways for the rest">
+        <table>
+          <caption class="sr-only">Node state, resulting phase, taint action and fault signal.</caption>
+          <thead><tr><th scope="col">target node</th><th scope="col">phase</th><th scope="col">taint</th><th scope="col">faultSignal</th></tr></thead>
+          <tbody>
+            <tr><td>not found</td><td><code>Pending</code></td><td>nothing to manage</td><td>cleared</td></tr>
+            <tr><td>ready</td><td><code>Ready</code></td><td>ensure removed</td><td>cleared</td></tr>
+            <tr><td>not ready</td><td><code>Quarantine</code></td><td>ensure present</td><td><code>node-not-ready</code></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>The four declines are the part I would defend in a review, so here they are with their reasons.</p>
+
+        <ul>
+          <li><strong>Taint, not cordon.</strong> A cordon sets <code>spec.unschedulable</code> on the node,
+          which is a blunt flag other tooling also writes. A taint is namespaced to us by key, and a
+          deliberately opted-in workload can tolerate it.</li>
+          <li><strong>No grace period.</strong> Flap damping would make the quarantine decision depend on a
+          window length nobody has measured. A not-ready node quarantines immediately, which is simple and
+          deterministic, and the cost of that choice is visible in the numbers below.</li>
+          <li><strong>Readiness as the trigger, not a fault signal.</strong> Fault injection is a later
+          milestone. Triggering on a signal that does not exist yet would make the guard untestable.</li>
+          <li><strong>No automatic drain.</strong> Evicting running work is the one action here that destroys
+          something. The platform surfaces what would be drained; a human or an explicit approval flag
+          triggers it.</li>
+        </ul>
+
+        <h2 id="what-stopping-a-kubelet-produced">What stopping a kubelet produced<a class="anchor" href="#what-stopping-a-kubelet-produced" aria-label="Link to this section">#</a></h2>
+
+        <p>Envtest can prove the reconciler writes the right status for a fabricated node object. It cannot
+        prove that a real node going away produces that object in the first place. So the test was to take a
+        throwaway kind cluster with a worker and <strong>stop that worker's kubelet</strong>.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 248" role="img" aria-labelledby="qt-t qt-d" class="figure-svg">
+            <title id="qt-t">The three phase transitions a stopped kubelet produced, on a time axis</title>
+            <desc id="qt-d">Three horizontal bars on a shared time axis. The first ends at zero seconds and is labelled Ready. The second ends at 46 seconds and is labelled Quarantine. The third ends at 48 seconds and is labelled Ready again. A pink line underneath says every phase was published by the operator.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="176" y="70" font-size="11.5" fill="#4f5bd5" text-anchor="end">Ready</text>
+              <rect x="190" y="50" width="18" height="28" rx="5" fill="none" stroke="#4f5bd5" stroke-width="1.8"/>
+              <text x="218" y="70" font-size="11.5" fill="#4a4a4a">0s · the run began healthy</text>
+              <text x="176" y="122" font-size="11.5" fill="#d62976" text-anchor="end">Quarantine</text>
+              <rect x="190" y="102" width="411" height="28" rx="5" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="611" y="122" font-size="11.5" fill="#4a4a4a">46s · taint applied</text>
+              <text x="176" y="174" font-size="11.5" fill="#4f5bd5" text-anchor="end">Ready</text>
+              <rect x="190" y="154" width="430" height="28" rx="5" fill="none" stroke="#4f5bd5" stroke-width="1.8"/>
+              <text x="630" y="174" font-size="11.5" fill="#4a4a4a">48s · taint removed</text>
+              <text x="360" y="230" font-size="11.5" fill="#d62976" text-anchor="middle">every phase published by the operator, not by the script</text>
+            </g>
+          </svg>
+          <figcaption>A throwaway kind cluster with a worker is the machine whose disruption nobody minds. Stopping that worker's kubelet produced the three transitions above with the verdict <code>Recovered</code>. <strong>The script stopped a kubelet and read the CR. It did not write any of the phases.</strong></figcaption>
+        </figure>
+
+        <p>The 46 seconds is not the controller being slow. It is the interval before Kubernetes itself marks
+        the node not ready, which is the signal the reconciler is waiting on. <strong>Choosing readiness as
+        the trigger bought simplicity and paid for it in exactly that window</strong>, and the number makes
+        the trade visible instead of arguable.</p>
+
+        <p>The 2 seconds on the way back is the reconciler, because by then the signal is already there.</p>
+
+        <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>No GPU was checked.</strong> The device plugin here is a fake advertising
+          <code>nvidia.com/gpu</code>. Nothing in this article observed a driver, a temperature, an XID or an
+          ECC counter.</li>
+          <li><strong>The intake table is a target.</strong> Stages 0 through 3 are a runbook with tools
+          named. They are not implemented, and the controller does not pretend they passed.</li>
+          <li><strong>DCGM absence is recorded, not simulated.</strong> When DCGM is unavailable the
+          controller falls back to the node condition and writes down that the GPU-level checks did not run.
+          That distinction is the whole reason the fallback exists.</li>
+          <li><strong>0s, 46s and 48s are one run on one kind cluster.</strong> They are not a distribution,
+          and the 46 seconds in particular depends on kubelet and controller-manager settings that were left
+          at their defaults.</li>
+          <li><strong>Drain is not automated and is not going to be soon.</strong> The design defers it
+          deliberately; calling that "next milestone" would overstate how close it is.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="wrapping-up">Wrapping up<a class="anchor" href="#wrapping-up" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>"Ready" has to be a claim about something.</strong> The Kubernetes condition is a claim
+          about the kubelet. A GPU node needs a phase that says which checks produced it.</li>
+          <li><strong>Observation and enforcement are separate milestones for a reason.</strong> Idempotency,
+          drift recovery and the finalizer are all easier to prove when nothing is being tainted yet.</li>
+          <li><strong>Write down what you decline.</strong> Cordon, grace period, fault-signal trigger and
+          automatic drain each had a reason, and a reader who only sees the feature list cannot tell a
+          decision from an omission.</li>
+          <li><strong>A number makes a trade-off arguable instead of rhetorical.</strong> Immediate
+          quarantine sounded strict until the measurement showed the strictness lives in a 46-second window
+          owned by someone else.</li>
+        </ul>
+
+        <p>What is left is one line. <strong>A controller that reports a state it did not verify is worse
+        than one that reports nothing</strong>, because the first one gets trusted. The fallback that records
+        "the GPU checks did not run" exists so that the phase never has to lie.</p>
+
+        <p>Thank you for reading.</p>
+        </div>
       </article>
     </main>
     <footer class="notranslate">
@@ -93,6 +348,8 @@
   <script src="../assets/content.js?v=2b20b6e120"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
   <script>
     (function () {
       var el = document.querySelector(".article-aside");
