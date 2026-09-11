@@ -79,6 +79,8 @@
         <nav class="article-toc" aria-label="目次">
           <p class="toc-label">目次</p>
           <ul>
+            <li><a href="#想定読者">想定読者</a></li>
+            <li><a href="#この記事の内容">何の話ですか</a></li>
             <li><a href="#falsifiable-arm">反証可能にする arm</a></li>
             <li><a href="#the-numbers">数値</a></li>
             <li><a href="#three-sentences">3 つの文が同時に真ではありえない</a></li>
@@ -86,6 +88,7 @@
             <li><a href="#forty-cents">40 セントが 3 回の有料セッションにできなかった答えを出した</a></li>
             <li><a href="#not-yet-bought">まだ購入していない実行</a></li>
             <li><a href="#what-this-does-not-claim">この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
           </ul>
         </nav>
       <article class="article-body">
@@ -103,6 +106,29 @@
         <p>答えは<strong>いいえ</strong>だった。そしてそれより価値があったのは、
         <strong>なぜ 有料の 4 回の反復の間その事実が見えなかったのか</strong>である。</p>
 
+
+        <h2 id="想定読者">想定読者<a class="anchor" href="#想定読者" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>GPU 1 枚を複数テナントで分け合わせる側を見ている方</li>
+          <li>「p99 が良くなりました」という報告を受けて、次に何を訊くか決める方</li>
+          <li>お金のかかる実験で、何から測るかを選ぶ方</li>
+        </ul>
+
+        <h2 id="この記事の内容">何の話ですか<a class="anchor" href="#この記事の内容" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li>GPU 1 枚の上に<strong>プレミアムテナントと長いコンテキストを使う騒がしい隣人</strong>を同居させ、
+          ゲートウェイの KV cache 認識アドミッション制御がプレミアムの p99 を守るか測った。</li>
+          <li>答えは<strong>いいえ</strong>だった。拒否 0 件の arm の<strong>完了数がプレミアムの要求数と
+          正確に一致した。</strong>守ったのではなく捨てていた。</li>
+          <li>レポートが見落とした理由は<strong>判定がすべて比率</strong>だったからだ。分母も一緒に減れば
+          比率は良くなる。</li>
+          <li>それを突き止めるのに新しい金はかからなかった。<strong>40 セントのマイクロテスト</strong>と、
+          既に買った証拠を別の軸で読み直すことで足りた。</li>
+          <li>⚠️ 反証されたのは<strong>1 つの信号・1 つのワークロード・1 枚のカード</strong>の上でのことだ。
+          アドミッション制御一般についての主張ではない。</li>
+        </ul>
 
         <h2 id="falsifiable-arm">反証可能にする arm<a class="anchor" href="#falsifiable-arm" aria-label="このセクションへのリンク">#</a></h2>
 
@@ -332,8 +358,24 @@
           <li><strong>進行中である。</strong>上で事前登録した実行が終われば最終節が変わる。</li>
         </ul>
 
+        <div class="wrapup">
+        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>保護を測る指標は、何を捨てたかも一緒に数える必要がある。</strong>比率だけを見ると、
+          分母が減ったことを改善として読む。</li>
+          <li><strong>3 つの文が同時に真になれないなら、どれかの定義が違う。</strong>429 を数えて 413 を
+          数えていなかった場所がそれだった。</li>
+          <li><strong>軸が違う数字を並べない。</strong>83.7 倍は到着過程の p99、1.57 倍は要求 2 つを
+          10 回繰り返した中央値である。</li>
+          <li><strong>既に買った証拠を別の軸で読み直すほうが、新しい実行より安い。</strong></li>
+        </ul>
+
         <p>残る 1 行はこれである。<strong>保護を測る指標は、何を消したかも一緒に数えなければ、消したことを成功として
         読む。</strong>そしてそれを突き止めるのに新しい金はかからず、既に購入した証拠を別の軸で読み直すだけで足りた。</p>
+
+        <p>お読みいただきありがとうございました。</p>
+        </div>
 
       </article>
     </main>

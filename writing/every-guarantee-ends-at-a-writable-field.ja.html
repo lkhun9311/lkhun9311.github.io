@@ -79,6 +79,8 @@
         <nav class="article-toc" aria-label="目次">
           <p class="toc-label">目次</p>
           <ul>
+            <li><a href="#想定読者">想定読者</a></li>
+            <li><a href="#この記事の内容">何の話ですか</a></li>
             <li><a href="#nothing-stopped-it">最初は何も止めなかった</a></li>
             <li><a href="#ownerreference-is-a-claim">ownerReference は主張であって事実ではない</a></li>
             <li><a href="#exemption-anyone-can-grant">誰でも与えられる免除は免除ではない</a></li>
@@ -87,6 +89,7 @@
             <li><a href="#why-fixes-differ">4 つの修理の形が違う理由</a></li>
             <li><a href="#a-claim-was-false">この文書の 1 つの主張が偽で、ガードはその上に建てられた</a></li>
             <li><a href="#what-this-does-not-claim">この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
           </ul>
         </nav>
       <article class="article-body">
@@ -117,6 +120,30 @@
         </div>
         </div>
 
+
+        <h2 id="想定読者">想定読者<a class="anchor" href="#想定読者" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>Kubernetes でテナントごとの資源上限を強制する側を作っている方</li>
+          <li>admission webhook やコントローラで「これは止まる」を保証している方</li>
+          <li>検査のコードは正しいのに、なぜ破られたのか説明できないことがある方</li>
+        </ul>
+
+        <h2 id="この記事の内容">何の話ですか<a class="anchor" href="#この記事の内容" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li>テナントが GPU を何枚まで持てるかを強制する<strong>クォータのガードを自分で攻撃した。</strong>
+          4 回破れた。</li>
+          <li>破れ方がすべて同じ形だった。<strong>検査が読む値をテナント自身が書けた。</strong>
+          上の表の真ん中の列がそのフィールドである。</li>
+          <li>検査のコードにバグは無かった。<strong>検査は自分が読んだものについては正しく</strong>、
+          誤っていたのはその値をテナントについての証拠として読んだ側だった。</li>
+          <li>4 つの修理は形が違う。入力を<strong>信じられないものから信じられるものに替える</strong>か、
+          その入力を渡せる側を<strong>テナントが入れない集合に狭める</strong>か、どちらもできないなら
+          <strong>被害を上限で縛る</strong>かである。</li>
+          <li>⚠️ <strong>GPU はシミュレーションであり、このガードは現在どの名前空間でも有効になっていない。</strong>
+          この記事が扱うのはアドミッションと信頼境界であって、装置の挙動ではない。</li>
+        </ul>
 
         <h2 id="nothing-stopped-it">最初は何も止めなかった<a class="anchor" href="#nothing-stopped-it" aria-label="このセクションへのリンク">#</a></h2>
 
@@ -323,12 +350,28 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
           高くつく」という部分までである。</li>
           <li><strong>4 件が全部という意味ではない。</strong>攻撃して見つかったのが 4 件で、攻撃していない表面は
           そのまま残っている。最初のガードがユニットスペック 10 個とライブケース 4 件を通過したという事実がその
-          理由だ — <strong>テストは自分が考えたことしか試さない。</strong></li>
+          理由である。<strong>テストは自分が考えたことしか試さない。</strong></li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul>
+          <li><strong><code>ownerReference</code> は主張であって事実ではない。</strong>要求者が書く値なので、
+          所有関係の証拠にはならない。</li>
+          <li><strong>誰でも付けられるアノテーションは免除ではない。</strong>免除を与えられる側を、
+          テナントが入れない集合に狭めて初めて免除になる。</li>
+          <li><strong>回収までの時間を被害者が選べるなら、回収は保証されていない。</strong>上限はガードが決める。</li>
+          <li><strong>テストは自分が考えたことしか試さない。</strong>最初のガードはユニットスペック 10 個と
+          ライブケース 4 件を通過しており、そのあと攻撃して 4 件出た。</li>
         </ul>
 
         <p>残る 1 行はこれである。<strong>保証を書くときは、その文がどの値に依存するのかを書き、その値を誰が
         書くのかをその隣に書かねばならない。</strong>テナントが書く値の上に建てた保証は、検査がどれほど正確でも
         そのフィールドで終わる。</p>
+
+        <p>お読みいただきありがとうございました。</p>
+        </div>
 
       </article>
     </main>
