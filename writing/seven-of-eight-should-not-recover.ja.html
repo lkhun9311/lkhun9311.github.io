@@ -161,6 +161,37 @@
         <p>これを検知の失敗と呼ぶと処方を誤ります。検知は失敗していない — ハートビートは届いていました。失敗していたのは
         <strong>誰の言葉を信じるかを決めていなかったこと</strong>です。</p>
 
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="sw-t sw-d" class="figure-svg">
+            <title id="sw-t">スイッチ障害が大量復旧に至った経路</title>
+            <desc id="sw-d">左から箱が四つ、灰色の矢印でつながります。一つ目はスイッチ障害、二つ目はコントローラ間通信の遮断、三つ目は孤立したコントローラの判断、四つ目は大量 Evacuate です。下にピンクでコンピュートは生きていたと書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">スイッチ障害</text>
+              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">Controller · DATA 遮断</text>
+              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#sw-a)"/>
+              <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">クォーラム崩壊</text>
+              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">合意不能</text>
+              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#sw-a)"/>
+              <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">孤立コントローラ</text>
+              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">コンピュートが死んだと判断</text>
+              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#sw-a)"/>
+              <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">大量 Evacuate</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">同じボリュームに二つ</text>
+              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">MGMT は正常 · ハートビートは到着中</text>
+            </g>
+            <defs>
+              <marker id="sw-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>切れたのは<strong>コントローラ間の通信</strong>で、コンピュートとの管理通信は生きていました。つまり「私は生きている」と「あれは死んだ」が<strong>同時に</strong>システム内にあり、既存ロジックは後者を採りました。</figcaption>
+        </figure>
+
         <h2 id="entitlement">検知を精緻にする代わりに、信号に資格を与えました<a class="anchor" href="#entitlement" aria-label="このセクションへのリンク">#</a></h2>
 
         <p>4 種類の信号に信頼度の等級と、より重要な<strong>役割</strong>を与えました。</p>
@@ -187,6 +218,40 @@
 
         <p>そこで原則をこう書きました。<strong>コンピュートが生きているかは、そのコンピュートだけが言えます。</strong>
         他の信号はその証言を補強するか、証言が届かなかったときに<em>なぜ届かなかったのか</em>を説明するために使います。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 314" role="img" aria-labelledby="sg-t sg-d" class="figure-svg">
+            <title id="sg-t">四種類の信号を信頼度の順に並べた梯子</title>
+            <desc id="sg-d">左に縦軸があり、上が高い信頼度、下が低い信頼度です。軸の右に箱が四つ、上から下へ並びます。エージェントのハートビート、コントローラのクォーラム、ネットワークのハートビート、外部到達性プローブの順です。箱ごとに右へ矢印が出て、その信号が証言できるものが書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <path d="M40 34 V 280" fill="none" stroke="#c9c9c9" stroke-width="1.4"/>
+              <text x="40" y="26" font-size="11" fill="#8a8a8a" text-anchor="middle">高い</text>
+              <text x="40" y="298" font-size="11" fill="#8a8a8a" text-anchor="middle">低い</text>
+              <rect x="64" y="48" width="248" height="40" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="188" y="73" font-size="11.5" fill="#4f5bd5" text-anchor="middle">エージェントのハートビート</text>
+              <path d="M318 68 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#sg-a)"/>
+              <text x="384" y="73" font-size="11.5" fill="#4a4a4a">コンピュートノードの実際の状態</text>
+              <rect x="64" y="104" width="248" height="40" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="188" y="129" font-size="11.5" fill="#4f5bd5" text-anchor="middle">コントローラのクォーラム</text>
+              <path d="M318 124 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#sg-a)"/>
+              <text x="384" y="129" font-size="11.5" fill="#4a4a4a">コントローラ群が合意できるか</text>
+              <rect x="64" y="160" width="248" height="40" rx="9" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="188" y="185" font-size="11.5" fill="#d62976" text-anchor="middle">ネットワークのハートビート</text>
+              <path d="M318 180 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#sg-a)"/>
+              <text x="384" y="185" font-size="11.5" fill="#4a4a4a">コントローラとコンピュートの接続</text>
+              <rect x="64" y="216" width="248" height="40" rx="9" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="188" y="241" font-size="11.5" fill="#8a8a8a" text-anchor="middle">外部到達性プローブ</text>
+              <path d="M318 236 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#sg-a)"/>
+              <text x="384" y="241" font-size="11.5" fill="#4a4a4a">コントローラ自身が孤立しているか</text>
+            </g>
+            <defs>
+              <marker id="sg-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>最後の行がこの設計のすべてです。外部到達性プローブは<strong>コントローラから外へ出る方向</strong>しか見ません。それでコンピュートの生死を判定すると、<strong>観測者の孤立を対象の障害として</strong>読むことになります。</figcaption>
+        </figure>
 
         <h2 id="two-questions">「障害か」と「いま実行してよいか」は別の問いです<a class="anchor" href="#two-questions" aria-label="このセクションへのリンク">#</a></h2>
 
@@ -217,6 +282,27 @@
         <p>この分離が即座に消した誤判定がひとつあります。<strong>ストレージ経路の障害を「コンピュートの障害」として
         読んでいたもの</strong>です。ストレージ条件は Phase 2 にあるので障害検知を汚染しません。ストレージが見えない
         ことはコンピュートが死んだ証拠ではなく、<em>いま復旧してはいけない</em>という証拠です。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="tq-t tq-d" class="figure-svg">
+            <title id="tq-t">一つの判定に混ざっていた二つの問いを分けた図</title>
+            <desc id="tq-d">箱が二つ並んでいます。左は障害かという問いで、下に根拠になりうる信号が並びます。右はいま実行してよいかという問いで、下にフェンシングとクォーラムとボリュームの状態が並びます。一番下にピンクで一つの判定に混ぜると互いを汚すと書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">障害か</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">エージェントのハートビートは切れたか</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">切れたならいつからか</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">別の信号がそれを説明するか</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">いま実行してよいか</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">フェンシングは可能か</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">コントローラはクォーラム内か</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">ボリュームを片側だけが掴んでいるか</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">一つの判定に混ぜると互いを汚す</text>
+            </g>
+          </svg>
+          <figcaption>既存の判定は二種類を<strong>一つの式</strong>に入れていました。分けてみると、8 シナリオのうち 7 つが右側で引っかかりました。<strong>障害ではあるが、いま実行してはいけない場合</strong>がそれだけ多かったということです。</figcaption>
+        </figure>
 
         <h2 id="seven-of-eight">8 つのうち 7 つ<a class="anchor" href="#seven-of-eight" aria-label="このセクションへのリンク">#</a></h2>
 
