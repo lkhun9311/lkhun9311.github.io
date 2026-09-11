@@ -76,7 +76,7 @@
           text_ja: "Connection 枯渇の記事を訂正しました。数字のない主張を Harness の実測に置き換え、まだ測っていないものは測っていないと書きました。" },
         { date: "2026-02-06", dateLabel: "Feb 6, 2026",
           text: "Started building a Kubernetes-native GPUaaS platform control plane.",
-          text_ko: "Kubernetes 기반 GPUaaS 플랫폼 Control Plane를 만들기 시작했습니다.",
+          text_ko: "Kubernetes 기반 GPUaaS 플랫폼 Control Plane을 만들기 시작했습니다.",
           text_ja: "Kubernetes ネイティブな GPUaaS プラットフォームのコントロールプレーンを作り始めました。" },
         { date: "2026-02-01", dateLabel: "Feb 1, 2026",
           text: "Built this technical homepage with GitHub Pages.",

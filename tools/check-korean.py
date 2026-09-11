@@ -55,6 +55,20 @@ GUARDED = {"락": r"(?<![가-힣])락(?![가-힣])|(?<![가-힣])락(?=[은을�
 # 「가르지 못합니다」를 쓰려다 「가릅니다」로 적으면 유보가 단정으로 바뀐다.
 TYPOS = {"가릅니다": "「가르지 못합니다」의 오기가 아닌지 보라"}
 
+# 규약 20-1 — 영어 낱말 뒤 조사는 **한국어 독음의 받침**을 따른다.
+# `Control Plane`은 「플레인」이라 받침 ㄴ → `Plane을`. `Backend`는 「백엔드」라 받침 없음 → `Backend를`.
+# 2026-09-11 에 `Plane를` 두 곳이 그대로 있었고, 규약 20(붙여 쓰기)은 이걸 못 본다.
+JOSA_CONS = ["Pool", "Console", "Plane", "Lock", "Connection", "Transaction", "Timeout",
+             "Arm", "Swap", "Plugin", "Stub", "Baseline", "Mutation", "Polling", "Pooling"]
+JOSA_VOWEL = ["Cache", "Thread", "Backend", "Client", "Instance", "Harness", "Worker",
+              "Executor", "Payload", "Loader", "Device", "Producer", "Monolith", "Cloud", "Pooler"]
+JOSA_BAD = ([(w, re.compile(r"(?<![A-Za-z])" + w + r"(를|는|가|와|로)(?![A-Za-z])"), "받침이 있으니 을·은·이·과·으로")
+             for w in JOSA_CONS] +
+            # ⚠️ `이` 는 주격조사이기도 하고 **서술격조사 이다**의 앞머리이기도 하다.
+            # 「Harness이고」·「Monolith이다」는 받침이 없어도 맞다. 뒤에 어미가 붙으면 건너뛴다.
+            [(w, re.compile(r"(?<![A-Za-z])" + w + r"(?:을|은|과|으로|이(?![고다며라었면야자든기런]))(?![A-Za-z])"),
+              "받침이 없으니 를·는·가·와·로") for w in JOSA_VOWEL])
+
 SKIP12 = "해당 없음"
 
 
@@ -130,6 +144,9 @@ def scan(path, fix=False):
     for w, hint in TYPOS.items():
         for m in re.finditer(re.escape(w), mid):
             found.append(("오기", mid[:m.start()].count("\n") + 1, "%s — %s" % (w, hint)))
+    for w, pat, hint in JOSA_BAD:
+        for m in re.finditer(pat, mid):
+            found.append(("20-1", mid[:m.start()].count("\n") + 1, "%s — %s" % (m.group(0), hint)))
 
     changed = False
     if fix:

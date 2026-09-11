@@ -59,7 +59,7 @@ var I18N = (function () {
       "home.about1": "Control Plane과 운영 신뢰성, Kubernetes 기반 플랫폼, 그리고 컴퓨트·스토리지·인증·관측을 다루는 실서비스 인터페이스를 중심으로 인프라 성격의 백엔드 시스템을 만듭니다.",
       "home.about2": "지금은 클라우드 백엔드 엔지니어링을 AI 인프라·추론 플랫폼·테넌트 거버넌스·워크로드 운영과 잇는 GPUaaS 프로젝트를 만들고 있습니다.",
       "home.highlights": "요즘 하는 일",
-      "home.hl1": "Kubernetes 기반 GPUaaS Control Plane를 만들고 있습니다.",
+      "home.hl1": "Kubernetes 기반 GPUaaS Control Plane을 만들고 있습니다.",
       "home.hl2": "GPU 스케줄링과 추론 서빙에 대한 노트를 씁니다.",
       "home.hl3": "AI 인프라 포트폴리오 프로젝트를 준비하고 있습니다.",
       "news.lead": "발행과 정정 기록입니다.",
