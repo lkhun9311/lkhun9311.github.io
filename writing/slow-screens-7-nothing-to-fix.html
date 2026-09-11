@@ -99,17 +99,17 @@
         <p>Hello. I write the backend of an internal cloud admin console. A report came in that monitoring was
         slow, so I reviewed three screens.</p>
 
-        <p><strong>The conclusion was “I could not find a case for changing anything.”</strong>
-        This part is about <strong>a review that decided to do nothing.</strong>
+        <p>The conclusion was “I could not find a case for changing anything.”
+        This part is about a review that decided to do nothing.
         ⚠️ That is a different sentence from “there was nothing to fix”, and the article keeps that
         distinction throughout.</p>
 
-        <blockquote><p>⚠️ <strong>This conclusion turned out to be wrong.</strong>
+        <blockquote><p>⚠️ This conclusion turned out to be wrong.
         Measuring first data on the same screen again gave <strong>6.8 seconds</strong>, and adding a cache in
         the very place this article declined to put one brought it to <strong>23 ms</strong>. What I had failed
         to measure is written up in
         <a href="monitoring-the-screen-i-said-not-to-fix.html">“The Screen I Said Not to Fix Took 6.8 Seconds”</a>.
-        The text below <strong>stays as it was written.</strong></p></blockquote>
+        The text below stays as it was written.</p></blockquote>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -126,29 +126,29 @@
           already fixed in <a href="slow-screens-4-client-per-loop.html">part four</a>, and for the rest
           <strong>nothing came up that would justify a change.</strong> ⚠️ That is not the same sentence as
           “there was nothing to fix”.</li>
-          <li><strong>No further cache went in.</strong> Where one would have gone
-          <strong>there was little to save</strong>, and putting a cache there
-          <strong>buys staleness and complexity instead.</strong></li>
-          <li><strong>One setting that looked excessive was left alone deliberately.</strong> The query window was
+          <li>No further cache went in. Where one would have gone
+          there was little to save, and putting a cache there
+          buys staleness and complexity instead.</li>
+          <li>One setting that looked excessive was left alone deliberately. The query window was
           wider than needed, and narrowing it made the graph flicker.</li>
-          <li>⚠️ <strong>And I never ran a load test.</strong> I judged from the code that the usual scenario would
-          produce a flat graph on this architecture, and <strong>did not confirm it by running one.</strong></li>
-          <li>A review that ends in “do nothing” is <strong>hard to check afterwards.</strong> Nothing was done, so
+          <li>⚠️ And I never ran a load test. I judged from the code that the usual scenario would
+          produce a flat graph on this architecture, and did not confirm it by running one.</li>
+          <li>A review that ends in “do nothing” is hard to check afterwards. Nothing was done, so
           there is nothing to compare. That part is in here too.</li>
         </ul>
 
-        <p><strong>This is an internal product, so neither the code nor the screens are reproduced as they
-        are.</strong> Product names, customers and internal addresses are gone; only the structure and the
+        <p>This is an internal product, so neither the code nor the screens are reproduced as they
+        are. Product names, customers and internal addresses are gone; only the structure and the
         configured values stay.</p>
 
         <h2 id="what-was-reviewed">What was reviewed<a class="anchor" href="#what-was-reviewed" aria-label="Link to this section">#</a></h2>
 
         <p>There are three monitoring screens: <strong>dashboard</strong>, <strong>physical resources</strong>
-        and <strong>virtual resources</strong>. All three read values from a time-series store and draw
+        and virtual resources. All three read values from a time-series store and draw
         graphs.</p>
 
         <p>“It is slow” arrives without distinguishing between them. So the first job was
-        <strong>working out which stretch of which screen was slow.</strong></p>
+        working out which stretch of which screen was slow.</p>
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
@@ -262,12 +262,12 @@
         </figure>
 
         <blockquote><p>Turning “go outside on every request” into “fill it in advance in the background”
-        <strong>takes the waiting out of request handling.</strong> For these two, that change was already
+        takes the waiting out of request handling. For these two, that change was already
         done.</p></blockquote>
 
-        <p>Before that it was <strong>a loop that slept.</strong> Code that slept briefly inside a loop and checked
-        again; earlier work had already removed it. This review looked at <strong>the state after
-        that.</strong></p>
+        <p>Before that it was a loop that slept. Code that slept briefly inside a loop and checked
+        again; earlier work had already removed it. This review looked at the state after
+        that.</p>
 
         <h2 id="no-more-cache">So no further cache went in<a class="anchor" href="#no-more-cache" aria-label="Link to this section">#</a></h2>
 
@@ -275,9 +275,9 @@
         too?” is the natural next thought.</p>
 
         <p>But that computation runs <strong>once every 15 seconds.</strong> And however many screens are open,
-        <strong>it runs once.</strong> One result is built and the same value goes to every open screen.
+        it runs once. One result is built and the same value goes to every open screen.
         On the read side it pulls six measurements from the time-series store
-        <strong>in a single query.</strong></p>
+        in a single query.</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">Scroll sideways to see the rest</p>
@@ -293,15 +293,15 @@
         </table>
         </div>
         </div>
-        <p class="table-note">The left column has <strong>one row</strong>, and that row runs once per 15 seconds.
-        ⚠️ <strong>This is not a measurement of “cheap”.</strong> Looking at the frequency and the structure,
-        I judged <strong>there was little to save.</strong> How many milliseconds that computation takes, or how
+        <p class="table-note">The left column has one row, and that row runs once per 15 seconds.
+        ⚠️ This is not a measurement of “cheap”. Looking at the frequency and the structure,
+        I judged there was little to save. How many milliseconds that computation takes, or how
         much CPU it uses, was never measured. As
         <a href="slow-screens-4-client-per-loop.html">part four</a> says, frequency alone does not settle
         cost.</p>
 
-        <blockquote><p><strong>Put a cache where there is little to save and you get more to handle than you
-        gain.</strong> A cache is a tool for making expensive things cheap. Here I could not find evidence that
+        <blockquote><p>Put a cache where there is little to save and you get more to handle than you
+        gain. A cache is a tool for making expensive things cheap. Here I could not find evidence that
         it was expensive, so none went in.</p></blockquote>
 
         <h2 id="the-wide-window">An excessive-looking setting, left deliberately<a class="anchor" href="#the-wide-window" aria-label="Link to this section">#</a></h2>
@@ -309,12 +309,12 @@
         <p>Something caught my eye during the review. Drawing the graph read <strong>the last 180 seconds.</strong>
         On a screen that refreshes every 15 seconds, 180 is <strong>twelve times wider.</strong></p>
 
-        <p>I started narrowing it and stopped. <strong>Narrowing makes the graph flicker.</strong> If collection
+        <p>I started narrowing it and stopped. Narrowing makes the graph flicker. If collection
         runs a beat late or misses once, the window holds no points at all, and the graph briefly shows
         “no data” before coming back.</p>
 
-        <blockquote><p>A wide window <strong>keeps the graph from emptying when a value briefly does not
-        arrive.</strong> ⚠️ The cost of keeping it wide <strong>was not measured.</strong> I saw the flicker
+        <blockquote><p>A wide window keeps the graph from emptying when a value briefly does not
+        arrive. ⚠️ The cost of keeping it wide was not measured. I saw the flicker
         when it was narrowed; what a wide window costs, I do not know. The internal record only says
         “excessive but cheap”.</p></blockquote>
 
@@ -352,7 +352,7 @@
           window.</figcaption>
         </figure>
 
-        <p>I left it. <strong>A value that looks excessive is sometimes preventing something</strong>, and this was
+        <p>I left it. A value that looks excessive is sometimes preventing something, and this was
         one of those.</p>
 
         <h2 id="no-load-test">No load test was run<a class="anchor" href="#no-load-test" aria-label="Link to this section">#</a></h2>
@@ -366,10 +366,10 @@
         writing the result out to each connection grows with the number of connections. And a scenario where
         each user opens the screen afresh runs the initial load that many times too.</p>
 
-        <blockquote><p>⚠️ <strong>This is a prediction.</strong> I judged from the structure of the code that it
-        would come out that way, and <strong>did not confirm it by running anything.</strong></p></blockquote>
+        <blockquote><p>⚠️ This is a prediction. I judged from the structure of the code that it
+        would come out that way, and did not confirm it by running anything.</p></blockquote>
 
-        <p>The axis that would mean something is not concurrent users but <strong>the number of projects</strong>,
+        <p>The axis that would mean something is not concurrent users but the number of projects,
         and the record says so. ⚠️ It says so and nothing was measured.</p>
 
         <h2 id="hard-to-check">A review that ends in “do nothing” is hard to check<a class="anchor" href="#hard-to-check" aria-label="Link to this section">#</a></h2>
@@ -380,12 +380,12 @@
         compare.</strong> Whether nothing happened because no cache went in, or whether something better was
         missed by not adding one, <strong>this review cannot tell.</strong></p>
 
-        <p>So what was done was <strong>looking at the same thing twice, separately.</strong> The record says only
-        “two independent reviews, conclusions converged”. ⚠️ <strong>Who asked what, and when, is not
-        recorded</strong>; what survives is that it was looked at twice and the conclusion was the same.</p>
+        <p>So what was done was looking at the same thing twice, separately. The record says only
+        “two independent reviews, conclusions converged”. ⚠️ Who asked what, and when, is not
+        recorded; what survives is that it was looked at twice and the conclusion was the same.</p>
 
-        <blockquote><p>Even so this is <strong>a review, not a measurement.</strong> Looking twice and agreeing does
-        not make it right. <strong>If it is wrong, it is wrong the same way twice.</strong></p></blockquote>
+        <blockquote><p>Even so this is a review, not a measurement. Looking twice and agreeing does
+        not make it right. If it is wrong, it is wrong the same way twice.</p></blockquote>
 
         <h2 id="limits">Limits: what this article does not claim<a class="anchor" href="#limits" aria-label="Link to this section">#</a></h2>
 
@@ -393,14 +393,14 @@
           <li><strong>There is no record of a load test being run.</strong> “Flat however many users you add”
           is <strong>a prediction from reading the code</strong>, not an observation. No sentence in this
           article cites a load-test result.</li>
-          <li><strong>“Little to save” is not a measured figure.</strong> The basis is
-          <strong>frequency and structure</strong> — once per 15 seconds, independent of viewer count.
+          <li>“Little to save” is not a measured figure. The basis is
+          frequency and structure — once per 15 seconds, independent of viewer count.
           How many milliseconds that computation takes, I do not know.</li>
-          <li><strong>“A wide window is not much more expensive” is not measured either.</strong> The flicker
+          <li>“A wide window is not much more expensive” is not measured either. The flicker
           on narrowing is something I saw; the cost of keeping it wide was never measured.</li>
-          <li><strong>This is a judgement made at one point in time.</strong> With more resources or more
+          <li>This is a judgement made at one point in time. With more resources or more
           screens the same review could reach a different conclusion.</li>
-          <li><strong>I cannot prove that not adding a cache was better than adding one.</strong> Nothing was
+          <li>I cannot prove that not adding a cache was better than adding one. Nothing was
           done, so there is nothing to compare it against. This article carries that limit.</li>
         </ul>
 
@@ -415,17 +415,17 @@
           <li><strong>A cache is a tool for making expensive things cheap.</strong> Put one where there is
           little to save and you keep the staleness and the complexity; leave one unread and it is worse than
           none.</li>
-          <li><strong>What was not measured gets written down as not measured.</strong> Two of these seven
+          <li>What was not measured gets written down as not measured. Two of these seven
           parts have no before-and-after figures, and each says so in its own text.</li>
-          <li><strong>Deciding not to change something still needs a reason.</strong> And that decision is
+          <li>Deciding not to change something still needs a reason. And that decision is
           harder to check afterwards than one that changed something.</li>
         </ul>
 
         <p>If one line survives, this one:
-        <strong>half of performance work is not finding what to fix but ruling out what does not need
-        fixing.</strong> That is what this review actually did.</p>
+        half of performance work is not finding what to fix but ruling out what does not need
+        fixing. That is what this review actually did.</p>
 
-        <p>One part is left, and it is about the <strong>instrument</strong> that produced those tables
+        <p>One part is left, and it is about the instrument that produced those tables
         (<a href="slow-screens-8-load-test-harness.html">part eight</a>). Thank you for reading.</p>
         </div>
 

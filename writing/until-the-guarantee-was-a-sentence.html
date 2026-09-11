@@ -96,12 +96,12 @@
       <article class="article-body">
 
         <p><strong>Scope.</strong> A record of a <strong>pre-launch privacy review</strong> of a personal project
-        (a social polling platform, Kotlin · Spring Boot). <strong>No attack was ever observed</strong>; every defect here
-        was found by attacking my own code. k=5 and the threshold of 30 are <strong>estimates, not measurements</strong>
+        (a social polling platform, Kotlin · Spring Boot). No attack was ever observed; every defect here
+        was found by attacking my own code. k=5 and the threshold of 30 are estimates, not measurements
         — the instrumentation is wired but real traffic has not run through it.</p>
 
         <p>This track consumed five tickets and still would not end. Each fix sent the full review off to find
-        another one. What ended it was not a sixth repair but <strong>writing the guarantee as a sentence</strong>.</p>
+        another one. What ended it was not a sixth repair but writing the guarantee as a sentence.</p>
 
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
@@ -117,12 +117,12 @@
         <ul>
           <li>A polling app publishes results as totals, per option, and by gender, age, region and trend.
           I found the places a person could be re-identified <strong>by attacking my own code.</strong></li>
-          <li>The defence was <strong>min-n</strong> (suppress a cell under five people), but it was
-          <strong>wired to the demographic axes only, and the time axis arrived later.</strong></li>
-          <li>A defence written per axis <strong>breaks automatically when an axis is added.</strong>
+          <li>The defence was min-n (suppress a cell under five people), but it was
+          wired to the demographic axes only, and the time axis arrived later.</li>
+          <li>A defence written per axis breaks automatically when an axis is added.
           Plugging one cell at a time has no end.</li>
           <li>The track ate five tickets and still did not close. What closed it was not a sixth repair but
-          <strong>writing the guarantee as one sentence.</strong></li>
+          writing the guarantee as one sentence.</li>
           <li>⚠️ No real attack was ever observed, and <strong>k=5 and the threshold of 30 are estimates,
           not measurements.</strong> This is not differential privacy.</li>
         </ul>
@@ -136,18 +136,18 @@
         <p>But min-n was applied <strong>only to the gender, age and region axes</strong>. The trend results went
         through no suppression at all.</p>
 
-        <p>Why that leaks: <strong>the difference between adjacent intervals is one person's vote.</strong> If a single
+        <p>Why that leaks: the difference between adjacent intervals is one person's vote. If a single
         vote lands in an interval, the delta is 1, and the graph draws which option it was. Polling at eight seconds
-        hands that over <strong>in real time</strong>.</p>
+        hands that over in real time.</p>
 
-        <p>Generalised: <strong>a defence written "per dimension" breaks open the moment a dimension is added.</strong>
+        <p>Generalised: a defence written "per dimension" breaks open the moment a dimension is added.
         min-n was designed to protect the demographic axes; the time axis came later. The defence belongs not on a
-        dimension but on <strong>the whole publication function</strong>. So the repair's scope became the serving of
-        option counts and totals <strong>in full</strong>, not "the chart screen".</p>
+        dimension but on the whole publication function. So the repair's scope became the serving of
+        option counts and totals in full, not "the chart screen".</p>
 
         <p>One distinction was set down here. The product side accepting residual risk — "we can't guarantee this for
-        quiet polls" — is a legitimate <strong>decision</strong>. A signed constraint that came undone with no record is
-        an <strong>accident</strong>. Blur the two and the next regression gets swallowed as
+        quiet polls" — is a legitimate decision. A signed constraint that came undone with no record is
+        an accident. Blur the two and the next regression gets swallowed as
         <em>"a risk we already accepted".</em></p>
 
         <figure class="diagram">
@@ -181,7 +181,7 @@
               </marker>
             </defs>
           </svg>
-          <figcaption>Write the defence <strong>per axis</strong> and a new axis arrives with nothing on it. The time axis came in with the trend graph, and <strong>nobody wired min-n to it at the same time.</strong></figcaption>
+          <figcaption>Write the defence <strong>per axis</strong> and a new axis arrives with nothing on it. The time axis came in with the trend graph, and nobody wired min-n to it at the same time.</figcaption>
         </figure>
 
         <h2 id="delay-is-the-defence">Delay is not a cost, it is the defence<a class="anchor" href="#delay-is-the-defence" aria-label="Link to this section">#</a></h2>
@@ -191,16 +191,16 @@
         <blockquote><p><strong>Publication granularity = cache TTL.</strong> They are the same parameter.</p></blockquote>
 
         <p>Normally "results appear T seconds late" is a <strong>cost</strong> you absorb. But under a time-axis
-        differencing attack, <strong>T is the size of the anonymity set</strong>. If m votes gather inside T, individual
+        differencing attack, T is the size of the anonymity set. If m votes gather inside T, individual
         exposure falls roughly as <code>e^(−m)</code> — 37% at m=1, 5% at m=3, 0.7% at m=5.</p>
 
-        <p>So the batching you introduce to cut server load <strong>is the defence itself</strong>. It is a rare case of
+        <p>So the batching you introduce to cut server load is the defence itself. It is a rare case of
         one knob serving two purposes, which means that when someone later says "let's shorten the TTL for
-        performance", that is not a performance decision but a <strong>security decision</strong>. That is why the
+        performance", that is not a performance decision but a security decision. That is why the
         equivalence was written into the decision record.</p>
 
-        <p>One variant was rejected — <strong>a variable T</strong> that widens the window when traffic is low. The
-        update period itself becomes an <strong>arrival-rate side channel</strong>, telling an observer "this poll is
+        <p>One variant was rejected — a variable T that widens the window when traffic is low. The
+        update period itself becomes an arrival-rate side channel, telling an observer "this poll is
         quiet". A fixed T it is.</p>
 
         <h2 id="stopping-condition">It took five tickets to ask for a stopping condition<a class="anchor" href="#stopping-condition" aria-label="Link to this section">#</a></h2>
@@ -210,37 +210,37 @@
         <em>at all</em> → the trend carries exact per-bucket counts → the author dashboard is live → the quote card goes
         straight to live.</p>
 
-        <p><strong>Every one of them was a real defect and every one was worth fixing.</strong> The problem is that the
+        <p>Every one of them was a real defect and every one was worth fixing. The problem is that the
         track self-multiplies. Each fix sends the full review off to find another.</p>
 
         <p>At the fifth, a reviewer demanded a closing condition — this is ticket five out of a twelve-week schedule,
         and not closing here keeps eating the time needed to validate whether "vote → chart → share" is even fun. And
-        the person who put a finger on it was the product side. <strong>"Why not just set the goal?"</strong></p>
+        the person who put a finger on it was the product side. "Why not just set the goal?"</p>
 
         <p>Written out, it came to two sentences.</p>
 
         <ul>
           <li><strong>G2 — what is true now.</strong> The published total, options and demographic axes are always a
           single consistent snapshot, and a delta requires ≥k movers.</li>
-          <li><strong>G1 — the goal.</strong> No change in <strong>any</strong> value observable by a non-author can
+          <li><strong>G1 — the goal.</strong> No change in any value observable by a non-author can
           occur without ≥k people.</li>
         </ul>
 
-        <p><strong>Computing G1 − G2 gave exactly two items</strong> — trend granularity and the author's live channel.
+        <p>Computing G1 − G2 gave exactly two items — trend granularity and the author's live channel.
         Not new research: two repairs already sitting in the backlog. "Accept it and close" turned into
-        <strong>"do these two and it becomes true"</strong>, and at that moment the stopping condition became
-        <strong>verifiable</strong>.</p>
+        "do these two and it becomes true", and at that moment the stopping condition became
+        verifiable.</p>
 
-        <p>That is the most portable procedure in this article. <strong>Digging for residual leaks has no stopping
-        condition.</strong> Writing the goal as a sentence is what makes the remaining work finite.</p>
+        <p>That is the most portable procedure in this article. Digging for residual leaks has no stopping
+        condition. Writing the goal as a sentence is what makes the remaining work finite.</p>
 
         <h2 id="a-guarantee-that-deletes-the-feature">A guarantee that deletes the feature if you meet it<a class="anchor" href="#a-guarantee-that-deletes-the-feature" aria-label="Link to this section">#</a></h2>
 
         <p>G1 contained a clause: <em>"≥5 people in each changed trend bucket."</em> Honouring it literally means
         delaying each bucket's update until it has gathered a delta of 5.</p>
 
-        <p>That is where it breaks. <strong>The delta of a past bucket is monotonically decreasing.</strong> New votes
-        carry <code>created_at = now()</code> and land <strong>only in the tail bucket</strong>; past buckets shrink
+        <p>That is where it breaks. The delta of a past bucket is monotonically decreasing. New votes
+        carry <code>created_at = now()</code> and land only in the tail bucket; past buckets shrink
         only through cancellations and switch-aways. So a past bucket <strong>can never reach 5.</strong> A single
         cancellation holds the trend hostage until the poll closes.</p>
 
@@ -248,20 +248,20 @@
         along the time axis. <strong>G1 was not an unachievable sentence; it was a sentence that, if achieved, deletes
         the feature.</strong></p>
 
-        <p>So it was <strong>lowered to G1′</strong>. One discipline was kept while lowering it —
-        <strong>state what the lowered line still blocks.</strong></p>
+        <p>So it was lowered to G1′. One discipline was kept while lowering it —
+        state what the lowered line still blocks.</p>
 
         <ul>
-          <li>On a poll of any size, recovering one vote from the time axis is <strong>structurally impossible</strong></li>
-          <li>If the gate is not passed, the trend <strong>does not update</strong></li>
-          <li>Option counts cannot be derived <strong>exactly</strong> from the trend</li>
+          <li>On a poll of any size, recovering one vote from the time axis is structurally impossible</li>
+          <li>If the gate is not passed, the trend does not update</li>
+          <li>Option counts cannot be derived exactly from the trend</li>
         </ul>
 
-        <p>And <strong>what is accepted</strong> was written down alongside it — inverting the rounding on
+        <p>And what is accepted was written down alongside it — inverting the rounding on
         small-sample polls.</p>
 
         <p>"I lowered the guarantee" is a sentence nobody wants to write. But not writing it leaves behind
-        <strong>a sentence nobody keeps</strong>.</p>
+        a sentence nobody keeps.</p>
 
         <h2 id="occupancy-vs-difference">An occupancy constraint does not imply a difference constraint<a class="anchor" href="#occupancy-vs-difference" aria-label="Link to this section">#</a></h2>
 
@@ -375,16 +375,16 @@
         <p>At t1, twelve buckets holding five votes each (sixty in total) means <strong>every bucket absolutely
         satisfies min-n.</strong> Move a few votes from there and the <strong>per-bucket delta is 1</strong>.</p>
 
-        <p>"At least min-n votes per bucket" is an <strong>occupancy</strong> constraint within a single snapshot, and
-        what leaks is the <strong>delta</strong> between two of them. <strong>A static constraint does not imply a
-        difference constraint.</strong></p>
+        <p>"At least min-n votes per bucket" is an occupancy constraint within a single snapshot, and
+        what leaks is the delta between two of them. A static constraint does not imply a
+        difference constraint.</p>
 
-        <p>And this was <strong>the same inequality error recurring</strong>. The error that produced an earlier ticket
+        <p>And this was the same inequality error recurring. The error that produced an earlier ticket
         in this very track was <em>"≥k people in the batch, therefore ≥min-n per bucket"</em> — and the prescription
         reproduced it in the same place. The reviewer conceded, and the ruling that another ticket would be absorbed
         into this prescription was withdrawn with it.</p>
 
-        <p>What was adopted instead was turning the trend volume into a <strong>rounded integer share</strong>. It was
+        <p>What was adopted instead was turning the trend volume into a rounded integer share. It was
         the one field on the publication path that passed through neither rounding nor suppression.</p>
 
         <figure class="diagram">
@@ -405,39 +405,39 @@
               <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">the leak is on the right</text>
             </g>
           </svg>
-          <figcaption>Each snapshot can be <strong>true on its own</strong> while the <strong>difference</strong> between them points at one person. An occupancy constraint does not imply a constraint on the difference.</figcaption>
+          <figcaption>Each snapshot can be <strong>true on its own</strong> while the difference between them points at one person. An occupancy constraint does not imply a constraint on the difference.</figcaption>
         </figure>
 
         <h2 id="the-facts-a-review-rests-on">The facts the review rested on were wrong<a class="anchor" href="#the-facts-a-review-rests-on" aria-label="Link to this section">#</a></h2>
 
         <p>The same prescription came with a review note attached: <em>"the app only uses relative height, so the
         product cost is zero."</em> Checking it, that was <strong>wrong.</strong> The crosshair was printing
-        <strong>exact counts on screen</strong> as <code>{vol} votes</code>. It was fixed to <code>N% of votes</code>
+        exact counts on screen as <code>{vol} votes</code>. It was fixed to <code>N% of votes</code>
         along with the rest.</p>
 
         <p>The instruction about the denominator was not followed either. Using the snapshot's total votes as the
         denominator makes <strong>the row sum exceed the number of people on multi-select polls, so the figure goes
         past 100%.</strong></p>
 
-        <blockquote><p>A review note is valid <strong>on the design and code as they stood at that moment</strong>. The
+        <blockquote><p>A review note is valid on the design and code as they stood at that moment. The
         facts it rests on have to be checked directly.</p></blockquote>
 
         <p>The same lesson came up twice that day. One of three other prescriptions was <em>"no 'real-time' wording on
-        an axis before close"</em>. Going to do it and grepping, <strong>there was no such copy.</strong> It had already
-        been removed at the user's request. Without checking, I would have <strong>fixed a problem that did not
-        exist.</strong></p>
+        an axis before close"</em>. Going to do it and grepping, there was no such copy. It had already
+        been removed at the user's request. Without checking, I would have fixed a problem that did not
+        exist.</p>
 
         <h2 id="the-disproof-run">The disproof run caught my own measurement first<a class="anchor" href="#the-disproof-run" aria-label="Link to this section">#</a></h2>
 
         <p>Before declaring G1′, <strong>it was run once for real</strong> — this repo carries "do not write a proof you
         did not run" as a rule.</p>
 
-        <p><strong>The first run came back FAIL.</strong> But it was not a defect; it was <strong>my measurement that
-        was wrong</strong>. The baseline was taken as the <strong>live</strong> state at observation time rather than the
+        <p>The first run came back FAIL. But it was not a defect; it was my measurement that
+        was wrong. The baseline was taken as the live state at observation time rather than the
         state at publication. The published value was 10 while live stood at 13, and that is what got measured.</p>
 
-        <blockquote><p>A transition between published snapshots has to be measured <strong>published against
-        published</strong>.</p></blockquote>
+        <blockquote><p>A transition between published snapshots has to be measured published against
+        published.</p></blockquote>
 
         <p>The actual output after the correction:</p>
 
@@ -451,9 +451,9 @@ check 3  n=15      1 vote = 6.67%  &gt; 1% rounding  → identifiable  ← the a
 
         <p><strong>Check 3 showing both sides</strong> is what the procedure is worth. G1′'s sentence "it only wins
         at scale" became a number, and the residual I chose to accept was confirmed to be
-        <strong>exactly that size</strong>. Observed, not estimated.</p>
+        exactly that size. Observed, not estimated.</p>
 
-        <p>Before and after were then captured <strong>from the same data</strong>. The pre-work commit was checked out
+        <p>Before and after were then captured from the same data. The pre-work commit was checked out
         into a separate worktree, built, and run again against the same poll and the same data. Here is the trend volume
         of a 2,411-vote poll.</p>
 
@@ -464,9 +464,9 @@ after    trendVolume = [100,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         <p>Where a <code>1</code> stood there is now a <code>0</code>. One vote is 0.04%, which falls below the rounding
         — <em>"it only wins at scale"</em> is that number.</p>
 
-        <p>Coverage was recorded honestly. <strong>Only one published pair was checked</strong>, and the age and region
+        <p>Coverage was recorded honestly. Only one published pair was checked, and the age and region
         axes were empty at n=15 under min-n suppression, so they were not subject to differencing. Repeated runs
-        including axis differences were <strong>not performed</strong>.</p>
+        including axis differences were not performed.</p>
 
         <h2 id="three-reviewers-agreed">Three reviewers agreed and were wrong together<a class="anchor" href="#three-reviewers-agreed" aria-label="Link to this section">#</a></h2>
 
@@ -478,28 +478,28 @@ after    trendVolume = [100,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
         <ul>
           <li><strong>A stronger live channel was already on the same screen.</strong> Card opens and landing views go
-          to the author with no time-window gate. They rise <strong>the moment the card is opened</strong>, which is an
+          to the author with no time-window gate. They rise the moment the card is opened, which is an
           earlier signal than a vote. I had accepted that and fixed only the thing next to it.</li>
-          <li><strong>I did not apply my own reasoning from the same document.</strong> The grounds for accepting
+          <li>I did not apply my own reasoning from the same document. The grounds for accepting
           residual risk on another item were "it reduces to audience≈1, so the marginal contribution is zero" — and this
           item reduces the same way. I applied the same reduction to one and not the other.</li>
-          <li><strong>This app has no people graph.</strong> "Sharing with a few acquaintances" is
-          <strong>not even addressable</strong>, and all sharing happens outside the app. Who it was sent to is always
+          <li>This app has no people graph. "Sharing with a few acquaintances" is
+          not even addressable, and all sharing happens outside the app. Who it was sent to is always
           knowledge that lives outside the app.</li>
         </ul>
 
-        <blockquote><p>What the app protects is <strong>the anonymity of the choice</strong>, not the secrecy of
+        <blockquote><p>What the app protects is the anonymity of the choice, not the secrecy of
         participation. I drew that line in the wrong place.</p></blockquote>
 
-        <p>The part that matters most is that this measure went in on <strong>the agreement of three reviewers</strong>.
-        All three shared <strong>the same premise</strong> — that the author shares to specific people — and
-        <strong>all three were wrong together.</strong></p>
+        <p>The part that matters most is that this measure went in on the agreement of three reviewers.
+        All three shared the same premise — that the author shares to specific people — and
+        all three were wrong together.</p>
 
-        <blockquote><p><strong>Reviews converging does not make them right. If the premise is shared, they are wrong
-        together.</strong></p></blockquote>
+        <blockquote><p>Reviews converging does not make them right. If the premise is shared, they are wrong
+        together.</p></blockquote>
 
         <p>What broke the premise was someone who knew the product's conditions. Which is why reviewers have to be asked
-        <strong>with the premise stated</strong> — spelled out as "this judgement rests on targeted sharing being
+        with the premise stated — spelled out as "this judgement rests on targeted sharing being
         possible".</p>
 
         <h2 id="what-this-does-not-claim">What this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
@@ -508,18 +508,18 @@ after    trendVolume = [100,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
           <li><strong>k=5 and the threshold of 30 are not measurements.</strong> They need real traffic; only the
           instrumentation is wired. The threshold of 30 was <strong>demoted to a heuristic</strong> with its conditions
           attached — "assuming a uniform distribution and two options".</li>
-          <li><strong>No attack was ever observed.</strong> Every defect here was found by attacking my own code.</li>
-          <li><strong>The coverage is narrow.</strong> The disproof procedure checked a single published pair, and
+          <li>No attack was ever observed. Every defect here was found by attacking my own code.</li>
+          <li>The coverage is narrow. The disproof procedure checked a single published pair, and
           repeated runs including axis differences were not done.</li>
-          <li><strong>This is not a claim of differential privacy.</strong> What is here is suppression, rounding and
-          batched updates — not a formal guarantee but <strong>a guarantee written as a sentence</strong>.</li>
-          <li><strong>The chilling-effect argument was dropped.</strong> The most persuasive-looking sentence in my case
-          was <strong>an unmeasured claim</strong>. Rest an argument on it and the whole thing falls when the next person
+          <li>This is not a claim of differential privacy. What is here is suppression, rounding and
+          batched updates — not a formal guarantee but a guarantee written as a sentence.</li>
+          <li>The chilling-effect argument was dropped. The most persuasive-looking sentence in my case
+          was an unmeasured claim. Rest an argument on it and the whole thing falls when the next person
           pushes back. It is stronger without it.</li>
-          <li><strong>Some things were not done.</strong> "Hide stale axes" was not done — a freshness label already
-          closes the misreading, and hiding creates a <strong>new threshold</strong>: how stale is stale enough to hide?
-          That cannot be set without measurement. <strong>Writing down why something was not done matters more than not
-          doing it.</strong></li>
+          <li>Some things were not done. "Hide stale axes" was not done — a freshness label already
+          closes the misreading, and hiding creates a new threshold: how stale is stale enough to hide?
+          That cannot be set without measurement. Writing down why something was not done matters more than not
+          doing it.</li>
         </ul>
 
         <div class="wrapup">
@@ -528,17 +528,17 @@ after    trendVolume = [100,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         <ul>
           <li><strong>Defend per axis and the next axis breaks it.</strong> The defence belongs on
           <strong>everything an outsider can observe</strong>, not on one axis at a time.</li>
-          <li><strong>A per-snapshot constraint does not imply a constraint on the difference.</strong>
+          <li>A per-snapshot constraint does not imply a constraint on the difference.
           True in every snapshot, still leaking between two of them.</li>
-          <li><strong>The batch that delays publication is itself the defence.</strong> A knob added to cut
+          <li>The batch that delays publication is itself the defence. A knob added to cut
           server load was setting the size of the anonymity set.</li>
-          <li><strong>Recording why something was not done matters more than not doing it.</strong> An argument
+          <li>Recording why something was not done matters more than not doing it. An argument
           you never measured makes the case stronger by being removed.</li>
         </ul>
 
-        <p>The line that remains is this. <strong>The track did not end until the guarantee was a sentence.</strong>
+        <p>The line that remains is this. The track did not end until the guarantee was a sentence.
         Digging for residual leaks has no stopping condition, and the stopping condition comes from a
-        <strong>sentence</strong>, not from a list of defects.</p>
+        sentence, not from a list of defects.</p>
 
         <p>Thank you for reading.</p>
         </div>

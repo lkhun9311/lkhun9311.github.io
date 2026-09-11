@@ -95,7 +95,7 @@
 
         <p><strong>Scope.</strong> In March 2026 I redesigned instance-HA failure handling for an
         OpenStack-based private cloud product. I do not name the product, its version, the customer, or ticket
-        numbers. <strong>The deliverable was a design document; another engineer took the implementation.</strong>
+        numbers. The deliverable was a design document; another engineer took the implementation.
         So there is no "this shipped and misjudgements fell by N" measurement here. What there is is a
         decision procedure, and the result of running every scenario through it.</p>
 
@@ -104,8 +104,8 @@
         Nova evacuate — bringing the same VM up on another node. If the original is still alive when the copy
         attaches to the same volume, both write to it.</p>
 
-        <p>The redesign did not make detection sharper. It decided <strong>which signal is entitled to testify
-        to what</strong> — and once eight scenarios were judged against that, exactly one of them was safe to
+        <p>The redesign did not make detection sharper. It decided which signal is entitled to testify
+        to what — and once eight scenarios were judged against that, exactly one of them was safe to
         recover.</p>
 
 
@@ -125,10 +125,10 @@
           <li>If the original is still alive when the copy attaches to the same volume,
           <strong>both write at once.</strong> That is when recovery costs more than the failure.</li>
           <li>Detection did not fail. The compute nodes kept saying "I am alive." What failed was
-          <strong>never deciding whose word to believe.</strong></li>
-          <li>So instead of sharpening detection I first decided <strong>what each signal is entitled to
-          testify to</strong>. Judged against that, one of eight scenarios should recover.</li>
-          <li>⚠️ <strong>The deliverable was a design document; a teammate took the implementation.</strong>
+          never deciding whose word to believe.</li>
+          <li>So instead of sharpening detection I first decided what each signal is entitled to
+          testify to. Judged against that, one of eight scenarios should recover.</li>
+          <li>⚠️ The deliverable was a design document; a teammate took the implementation.
           So there is no after-the-fact measurement here saying failures went down.</li>
         </ul>
 
@@ -148,21 +148,21 @@
             <tr><td>MGMT</td><td>controller ↔ compute management traffic</td><td><strong>up</strong></td></tr>
             <tr><td>DATA</td><td>VM data traffic</td><td>cut</td></tr>
             <tr><td>Controller</td><td>controller ↔ controller traffic</td><td>cut</td></tr>
-            <tr><td>BMC</td><td>fencing (IPMI)</td><td><strong>did not exist</strong></td></tr>
+            <tr><td>BMC</td><td>fencing (IPMI)</td><td>did not exist</td></tr>
           </tbody>
         </table>
         </div>
         </div>
 
         <p>When controllers cannot reach each other, quorum collapses, and some controller decides
-        <strong>on its own</strong> that a compute node is dead. Meanwhile MGMT was up, so
-        <strong>that compute node's agent heartbeat was arriving normally the whole time.</strong></p>
+        on its own that a compute node is dead. Meanwhile MGMT was up, so
+        that compute node's agent heartbeat was arriving normally the whole time.</p>
 
         <p>Two contradictory statements existed in the system simultaneously. The compute node was saying "I am
         alive." An isolated controller concluded "it is dead." The existing logic took the second one.</p>
 
         <p>Call that a detection failure and the prescription comes out wrong. Detection did not fail — the
-        heartbeat arrived. What failed was that <strong>nobody had decided whose word counts</strong>.</p>
+        heartbeat arrived. What failed was that nobody had decided whose word counts.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 200" role="img" aria-labelledby="sw-t sw-d" class="figure-svg">
@@ -192,7 +192,7 @@
               </marker>
             </defs>
           </svg>
-          <figcaption>What was cut was <strong>controller-to-controller traffic</strong>; the management link to the compute nodes was fine. So "I am alive" and "it is dead" were in the system <strong>at the same time</strong>, and the old logic took the second one.</figcaption>
+          <figcaption>What was cut was <strong>controller-to-controller traffic</strong>; the management link to the compute nodes was fine. So "I am alive" and "it is dead" were in the system at the same time, and the old logic took the second one.</figcaption>
         </figure>
 
         <h2 id="entitlement-not-accuracy">Not accuracy — entitlement<a class="anchor" href="#entitlement-not-accuracy" aria-label="Link to this section">#</a></h2>
@@ -206,21 +206,21 @@
           <caption class="sr-only">The four signals, their confidence, and what each can testify to.</caption>
           <thead><tr><th scope="col">signal</th><th scope="col">confidence</th><th scope="col">what it can testify to</th></tr></thead>
           <tbody>
-            <tr><td>agent heartbeat</td><td><strong>highest</strong></td><td>the compute node's <strong>actual state</strong></td></tr>
+            <tr><td>agent heartbeat</td><td><strong>highest</strong></td><td>the compute node's actual state</td></tr>
             <tr><td>controller quorum</td><td>high</td><td>whether the controller cluster can agree at all</td></tr>
             <tr><td>network heartbeat</td><td>medium</td><td>connectivity between controller and compute</td></tr>
-            <tr><td>external reachability probe</td><td><strong>low</strong></td><td><strong>whether the controller is isolated</strong></td></tr>
+            <tr><td>external reachability probe</td><td>low</td><td>whether the controller is isolated</td></tr>
           </tbody>
         </table>
         </div>
         </div>
 
         <p>The last row is the whole design. The external probe only checks reachability outward from the
-        controller. <strong>It never verifies the compute node.</strong> Judge a compute node's liveness with
+        controller. It never verifies the compute node. Judge a compute node's liveness with
         it and you read the observer's isolation as the subject's failure. That is precisely what happened.</p>
 
-        <p>So the principle was written down: <strong>only the compute node can say whether the compute node is
-        alive.</strong> Every other signal either corroborates that statement, or explains <em>why the statement
+        <p>So the principle was written down: only the compute node can say whether the compute node is
+        alive. Every other signal either corroborates that statement, or explains <em>why the statement
         did not arrive</em>.</p>
 
         <figure class="diagram">
@@ -254,7 +254,7 @@
               </marker>
             </defs>
           </svg>
-          <figcaption>The last row is the whole design. The reachability probe only observes <strong>the direction out of the controller</strong>. Judge a compute node by it and you read <strong>the observer's isolation as the subject's failure</strong>.</figcaption>
+          <figcaption>The last row is the whole design. The reachability probe only observes <strong>the direction out of the controller</strong>. Judge a compute node by it and you read the observer's isolation as the subject's failure.</figcaption>
         </figure>
 
         <h2 id="two-different-questions">"Is it broken" and "is it safe to act" are different questions<a class="anchor" href="#two-different-questions" aria-label="Link to this section">#</a></h2>
@@ -306,7 +306,7 @@
               <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">mixed into one verdict · both contaminated</text>
             </g>
           </svg>
-          <figcaption>The old verdict held both kinds in <strong>one expression</strong>. Once separated, seven of the eight scenarios failed on the right-hand side. <strong>It really was a failure, and acting now was still wrong</strong> that often.</figcaption>
+          <figcaption>The old verdict held both kinds in <strong>one expression</strong>. Once separated, seven of the eight scenarios failed on the right-hand side. It really was a failure, and acting now was still wrong that often.</figcaption>
         </figure>
 
         <h2 id="seven-of-eight">Seven of eight<a class="anchor" href="#seven-of-eight" aria-label="Link to this section">#</a></h2>
@@ -327,7 +327,7 @@
             <tr><td>storage path down</td><td>✓</td><td>✓</td><td>✓</td><td>✗</td><td>compute is fine</td><td>HOLD (Phase 2 fails)</td></tr>
             <tr><td>external reachability only</td><td>✓</td><td>✓</td><td>✗</td><td>✓</td><td>compute is fine</td><td>HOLD</td></tr>
             <tr><td>heartbeat TTL + probe both fail</td><td>✓</td><td>✗</td><td>✗</td><td>✓</td><td>partition suspected</td><td>HOLD → further checks</td></tr>
-            <tr><td>controllers split, heartbeat arriving</td><td>✗</td><td>✓</td><td>✓</td><td>✓</td><td>cannot judge</td><td><strong>HOLD (no unilateral decision)</strong></td></tr>
+            <tr><td>controllers split, heartbeat arriving</td><td>✗</td><td>✓</td><td>✓</td><td>✓</td><td>cannot judge</td><td>HOLD (no unilateral decision)</td></tr>
           </tbody>
         </table>
         </div>
@@ -335,14 +335,14 @@
 
         <p>The bottom row is the incident. Its action is now HOLD.</p>
 
-        <p>Seven of eight comes out of <strong>an asymmetry in cost</strong>. Skip a recovery and the service
+        <p>Seven of eight comes out of an asymmetry in cost. Skip a recovery and the service
         stays down while a human gets time to intervene. Run a recovery wrongly and the original and the copy
         write to the same volume, which cannot be undone. When the two mistakes are not worth the same, the
         decision boundary should not sit in the middle.</p>
 
         <p>The obvious objection: <em>"if seven of eight hold, doesn't real recovery get slower?"</em> It does.
         Slower is the price this design chose to pay. In exchange, HOLD is not a state where nothing happens —
-        <strong>it raises an operator alert</strong>. Automation gives up the decision and hands it to a person;
+        it raises an operator alert. Automation gives up the decision and hands it to a person;
         it does not drop it.</p>
 
         <h2 id="no-fencing-no-recovery">No fencing, no recovery — and the five seconds<a class="anchor" href="#no-fencing-no-recovery" aria-label="Link to this section">#</a></h2>
@@ -364,14 +364,14 @@ Compute-02 → VM-A evacuated       → writes /dev/vdb   (new attachment)</code
           <thead><tr><th scope="col">storage</th><th scope="col">risk</th></tr></thead>
           <tbody>
             <tr><td>iSCSI</td><td>SCSI-3 PR exists, but new access arriving before the original attachment is torn down can still collide</td></tr>
-            <tr><td><strong>LVM</strong></td><td><strong>no SCSI PR.</strong> Concurrent writes carry a high risk of VG/LV metadata corruption</td></tr>
+            <tr><td>LVM</td><td>no SCSI PR. Concurrent writes carry a high risk of VG/LV metadata corruption</td></tr>
             <tr><td>NFS</td><td>file-lock based, so consistency cannot be guaranteed under concurrent mount and write</td></tr>
           </tbody>
         </table>
         </div>
         </div>
 
-        <p>Hence the principle: <strong>no fencing, no recovery.</strong> Four stages — detect, verify, fence,
+        <p>Hence the principle: no fencing, no recovery. Four stages — detect, verify, fence,
         recover. The fencing stage on its own reads:</p>
 
 <pre data-lang="text"><code>1. IPMI chassis power off
@@ -380,12 +380,12 @@ Compute-02 → VM-A evacuated       → writes /dev/vdb   (new attachment)</code
 4. confirm residual storage attachments are cleared (varies by type)
 5. run the recovery</code></pre>
 
-        <p>Step 2 exists for a plain reason. <strong>Query the power state right after cutting it and it is not
-        off yet.</strong> Without the wait, the check reads "not off" and is taken as a fencing failure — or
+        <p>Step 2 exists for a plain reason. Query the power state right after cutting it and it is not
+        off yet. Without the wait, the check reads "not off" and is taken as a fencing failure — or
         waved through optimistically. Five seconds is the floor; the ceiling is a separate fencing timeout.</p>
 
-        <p>And one precondition invalidates the entire procedure. <strong>Fencing goes over IPMI, so if the BMC
-        sits on the same physical switch as MGMT, the switch failure takes IPMI down with it.</strong> Fencing
+        <p>And one precondition invalidates the entire procedure. Fencing goes over IPMI, so if the BMC
+        sits on the same physical switch as MGMT, the switch failure takes IPMI down with it. Fencing
         becomes impossible at exactly the moment fencing is needed.</p>
 
         <div class="table-scroll">
@@ -395,17 +395,17 @@ Compute-02 → VM-A evacuated       → writes /dev/vdb   (new attachment)</code
           <caption class="sr-only">Whether fencing survives a switch failure, by BMC network topology.</caption>
           <thead><tr><th scope="col">topology</th><th scope="col">during a switch failure</th><th scope="col">result</th></tr></thead>
           <tbody>
-            <tr><td>BMC and MGMT on the same physical switch</td><td>MGMT and IPMI cut together</td><td><strong>fencing impossible</strong></td></tr>
+            <tr><td>BMC and MGMT on the same physical switch</td><td>MGMT and IPMI cut together</td><td>fencing impossible</td></tr>
             <tr><td>BMC separated by VLAN only</td><td>the switch dies and the VLANs on it go with it</td><td>fencing unreliable</td></tr>
-            <tr><td><strong>BMC on a dedicated physical switch</strong></td><td>MGMT cut, IPMI survives</td><td>fencing possible</td></tr>
+            <tr><td>BMC on a dedicated physical switch</td><td>MGMT cut, IPMI survives</td><td>fencing possible</td></tr>
           </tbody>
         </table>
         </div>
         </div>
 
-        <p><strong>A VLAN is not enough.</strong> When the switch itself dies, every VLAN on it disappears. At
+        <p>A VLAN is not enough. When the switch itself dies, every VLAN on it disappears. At
         the time of the incident there was no BMC network at all. So this was written not as a section of the
-        design but as a <strong>precondition</strong>: without it, even the one recoverable cell of the matrix
+        design but as a precondition: without it, even the one recoverable cell of the matrix
         cannot be executed.</p>
 
         <h2 id="a-db-lock-is-not-consensus">A DB lock is not distributed consensus<a class="anchor" href="#a-db-lock-is-not-consensus" aria-label="Link to this section">#</a></h2>
@@ -421,11 +421,11 @@ Compute-02 → VM-A evacuated       → writes /dev/vdb   (new attachment)</code
           <caption class="sr-only">Three execution-control approaches compared.</caption>
           <thead><tr><th scope="col">axis</th><th scope="col">Galera + DB lock</th><th scope="col">etcd + fencing</th><th scope="col">Pacemaker + Corosync</th></tr></thead>
           <tbody>
-            <tr><td>agreement</td><td>DB lock</td><td><strong>Raft</strong></td><td><strong>Totem</strong></td></tr>
-            <tr><td>split-brain prevention</td><td>low</td><td>medium</td><td><strong>high</strong></td></tr>
+            <tr><td>agreement</td><td>DB lock</td><td><strong>Raft</strong></td><td>Totem</td></tr>
+            <tr><td>split-brain prevention</td><td>low</td><td>medium</td><td>high</td></tr>
             <tr><td>detection time</td><td>~30s</td><td>~10s</td><td><strong>~5s</strong></td></tr>
-            <tr><td>STONITH</td><td>none</td><td>none</td><td><strong>built in</strong></td></tr>
-            <tr><td>OpenStack integration</td><td>non-standard</td><td>non-standard</td><td><strong>Masakari, standard</strong></td></tr>
+            <tr><td>STONITH</td><td>none</td><td>none</td><td>built in</td></tr>
+            <tr><td>OpenStack integration</td><td>non-standard</td><td>non-standard</td><td>Masakari, standard</td></tr>
             <tr><td>extra infrastructure</td><td>two proxies</td><td>none</td><td>Pacemaker setup</td></tr>
             <tr><td>implementation difficulty</td><td>low</td><td>medium</td><td>high</td></tr>
           </tbody>
@@ -433,30 +433,30 @@ Compute-02 → VM-A evacuated       → writes /dev/vdb   (new attachment)</code
         </div>
         </div>
 
-        <p>The first row decided it. <strong>A DB lock is not distributed consensus.</strong> A lock reduces
+        <p>The first row decided it. A DB lock is not distributed consensus. A lock reduces
         duplicate execution, but under a network partition it does not stop
-        <strong>both sides from each taking their own lock</strong>. The entire point of this work was
+        both sides from each taking their own lock. The entire point of this work was
         preventing split-brain; an option that cannot prevent it structurally does not achieve the goal, however
         cheap it is. It stayed on the table as a stopgap.</p>
 
         <p>The primary recommendation was Pacemaker + Corosync, and not because of detection time.
-        <strong>STONITH is built in, so "no fencing, no recovery" is enforced by the structure</strong> rather
+        STONITH is built in, so "no fencing, no recovery" is enforced by the structure rather
         than by everyone remembering it. etcd was the fallback if the operational cost proved too high.</p>
 
         <p>That has its own objection: <em>"Pacemaker freezes the minority side of a partition — doesn't the
-        service stop?"</em> It does. That is <strong>an intended safe failure</strong>. Stopping and calling a
+        service stop?"</em> It does. That is an intended safe failure. Stopping and calling a
         human beats moving without certainty, which is the posture of the whole design, so the execution layer
         was chosen with the same posture.</p>
 
         <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
         <ul>
-          <li><strong>Not a claim that I implemented it.</strong> My scope ended at the design document;
+          <li>Not a claim that I implemented it. My scope ended at the design document;
           another engineer took the implementation.</li>
-          <li><strong>There is no after-measurement.</strong> I do not have a number for how many
+          <li>There is no after-measurement. I do not have a number for how many
           misjudgements this removed. What exists is a verdict for eight scenarios, not a record of those
           verdicts being confirmed in the field.</li>
-          <li><strong>The logic that misjudged was not mine.</strong> The existing recovery logic misjudged;
+          <li>The logic that misjudged was not mine. The existing recovery logic misjudged;
           the decision procedure came afterwards.</li>
           <li><strong>The "at least 5s" in the fencing procedure is also not a measurement.</strong> It is
           the floor the design recommends; the distribution of how long power actually takes to drop on this
@@ -464,10 +464,10 @@ Compute-02 → VM-A evacuated       → writes /dev/vdb   (new attachment)</code
           <li><strong>~5s / ~10s / ~30s are general properties</strong> of each approach, not measurements
           taken in this environment. The rest of that comparison is likewise a reading of documentation and
           standards, not a benchmark.</li>
-          <li><strong>The recovery time objective was an estimate.</strong> The design carries a staged
+          <li>The recovery time objective was an estimate. The design carries a staged
           calculation, but it was never measured and remained pending team agreement, which is why no such
           number appears in this article.</li>
-          <li><strong>Eight is not every case.</strong> They are the combinations observed or foreseeable at
+          <li>Eight is not every case. They are the combinations observed or foreseeable at
           design time; anything else falls through to the default, which is HOLD — the second reason the
           default is HOLD.</li>
         </ul>
@@ -480,14 +480,14 @@ Compute-02 → VM-A evacuated       → writes /dev/vdb   (new attachment)</code
           node can testify that the compute node is alive.</li>
           <li><strong>"Is this a failure?" and "is it safe to act now?" are different questions.</strong>
           Put them in one verdict and they contaminate each other.</li>
-          <li><strong>No fencing, no recovery.</strong> You may start the copy only after the original is
+          <li>No fencing, no recovery. You may start the copy only after the original is
           definitely off.</li>
-          <li><strong>The default is HOLD.</strong> That puts a person where the automation was, which is not
+          <li>The default is HOLD. That puts a person where the automation was, which is not
           the same as doing nothing.</li>
         </ul>
 
-        <p>What is left is one line. <strong>In a high-availability system the hard part is not the code that
-        performs recovery; it is the judgement that declines to.</strong> And that judgement does not come from
+        <p>What is left is one line. In a high-availability system the hard part is not the code that
+        performs recovery; it is the judgement that declines to. And that judgement does not come from
         sharper detection. It comes from first deciding which signal is entitled to testify to what.</p>
 
         <p>Thank you for reading.</p>

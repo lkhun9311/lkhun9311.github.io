@@ -118,16 +118,16 @@
         <h2 id="what-is-in-here">What is in here<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
 
         <ul>
-          <li>It was slow because <strong>connecting was computing.</strong> The cache that existed held
+          <li>It was slow because connecting was computing. The cache that existed held
           “who is there”, and the “how much is each using right now” that the screen needed was
-          <strong>outside it.</strong></li>
-          <li>An exception was being swallowed, so <strong>the connection stayed alive while no data came</strong>
-          and the screen showed <strong>an endless spinner</strong> instead of an error.</li>
-          <li>Once the computation moved off the request path, <strong>three races</strong> appeared: a refresh
+          outside it.</li>
+          <li>An exception was being swallowed, so the connection stayed alive while no data came
+          and the screen showed an endless spinner instead of an error.</li>
+          <li>Once the computation moved off the request path, three races appeared: a refresh
           being cancelled, the same value broadcast to everyone several times, and
-          <strong>one timeout cutting somebody else's query.</strong></li>
+          one timeout cutting somebody else's query.</li>
           <li>The median went from 6,776 ms to <strong>10 ms.</strong> I also wrote down
-          <strong>what I did not do.</strong></li>
+          what I did not do.</li>
         </ul>
 
         <p>This is an internal product, so the code and the screens are not reproduced literally.
@@ -135,7 +135,7 @@
 
         <blockquote><p>⚠️ <strong>These are 30 sequential runs by a single user.</strong>
         Not concurrent throughput, so I did not read throughput here as scalability.
-        What means something is <strong>the latency distribution to first business data, and the error rate.</strong></p></blockquote>
+        What means something is the latency distribution to first business data, and the error rate.</p></blockquote>
 
         <h2 id="connecting-was-computing">Connecting was computing<a class="anchor" href="#connecting-was-computing" aria-label="Link to this section">#</a></h2>
 
@@ -189,8 +189,8 @@
         </figure>
 
         <p>The distribution had that shape too. When the timing lined up with the previous computation it was
-        fast, and when it did not the user waited <strong>for the next tick and then for a computation lasting
-        seconds.</strong> That is why the samples split into fast ones and 6 to 9 second ones.</p>
+        fast, and when it did not the user waited for the next tick and then for a computation lasting
+        seconds. That is why the samples split into fast ones and 6 to 9 second ones.</p>
 
         <h2 id="endless-spinner">It looked like an endless spinner, not an error<a class="anchor" href="#endless-spinner" aria-label="Link to this section">#</a></h2>
 
@@ -199,7 +199,7 @@
         errors and never dropped the loading layer, so what the user got was
         <strong>a spinner that never stopped</strong> rather than a message.</p>
 
-        <p>Slow and never-arriving <strong>looked identical on screen.</strong> That got fixed alongside the rest.</p>
+        <p>Slow and never-arriving looked identical on screen. That got fixed alongside the rest.</p>
 
         <h2 id="off-the-request-path">I took the computation off the request path<a class="anchor" href="#off-the-request-path" aria-label="Link to this section">#</a></h2>
 
@@ -218,7 +218,7 @@ new connection
 
         <p>Swapping through a single reference is the point: a reader never sees
         <strong>a half-updated value.</strong> A failed refresh does not clear the previous snapshot. That must
-        not hide an outage, so <strong>the computation time and a degraded flag ride along with the value.</strong></p>
+        not hide an outage, so the computation time and a degraded flag ride along with the value.</p>
 
         <h2 id="three-races">Then there were three races<a class="anchor" href="#three-races" aria-label="Link to this section">#</a></h2>
 
@@ -280,14 +280,14 @@ new connection
         <p><strong>First, a cancelled refresh leaves somebody waiting.</strong>
         If a user connects while the startup warm-up is running, the refresh that connection asked for is
         cancelled because one is already in flight. And if the warm-up puts its result in the cache
-        <strong>without broadcasting</strong>, that user waits for the next 15 second tick. I collapsed warm-up,
-        scheduled job and connection refresh <strong>into one function</strong> and made whoever actually wins
-        the refresh <strong>always publish the result.</strong></p>
+        without broadcasting, that user waits for the next 15 second tick. I collapsed warm-up,
+        scheduled job and connection refresh into one function and made whoever actually wins
+        the refresh always publish the result.</p>
 
-        <p><strong>Second, the same value gets broadcast several times.</strong>
+        <p>Second, the same value gets broadcast several times.
         With a stale cache and N connections arriving together, each of them could re-send the existing value
-        <strong>to every session.</strong> Now a connection is answered <strong>on its own session only</strong>,
-        and the full broadcast of a new result happens <strong>once, from the refresh winner.</strong></p>
+        to every session. Now a connection is answered on its own session only,
+        and the full broadcast of a new result happens once, from the refresh winner.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 210" role="img" aria-labelledby="sp-t sp-d" class="figure-svg">
@@ -331,14 +331,14 @@ new connection
           connections arrive. Before, the same value went out to everyone once per connection.</figcaption>
         </figure>
 
-        <p><strong>Third, one timeout cuts somebody else's query.</strong>
-        Putting a <strong>total request deadline</strong> on the metrics client also cuts long reporting queries
+        <p>Third, one timeout cuts somebody else's query.
+        Putting a total request deadline on the metrics client also cuts long reporting queries
         that share the client. Instead of a global total, I set bounds
-        <strong>on the connect and read stages</strong> and separated the client policy per feature.</p>
+        on the connect and read stages and separated the client policy per feature.</p>
 
-        <blockquote><p>⚠️ None of the three was <strong>found by measurement.</strong> They came out of reading
+        <blockquote><p>⚠️ None of the three was found by measurement. They came out of reading
         the code during review. I did not reproduce them under load; I judged that they could happen and fixed
-        them. So I will not write that these three <strong>were occurring.</strong></p></blockquote>
+        them. So I will not write that these three were occurring.</p></blockquote>
 
         <h2 id="the-result">The result<a class="anchor" href="#the-result" aria-label="Link to this section">#</a></h2>
 
@@ -361,7 +361,7 @@ new connection
         </table>
         </div>
         </div>
-        <p class="table-note">⚠️ <strong>I did not widen this result to the whole screen.</strong>
+        <p class="table-note">⚠️ I did not widen this result to the whole screen.
         The resource usage REST API on the same screen was still measured in seconds after this change.
         A separate problem, one quota call per project, was still there, and part four covers it.</p>
 
@@ -372,9 +372,9 @@ new connection
         <strong>read the same sample three times.</strong> Freshness would not improve and the store would carry
         more load.</p>
 
-        <p><strong>I did not merge the computation time with the observation time.</strong>
+        <p>I did not merge the computation time with the observation time.
         The first exists for the cache refresh policy; the second is how a user judges the age of the data.
-        With a quiet source, merging them lets <strong>every connection decide the cache is stale</strong>
+        With a quiet source, merging them lets every connection decide the cache is stale
         and pile recomputations on top of each other.</p>
 
         <h2 id="what-this-does-not-claim">What this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
@@ -382,9 +382,9 @@ new connection
         <ul>
           <li><strong>These are not production statistics.</strong> Thirty sequential runs by a single user,
           with no concurrent throughput measured.</li>
-          <li><strong>I do not claim the three races were occurring.</strong> I read the code, judged, and fixed;
-          <strong>I did not reproduce them.</strong></li>
-          <li><strong>This is not “monitoring got faster”.</strong> It is one SSE path on one screen.</li>
+          <li>I do not claim the three races were occurring. I read the code, judged, and fixed;
+          I did not reproduce them.</li>
+          <li>This is not “monitoring got faster”. It is one SSE path on one screen.</li>
           <li><strong>10 ms is not a constant.</strong> It is the cost of reading a snapshot from memory and
           serialising it, and it follows the size of the data.</li>
         </ul>
@@ -398,16 +398,16 @@ new connection
             <li><strong>A duplicate guard can cancel the person who is waiting.</strong>
             “Cancel if a refresh is running” is correct, and if the cancelled side cannot publish, that person
             waits a full cycle.</li>
-            <li><strong>A bound on a shared client applies to other paths too.</strong>
+            <li>A bound on a shared client applies to other paths too.
             What was needed was per-stage bounds, not a total deadline.</li>
           </ul>
 
           <p>If one line survives, this one.
-          <strong>“Build it ahead and serve it” is one line, but it stops being one line until you decide who
-          builds and who publishes.</strong></p>
+          “Build it ahead and serve it” is one line, but it stops being one line until you decide who
+          builds and who publishes.</p>
 
           <p>The next part is physical nodes, where moving the same pattern ran into
-          <strong>“may an empty list be published as a healthy zero?”</strong> Thank you for reading.</p>
+          “may an empty list be published as a healthy zero?” Thank you for reading.</p>
         </div>
 
 

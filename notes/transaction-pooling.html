@@ -88,7 +88,7 @@
         <ul>
           <li><strong>session pooling</strong> — holds the connection until the client disconnects. Almost no reuse.</li>
           <li><strong>transaction pooling</strong> — per transaction. The mode used most in practice.</li>
-          <li><strong>statement pooling</strong> — per single query. Transactions cannot be used.</li>
+          <li>statement pooling — per single query. Transactions cannot be used.</li>
         </ul>
         <h2 id="성질">The property that matters — when it pins<a class="anchor" href="#성질" aria-label="Link to this section">#</a></h2>
         <p>This one line is all of it.</p>
@@ -96,7 +96,7 @@
         <blockquote><p>Reuse happens only <strong>between</strong> one transaction and the next.
         While a transaction is open, its connection is <strong>pinned</strong> to that client.</p></blockquote>
 
-        <p>Which is obvious once said: a transaction is <strong>state</strong>, and lending it out mid-flight to another session breaks isolation.</p>
+        <p>Which is obvious once said: a transaction is state, and lending it out mid-flight to another session breaks isolation.</p>
 
         <p>So it comes out like this.</p>
 
@@ -105,7 +105,7 @@
   → one app connection costs one database connection
   → the pooler has nothing left to fold</pre>
 
-        <p>So it earns its keep <strong>when there are many short transactions</strong>. On code that waits for an external API
+        <p>So it earns its keep when there are many short transactions. On code that waits for an external API
         inside a transaction, it does nothing.</p>
         <h2 id="핀">Patterns that pin<a class="anchor" href="#핀" aria-label="Link to this section">#</a></h2>
         <p>With any of these in the code, the connection stays pinned after the transaction ends and the pooler is powerless.</p>

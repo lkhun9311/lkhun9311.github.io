@@ -92,8 +92,8 @@
 
         <p>A GPU workload that lands on a node whose driver is not loaded does not fail politely. It fails
         after the scheduler has already committed the pod, on the most expensive hardware in the cluster.
-        So the question is not "is the node up" but <strong>"has anything checked the things a GPU workload
-        actually needs"</strong>.</p>
+        So the question is not "is the node up" but "has anything checked the things a GPU workload
+        actually needs".</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -108,15 +108,15 @@
         <ul>
           <li>Node readiness is represented as a <strong>CRD with an explicit phase</strong>
           (<code>NodeHealth</code>) rather than as an operational assumption.</li>
-          <li>The reconciler was built in two steps on purpose: <strong>observe first, enforce second.</strong>
+          <li>The reconciler was built in two steps on purpose: observe first, enforce second.
           Observation is idempotent and recovers from drift; enforcement adds exactly one taint.</li>
-          <li>Four things were <strong>declined</strong> rather than postponed: cordon, a grace period, a
+          <li>Four things were declined rather than postponed: cordon, a grace period, a
           fault-signal trigger, and automatic draining. Each has a reason below.</li>
           <li>Stopping a worker's kubelet produced <code>Ready</code> → <code>Quarantine</code> →
           <code>Ready</code> at <strong>0s, 46s and 48s</strong>, with the verdict <code>Recovered</code>.</li>
-          <li>⚠️ <strong>The GPU-level intake is a target, not code.</strong> DCGM, fio, iperf3 and an NCCL
+          <li>⚠️ The GPU-level intake is a target, not code. DCGM, fio, iperf3 and an NCCL
           baseline all need a real GPU node. When DCGM is unavailable the controller falls back to the
-          Kubernetes node condition <strong>and records that the GPU checks were not run</strong>.</li>
+          Kubernetes node condition and records that the GPU checks were not run.</li>
         </ul>
 
         <figure class="diagram">
@@ -194,7 +194,7 @@
           stored one. A reconcile that changes nothing performs no write.</li>
           <li><strong>Drift recovery.</strong> Edit the status by hand and the next reconcile restores it. A
           node change triggers the same path.</li>
-          <li><strong>Finalizer lifecycle.</strong> Added on create, removed on delete after cleanup runs.
+          <li>Finalizer lifecycle. Added on create, removed on delete after cleanup runs.
           At this point cleanup had nothing to remove, which is exactly why it was worth writing then.</li>
         </ul>
 
@@ -221,7 +221,7 @@
               <text x="360" y="218" font-size="11.5" fill="#d62976" text-anchor="middle">each of the four on the right · a decision, not an omission</text>
             </g>
           </svg>
-          <figcaption>Declining automatic drain is the one that matters operationally. The platform can tell you <strong>what</strong> to drain; evicting running work stays behind an operator approval. <strong>The maturity claimed here is "knows the operational risk", not "auto-drains".</strong></figcaption>
+          <figcaption>Declining automatic drain is the one that matters operationally. The platform can tell you <strong>what</strong> to drain; evicting running work stays behind an operator approval. The maturity claimed here is "knows the operational risk", not "auto-drains".</figcaption>
         </figure>
 
         <h2 id="one-taint-and-four-declines">One taint, and four things declined<a class="anchor" href="#one-taint-and-four-declines" aria-label="Link to this section">#</a></h2>
@@ -252,12 +252,12 @@
           <li><strong>Taint, not cordon.</strong> A cordon sets <code>spec.unschedulable</code> on the node,
           which is a blunt flag other tooling also writes. A taint is namespaced to us by key, and a
           deliberately opted-in workload can tolerate it.</li>
-          <li><strong>No grace period.</strong> Flap damping would make the quarantine decision depend on a
+          <li>No grace period. Flap damping would make the quarantine decision depend on a
           window length nobody has measured. A not-ready node quarantines immediately, which is simple and
           deterministic, and the cost of that choice is visible in the numbers below.</li>
-          <li><strong>Readiness as the trigger, not a fault signal.</strong> Fault injection is a later
+          <li>Readiness as the trigger, not a fault signal. Fault injection is a later
           milestone. Triggering on a signal that does not exist yet would make the guard untestable.</li>
-          <li><strong>No automatic drain.</strong> Evicting running work is the one action here that destroys
+          <li>No automatic drain. Evicting running work is the one action here that destroys
           something. The platform surfaces what would be drained; a human or an explicit approval flag
           triggers it.</li>
         </ul>
@@ -293,7 +293,7 @@
         grace period first. <strong>Choosing readiness as the trigger bought simplicity and paid for it in
         that window</strong>, and the number makes the trade visible instead of arguable.</p>
 
-        <p>⚠️ <strong>That attribution is read from the design, not measured.</strong> The run recorded three
+        <p>⚠️ That attribution is read from the design, not measured. The run recorded three
         phase transitions and their times. It did not record which component spent the 46 seconds, and
         nothing here instrumented the node controller to find out.</p>
 
@@ -303,15 +303,15 @@
           <li><strong>No GPU was checked.</strong> The device plugin here is a fake advertising
           <code>nvidia.com/gpu</code>. Nothing in this article observed a driver, a temperature, an XID or an
           ECC counter.</li>
-          <li><strong>The intake table is a target.</strong> Stages 0 through 3 are a runbook with tools
+          <li>The intake table is a target. Stages 0 through 3 are a runbook with tools
           named. They are not implemented, and the controller does not pretend they passed.</li>
-          <li><strong>DCGM absence is recorded, not simulated.</strong> When DCGM is unavailable the
+          <li>DCGM absence is recorded, not simulated. When DCGM is unavailable the
           controller falls back to the node condition and writes down that the GPU-level checks did not run.
           That distinction is the whole reason the fallback exists.</li>
           <li><strong>0s, 46s and 48s are one run on one kind cluster.</strong> They are not a distribution,
           and the 46 seconds in particular depends on kubelet and controller-manager settings that were left
           at their defaults.</li>
-          <li><strong>Drain is not automated and is not going to be soon.</strong> The design defers it
+          <li>Drain is not automated and is not going to be soon. The design defers it
           deliberately; calling that "next milestone" would overstate how close it is.</li>
         </ul>
 
@@ -323,16 +323,16 @@
           about the kubelet. A GPU node needs a phase that says which checks produced it.</li>
           <li><strong>Observation and enforcement are separate milestones for a reason.</strong> Idempotency,
           drift recovery and the finalizer are all easier to prove when nothing is being tainted yet.</li>
-          <li><strong>Write down what you decline.</strong> Cordon, grace period, fault-signal trigger and
+          <li>Write down what you decline. Cordon, grace period, fault-signal trigger and
           automatic drain each had a reason, and a reader who only sees the feature list cannot tell a
           decision from an omission.</li>
-          <li><strong>A number makes a trade-off arguable instead of rhetorical.</strong> Immediate
+          <li>A number makes a trade-off arguable instead of rhetorical. Immediate
           quarantine sounded strict until the measurement showed the strictness lives in a 46-second window
           owned by someone else.</li>
         </ul>
 
-        <p>What is left is one line. <strong>A controller that reports a state it did not verify is worse
-        than one that reports nothing</strong>, because the first one gets trusted. The fallback that records
+        <p>What is left is one line. A controller that reports a state it did not verify is worse
+        than one that reports nothing, because the first one gets trusted. The fallback that records
         "the GPU checks did not run" exists so that the phase never has to lie.</p>
 
         <p>Thank you for reading.</p>

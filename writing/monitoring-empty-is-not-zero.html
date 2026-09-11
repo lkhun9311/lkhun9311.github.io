@@ -104,14 +104,14 @@
 
         <p>It may not. The list can be empty because there really is nothing, or because
         <strong>collection failed.</strong> Without separating those, the moment something breaks
-        <strong>a healthy screen gets overwritten with zero.</strong></p>
+        a healthy screen gets overwritten with zero.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
         <ul class="callout">
           <li>Anyone building a screen that serves the last known good value</li>
           <li>Anyone deciding whether “the result was empty” means <strong>healthy</strong> or <strong>failed</strong></li>
-          <li>Anyone choosing which of <strong>a false zero, a blank screen or an endless spinner</strong> to avoid
+          <li>Anyone choosing which of a false zero, a blank screen or an endless spinner to avoid
           during an outage</li>
         </ul>
 
@@ -119,9 +119,9 @@
 
         <ul>
           <li>The same serve-stale pattern moved across, but <strong>what “empty” means</strong> differed per screen.</li>
-          <li>Empty results were split <strong>five ways.</strong> <strong>Only two</strong> are published as new
-          values; the rest <strong>keep the last good one.</strong></li>
-          <li>The value and <strong>the collection status travel separately.</strong> That is what makes
+          <li>Empty results were split five ways. Only two are published as new
+          values; the rest keep the last good one.</li>
+          <li>The value and the collection status travel separately. That is what makes
           “showing the last value, and the current collection failed” expressible.</li>
           <li>The median went from 3,938 ms to <strong>23 ms.</strong></li>
         </ul>
@@ -129,10 +129,10 @@
         <p>This is an internal product, so the code and the screens are not reproduced literally.
         Product names, customers and internal addresses are out; the structure and the decision rules stay.</p>
 
-        <blockquote><p>⚠️ <strong>This part includes something I did not get right at first.</strong>
-        In the physical nodes implementation the five branches were <strong>not complete.</strong>
+        <blockquote><p>⚠️ This part includes something I did not get right at first.
+        In the physical nodes implementation the five branches were not complete.
         “Fetch succeeded but the result was empty” could still be read as healthy, and it took
-        <strong>the shared cache work in part five</strong> to lift it into a common judgement.</p></blockquote>
+        the shared cache work in part five to lift it into a common judgement.</p></blockquote>
 
         <h2 id="same-pattern">Same pattern, different question<a class="anchor" href="#same-pattern" aria-label="Link to this section">#</a></h2>
 
@@ -227,8 +227,8 @@ else:                                      NO_VALID_METRICS</code></pre>
         values. The other three <strong>leave the last good value alone</strong> and update only the degraded
         flag and the failure time.</p>
 
-        <p>Separating the <strong>generation of the value</strong> from the
-        <strong>outcome of the last attempt</strong> is the point. It lets old data avoid posing as new data
+        <p>Separating the generation of the value from the
+        outcome of the last attempt is the point. It lets old data avoid posing as new data
         without blanking the screen.</p>
 
         <h2 id="arrival-order">Arrival order is data too<a class="anchor" href="#arrival-order" aria-label="Link to this section">#</a></h2>
@@ -278,7 +278,7 @@ else:                                      NO_VALID_METRICS</code></pre>
         <p>Using an <code>HH:mm:ss</code> string as the chart key is not enough here.
         <strong>Two generations can be made within the same second</strong>, and a process restart can move the
         clock backwards. The display time, the ordering generation and the monotonic time used for scheduling
-        are kept as <strong>three separate values.</strong></p>
+        are kept as three separate values.</p>
 
         <h2 id="value-and-trust">The value and its trustworthiness are drawn separately<a class="anchor" href="#value-and-trust" aria-label="Link to this section">#</a></h2>
 
@@ -288,8 +288,8 @@ else:                                      NO_VALID_METRICS</code></pre>
         <ul>
           <li>The data and <strong>the time that data was made</strong></li>
           <li>The <strong>status and time</strong> of the last collection attempt</li>
-          <li>A <strong>degraded flag</strong> saying the previous value is being carried</li>
-          <li>A <strong>generation</strong> for ordering within the life of the connection</li>
+          <li>A degraded flag saying the previous value is being carried</li>
+          <li>A generation for ordering within the life of the connection</li>
         </ul>
 
         <figure class="diagram">
@@ -326,9 +326,9 @@ else:                                      NO_VALID_METRICS</code></pre>
         </figure>
 
         <p>When the degraded flag is set, the front end keeps the existing value and shows that it is old.
-        <strong>Only when the flag is clear and the result is empty</strong> does it draw a real zero.
+        Only when the flag is clear and the result is empty does it draw a real zero.
         Without that split you cannot avoid at least one of
-        <strong>“render an outage as zero” or “hide a genuine zero behind an old value”.</strong></p>
+        “render an outage as zero” or “hide a genuine zero behind an old value”.</p>
 
         <h2 id="the-result">The result<a class="anchor" href="#the-result" aria-label="Link to this section">#</a></h2>
 
@@ -349,9 +349,9 @@ else:                                      NO_VALID_METRICS</code></pre>
         </div>
         </div>
         <p class="table-note">⚠️ The “after” column was measured
-        <strong>with the shared cache from part five already in place.</strong> It is not this part's change
+        with the shared cache from part five already in place. It is not this part's change
         alone. First data was in the tens of milliseconds right after the per-screen work too, but
-        <strong>I did not keep a separate table at that point.</strong></p>
+        I did not keep a separate table at that point.</p>
 
         <h2 id="what-this-does-not-claim">What this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
@@ -360,11 +360,11 @@ else:                                      NO_VALID_METRICS</code></pre>
           first-data latency, not a concurrency load test.</li>
           <li><strong>This part's contribution was not measured on its own.</strong> The “after” column includes
           the shared cache from part five.</li>
-          <li><strong>I do not claim the five branches were complete from the start.</strong> At the time of the
+          <li>I do not claim the five branches were complete from the start. At the time of the
           physical nodes work, “fetch succeeded and the result was empty” could still be read as healthy, and
           part five is where it became a common judgement.</li>
-          <li><strong>last-known-good is not always right.</strong> Hiding the age of the data buys availability
-          by <strong>lying for longer.</strong></li>
+          <li>last-known-good is not always right. Hiding the age of the data buys availability
+          by lying for longer.</li>
         </ul>
 
         <div class="wrapup">
@@ -374,18 +374,18 @@ else:                                      NO_VALID_METRICS</code></pre>
             <li><strong>“Empty” is not an observation, it is a value that needs interpreting.</strong>
             Empty because nothing is there and empty because nothing could be fetched
             <strong>arrive in the same data structure.</strong></li>
-            <li><strong>An honest screen needs the value and the collection status kept apart.</strong>
+            <li>An honest screen needs the value and the collection status kept apart.
             “Here is the last value, and the current collection failed” is not sayable once they are merged.</li>
-            <li><strong>Judging recency by arrival order makes the screen move backwards.</strong>
+            <li>Judging recency by arrival order makes the screen move backwards.
             Creation order has to ride along with the value.</li>
           </ul>
 
           <p>If one line survives, this one.
-          <strong>What a monitoring screen has to decide is not the latest number, but which of a false zero,
-          a blank screen and an endless spinner it will avoid when observation fails.</strong></p>
+          What a monitoring screen has to decide is not the latest number, but which of a false zero,
+          a blank screen and an endless spinner it will avoid when observation fails.</p>
 
           <p>The next part is virtual resources, where the screen had
-          <strong>two</strong> bottlenecks rather than one. Thank you for reading.</p>
+          two bottlenecks rather than one. Thank you for reading.</p>
         </div>
 
 

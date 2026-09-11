@@ -100,11 +100,11 @@
 
         <p>In <a href="slow-screens-7-nothing-to-fix.html">part seven</a> I reviewed three monitoring screens
         and wrote that <strong>I could not find a case for changing anything.</strong> That article also
-        contains this sentence. <strong>“I decided not to add more cache. The place I was going to add it
-        was already a cheap path, and a cache there buys staleness and complexity.”</strong></p>
+        contains this sentence. “I decided not to add more cache. The place I was going to add it
+        was already a cheap path, and a cache there buys staleness and complexity.”</p>
 
         <p><strong>First data on that screen took 6.8 seconds.</strong> And the fix was
-        <strong>a cache in exactly that place.</strong> It became 23 ms.</p>
+        a cache in exactly that place. It became 23 ms.</p>
 
         <p>This is the story of why that judgement was wrong, and of what I had failed to measure.
         Four parts after this one go screen by screen.</p>
@@ -120,13 +120,13 @@
         <h2 id="what-is-in-here">What is in here<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
 
         <ul>
-          <li><strong>An article I published reached the wrong conclusion.</strong> I wrote that there was no
+          <li>An article I published reached the wrong conclusion. I wrote that there was no
           case for a change, and first data on the same screen was 6.8 seconds.</li>
-          <li>What was wrong was not the arithmetic but <strong>where I measured.</strong> I measured the REST
-          response. The user was waiting for <strong>the first SSE <code>data</code> event.</strong></li>
+          <li>What was wrong was not the arithmetic but where I measured. I measured the REST
+          response. The user was waiting for the first SSE <code>data</code> event.</li>
           <li>“The time-series store is cheap because it runs once every 15 seconds” was true
-          <strong>only of the periodic refresh.</strong> The same computation also ran
-          <strong>synchronously on every new connection.</strong></li>
+          only of the periodic refresh. The same computation also ran
+          synchronously on every new connection.</li>
           <li>I fixed the three screens one at a time, then merged three caches into one. Medians went from
           <strong>6,776 ms, 3,938 ms and 1,436 ms to about 23 ms each.</strong></li>
         </ul>
@@ -134,10 +134,10 @@
         <p>This is an internal product, so the code and the screens are not reproduced literally.
         Product names, customers and internal addresses are out; the structure and the configured values stay.</p>
 
-        <blockquote><p>⚠️ <strong>One thing up front.</strong> These numbers are
+        <blockquote><p>⚠️ One thing up front. These numbers are
         <strong>30 runs by a single user</strong>, not production statistics. And between the review in
         part seven (August) and this measurement (September)
-        <strong>someone else's improvement landed as well.</strong> I did not separate their contribution
+        someone else's improvement landed as well. I did not separate their contribution
         from mine. It is in “what this article does not claim” below.</p></blockquote>
 
         <h2 id="which-screens">Which screens?<a class="anchor" href="#which-screens" aria-label="Link to this section">#</a></h2>
@@ -207,20 +207,20 @@
           <tbody>
             <tr><td>Conclusion</td><td>No case for changing anything</td><td><strong>First data, median 6,776 ms</strong></td></tr>
             <tr><td>Cache</td><td>Not adding one. The path is already cheap</td><td><strong>Added one there. 23 ms</strong></td></tr>
-            <tr><td>Basis</td><td>Computed once per 15 s, broadcast to all</td><td>True of the tick. <strong>It also runs per connection</strong></td></tr>
+            <tr><td>Basis</td><td>Computed once per 15 s, broadcast to all</td><td>True of the tick. It also runs per connection</td></tr>
             <tr><td>Measurement</td><td>⚠️ I did not run a load test</td><td>Timed the first SSE <code>data</code> directly</td></tr>
           </tbody>
         </table>
         </div>
         </div>
-        <p class="table-note">The last line of part seven was <strong>“I did not run a load test. I judged it
-        from the code and never confirmed it by running one.”</strong> The limit it wrote down for itself is
+        <p class="table-note">The last line of part seven was “I did not run a load test. I judged it
+        from the code and never confirmed it by running one.” The limit it wrote down for itself is
         the one that came true.</p>
 
-        <p>⚠️ One thing needs separating. <strong>“Cheap because it runs once every 15 seconds” is not a false
-        statement by itself.</strong> The periodic refresh really is independent of the number of users and
+        <p>⚠️ One thing needs separating. “Cheap because it runs once every 15 seconds” is not a false
+        statement by itself. The periodic refresh really is independent of the number of users and
         really does run once per tick. What was wrong was
-        <strong>treating that one sentence as an account of the whole screen.</strong></p>
+        treating that one sentence as an account of the whole screen.</p>
 
         <h2 id="where-i-measured">Where I measured was not where users waited<a class="anchor" href="#where-i-measured" aria-label="Link to this section">#</a></h2>
 
@@ -284,13 +284,13 @@
           <tbody>
             <tr><td>Dashboard</td><td>about 6,776 ms</td><td><strong>about 23 ms</strong></td><td>about 8,607 ms</td><td>about 55 ms</td></tr>
             <tr><td>Physical nodes</td><td>about 3,938 ms</td><td><strong>about 23 ms</strong></td><td>about 5,130 ms</td><td>about 43 ms</td></tr>
-            <tr><td>Virtual resources</td><td>about 1,436 ms</td><td><strong>about 23 ms</strong></td><td>about 1,742 ms</td><td>about 37 ms</td></tr>
+            <tr><td>Virtual resources</td><td>about 1,436 ms</td><td>about 23 ms</td><td>about 1,742 ms</td><td>about 37 ms</td></tr>
           </tbody>
         </table>
         </div>
         </div>
         <p class="table-note">The virtual resources row is the SSE side. That screen also had a REST path at
-        about 2,627 ms, and <strong>both had to be fixed before it got faster.</strong> That is part four.</p>
+        about 2,627 ms, and both had to be fixed before it got faster. That is part four.</p>
 
         <h2 id="what-the-fix-was">The fix is one line<a class="anchor" href="#what-the-fix-was" aria-label="Link to this section">#</a></h2>
 
@@ -343,7 +343,7 @@
         </figure>
 
         <p>The name for it is serve-stale: hand over the last value even if it is old.
-        It is a trade, <strong>accepting staleness to remove latency</strong>, and how far that trade is
+        It is a trade, accepting staleness to remove latency, and how far that trade is
         allowed to go differs per screen. That is what the next four parts are about.</p>
 
         <h2 id="the-four-parts">The four parts that follow<a class="anchor" href="#the-four-parts" aria-label="Link to this section">#</a></h2>
@@ -352,11 +352,11 @@
           <li><strong>Part two, the dashboard.</strong> How I found the boundary users actually wait on and how
           the probe was built. From 6,776 ms to 10 ms.</li>
           <li><strong>Part three, physical nodes.</strong> Moving the same pattern raised one question.
-          <strong>When the metric query returns an empty list, may that be published as a healthy zero?</strong></li>
-          <li><strong>Part four, virtual resources.</strong> Two bottlenecks, REST and SSE, so fixing one
+          When the metric query returns an empty list, may that be published as a healthy zero?</li>
+          <li>Part four, virtual resources. Two bottlenecks, REST and SSE, so fixing one
           left the screen where it was.</li>
-          <li><strong>Part five, the shared cache.</strong> Merging three caches into one turned
-          <strong>things that separation had been protecting by accident</strong> into explicit contracts.</li>
+          <li>Part five, the shared cache. Merging three caches into one turned
+          things that separation had been protecting by accident into explicit contracts.</li>
         </ul>
 
         <h2 id="what-this-does-not-claim">What this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
@@ -364,13 +364,13 @@
         <ul>
           <li><strong>These are not production statistics.</strong> Thirty runs by a single user, with no
           concurrency and no long-run distribution.</li>
-          <li><strong>I could not separate the contributions.</strong> Between the review in part seven (August)
+          <li>I could not separate the contributions. Between the review in part seven (August)
           and this measurement (September), someone else's improvement also landed. How much of the “before”
-          figure belongs to it <strong>was never measured apart.</strong></li>
-          <li><strong>Part seven was not wrong throughout.</strong> One of the things it decided to leave alone,
+          figure belongs to it was never measured apart.</li>
+          <li>Part seven was not wrong throughout. One of the things it decided to leave alone,
           a query window that looks too wide, is still right to leave alone. What was wrong is
-          <strong>the judgement about cache and the basis behind it.</strong></li>
-          <li><strong>serve-stale is not always the answer.</strong> It holds only where an old value may be
+          the judgement about cache and the basis behind it.</li>
+          <li>serve-stale is not always the answer. It holds only where an old value may be
           shown. Drawing that line per screen is the subject of parts three and five.</li>
           <li><strong>23 ms is not a constant.</strong> It is the cost of reading a snapshot from memory and
           serialising it, and it moves with the size of the data.</li>
@@ -384,12 +384,12 @@
             cheap and the connection path was not. Taking one sentence to cover both was the mistake.</li>
             <li><strong>Check that where the tool says success is where the user stopped waiting.</strong>
             If those differ, the space between them is invisible to everyone.</li>
-            <li><strong>A decision not to act is harder to check than a change.</strong> I wrote that in part
+            <li>A decision not to act is harder to check than a change. I wrote that in part
             seven and then never built the instrument that would have checked it.</li>
           </ul>
 
           <p>If one line survives, this one.
-          <strong>“No case for a change” has to be written differently from “I did not measure.”</strong>
+          “No case for a change” has to be written differently from “I did not measure.”
           Part seven is an article that works hard to keep those apart, and it failed to keep them apart in
           the one place that counted.</p>
 

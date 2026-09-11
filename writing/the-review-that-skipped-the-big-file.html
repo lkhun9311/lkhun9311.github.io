@@ -105,12 +105,12 @@
 
         <p>Results were piling up. But when I rebuilt the string that gets handed to that review,
         <strong>it turned out to be cut through the middle of a character</strong>, and an argument like
-        that is <strong>rejected before it ever reaches a model.</strong></p>
+        that is rejected before it ever reaches a model.</p>
 
-        <p>⚠️ Let me say this at the top. What this article <strong>measured</strong> is "what happens when
+        <p>⚠️ Let me say this at the top. What this article measured is "what happens when
         the documents that survive today are cut by that command". What the hook actually received back
-        then, and how it actually ended, <strong>is not recorded anywhere.</strong> The gap between the two
-        is <strong>inference</strong>, and I will keep marking which is which.</p>
+        then, and how it actually ended, is not recorded anywhere. The gap between the two
+        is inference, and I will keep marking which is which.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -125,16 +125,16 @@
         <ul class="callout">
           <li>The document was cut with <code>head -c 60000</code> before being handed to the review tool.
           That command <strong>keeps the first 60,000 bytes.</strong> It counts bytes, not characters.</li>
-          <li>Pulling out the <strong>four commits</strong> of the large design document that are over
-          60,000 bytes and measuring them, <strong>all four are cut inside a character.</strong>
+          <li>Pulling out the four commits of the large design document that are over
+          60,000 bytes and measuring them, all four are cut inside a character.
           Five, counting the copy I am working on now.</li>
           <li>Given an argument like that, the tool <strong>ends with 2 without reaching a model.</strong>
           I reproduced it to check.</li>
-          <li>Failure leaves three signals, and <strong>a different thing erased each one</strong>: the
+          <li>Failure leaves three signals, and a different thing erased each one: the
           redirection that creates the output file up front, <code>2&gt;/dev/null</code>, and the
           <code>exit 0</code> at the end of the script.</li>
-          <li>⚠️ <strong>Under 60,000 bytes there is nothing to cut, so it is fine.</strong> Results for the
-          shorter document kept accumulating and <strong>the folder looked healthy.</strong></li>
+          <li>⚠️ Under 60,000 bytes there is nothing to cut, so it is fine. Results for the
+          shorter document kept accumulating and the folder looked healthy.</li>
         </ul>
 
         <h2 id="what-i-set-up">Editing a design doc was supposed to trigger a review<a class="anchor" href="#what-i-set-up" aria-label="Link to this section">#</a></h2>
@@ -145,7 +145,7 @@
 
         <p>⚠️ <strong>"Editing" is narrower than it sounds.</strong> The hook only fires for one particular
         editing tool. Change the file from a shell or through some other path and it
-        <strong>never runs at all.</strong> That comes back later.</p>
+        never runs at all. That comes back later.</p>
 
 <pre data-lang="bash"><code>FILE="${1:-docs/DESIGN.md}"
 OUT=".reviews/design-$(date +%Y%m%d-%H%M%S)-$$.md"   # the $$ was added later
@@ -161,11 +161,11 @@ exit 0</code></pre>
 
         <p><code>head -c 60000</code> was there because handing over the whole document might make the
         argument too long. <code>2&gt;/dev/null</code> and <code>exit 0</code> were there
-        <strong>so a failed review would not block the edit.</strong></p>
+        so a failed review would not block the edit.</p>
 
         <blockquote><p>The defect this article is about lives in those eight lines.
-        <strong>Every one of them went in for a plausible reason.</strong>
-        ⚠️ Except the last one, which is <strong>outside the code.</strong> It comes later.</p></blockquote>
+        Every one of them went in for a plausible reason.
+        ⚠️ Except the last one, which is outside the code. It comes later.</p></blockquote>
 
         <h2 id="inside-a-character">The cut landed inside a character<a class="anchor" href="#inside-a-character" aria-label="Link to this section">#</a></h2>
 
@@ -220,15 +220,15 @@ exit 0</code></pre>
           </svg>
           <figcaption>The vertical line is not a byte, it is <strong>the cut boundary.</strong>
           In the current document the 60,000th byte is <code>ED</code>, the first byte of 「핸」, and the
-          boundary sits just after it, so <strong>one of three bytes</strong> survives.
-          <strong>Not half — a third.</strong></figcaption>
+          boundary sits just after it, so one of three bytes survives.
+          Not half — a third.</figcaption>
         </figure>
 
         <h2 id="every-revision">I measured every revision that survives<a class="anchor" href="#every-revision" aria-label="Link to this section">#</a></h2>
 
         <p>"A character can be split" and "it was split then" are different statements. So I pulled out
         <strong>every revision of this document that survives as a commit</strong> and checked two things:
-        <strong>whether the whole original is valid</strong>, and <strong>whether the first 60,000 bytes
+        whether the whole original is valid, and <strong>whether the first 60,000 bytes
         are.</strong> If the original was already broken, the cut is not to blame.</p>
 
 <pre data-lang="bash"><code>blob=$(git rev-parse "$commit:docs/DESIGN.md")
@@ -244,34 +244,34 @@ git cat-file -p "$blob" | head -c 60000 | iconv -f UTF-8 -t UTF-8 &gt; /dev/null
           <thead><tr><th>Revision</th><th>Size</th><th>Whole original</th><th>First 60,000 bytes</th></tr></thead>
           <tbody>
             <tr><td>17 Jul</td><td>51,927 bytes</td><td>valid</td><td>nothing to cut</td></tr>
-            <tr><td>2 Aug</td><td>75,281 bytes</td><td>valid</td><td><strong>cut inside a character</strong></td></tr>
-            <tr><td>16 Aug</td><td>111,834 bytes</td><td>valid</td><td><strong>cut inside a character</strong></td></tr>
-            <tr><td>23 Aug</td><td>114,909 bytes</td><td>valid</td><td><strong>cut inside a character</strong></td></tr>
-            <tr><td>26 Aug</td><td>115,891 bytes</td><td>valid</td><td><strong>cut inside a character</strong></td></tr>
-            <tr><td>working tree (now)</td><td>130,939 bytes</td><td>valid</td><td><strong>cut inside a character</strong></td></tr>
+            <tr><td>2 Aug</td><td>75,281 bytes</td><td>valid</td><td>cut inside a character</td></tr>
+            <tr><td>16 Aug</td><td>111,834 bytes</td><td>valid</td><td>cut inside a character</td></tr>
+            <tr><td>23 Aug</td><td>114,909 bytes</td><td>valid</td><td>cut inside a character</td></tr>
+            <tr><td>26 Aug</td><td>115,891 bytes</td><td>valid</td><td>cut inside a character</td></tr>
+            <tr><td>working tree (now)</td><td>130,939 bytes</td><td>valid</td><td>cut inside a character</td></tr>
           </tbody>
         </table>
         </div>
         </div>
-        <p class="table-note"><strong>All six originals are valid.</strong> So the breakage in the right-hand
-        column <strong>comes from the cut.</strong> <strong>All four commits</strong> over 60,000 bytes are
+        <p class="table-note">All six originals are valid. So the breakage in the right-hand
+        column comes from the cut. All four commits over 60,000 bytes are
         affected, five counting the working copy.
-        ⚠️ I was about to write "it catches about half the time" and <strong>deleted it after measuring.</strong></p>
+        ⚠️ I was about to write "it catches about half the time" and deleted it after measuring.</p>
 
-        <blockquote><p>⚠️ <strong>This table proves exactly this much:</strong>
+        <blockquote><p>⚠️ This table proves exactly this much:
         "cutting this blob with this command produces invalid UTF-8".
-        <strong>Not that the hook actually received that blob, nor how it ended if it did.</strong>
-        There were <strong>more intermediate states</strong> between commits and they are not preserved.
+        Not that the hook actually received that blob, nor how it ended if it did.
+        There were more intermediate states between commits and they are not preserved.
         I do not know how many.</p></blockquote>
 
-        <p>So what this article can say is <strong>"among what can still be measured, I found no
-        counterexample".</strong> "It went unread for weeks" is <strong>an inference drawn from that</strong>,
+        <p>So what this article can say is "among what can still be measured, I found no
+        counterexample". "It went unread for weeks" is an inference drawn from that,
         not a proof.</p>
 
         <h2 id="who-rejected-it">The program that rejected it was not the one I thought<a class="anchor" href="#who-rejected-it" aria-label="Link to this section">#</a></h2>
 
-        <p>I ran a string containing a split character as an argument, <strong>in the same form the hook used
-        at the time.</strong></p>
+        <p>I ran a string containing a split character as an argument, in the same form the hook used
+        at the time.</p>
 
 <pre data-lang="text"><code>$ codex exec --sandbox read-only "$(cat broken.txt)"
 
@@ -280,10 +280,10 @@ stdout: 0 bytes
 stderr: error: invalid UTF-8 was detected in one or more arguments
         Usage: codex exec [OPTIONS] [PROMPT]</code></pre>
 
-        <p><strong>It never reaches a model.</strong> The rejection happens while the arguments are being
+        <p>It never reaches a model. The rejection happens while the arguments are being
         checked. So not one character of review comes back.</p>
 
-        <p>And <strong>here I got it wrong once more.</strong> The fixed hook has a <code>timeout</code> in
+        <p>And here I got it wrong once more. The fixed hook has a <code>timeout</code> in
         front, and having measured in that form I had written down
         <strong>an exit code of 125.</strong> Measuring again:</p>
 
@@ -293,15 +293,15 @@ $ timeout 60 codex exec ... "&lt;broken argument&gt;"   → 125
 $ timeout 60 cat  "&lt;broken argument&gt;"             → 125
 $ timeout 60 echo "&lt;broken argument&gt;"             → 125</code></pre>
 
-        <p>The last two lines are the answer. <strong>It has nothing to do with codex.</strong>
+        <p>The last two lines are the answer. It has nothing to do with codex.
         The <code>timeout</code> on this machine is not the GNU one but the
-        <strong>Rust rewrite</strong> (<code>uutils coreutils 0.8.0</code>), and it
+        Rust rewrite (<code>uutils coreutils 0.8.0</code>), and it
         <strong>rejects invalid UTF-8 in its own arguments</strong> before doing anything.
-        <strong>codex never starts.</strong></p>
+        codex never starts.</p>
 
-        <blockquote><p>The two programs print <strong>a first line that does not differ by a character</strong>,
+        <blockquote><p>The two programs print a first line that does not differ by a character,
         because both use the same Rust argument-parsing library.
-        What differs is <strong>the second line and the exit code.</strong></p></blockquote>
+        What differs is the second line and the exit code.</p></blockquote>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">Scroll sideways to see the rest</p>
@@ -310,28 +310,28 @@ $ timeout 60 echo "&lt;broken argument&gt;"             → 125</code></pre>
           <caption class="sr-only">Two programs rejecting the same broken argument.</caption>
           <thead><tr><th>Who rejected</th><th>First line</th><th>Second line</th><th>Exit code</th></tr></thead>
           <tbody>
-            <tr><td>codex</td><td>invalid UTF-8 …</td><td><code>Usage: codex exec …</code></td><td><strong>2</strong></td></tr>
-            <tr><td>timeout</td><td>invalid UTF-8 …</td><td><code>For more information …</code></td><td><strong>125</strong></td></tr>
+            <tr><td>codex</td><td>invalid UTF-8 …</td><td><code>Usage: codex exec …</code></td><td>2</td></tr>
+            <tr><td>timeout</td><td>invalid UTF-8 …</td><td><code>For more information …</code></td><td>125</td></tr>
           </tbody>
         </table>
         </div>
         </div>
-        <p class="table-note">⚠️ <strong>The hook before the fix had no <code>timeout</code>.</strong>
-        So the value at the time would have been <strong>2</strong>. The 125 is
-        <strong>a value I produced while measuring now</strong>, and I nearly wrote it down as what happened
+        <p class="table-note">⚠️ The hook before the fix had no <code>timeout</code>.
+        So the value at the time would have been 2. The 125 is
+        a value I produced while measuring now, and I nearly wrote it down as what happened
         back then.</p>
 
-        <blockquote><p>The outcome is the same either way: <strong>not one character of review comes back.</strong>
-        But <strong>I had the wrong idea about who did the rejecting.</strong>
+        <blockquote><p>The outcome is the same either way: not one character of review comes back.
+        But I had the wrong idea about who did the rejecting.
         "The tool rejects the document" and "the wrapper around the tool rejects the argument" are different
-        stories, and <strong>they get fixed in different places.</strong></p></blockquote>
+        stories, and they get fixed in different places.</p></blockquote>
 
         <h2 id="three-signals">Three different things erased one signal each<a class="anchor" href="#three-signals" aria-label="Link to this section">#</a></h2>
 
         <p>The failure itself is loud. The exit code is not zero and the message is plain.
         That it never reached <strong>me</strong> is down to three things I put in.
         ⚠️ <strong>They are not layers over the same thing.</strong> Failure leaves three signals and
-        <strong>a different thing erased each one.</strong></p>
+        a different thing erased each one.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 236" role="img" aria-labelledby="si-t si-d" class="figure-svg">
@@ -382,19 +382,19 @@ $ timeout 60 echo "&lt;broken argument&gt;"             → 125</code></pre>
         </figure>
 
         <p>The first is the nastiest. <code>&gt;</code> creates and empties the file
-        <strong>before the command starts.</strong> So a file appears even when the tool emits nothing.
+        before the command starts. So a file appears even when the tool emits nothing.
         Normally "there is no result file" would be the signal that something failed, and
-        <strong>that signal never appears.</strong></p>
+        that signal never appears.</p>
 
-        <blockquote><p>⚠️ <strong>It is not that all three are required to hide it.</strong>
+        <blockquote><p>⚠️ It is not that all three are required to hide it.
         Remove only <code>2&gt;/dev/null</code> and the reason survives; remove only <code>exit 0</code>
         and the caller receives a non-zero value.</p></blockquote>
 
-        <p>So there is <strong>a fourth</strong>, and it is outside the code.
+        <p>So there is a fourth, and it is outside the code.
         This hook is invoked automatically after an edit, and I
-        <strong>never once looked at where its output went or who received its exit code.</strong>
+        never once looked at where its output went or who received its exit code.
         I only looked at the folder. I am the one who put the three in, and
-        <strong>I am the one who did not look.</strong></p>
+        I am the one who did not look.</p>
 
         <h2 id="the-folder-filled-up">Meanwhile the folder kept filling up<a class="anchor" href="#the-folder-filled-up" aria-label="Link to this section">#</a></h2>
 
@@ -410,15 +410,15 @@ $ timeout 60 echo "&lt;broken argument&gt;"             → 125</code></pre>
           <tbody>
             <tr><td>early Jul – 8 Aug</td><td><strong>28</strong> files with content</td></tr>
             <tr><td>13 Jul · 12–13 Aug</td><td><strong>5 zero-byte files</strong></td></tr>
-            <tr><td>14 Aug – 31 Aug</td><td><strong>no files at all</strong></td></tr>
+            <tr><td>14 Aug – 31 Aug</td><td>no files at all</td></tr>
             <tr><td>early Sep</td><td>5 files with content (4 of them after the fix)</td></tr>
           </tbody>
         </table>
         </div>
         </div>
-        <p class="table-note">⚠️ <strong>The table is counted; the meaning is not.</strong>
-        Whether a zero-byte file means "called and failed" <strong>cannot be known, because stderr was being
-        discarded.</strong> Failing to find the executable would look the same. And an absent file is not
+        <p class="table-note">⚠️ The table is counted; the meaning is not.
+        Whether a zero-byte file means "called and failed" cannot be known, because stderr was being
+        discarded. Failing to find the executable would look the same. And an absent file is not
         evidence that nothing was called.</p>
 
         <figure class="diagram">
@@ -480,26 +480,26 @@ $ timeout 60 echo "&lt;broken argument&gt;"             → 125</code></pre>
             </defs>
           </svg>
           <figcaption>Circles are drawn <strong>one per date</strong>; there were several on the same day in
-          reality. Crosses are <strong>all five zero-byte files.</strong> Right of the dashed line is where
-          the large document starts being cut, and <strong>the circles carry on for a while after it.</strong></figcaption>
+          reality. Crosses are all five zero-byte files. Right of the dashed line is where
+          the large document starts being cut, and the circles carry on for a while after it.</figcaption>
         </figure>
 
-        <p>⚠️ And <strong>laid out like this, the odd spots stand out.</strong> The zero-byte files do,
+        <p>⚠️ And laid out like this, the odd spots stand out. The zero-byte files do,
         and so does a gap of more than two weeks. The reason I did not see them is that
-        <strong>I never laid them out like this.</strong> I checked, now and then, only that
-        <strong>the file count was going up.</strong> Not the sizes, not the gaps between dates.</p>
+        I never laid them out like this. I checked, now and then, only that
+        the file count was going up. Not the sizes, not the gaps between dates.</p>
 
-        <p>The zero-byte file from 13 July <strong>is not explained by the cause in this article.</strong>
+        <p>The zero-byte file from 13 July is not explained by the cause in this article.
         The document was under 60,000 bytes then, so there was nothing to cut.
-        The reason that one failed, <strong>I do not know.</strong></p>
+        The reason that one failed, I do not know.</p>
 
-        <p>In early August reviews with content kept coming. There were <strong>two</strong> design documents
-        then, and the newer one was <strong>31,965 bytes</strong> — under 60,000, so nothing to cut. The
+        <p>In early August reviews with content kept coming. There were two design documents
+        then, and the newer one was 31,965 bytes — under 60,000, so nothing to cut. The
         content of those reviews was about that newer document too.
-        ⚠️ <strong>The output does not record a filename</strong>, so that is a guess from reading the
-        content, and <strong>which review looked at which document cannot be told from the output.</strong></p>
+        ⚠️ The output does not record a filename, so that is a guess from reading the
+        content, and which review looked at which document cannot be told from the output.</p>
 
-        <blockquote><p>So the folder looked <strong>even healthier.</strong>
+        <blockquote><p>So the folder looked even healthier.
         Every edit to the shorter document appeared to add another neat result.</p></blockquote>
 
         <h2 id="one-byte">Dropping one byte let it through<a class="anchor" href="#one-byte" aria-label="Link to this section">#</a></h2>
@@ -508,9 +508,9 @@ $ timeout 60 echo "&lt;broken argument&gt;"             → 125</code></pre>
 
 <pre data-lang="bash"><code>DOC=$(head -c 60000 "$FILE" | iconv -f UTF-8 -t UTF-8 -c)</code></pre>
 
-        <p>I ran the same document <strong>with and without it</strong>, side by side.
-        The tool is <code>codex-cli 0.153.4</code>, run <strong>without <code>timeout</code>, as the hook was
-        before the fix.</strong></p>
+        <p>I ran the same document with and without it, side by side.
+        The tool is <code>codex-cli 0.153.4</code>, run without <code>timeout</code>, as the hook was
+        before the fix.</p>
 
 <pre data-lang="text"><code>[without iconv]
   slice of 60,000 bytes → exit code 2 · stdout 0 bytes
@@ -518,22 +518,22 @@ $ timeout 60 echo "&lt;broken argument&gt;"             → 125</code></pre>
 [through iconv]
   slice of 59,999 bytes → exit code 0 · answered with the document's title, correctly</code></pre>
 
-        <blockquote><p><strong>The difference is one byte.</strong> Drop the one fragment of a split
+        <blockquote><p>The difference is one byte. Drop the one fragment of a split
         character and the tool reads the document and answers.</p></blockquote>
 
-        <p>⚠️ Those numbers are <strong>the size of the slice</strong>, not the size of the argument that
+        <p>⚠️ Those numbers are the size of the slice, not the size of the argument that
         actually went over. Instructions and a filename go in front, and command substitution
-        <strong>strips every trailing newline.</strong> So even a document under 60,000 bytes
-        <strong>is not byte-for-byte identical inside the variable.</strong></p>
+        strips every trailing newline. So even a document under 60,000 bytes
+        is not byte-for-byte identical inside the variable.</p>
 
-        <p>⚠️ <code>-c</code> <strong>does not only drop the tail.</strong> It drops invalid bytes anywhere
-        in the input, so <strong>corruption in the middle of a document is quietly deleted too.</strong>
-        Here that is what I want; <strong>in general it is not.</strong></p>
+        <p>⚠️ <code>-c</code> does not only drop the tail. It drops invalid bytes anywhere
+        in the input, so corruption in the middle of a document is quietly deleted too.
+        Here that is what I want; in general it is not.</p>
 
         <p>⚠️ And the <code>iconv</code> on this machine (GNU libc 2.43) prints a diagnostic and
         <strong>ends with 1</strong> while dropping the tail. That is not a warning, it is
-        <strong>ending in failure.</strong> The hook does not look at that status. Had the script been
-        running under <code>set -e</code>, it would have <strong>died before ever calling the tool.</strong></p>
+        ending in failure. The hook does not look at that status. Had the script been
+        running under <code>set -e</code>, it would have died before ever calling the tool.</p>
 
         <h2 id="fixed-and-not">What I fixed and what I did not<a class="anchor" href="#fixed-and-not" aria-label="Link to this section">#</a></h2>
 
@@ -551,92 +551,92 @@ fi</code></pre>
         <ul class="callout">
           <li><strong>Only valid bytes survive the cut.</strong> The limit stays; only the fragment goes.</li>
           <li><strong>The tool's stderr goes to a log file.</strong> The failure message carries the last two
-          lines of that log, <strong>bringing the reason to the screen.</strong>
-          ⚠️ Only <strong>that one line's stderr</strong> goes to the log. The diagnostic from the
-          <code>iconv</code> in front <strong>still leaks out.</strong></li>
-          <li><strong>A failure deletes the zero-byte file</strong>, so it cannot be mistaken for "reviewed".</li>
-          <li><strong><code>&lt; /dev/null</code> was added.</strong> This hook runs behind the edit, so if
-          the tool ever sat waiting on standard input, <strong>it could hang without anyone noticing.</strong>
+          lines of that log, bringing the reason to the screen.
+          ⚠️ Only that one line's stderr goes to the log. The diagnostic from the
+          <code>iconv</code> in front still leaks out.</li>
+          <li>A failure deletes the zero-byte file, so it cannot be mistaken for "reviewed".</li>
+          <li><code>&lt; /dev/null</code> was added. This hook runs behind the edit, so if
+          the tool ever sat waiting on standard input, it could hang without anyone noticing.
           ⚠️ The instruction goes in as an argument, so it does not normally wait. This guards the case where
           an inherited input is still open.</li>
         </ul>
 
-        <p>⚠️ <strong>Even this fixed version does not report failure properly.</strong>
-        The failure branch ends with <code>echo</code>, so <strong>the script exits zero again.</strong>
+        <p>⚠️ Even this fixed version does not report failure properly.
+        The failure branch ends with <code>echo</code>, so the script exits zero again.
         To a caller that does not watch the output it is still a success. Of the three things above,
-        <strong>the third is still unfixed.</strong></p>
+        the third is still unfixed.</p>
 
-        <p>⚠️ And <strong>names collide.</strong> The error log is a single file, so overlapping runs
+        <p>⚠️ And names collide. The error log is a single file, so overlapping runs
         overwrite each other and the wrong cause gets attached. The result filename is a
-        <strong>second-resolution timestamp</strong>, so two runs in the same second each truncate and write,
-        <strong>mixing or corrupting it.</strong> The process id is now in the name, which covers the result
-        side only; <strong>the log side is still open.</strong></p>
+        second-resolution timestamp, so two runs in the same second each truncate and write,
+        mixing or corrupting it. The process id is now in the name, which covers the result
+        side only; the log side is still open.</p>
 
-        <p>⚠️ The result file <strong>still does not say which document was read.</strong>
+        <p>⚠️ The result file still does not say which document was read.
         The filename is only a timestamp.</p>
 
-        <blockquote><p><strong>"A review ran" and "this document was reviewed" are different statements</strong>,
+        <blockquote><p>"A review ran" and "this document was reviewed" are different statements,
         and the folder only shows the first. Writing this article, I
-        <strong>never did work out which documents August's reviews had looked at</strong> from the output alone.</p></blockquote>
+        never did work out which documents August's reviews had looked at from the output alone.</p></blockquote>
 
         <h2 id="wrote-it-wrong">I wrote the same defect down wrong three times<a class="anchor" href="#wrote-it-wrong" aria-label="Link to this section">#</a></h2>
 
         <p>This is the uncomfortable part. The day I first found this, I wrote the following into my rules
         document.</p>
 
-        <blockquote><p>Measured: the design review hook <strong>has never once succeeded</strong>
+        <blockquote><p>Measured: the design review hook has never once succeeded
         (zero <code>design-*</code> files in the results folder).</p></blockquote>
 
-        <p><strong>Both halves are wrong.</strong> That day the folder already held <strong>38</strong>
+        <p>Both halves are wrong. That day the folder already held <strong>38</strong>
         <code>design-*</code> files, of which <strong>5</strong> were zero bytes.
-        <strong>Counting only the committed ones gives 34</strong>; the other four had not been committed yet.
-        I wrote "measured" and <strong>never counted.</strong>
-        Then I <strong>copied that sentence into the hook's own comment.</strong></p>
+        Counting only the committed ones gives 34; the other four had not been committed yet.
+        I wrote "measured" and never counted.
+        Then I copied that sentence into the hook's own comment.</p>
 
-        <blockquote><p>This is <strong>the same shape as the defect I was fixing.</strong>
+        <blockquote><p>This is the same shape as the defect I was fixing.
         I wrote down something unverified as if it were verified, and
-        <strong>believed it was verified because it was written down.</strong>
-        No checker catches this kind, so <strong>it survives until someone reads it again.</strong></p></blockquote>
+        believed it was verified because it was written down.
+        No checker catches this kind, so it survives until someone reads it again.</p></blockquote>
 
-        <p>The right shape is this. Not "it never worked" but <strong>"for the document past 60,000 bytes,
-        every revision that can still be measured is affected".</strong> And in the meantime
-        <strong>other result files were still accumulating.</strong> A far less visible shape, and
-        <strong>that is why it lasted longer.</strong></p>
+        <p>The right shape is this. Not "it never worked" but "for the document past 60,000 bytes,
+        every revision that can still be measured is affected". And in the meantime
+        other result files were still accumulating. A far less visible shape, and
+        that is why it lasted longer.</p>
 
-        <p>⚠️ I also <strong>no longer know what I was looking at</strong> when I wrote "zero". I may simply
+        <p>⚠️ I also no longer know what I was looking at when I wrote "zero". I may simply
         not have looked, or looked at a different folder.
-        <strong>That there is no record of checking</strong> is all that can be verified now.</p>
+        That there is no record of checking is all that can be verified now.</p>
 
-        <p>And <strong>the third one I made while writing this article.</strong>
-        I put the exit code down as <strong>125</strong>, and that was a value <code>timeout</code> produced.
-        <strong>The hook before the fix had no <code>timeout</code>.</strong>
-        So I nearly wrote <strong>a value made under my own hand just now</strong> down as something that
+        <p>And the third one I made while writing this article.
+        I put the exit code down as 125, and that was a value <code>timeout</code> produced.
+        The hook before the fix had no <code>timeout</code>.
+        So I nearly wrote a value made under my own hand just now down as something that
         happened back then.</p>
 
-        <blockquote><p>All three are the same shape. <strong>The place I measured and the place I claimed
-        were different.</strong> I moved "measuring here and now gives this" over into "that is what happened
-        there and then". <strong>Exactly the mistake this article is about</strong>, and I made it
-        <strong>once more</strong> in the middle of writing it up.</p></blockquote>
+        <blockquote><p>All three are the same shape. The place I measured and the place I claimed
+        were different. I moved "measuring here and now gives this" over into "that is what happened
+        there and then". Exactly the mistake this article is about, and I made it
+        once more in the middle of writing it up.</p></blockquote>
 
         <h2 id="what-this-does-not-claim">Limits: what this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
         <ul class="callout">
           <li><strong>The cause of the five zero-byte files is unconfirmed.</strong> stderr was being
           discarded, so <strong>the reasons from that time are gone.</strong> What the reproduction shows is
-          <strong>one path that produces the same shape</strong>, not the cause of those five.
-          The one from 13 July <strong>is not explained by that path.</strong></li>
-          <li><strong>"Unread for weeks" is not proved.</strong> What is proved is
-          <strong>"every measurable revision is cut inside a character, and the tool rejects such an
-          argument".</strong> The intermediate states in between are not preserved.</li>
-          <li><strong>Why there were no reviews at all in mid-August is also unknown.</strong> The hook only
+          one path that produces the same shape, not the cause of those five.
+          The one from 13 July is not explained by that path.</li>
+          <li>"Unread for weeks" is not proved. What is proved is
+          "every measurable revision is cut inside a character, and the tool rejects such an
+          argument". The intermediate states in between are not preserved.</li>
+          <li>Why there were no reviews at all in mid-August is also unknown. The hook only
           fires for <code>Edit</code> and <code>Write</code>, so another path would not trigger it, but
-          <strong>there is no record of what I used then.</strong></li>
-          <li><strong>This does not mean other documents always break.</strong> If the 60,000th byte lands
+          there is no record of what I used then.</li>
+          <li>This does not mean other documents always break. If the 60,000th byte lands
           between characters it does not.
-          <strong>I simply found no such revision in this document.</strong></li>
-          <li><strong>Whether the fixed hook holds up over time is still unknown.</strong> There are four
+          I simply found no such revision in this document.</li>
+          <li>Whether the fixed hook holds up over time is still unknown. There are four
           successful results since the fix, and I checked that failures are visible
-          <strong>by deliberately breaking it once.</strong></li>
+          by deliberately breaking it once.</li>
         </ul>
 
         <div class="wrapup">
@@ -646,18 +646,18 @@ fi</code></pre>
           <li><strong>Feed Korean into a tool that cuts by bytes and it can be cut inside a character.</strong>
           And that only starts <strong>once the document passes the limit.</strong> Below it there is nothing
           to cut and everything is fine.</li>
-          <li><strong><code>&gt;</code> creates the file before the command.</strong>
+          <li><code>&gt;</code> creates the file before the command.
           A file remains even on failure, and a file present reads to a person as "it worked".</li>
-          <li><strong>Failure leaves several pieces of evidence, and there can be several covers.</strong>
+          <li>Failure leaves several pieces of evidence, and there can be several covers.
           If the result, the message and the exit code are each covered by a different thing,
-          <strong>fixing one changes nothing you can see.</strong></li>
-          <li><strong>"A check ran" and "this was checked" are different statements.</strong>
+          fixing one changes nothing you can see.</li>
+          <li>"A check ran" and "this was checked" are different statements.
           If the output does not record what it looked at, you only get the first.</li>
         </ul>
 
         <p>If one line survives, it is this.
-        <strong>Writing down that you fixed a check and counting what that check actually did are different
-        jobs.</strong> I did the first and looked at the folder.</p>
+        Writing down that you fixed a check and counting what that check actually did are different
+        jobs. I did the first and looked at the folder.</p>
 
         <p>Thank you for reading.</p>
         </div>

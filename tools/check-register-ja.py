@@ -12,6 +12,9 @@ import io
 import re
 import sys
 
+# ⚠️ 이 기준선은 **마크업에 딸려 움직인다.** 2026-09-12 에 `<strong>` 4,846 개를 걷어냈더니
+# 글자는 하나도 안 바뀌었는데 두 편에서 「늘었다」가 떴다 — 태그가 끊어 놓던 토큰이 이어붙어
+# 세는 자리가 달라졌기 때문이다. 문체가 아니라 **세는 방식**이 바뀐 것이므로 기준선만 옮긴다.
 BASELINE = {
     "writing/a-pooler-fixes-only-one.ja.html": 14,
     "writing/every-guarantee-ends-at-a-writable-field.ja.html": 6,
@@ -22,17 +25,17 @@ BASELINE = {
     "writing/monitoring-the-screen-i-said-not-to-fix.ja.html": 8,
     "writing/monitoring-three-races-in-one-cache.ja.html": 0,
     "writing/monitoring-two-gates-one-screen.ja.html": 0,
-    "writing/parallelism-made-the-tail-worse.ja.html": 5,
+    "writing/parallelism-made-the-tail-worse.ja.html": 8,
     "writing/seven-of-eight-should-not-recover.ja.html": 3,
     "writing/slow-screens-1-volume-list.ja.html": 6,
     "writing/slow-screens-2-instance-list.ja.html": 1,
-    "writing/slow-screens-3-role-lookup.ja.html": 2,
+    "writing/slow-screens-3-role-lookup.ja.html": 4,
     "writing/slow-screens-4-client-per-loop.ja.html": 3,
     "writing/slow-screens-6-polling-pileup.ja.html": 3,
-    "writing/slow-screens-7-nothing-to-fix.ja.html": 1,
+    "writing/slow-screens-7-nothing-to-fix.ja.html": 2,
     "writing/slow-screens-8-load-test-harness.ja.html": 4,
     "writing/the-ceiling-was-not-in-the-code.ja.html": 6,
-    "writing/the-only-control-that-caught-something.ja.html": 5,
+    "writing/the-only-control-that-caught-something.ja.html": 6,
     "writing/the-review-that-skipped-the-big-file.ja.html": 2,
     "writing/three-documents-on-a-false-premise.ja.html": 4,
     "writing/until-the-guarantee-was-a-sentence.ja.html": 8,

@@ -88,7 +88,7 @@
         <strong>holding it and setting its direction</strong> so it cannot wander. The software sense is the same:
         put force (load) on a system, and hold that force so it lands <strong>the same way every time</strong>.</p>
 
-        <p>So a "load tool" and a "harness" are different things. JMeter, k6 and Gatling are <strong>load generators</strong>;
+        <p>So a "load tool" and a "harness" are different things. JMeter, k6 and Gatling are load generators;
         a harness wraps one of them together with <em>checking dependencies → starting the target → issuing tokens →
         running the load → collecting results → summarising</em>, reproducibly, behind one command.</p>
         <h2 id="조건">What makes a harness a harness<a class="anchor" href="#조건" aria-label="Link to this section">#</a></h2>
@@ -97,13 +97,13 @@
         <ol>
           <li><strong>Reproducibility.</strong> The same command builds the same conditions. If they differ per run, two results cannot be compared.</li>
           <li><strong>Parameters.</strong> What changes — thread count, duration, latency — comes in as arguments; the scenario is not hard-coded.</li>
-          <li><strong>Failures must be visible.</strong> Carry on after a setup step failed and <strong>the number zero
-          disguises itself as a result</strong>. In load testing a silent failure is worse than a failure.</li>
+          <li>Failures must be visible. Carry on after a setup step failed and the number zero
+          disguises itself as a result. In load testing a silent failure is worse than a failure.</li>
         </ol>
 
         <p>The third is the one most often missing. If the target app never came up and the generator runs anyway, the result is
         not "100% errors" but "0 samples", and when the summariser lets that pass quietly
-        <strong>it looks as though nothing happened at all.</strong></p>
+        it looks as though nothing happened at all.</p>
         <h2 id="흐름">How one run goes<a class="anchor" href="#흐름" aria-label="Link to this section">#</a></h2>
         <p>The order in the harness actually built (<code>perf/run.sh</code>). Each step moves on
         <strong>only after checking that it really happened</strong>.</p>
@@ -125,10 +125,10 @@
         4 writers, where nothing was saturated, the factor of two was there.</p>
 
         <p><strong>"The absolute number is the performance"</strong> — when the generator and the target share a machine, absolute
-        throughput means nothing. What means something is <strong>a comparison under the same conditions</strong>.</p>
+        throughput means nothing. What means something is a comparison under the same conditions.</p>
 
-        <p><strong>"It ran, so it measured"</strong> — if the harness itself is quietly wrong, every number it prints is false.
-        So each part is <strong>broken on purpose first</strong>, to see whether the failure shows.</p>
+        <p>"It ran, so it measured" — if the harness itself is quietly wrong, every number it prints is false.
+        So each part is broken on purpose first, to see whether the failure shows.</p>
 
         <h2 id="쓰인-곳">Where it is used on this site<a class="anchor" href="#쓰인-곳" aria-label="Link to this section">#</a></h2>
         <ul>

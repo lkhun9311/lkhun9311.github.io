@@ -104,8 +104,8 @@
         <strong>running past ten minutes and timing out</strong>. It failed about five times in six.</p>
 
         <p>After fixing it I <strong>split the work into six configurations</strong> and
-        <strong>measured each one under the same load.</strong> That table is the whole article.
-        It shows which change bought how much, and <strong>which change made something worse.</strong></p>
+        measured each one under the same load. That table is the whole article.
+        It shows which change bought how much, and which change made something worse.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -118,33 +118,33 @@
         <h2 id="what-is-in-here">What this is about<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
 
         <ul>
-          <li><strong>Six configurations, measured one at a time.</strong> Measure only “before and after”
+          <li>Six configurations, measured one at a time. Measure only “before and after”
           and you never learn which change did the work.</li>
           <li>Holding the cache fixed and switching sequential to parallel made
           <strong>the median 21x faster and P99 1.9x slower.</strong> Neither “faster” nor “slower” is the answer.</li>
-          <li>The largest drop in seconds came from <strong>adding one cache</strong>: a 579.0 s average became 13.1 s.
+          <li>The largest drop in seconds came from adding one cache: a 579.0 s average became 13.1 s.
           The final <strong>23 ms</strong> came from putting Caffeine’s refresh behaviour on top of that.</li>
-          <li>The hand-rolled cache had a defect. <strong>It never stored an empty answer,</strong>
+          <li>The hand-rolled cache had a defect. It never stored an empty answer,
           so it asked again every time there was nothing to find.</li>
         </ul>
 
-        <p>⚠️ <strong>The claim that parallelising can make things slower has
-        <a href="parallelism-made-the-tail-worse.html">its own article</a>.</strong> That one holds the cache fixed
-        and compares sequential against parallel. This one looks at <strong>all six configurations</strong>.</p>
+        <p>⚠️ The claim that parallelising can make things slower has
+        <a href="parallelism-made-the-tail-worse.html">its own article</a>. That one holds the cache fixed
+        and compares sequential against parallel. This one looks at all six configurations.</p>
 
-        <p><strong>This is an internal product, so the code here is not the code that shipped.</strong>
+        <p>This is an internal product, so the code here is not the code that shipped.
         Product names, customers and internal addresses are gone; the structure and the numbers stay.
         Class names are generalised only as far as the story needs.</p>
 
-        <p><strong>⚠️ One thing up front.</strong> The numbers below were <strong>measured with JMeter in an
-        isolated test environment</strong>, not taken from production. The “ten minutes” is the load test’s
+        <p>⚠️ One thing up front. The numbers below were measured with JMeter in an
+        isolated test environment, not taken from production. The “ten minutes” is the load test’s
         own timeout ceiling, not a wait any real user sat through.</p>
 
         <h2 id="the-screen">The screen<a class="anchor" href="#the-screen" aria-label="Link to this section">#</a></h2>
 
         <p>An administrator opens it to see <strong>every volume in the system</strong>. For each volume,
-        beyond the name and size, the screen also shows <strong>which project owns it</strong>,
-        <strong>which volume group it belongs to</strong> and <strong>whether it has a recent error message</strong>.
+        beyond the name and size, the screen also shows which project owns it,
+        which volume group it belongs to and whether it has a recent error message.
         All three come from different APIs.</p>
 
         <figure class="diagram">
@@ -203,8 +203,8 @@
   error message lookup  N calls
 = 3N external API calls</code></pre>
 
-        <p>More volumes, <strong>linearly</strong> slower. In the test environment this screen
-        <strong>ran past ten minutes and timed out</strong>, with an error rate of <strong>83.3%</strong>.</p>
+        <p>More volumes, linearly slower. In the test environment this screen
+        ran past ten minutes and timed out, with an error rate of <strong>83.3%</strong>.</p>
 
         <h2 id="the-guess">The guess: I thought sequential calls were the problem<a class="anchor" href="#the-guess" aria-label="Link to this section">#</a></h2>
 
@@ -221,14 +221,14 @@
 
         <p>In one line, this is it.</p>
 
-        <blockquote><p><strong>Measure only “before and after” and you never learn which change did the work.</strong>
+        <blockquote><p>Measure only “before and after” and you never learn which change did the work.
         Measuring six configurations in turn showed that parallelising
-        <strong>moves the median and the tail in opposite directions.</strong></p></blockquote>
+        moves the median and the tail in opposite directions.</p></blockquote>
 
         <p>Here is the table first. The load was identical in all six runs.
-        The <strong>median</strong> is the middle value once requests are sorted by response time;
+        The median is the middle value once requests are sorted by response time;
         <strong>P99</strong> is the line 1% of requests fall beyond on the slow side.
-        <strong>TPS</strong> is requests finished per second. <strong>Apdex</strong>, which appears later,
+        TPS is requests finished per second. Apdex, which appears later,
         is the share of requests that finished within 0.5 s and within 1.5 s. Closer to 1 is better.</p>
 
         <div class="table-scroll">
@@ -241,21 +241,21 @@
             <tr><td>1. no cache · sequential</td><td>54</td><td><strong>83.3%</strong></td><td>600.0 s</td><td>579.0 s</td><td>600.0 s<br>(timeout)</td><td>0.06</td></tr>
             <tr><td>2. cache 5 s · sequential</td><td>1,641</td><td>0%</td><td>11.0 s</td><td>13.1 s</td><td>42.6 s</td><td>2.69</td></tr>
             <tr><td>3. no cache · parallel</td><td>541</td><td>0%</td><td>45.1 s</td><td>47.8 s</td><td>129.9 s</td><td>0.87</td></tr>
-            <tr><td>4. cache 5 s · parallel</td><td>1,560</td><td>0%</td><td><strong>0.5 s</strong></td><td>14.7 s</td><td><strong>79.0 s</strong></td><td>2.46</td></tr>
-            <tr><td>5. 4 + <code>addMoreInfo()</code> optimised</td><td>5,991</td><td>0%</td><td>0.03 s</td><td><strong>1.0 s</strong></td><td>6.9 s</td><td>10.01</td></tr>
-            <tr><td>6. 5 + Caffeine refresh</td><td>7,658</td><td>0%</td><td><strong>4 ms</strong></td><td><strong>5.3 ms</strong></td><td><strong>23 ms</strong></td><td>12.82</td></tr>
+            <tr><td>4. cache 5 s · parallel</td><td>1,560</td><td>0%</td><td>0.5 s</td><td>14.7 s</td><td>79.0 s</td><td>2.46</td></tr>
+            <tr><td>5. 4 + <code>addMoreInfo()</code> optimised</td><td>5,991</td><td>0%</td><td>0.03 s</td><td>1.0 s</td><td>6.9 s</td><td>10.01</td></tr>
+            <tr><td>6. 5 + Caffeine refresh</td><td>7,658</td><td>0%</td><td>4 ms</td><td>5.3 ms</td><td>23 ms</td><td>12.82</td></tr>
           </tbody>
         </table>
         </div>
         </div>
-        <p class="table-note">All six runs used <strong>50 concurrent users · 2 min Ramp-Up · 10 min duration ·
-        2–5 s Think Time.</strong> Only the leftmost column of each row changed.</p>
+        <p class="table-note">All six runs used 50 concurrent users · 2 min Ramp-Up · 10 min duration ·
+        2–5 s Think Time. Only the leftmost column of each row changed.</p>
 
-        <p>How to read it. <strong>Row 1 is the worst:</strong> a 579 s mean with an 83.3% error rate,
+        <p>How to read it. Row 1 is the worst: a 579 s mean with an 83.3% error rate,
         which is to say it does not answer at all. Adding a single cache in row 2 takes that to 0%.</p>
 
-        <p>The next part is the one worth staring at. <strong>Hold the cache fixed and compare
-        sequential (2) against parallel (4), and the two numbers move in opposite directions.</strong></p>
+        <p>The next part is the one worth staring at. Hold the cache fixed and compare
+        sequential (2) against parallel (4), and the two numbers move in opposite directions.</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">Scroll sideways to see the rest</p>
@@ -264,16 +264,16 @@
           <caption class="sr-only">Distribution: sequential against parallel.</caption>
           <thead><tr><th>Metric</th><th>2. sequential</th><th>4. parallel</th><th>Ratio</th></tr></thead>
           <tbody>
-            <tr><td><strong>Median</strong></td><td>10,974 ms</td><td><strong>508 ms</strong></td><td><strong>21.6x faster</strong></td></tr>
+            <tr><td>Median</td><td>10,974 ms</td><td>508 ms</td><td>21.6x faster</td></tr>
             <tr><td>P90</td><td>23,907 ms</td><td>58,908 ms</td><td>2.5x slower</td></tr>
-            <tr><td><strong>P99</strong></td><td>42,644 ms</td><td><strong>78,997 ms</strong></td><td><strong>1.85x slower</strong></td></tr>
+            <tr><td>P99</td><td>42,644 ms</td><td>78,997 ms</td><td>1.85x slower</td></tr>
             <tr><td>Mean</td><td>13,108 ms</td><td>14,749 ms</td><td>1.13x slower</td></tr>
             <tr><td>TPS</td><td>2.69</td><td>2.46</td><td>0.91x</td></tr>
           </tbody>
         </table>
         </div>
         </div>
-        <p class="table-note">Parallelising made <strong>the median 21x faster and the tail 1.9x slower.</strong>
+        <p class="table-note">Parallelising made the median 21x faster and the tail 1.9x slower.
         “It got slower” is not a sentence that describes this distribution.</p>
 
         <figure class="diagram">
@@ -289,23 +289,23 @@
           P99 rises to 78,997 ms. Sequential against parallel is the only thing that changed.</figcaption>
         </figure>
 
-        <p>Requests in the middle got <strong>faster.</strong> In exchange,
-        <strong>the slowest 1% were pushed past 79 seconds.</strong> P99 does not mean “one user in a hundred
-        waited 79 seconds”. It is <strong>the line 1% of requests fall beyond once you sort them slowest first.</strong>
+        <p>Requests in the middle got faster. In exchange,
+        the slowest 1% were pushed past 79 seconds. P99 does not mean “one user in a hundred
+        waited 79 seconds”. It is the line 1% of requests fall beyond once you sort them slowest first.
         One user issues many requests, so it does not convert directly into a headcount.</p>
 
-        <p>Apdex rose from 0.014 to 0.526 as well. Apdex is <strong>the share of requests finishing within
-        0.5 s and within 1.5 s</strong>, not something derived from the median. It rose because more requests
-        landed inside those bands. <strong>Read the mean alone and you get “1.13x slower”, one line that
-        erases both directions at once.</strong></p>
+        <p>Apdex rose from 0.014 to 0.526 as well. Apdex is the share of requests finishing within
+        0.5 s and within 1.5 s, not something derived from the median. It rose because more requests
+        landed inside those bands. Read the mean alone and you get “1.13x slower”, one line that
+        erases both directions at once.</p>
 
-        <p>Which configuration bought how much <strong>depends on which metric you ask.</strong>
-        By the mean, <strong>the largest drop in seconds is 1 → 2:</strong> 579.0 s became 13.1 s, a saving of
-        565.9 s, and all that changed was adding one cache. <strong>The largest drop as a ratio is 5 → 6,</strong>
-        which took 1.0 s to 5.3 ms. Both sentences are <strong>mean-based.</strong> Measured by the median the
+        <p>Which configuration bought how much depends on which metric you ask.
+        By the mean, the largest drop in seconds is 1 → 2: 579.0 s became 13.1 s, a saving of
+        565.9 s, and all that changed was adding one cache. The largest drop as a ratio is 5 → 6,
+        which took 1.0 s to 5.3 ms. Both sentences are mean-based. Measured by the median the
         ranking changes.</p>
 
-        <p>⚠️ What inside configuration 5 bought what <strong>cannot be separated from this record.</strong>
+        <p>⚠️ What inside configuration 5 bought what cannot be separated from this record.
         The source says only <code>addMoreInfo() optimized</code>. That it was a bundle of changes inside the
         function that builds one volume is as far as I could verify.</p>
 
@@ -360,7 +360,7 @@
           </div>
           <figcaption>⚠️ <strong>The difference between the two cards is not whether threads queue.</strong>
           A synchronous <code>LoadingCache.get</code> also makes the rest wait until the loader returns.
-          What differs is <strong>whether they wait holding the map’s lock.</strong> In the upper card the bin
+          What differs is whether they wait holding the map’s lock. In the upper card the bin
           that key lives in is locked, so other keys in the same bin are affected as well.</figcaption>
         </figure>
 
@@ -390,10 +390,10 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         <p>And while they wait, those threads <strong>are still holding executor seats.</strong>
         So tasks for other volumes queue behind them.</p>
 
-        <p>⚠️ <strong>This causal story comes from reading the code, not from what the test proved.</strong>
+        <p>⚠️ This causal story comes from reading the code, not from what the test proved.
         What the six configurations show is “hold the cache fixed, go parallel, it got worse” and no further.
         Whether that came from lock contention, thread switching cost, or a limit on the external API side,
-        <strong>this test cannot separate.</strong> Separating them would need a parallel arm with the lock
+        this test cannot separate. Separating them would need a parallel arm with the lock
         removed, and I did not run one.</p>
 
         <h2 id="cause-b">Cause 2: an empty result was never cached<a class="anchor" href="#cause-b" aria-label="Link to this section">#</a></h2>
@@ -415,14 +415,14 @@ if (messages == null || messages.isEmpty()) {
 
         <ul>
           <li><strong>Zero rows means nothing is stored,</strong> because <code>forEach</code> never runs.
-          <strong>When a query returns nothing, that answer never reaches the cache, so the next request calls
-          the external API again.</strong> ⚠️ The source does not record how often the result was empty.
+          When a query returns nothing, that answer never reaches the cache, so the next request calls
+          the external API again. ⚠️ The source does not record how often the result was empty.
           That the structure behaves this way is as far as I verified.</li>
-          <li><strong>There is a gap between the check and the store.</strong> If several threads pass
+          <li>There is a gap between the check and the store. If several threads pass
           <code>isEmpty()</code> at once, all of them call the external API.</li>
         </ul>
 
-        <p>A cache that will not store “nothing” <strong>is not a cache for that answer.</strong></p>
+        <p>A cache that will not store “nothing” is not a cache for that answer.</p>
 
                 <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
@@ -477,15 +477,15 @@ if (messages == null || messages.isEmpty()) {
         <strong>locks the bin that key lives in</strong> and then runs the mapping function.</p>
 
         <blockquote><p><strong>The same key is blocked completely,</strong> and for exactly as long as the
-        mapping function takes. Even a different key <strong>is blocked too if its hash lands in the same
-        bin.</strong></p></blockquote>
+        mapping function takes. Even a different key is blocked too if its hash lands in the same
+        bin.</p></blockquote>
 
         <p>If the mapping function is a memory computation, that is microseconds. Here it was
-        <strong>a network round trip</strong>. Not milliseconds, but tens to hundreds of them.</p>
+        a network round trip. Not milliseconds, but tens to hundreds of them.</p>
 
-        <p>⚠️ The internal document calls this a “segment lock”, which <strong>is not accurate.</strong>
+        <p>⚠️ The internal document calls this a “segment lock”, which is not accurate.
         Segments are the Java 7 implementation; since Java 8 <code>ConcurrentHashMap</code> locks
-        <strong>per bin.</strong> Use the wrong name and the next person goes looking in the wrong place.</p>
+        per bin. Use the wrong name and the next person goes looking in the wrong place.</p>
 
         <h2 id="the-fix">The fix: not better locking, but removing the reason to lock<a class="anchor" href="#the-fix" aria-label="Link to this section">#</a></h2>
 
@@ -496,31 +496,31 @@ if (messages == null || messages.isEmpty()) {
         (If the mapping function returns <code>null</code>, nothing is stored and the next call computes again.
         Looking up a deleted group is one such path.)</p>
 
-        <p>So <strong>what this screen actually got was not better locking, but removing the reason to
-        lock.</strong> The hand-rolled cache and its <code>synchronized</code> blocks came out and Caffeine went
+        <p>So what this screen actually got was not better locking, but removing the reason to
+        lock. The hand-rolled cache and its <code>synchronized</code> blocks came out and Caffeine went
         in. One loader per key is guaranteed, so there is no separate lock to write against a stampede.</p>
 
-        <p>What configuration 6 added is <strong>a refresh policy.</strong> Instead of dropping a stale value
+        <p>What configuration 6 added is a refresh policy. Instead of dropping a stale value
         and making the next caller repopulate it, it hands back the old value and reloads behind them.
-        ⚠️ That behaviour only appears <strong>once a value is there.</strong> The first request for a key waits
+        ⚠️ That behaviour only appears once a value is there. The first request for a key waits
         for the loader to finish.</p>
 
         <p>Five things actually changed on this screen.</p>
 
         <ul>
-          <li><strong>The hand-rolled cache became Caffeine.</strong> What <code>CacheManager</code> and
+          <li>The hand-rolled cache became Caffeine. What <code>CacheManager</code> and
           <code>synchronized</code> blocks were doing is now the library’s job.</li>
-          <li><strong>Refreshing moved to the background.</strong> With <code>refreshAfterWrite(5s)</code>,
+          <li>Refreshing moved to the background. With <code>refreshAfterWrite(5s)</code>,
           a list query returns the value it has immediately and the reload happens behind it.</li>
-          <li><strong>The cache is filled at startup.</strong> An <code>ApplicationReadyEvent</code> triggers
-          <code>CompletableFuture.runAsync</code>. <strong>It does not block startup.</strong>
-          Which makes it not a device that removes the cold start but <strong>one that lowers the odds of
-          meeting it.</strong> A request arriving before warming finishes still loads for itself, and the same
+          <li>The cache is filled at startup. An <code>ApplicationReadyEvent</code> triggers
+          <code>CompletableFuture.runAsync</code>. It does not block startup.
+          Which makes it not a device that removes the cold start but one that lowers the odds of
+          meeting it. A request arriving before warming finishes still loads for itself, and the same
           holds if warming fails. ⚠️ The design document describes this step as “synchronous warming”, but the
           code says <code>runAsync</code>. I wrote down the code, not the document.</li>
-          <li><strong>Creating or deleting a volume invalidates the cache</strong>, without leaving it empty.
+          <li>Creating or deleting a volume invalidates the cache, without leaving it empty.
           The existing value stays while a fresh read happens behind it and swaps in atomically.</li>
-          <li><strong>The path that edits a volume group was not invalidating the volume cache.</strong>
+          <li>The path that edits a volume group was not invalidating the volume cache.
           It cleared its own cache and left the volume DTO cache alone. That path now invalidates both.</li>
         </ul>
 
@@ -531,30 +531,30 @@ if (messages == null || messages.isEmpty()) {
         out to the external API,</strong> and it is not the person who deleted something who pays that cost.
         It is whoever arrives next.</p>
 
-        <p>So it <strong>keeps the existing value and refills behind it.</strong> That is a trade between
-        showing a briefly stale value and making one person slow. <strong>The five seconds has a reason
-        behind it:</strong> the screen re-fetches the list every five seconds, so the team agreed that staying
+        <p>So it keeps the existing value and refills behind it. That is a trade between
+        showing a briefly stale value and making one person slow. The five seconds has a reason
+        behind it: the screen re-fetches the list every five seconds, so the team agreed that staying
         fresh within that cycle was enough.</p>
 
-        <p>That said, <strong>“five seconds” is not a ceiling.</strong> The volume list carries only
-        <code>refreshAfterWrite(5s)</code> and no expiry. The reload starts <strong>when someone asks for the
-        value again after those five seconds have passed,</strong> and that person receives the old value.
+        <p>That said, “five seconds” is not a ceiling. The volume list carries only
+        <code>refreshAfterWrite(5s)</code> and no expiry. The reload starts when someone asks for the
+        value again after those five seconds have passed, and that person receives the old value.
         If nobody asks, nothing refreshes. If the reload fails, the old value stays. Which means there is
-        <strong>no fixed ceiling on how stale the value can get.</strong> Adding an expiry creates one, and at
+        no fixed ceiling on how stale the value can get. Adding an expiry creates one, and at
         that moment you are back at the first paragraph of this section. Someone pays the cost.</p>
 
         <h2 id="objection">Objection: “why not just add threads?”<a class="anchor" href="#objection" aria-label="Link to this section">#</a></h2>
 
         <p>It is the first prescription anyone reaches for, and <strong>here it is wrong.</strong></p>
 
-        <p>What blocks is not the thread count but <strong>a single key.</strong> More threads only means more
+        <p>What blocks is not the thread count but a single key. More threads only means more
         of them standing in front of that key. Configurations 2 and 4 part company exactly there: going parallel
         made <strong>the median 21x faster and P99 1.9x slower.</strong> The queue did not get shorter,
-        <strong>the distribution got wider.</strong> ⚠️ I did not measure the order in which requests finished.
+        the distribution got wider. ⚠️ I did not measure the order in which requests finished.
         That two percentiles moved in opposite directions is everything this test says.</p>
 
         <p>Growing the executor fails for the same reason. The queue does not shorten;
-        <strong>the people queuing simply take up more seats.</strong></p>
+        the people queuing simply take up more seats.</p>
 
         <h2 id="measurement">Measurement: before and after, same conditions<a class="anchor" href="#measurement" aria-label="Link to this section">#</a></h2>
 
@@ -568,17 +568,17 @@ if (messages == null || messages.isEmpty()) {
           <caption class="sr-only">The admin volume screen, before and after.</caption>
           <thead><tr><th>Metric</th><th>Before</th><th>After</th></tr></thead>
           <tbody>
-            <tr><td><strong>Error rate</strong></td><td>83.3%</td><td><strong>0%</strong></td></tr>
-            <tr><td><strong>P99</strong></td><td>10 min timeout</td><td><strong>23 ms</strong></td></tr>
+            <tr><td>Error rate</td><td>83.3%</td><td><strong>0%</strong></td></tr>
+            <tr><td>P99</td><td>10 min timeout</td><td>23 ms</td></tr>
             <tr><td>Throughput</td><td>0.06 req/s</td><td>12.82 req/s</td></tr>
-            <tr><td>Apdex</td><td>0.0</td><td><strong>1.000</strong></td></tr>
+            <tr><td>Apdex</td><td>0.0</td><td>1.000</td></tr>
           </tbody>
         </table>
         </div>
         </div>
         <p class="table-note">45 of 54 samples failed, an error rate of 83.3%. The report’s error table lists
         exactly one kind, <code>java.net.SocketTimeoutException · Read timed out</code>, 45 times.
-        <strong>Every failure was a timeout.</strong></p>
+        Every failure was a timeout.</p>
 
         <p>I found and fixed the same defect on the three remaining screens, and all four moved the same way.</p>
 
@@ -599,20 +599,20 @@ if (messages == null || messages.isEmpty()) {
         <h2 id="limits">Limits: what this article does not claim<a class="anchor" href="#limits" aria-label="Link to this section">#</a></h2>
 
         <ul>
-          <li><strong>These are not production numbers.</strong> They were measured with JMeter in an isolated
+          <li>These are not production numbers. They were measured with JMeter in an isolated
           test environment. The “ten minutes” is the load test’s timeout ceiling, not a wait any user sat through.</li>
-          <li><strong>This is not an argument that parallelism is bad.</strong> I suspect
-          <strong>the network call inside a lock</strong> is why parallelism hurt in this code, and once that lock
+          <li>This is not an argument that parallelism is bad. I suspect
+          the network call inside a lock is why parallelism hurt in this code, and once that lock
           was gone parallelism pays. But the basis for that suspicion is the code, not this test.</li>
-          <li><strong>It also did not have to be Caffeine.</strong> The property needed is “one loader per key”,
+          <li>It also did not have to be Caffeine. The property needed is “one loader per key”,
           not a particular library. You can write it yourself. Writing it myself is what caused this article.</li>
-          <li><strong>I do not attribute all four screens to one cause.</strong> Each had slightly different
+          <li>I do not attribute all four screens to one cause. Each had slightly different
           secondary causes, and only the first one is written up in detail here.</li>
           <li><strong>The 23 ms is the aggregate P99 over all 7,658 samples,</strong> not a figure filtered to
           cache hits. What the source explains as a cache hit is the 4 ms median.</li>
           <li><strong>Configurations 5 and 6 cannot be attributed change by change.</strong> The source records
           5 only as <code>addMoreInfo() optimized</code>, and several edits went in together.</li>
-          <li><strong>This test cannot say why parallel got worse.</strong> The lock-contention explanation comes
+          <li>This test cannot say why parallel got worse. The lock-contention explanation comes
           from reading the code.</li>
         </ul>
 
@@ -626,18 +626,18 @@ if (messages == null || messages.isEmpty()) {
           was not there before.</li>
           <li>A <code>computeIfAbsent</code> mapping function should be <strong>short and simple.</strong>
           The Java documentation says so. Put I/O inside it and that key stays locked for the whole round trip.</li>
-          <li><strong>“Nothing” is a value too.</strong> A cache that will not store zero rows is not a cache
+          <li>“Nothing” is a value too. A cache that will not store zero rows is not a cache
           for as long as the answer is zero rows.</li>
-          <li><strong>Using a concurrent data structure and having no contention are different claims.</strong></li>
+          <li>Using a concurrent data structure and having no contention are different claims.</li>
         </ul>
 
         <p>If one line survives, this one:
-        <strong>measure only “before and after” and you never learn which change did the work.</strong>
+        measure only “before and after” and you never learn which change did the work.
         Only after measuring the six configurations separately could I see that parallelism has a harmful
         stretch in this code.</p>
 
-        <p>The next part is a different screen in the same product. That time <strong>there was nothing wrong
-        with the code</strong> and listing 20 instances still took 54 seconds.</p>
+        <p>The next part is a different screen in the same product. That time there was nothing wrong
+        with the code and listing 20 instances still took 54 seconds.</p>
 
         <p>Thank you for reading.</p>
         </div>

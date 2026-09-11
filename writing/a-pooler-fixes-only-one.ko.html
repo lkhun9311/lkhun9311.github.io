@@ -105,10 +105,10 @@
 
         <p>이 서비스에서 글을 하나 쓰면 서버는 그것을 DB에 넣기 전에 외부 모더레이션 API로 보내
         유해한 내용인지 묻습니다. 그 호출에는 Read Timeout이 <strong>10초</strong>로 걸려 있습니다.
-        그리고 그 호출이 <strong>DB Transaction 안에</strong> 있었습니다.</p>
+        그리고 그 호출이 DB Transaction 안에 있었습니다.</p>
 
         <p>이 구조를 보고 처음 든 생각은 아주 흔한 것이었습니다.
-        <strong>“트래픽이 늘면 Connection이 모자랄 테니 RDS Proxy 같은 것을 하나 앞에 세우면 되겠다.”</strong>
+        “트래픽이 늘면 Connection이 모자랄 테니 RDS Proxy 같은 것을 하나 앞에 세우면 되겠다.”
         틀린 생각이었습니다.</p>
 
         <p>이 글은 그 판단이 왜 틀렸는지, 그리고 도구를 사기 전에 무엇을 먼저 확인했어야 했는지에
@@ -128,25 +128,25 @@
         <ul>
           <li>Connection 고갈에는 원인이 <strong>두 가지</strong> 있고 Connection Pooler는 그중 <strong>하나만</strong>
           고칩니다.</li>
-          <li>왜 못 고치는지는 제품 문서가 아니라 <strong>Transaction Pooling이라는 방식의 정의</strong>에서 나옵니다.</li>
-          <li>그래서 도구를 도입하기 전에 <strong>이 코드에서 그 도구가 동작하는지</strong>부터 확인했습니다.</li>
+          <li>왜 못 고치는지는 제품 문서가 아니라 Transaction Pooling이라는 방식의 정의에서 나옵니다.</li>
+          <li>그래서 도구를 도입하기 전에 이 코드에서 그 도구가 동작하는지부터 확인했습니다.</li>
           <li>수정이 <code>@Transactional</code> 한 줄로 되돌아갈 수 있는 종류라 회귀 방어를
-          <strong>결과가 아니라 원인</strong>에 걸었습니다.</li>
+          결과가 아니라 원인에 걸었습니다.</li>
         </ul>
 
-        <p><strong>코드는 비공개 저장소에 있습니다.</strong> 아직 출시 전이라 저장소를 열어 두지
-        않았습니다. 그래서 이 글에는 GitHub 링크가 없습니다. 코드는 <strong>인용한 조각만</strong> 본문에 옮겼습니다.
+        <p>코드는 비공개 저장소에 있습니다. 아직 출시 전이라 저장소를 열어 두지
+        않았습니다. 그래서 이 글에는 GitHub 링크가 없습니다. 코드는 인용한 조각만 본문에 옮겼습니다.
         패키지 이름과 환경변수 이름은 원본 기록에서 이미 익명화된 것을 그대로 씁니다.</p>
 
-        <p><strong>⚠️ 미리 말씀드릴 것이 있습니다.</strong> 이 글의 수치는 <strong>로컬 Harness로 잰
-        것</strong>이지 운영 수치가 아닙니다. 외부 호출 지연은 Stub에 설정한 값입니다.
-        <strong>장애가 난 적도 없습니다.</strong> 아래에 나오는 “최대 10초”는 외부 호출에
-        <strong>설정해 둔 Read Timeout</strong> 값이지 요청마다 실제로 그만큼 붙잡고 있었다고 측정한 값이
+        <p>⚠️ 미리 말씀드릴 것이 있습니다. 이 글의 수치는 로컬 Harness로 잰
+        것이지 운영 수치가 아닙니다. 외부 호출 지연은 Stub에 설정한 값입니다.
+        장애가 난 적도 없습니다. 아래에 나오는 “최대 10초”는 외부 호출에
+        설정해 둔 Read Timeout 값이지 요청마다 실제로 그만큼 붙잡고 있었다고 측정한 값이
         아닙니다.</p>
 
         <h2 id="어떤-서비스">어떤 서비스인가요?<a class="anchor" href="#어떤-서비스" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>사업화를 목표로 만들고 있는 <strong>소셜 투표 플랫폼</strong>입니다. 사용자가 질문을 올리면 다른 사람들이
+        <p>사업화를 목표로 만들고 있는 소셜 투표 플랫폼입니다. 사용자가 질문을 올리면 다른 사람들이
         투표하고 그 결과 차트를 앱 밖으로 공유하는 서비스입니다. Kotlin과 Spring Boot로 만든 단일
         Monolith이고 데이터베이스는 관리형 PostgreSQL 하나를 씁니다. 아직 출시 전입니다.</p>
 
@@ -194,10 +194,10 @@
           <figcaption>모바일 앱 → API 서버 → PostgreSQL 구조입니다. 분홍색으로 표시한 아래쪽이 이 글에서 문제가 되는 지점입니다.</figcaption>
         </figure>
 
-        <p>앞에서 말한 <strong>외부 모더레이션 API</strong>가 유해한 내용을 걸러 주는 그 서비스입니다.
+        <p>앞에서 말한 외부 모더레이션 API가 유해한 내용을 걸러 주는 그 서비스입니다.
         글이나 댓글을 쓸 때마다 부르는데 뒤에 나오지만 실제로는 <strong>글 1건당 2회</strong>입니다.</p>
 
-        <p>문제는 이 호출이 있다는 것이 아니라 <strong>어디에 있느냐</strong>였습니다.</p>
+        <p>문제는 이 호출이 있다는 것이 아니라 어디에 있느냐였습니다.</p>
 
 <pre data-lang="yaml"><code># application.yml
 read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
@@ -214,7 +214,7 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
         <strong>묶어 주는</strong> 미들웨어입니다. 소개 그림만 보면 정확히 제게 필요한 물건처럼 보였습니다.</p>
 
         <p>그런데 이 판단을 내리기 전에 확인해야 할 것이 있었습니다.
-        <strong>“내가 겪을 Connection 부족이 정말 이 도구가 고치는 종류의 부족인가”</strong>입니다.</p>
+        “내가 겪을 Connection 부족이 정말 이 도구가 고치는 종류의 부족인가”입니다.</p>
 
         <h2 id="결론부터">증상은 하나인데 원인은 둘이었습니다<a class="anchor" href="#결론부터" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -222,11 +222,11 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
         이렇게 갈렸습니다.</p>
 
         <blockquote><p>Connection 고갈에는 <strong>Connection 개수 때문에 생기는 것</strong>과
-        <strong>Connection을 오래 붙잡고 있어서 생기는 것</strong>이 있습니다.
-        <strong>증상은 같고 처방은 다릅니다.</strong> Connection Pooler는 앞쪽만 고칩니다.</p></blockquote>
+        Connection을 오래 붙잡고 있어서 생기는 것이 있습니다.
+        증상은 같고 처방은 다릅니다. Connection Pooler는 앞쪽만 고칩니다.</p></blockquote>
 
         <p>그리고 이 결론의 근거는 RDS Proxy나 PgBouncer의 제품 문서가 아니라
-        <strong><a class="term" href="../notes/transaction-pooling.html">Transaction Pooling</a>이라는 방식의 정의 자체</strong>에서 나왔습니다.</p>
+        <a class="term" href="../notes/transaction-pooling.html">Transaction Pooling</a>이라는 방식의 정의 자체에서 나왔습니다.</p>
 
         <p>두 원인은 겉으로 똑같이 생겼습니다. Connection Pool이 고갈되면 드러나는 모습은 대체로 하나입니다.
         Pool에서 Connection을 기다리다 Timeout이 나고 서로 아무 상관 없는 API 들이 동시에 느려집니다.
@@ -313,7 +313,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         </figure>
 
         <p>동시에 글을 쓰는 요청이 Pool 크기를 넘으면 그 시점부터 Connection이 없습니다. 여기서 Connection
-        <strong>개수</strong>를 늘려도 근본 원인은 그대로입니다. 느린 외부 호출이 Connection을 붙잡고 있다는
+        개수를 늘려도 근본 원인은 그대로입니다. 느린 외부 호출이 Connection을 붙잡고 있다는
         사실은 변하지 않으니까요.</p>
 
         <p>그리고 멈추는 건 글쓰기 경로만이 아닙니다.</p>
@@ -378,12 +378,12 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
           <figcaption>Pool이 고갈되면 멈추는 것은 글 작성 경로만이 아닙니다. 왼쪽이 글쓰기 요청, 가운데가 Connection Pool, 오른쪽이 글쓰기와 무관한 요청들입니다. 오른쪽도 <strong>같은 Pool</strong>에서 Connection을 받으므로 가운데가 다 차면 함께 대기로 바뀝니다.</figcaption>
         </figure>
 
-        <p>투표도, 피드 조회도, 결과 차트 조회도 <strong>같은 Connection Pool</strong>에서 Connection을 받습니다.
+        <p>투표도, 피드 조회도, 결과 차트 조회도 같은 Connection Pool에서 Connection을 받습니다.
         그래서 글쓰기 경로가 Pool을 다 쓰면 서비스 전체가 함께 느려집니다.</p>
 
-        <p>이 앱에서 특히 아플 수 있는 건 <strong>타이밍</strong>입니다. 이 서비스의 성장 엔진이
-        “투표 결과 차트를 공유하는 것”이라서, <strong>공유가 잘 터지는 날이 곧 서비스가 멈추는 날이 될 수
-        있습니다</strong>. ⚠️ 다만 아직 출시 전이고 <strong>그런 날이 실제로 온 적은 없습니다</strong>.
+        <p>이 앱에서 특히 아플 수 있는 건 타이밍입니다. 이 서비스의 성장 엔진이
+        “투표 결과 차트를 공유하는 것”이라서, 공유가 잘 터지는 날이 곧 서비스가 멈추는 날이 될 수
+        있습니다. ⚠️ 다만 아직 출시 전이고 그런 날이 실제로 온 적은 없습니다.
         관측한 장애가 아니라 구조에서 나오는 예상입니다.</p>
 
         <h2 id="왜-못-고치나">Pooler는 왜 둘째를 못 고치나<a class="anchor" href="#왜-못-고치나" aria-label="이 절로 가는 링크">#</a></h2>
@@ -394,9 +394,9 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         <p>“앱 Connection 수천 개를 DB Connection 수십 개로 묶어 준다”는 설명은 맞습니다. 문제는
         <strong>언제 묶이는가</strong>이고 그 답이 Transaction Pooling의 정의에 이미 들어 있습니다.</p>
 
-        <blockquote><p><strong>Connection을 다시 쓰는 일은 Transaction과 Transaction <em>사이</em>에서만 일어납니다.</strong>
+        <blockquote><p>Connection을 다시 쓰는 일은 Transaction과 Transaction <em>사이</em>에서만 일어납니다.
         Transaction이 열려 있는 동안에는 그 Backend Connection이 그 클라이언트에
-        <strong>묶입니다(pin).</strong></p></blockquote>
+        묶입니다(pin).</p></blockquote>
 
         <p>당연한 이야기이기도 합니다. Transaction은 상태이고 열려 있는 중간에 다른 세션에 빌려주면 격리가
         깨지니까요.</p>
@@ -461,7 +461,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
               <text x="696" y="297" font-size="14" fill="#d62976" font-weight="700" text-anchor="end">앱 1 → DB 1</text>
             </svg>
           </div>
-          <figcaption>가로축은 시간이고 세 줄은 각각 클라이언트 A·B와 Backend Connection입니다. 위 카드에서는 짧은 Transaction 여러 개가 Backend Connection 하나에 번갈아 얹혀 <strong>여러 개가 1개로 묶입니다</strong>. 아래 카드에서는 A가 Transaction을 연 채 외부 호출을 기다리는 동안 B가 끼어들지 못해 <strong>1개가 1개에 묶여 버립니다</strong>. 그래서 Connection Pooler가 만들어 낼 이득이 거의 없습니다.</figcaption>
+          <figcaption>가로축은 시간이고 세 줄은 각각 클라이언트 A·B와 Backend Connection입니다. 위 카드에서는 짧은 Transaction 여러 개가 Backend Connection 하나에 번갈아 얹혀 <strong>여러 개가 1개로 묶입니다</strong>. 아래 카드에서는 A가 Transaction을 연 채 외부 호출을 기다리는 동안 B가 끼어들지 못해 1개가 1개에 묶여 버립니다. 그래서 Connection Pooler가 만들어 낼 이득이 거의 없습니다.</figcaption>
         </figure>
 
         <p>그래서 이렇게 됩니다.</p>
@@ -471,9 +471,9 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
   → 앱 connection 1개당 DB connection 1개
   → connection pooler가 줄여 주는 게 없음</code></pre>
 
-        <p>Connection Pooler는 <strong>짧은 Transaction이 많을 때</strong> 값을 하는 도구입니다. 원인 ②인 상태에서
+        <p>Connection Pooler는 짧은 Transaction이 많을 때 값을 하는 도구입니다. 원인 ②인 상태에서
         도입하면 돈을 쓰고도 아무것도 나아지지 않습니다. 사실 더 나쁜 건 그다음입니다.
-        <strong>“이제 대비했다”고 믿게 됩니다.</strong> 그 믿음이 다음 점검을 막습니다.</p>
+        “이제 대비했다”고 믿게 됩니다. 그 믿음이 다음 점검을 막습니다.</p>
 
         <h2 id="순서가-있습니다">고칠 순서가 이미 정해져 있었습니다<a class="anchor" href="#순서가-있습니다" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -496,7 +496,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         </table>
         </div>
         </div>
-        <p class="table-note"><strong>순서</strong>가 이 표의 요점입니다. ①이 안 되어 있으면 ②③④⑤는 완화일 뿐 수리가 아닙니다.</p>
+        <p class="table-note">순서가 이 표의 요점입니다. ①이 안 되어 있으면 ②③④⑤는 완화일 뿐 수리가 아닙니다.</p>
 
         <p>Connection Pooler는 ③입니다. ①을 안 하고 ③부터 가면 효과가 없다는 게 앞 절의 내용이었습니다.</p>
 
@@ -528,18 +528,18 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         <strong>경합 창은 넓어지지 않았습니다.</strong> 수정 전에도 모더레이션 호출이 읽기와 쓰기
         <em>사이</em>에 있었고 그 경로는 게시글 행에 Lock을 걸지 않고 있었기 때문입니다
         (<code>for update</code>가 없었습니다). Transaction 안에 있다고 해서 다른 세션의 변경을 막아 주지는
-        않습니다. 읽기에서 쓰기까지의 거리는 <strong>동일합니다.</strong></p>
+        않습니다. 읽기에서 쓰기까지의 거리는 동일합니다.</p>
 
         <p>같은 작업을 쓰기 경로 세 곳(글 · 댓글 · 투표 첨부)에 했습니다. 그중 하나는 상태가 더
-        나빴습니다. 투표 첨부 경로는 <code>for update</code>로 <strong>행까지 잠근 채</strong> 외부 호출을
-        하고 있었습니다. Connection과 행 Lock, <strong>두 자원</strong>을 동시에 쥐고 있었던 겁니다.</p>
+        나빴습니다. 투표 첨부 경로는 <code>for update</code>로 행까지 잠근 채 외부 호출을
+        하고 있었습니다. Connection과 행 Lock, 두 자원을 동시에 쥐고 있었던 겁니다.</p>
 
         <p>글과 댓글 두 경로를 먼저 고치고 투표 첨부는 검열에 넣는 입력이 <em>잠근 행에서</em> 나오는 탓에
-        staleness(값이 낡았는지) 재확인이 필요해서 <strong>한 번 미뤘다가 같은 날 뒤에 고쳤습니다.</strong>
+        staleness(값이 낡았는지) 재확인이 필요해서 한 번 미뤘다가 같은 날 뒤에 고쳤습니다.
         기록에는 「의도적 미착수」로 남겨 두었고 그날 후속 세션에서 처리했습니다.</p>
 
         <p>결론을 한 줄로 적으면 이렇습니다.
-        <strong>코드 수정은 Connection Pooler의 대안이 아니라 전제조건이었습니다.</strong>
+        코드 수정은 Connection Pooler의 대안이 아니라 전제조건이었습니다.
         고치고 나니 이제 Connection Pooler가 값을 할 수 있는 조건에 가까워진 상태가 됐습니다.</p>
 
         <h2 id="두-숫자">아무도 고르지 않은 숫자 둘이 용량을 정하고 있었습니다<a class="anchor" href="#두-숫자" aria-label="이 절로 가는 링크">#</a></h2>
@@ -557,13 +557,13 @@ spring:
     password: ${DB_PASSWORD:...}
     # 끝. hikari 블록 자체가 없습니다</code></pre>
 
-        <p>톰캣 Thread는 <strong>기본값 200</strong>, Connection Pool은 <strong>설정이 한 줄도 없어서</strong>
+        <p>톰캣 Thread는 <strong>기본값 200</strong>, Connection Pool은 설정이 한 줄도 없어서
         Spring Boot 기본값이 그대로 서비스 용량이 되어 있었습니다. 이러면 나머지 요청들은 Connection을
         기다리다 Timeout 뒤에 실패합니다.</p>
 
-        <p><strong>방향 자체는 맞습니다.</strong> 빨리 실패해야 나머지가 삽니다. 문제는 다른 데
-        있었습니다. <strong>두 값 다 아무도 고른 것이 아니었습니다.</strong> 둘 다 프레임워크 기본값이고
-        나쁜 것은 숫자 자체가 아니라 <strong>그 숫자가 어디에도 적혀 있지 않다는 것</strong>이었습니다.</p>
+        <p>방향 자체는 맞습니다. 빨리 실패해야 나머지가 삽니다. 문제는 다른 데
+        있었습니다. 두 값 다 아무도 고른 것이 아니었습니다. 둘 다 프레임워크 기본값이고
+        나쁜 것은 숫자 자체가 아니라 그 숫자가 어디에도 적혀 있지 않다는 것이었습니다.</p>
 
         <p>그래서 명시했습니다.</p>
 
@@ -572,16 +572,16 @@ spring:
   connection-timeout: ${DB_POOL_TIMEOUT_MS:5000}   # 30초 기본값은 너무 깁니다. 빨리 실패해야 나머지가 삽니다
   max-lifetime: ${DB_POOL_MAX_LIFETIME_MS:1200000}</code></pre>
 
-        <p>다만 <strong>Pool을 키운 것은 수리가 아니라 완화</strong>입니다. 그리고 키우는 데에도 상한이
+        <p>다만 Pool을 키운 것은 수리가 아니라 완화입니다. 그리고 키우는 데에도 상한이
         있습니다.</p>
 
 <pre data-lang="text"><code>pool 크기 × 최대 instance 수 ≤ DB connection 상한</code></pre>
 
-        <p>앱은 자기 Instance가 몇 대인지 모르기 때문에 이 불변식을 <strong>코드로 강제할 수
-        없습니다.</strong> IaC 주석이 유일한 방어라 거기에 못박아 뒀습니다.</p>
+        <p>앱은 자기 Instance가 몇 대인지 모르기 때문에 이 불변식을 코드로 강제할 수
+        없습니다. IaC 주석이 유일한 방어라 거기에 못박아 뒀습니다.</p>
 
-        <p>유입 제어라는 것은 상한을 <em>두는</em> 것이 아니라 <strong>그 상한을 의도적으로 정하는
-        것</strong>입니다. 기본값 두 개가 만들어 낸 동시성 정책은 정책이 아닙니다.</p>
+        <p>유입 제어라는 것은 상한을 <em>두는</em> 것이 아니라 그 상한을 의도적으로 정하는
+        것입니다. 기본값 두 개가 만들어 낸 동시성 정책은 정책이 아닙니다.</p>
 
         <h2 id="쓸-수-있는-코드">이 코드가 Pooler를 쓸 수 있는 코드인가<a class="anchor" href="#쓸-수-있는-코드" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -610,10 +610,10 @@ VoteRepository.kt        pg_advisory_xact_lock(...)</code></pre>
         얹힙니다.</p>
 
         <p>이 셋이 <code>xact</code> 스코프인 것이 의도였는지 우연이었는지는 기록으로 가릴 수 없습니다.
-        확실한 것은 <strong>세션 스코프 Lock을 한 군데만 썼어도 그 경로가 Connection Pooler를 무력화했을
-        것</strong>이고 그 사실은 도입한 뒤에야 알게 됐으리라는 겁니다.</p>
+        확실한 것은 세션 스코프 Lock을 한 군데만 썼어도 그 경로가 Connection Pooler를 무력화했을
+        것이고 그 사실은 도입한 뒤에야 알게 됐으리라는 겁니다.</p>
 
-        <p><strong>도구를 도입하기 전에, 그 도구가 이 코드에서 실제로 동작하는지 먼저 확인하는 절차.</strong>
+        <p>도구를 도입하기 전에, 그 도구가 이 코드에서 실제로 동작하는지 먼저 확인하는 절차.
         이 점검에서 얻은 것 중 다른 프로젝트로 가장 잘 옮겨지는 부분이 이거였습니다.</p>
 
         <h2 id="비동기로-바꾸면">“비동기로 바꾸면 되지 않나요?”<a class="anchor" href="#비동기로-바꾸면" aria-label="이 절로 가는 링크">#</a></h2>
@@ -624,7 +624,7 @@ VoteRepository.kt        pg_advisory_xact_lock(...)</code></pre>
         <strong>Connection은 그대로 잡습니다.</strong> JDBC는 블로킹이고 Transaction이 열려 있는 한 Connection은
         반납되지 않기 때문입니다.</p>
 
-        <p><strong>Thread와 Connection은 다른 자원입니다.</strong> 문제의 축이 Connection인데 Thread를 아끼는
+        <p>Thread와 Connection은 다른 자원입니다. 문제의 축이 Connection인데 Thread를 아끼는
         처방을 가져오면 축이 어긋납니다. R2DBC라면 이야기가 다르지만 그건 데이터 접근 계층을 전면
         재작성하는 일입니다.</p>
 
@@ -639,8 +639,8 @@ VoteRepository.kt        pg_advisory_xact_lock(...)</code></pre>
         정상입니다. 증상은 부하가 걸리는 날에만 나옵니다.</p>
 
         <p>“Connection을 오래 안 잡는다”는 것은 직접 관측하기가 어렵습니다. 그래서 결과 대신
-        <strong>원인</strong>을 단언했습니다. 실제 HTTP 클라이언트가 앉는 인터페이스 자리에 spy를 앉히고
-        <strong>호출이 일어나는 그 시점에 Transaction이 활성인지</strong>를 기록합니다.</p>
+        원인을 단언했습니다. 실제 HTTP 클라이언트가 앉는 인터페이스 자리에 spy를 앉히고
+        호출이 일어나는 그 시점에 Transaction이 활성인지를 기록합니다.</p>
 
 <pre data-lang="kotlin"><code>class TransactionProbe : ContentModerationApi {
     val sawTransaction = mutableListOf&lt;Boolean&gt;()
@@ -653,11 +653,11 @@ VoteRepository.kt        pg_advisory_xact_lock(...)</code></pre>
 assertThat(probe.sawTransaction).isNotEmpty()         // ① 호출이 실제로 일어났나
 assertThat(probe.sawTransaction).containsOnly(false)  // ② 그 호출은 transaction 밖이었나</code></pre>
 
-        <p>①이 없으면 ②가 <strong>공허하게 통과합니다.</strong> 게이트가 통째로 빠져서 호출이 0건이면
-        <code>containsOnly</code>는 빈 리스트에 대해 참이기 때문입니다. <strong>“~가 아니다”를 검사하는
-        단언에는 항상 “호출이 있기는 했나”를 같이 붙여야 합니다.</strong></p>
+        <p>①이 없으면 ②가 공허하게 통과합니다. 게이트가 통째로 빠져서 호출이 0건이면
+        <code>containsOnly</code>는 빈 리스트에 대해 참이기 때문입니다. “~가 아니다”를 검사하는
+        단언에는 항상 “호출이 있기는 했나”를 같이 붙여야 합니다.</p>
 
-        <p>그리고 이 가드가 정말 겨누고 있는지는 <strong><a class="term" href="../notes/mutation-testing.html">Mutation</a></strong>으로 확인했습니다. 코드를 일부러
+        <p>그리고 이 가드가 정말 겨누고 있는지는 <a class="term" href="../notes/mutation-testing.html">Mutation</a>으로 확인했습니다. 코드를 일부러
         되돌려 놓고 테스트를 돌려서 빨간불이 나는지 보는 방법입니다.</p>
 
 <pre data-lang="shell"><code># 댓글 경로에 @Transactional 복원
@@ -666,22 +666,22 @@ ModerationOutsideTransactionTest > the moderation call does not hold a database 
 # 글 경로에 @Transactional 복원
 ModerationOutsideTransactionTest > creating a post also screens outside a transaction() FAILED</code></pre>
 
-        <p>글과 댓글 경로에서는 <strong>해당 가드만</strong> 빨간불이 됐습니다. 그런데 투표 첨부 경로는
-        달랐습니다. <strong>Mutation이 처음엔 초록불이었습니다.</strong> staleness 가드가 겨누는 조건이
+        <p>글과 댓글 경로에서는 해당 가드만 빨간불이 됐습니다. 그런데 투표 첨부 경로는
+        달랐습니다. Mutation이 처음엔 초록불이었습니다. staleness 가드가 겨누는 조건이
         테스트 안에서 만들어지지 않았기 때문이고 spy의 <code>onScreen</code> 훅으로 검열 구간에 행을 바꿔
         조건을 만든 뒤에야 빨간불을 봤습니다.</p>
 
         <p>여기서 배운 것이 이 글에서 제일 옮길 만한 것입니다.
-        <strong>Mutation이 초록불이면 코드가 안전한 게 아니라 가드가 겨누고 있지 않은 것입니다.</strong></p>
+        Mutation이 초록불이면 코드가 안전한 게 아니라 가드가 겨누고 있지 않은 것입니다.</p>
 
         <h2 id="재-봤습니다">3주 뒤에 실제로 재 봤습니다<a class="anchor" href="#재-봤습니다" aria-label="이 절로 가는 링크">#</a></h2>
         <p>이 글은 원래 <em>“수치가 없습니다”</em>로 끝날 예정이었습니다. 그런데 그 문장을 쓰고 나니
-        <strong>수치를 만들 도구가 없다는 뜻</strong>이라는 게 분명해져서 3주 뒤에 JMeter <a class="term" href="../notes/load-test-harness.html">Harness</a>를
+        수치를 만들 도구가 없다는 뜻이라는 게 분명해져서 3주 뒤에 JMeter <a class="term" href="../notes/load-test-harness.html">Harness</a>를
         만들어 재 봤습니다.</p>
 
-        <p>핵심은 <strong>한 변수만 바꾸는 것</strong>이었습니다. Arm A는 현재 코드, Arm B는
+        <p>핵심은 한 변수만 바꾸는 것이었습니다. Arm A는 현재 코드, Arm B는
         <code>@Transactional</code> 한 줄만 되돌린 코드입니다. Pool 크기·Thread 수·외부 호출 지연·데이터는
-        전부 같습니다. 외부 호출 지연은 앱에 심지 않고 <strong>로컬 Stub</strong>을 세워
+        전부 같습니다. 외부 호출 지연은 앱에 심지 않고 로컬 Stub을 세워
         <code>base-url</code>을 그쪽으로 돌렸습니다. 앱에 「느리게 도는 모드」를 넣으면 그게 언젠가
         운영에서 켜집니다.</p>
         <div class="table-scroll">
@@ -691,7 +691,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
           <caption class="sr-only">Arm A와 Arm B의 응답시간·처리량 비교.</caption>
           <thead><tr><th scope="col">지표</th><th scope="col">Arm A (Transaction 밖)</th><th scope="col">Arm B (안으로 되돌림)</th><th scope="col">배수</th></tr></thead>
           <tbody>
-            <tr><td><strong>피드 조회 p50</strong></td><td><strong>4 ms</strong></td><td><strong>6,047 ms</strong></td><td><strong>1,512×</strong></td></tr>
+            <tr><td><strong>피드 조회 p50</strong></td><td><strong>4 ms</strong></td><td>6,047 ms</td><td>1,512×</td></tr>
             <tr><td>피드 조회 p95</td><td>6 ms</td><td>6,405 ms</td><td>1,068×</td></tr>
             <tr><td>피드 조회 처리량</td><td>39.22 req/s</td><td>1.35 req/s</td><td>1/29</td></tr>
             <tr><td>글 생성 p50</td><td>2,577 ms</td><td>2,584 ms</td><td>1.00×</td></tr>
@@ -701,7 +701,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         </table>
         </div>
         </div>
-        <p class="table-note">고친 경로(글 생성)는 두 Arm이 거의 같습니다. 벌어지는 곳은 <strong>글쓰기와 아무 상관 없는 피드 조회</strong>뿐입니다.</p>
+        <p class="table-note">고친 경로(글 생성)는 두 Arm이 거의 같습니다. 벌어지는 곳은 글쓰기와 아무 상관 없는 피드 조회뿐입니다.</p>
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
             <svg viewBox="0 0 720 292" role="img" aria-labelledby="ab-t ab-d" xmlns="http://www.w3.org/2000/svg">
@@ -743,28 +743,28 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
           <figcaption>응답시간 중앙값입니다. 가로축은 10배마다 눈금이 하나씩 있는 로그 축이고 위 두 막대가 피드 조회·아래 두 막대가 글 생성입니다. 조건은 쓰기 16 · Pool 10 · 외부 호출 800ms입니다.</figcaption>
         </figure>
 
-        <p>읽는 법은 이렇습니다. <strong>쓰기 경로는 두 Arm이 같습니다</strong>(2,577 대 2,584ms).
-        외부 호출 1.6초가 어느 쪽이든 지배하기 때문입니다. 그래서 <strong>쓰기만 재면 이 수정의 효과가
-        보이지 않습니다.</strong></p>
+        <p>읽는 법은 이렇습니다. 쓰기 경로는 두 Arm이 같습니다(2,577 대 2,584ms).
+        외부 호출 1.6초가 어느 쪽이든 지배하기 때문입니다. 그래서 쓰기만 재면 이 수정의 효과가
+        보이지 않습니다.</p>
 
-        <p>효과는 <strong>글쓰기와 아무 상관 없는 피드 조회</strong>에 나타납니다. Arm B에서는 쓰기 16개가
+        <p>효과는 글쓰기와 아무 상관 없는 피드 조회에 나타납니다. Arm B에서는 쓰기 16개가
         각각 1.6초씩 Connection을 붙잡아 Pool 10개를 전부 소진하고 4ms로 끝나던 조회가 6초가 됩니다.
-        <strong>오류가 아니라 대기라서 오류율은 0%인 채로</strong> 서비스가 느려집니다. 이게 이 결함이
+        오류가 아니라 대기라서 오류율은 0%인 채로 서비스가 느려집니다. 이게 이 결함이
         조용한 이유입니다.</p>
 
-        <p>그리고 처음 돌린 실행은 <strong>차이가 거의 없었습니다</strong>(p95 5ms 대 8ms). 쓰기 8개로는
-        Pool 10개가 고갈되지 않기 때문입니다. <strong>Pool이 마르지 않으면 이 현상은 나타나지 않습니다.</strong>
+        <p>그리고 처음 돌린 실행은 차이가 거의 없었습니다(p95 5ms 대 8ms). 쓰기 8개로는
+        Pool 10개가 고갈되지 않기 때문입니다. Pool이 마르지 않으면 이 현상은 나타나지 않습니다.
         이 수치는 조건에 딸린 값이지 상수가 아닙니다.</p>
 
         <h2 id="겹쳐-부르기">재고 나니 다음 질문이 따라 나왔습니다<a class="anchor" href="#겹쳐-부르기" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>⚠️ <strong>이 수정은 아직 병합하지 않았습니다.</strong> 보안 게이트를 건드리는 변경이라
+        <p>⚠️ 이 수정은 아직 병합하지 않았습니다. 보안 게이트를 건드리는 변경이라
         서면 검토가 먼저입니다. 아래 수치는 브랜치에서 잰 것입니다.</p>
 
         <p>수치가 생기니 다음 질문이 자동으로 나왔습니다. <strong>글 생성 p50이 왜 Stub 지연의 정확히
-        두 배인가.</strong> 게이트를 열어 보니 외부 분류기를 <strong>순차로</strong> 부르고 있었습니다.</p>
+        두 배인가.</strong> 게이트를 열어 보니 외부 분류기를 순차로 부르고 있었습니다.</p>
 
-        <p>③ 유해분류와 ④ 저격판정은 <strong>같은 입력을 보는 독립 검사</strong>입니다. 앞의 결과가 뒤의
+        <p>③ 유해분류와 ④ 저격판정은 같은 입력을 보는 독립 검사입니다. 앞의 결과가 뒤의
         입력이 되지 않으니 순서가 필요 없습니다.</p>
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
@@ -807,20 +807,20 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         </figure>
 
         <p>가상 Thread(Java 21)로 ④를 띄우고 ③을 호출 Thread에서 돌립니다.
-        <strong>고정 크기 Pool을 두지 않은 것이 요점입니다.</strong> Pool 크기는 곧 새 동시성 상한이고
+        고정 크기 Pool을 두지 않은 것이 요점입니다. Pool 크기는 곧 새 동시성 상한이고
         이 글이 내내 이야기한 「아무도 고르지 않은 상한」을 모더레이션 경로에 다시 만들게 됩니다.</p>
 
-        <p>⚠️ <strong>그런데 이 문장을 쓸 때 저는 이미 그 상한 안에 있었습니다.</strong> 새로 만들지
+        <p>⚠️ 그런데 이 문장을 쓸 때 저는 이미 그 상한 안에 있었습니다. 새로 만들지
         않았을 뿐이고 AWS SDK가 끌고 들어온 HTTP 클라이언트의 「호스트당 5」가 그 경로에 이미
         걸려 있었습니다. 그건 3주 뒤에야 알았습니다.</p>
 
-        <p><strong>응답</strong>은 그대로여야 합니다. 다만 동작이 아주 그대로인 것은 아닙니다.
+        <p>응답은 그대로여야 합니다. 다만 동작이 아주 그대로인 것은 아닙니다.
         ③이 막아도 ④가 돌기 때문에 외부 호출 횟수가 늘어납니다. 응답을 같게 유지하려고
         둘 다 끝날 때까지 기다리고(먼저 던졌다고 남은 호출을 버려두면 비용은 나가고 결과는 아무도 안 봅니다),
         예외는 ③이 ④보다 우선합니다(순차와 같은 응답).</p>
 
-        <p>⚠️ <strong>대가가 있습니다.</strong> 순차일 때는 ③이 막으면 ④를 아예 안 불렀습니다. 이제는
-        ③이 막아도 ④가 돕니다. 증가분은 <strong>③ 차단율 × ④ 단가</strong>이고 차단율이 낮은 지금은
+        <p>⚠️ 대가가 있습니다. 순차일 때는 ③이 막으면 ④를 아예 안 불렀습니다. 이제는
+        ③이 막아도 ④가 돕니다. 증가분은 ③ 차단율 × ④ 단가이고 차단율이 낮은 지금은
         게시글당 약 $0.0002 수준입니다. 무조건부 수치가 아니라, 차단율이 오르면 다시 따져야 합니다.</p>
         <div class="table-scroll">
 <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
@@ -829,48 +829,48 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
           <caption class="sr-only">순차 호출과 겹쳐 부르기의 응답시간·처리량 비교.</caption>
           <thead><tr><th scope="col">지표</th><th scope="col">순차</th><th scope="col">겹쳐 부르기</th><th scope="col">배수</th></tr></thead>
           <tbody>
-            <tr><td><strong>글 생성 p50</strong></td><td>1,611 ms</td><td><strong>811 ms</strong></td><td><strong>1.99× 빠름</strong></td></tr>
+            <tr><td><strong>글 생성 p50</strong></td><td>1,611 ms</td><td>811 ms</td><td>1.99× 빠름</td></tr>
             <tr><td>글 생성 p95</td><td>1,614 ms</td><td>814 ms</td><td>1.98×</td></tr>
-            <tr><td><strong>글 생성 처리량</strong></td><td>2.52 req/s</td><td><strong>5.01 req/s</strong></td><td><strong>1.99×</strong></td></tr>
+            <tr><td>글 생성 처리량</td><td>2.52 req/s</td><td>5.01 req/s</td><td>1.99×</td></tr>
             <tr><td>피드 조회 p50</td><td>4 ms</td><td>4 ms</td><td>1.00×</td></tr>
             <tr><td>오류율</td><td>0%</td><td>0%</td><td>—</td></tr>
           </tbody>
         </table>
         </div>
         </div>
-        <p class="table-note">외부 대기를 반으로 줄였으니 <strong>글 생성만</strong> 두 배가 되는 것이 맞습니다. 피드 조회가 그대로인 것은 건드리지 않은 경로이기 때문입니다.</p>
+        <p class="table-note">외부 대기를 반으로 줄였으니 글 생성만 두 배가 되는 것이 맞습니다. 피드 조회가 그대로인 것은 건드리지 않은 경로이기 때문입니다.</p>
 
                 <h3>그런데 처음엔 개선이 안 보였습니다</h3>
 
-        <p>먼저 쓰기 16으로 돌렸더니 p50이 <strong>2,577ms 대 2,598ms</strong>로 차이가 없었습니다.
+        <p>먼저 쓰기 16으로 돌렸더니 p50이 2,577ms 대 2,598ms로 차이가 없었습니다.
         병렬화가 안 먹은 줄 알았습니다.</p>
 
-        <p>원인은 코드가 아니라 <strong>측정 조건</strong>이었습니다. 쓰기 16에서는 두 쪽 모두
-        6.26 req/s라는 <strong>같은 천장</strong>에 걸려 있었고 외부 호출이 그 시점엔 병목이
+        <p>원인은 코드가 아니라 측정 조건이었습니다. 쓰기 16에서는 두 쪽 모두
+        6.26 req/s라는 같은 천장에 걸려 있었고 외부 호출이 그 시점엔 병목이
         아니었으므로 그걸 절반으로 줄여도 총 처리량이 변하지 않습니다.</p>
 
-        <p>⚠️ <strong>이 문단은 한 번 틀렸습니다.</strong> 처음에는 그 천장을 「부하기·앱·Stub·DB가
+        <p>⚠️ 이 문단은 한 번 틀렸습니다. 처음에는 그 천장을 「부하기·앱·Stub·DB가
         한 기계의 CPU를 나눠 써서 포화된 것」이라고 적었습니다. 그런데 3주 뒤에 그 천장을 따로 쫓아가
-        보니 <strong>CPU가 아니라 아웃바운드 HTTP 동시 실행 상한</strong>이었습니다. 구별한 것은 두 가지였습니다. <strong>Stub을 앱 없이 직접 두드리니 동시 32건을 0.81초에 받았고</strong>
-        <strong>Stub에 계측을 넣으니 동시 실행이 정확히 10에서 멈춰 있었습니다</strong>. 쓰기나 Pool을 키워도
+        보니 CPU가 아니라 아웃바운드 HTTP 동시 실행 상한이었습니다. 구별한 것은 두 가지였습니다. Stub을 앱 없이 직접 두드리니 동시 32건을 0.81초에 받았고
+        Stub에 계측을 넣으니 동시 실행이 정확히 10에서 멈춰 있었습니다. 쓰기나 Pool을 키워도
         안 움직인다는 사실만으로는 CPU 포화와 구별되지 않습니다. 둘 다 「안 움직인다」를 예측하니까요.
         그 추적은 <a href="the-ceiling-was-not-in-the-code.ko.html">처리량 상한은 코드에 없었습니다</a>에
-        따로 적었습니다. <strong>천장을 「포화」라고 부르고 원인을 안 쫓아간 것이 이 글의 실수입니다.</strong></p>
+        따로 적었습니다. 천장을 「포화」라고 부르고 원인을 안 쫓아간 것이 이 글의 실수입니다.</p>
 
         <p>확인은 이 순서로 했습니다. ①Stub이 병목인지 직접 쟀습니다. 동시 32건이 0.81초에 끝나니
-        아닙니다. ②소스와 jar 시각을 대조해 병렬 코드가 빌드에 들어간 것을 봤습니다. ③<strong>단건
-        요청</strong>을 쟀더니 0.817초였고 병렬화는 동작하고 있었습니다. ④포화되지 않는 쓰기 4에서 다시 재니
+        아닙니다. ②소스와 jar 시각을 대조해 병렬 코드가 빌드에 들어간 것을 봤습니다. ③단건
+        요청을 쟀더니 0.817초였고 병렬화는 동작하고 있었습니다. ④포화되지 않는 쓰기 4에서 다시 재니
         2배가 그대로 나왔습니다.</p>
 
-        <p>남는 교훈은 이겁니다. <strong>포화된 시스템에서는 병목이 아닌 것을 고쳐도 숫자가 안 움직입니다.</strong>
-        개선이 안 보이면 코드를 의심하기 전에 <strong>무엇이 천장을 만들고 있는지</strong>부터 재야 합니다.</p>
+        <p>남는 교훈은 이겁니다. 포화된 시스템에서는 병목이 아닌 것을 고쳐도 숫자가 안 움직입니다.
+        개선이 안 보이면 코드를 의심하기 전에 무엇이 천장을 만들고 있는지부터 재야 합니다.</p>
 
         <h3>새 규칙에는 새 가드를</h3>
 
-        <p>이 변경은 <strong>예외 우선순위</strong>라는 규칙을 새로 만듭니다. 순차일 때는 ③이 던지면 ④를
+        <p>이 변경은 예외 우선순위라는 규칙을 새로 만듭니다. 순차일 때는 ③이 던지면 ④를
         안 불렀으니 우선순위라는 것 자체가 없었습니다.</p>
 
-        <p>그래서 일부러 뒤집어 봤더니 <strong>기존 테스트 8건이 전부 통과했습니다.</strong> 규칙을 만들면
+        <p>그래서 일부러 뒤집어 봤더니 기존 테스트 8건이 전부 통과했습니다. 규칙을 만들면
         그걸 지키는 단언도 만들어야 합니다. 2건을 추가하고 Mutation 3종으로 확인했습니다.
         <code>ExecutionException</code> 언랩 제거, 우선순위 뒤집기, ③이 막으면 ④ 건너뛰기. 셋 다
         빨간불이 납니다.</p>
@@ -878,21 +878,21 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
         <h2 id="주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul class="callout">
-          <li><strong>운영 수치가 아닙니다.</strong> 잰 것은 로컬 Harness이고 부하기와 앱이 같은 기계에서
+          <li>운영 수치가 아닙니다. 잰 것은 로컬 Harness이고 부하기와 앱이 같은 기계에서
           CPU를 나눠 씁니다. 절대 처리량은 의미가 없고 비교만 의미가 있습니다. 외부 호출 800ms는 Stub에
-          <strong>설정한 값</strong>이지 실제 지연 분포가 아닙니다.</li>
+          설정한 값이지 실제 지연 분포가 아닙니다.</li>
           <li><strong>Arm 당 1회 실행입니다.</strong> 반복 실행으로 분산을 보지 않았습니다.</li>
           <li><strong>1,512배는 조건에 딸린 숫자입니다.</strong> 쓰기 동시성이 Pool 크기를 넘을 때 나타납니다.
           쓰기 8 · Pool 10에서는 p95가 5ms 대 8ms였습니다.</li>
-          <li><strong>“최대 10초”는 설정값입니다.</strong> 외부 호출에 걸어 둔 Read Timeout이고 요청마다
+          <li>“최대 10초”는 설정값입니다. 외부 호출에 걸어 둔 Read Timeout이고 요청마다
           실제로 그만큼 점유했다고 측정한 값이 아닙니다.</li>
-          <li><strong>장애가 난 적은 없습니다.</strong> 출시 전 구조 점검에서 나온 것이고 이 경로가 실제로
+          <li>장애가 난 적은 없습니다. 출시 전 구조 점검에서 나온 것이고 이 경로가 실제로
           고갈되는 것을 관측한 기록은 없습니다.</li>
-          <li><strong>Connection Pooler가 쓸모없다는 이야기가 아닙니다.</strong> 원인 ① 쪽 고갈에는 정확히 맞는
-          도구입니다. 이 글이 말하는 것은 <strong>원인 ②인 상태에서는 앱 Connection 1개당 DB Connection 1개가 되어
-          값을 못 한다</strong>는 것뿐입니다.</li>
-          <li><strong>벤더별 Connection 상한 수치는 쓰지 않았습니다.</strong> 확인하지 않은 값입니다.</li>
-          <li><strong>핀 유발 패턴 목록이 완전하지 않을 수 있습니다.</strong> Pooler와 버전에 따라 다르고
+          <li>Connection Pooler가 쓸모없다는 이야기가 아닙니다. 원인 ① 쪽 고갈에는 정확히 맞는
+          도구입니다. 이 글이 말하는 것은 원인 ②인 상태에서는 앱 Connection 1개당 DB Connection 1개가 되어
+          값을 못 한다는 것뿐입니다.</li>
+          <li>벤더별 Connection 상한 수치는 쓰지 않았습니다. 확인하지 않은 값입니다.</li>
+          <li>핀 유발 패턴 목록이 완전하지 않을 수 있습니다. Pooler와 버전에 따라 다르고
           여기서는 이 코드에 그 넷이 없다는 것만 확인했습니다.</li>
         </ul>
 
@@ -906,15 +906,15 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
             같아서 헷갈립니다.</li>
             <li>Connection Pooler는 개수 문제를 고치는 도구입니다. 점유 시간 문제에서는 앱 Connection 1개당 DB Connection
             1개가 되어 줄여 줄 것이 없습니다. 이건 제품의 한계가 아니라
-            <strong>Transaction Pooling이라는 방식의 정의</strong>에서 나옵니다.</li>
-            <li><strong>Transaction을 짧게 만드는 것이 나머지 전부의 전제입니다.</strong> 순서를 건너뛰면 나머지는 완화일 뿐 수리가 아닙니다.</li>
-            <li>도구를 도입하기 전에 <strong>이 코드에서 그 도구가 동작하는지</strong> 확인하는 절차를 넣으면
+            Transaction Pooling이라는 방식의 정의에서 나옵니다.</li>
+            <li>Transaction을 짧게 만드는 것이 나머지 전부의 전제입니다. 순서를 건너뛰면 나머지는 완화일 뿐 수리가 아닙니다.</li>
+            <li>도구를 도입하기 전에 이 코드에서 그 도구가 동작하는지 확인하는 절차를 넣으면
             도입하고 나서 알게 될 일을 미리 알 수 있습니다.</li>
           </ul>
 
           <p>마지막으로 한 줄만 남긴다면 이겁니다.
-          <strong>증상이 같다고 원인이 같은 것은 아니고 도구는 원인 하나에만 맞습니다.</strong>
-          그리고 잘못 고른 도구의 진짜 비용은 돈이 아니라 <strong>“이제 대비했다”는 믿음</strong>입니다.</p>
+          증상이 같다고 원인이 같은 것은 아니고 도구는 원인 하나에만 맞습니다.
+          그리고 잘못 고른 도구의 진짜 비용은 돈이 아니라 “이제 대비했다”는 믿음입니다.</p>
 
           <p>읽어 주셔서 감사합니다.</p>
         </div>

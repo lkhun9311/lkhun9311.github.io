@@ -106,7 +106,7 @@
         <strong>Merging the three caches into one removes the duplication.</strong></p>
 
         <p>The actual work was much larger than turning three data structures into one, because
-        <strong>everything that separation had been protecting by accident</strong> became a contract that had
+        everything that separation had been protecting by accident became a contract that had
         to be written down.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
@@ -124,10 +124,10 @@
           <strong>Duplicate collection, a shared mutable DTO, and treating an outage as an empty value.</strong></li>
           <li><strong>Partial failure is carried per item.</strong> An instance metric failing does not roll the
           successfully collected nodes back to an earlier generation.</li>
-          <li>Merging <strong>produced a regression immediately.</strong> With only one screen open, the other
-          screen's last value <strong>disappeared from the cache.</strong> Re-entry took 5,115 ms.</li>
-          <li>Slow consumers were separated from collection. <strong>The synchronous send itself did not go
-          away.</strong></li>
+          <li>Merging produced a regression immediately. With only one screen open, the other
+          screen's last value disappeared from the cache. Re-entry took 5,115 ms.</li>
+          <li>Slow consumers were separated from collection. The synchronous send itself did not go
+          away.</li>
         </ul>
 
         <p>This is an internal product, so the code and the screens are not reproduced literally.
@@ -195,12 +195,12 @@
           From this figure alone, <strong>merging looks like pure gain.</strong></figcaption>
         </figure>
 
-        <p><strong>Second, a shared mutable DTO.</strong> Each screen filled the object returned by the
-        structure cache with metrics <strong>in place.</strong> If one thread mutates while another serialises,
-        <strong>two different moments end up in one payload.</strong> Swapping the pointer atomically does not
-        help: <strong>if the objects inside are shared and mutable, it is not an immutable snapshot.</strong></p>
+        <p>Second, a shared mutable DTO. Each screen filled the object returned by the
+        structure cache with metrics in place. If one thread mutates while another serialises,
+        two different moments end up in one payload. Swapping the pointer atomically does not
+        help: if the objects inside are shared and mutable, it is not an immutable snapshot.</p>
 
-        <p><strong>Third, treating an outage as an empty value.</strong> When an infrastructure read or a metric
+        <p>Third, treating an outage as an empty value. When an infrastructure read or a metric
         fetch failed and an empty list went out as the new healthy snapshot, the last good screen was overwritten
         with zero. Parts three and four met this problem screen by screen.</p>
 
@@ -211,7 +211,7 @@
         failed lets one dependency's outage age the whole screen. Accepting an empty instance list as a new
         value overwrites the real VM count with zero.</p>
 
-        <p>So the five branches from part three were lifted into a <strong>common judgement</strong> and applied
+        <p>So the five branches from part three were lifted into a common judgement and applied
         per item.</p>
 
 <pre data-lang="text"><code>FRESH              publish new data with a new generation
@@ -263,17 +263,17 @@ NO_VALID_METRICS   carry the previous data + degraded</code></pre>
 
         <p>The most visible thing after merging was <strong>leaving a page and coming back.</strong></p>
 
-        <p>The single producer computed <strong>only the paths currently subscribed</strong> and published them
-        as one map, <strong>replacing the previous map wholesale.</strong> With only the physical nodes screen
+        <p>The single producer computed only the paths currently subscribed and published them
+        as one map, replacing the previous map wholesale. With only the physical nodes screen
         open, a refresh leaves only nodes in the newest generation.
-        <strong>The previous dashboard value disappears from the cache.</strong></p>
+        The previous dashboard value disappears from the cache.</p>
 
         <p>Connecting to the dashboard after that leaves nothing to send at once, so it
-        <strong>waits a full collection cycle.</strong> Measured, that was
+        waits a full collection cycle. Measured, that was
         <strong>about 5,115 ms</strong>, and connecting again right away was 16 ms.</p>
 
-        <blockquote><p>The contract the separated caches <strong>had been keeping silently</strong> was this.
-        <strong>“A refresh on another path does not erase my last value.”</strong>
+        <blockquote><p>The contract the separated caches had been keeping silently was this.
+        “A refresh on another path does not erase my last value.”
         Merging removed that contract, and nobody had ever written it down.</p></blockquote>
 
 <pre data-lang="text"><code>latestGeneration       the set of paths included in this collection
@@ -346,17 +346,17 @@ onConnect(path):
         The sender uses a ready deque and resident workers.</p>
 
         <ul>
-          <li>Each session keeps <strong>only the highest pending generation.</strong></li>
-          <li>A session enters the queue <strong>once.</strong></li>
-          <li>After a worker sends, a new pending item puts the session <strong>back at the tail.</strong></li>
+          <li>Each session keeps only the highest pending generation.</li>
+          <li>A session enters the queue once.</li>
+          <li>After a worker sends, a new pending item puts the session back at the tail.</li>
           <li>Anything at or below an already-sent generation is dropped.</li>
           <li>A closed session is re-checked immediately before sending.</li>
         </ul>
 
-        <blockquote><p>⚠️ <strong>The synchronous send itself did not go away.</strong>
+        <blockquote><p>⚠️ The synchronous send itself did not go away.
         When the number of simultaneously blocked sessions exceeds the number of workers, sending is still
         delayed. Asynchronous I/O and pre-emptive eviction of slow sessions
-        <strong>remain as separate work.</strong></p></blockquote>
+        remain as separate work.</p></blockquote>
 
         <h2 id="merged-result">The merged result<a class="anchor" href="#merged-result" aria-label="Link to this section">#</a></h2>
 
@@ -369,14 +369,14 @@ onConnect(path):
           <tbody>
             <tr><td>Dashboard</td><td>about 6,776 ms</td><td><strong>about 23 ms</strong></td><td>about 8,607 ms</td><td>about 55 ms</td></tr>
             <tr><td>Physical nodes</td><td>about 3,938 ms</td><td><strong>about 23 ms</strong></td><td>about 5,130 ms</td><td>about 43 ms</td></tr>
-            <tr><td>Virtual resources</td><td>about 1,436 ms</td><td><strong>about 23 ms</strong></td><td>about 1,742 ms</td><td>about 37 ms</td></tr>
+            <tr><td>Virtual resources</td><td>about 1,436 ms</td><td>about 23 ms</td><td>about 1,742 ms</td><td>about 37 ms</td></tr>
           </tbody>
         </table>
         </div>
         </div>
         <p class="table-note">All three at 0% errors and Apdex 1.000. REST reads stayed within tens of
         milliseconds, confirming the earlier improvements had not regressed.
-        ⚠️ However, <strong>some metrics were absent in the environment when virtual resources were re-measured.</strong>
+        ⚠️ However, some metrics were absent in the environment when virtual resources were re-measured.
         The direct comparison under populated conditions rests on the per-screen measurement in part four.</p>
 
         <h2 id="questions-to-answer">What to check when merging shared state<a class="anchor" href="#questions-to-answer" aria-label="Link to this section">#</a></h2>
@@ -386,12 +386,12 @@ onConnect(path):
 
         <ul>
           <li>Is <strong>the last value preserved</strong> for a consumer that is not currently subscribed?</li>
-          <li>Does one source's failure <strong>roll back another source's success?</strong></li>
-          <li>Is an empty value <strong>a healthy zero or an undecidable one?</strong></li>
-          <li>Are <strong>the objects inside the payload</strong> immutable per generation?</li>
-          <li>Can a new value and an old one <strong>be sent out of order?</strong></li>
-          <li>Does a slow consumer <strong>block the producer?</strong></li>
-          <li>With several processes, are there <strong>several producers?</strong></li>
+          <li>Does one source's failure roll back another source's success?</li>
+          <li>Is an empty value a healthy zero or an undecidable one?</li>
+          <li>Are the objects inside the payload immutable per generation?</li>
+          <li>Can a new value and an old one be sent out of order?</li>
+          <li>Does a slow consumer block the producer?</li>
+          <li>With several processes, are there several producers?</li>
         </ul>
 
         <h2 id="what-this-does-not-claim">What this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
@@ -400,9 +400,9 @@ onConnect(path):
           <li><strong>These are not production statistics.</strong> Sequential single-user measurements.</li>
           <li><strong>The final figure for virtual resources is not a direct comparison.</strong> Some metrics
           were absent at re-measurement, so part four's per-screen measurement is the reference.</li>
-          <li><strong>I do not claim the slow consumer problem is solved.</strong> It was separated from
+          <li>I do not claim the slow consumer problem is solved. It was separated from
           collection; sending is still delayed once blocked sessions outnumber workers.</li>
-          <li><strong>Several producers were not addressed.</strong> The last question in the list above is
+          <li>Several producers were not addressed. The last question in the list above is
           still open.</li>
         </ul>
 
@@ -416,17 +416,17 @@ onConnect(path):
             Where I measured was not where users waited.</li>
             <li><strong>“Build it ahead and serve it” becomes one line only once you decide who builds and who
             publishes.</strong></li>
-            <li><strong>“Empty” is not an observation, it is a value that needs interpreting.</strong></li>
-            <li><strong>The gate that finishes last sets the screen's delay.</strong></li>
-            <li><strong>What separation was protecting has to be written down as a contract when you merge.</strong></li>
+            <li>“Empty” is not an observation, it is a value that needs interpreting.</li>
+            <li>The gate that finishes last sets the screen's delay.</li>
+            <li>What separation was protecting has to be written down as a contract when you merge.</li>
           </ul>
 
           <p>If one line survives, this one.
-          <strong>Shared state does not get simpler by being gathered in one place. It becomes manageable only
-          once every implicit contract has been made explicit.</strong></p>
+          Shared state does not get simpler by being gathered in one place. It becomes manageable only
+          once every implicit contract has been made explicit.</p>
 
           <p>More durable than the performance won by removing duplicate collection is
-          <strong>having written these meanings into the code and the tests.</strong>
+          having written these meanings into the code and the tests.
           Thank you for reading all five parts.</p>
         </div>
 

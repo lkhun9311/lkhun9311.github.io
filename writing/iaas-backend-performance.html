@@ -90,7 +90,7 @@
         below was measured in an internal test environment, not against production traffic.</strong></p>
 
         <p>Thirteen write-ups, and the single most useful thing in them is not any one fix. It is that
-        <strong>two results came out the opposite way round from what I expected</strong>, and neither was
+        two results came out the opposite way round from what I expected, and neither was
         caught by reading the code.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
@@ -109,11 +109,11 @@
           deleted, a cache that was written and never read, and authentication repeated once per project.</li>
           <li>The run was split into <strong>six configurations measured one at a time</strong>, which is the
           only reason one of the fixes could be identified as harmful on its own.</li>
-          <li><strong>Going parallel made the tail worse</strong>: with the cache held fixed, p99 moved from
+          <li>Going parallel made the tail worse: with the cache held fixed, p99 moved from
           42.6 s to 79.0 s.</li>
-          <li><strong>A review that concluded "nothing to fix" was wrong.</strong> The same screen's first
+          <li>A review that concluded "nothing to fix" was wrong. The same screen's first
           data measured 6.8 s later, and the fix that review declined took it to 23 ms.</li>
-          <li>⚠️ These are <strong>test-environment numbers under a declared load profile</strong>, mostly
+          <li>⚠️ These are test-environment numbers under a declared load profile, mostly
           single-user sequential for the monitoring work. They are not a capacity statement.</li>
         </ul>
 
@@ -262,12 +262,12 @@
           under a declared profile. Real user distributions, data volumes and networks differ.</li>
           <li><strong>Each configuration was measured once.</strong> No repetition, no variance, so only
           multiple-fold differences are used as evidence anywhere in the series.</li>
-          <li><strong>Parallelism is not the problem.</strong> Parallelising code that holds a lock across
+          <li>Parallelism is not the problem. Parallelising code that holds a lock across
           I/O is. None of the six configurations removed that condition, so the series cannot say what
           parallelism is worth once it is gone.</li>
-          <li><strong>The monitoring measurements are single-user sequential.</strong> They say nothing about
+          <li>The monitoring measurements are single-user sequential. They say nothing about
           how many concurrent users the screens hold.</li>
-          <li><strong>Nothing here is anonymised code.</strong> Snippets are quoted with internal identifiers
+          <li>Nothing here is anonymised code. Snippets are quoted with internal identifiers
           removed; screens and product names are not reproduced.</li>
         </ul>
 
@@ -279,14 +279,14 @@
           still be about the wrong path, and that failure looks exactly like a finished review.</li>
           <li><strong>Ship four changes, learn one fact.</strong> Splitting a run into configurations is what
           turns "it got faster" into "this one did it, and that one hurt".</li>
-          <li><strong>A slow list is rarely a slow query.</strong> Look for where the request waits: a lock
+          <li>A slow list is rarely a slow query. Look for where the request waits: a lock
           held across I/O, an authentication inside a loop, a cache written and never read.</li>
-          <li><strong>Separation keeps contracts by accident.</strong> Merging caches is not a refactor; it
+          <li>Separation keeps contracts by accident. Merging caches is not a refactor; it
           is the moment those contracts have to be written down.</li>
         </ul>
 
-        <p>What is left is one line. <strong>The two results that came out backwards are the only two that
-        taught me anything transferable</strong>, and both of them needed a run that was designed to be able
+        <p>What is left is one line. The two results that came out backwards are the only two that
+        taught me anything transferable, and both of them needed a run that was designed to be able
         to disagree with me.</p>
 
         <p>Thank you for reading.</p>

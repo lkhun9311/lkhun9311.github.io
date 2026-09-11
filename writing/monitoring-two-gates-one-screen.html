@@ -104,7 +104,7 @@
         and SSE first data about 1.4 seconds.</p>
 
         <p><strong>Fixing one of them does not make the screen faster.</strong>
-        Total loading time is not their sum but <strong>whichever finishes last.</strong></p>
+        Total loading time is not their sum but whichever finishes last.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -120,16 +120,16 @@
           <li>I wrote the screen's completion condition <strong>as a formula first.</strong> A maximum, not a sum.</li>
           <li>The REST path made one external call per project. Rather than
           <strong>running them in parallel</strong>, I took that fan-out off the request.</li>
-          <li>A review caught something there. <strong>Accepting an empty list as a success</strong> overwrites
-          the existing value with <code>0/0</code>. A failure had to be expressed <strong>as a failure.</strong></li>
-          <li>And <strong>getting faster exposed a hidden ordering dependency.</strong> Once SSE reached 24 ms it
+          <li>A review caught something there. Accepting an empty list as a success overwrites
+          the existing value with <code>0/0</code>. A failure had to be expressed as a failure.</li>
+          <li>And getting faster exposed a hidden ordering dependency. Once SSE reached 24 ms it
           arrived before REST, and the screen went blank.</li>
         </ul>
 
         <p>This is an internal product, so the code and the screens are not reproduced literally.
         Product names, customers and internal addresses are out; the structure and the numbers stay.</p>
 
-        <blockquote><p>⚠️ <strong>These are sequential single-user measurements.</strong>
+        <blockquote><p>⚠️ These are sequential single-user measurements.
         Not a concurrency load test, so I have not read them as “it handles N users”.</p></blockquote>
 
         <h2 id="the-formula">I wrote the completion condition as a formula<a class="anchor" href="#the-formula" aria-label="Link to this section">#</a></h2>
@@ -171,7 +171,7 @@
             </defs>
           </svg>
           <figcaption>In a performance report, <strong>summing</strong> independent requests overstates what the
-          user waited. Quoting <strong>only the fastest</strong> hides the other gate.</figcaption>
+          user waited. Quoting only the fastest hides the other gate.</figcaption>
         </figure>
 
         <h2 id="first-gate">The first gate, one call per project<a class="anchor" href="#first-gate" aria-label="Link to this section">#</a></h2>
@@ -180,12 +180,12 @@
         in turn. With N projects that is <strong>about 2N external calls.</strong> If the client factory
         authenticates on every call, the cost is higher still.</p>
 
-        <p>The first idea is parallelism. But <strong>unbounded parallel calls</strong> push a burst at the
+        <p>The first idea is parallelism. But unbounded parallel calls push a burst at the
         authentication service, the external API and the application thread pool at once. The median falls
         while p99 and the error rate can worsen, and under load
-        <strong>the same fan-out is duplicated per user.</strong></p>
+        the same fan-out is duplicated per user.</p>
 
-        <p>What I chose was <strong>taking the fan-out off the user request.</strong></p>
+        <p>What I chose was taking the fan-out off the user request.</p>
 
 <pre data-lang="text"><code>background usage loader
     read the current project list
@@ -244,13 +244,13 @@ REST request
         </figure>
 
         <p>A review caught one thing here. When the structure cache degraded and returned
-        <strong>an empty project list</strong>, the loader taking that as <strong>a successful result</strong>
+        an empty project list, the loader taking that as a successful result
         stored <code>0/0</code> usage as the new healthy value. The same shape as part three.</p>
 
-        <p>The fix was <strong>throwing when the structure information is missing.</strong>
+        <p>The fix was throwing when the structure information is missing.
         A failure preserves the existing value, while
-        <strong>a successful empty list overwrites it with zero.</strong> Under serve-stale, a failure has to be
-        expressed <strong>exactly as a failure</strong> for the cache to keep the last good value.</p>
+        a successful empty list overwrites it with zero. Under serve-stale, a failure has to be
+        expressed exactly as a failure for the cache to keep the last good value.</p>
 
         <p>The REST median went from about 2,627 ms to <strong>5 to 12 ms</strong>, and p99 from about 3,005 ms
         into the 10 to 20 ms range.</p>
@@ -261,11 +261,11 @@ REST request
         data. A 15 second worker now builds it ahead and the connection replays it at once. The median went from
         about 1,436 ms to <strong>24 ms.</strong></p>
 
-        <p>And here <strong>a regression candidate appeared.</strong></p>
+        <p>And here a regression candidate appeared.</p>
 
-        <p>The existing screen leaned on <strong>an implicit assumption that REST arrives first.</strong>
+        <p>The existing screen leaned on an implicit assumption that REST arrives first.
         If the previous state was empty, the SSE merge function returned early, and
-        <strong>the slow REST happened to fill that state first.</strong> Once SSE dropped to tens of
+        the slow REST happened to fill that state first. Once SSE dropped to tens of
         milliseconds the order flipped and <strong>the screen stayed blank until the next 15 second broadcast.</strong></p>
 
         <figure class="diagram">
@@ -302,9 +302,9 @@ REST request
         </figure>
 
         <p>So three guards went in. Connection replies and periodic broadcasts can invert, so
-        <strong>frames older by creation time are dropped</strong>; a process restart can move the time base
-        backwards, so the client <strong>rebaselines and accepts the new stream</strong>; and if SSE arrives
-        before REST, <strong>the first frame initialises the project and VM lists.</strong></p>
+        frames older by creation time are dropped; a process restart can move the time base
+        backwards, so the client rebaselines and accepts the new stream; and if SSE arrives
+        before REST, the first frame initialises the project and VM lists.</p>
 
         <h2 id="the-result">The result<a class="anchor" href="#the-result" aria-label="Link to this section">#</a></h2>
 
@@ -317,13 +317,13 @@ REST request
           <tbody>
             <tr><td>REST quota and usage</td><td>about 2,627 ms</td><td>about 5 to 12 ms</td></tr>
             <tr><td>SSE first metric</td><td>about 1,436 ms</td><td>about 24 ms</td></tr>
-            <tr><td><strong>The screen's dominating value</strong></td><td><strong>about 2,627 ms</strong></td><td><strong>about 24 ms</strong></td></tr>
+            <tr><td>The screen's dominating value</td><td><strong>about 2,627 ms</strong></td><td><strong>about 24 ms</strong></td></tr>
           </tbody>
         </table>
         </div>
         </div>
-        <p class="table-note">Before, <strong>REST was the maximum</strong>. After,
-        <strong>SSE is the maximum</strong>. The dominating side changed.</p>
+        <p class="table-note">Before, REST was the maximum. After,
+        SSE is the maximum. The dominating side changed.</p>
 
         <h2 id="limits-left">Limits the review left standing<a class="anchor" href="#limits-left" aria-label="Link to this section">#</a></h2>
 
@@ -331,9 +331,9 @@ REST request
           <li>Each screen's cache still <strong>shared a mutable structure DTO with the other screens.</strong>
           If one screen updates it in place while another serialises, generations can mix.</li>
           <li>The problem of <strong>SSE publishing an empty snapshot as healthy</strong> when the
-          infrastructure degrades was <strong>common to all three screens.</strong> Handling it on one screen
+          infrastructure degrades was common to all three screens. Handling it on one screen
           only means the same source is interpreted differently per screen.</li>
-          <li>There was <strong>no contract for a changing project set.</strong> If the front end merges only
+          <li>There was no contract for a changing project set. If the front end merges only
           metrics into existing projects, a project added later stays invisible until a refresh and a deleted
           one lingers.</li>
         </ul>
@@ -344,11 +344,11 @@ REST request
 
         <ul>
           <li><strong>These are not production statistics.</strong> Sequential single-user measurements.</li>
-          <li><strong>I am not saying parallelism is bad.</strong> I chose not to use unbounded parallelism, and
+          <li>I am not saying parallelism is bad. I chose not to use unbounded parallelism, and
           <strong>I did not measure what p99 would have done if I had.</strong></li>
-          <li><strong>I do not claim the ordering dependency broke in production.</strong> It was found during
-          the change and blocked, and <strong>there is no record of a user seeing a blank screen.</strong></li>
-          <li><strong>The project set contract still does not exist.</strong> It is written down as remaining work.</li>
+          <li>I do not claim the ordering dependency broke in production. It was found during
+          the change and blocked, and there is no record of a user seeing a blank screen.</li>
+          <li>The project set contract still does not exist. It is written down as remaining work.</li>
         </ul>
 
         <div class="wrapup">
@@ -356,19 +356,19 @@ REST request
 
           <ul>
             <li><strong>Screen performance is not the time of the most visible API.</strong>
-            Among parallel paths, <strong>the gate that has to finish last</strong> sets the user's delay.</li>
+            Among parallel paths, the gate that has to finish last sets the user's delay.</li>
             <li><strong>The best outcome of an N+1 fix is not finishing N calls faster.</strong>
-            It is <strong>breaking the synchronous coupling</strong> between the user request and those N calls.</li>
-            <li><strong>The slow thing may have been holding the order for you.</strong>
+            It is breaking the synchronous coupling between the user request and those N calls.</li>
+            <li>The slow thing may have been holding the order for you.
             Speed removes that accident.</li>
           </ul>
 
           <p>If one line survives, this one.
-          <strong>Measure each path separately and write down the whole completion formula next to them, or you
-          will mistake half a fix for a finished one.</strong></p>
+          Measure each path separately and write down the whole completion formula next to them, or you
+          will mistake half a fix for a finished one.</p>
 
           <p>The next part is the last. Merging the three screens' caches into one turned
-          <strong>things that separation had been protecting by accident</strong> into contracts.
+          things that separation had been protecting by accident into contracts.
           Thank you for reading.</p>
         </div>
 
