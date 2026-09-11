@@ -81,7 +81,7 @@
             <li><a href="#この記事の内容">何の話ですか</a></li>
             <li><a href="#six-rows">6 行</a></li>
             <li><a href="#why-3-is-worse-than-2">なぜ ③ は ② より悪いのか</a></li>
-            <li><a href="#not-caching-absence">2 つ目の欠陥: 「無い」を Cache していなかった</a></li>
+            <li><a href="#not-caching-absence">2 つ目の欠陥: 「無い」を Cache していませんでした</a></li>
             <li><a href="#which-fix-actually-mattered">どの修正が実際に効いたのか</a></li>
             <li><a href="#before-and-after-only">前後だけを測っていたら何を誤って報告したか</a></li>
             <li><a href="#what-this-does-not-claim">この記事が主張しないこと</a></li>
@@ -91,18 +91,18 @@
       <article class="article-body">
 
         <p><strong>範囲.</strong> 2026年5月、OpenStack ベースのプライベートクラウド管理コンソールの
-        <strong>ボリューム一覧画面</strong>を改善した記録である。製品名・バージョン・顧客名は書かない。以下の数値は
-        すべて<strong>社内試験環境で JMeter により測定した値</strong>であり、本番トラフィックではない。負荷条件は
-        6 構成すべて同一である。
+        <strong>ボリューム一覧画面</strong>を改善した記録です。製品名・バージョン・顧客名は書きません。以下の数値は
+        すべて<strong>社内試験環境で JMeter により測定した値</strong>であり、本番トラフィックではありません。負荷条件は
+        6 構成すべて同一です。
         <strong>同時ユーザー 50 名 · ランプアップ 2 分 · 継続 10 分 · シンクタイム 2〜5 秒</strong>。コードは実際の
-        ソースから引用し、社内固有の識別子は削除した。</p>
+        ソースから引用し、社内固有の識別子は削除しました。</p>
 
-        <p>この画面はボリュームが増えるほど線形に遅くなり、最終的に 10 分の Timeout で落ちた。原因はボリューム
-        1 件ごとに外部 API を逐次で呼ぶループであり、処方は自明に見えた。<strong>並列にすればよい。</strong></p>
+        <p>この画面はボリュームが増えるほど線形に遅くなり、最終的に 10 分の Timeout で落ちました。原因はボリューム
+        1 件ごとに外部 API を逐次で呼ぶループであり、処方は自明に見えました。<strong>並列にすればよいです。</strong></p>
 
-        <p>並列にしたら<strong>さらに遅くなった。</strong>Cache 設定を固定したまま逐次を並列に変えると P99 が
-        <strong>42.6 秒から 79.0 秒</strong>になった。この記事は、その 1 マスが何を教えたか、そして
-        <strong>その 1 マスを見えるようにした試験設計</strong>についてである。</p>
+        <p>並列にしたら<strong>さらに遅くなりました。</strong>Cache 設定を固定したまま逐次を並列に変えると P99 が
+        <strong>42.6 秒から 79.0 秒</strong>になりました。この記事は、その 1 マスが何を教えたか、そして
+        <strong>その 1 マスを見えるようにした試験設計</strong>についてです。</p>
 
 
         <h2 id="想定読者">想定読者<a class="anchor" href="#想定読者" aria-label="このセクションへのリンク">#</a></h2>
@@ -116,22 +116,22 @@
         <h2 id="この記事の内容">何の話ですか<a class="anchor" href="#この記事の内容" aria-label="このセクションへのリンク">#</a></h2>
 
         <ul>
-          <li>ボリューム一覧画面が、ボリューム 1 件ごとに外部 API を<strong>逐次で</strong>呼んでいた。
-          処方は自明に見えた。並列にすればよい。</li>
-          <li>並列にすると<strong>もっと遅くなった。</strong>Cache 設定を固定したまま逐次を並列に変えると、
-          P99 が <strong>42.6 秒から 79.0 秒</strong>になった。</li>
-          <li>原因は <code>computeIfAbsent</code> のマッピング関数の中で外部 API を呼んだことだ。
-          その場所が<strong>ロックされたまま</strong>ネットワーク往復を待つ。</li>
+          <li>ボリューム一覧画面が、ボリューム 1 件ごとに外部 API を<strong>逐次で</strong>呼んでいました。
+          処方は自明に見えました。並列にすればよいです。</li>
+          <li>並列にすると<strong>もっと遅くなりました。</strong>Cache 設定を固定したまま逐次を並列に変えると、
+          P99 が <strong>42.6 秒から 79.0 秒</strong>になりました。</li>
+          <li>原因は <code>computeIfAbsent</code> のマッピング関数の中で外部 API を呼んだことです。
+          その場所が<strong>ロックされたまま</strong>ネットワーク往復を待ちます。</li>
           <li>その 1 マスが見えたのは、対策をまとめて入れず<strong>構成を 6 段階に分けて同じ条件で
-          それぞれ測った</strong>からである。</li>
-          <li>⚠️ 社内テスト環境で JMeter により測定し、<strong>構成ごとに 1 回ずつしか測っていない。</strong>
-          根拠に使うのは倍単位の差だけである。</li>
+          それぞれ測った</strong>からです。</li>
+          <li>⚠️ 社内テスト環境で JMeter により測定し、<strong>構成ごとに 1 回ずつしか測っていません。</strong>
+          根拠に使うのは倍単位の差だけです。</li>
         </ul>
 
         <h2 id="six-rows">6 行<a class="anchor" href="#six-rows" aria-label="このセクションへのリンク">#</a></h2>
 
-        <p>対策をまとめて入れて前後を測ると、「速くなった」という事実だけが残る。何がどれだけ寄与したかは分から
-        ない。そこで構成を 6 段階に分け、<strong>同じ条件でそれぞれ</strong>測定した。</p>
+        <p>対策をまとめて入れて前後を測ると、「速くなった」という事実だけが残ります。何がどれだけ寄与したかは分から
+        ない。そこで構成を 6 段階に分け、<strong>同じ条件でそれぞれ</strong>測定しました。</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
@@ -151,22 +151,22 @@
         </div>
         </div>
 
-        <p>単位はミリ秒である。① の 600,017ms は測定値ではなく、<strong>10 分の Timeout 上限に張り付いた値</strong>
-        だ。この構成ではリクエストの 83.3% が完了していない。完了しなかったリクエストの遅延は「600 秒」ではなく
-        <strong>不明</strong>が正しく、表のそのマスはそう読まなければならない。</p>
+        <p>単位はミリ秒です。① の 600,017ms は測定値ではなく、<strong>10 分の Timeout 上限に張り付いた値</strong>
+        です。この構成ではリクエストの 83.3% が完了していません。完了しなかったリクエストの遅延は「600 秒」ではなく
+        <strong>不明</strong>が正しく、表のそのマスはそう読まなければなりません。</p>
 
-        <p>③ が ② より悪いことがまず目に留まる。42.6 秒に対して 129.9 秒だ。ところが
+        <p>③ が ② より悪いことがまず目に留まります。42.6 秒に対して 129.9 秒です。ところが
         <strong>この 2 行は互いの対照群ではない</strong>。 ② は Cache 5 秒で逐次、③ は Cache なしで並列なので
-        <strong>2 つの変数が同時に変わる。</strong>この差から並列化の効果だけを取り出すことはできない。</p>
+        <strong>2 つの変数が同時に変わります。</strong>この差から並列化の効果だけを取り出すことはできません。</p>
 
-        <p>Cache を固定した対は<strong>② と ④</strong>である。どちらも Cache 5 秒で、逐次か並列かだけが違う。</p>
+        <p>Cache を固定した対は<strong>② と ④</strong>です。どちらも Cache 5 秒で、逐次か並列かだけが違います。</p>
 
-        <p><strong>P99 は 42.6 秒から 79.0 秒に上がった。</strong>Thread を増やしたのにテールが 1.85 倍になった。
-        これがこの実験で並列化単独の効果として言えるすべてであり、向きははっきりしている。有害だった。</p>
+        <p><strong>P99 は 42.6 秒から 79.0 秒に上がりました。</strong>Thread を増やしたのにテールが 1.85 倍になりました。
+        これがこの実験で並列化単独の効果として言えるすべてであり、向きははっきりしています。有害でした。</p>
 
         <h2 id="why-3-is-worse-than-2">なぜ ③ は ② より悪いのか<a class="anchor" href="#why-3-is-worse-than-2" aria-label="このセクションへのリンク">#</a></h2>
 
-        <p>並列化したコードはこうなっていた。</p>
+        <p>並列化したコードはこうなっていました。</p>
 
 <pre data-lang="java"><code>final Map&lt;String, VolumeGroup&gt; groupCache = new ConcurrentHashMap&lt;&gt;();
 
@@ -183,29 +183,29 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
     .map(CompletableFuture::join)
     .collect(Collectors.toList());</code></pre>
 
-        <p><code>ConcurrentHashMap</code> を使っているのだから安全だ、と読みたくなる。安全ではある。問題は安全性
-        ではなく、<strong>その安全性を何で買っているか</strong>である。</p>
+        <p><code>ConcurrentHashMap</code> を使っているのだから安全だ、と読みたくなります。安全ではあります。問題は安全性
+        ではなく、<strong>その安全性を何で買っているか</strong>です。</p>
 
         <p><code>computeIfAbsent</code> は、マッピング関数を<strong>そのキーが属するビンを Lock したまま</strong>
-        実行する。マッピング関数がマップを読んで返るだけの計算なら、その区間はナノ秒である。ここではその場で
-        <strong>ネットワーク往復</strong>を行っている。</p>
+        実行します。マッピング関数がマップを読んで返るだけの計算なら、その区間はナノ秒です。ここではその場で
+        <strong>ネットワーク往復</strong>を行っています。</p>
 
-        <p>結果としてこうなる。同じグループに属するボリュームが M 件あれば、Executor に投入された M 個の Thread が
-        <strong>同じキー</strong>で <code>computeIfAbsent</code> に入る。1 つが外部呼び出しを行っている間、残りの
-        M−1 個はそのビンの前に並ぶ。逐次コードで並んでいたものが
-        <strong>並列コードでも並び、しかもその間 Thread Pool の枠を占有している。</strong>得たものは無く、増えた
-        のはコンテキストスイッチと Pool 枯渇だけである。</p>
+        <p>結果としてこうなります。同じグループに属するボリュームが M 件あれば、Executor に投入された M 個の Thread が
+        <strong>同じキー</strong>で <code>computeIfAbsent</code> に入ります。1 つが外部呼び出しを行っている間、残りの
+        M−1 個はそのビンの前に並びます。逐次コードで並んでいたものが
+        <strong>並列コードでも並び、しかもその間 Thread Pool の枠を占有しています。</strong>得たものは無く、増えた
+        のはコンテキストスイッチと Pool 枯渇だけです。</p>
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロール可能な図">
             <svg viewBox="0 0 720 312" role="img" aria-labelledby="cia-t cia-d" xmlns="http://www.w3.org/2000/svg">
               <title id="cia-t">computeIfAbsent 内の外部呼び出しが bin を Lock する構造</title>
-              <desc id="cia-d">同じグループ ID をキーとする 4 つの作業が Executor の 4 Thread に並列で投入される。キーが同じなので
-              4 Thread は 1 つの bin に集まる。T1 がその bin を保持したままマッピング関数の中で外部 API を呼び、ネットワーク
-              往復が終わるまで bin は Lock される。T2・T3・T4 はその前に並び、その間も Thread Pool の枠を占有し続ける。
-              別のキーが属する bin は Lock されないので、そちらの作業は進行できる。マッピング関数は一度だけ実行され、値が
-              公開されると待機は解ける。つまり呼び出し回数が増えるのではなく、逐次コードにあった行列がそのまま残り、枠の
-              占有とコンテキストスイッチだけが追加される。</desc>
+              <desc id="cia-d">同じグループ ID をキーとする 4 つの作業が Executor の 4 Thread に並列で投入されます。キーが同じなので
+              4 Thread は 1 つの bin に集まります。T1 がその bin を保持したままマッピング関数の中で外部 API を呼び、ネットワーク
+              往復が終わるまで bin は Lock されます。T2・T3・T4 はその前に並び、その間も Thread Pool の枠を占有し続けます。
+              別のキーが属する bin は Lock されないので、そちらの作業は進行できます。マッピング関数は一度だけ実行され、値が
+              公開されると待機は解けます。つまり呼び出し回数が増えるのではなく、逐次コードにあった行列がそのまま残り、枠の
+              占有とコンテキストスイッチだけが追加されます。</desc>
 
               <g fill="none" stroke="rgba(229,222,238,0.9)" stroke-width="1.5">
                 <rect x="8" y="46" width="188" height="256" rx="8"/>
@@ -277,25 +277,25 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
               </defs>
             </svg>
           </div>
-          <figcaption>同じキーのリクエストは 1 つの bin に集まる。実線が呼び出し中の T1、点線が待っている T2・T3・T4 だ。マッピング関数の中の外部呼び出しがその bin を往復の間つかんでおり、残りの Thread は枠を占有したまま待つ。別のキーの bin は Lock されない。マッピング関数は<strong>一度だけ</strong>実行され、値が公開されれば待ちは解ける。つまり増えたのは呼び出し回数ではなく<strong>Pool 占有とコンテキストスイッチ</strong>で、行列は逐次コードのまま残る。</figcaption>
+          <figcaption>同じキーのリクエストは 1 つの bin に集まります。実線が呼び出し中の T1、点線が待っている T2・T3・T4 です。マッピング関数の中の外部呼び出しがその bin を往復の間つかんでおり、残りの Thread は枠を占有したまま待ちます。別のキーの bin は Lock されません。マッピング関数は<strong>一度だけ</strong>実行され、値が公開されれば待ちは解けます。つまり増えたのは呼び出し回数ではなく<strong>Pool 占有とコンテキストスイッチ</strong>で、行列は逐次コードのまま残ります。</figcaption>
         </figure>
 
-        <p>だから ③ は ② より悪い。② は 5 秒 Cache のおかげで外部呼び出しの回数自体が少なく、③ は Cache が
-        無いためすべてのリクエストが Lock された場所を通らなければならなかった。</p>
+        <p>だから ③ は ② より悪いです。② は 5 秒 Cache のおかげで外部呼び出しの回数自体が少なく、③ は Cache が
+        無いためすべてのリクエストが Lock された場所を通らなければなりませんでした。</p>
 
-        <blockquote><p><strong>用語をひとつ.</strong> この構造を「セグメント Lock 」と呼ぶ文書をよく見る。セグメント
-        は<strong>Java 7 時代の用語</strong>である。Java 8 以降の <code>ConcurrentHashMap</code> はセグメントを廃し、
-        <strong>ビン(bin)単位</strong>で Lock する。 Lock の範囲が狭くなっただけで、<em>マッピング関数が走る間その
-        場所が Lock される</em>という事実は変わらない。 Lock 範囲が狭くなったことは、
-        <strong>Lock の中で I/O をしてよいという意味ではない。</strong></p></blockquote>
+        <blockquote><p><strong>用語をひとつ.</strong> この構造を「セグメント Lock 」と呼ぶ文書をよく見ます。セグメント
+        は<strong>Java 7 時代の用語</strong>です。Java 8 以降の <code>ConcurrentHashMap</code> はセグメントを廃し、
+        <strong>ビン(bin)単位</strong>で Lock します。 Lock の範囲が狭くなっただけで、<em>マッピング関数が走る間その
+        場所が Lock される</em>という事実は変わりません。 Lock 範囲が狭くなったことは、
+        <strong>Lock の中で I/O をしてよいという意味ではありません。</strong></p></blockquote>
 
-        <p>直し方は、 Lock を自前で扱うのをやめることである。Caffeine の <code>LoadingCache</code> は、 Cache
-        ミス時に<strong>キーごとにローダーをちょうど 1 回だけ</strong>実行し、他の呼び出し側はその結果を待つ。同じ
-        「1 回だけ呼ぶ」保証でありながら、待つ側がマップのビンを掴んでいない。</p>
+        <p>直し方は、 Lock を自前で扱うのをやめることです。Caffeine の <code>LoadingCache</code> は、 Cache
+        ミス時に<strong>キーごとにローダーをちょうど 1 回だけ</strong>実行し、他の呼び出し側はその結果を待ちます。同じ
+        「1 回だけ呼ぶ」保証でありながら、待つ側がマップのビンを掴んでいません。</p>
 
-        <h2 id="not-caching-absence">2 つ目の欠陥: 「無い」を Cache していなかった<a class="anchor" href="#not-caching-absence" aria-label="このセクションへのリンク">#</a></h2>
+        <h2 id="not-caching-absence">2 つ目の欠陥: 「無い」を Cache していませんでした<a class="anchor" href="#not-caching-absence" aria-label="このセクションへのリンク">#</a></h2>
 
-        <p>同じ画面の別経路には、自前の Cache がもう 1 つあった。</p>
+        <p>同じ画面の別経路には、自前の Cache がもう 1 つありました。</p>
 
 <pre data-lang="java"><code>public static List&lt;Message&gt; messages(final String resourceId) {
     CacheManager manager = CacheManager.getInstance().init(Message.class, 10);
@@ -308,27 +308,27 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
     ...
 }</code></pre>
 
-        <p>欠陥が二重になっている。</p>
+        <p>欠陥が二重になっています。</p>
 
         <p><strong>ひとつ。</strong>並列化された N 個の Thread が <code>isEmpty()</code> の判定を同時に通過すると、
-        <strong>N 個すべて</strong>が外部 API を呼ぶ。よくある Cache スタンピードである。</p>
+        <strong>N 個すべて</strong>が外部 API を呼びます。よくある Cache スタンピードです。</p>
 
-        <p><strong>ふたつ。</strong>取得結果が 0 件だと <code>forEach</code> が一度も回らない。すると
-        <strong>Cache には何も保存されない。</strong>次のリクエストも Cache が空だと判断してまた呼ぶ。
-        「無い」という答えを Cache していないのだ。そしてこの経路では 0 件がよくある答えだった。つまり
-        <strong>最も頻度の高いケースで Cache がまったく機能していなかった。</strong></p>
+        <p><strong>ふたつ。</strong>取得結果が 0 件だと <code>forEach</code> が一度も回りません。すると
+        <strong>Cache には何も保存されません。</strong>次のリクエストも Cache が空だと判断してまた呼びます。
+        「無い」という答えを Cache していないのです。そしてこの経路では 0 件がよくある答えでした。つまり
+        <strong>最も頻度の高いケースで Cache がまったく機能していませんでした。</strong></p>
 
-        <p>ここでも処方は同じである。Caffeine はローダーが空リストを返しても<strong>その空リストを値として
- Cache する</strong>。「値が無い」と「まだ訊いていない」をデータ構造が区別してくれる。自前の Cache は
-        その 2 つを同じ <code>isEmpty()</code> で潰していた。</p>
+        <p>ここでも処方は同じです。Caffeine はローダーが空リストを返しても<strong>その空リストを値として
+ Cache する</strong>。「値が無い」と「まだ訊いていない」をデータ構造が区別してくれます。自前の Cache は
+        その 2 つを同じ <code>isEmpty()</code> で潰していました。</p>
 
-        <p>この 2 つの欠陥は性質が違う。1 つ目は<strong>正しいが遅い</strong>欠陥であり、2 つ目は
-        <strong>Cache があると信じ込ませる</strong>欠陥である。2 つ目のほうが長く生き延びた理由は明白だ。
-        コードに Cache があり、その Cache が埋まっているかを誰も数えなかった。</p>
+        <p>この 2 つの欠陥は性質が違います。1 つ目は<strong>正しいが遅い</strong>欠陥であり、2 つ目は
+        <strong>Cache があると信じ込ませる</strong>欠陥です。2 つ目のほうが長く生き延びた理由は明白です。
+        コードに Cache があり、その Cache が埋まっているかを誰も数えませんでした。</p>
 
         <h2 id="which-fix-actually-mattered">どの修正が実際に効いたのか<a class="anchor" href="#which-fix-actually-mattered" aria-label="このセクションへのリンク">#</a></h2>
 
-        <p>6 行を隣り合う対として読むと、各対策の寄与が分離される。</p>
+        <p>6 行を隣り合う対として読むと、各対策の寄与が分離されます。</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
@@ -347,17 +347,17 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         </div>
         </div>
 
-        <p>最後の 1 段は<strong>倍率では</strong>最も大きかった。6.9 秒から 23ms へ、約 300 倍である。
+        <p>最後の 1 段は<strong>倍率では</strong>最も大きかったです。6.9 秒から 23ms へ、約 300 倍です。
         <strong>絶対量では ④→⑤ のほうが大きい</strong>(約 72.1 秒の減少に対し約 6.84 秒)。どちらも真であり、
-        どちらを「最も大きい」と呼ぶかは尺度が決める。いずれにせよそれは<strong>最後に入れたもの</strong>なので、
-        前後だけを測っていたら先行する 4 つの対策の手柄になっていただろう。</p>
+        どちらを「最も大きい」と呼ぶかは尺度が決めます。いずれにせよそれは<strong>最後に入れたもの</strong>なので、
+        前後だけを測っていたら先行する 4 つの対策の手柄になっていただろいます。</p>
 
-        <p>なぜ ⑤→⑥ がこれほど大きいのか。⑤ までは、期限切れの Cache を読もうとしたリクエストが
-        <strong>新しく埋まるまで待つ。</strong>Caffeine の refresh は期限切れの時点で既存の値を返し続けながら、
+        <p>なぜ ⑤→⑥ がこれほど大きいのでしょうか。⑤ までは、期限切れの Cache を読もうとしたリクエストが
+        <strong>新しく埋まるまで待ちます。</strong>Caffeine の refresh は期限切れの時点で既存の値を返し続けながら、
         <strong>バックグラウンドで更新する</strong>。つまり最後の段が消したのは取得コストではなく
-        <strong>更新を待つ時間</strong>であり、それがテール遅延の大部分だった。</p>
+        <strong>更新を待つ時間</strong>であり、それがテール遅延の大部分でした。</p>
 
-        <p>同じ処方を残り 3 画面にも適用した。4 画面とも同じ負荷条件で測った値である。</p>
+        <p>同じ処方を残り 3 画面にも適用しました。4 画面とも同じ負荷条件で測った値です。</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
@@ -377,46 +377,46 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
 
         <h2 id="before-and-after-only">前後だけを測っていたら何を誤って報告したか<a class="anchor" href="#before-and-after-only" aria-label="このセクションへのリンク">#</a></h2>
 
-        <p>① と ⑥ だけを測っていたら、報告書はこう書かれただろう。<em>「 Cache と並列化を適用し、エラー率
+        <p>① と ⑥ だけを測っていたら、報告書はこう書かれただろいます。<em>「 Cache と並列化を適用し、エラー率
         83.3% を 0% に、P99 を 10 分から 23ms に改善した。」</em></p>
 
-        <p>すべての数値が真である。そして<strong>並列化が寄与したという含意は偽</strong>である。並列化は単独では
-        有害だった。 Cache を固定しても並列は逐次より悪かったので、この実験は並列化の正の寄与を示していない。それを知らないまま他の画面に「ここも並列化しよう」と
-        処方していたら、同じ罠に再び入っていた。</p>
+        <p>すべての数値が真です。そして<strong>並列化が寄与したという含意は偽</strong>です。並列化は単独では
+        有害でした。 Cache を固定しても並列は逐次より悪かったので、この実験は並列化の正の寄与を示していません。それを知らないまま他の画面に「ここも並列化しよう」と
+        処方していたら、同じ罠に再び入っていました。</p>
 
-        <p>実際、この表は診断の根拠にもなった。 Cache を固定したまま並列化が悪化するということは、
+        <p>実際、この表は診断の根拠にもなりました。 Cache を固定したまま並列化が悪化するということは、
         <strong>ボトルネックが CPU やスループットではなく直列化点である</strong>という意味であり、だからコードの中に Lock を探し、
-        <code>computeIfAbsent</code> の中の外部呼び出しが出てきた。表がコードを指した。</p>
+        <code>computeIfAbsent</code> の中の外部呼び出しが出てきました。表がコードを指しました。</p>
 
-        <p>予想される反論を 2 つ先に書いておく。</p>
+        <p>予想される反論を 2 つ先に書いておきます。</p>
 
         <p><strong>「 Thread Pool を大きくすればよいのでは?」</strong>。ボトルネックが Lock なら、 Thread を
-        増やしても待つ側が増えるだけである。②↔④ がまさにその実験だ。同じ Cache 設定で、逐次より並列のほうが
-        遅かった。</p>
+        増やしても待つ側が増えるだけです。②↔④ がまさにその実験です。同じ Cache 設定で、逐次より並列のほうが
+        遅かったです。</p>
 
-        <p><strong>「中央値 4ms は Cache ヒットだから当然では?」</strong>。その通り。だから中央値だけを見ない。
-        同じ行の P99 が 23ms で、Apdex が 1.000 である。Apdex は満足・許容・不満を重み付けして数えるので、
-        中央ではなく分布全体を読む。ただし表示された 1.000 が標本全体を証明するわけではない(後述の留保)。</p>
+        <p><strong>「中央値 4ms は Cache ヒットだから当然では?」</strong>。その通りです。だから中央値だけを見ません。
+        同じ行の P99 が 23ms で、Apdex が 1.000 です。Apdex は満足・許容・不満を重み付けして数えるので、
+        中央ではなく分布全体を読みます。ただし表示された 1.000 が標本全体を証明するわけではない(後述の留保)。</p>
 
         <h2 id="what-this-does-not-claim">この記事が主張しないこと<a class="anchor" href="#what-this-does-not-claim" aria-label="このセクションへのリンク">#</a></h2>
 
         <ul>
-          <li><strong>並列化が悪いという主張ではない。</strong>Lock の中で I/O を行うコードを並列化すると悪い。
+          <li><strong>並列化が悪いという主張ではありません。</strong>Lock の中で I/O を行うコードを並列化すると悪いです。
           ただしこの 6 構成の中に<strong>その条件を外した並列構成が無い</strong>ので、外したときに並列化が
-          値を持つかどうかはこの実験が示していない。③→④ は Cache だけが変わった対であり、その答えではない。</li>
-          <li><strong>本番の測定ではない。</strong>社内試験環境での合成負荷である。実際のユーザー分布・データ規模・
-          ネットワークは異なる。</li>
-          <li><strong>② と ③ は互いの対照群ではない。</strong>Cache と実行方式が同時に変わるため、その差
-          (42.6 秒 → 129.9 秒)をどちらの効果にも帰属できない。この記事が並列化単独の根拠に使うのは、 Cache を
-          固定した ②→④ だけである。</li>
-          <li><strong>Apdex 1.000 は標本全体が満足しきい値の内側にあることの証明ではない。</strong>ツールの表示が
-          小数第 3 位で丸められるなら、少数の tolerating 標本があっても 1.000 に見える。丸め前の値は確認していない。</li>
-          <li><strong>構成ごとに 1 回ずつしか測っていない。</strong>反復測定による分散が無いので、隣接する 2 構成の
-          差が小さいときはその差を根拠にしていない。この記事が根拠に使うのは ②→④ のような
-          <strong>倍単位の差</strong>だけである。</li>
-          <li><strong>① の 600 秒は遅延ではない。</strong>Timeout 上限である。① の P99 を「600 秒」として
-          引用すると、測定できなかったものを測定したふりをすることになる。</li>
-          <li><strong>Apdex のしきい値はツールの既定値</strong>をそのまま使った。サービス水準目標から定義した値では
+          値を持つかどうかはこの実験が示していません。③→④ は Cache だけが変わった対であり、その答えではありません。</li>
+          <li><strong>本番の測定ではありません。</strong>社内試験環境での合成負荷です。実際のユーザー分布・データ規模・
+          ネットワークは異なります。</li>
+          <li><strong>② と ③ は互いの対照群ではありません。</strong>Cache と実行方式が同時に変わるため、その差
+          (42.6 秒 → 129.9 秒)をどちらの効果にも帰属できません。この記事が並列化単独の根拠に使うのは、 Cache を
+          固定した ②→④ だけです。</li>
+          <li><strong>Apdex 1.000 は標本全体が満足しきい値の内側にあることの証明ではありません。</strong>ツールの表示が
+          小数第 3 位で丸められるなら、少数の tolerating 標本があっても 1.000 に見えます。丸め前の値は確認していません。</li>
+          <li><strong>構成ごとに 1 回ずつしか測っていません。</strong>反復測定による分散が無いので、隣接する 2 構成の
+          差が小さいときはその差を根拠にしていません。この記事が根拠に使うのは ②→④ のような
+          <strong>倍単位の差</strong>だけです。</li>
+          <li><strong>① の 600 秒は遅延ではありません。</strong>Timeout 上限です。① の P99 を「600 秒」として
+          引用すると、測定できなかったものを測定したふりをすることになります。</li>
+          <li><strong>Apdex のしきい値はツールの既定値</strong>をそのまま使いました。サービス水準目標から定義した値では
           ない。</li>
         </ul>
 
@@ -424,22 +424,22 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="このセクションへのリンク">#</a></h2>
 
         <ul>
-          <li><strong>対策をまとめて入れると「速くなった」しか残らない。</strong>何がどれだけ効いたかは、
-          構成を分けてそれぞれ測らないと出てこない。</li>
-          <li><strong>Lock を握ったままネットワーク往復をすると、並列化は待ち行列を増やすだけである。</strong>
-          Thread を増やしても同じ bin の前の列が伸びるだけだ。</li>
+          <li><strong>対策をまとめて入れると「速くなった」しか残りません。</strong>何がどれだけ効いたかは、
+          構成を分けてそれぞれ測らないと出てきません。</li>
+          <li><strong>Lock を握ったままネットワーク往復をすると、並列化は待ち行列を増やすだけです。</strong>
+          Thread を増やしても同じ bin の前の列が伸びるだけです。</li>
           <li><strong>「値が無い」と「まだ訊いていない」をデータ構造が区別できないと</strong>、Cache は空の結果を
-          答えとして固めてしまう。</li>
-          <li><strong>表がコードを指した。</strong>Cache を固定したまま並列の方が悪いということは、ボトルネックが
-          スループットではなく直列化点だという意味であり、そこから Lock を探しに行った。</li>
+          答えとして固めてしまいます。</li>
+          <li><strong>表がコードを指しました。</strong>Cache を固定したまま並列の方が悪いということは、ボトルネックが
+          スループットではなく直列化点だという意味であり、そこから Lock を探しに行きました。</li>
         </ul>
 
-        <p>残る 1 行はこれである。<strong>直したものが複数あるなら、何が直したのかは別々に測らないと出てこない。</strong>
-        そしてそう測ると、ときどき、良くなったと信じていた対策が単独では有害だったと分かる。</p>
+        <p>残る 1 行はこれです。<strong>直したものが複数あるなら、何が直したのかは別々に測らないと出てきません。</strong>
+        そしてそう測ると、ときどき、良くなったと信じていた対策が単独では有害だったと分かります。</p>
 
         <p>前回は認証をループの外に出した
         (<a href="slow-screens-4-client-per-loop.ja.html">④編</a>)、次回は一覧の取得が終わる前に画面が
-        取り直していた話 (<a href="slow-screens-6-polling-pileup.ja.html">⑥編</a>) である。</p>
+        取り直していた話 (<a href="slow-screens-6-polling-pileup.ja.html">⑥編</a>) です。</p>
 
         <p>お読みいただきありがとうございました。</p>
         </div>
