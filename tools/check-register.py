@@ -90,6 +90,22 @@ def count(path):
     return len(hits), hits
 
 
+TITLE = re.compile(r"<h1>(.*?)(?:<br>|</h1>)", re.S)
+
+
+def title_plain(path):
+    """제목(<h1> 첫 줄)이 평서체인가. ⚠️ 제목에는 마침표가 없어서 본문 규칙이 통째로 못 본다.
+    실제로 본문 899 문장을 바꾼 뒤에도 제목 6개가 「…끝난다」로 남아 있었다."""
+    s = io.open(path, encoding="utf-8").read()
+    m = TITLE.search(s)
+    if not m:
+        return None
+    t = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", m.group(1))).strip()
+    if not t.endswith("다"):
+        return None
+    return None if _is_polite(t + ".", len(t) - 1) else t
+
+
 def main():
     show = "--show" in sys.argv
     files = sorted(glob.glob("writing/*.ko.html")) + sorted(glob.glob("notes/*.ko.html"))
@@ -111,6 +127,28 @@ def main():
                     fails.append("      …%s" % h)
         elif n < base:
             shrunk.append("%s: %d → %d" % (f, base, n))
+    for f in files:
+        t = title_plain(f)
+        if t:
+            fails.append("%s: 제목이 평서체다 — 「%s」" % (f, t))
+
+    # 카드 설명과 meta description. ⚠️ 둘 다 <article> 밖이라 본문 검사가 통째로 못 본다.
+    # 목록 페이지에서 **처음 읽히는 문장**인데 7 개가 평서체로 남아 있었다.
+    for f in ["assets/content.js"] + files:
+        try:
+            s = io.open(f, encoding="utf-8").read()
+        except OSError:
+            continue
+        for rx in (r'name="description" content="([^"]*)"',
+                   r'property="og:description" content="([^"]*)"',
+                   r'name="twitter:description" content="([^"]*)"',
+                   r'desc_ko:\s*"((?:[^"\\]|\\.)*)"'):
+            for m in re.finditer(rx, s):
+                for h in _plain_spans(m.group(1)):
+                    fails.append("%s: 설명이 평서체다 — 「%s」"
+                                 % (f, m.group(1)[max(0, h.start() - 30):h.end()]))
+                    break
+
     for f in BASELINE:
         if f not in cur:
             shrunk.append("%s: 사라졌다 — BASELINE 에서 빼라" % f)
