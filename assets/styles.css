@@ -3345,10 +3345,10 @@ html[lang="ja"] .article-toc {
 .facets {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   overflow-x: auto;
   overscroll-behavior-x: contain;
-  padding: 2px 0 9px;
+  padding: 6px 0 16px;
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.16) transparent;
 }
@@ -3375,41 +3375,45 @@ html[lang="ja"] .article-toc {
   line-height: 2;
 }
 
-/* 버튼은 사이트에 이미 있는 알약(`.card-source`)과 같은 모양이다(사용자 지시, 2026-09-12).
-   테두리만 있고 채우지 않으며 색은 currentColor 를 따른다 — 따로 만든 회색 상자보다 이쪽이
-   목록 안의 배지·태그와 한 식구로 읽힌다. */
+/* 버튼은 글 머리의 알약(`.hero-top .project-tag` · `.source-tag`)과 **같은 모양·같은 크기**다
+   (사용자 지시, 2026-09-12). 치수를 그대로 옮겨 적는다 — 값이 갈라지면 두 곳이 따로 움직인다.
+   ⚠️ 그림자가 20px 번지므로 줄에 위아래 여백을 준다. `overflow-x: auto` 는 세로도 같이 자른다. */
 .facet {
   flex: none;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 3px 12px;
-  border: 1px solid currentColor;
+  gap: 7px;
+  padding: 5px 14px;
   border-radius: 999px;
-  background: none;
+  border: 1px solid rgba(214, 41, 118, 0.55);
+  background-color: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 20px rgba(214, 41, 118, 0.20);
+  color: var(--ig-pink);
   font-family: inherit;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  font-size: 0.84rem;
+  font-weight: 800;
+  font-style: normal;
+  letter-spacing: 0.01em;
   line-height: 1.7;
-  color: var(--muted, #7b7186);
   white-space: nowrap;
   cursor: pointer;
-  transition: color 120ms ease, background-color 120ms ease;
+  transition: background-color 0.16s ease, color 0.16s ease;
 }
 
-.facet:hover { color: var(--ig-purple, #962fbf); }
-
+/* 켜진 것과 마우스가 얹힌 것은 글 머리의 알약과 같이 **채워서** 보인다. */
+.facet:hover,
+.facet:focus-visible,
 .facet.active {
-  color: var(--accent, #d62976);
-  background: rgba(214, 41, 118, 0.08);
+  background-color: var(--ig-pink);
+  color: #fff;
 }
 
 .facet .n {
   flex: none;
-  font-size: 0.72rem;
-  font-weight: 600;
+  font-size: 0.76rem;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
+  color: inherit;
   opacity: 0.72;
 }
 
