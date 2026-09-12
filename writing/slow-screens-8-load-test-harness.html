@@ -82,7 +82,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-is-in-here">What this is about</a></li>
             <li><a href="#why-i-built-it">Six configurations mean six runs</a></li>
             <li><a href="#conditions-as-constants">I moved the conditions into constants</a></li>
             <li><a href="#one-at-a-time">Measuring one thing at a time was the point</a></li>
@@ -99,16 +98,19 @@
 
         <article class="article-body">
 
-        <p>Hello. I work on the backend of an internal cloud admin console.
-        In <a href="slow-screens-1-volume-list.html">part one</a> I took a single volume list screen and
-        measured it under <strong>six configurations</strong>.
-        The six do not stack neatly on top of each other; there is a place where a cache is added and
-        then taken away again. Three more screens were measured under the same conditions
-        (<a href="parallelism-made-the-tail-worse.html">part five</a>).</p>
+        <p>I work on the backend of an internal cloud admin console. In part one I took a single volume
+        list screen and measured it under six configurations. To see what each configuration contributed,
+        everything but the thing you are looking at has to match.</p>
 
-        <p>To see what each configuration contributed, <strong>everything but the thing you are looking at
-        has to match.</strong> This article is about the tool that took on the "keep the load conditions
-        the same" half of that, and about what that tool did not do.</p>
+        <p>The tool in this article took on that “keep it the same” half. The load conditions moved into
+        constants in code, and the JMX is generated from there. Nothing touched those values between
+        runs, so the declared load conditions were identical across all six. The ten measurement targets
+        can also be measured one at a time, which takes other APIs' load out of the picture.</p>
+
+        <p><strong>But what was made identical is the declared conditions, not the whole environment the
+        test sat in.</strong> And two more things the tool did not do: the run script printed “complete”
+        and exited 0 with not a single result file produced, and which run was which code configuration
+        never made it into the report. This article is about that tool, and about what it did not do.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -116,22 +118,6 @@
           <li>Anyone who has set up a load test by filling in a GUI and pressing run</li>
           <li>Anyone measuring the same thing repeatedly without being sure the runs match</li>
           <li>Anyone who wrote an automation script and then moved on at "well, it runs"</li>
-        </ul>
-
-        <h2 id="what-is-in-here">What this is about<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
-
-        <ul class="callout">
-          <li>I moved the load conditions into constants in code and generated the JMX
-          from them. Those values were never touched between runs, so
-          the declared load conditions are identical across all six.
-          ⚠️ That does not mean the environment was.</li>
-          <li>I made the ten measurement targets runnable one at a time, so the tool
-          would not hit the other APIs alongside.</li>
-          <li>I left the result format as CSV. That format has no column for a response body.</li>
-          <li>⚠️ And yet, with no result files at all, the run script printed "done" and
-          exited zero. I reproduced it to check.</li>
-          <li>⚠️ And which run was which code configuration is nowhere in the reports.
-          That pairing was being done by a document outside the harness.</li>
         </ul>
 
         <h2 id="why-i-built-it">Six configurations mean six runs<a class="anchor" href="#why-i-built-it" aria-label="Link to this section">#</a></h2>

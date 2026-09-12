@@ -82,7 +82,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-is-in-here">What this is about</a></li>
             <li><a href="#what-was-reviewed">What was reviewed</a></li>
             <li><a href="#already-warm">Dashboard and physical resources: already filled in the background</a></li>
             <li><a href="#no-more-cache">So no further cache went in</a></li>
@@ -96,20 +95,19 @@
 
         <article class="article-body">
 
-        <p>Hello. I write the backend of an internal cloud admin console. A report came in that monitoring was
-        slow, so I reviewed three screens.</p>
+        <p>I write the backend of an internal cloud admin console. A report came in that monitoring was
+        slow, so I reviewed three screens. The conclusion was “I could not find a case for changing
+        anything.” That is a different sentence from “there was nothing to fix”, and this article keeps
+        the distinction throughout.</p>
 
-        <p>The conclusion was “I could not find a case for changing anything.”
-        This part is about a review that decided to do nothing.
-        That is a different sentence from “there was nothing to fix”, and the article keeps that
-        distinction throughout.</p>
+        <p>The review made two decisions. It declined to add more cache, and it deliberately left one
+        setting that looked excessive alone. The place the cache would have gone was already a cheap
+        path, and narrowing the query window made the screen flicker.</p>
 
-        <blockquote><p>This conclusion turned out to be wrong.
-        Measuring first data on the same screen again gave <strong>6.8 seconds</strong>, and adding a cache in
-        the very place this article declined to put one brought it to <strong>23 ms</strong>. What I had failed
-        to measure is written up in
-        <a href="monitoring-the-screen-i-said-not-to-fix.html">“The Screen I Said Not to Fix Took 6.8 Seconds”</a>.
-        The text below stays as it was written.</p></blockquote>
+        <p><strong>And this conclusion turned out to be wrong.</strong> Measuring first data on the same
+        screen again gave 6.8 seconds, and a cache in the very place this article declined to put one
+        brought it to 23 ms. What I had failed to measure is written up in “The screen I said not to fix
+        took 6.8 seconds”. The text below stays as it was written.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -118,28 +116,6 @@
           <li>A load test came back looking good and you were not quite convinced.</li>
           <li>You have to decide whether to add another cache.</li>
         </ul>
-
-        <h2 id="what-is-in-here">What this is about<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li>I reviewed three screens and <strong>found no case for a new optimisation.</strong> One slow spot was
-          already fixed in <a href="slow-screens-4-client-per-loop.html">part four</a>, and for the rest
-          <strong>nothing came up that would justify a change.</strong> ⚠️ That is not the same sentence as
-          “there was nothing to fix”.</li>
-          <li>No further cache went in. Where one would have gone
-          there was little to save, and putting a cache there
-          buys staleness and complexity instead.</li>
-          <li>One setting that looked excessive was left alone deliberately. The query window was
-          wider than needed, and narrowing it made the graph flicker.</li>
-          <li>⚠️ And I never ran a load test. I judged from the code that the usual scenario would
-          produce a flat graph on this architecture, and did not confirm it by running one.</li>
-          <li>A review that ends in “do nothing” is hard to check afterwards. Nothing was done, so
-          there is nothing to compare. That part is in here too.</li>
-        </ul>
-
-        <p>This is an internal product, so neither the code nor the screens are reproduced as they
-        are. Product names, customers and internal addresses are gone; only the structure and the
-        configured values stay.</p>
 
         <h2 id="what-was-reviewed">What was reviewed<a class="anchor" href="#what-was-reviewed" aria-label="Link to this section">#</a></h2>
 

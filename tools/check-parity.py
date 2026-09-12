@@ -6,13 +6,13 @@
 아니라 손실이다. 실제로 도입부를 통째로 갈다가 `every-guarantee…` 한국어판이
 표를 한 장 잃었고, `check-figures` 는 표를 안 세므로 **아무도 못 잡았다.**
 
-절(h2) 개수는 「무슨 내용인가요?」 절을 세 언어에서 차례로 걷어내는 동안 어긋난다.
-그래서 지금은 **남은 편수를 숫자로 찍고** 다 끝나면 실패로 올린다.
+절(h2) 개수는 「무슨 내용인가요?」 절을 세 언어에서 걷어내는 동안만 어긋났다.
+23편이 다 끝난 2026-09-12 에 실패로 올렸다.
 """
 import glob, io, os, re, sys
 from collections import defaultdict
 
-H2_IN_PROGRESS = True  # 스포일러 절 제거가 끝나면 False 로 내린다
+H2_IN_PROGRESS = False  # 2026-09-12 스포일러 절 제거가 23편 모두 끝나 잠갔다
 
 
 def main():

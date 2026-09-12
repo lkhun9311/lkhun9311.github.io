@@ -80,7 +80,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-is-in-here">What is in here</a></li>
             <li><a href="#which-path">Which path is this about?</a></li>
             <li><a href="#i-thought-the-database">At first I thought the database was the bottleneck</a></li>
             <li><a href="#the-conclusion-first">The conclusion first</a></li>
@@ -100,14 +99,19 @@
         </nav>
       <article class="article-body">
 
-        <p>I am building a <strong>social polling platform</strong>. In the previous article I moved an
-        external call out of a database transaction and stood up a
-        <a class="term" href="../notes/load-test-harness.html">load-test harness</a> to put numbers on it.
-        The harness immediately asked the next question — <em>why does post creation stop at 6.27 req/s?</em></p>
+        <p>I am building a social polling platform. In the previous article I moved an external call out
+        of a database transaction and stood up a load-test harness to put numbers on it. The harness
+        immediately asked the next question: why does post creation stop at 6.27 req/s?</p>
 
-        <p>Twice the write threads did nothing. Three times the database pool did nothing. The culprit
-        was <strong>a default inside a library I never added, never chose, and had never seen the name of</strong>.</p>
+        <p>Twice the write threads did nothing. Three times the database connection pool did nothing.
+        <strong>Turn both knobs and nothing moves, and the ceiling is outside both of them.</strong></p>
 
+        <p>What was outside was a default in a library I never added, never chose, and had never seen the
+        name of: “five connections per destination host”, in the HTTP client the AWS SDK dragged in when
+        I added it for S3. That library exists only on the runtime classpath, so reading the code will not
+        find it; only measuring will. And the fix was not to remove the ceiling but to set one. Delete it
+        and throughput rises just the same, except that a 5 nobody chose becomes an infinity nobody
+        chose.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -116,33 +120,6 @@
           <li>Anyone whose throughput sits on one number and will not move, even after raising threads and the database pool</li>
           <li>Anyone who has wondered <em>“is a library I never added deciding how my service behaves?”</em></li>
         </ul>
-
-        <h2 id="what-is-in-here">What is in here<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li>Throughput on the content moderation path sat at <strong>6.27 req/s</strong>. Twice the
-          write threads, three times the database pool — no change.</li>
-          <li>The cause was the <strong>HTTP client the AWS SDK pulled in when I added S3</strong>, and its
-          default of five connections per target host.</li>
-          <li>That library is only on the runtime classpath. Its name appears nowhere in my
-          code, so reading could not find it — only measuring could.</li>
-          <li>The fix was setting the limit, not removing it. Removing it raises throughput
-          by exactly the same amount, but it only swaps a five nobody chose for
-          an infinity nobody chose.</li>
-          <li>Result: outbound concurrency 10 → 32, post creation p50
-          2,592 → 805 ms, throughput 6.27 → 19.89 req/s (3.17×), errors
-          0%.</li>
-        </ul>
-
-        <p>The code is in a private repository. The product has not launched, so the
-        repository is not open yet. So there are no GitHub links in this article; only the quoted
-        fragments of the code appear in the text.</p>
-
-        <p>⚠️ One thing up front. Every number here comes from a local harness.
-        The load generator, the application, the external-API stub and PostgreSQL all share one machine's CPU.
-        Absolute throughput is meaningless; only the comparison means anything. The 800 ms
-        external latency is a value I configured in the stub, not a real latency distribution,
-        and each condition was run once.</p>
 
         <h2 id="which-path">Which path is this about?<a class="anchor" href="#which-path" aria-label="Link to this section">#</a></h2>
 
