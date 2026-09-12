@@ -1505,31 +1505,25 @@ footer a:hover {
 
 .entry-row:hover .entry-title { color: var(--ig-pink); }
 
-/* 한 줄로 자른다. 요약이 세 줄이면 목록이 다시 글 무더기가 된다 — 여기서 요약의 일은
-   "이 글이 무엇인지" 한 번에 알려 주는 것뿐이다.
+/* 두 줄까지 보인다(사용자 지시, 2026-09-12). 한 줄로 자르면 요약이 문장 조각으로 끝나서
+   "이 글이 무엇인지"에 답하지 못하는 행이 생긴다. 세 줄부터는 목록이 다시 글 무더기가 된다.
    색은 회색(--muted). --text-soft(#3b3344)는 거의 검정이라 제목과 한 덩어리로 읽힌다. */
 .entry-desc {
   margin: 0;
   color: var(--muted);
   font-size: 0.98rem;
   line-height: 1.5;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-/* 좁은 화면에서는 여백만 줄인다. 날짜는 이미 제목 위에 있다.
-   한 줄 자르기는 두 줄 자르기로 바꾼다. 좁은 폭에서 한 줄이면 남는 것이 문장 조각뿐이다. */
+/* 좁은 화면에서는 여백만 줄인다. 자르는 줄 수는 위에서 이미 둘이다. */
 @media (max-width: 720px) {
   .entry-row {
     padding: 16px 4px 15px;
-  }
-  .entry-desc {
-    white-space: normal;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
   }
 }
 
@@ -3381,40 +3375,42 @@ html[lang="ja"] .article-toc {
   line-height: 2;
 }
 
+/* 버튼은 사이트에 이미 있는 알약(`.card-source`)과 같은 모양이다(사용자 지시, 2026-09-12).
+   테두리만 있고 채우지 않으며 색은 currentColor 를 따른다 — 따로 만든 회색 상자보다 이쪽이
+   목록 안의 배지·태그와 한 식구로 읽힌다. */
 .facet {
   flex: none;
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   gap: 6px;
-  padding: 5px 12px;
-  border: 1px solid var(--line-soft, rgba(229, 222, 238, 0.9));
+  padding: 3px 12px;
+  border: 1px solid currentColor;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.72);
+  background: none;
   font-family: inherit;
-  font-size: 0.86rem;
-  line-height: 1.4;
-  color: var(--text-soft, #3b3344);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.7;
+  color: var(--muted, #7b7186);
   white-space: nowrap;
   cursor: pointer;
-  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+  transition: color 120ms ease, background-color 120ms ease;
 }
 
-.facet:hover { background: #fff; border-color: rgba(150, 47, 191, 0.35); }
+.facet:hover { color: var(--ig-purple, #962fbf); }
 
 .facet.active {
-  background: rgba(214, 41, 118, 0.10);
-  border-color: var(--accent, #d62976);
-  color: var(--text, #18121d);
-  font-weight: 700;
+  color: var(--accent, #d62976);
+  background: rgba(214, 41, 118, 0.08);
 }
 
 .facet .n {
   flex: none;
-  font-size: 0.74rem;
+  font-size: 0.72rem;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
-  color: var(--muted, #7b7186);
+  opacity: 0.72;
 }
-
-.facet.active .n { color: var(--accent, #d62976); }
 
 @media (prefers-reduced-motion: reduce) { .facet { transition: none; } }
