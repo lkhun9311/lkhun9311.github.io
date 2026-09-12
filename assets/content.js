@@ -102,8 +102,8 @@
           dateLabel: "Sep 5, 2026",
           private: true,
           desc: "A Kotlin and Spring Boot service where people post a question, others vote anonymously, and the results are published as aggregates \u2014 totals, per-option counts, demographic axes and a trend over time. Min-n suppression and rounded shares narrow what a published change can reveal; the guarantee is written down as a sentence, and so are its limits, since small samples can still be identifiable. Pre-launch work covered transaction boundaries, the connection budget, and a moderation gate that runs outside the transaction.",
-          desc_ko: "질문을 올리면 다른 사람들이 익명으로 투표하고 결과는 집계로 공개되는 Kotlin · Spring Boot 서비스입니다. 총계 · 선택지별 수 · 인구 축 · 시간 추이를 냅니다. 최소 표본 억제와 반올림으로 공개된 변화가 드러내는 것을 좁혔고 보장선을 문장으로 적어 두되 그 한계도 같이 적었습니다. 표본이 작으면 식별 가능성이 남기 때문입니다. 출시 전에는 Transaction 경계와 Connection 예산, Transaction 밖에서 도는 모더레이션 게이트를 다뤘습니다.",
-          desc_ja: "質問を投稿すると他の人が匿名で投票し、結果は集計として公開される Kotlin・Spring Boot のサービスです。総数・選択肢ごとの数・人口軸・時間推移を出します。最小標本の抑制と丸めで公開された変化が明かすものを狭め、保証線を文として書き、その限界も併記しました。標本が小さければ識別可能性は残るからです。公開前は Transaction の境界と Connection の予算、Transaction の外で回るモデレーションゲートを扱いました。",
+          desc_ko: "질문을 올리면 다른 사람들이 익명으로 투표하고 결과는 집계로 공개되는 Kotlin · Spring Boot 서비스입니다. 총계 · 선택지별 수 · 인구 축 · 시간 추이를 냅니다. 최소 표본 억제와 반올림으로 공개된 변화가 드러내는 것을 좁혔고 보장선을 문장으로 적어 두되 그 한계도 같이 적었습니다. 표본이 작으면 식별 가능성이 남기 때문입니다. 출시 전에는 Transaction 경계와 Connection 예산, Transaction 밖에서 도는 Moderation 게이트를 다뤘습니다.",
+          desc_ja: "質問を投稿すると他の人が匿名で投票し、結果は集計として公開される Kotlin・Spring Boot のサービスです。総数・選択肢ごとの数・人口軸・時間推移を出します。最小標本の抑制と丸めで公開された変化が明かすものを狭め、保証線を文として書き、その限界も併記しました。標本が小さければ識別可能性は残るからです。公開前は Transaction の境界と Connection の予算、Transaction の外で回るModerationゲートを扱いました。",
 
           tags: ["Backend", "Privacy", "Postgres"],
           stacks: [["Kotlin", "kotlin"], ["Spring Boot", "spring"], ["PostgreSQL", "postgres"], ["Flyway", "flyway"], ["Operations", "operations"]]
@@ -339,7 +339,7 @@
           url: "writing/monitoring-three-races-in-one-cache.html",
           source: "company", sourceLabel: "Company work",
           title_ko: "모니터링 화면에 Cache를 넣자 세 종류의 경합이 생겼습니다",
-          desc_ko: "대시보드의 첫 데이터가 6.8초였던 이유는 접속이 곧 계산이었기 때문입니다. 요청 경로에서 계산을 떼어 내 10ms가 됐는데 그 과정에서 갱신이 취소되는 것·같은 값을 전체에 여러 번 뿌리는 것·Timeout 하나가 남의 쿼리를 끊는 것, 경합 셋이 나왔습니다. 연작 ‘통합 모니터링’ ②.",
+          desc_ko: "대시보드의 첫 데이터가 6.8s였던 이유는 접속이 곧 계산이었기 때문입니다. 요청 경로에서 계산을 떼어 내 10ms가 됐는데 그 과정에서 갱신이 취소되는 것·같은 값을 전체에 여러 번 뿌리는 것·Timeout 하나가 남의 쿼리를 끊는 것, 경합 셋이 나왔습니다. 연작 ‘통합 모니터링’ ②.",
           title_ja: "モニタリング画面に Cache を入れたら三種類の競合が生まれました",
           desc_ja: "ダッシュボードの最初のデータが 6.8 秒だった理由は、接続がそのまま計算だったからです。リクエスト経路から計算を外して 10ms になりましたが、その過程で更新が取り消されること・同じ値を全体に何度も配ること・Timeout 一つが他人のクエリを切ることという競合が三つ出てきました。連載「統合モニタリング」②。",
           date: "2026-09", dateLabel: "Sep 2026",
@@ -350,8 +350,8 @@
           title: "The Screen I Found No Case to Fix Took 6.8 Seconds",
           url: "writing/monitoring-the-screen-i-said-not-to-fix.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "고칠 근거를 못 찾았다고 쓴 모니터링 화면이 6.8초였습니다",
-          desc_ko: "모니터링 화면 3개를 검토하고 ‘고칠 근거를 못 찾았다’고 발행했는데 같은 화면의 첫 데이터가 6.8초였습니다. 저는 REST 응답을 쟀고 사용자는 SSE의 첫 data를 기다리고 있었습니다. 요청 경로에서 계산을 떼어 내자 세 화면 모두 약 23ms가 됐습니다. 연작 ‘통합 모니터링’ ①.",
+          title_ko: "고칠 근거를 못 찾았다고 쓴 모니터링 화면이 6.8s였습니다",
+          desc_ko: "모니터링 화면 3개를 검토하고 ‘고칠 근거를 못 찾았다’고 발행했는데 같은 화면의 첫 데이터가 6.8s였습니다. 저는 REST 응답을 쟀고 사용자는 SSE의 첫 data를 기다리고 있었습니다. 요청 경로에서 계산을 떼어 내자 세 화면 모두 약 23ms가 됐습니다. 연작 ‘통합 모니터링’ ①.",
           title_ja: "直す根拠が見つからないと書いた画面が 6.8 秒でした",
           desc_ja: "モニタリング画面 3 つをレビューして「直す根拠が見つからなかった」と公開したのに、同じ画面の最初のデータが 6.8 秒でした。私は REST の応答を測り、利用者は SSE の最初の data を待っていました。リクエスト経路から計算を外すと、三画面とも約 23ms になりました。連載「統合モニタリング」①。",
           date: "2026-09", dateLabel: "Sep 2026",
@@ -386,8 +386,8 @@
           title: "Pre-fetching Everything and Polling a Ten-Second Query Blocked the Dialog",
           url: "writing/slow-screens-6-polling-pileup.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "안 고른 것까지 미리 받고 10초 조회를 5초마다 불러 창이 막혔습니다",
-          desc_ko: "버튼을 눌러도 창이 안 열리고 로딩만 돌았습니다. 개발자 도구에는 끝나지 않은 요청이 4건 남아 있었습니다. 목록 조회가 10초 넘게 걸리는데 화면은 5초마다 다시 불렀고 창이 열려 있는 동안에도 멈추지 않았습니다. 그리고 그 5초가 Backend Cache 결정의 근거가 됐습니다. 연작 ‘느린 화면’ ⑥.",
+          title_ko: "안 고른 것까지 미리 받고 10s 조회를 5s마다 불러 창이 막혔습니다",
+          desc_ko: "버튼을 눌러도 창이 안 열리고 로딩만 돌았습니다. 개발자 도구에는 끝나지 않은 요청이 4건 남아 있었습니다. 목록 조회가 10s 넘게 걸리는데 화면은 5s마다 다시 불렀고 창이 열려 있는 동안에도 멈추지 않았습니다. 그리고 그 5s가 Backend Cache 결정의 근거가 됐습니다. 연작 ‘느린 화면’ ⑥.",
           title_ja: "選んでいないものまで先に取り、10 秒の取得を 5 秒ごとに呼んでダイアログが塞がりました",
           desc_ja: "ボタンを押してもダイアログが開かず、ローディングだけが回っていました。開発者ツールには未完了のリクエストが 4 件。一覧の取得に 10 秒以上かかるのに画面は 5 秒ごとに取り直し、ダイアログが開いているあいだも止まりませんでした。そしてその 5 秒が Backend Cache の判断の根拠になりました。連載「遅い画面」⑥。",
           date: "2026-09", dateLabel: "Sep 2026",
@@ -422,8 +422,8 @@
           title: "Listing Instances: 54 Seconds → One",
           url: "writing/slow-screens-2-instance-list.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "Instance 목록 조회가 54초 → 1초로 줄었습니다",
-          desc_ko: "Instance는 20개인데 목록이 Timeout이 났습니다. CLI로 불러도 54초여서 느린 구간이 Backend 아래에 있다는 것까지는 알았습니다. Swap이 8.0GiB 전부 차 있었고 instances 테이블에는 삭제 표시만 된 행이 1,021개 남아 있었습니다. 그리고 제가 쓴 명령은 운영에서 쓰면 안 되는 것이었습니다. 연작 ‘느린 화면’ ②.",
+          title_ko: "Instance 목록 조회가 54s → 1s로 줄었습니다",
+          desc_ko: "Instance는 20개인데 목록이 Timeout이 났습니다. CLI로 불러도 54s여서 느린 구간이 Backend 아래에 있다는 것까지는 알았습니다. Swap이 8.0GiB 전부 차 있었고 instances 테이블에는 삭제 표시만 된 행이 1,021개 남아 있었습니다. 그리고 제가 쓴 명령은 운영에서 쓰면 안 되는 것이었습니다. 연작 ‘느린 화면’ ②.",
           title_ja: "Instance 一覧が 54 秒から 1 秒になりました",
           desc_ja: "Instance は 20 個なのに一覧が Timeout しました。同じ取得を CLI で実行しても 54 秒で、コードが容疑から外れました。Swap が 8.0GiB すべて埋まり、instances テーブルには削除の印だけが付いた行が 1,021 件。そして私が使ったコマンドは本番で使ってはいけないものでした。連載「遅い画面」②。",
           date: "2026-09", dateLabel: "Sep 2026",
@@ -434,7 +434,7 @@
           title: "A Volume List: Ten-Minute Timeout → 23 ms",
           url: "writing/slow-screens-1-volume-list.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "볼륨 목록 P99가 10분 → 23ms로 줄었습니다",
+          title_ko: "볼륨 목록 P99가 10min → 23ms로 줄었습니다",
           desc_ko: "관리 볼륨 목록이 6번에 5번 Timeout이 났습니다. 고친 뒤 구성을 6가지로 나눠 같은 부하로 따로 쟀더니, 초를 가장 많이 줄인 것은 Cache 하나였고 병렬화는 중앙값과 꼬리를 반대 방향으로 움직였습니다. 연작 ‘느린 화면’ ①.",
           title_ja: "ボリューム一覧の P99 が 10 分の Timeout → 23ms になりました",
           desc_ja: "管理ボリューム一覧が 6 回に 5 回 Timeout しました。直したあと構成を 6 通りに分けて同じ負荷で測ると、秒を最も減らしたのは Cache 1 つで、並列化は中央値と裾を逆方向に動かしました。連載「遅い画面」①。",
@@ -447,7 +447,7 @@
           url: "writing/parallelism-made-the-tail-worse.html",
           source: "company", sourceLabel: "Company work",
           title_ko: "볼륨 목록을 병렬로 바꾸자 P99가 2배 나빠졌습니다",
-          desc_ko: "Cache 설정을 고정한 채 순차를 병렬로 바꾸니 P99가 42.6초에서 79.0초로 나빠졌습니다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다. 여섯 구성을 같은 조건으로 재고 나서야 보였습니다. 연작 ‘느린 화면’ ⑤.",
+          desc_ko: "Cache 설정을 고정한 채 순차를 병렬로 바꾸니 P99가 42.6s에서 79.0s로 나빠졌습니다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다. 여섯 구성을 같은 조건으로 재고 나서야 보였습니다. 연작 ‘느린 화면’ ⑤.",
           title_ja: "ボリューム一覧を並列にしたら P99 が 2 倍悪化しました",
           desc_ja: "キャッシュ設定を固定したまま逐次を並列に変えると、p99 が 42.6 秒から 79.0 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンがロックされる。6 構成を同条件で測って初めて見えたこと。連載「遅い画面」⑤。",
           date: "2026-09", dateLabel: "Sep 2026",
@@ -927,7 +927,7 @@
        카드 요약의 **첫 문장**을 제목 밑에 회색 한 줄로 붙인다. 요약 전체는 너무 길다. */
     function firstSentence(t) {
       if (!t) return "";
-      /* ⚠️ `[.。]` 만 보면 **소수점에서 끊긴다** — 「6.8 초」가 「6.」이 됐다.
+      /* ⚠️ `[.。]` 만 보면 **소수점에서 끊긴다** — 「6.8s」가 「6.」이 됐다.
          마침표 뒤가 숫자면 문장 끝이 아니다. */
       var m = /^[\s\S]*?(?:다\.|요\.|니다\.|。|\.(?!\d))/.exec(t);
       var out = (m ? m[0] : t).trim();

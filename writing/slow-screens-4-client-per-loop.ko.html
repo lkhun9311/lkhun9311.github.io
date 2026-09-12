@@ -69,7 +69,7 @@
     <main>
       <div class="hero-top">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
-        <div class="article-meta"><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a><span class="source-tag company notranslate">회사 업무</span></div>
+        <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div>
       </div>
               <section class="page-hero">
           <h1>모니터링 화면 초기 로드가 프로젝트 수만큼 Keystone에 인증했습니다<br><span class="h1-sub">Client를 만드는 것이 곧 Keystone 인증이었습니다.</span></h1>
@@ -122,7 +122,7 @@
 
         <ul>
           <li><strong>초기 로드</strong>는 REST로 한 번, 프로젝트마다 쿼터와 사용량을 모아 옵니다.</li>
-          <li><strong>그 뒤</strong>는 서버가 15초마다 값을 계산해 열려 있는 모든 화면에 밀어 줍니다.
+          <li><strong>그 뒤</strong>는 서버가 15s마다 값을 계산해 열려 있는 모든 화면에 밀어 줍니다.
           연결을 열어 둔 채 서버가 값을 보내는 방식이라 SSE(Server-Sent Events)라고 부릅니다.
           여기서 접속자 수와 무관한 것은 계산 횟수이고
           만든 값을 직렬화해 각 연결로 내보내는 비용은 접속자 수만큼 늘어납니다.</li>
@@ -131,10 +131,10 @@
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
             <svg viewBox="0 0 720 210" role="img" aria-labelledby="mon-t mon-d" xmlns="http://www.w3.org/2000/svg">
-              <title id="mon-t">초기 로드와 15초 push, 두 경로</title>
+              <title id="mon-t">초기 로드와 15s push, 두 경로</title>
               <desc id="mon-d">위쪽이 초기 로드입니다. 화면이 REST로 한 번 요청하면 Backend가 프로젝트마다
               Client를 만들어 조회하고 Client를 만들 때마다 Keystone 인증이 한 번씩 일어납니다.
-              분홍색으로 표시한 구간입니다. 아래쪽이 그 뒤의 흐름으로, 서버가 15초마다 한 번 계산해
+              분홍색으로 표시한 구간입니다. 아래쪽이 그 뒤의 흐름으로, 서버가 15s마다 한 번 계산해
               열려 있는 모든 화면에 같은 값을 밀어 줍니다. 이쪽은 파란색입니다.</desc>
 
               <rect x="8" y="24" width="104" height="32" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
@@ -154,7 +154,7 @@
               <text x="60" y="146" font-size="12.5" fill="#18121d" text-anchor="middle">화면 여럿</text>
               <path d="M150 142 H 112" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#mn-arB)"/>
               <rect x="158" y="126" width="126" height="32" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
-              <text x="221" y="146" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">15초마다 1회</text>
+              <text x="221" y="146" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">15s마다 1회</text>
               <path d="M322 142 H 284" fill="none" stroke="#4f5bd5" stroke-width="2" marker-end="url(#mn-arB)"/>
               <rect x="330" y="126" width="382" height="32" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
               <text x="521" y="146" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">시계열 저장소에서 계산</text>
@@ -170,7 +170,7 @@
               </defs>
             </svg>
           </div>
-          <figcaption>초기 REST 로드와 15초 주기 전송의 호출 구조입니다.</figcaption>
+          <figcaption>초기 REST 로드와 15s 주기 전송의 호출 구조입니다.</figcaption>
         </figure>
 
         <h2 id="쿼리부터">쿼리부터 열고 싶어집니다<a class="anchor" href="#쿼리부터" aria-label="이 절로 가는 링크">#</a></h2>
@@ -179,7 +179,7 @@
         조회식을 다듬고 결과를 Cache하고 그러고 나서 부하 도구로 사용자를 늘려 확인하는 것.
         <strong>순서가 자연스러운데, 여기서는 느린 구간이 그쪽이 아니었습니다.</strong></p>
 
-        <p>시계열 조회는 <strong>15초에 한 번</strong> 돕니다. 그것도 열린 화면 수와 상관없이 한 번입니다.
+        <p>시계열 조회는 <strong>15s에 한 번</strong> 돕니다. 그것도 열린 화면 수와 상관없이 한 번입니다.
         그 빈도만으로 ‘싸다’고 판정할 수는 없습니다. 다만 기록에서 먼저 볼 구간으로
         지목된 곳은 여기가 아니었습니다.</p>
 
@@ -334,7 +334,7 @@ for (String projectId : projects) {
         <p>여기서부터가 이 글이 앞의 세 편과 다른 부분입니다.</p>
 
         <p>사내 기록에 남은 숫자는 두 개인데 <strong>서로 다릅니다.</strong> 한쪽은 ‘N프로젝트면 응답
-        5~10초’라고 적혀 있고 다른 쪽은 ‘초기 로드가 수 초에서 수십 초’라고 적혀 있습니다.
+        5~10s’라고 적혀 있고 다른 쪽은 ‘초기 로드가 수 초에서 수십 초’라고 적혀 있습니다.
         <strong>어느 쪽도 어떻게 잰 값인지 적혀 있지 않고 고친 뒤의 값은 아예 없습니다.</strong></p>
 
         <p>그래서 이 글은 ‘몇 배 빨라졌다’를 쓸 수 없습니다. 쓸 수 있는 것은
@@ -366,7 +366,7 @@ for (String projectId : projects) {
 
         <p>부하 도구를 켜고 동시 사용자를 늘리는 것이 보통 하는 일입니다. 그런데 이 화면에서
         사용자가 기다리는 무거운 구간은 <strong>초기 로드 1회</strong>이고 그 뒤는
-        <strong>15초마다 서버가 한 번 계산해 열려 있는 모든 화면에 같은 값을 밀어 주는</strong> 구조입니다.</p>
+        <strong>15s마다 서버가 한 번 계산해 열려 있는 모든 화면에 같은 값을 밀어 주는</strong> 구조입니다.</p>
 
         <blockquote><p>사용자를 10명으로 늘려도 Tick당 계산은 여전히 1회입니다.
         연결을 붙들고 있는 시나리오라면 그래프는 ‘사용자를 늘려도 끄떡없다’로 나옵니다.
@@ -413,7 +413,7 @@ for (String projectId : projects) {
         <ul>
           <li>사내 제품이라 코드를 그대로 옮기지 않았습니다. 제품명·고객사·내부 주소는 빼고 구조만 남겼습니다. 클래스와 함수 이름은 이야기에 필요한 만큼만 일반화해서 씁니다.</li>
 
-          <li>전후 측정치가 없습니다. ‘5~10초’와 ‘수 초에서 수십 초’는 사내 기록의
+          <li>전후 측정치가 없습니다. ‘5~10s’와 ‘수 초에서 수십 초’는 사내 기록의
           두 문장이고 방법이 적혀 있지 않습니다. 고친 뒤의 값은 없습니다. 이 글의 어떤 문장도
           속도 개선폭을 주장하지 않습니다.</li>
           <li><strong>인증 1회가 얼마인지 모릅니다.</strong> 그래서 ‘N−1회를 덜 낸다’는 말이
@@ -462,7 +462,7 @@ for (String projectId : projects) {
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=07ce86b446"></script>
-  <script src="../assets/content.js?v=8e19bcc47c"></script>
+  <script src="../assets/content.js?v=77d20d5e81"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

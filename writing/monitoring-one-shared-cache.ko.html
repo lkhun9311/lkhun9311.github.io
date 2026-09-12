@@ -69,7 +69,7 @@
     <main>
       <div class="hero-top">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
-        <div class="article-meta"><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a><span class="source-tag company notranslate">회사 업무</span></div>
+        <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div>
       </div>
               <section class="page-hero">
           <h1>모니터링 Cache 세 개를 합치자 서로의 값을 지웠습니다<br><span class="h1-sub">따로 있을 때 우연히 지켜지던 규칙을 전부 코드로 적어야 했습니다.</span></h1>
@@ -120,7 +120,7 @@
 
         <h2 id="통합-전">통합 전 구조가 가진 셋<a class="anchor" href="#통합-전" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p><strong>첫째, 중복 수집.</strong> 세 화면의 15초 주기가 겹치면 같은 노드와 Instance를
+        <p><strong>첫째, 중복 수집.</strong> 세 화면의 15s 주기가 겹치면 같은 노드와 Instance를
         여러 번 읽습니다. 화면이 늘수록 원천 부하가 <strong>소비자 수에 비례</strong>합니다.</p>
 
         <figure class="diagram">
@@ -272,9 +272,9 @@ lastPageByPath[경로]  각 경로의 마지막 성공 payload
           <svg viewBox="0 0 720 220" role="img" aria-labelledby="rg-t rg-d" class="figure-svg">
             <title id="rg-t">경로별 마지막 값을 따로 보존하도록 고친 구조</title>
             <desc id="rg-d">위쪽은 고치기 전입니다. 발행이 맵을 통째로 교체해 이번에 포함되지 않은
-            대시보드 항목이 사라지고 재진입이 5,115밀리초라고 적혀 있습니다. 아래쪽은 고친 뒤입니다.
+            대시보드 항목이 사라지고 재진입이 5,115ms라고 적혀 있습니다. 아래쪽은 고친 뒤입니다.
             최신 세대는 교체하되 경로별 마지막 값은 병합만 하므로 대시보드 항목이 남아 있고
-            재진입이 17밀리초라고 적혀 있습니다.</desc>
+            재진입이 17ms라고 적혀 있습니다.</desc>
             <g font-family="Inter, sans-serif">
               <text x="14" y="34" font-size="11.5" fill="#8a8a8a">고치기 전</text>
               <rect x="110" y="20" width="120" height="28" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
@@ -312,7 +312,7 @@ lastPageByPath[경로]  각 경로의 마지막 성공 payload
             </defs>
           </svg>
           <figcaption>접속 직후 오래된 값이 잠깐 보일 수 있습니다.
-          <strong>‘5초 빈 화면’보다 ‘즉시 마지막 값, 곧 새 값’</strong>을 골랐습니다.</figcaption>
+          <strong>‘5s 빈 화면’보다 ‘즉시 마지막 값, 곧 새 값’</strong>을 골랐습니다.</figcaption>
         </figure>
 
         <h2 id="느린-소비자">느린 소비자를 수집에서 떼어 냈습니다<a class="anchor" href="#느린-소비자" aria-label="이 절로 가는 링크">#</a></h2>
@@ -417,7 +417,7 @@ lastPageByPath[경로]  각 경로의 마지막 성공 payload
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=07ce86b446"></script>
-  <script src="../assets/content.js?v=8e19bcc47c"></script>
+  <script src="../assets/content.js?v=77d20d5e81"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

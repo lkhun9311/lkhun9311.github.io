@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="프로젝트 역할 조회가 1,409ms → 1ms로 줄었습니다 | Kwanghun Lee" />
-  <meta property="og:description" content="이용자 화면의 역할 목록이 1.4초였습니다. hit 8번은 전부 0ms였고 miss 6번을 더하면 1,409ms로 타이머 구간 총계와 정확히 같았습니다. Cache miss 1건이 프로젝트 전체 목록을 다시 부르고 있었는데 그 6건은 다시 받아도 없는 프로젝트였습니다." />
+  <meta property="og:description" content="이용자 화면의 역할 목록이 1.4s였습니다. hit 8번은 전부 0ms였고 miss 6번을 더하면 1,409ms로 타이머 구간 총계와 정확히 같았습니다. Cache miss 1건이 프로젝트 전체 목록을 다시 부르고 있었는데 그 6건은 다시 받아도 없는 프로젝트였습니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -27,9 +27,9 @@
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="프로젝트 역할 조회가 1,409ms → 1ms로 줄었습니다 | Kwanghun Lee" />
-  <meta name="twitter:description" content="이용자 화면의 역할 목록이 1.4초였습니다. hit 8번은 전부 0ms였고 miss 6번을 더하면 1,409ms로 타이머 구간 총계와 정확히 같았습니다. Cache miss 1건이 프로젝트 전체 목록을 다시 부르고 있었는데 그 6건은 다시 받아도 없는 프로젝트였습니다." />
+  <meta name="twitter:description" content="이용자 화면의 역할 목록이 1.4s였습니다. hit 8번은 전부 0ms였고 miss 6번을 더하면 1,409ms로 타이머 구간 총계와 정확히 같았습니다. Cache miss 1건이 프로젝트 전체 목록을 다시 부르고 있었는데 그 6건은 다시 받아도 없는 프로젝트였습니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="이용자 화면의 역할 목록이 1.4초였습니다. hit 8번은 전부 0ms였고 miss 6번을 더하면 1,409ms로 타이머 구간 총계와 정확히 같았습니다. Cache miss 1건이 프로젝트 전체 목록을 다시 부르고 있었는데 그 6건은 다시 받아도 없는 프로젝트였습니다." />
+  <meta name="description" content="이용자 화면의 역할 목록이 1.4s였습니다. hit 8번은 전부 0ms였고 miss 6번을 더하면 1,409ms로 타이머 구간 총계와 정확히 같았습니다. Cache miss 1건이 프로젝트 전체 목록을 다시 부르고 있었는데 그 6건은 다시 받아도 없는 프로젝트였습니다." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=1daf6cc6f0" />
 </head>
@@ -69,7 +69,7 @@
     <main>
       <div class="hero-top">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
-        <div class="article-meta"><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a><span class="source-tag company notranslate">회사 업무</span></div>
+        <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div>
       </div>
               <section class="page-hero">
           <h1>프로젝트 역할 조회가 1,409ms → 1ms로 줄었습니다<br><span class="h1-sub">못 찾은 프로젝트 id마다 전체 목록을 다시 부르고 있었습니다.</span></h1>
@@ -97,14 +97,14 @@
         <article class="article-body">
 
         <p>사내 Cloud 관리 Console의 Backend를 만들고 있습니다. 이용자 한 명을 열면 아래쪽에
-        그 사람이 어느 프로젝트에서 어떤 역할인지가 표로 나옵니다. 그 표가 1초를 넘겨
+        그 사람이 어느 프로젝트에서 어떤 역할인지가 표로 나옵니다. 그 표가 1s를 넘겨
         로딩만 돌고 있었습니다.</p>
 
         <p>역할 자체는 우리 DB에 있는데 프로젝트 이름은 OpenStack 쪽, 정확히는 이용자와 프로젝트를
         맡는 Keystone에 있습니다. 그래서 역할 한 줄마다 프로젝트를 한 번씩 찾아야 하고
         그 찾는 자리에는 이미 Cache가 있었습니다.
         <a href="slow-screens-1-volume-list.ko.html">①편</a>에 나온 그 <code>CacheManager</code>이고
-        보관 기간은 10분이었습니다.</p>
+        보관 기간은 10min이었습니다.</p>
 
         <p>그러니까 이 글은 ‘Cache를 넣었더니 빨라졌다’가 아닙니다.
         <strong>Cache가 있는데 그 Cache 때문에 느렸던</strong> 이야기입니다.</p>
@@ -147,7 +147,7 @@
               <text x="244" y="86" font-size="12" fill="#d62976" font-weight="700">줄마다 1회</text>
               <rect x="166" y="96" width="132" height="34" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="232" y="112" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">직접 짠 Cache</text>
-              <text x="232" y="126" font-size="11.5" fill="#7b7186" text-anchor="middle">보관 10분</text>
+              <text x="232" y="126" font-size="11.5" fill="#7b7186" text-anchor="middle">보관 10min</text>
               <path d="M298 113 H 336" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#v3-arA)"/>
               <rect x="344" y="96" width="240" height="34" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="464" y="112" font-size="12.5" fill="#d62976" font-weight="700" text-anchor="middle">Keystone · 프로젝트 목록 API</text>
@@ -243,8 +243,8 @@
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
             <svg viewBox="0 0 720 150" role="img" aria-labelledby="bar-t bar-d" xmlns="http://www.w3.org/2000/svg">
               <title id="bar-t">구간 총계 1,409ms를 조회 14건으로 나눈 막대</title>
-              <desc id="bar-d">가로 막대 하나가 구간 총계 1,409밀리초 전체입니다. 그 안이 miss 6칸으로만 채워져
-              있고 각 칸은 228에서 247밀리초 사이입니다. hit 8건은 0밀리초여서 막대에서 폭을 차지하지 않고
+              <desc id="bar-d">가로 막대 하나가 구간 총계 1,409ms 전체입니다. 그 안이 miss 6칸으로만 채워져
+              있고 각 칸은 228에서 247ms 사이입니다. hit 8건은 0ms여서 막대에서 폭을 차지하지 않고
               막대 아래에 눈금으로만 표시돼 있습니다.</desc>
 
               <text x="0" y="20" font-size="12.5" fill="#3b3344">구간 총계 1,409ms · 조회 14건</text>
@@ -380,7 +380,7 @@ var project = CacheBox.projects().stream()
         <p>고친 뒤에는 모르는 id를 만나도 아무것도 안 합니다. 그래서 새 프로젝트는
         Cache가 다시 채워질 때까지 안 보입니다.</p>
 
-        <p>그 ‘다시 채워질 때’가 <strong>10분이라고 못 박을 수는 없습니다.</strong>
+        <p>그 ‘다시 채워질 때’가 <strong>10min이라고 못 박을 수는 없습니다.</strong>
         보관 기간은 목록 단위가 아니라 항목마다 기록된 저장 시각에 걸립니다.
         그리고 <code>project()</code>는 지워지지 않고 남아 있어서 다른 화면에서 그 함수가
         한 번 돌면 항목들이 통째로 다시 채워집니다. 그러면 시각이 갱신되어 더 늦게 보일 수도,
@@ -389,7 +389,7 @@ var project = CacheBox.projects().stream()
         반영된다는 것까지입니다.</p>
 
         <blockquote><p>지연을 없앤 것이 아니라 지연과 최신성을 맞바꾼 것입니다.
-        이 화면은 사람이 눈으로 읽는 목록이라 10분을 받아들일 수 있었습니다.
+        이 화면은 사람이 눈으로 읽는 목록이라 10min을 받아들일 수 있었습니다.
         그 판단이 안 되는 화면도 있습니다.</p></blockquote>
 
         <h2 id="안-고친-것">그리고 원인은 그대로 남았습니다<a class="anchor" href="#안-고친-것" aria-label="이 절로 가는 링크">#</a></h2>
@@ -444,7 +444,7 @@ var project = CacheBox.projects().stream()
         처음 한 번에는 맞고 채워도 안 생기는 id 앞에서는 가장 나쁜 선택입니다.</p>
 
         <p>줄일 수 있는 것은 두 가지였습니다. 못 찾는 횟수와, 못 찾았을 때 드는 시간.
-        이번에 줄인 것은 뒤쪽이고 앞쪽은 그대로 남아 있습니다. 대신 잃은 것은 10분어치의 최신성입니다.</p>
+        이번에 줄인 것은 뒤쪽이고 앞쪽은 그대로 남아 있습니다. 대신 잃은 것은 10min어치의 최신성입니다.</p>
 
         <p>그리고 이 일은 이미 찍히고 있던 로그를 더해 보기만 하면 되는 일이었습니다.
         그 여섯 줄을 더하기 전까지 저는 ‘Cache가 왜 안 듣지’를 들여다보고 있었습니다.</p>
@@ -462,7 +462,7 @@ var project = CacheBox.projects().stream()
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=07ce86b446"></script>
-  <script src="../assets/content.js?v=8e19bcc47c"></script>
+  <script src="../assets/content.js?v=77d20d5e81"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

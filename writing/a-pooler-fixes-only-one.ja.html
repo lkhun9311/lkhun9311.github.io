@@ -69,7 +69,7 @@
     <main>
       <div class="hero-top">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>一覧</a>
-        <div class="article-meta"><a class="project-tag notranslate" href="../writing/index.html?tag=Social%20Polling%20Platform">#ソーシャル投票プラットフォーム</a><span class="source-tag commercial notranslate">事業化プロジェクト</span><span class="repo-private notranslate" translate="no">Private</span></div>
+        <div class="article-meta"><span class="source-tag commercial notranslate">事業化プロジェクト</span><span class="repo-private notranslate" translate="no">Private</span><a class="project-tag notranslate" href="../writing/index.html?tag=Social%20Polling%20Platform">#ソーシャル投票プラットフォーム</a></div>
       </div>
       <section class="page-hero">
         <h1>RDS Proxy を立てても Connection 枯渇は解けません<br><span class="h1-sub">Connection 枯渇の原因は二つあり、Pooler はそのうち一つしか直しません。</span></h1>
@@ -101,7 +101,7 @@
       <article class="article-body">
 
         <p>リリース前の<a href="../projects/index.html">ソーシャル投票プラットフォーム</a>を一人で作っています。このサービスで投稿を一つ
-        書くと、サーバーはそれを DB に入れる前に外部モデレーション API へ送り、有害な内容かどうかを
+        書くと、サーバーはそれを DB に入れる前に外部Moderation API へ送り、有害な内容かどうかを
         尋ねます。その呼び出しには Read Timeout が 10 秒で掛かっています。そしてその呼び出しが
         DB Transaction の中にありました。</p>
 
@@ -135,7 +135,7 @@
               <title id="svc-t">サービス構成と、問題があった箇所</title>
               <desc id="svc-d">モバイルアプリが API サーバへ投稿・コメント・投票のリクエストを送り、API サーバは Connection Pool を
               通してマネージド PostgreSQL にクエリを投げます。ところが投稿とコメントを書くたびに、API サーバが外部
-              モデレーション API を一回ずつ呼び出します。この呼び出しには Read Timeout が10秒に設定されており、問題は
+              Moderation API を一回ずつ呼び出します。この呼び出しには Read Timeout が10秒に設定されており、問題は
               この呼び出しがデータベース Transaction の中で起きていたことです。</desc>
 
               <rect x="8" y="44" width="132" height="56" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
@@ -154,7 +154,7 @@
               <path d="M295 110 V 158" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#arA)"/>
               <text x="307" y="140" font-size="13" fill="#d62976" font-weight="700">投稿・コメントのたびに</text>
               <rect x="202" y="158" width="506" height="54" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="455" y="182" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">外部モデレーション API</text>
+              <text x="455" y="182" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">外部Moderation API</text>
               <text x="455" y="201" font-size="13" fill="#d62976" text-anchor="middle">Read Timeout は 10 秒に設定</text>
               <defs>
                 <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
@@ -172,7 +172,7 @@
           <figcaption>モバイルアプリ → API サーバ → PostgreSQL というありふれた構成です。ありふれていないのはピンクで示した下の一つ、<strong>データベース Transaction の中で</strong>起きていた外部呼び出しだけで、それがこの記事のすべてです。</figcaption>
         </figure>
 
-        <p>先ほどの外部モデレーション API が、有害な内容をふるい落とすそのサービスです。
+        <p>先ほどの外部Moderation API が、有害な内容をふるい落とすそのサービスです。
         投稿やコメントを書くたびに呼び出しますが、後で出てくるとおり実際には
         <strong>投稿 1 件あたり 2 回</strong>です。</p>
 
@@ -507,7 +507,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
 }</code></pre>
 
         <p>ここで<em>「 Transaction を割ったら競合が増えませんか?」</em>という質問が出そうですが、
-        <strong>競合の窓は広がっていません。</strong>修正前もモデレーション呼び出しが読み取りと書き込みの
+        <strong>競合の窓は広がっていません。</strong>修正前もModeration呼び出しが読み取りと書き込みの
         <em>間</em>にあり、その経路は投稿の行に Lock を掛けていなかったからです(<code>for update</code> が
         ありませんでした)。 Transaction の中にあるからといって他のセッションの変更を防いでくれるわけでは
         ありません。読み取りから書き込みまでの距離は同じです。</p>
@@ -787,7 +787,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
 
         <p>仮想 Thread（Java 21）で ④ を走らせ、③ は呼び出し Thread で回します。
         固定サイズの Pool を置かないことが要点です。 Pool サイズは新しい同時実行の上限で
-        あり、この記事がずっと話してきた「誰も選んでいない上限」をモデレーション経路に作り直すことになります。</p>
+        あり、この記事がずっと話してきた「誰も選んでいない上限」をModeration経路に作り直すことになります。</p>
 
         <p>ところがこの文を書いたとき、私はすでにその上限の中にいました。新しく作らな
         かっただけで、AWS SDK が連れてきた HTTP クライアントの「ホストあたり 5」がその経路にすでに
@@ -906,7 +906,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=07ce86b446"></script>
-  <script src="../assets/content.js?v=8e19bcc47c"></script>
+  <script src="../assets/content.js?v=77d20d5e81"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
