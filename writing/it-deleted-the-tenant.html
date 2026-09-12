@@ -97,8 +97,13 @@
         tenant shares one GPU with a long-context noisy neighbour, does the gateway's KV-cache-aware
         admission control protect the premium tenant's p99? I measured it.</p>
 
-        <p><strong>It does not.</strong> The arm that rejected nothing had a completion count exactly
-        equal to the premium request count. It did not protect them; it dropped them.</p>
+        <p><strong>It does not.</strong> The arm the report recorded as rejecting nothing had a completion
+        count exactly equal to the premium request count (1,840). It did not protect them; it
+        dropped them.</p>
+
+        <p>That arm issued not one 429, and was shedding 1,788 requests as 413.
+        <strong>The report only counted 429s.</strong> Counting 413s as load shedding and
+        recomputing evidence already bought turned its rejections from 0 into 1,788.</p>
 
         <p>The more valuable finding was why four paid repetitions could not see that. Every verdict in
         the report was a ratio, and shrink the denominator too and the ratio improves. Finding it out
