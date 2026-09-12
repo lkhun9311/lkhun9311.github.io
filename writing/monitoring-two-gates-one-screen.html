@@ -100,8 +100,8 @@
 
         <p>This screen had two data paths that start independently. REST builds the per-project quota and
         usage; SSE pushes the virtual machine metrics. Before the change REST was about 2.6 seconds and
-        SSE first data about 1.4 seconds. So fixing one of them does not make the screen faster.
-        <strong>The screen finishes not at the sum of the two but at whichever finishes last.</strong>
+        SSE first data about 1.4 seconds. So fixing one of them does not make the screen faster by that much.
+        <strong>The screen finishes not at the sum of the two but at whichever finishes last</strong>, so fix REST and SSE's 1.4 seconds becomes the floor.
         I wrote that expression down before starting.</p>
 
         <p>After the fix something that had been hiding came out. Once SSE dropped to 24 ms it arrived
@@ -365,7 +365,7 @@ REST request
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=07ce86b446"></script>
-  <script src="../assets/content.js?v=3e76e15162"></script>
+  <script src="../assets/content.js?v=97dedaefde"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
