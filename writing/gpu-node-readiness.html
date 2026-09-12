@@ -73,7 +73,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-this-is-about">What this is about</a></li>
             <li><a href="#what-ready-has-to-mean">What "ready" has to mean for a GPU node</a></li>
             <li><a href="#observe-first-enforce-second">Observe first, enforce second</a></li>
             <li><a href="#one-taint-and-four-declines">One taint, and four things declined</a></li>
@@ -84,16 +83,21 @@
         </nav>
 
       <article class="article-body">
-        <p><strong>Scope.</strong> This is the node-readiness slice of a personal project, a
-        <a href="../projects/gpuaas-control-plane.html">Kubernetes-native GPU control plane</a>. Everything below
-        runs on a local kind cluster against <strong>simulated <code>nvidia.com/gpu</code> capacity</strong>.
-        The controller behaviour is real; the GPU-level checks it wants to run are not, and the article says
-        which is which at every step.</p>
 
-        <p>A GPU workload that lands on a node whose driver is not loaded does not fail politely. It fails
-        after the scheduler has already committed the pod, on the most expensive hardware in the cluster.
-        So the question is not "is the node up" but "has anything checked the things a GPU workload
-        actually needs".</p>
+        <p>A GPU workload that lands on a node whose driver is not loaded does not fail politely. It
+        fails after the scheduler has already committed the pod, on the most expensive hardware in the
+        cluster. So the question is not “is the node up” but “has anything checked the things a GPU
+        workload actually needs”.</p>
+
+        <p>So node readiness here is a CRD with an explicit phase (<code>NodeHealth</code>) rather than
+        an operational assumption. The reconciler was built in two steps on purpose: observe first,
+        enforce second. Observation is idempotent and recovers from drift; enforcement adds exactly one
+        taint.</p>
+
+        <p><strong>Four things were declined rather than postponed</strong> — cordon, a grace period, a
+        fault-signal trigger, and automatic draining — and each has a reason below. Stopping a worker's
+        kubelet produced Ready → Quarantine → Ready at 0 s, 46 s and 48 s, with the verdict
+        <em>Recovered</em>.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -101,22 +105,6 @@
           <li>You admit GPU nodes to a cluster and have wondered what "ready" is supposed to mean</li>
           <li>You have a controller that reflects state and are deciding whether it should also enforce</li>
           <li>You have to say, in writing, what your platform does not automate</li>
-        </ul>
-
-        <h2 id="what-this-is-about">What this is about<a class="anchor" href="#what-this-is-about" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li>Node readiness is represented as a <strong>CRD with an explicit phase</strong>
-          (<code>NodeHealth</code>) rather than as an operational assumption.</li>
-          <li>The reconciler was built in two steps on purpose: observe first, enforce second.
-          Observation is idempotent and recovers from drift; enforcement adds exactly one taint.</li>
-          <li>Four things were declined rather than postponed: cordon, a grace period, a
-          fault-signal trigger, and automatic draining. Each has a reason below.</li>
-          <li>Stopping a worker's kubelet produced <code>Ready</code> → <code>Quarantine</code> →
-          <code>Ready</code> at <strong>0s, 46s and 48s</strong>, with the verdict <code>Recovered</code>.</li>
-          <li>⚠️ The GPU-level intake is a target, not code. DCGM, fio, iperf3 and an NCCL
-          baseline all need a real GPU node. When DCGM is unavailable the controller falls back to the
-          Kubernetes node condition and records that the GPU checks were not run.</li>
         </ul>
 
         <figure class="diagram">
@@ -150,7 +138,7 @@
           <figcaption>A GPU node is treated as an asset with an intake, not as a server that either answers or does not. <strong>The two boxes on the right exist in code. The two on the left are a runbook, not a controller</strong>. The checks they name need a real GPU node to run against.</figcaption>
         </figure>
 
-        <h2 id="what-ready-has-to-mean">What "ready" has to mean for a GPU node<a class="anchor" href="#what-ready-has-to-mean" aria-label="Link to this section">#</a></h2>
+<h2 id="what-ready-has-to-mean">What "ready" has to mean for a GPU node<a class="anchor" href="#what-ready-has-to-mean" aria-label="Link to this section">#</a></h2>
 
         <p>The Kubernetes <code>Ready</code> condition says the kubelet is talking to the API server. For a
         CPU workload that is close enough. For a GPU workload it is not a claim about the device at all.</p>
@@ -300,6 +288,9 @@
         <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
         <ul>
+          <li>Everything below runs on a local kind cluster against simulated <code>nvidia.com/gpu</code> capacity. The controller behaviour is real; the GPU-level checks it wants to run are not, and the article says which is which at every step.</li>
+          <li>The GPU-level intake is a target, not code. DCGM, fio, iperf3 and an NCCL baseline all need a real GPU node. When DCGM is unavailable the controller falls back to the Kubernetes node condition and records that the GPU checks were not run.</li>
+
           <li><strong>No GPU was checked.</strong> The device plugin here is a fake advertising
           <code>nvidia.com/gpu</code>. Nothing in this article observed a driver, a temperature, an XID or an
           ECC counter.</li>

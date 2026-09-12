@@ -73,7 +73,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-this-is-about">What this is about</a></li>
             <li><a href="#none-of-them-was-the-query">None of them was the query</a></li>
             <li><a href="#six-runs-not-two">Six runs, not two</a></li>
             <li><a href="#two-results-came-out-backwards">Two results came out backwards</a></li>
@@ -84,14 +83,19 @@
         </nav>
 
       <article class="article-body">
-        <p><strong>Scope.</strong> Backend work on an internal cloud admin console for an OpenStack-based
-        private cloud, written up as two series: eight parts on slow screens and five on unifying the
-        monitoring path. Product names, versions and customers are not written here. <strong>Every number
-        below was measured in an internal test environment, not against production traffic.</strong></p>
 
-        <p>Thirteen write-ups, and the single most useful thing in them is not any one fix. It is that
-        two results came out the opposite way round from what I expected, and neither was
-        caught by reading the code.</p>
+        <p>Thirteen write-ups about backend work on an internal cloud admin console for an
+        OpenStack-based private cloud: eight parts on slow screens and five on unifying the monitoring
+        path. The single most useful thing in them is not any one fix.</p>
+
+        <p><strong>It is that two results came out the opposite way round from what I expected, and
+        neither was caught by reading the code.</strong></p>
+
+        <p>Four screens each looked like a slow query, and none of them was. The causes were a lock held
+        across a network round trip, a saturated swap with 1,021 rows still marked deleted, a cache that
+        was written and never read, and authentication repeated once per project. The run was split into
+        six configurations measured one at a time, which is the only reason one of the fixes could be
+        identified as harmful on its own.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -99,22 +103,6 @@
           <li>You own a control-plane screen that fans out to several infrastructure APIs</li>
           <li>You are about to report "we made it N times faster" and have to say which change did it</li>
           <li>You have concluded a review with "nothing worth changing here"</li>
-        </ul>
-
-        <h2 id="what-this-is-about">What this is about<a class="anchor" href="#what-this-is-about" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li>Four screens, each of which <strong>looked like a slow query and was not</strong>. The causes
-          were a lock held across a network round trip, a saturated swap with 1,021 rows still marked
-          deleted, a cache that was written and never read, and authentication repeated once per project.</li>
-          <li>The run was split into <strong>six configurations measured one at a time</strong>, which is the
-          only reason one of the fixes could be identified as harmful on its own.</li>
-          <li>Going parallel made the tail worse: with the cache held fixed, p99 moved from
-          42.6 s to 79.0 s.</li>
-          <li>A review that concluded "nothing to fix" was wrong. The same screen's first
-          data measured 6.8 s later, and the fix that review declined took it to 23 ms.</li>
-          <li>⚠️ These are test-environment numbers under a declared load profile, mostly
-          single-user sequential for the monitoring work. They are not a capacity statement.</li>
         </ul>
 
         <figure class="diagram">
@@ -140,7 +128,7 @@
           <figcaption>Every one of these looked like a slow query at the start. <strong>None of them was.</strong> The causes were a lock held across a network call, a saturated swap, a cache nobody read, and a boundary measured on the wrong side.</figcaption>
         </figure>
 
-        <h2 id="none-of-them-was-the-query">None of them was the query<a class="anchor" href="#none-of-them-was-the-query" aria-label="Link to this section">#</a></h2>
+<h2 id="none-of-them-was-the-query">None of them was the query<a class="anchor" href="#none-of-them-was-the-query" aria-label="Link to this section">#</a></h2>
 
         <p>The screens all render lists or time-series, so the query is the first suspect every time. In
         four consecutive cases it was the wrong one.</p>
@@ -258,6 +246,8 @@
         <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
         <ul>
+          <li>Product names, versions and customers are not written here. Every number was measured in an internal test environment under a declared load profile, mostly single-user sequential for the monitoring work. They are not a capacity statement.</li>
+
           <li><strong>These are test-environment numbers.</strong> Synthetic load in an isolated environment
           under a declared profile. Real user distributions, data volumes and networks differ.</li>
           <li><strong>Each configuration was measured once.</strong> No repetition, no variance, so only

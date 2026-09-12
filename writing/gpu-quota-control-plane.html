@@ -73,7 +73,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-this-is-about">What this is about</a></li>
             <li><a href="#where-the-budget-is-enforced">Where the budget is enforced</a></li>
             <li><a href="#the-knob-that-has-two-answers">The knob that has two answers</a></li>
             <li><a href="#the-correction">The correction, published the same day</a></li>
@@ -84,15 +83,21 @@
         </nav>
 
       <article class="article-body">
-        <p><strong>Scope.</strong> This is the quota slice of a personal project, a
-        <a href="../projects/gpuaas-control-plane.html">Kubernetes-native GPU control plane</a>. The numbers
-        below come from runs on a <strong>kind cluster with a fake device plugin</strong>, later carried to
-        four A10Gs in a paid session. Where a figure is from simulated capacity, this article says so.</p>
 
-        <p>A GPU budget is easy to declare and hard to place. Declare it in one object and something else
-        still has to refuse work that exceeds it, and there is more than one "something else": a training job
-        is admitted by a queue, an inference request is admitted at the edge. Counting both in the same place
-        double-counts the same cards.</p>
+        <p>A GPU budget is easy to declare and hard to place. Declare it in one object and something
+        else still has to refuse work that exceeds it — and there is more than one “something else”. A
+        training job is admitted by a queue; an inference request is admitted at the edge. Counting both
+        in the same place double-counts the same cards.</p>
+
+        <p>So a tenant's budget is declared once in a <code>GPUQuotaPolicy</code> and enforced by
+        whichever engine owns that kind of work: Kueue for training, a token bucket at the gateway for
+        inference.</p>
+
+        <p>Kueue's <code>reclaimWithinCohort</code> knob was measured both ways on the same ledger.
+        Reclaim off wasted nothing and made the owner wait 10.1 s. Reclaim on admitted the owner in about
+        120 ms and discarded 39.3 GPU-seconds. <strong>The first published reading of that second number
+        was wrong about why</strong>, and an adversarial review is what produced the control experiment
+        that corrected it.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -100,24 +105,6 @@
           <li>You are giving several tenants a share of the same GPUs</li>
           <li>You are choosing between a queue policy that reclaims and one that waits</li>
           <li>You have compared two policies on latency and wondered what the loser was buying</li>
-        </ul>
-
-        <h2 id="what-this-is-about">What this is about<a class="anchor" href="#what-this-is-about" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li>A tenant's GPU budget is declared once in a <code>GPUQuotaPolicy</code> and then enforced by
-          <strong>whichever engine owns that kind of work</strong>. Kueue for training, a token bucket at the
-          gateway for inference.</li>
-          <li>Kueue's <code>reclaimWithinCohort</code> knob was measured both ways on the same ledger.
-          <strong>Reclaim off wasted nothing and made the owner wait 10.1 s. Reclaim on admitted the owner in
-          about 120 ms and discarded 39.3 GPU-seconds.</strong></li>
-          <li>⚠️ The first published reading of that second number was wrong about why. An
-          adversarial review produced a control experiment: the borrower never stopped, finished its work,
-          and was not credited for it. The waste was re-execution.</li>
-          <li>The same correction moved the owner's real start from 120 ms to about 10 s, because the borrower
-          still held the device. Admission is a reservation, not access.</li>
-          <li>Where this quota is actually enforced, four guarantees were later broken by attacking them.
-          That is <a href="every-guarantee-ends-at-a-writable-field.html">its own article</a>.</li>
         </ul>
 
         <figure class="diagram">
@@ -151,7 +138,7 @@
           <figcaption>The budget is declared once and enforced by whichever engine owns that kind of work. <strong>Training GPUs are Kueue’s to admit; the gateway limits inference requests.</strong> Putting both into one namespace <code>ResourceQuota</code> would count the same GPUs twice.</figcaption>
         </figure>
 
-        <h2 id="where-the-budget-is-enforced">Where the budget is enforced<a class="anchor" href="#where-the-budget-is-enforced" aria-label="Link to this section">#</a></h2>
+<h2 id="where-the-budget-is-enforced">Where the budget is enforced<a class="anchor" href="#where-the-budget-is-enforced" aria-label="Link to this section">#</a></h2>
 
         <p><code>GPUQuotaPolicy</code> is cluster-scoped, because multi-tenant quota is something a cluster
         administrator declares rather than something a namespace owns. Its status carries a phase,
@@ -259,6 +246,8 @@
         <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
         <ul>
+          <li>The numbers below come from runs on a kind cluster with a fake device plugin, later carried to four A10Gs in a paid session. Where a figure is from simulated capacity, this article says so.</li>
+
           <li><strong>The quota sync is not a scheduler.</strong> Kueue admits; this project provides the
           <code>MLTrainingJob</code> abstraction and the status translation on top of it.</li>
           <li>The gateway limiter has never been deployed. It is built and unit-tested. An

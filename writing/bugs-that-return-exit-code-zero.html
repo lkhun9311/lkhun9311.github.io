@@ -73,7 +73,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-this-is-about">What this is about</a></li>
             <li><a href="#the-ten">The ten</a></li>
             <li><a href="#terms-used-below">Terms used below</a></li>
             <li><a href="#case-1-an-agreement-that-was-a-coincidence">Case 1. An agreement that was a coincidence</a></li>
@@ -88,17 +87,16 @@
         </nav>
         <article class="article-body">
 
-        <p><strong>Scope.</strong> This is control-plane verification work on a Kubernetes operator and
-        gateway for multi-tenant GPU scheduling
-        (<a href="../projects/gpuaas-control-plane.html">what the system is and why</a>). Everything below runs on a local three-node
-        <code>kind</code> cluster against simulated <code>nvidia.com/gpu</code> capacity. No GPU here is
-        real, no production traffic has touched it, and the inference backend is a stub rather than vLLM.
-        What the experiments measure is how the control plane behaves, not how devices behave.</p>
+        <p>Over a week of control-plane verification on a Kubernetes operator and gateway for
+        multi-tenant GPU scheduling, I found ten defects.</p>
 
-        <p>Over a week of that work I found ten defects. None failed a test, crashed a process, or returned
-        a non-zero exit code. Nine were found by reading a result that looked correct; one was found by an
-        artifact contradicting itself.</p>
+        <p><strong>None of them failed a test, crashed a process, or returned a non-zero exit code.</strong>
+        Nine were found by reading a result that looked correct; one was found by an artifact
+        contradicting itself.</p>
 
+        <p>The pattern behind all ten is the same. The suite asserted on what the code did rather than on
+        what the contract promised, so agreements that held by coincidence looked fine. Each case below
+        lists what broke, how it was found, and the guard that holds it now.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -106,21 +104,6 @@
           <li>You verify a Kubernetes controller or webhook you wrote yourself</li>
           <li>Your suite is green and you are not sure what that rules out</li>
           <li>You have to decide what to check before spending money on real hardware</li>
-        </ul>
-
-        <h2 id="what-this-is-about">What this is about<a class="anchor" href="#what-this-is-about" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li>A week of control-plane verification on a Kubernetes GPU operator and gateway turned up
-          <strong>ten defects.</strong></li>
-          <li><strong>None of them failed a test, crashed a process, or returned a non-zero exit code.</strong>
-          Nine came from reading results; one came from external review.</li>
-          <li>The pattern behind them is that the suite asserted on what the code did rather
-          than on what the contract promised, so agreements held by coincidence looked fine.</li>
-          <li>Each case below lists what broke, how it was found, and the guard that holds it now.</li>
-          <li>⚠️ Everything runs on a local three-node kind cluster against
-          simulated <code>nvidia.com/gpu</code> capacity, with a stub backend. This measures
-          control-plane behaviour, not device behaviour.</li>
         </ul>
 
         <figure class="diagram">
@@ -154,7 +137,7 @@
           <figcaption>Every step here is behaving correctly. <strong>A test suite reports on the assertions it contains</strong>, and none of these ten had an assertion pointed at them. Exit code zero is a statement about the tests, not about the system.</figcaption>
         </figure>
 
-        <h2 id="the-ten">The ten<a class="anchor" href="#the-ten" aria-label="Link to this section">#</a></h2>
+<h2 id="the-ten">The ten<a class="anchor" href="#the-ten" aria-label="Link to this section">#</a></h2>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">scroll sideways for the rest</p>
@@ -517,6 +500,8 @@ OUT=./ex/fr002.json ./hack/chaos-fr002-serving-pod-killed.sh
         preconditions were checked. The records they write carry the harness resolution next to every latency.</p>
 
         <h2 id="what-this-establishes-and-what-it-does-not">What this establishes, and what it does not<a class="anchor" href="#what-this-establishes-and-what-it-does-not" aria-label="Link to this section">#</a></h2>
+
+        <p>Everything runs on a local three-node kind cluster against simulated <code>nvidia.com/gpu</code> capacity, with a stub backend rather than vLLM. No GPU here is real and no production traffic has touched it. What the experiments measure is how the control plane behaves, not how devices behave.</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">scroll sideways for the rest</p>
