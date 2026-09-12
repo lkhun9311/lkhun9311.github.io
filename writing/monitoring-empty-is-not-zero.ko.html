@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="빈 목록이 노드가 0대인지 조회가 실패한 것인지 구분하지 못했습니다 | Kwanghun Lee" />
-  <meta property="og:description" content="물리 노드 화면에 같은 serve-stale 패턴을 옮기다가 「빈 결과를 0대로 발행해도 되는가」에서 멈췄습니다. 빈 결과를 다섯 갈래로 갈라 둘만 새 값으로 발행하고 나머지는 마지막 정상값을 유지하도록 했습니다. 중앙값 3,938ms가 23ms가 됐습니다." />
+  <meta property="og:description" content="물리 노드 화면에 같은 serve-stale 패턴을 옮기다가 「빈 결과를 0대로 발행해도 되는가」에서 멈췄습니다. 빈 결과를 다섯 갈래로 갈라 둘만 새 값으로 발행하고 나머지는 마지막 정상값을 유지하도록 했습니다. 첫 데이터 중앙값이 3,938ms에서 23ms로 줄었습니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -27,9 +27,9 @@
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="빈 목록이 노드가 0대인지 조회가 실패한 것인지 구분하지 못했습니다 | Kwanghun Lee" />
-  <meta name="twitter:description" content="물리 노드 화면에 같은 serve-stale 패턴을 옮기다가 「빈 결과를 0대로 발행해도 되는가」에서 멈췄습니다. 빈 결과를 다섯 갈래로 갈라 둘만 새 값으로 발행하고 나머지는 마지막 정상값을 유지하도록 했습니다. 중앙값 3,938ms가 23ms가 됐습니다." />
+  <meta name="twitter:description" content="물리 노드 화면에 같은 serve-stale 패턴을 옮기다가 「빈 결과를 0대로 발행해도 되는가」에서 멈췄습니다. 빈 결과를 다섯 갈래로 갈라 둘만 새 값으로 발행하고 나머지는 마지막 정상값을 유지하도록 했습니다. 첫 데이터 중앙값이 3,938ms에서 23ms로 줄었습니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="물리 노드 화면에 같은 serve-stale 패턴을 옮기다가 「빈 결과를 0대로 발행해도 되는가」에서 멈췄습니다. 빈 결과를 다섯 갈래로 갈라 둘만 새 값으로 발행하고 나머지는 마지막 정상값을 유지하도록 했습니다. 중앙값 3,938ms가 23ms가 됐습니다." />
+  <meta name="description" content="물리 노드 화면에 같은 serve-stale 패턴을 옮기다가 「빈 결과를 0대로 발행해도 되는가」에서 멈췄습니다. 빈 결과를 다섯 갈래로 갈라 둘만 새 값으로 발행하고 나머지는 마지막 정상값을 유지하도록 했습니다. 첫 데이터 중앙값이 3,938ms에서 23ms로 줄었습니다." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=24808288b9" />
 </head>
@@ -104,10 +104,10 @@
         <p>안 됩니다. 진짜로 대상이 없어서 빈 것일 수도 있고 수집이 실패해서 빈 것일 수도 있습니다.
         둘을 안 가르면 장애가 난 순간에 멀쩡하던 화면을 0대로 덮습니다.</p>
 
-        <p>그래서 「비었다」를 다섯 갈래로 갈랐고 그중 하나만 새 값으로 발행하게 했습니다. 나머지
-        넷에서는 마지막 정상값을 그대로 둡니다. 그리고 값과 수집 상태를 따로 실어 보냅니다.
-        그래야 「마지막 값은 보여 주되 지금 수집은 실패했다」는 화면이 만들어집니다. 중앙값
-        3,938ms는 <strong>23ms</strong>가 됐습니다.</p>
+        <p>그래서 「비었다」를 다섯 갈래로 갈랐습니다. 「정상 수집」과 「대상이 정말 0대」 둘만 새 값으로 발행하고 나머지
+        셋에서는 마지막 정상값을 그대로 둡니다. 그리고 값과 수집 상태를 따로 실어 보냅니다.
+        그래야 「마지막 값은 보여 주되 지금 수집은 실패했다」는 화면이 만들어집니다. 첫 데이터가
+        오는 시각의 중앙값은 3,938ms에서 <strong>23ms</strong>로 줄었습니다.</p>
 
         <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -380,7 +380,7 @@ else:                              NO_VALID_METRICS</code></pre>
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=07ce86b446"></script>
-  <script src="../assets/content.js?v=2fddf60fa0"></script>
+  <script src="../assets/content.js?v=48d76e85c8"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
