@@ -17,7 +17,7 @@
 
   /* 카드의 언어. `i18n.js` 가 먼저 실려서 이번 로드의 언어를 정해 둔다(없으면 영어).
      ⚠️ 카드 제목에는 `notranslate` 가 붙어 있다 — 고유명사가 뭉개지지 말라고 붙인 것인데,
-     그 탓에 **한국어 독자에게 제목만 영어로 남아 있었다.** 위젯으로는 고칠 수 없고,
+     그 탓에 **한국어 독자에게 제목만 영어로 남아 있었다.** 위젯으로는 고칠 수 없고
      항목마다 `title_ko`·`desc_ja` 를 두어야 고쳐진다. */
   var LANG = (window.I18N && window.I18N.lang) || null;
 
@@ -44,7 +44,7 @@
     return LABEL_KEY[v] ? tr(LABEL_KEY[v], v) : v;
   }
 
-  /* 날짜는 항목에 적지 않고 **만든다.** `dateLabel` 을 언어마다 손으로 적으면 20개가 넘고,
+  /* 날짜는 항목에 적지 않고 **만든다.** `dateLabel` 을 언어마다 손으로 적으면 20개가 넘고
      그중 하나만 안 고쳐진 날이 반드시 온다. `date` 는 이미 `2026-09` 또는 `2026-09-05` 형식이다. */
   var MONTH_EN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
@@ -68,6 +68,7 @@
     "load-test-harness": {ko:{t:"Harness",s:[["뜻","말 자체의 뜻",0],["조건","무엇이 Harness를 Harness로 만드나",0],["흐름","어떻게 도나: 실행 한 번의 흐름",0],["오해","흔한 오해",0]]}, en:{t:"Harness",s:[["뜻","What the word means",0],["조건","What makes a harness a harness",0],["흐름","How one run goes",0],["오해","Common misreadings",0]]}, ja:{t:"Harness",s:[["뜻","言葉そのものの意味",0],["조건","何が Harness を Harness にするのか",0],["흐름","どう回るか — 実行一回の流れ",0],["오해","よくある誤解",0]]}},
     "mutation-testing": {ko:{t:"Mutation Testing",s:[["왜","왜 필요한가",0],["방법","어떻게 하나",0],["경로","경로마다 따로 걸어야 합니다",0]]}, en:{t:"Mutation Testing",s:[["왜","Why it is needed",0],["방법","How to do it",0],["경로","Do it one path at a time",0]]}, ja:{t:"Mutation Testing",s:[["왜","なぜ必要か",0],["방법","どうやるか",0],["경로","経路ごとに別々にかける",0]]}},
     "percentile": {ko:{t:"Percentile",s:[["percentile","개요",1],["percentile-average","왜 평균을 안 쓰나",1],["percentile-calc","계산 방식이 두 가지입니다",1],["percentile-where","어디를 봐야 하나",1]]}, en:{t:"Percentile",s:[["percentile","Overview",1],["percentile-average","Why not the average",1],["percentile-calc","There are two ways to compute it",1],["percentile-where","Which one to read",1]]}, ja:{t:"Percentile",s:[["percentile","概要",1],["percentile-average","なぜ平均を使わないのか",1],["percentile-calc","計算方式が二つある",1],["percentile-where","どれを見るか",1]]}},
+    "sse": {ko:{t:"SSE",s:[["무엇","무엇인가요?",0],["첫값","연결이 열린 것과 값이 온 것은 다릅니다",0],["느린소비자","느린 한 명이 전부를 막습니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"SSE",s:[["무엇","What it is",0],["첫값","An open connection is not an arrived value",0],["느린소비자","One slow consumer blocks the rest",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"SSE",s:[["무엇","何か",0],["첫값","接続が開いたことと値が来たことは違います",0],["느린소비자","遅い一人が全体を塞ぎます",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "transaction-pooling": {ko:{t:"Transaction Pooling",s:[["모드","세 가지 모드",0],["성질","핵심 성질: 언제 묶이나",0],["핀","핀(Pin)이 걸리는 패턴",0]]}, en:{t:"Transaction Pooling",s:[["모드","Three modes",0],["성질","The property that matters — when it pins",0],["핀","Patterns that Pin",0]]}, ja:{t:"Transaction Pooling",s:[["모드","三つのモード",0],["성질","核心的な性質 — いつ固定されるか",0],["핀","ピン(Pin)がかかるパターン",0]]}},
     "warmup": {ko:{t:"Warm-up",s:[["원인","무엇이 앞부분을 다르게 만드나",0],["길이","얼마나 버리나",0]]}, en:{t:"Warm-up",s:[["원인","What makes the front different",0],["길이","How much to throw away",0]]}, ja:{t:"Warm-up",s:[["원인","何が先頭を違うものにするのか",0],["길이","どれだけ捨てるか",0]]}}
   };
@@ -101,7 +102,7 @@
     },
 
     projects: {
-      /* Writing 과 같은 축으로 나눈다 — 섹션마다 기준이 달라지면 왼쪽 레일을 매번 다시 배운다. */
+      /* Writing과 같은 축으로 나눈다 — 섹션마다 기준이 달라지면 왼쪽 레일을 매번 다시 배운다. */
       tagGroups: {
         "Area": ["GPU", "Kubernetes", "Backend", "Postgres", "IaaS", "Control Plane"],
         "Perspective": ["Operations", "Privacy"]
@@ -508,12 +509,22 @@
       /* 왼쪽 필터의 묶음. 용어 노트(#Harness 처럼 말 자체가 태그인 것)와 분류를 갈라 놓는다 —
          한 줄에 섞여 있으면 "무엇으로 고르는 목록인지"를 매번 다시 읽어야 한다. */
       tagGroups: {
-        "Term": ["Harness", "Percentile", "Warm-up", "Arm", "Connection Pool", "Connection Pooler",
+        "Term": ["Harness", "Percentile", "SSE", "Warm-up", "Arm", "Connection Pool", "Connection Pooler",
                 "Transaction Pooling", "Mutation Testing", "Fail-closed"],
         "Kind": ["Performance", "Database", "Verification", "Design",
                 "Troubleshooting", "Operating", "Debugging", "Chore", "Certification"]
       },
       items: [
+        {
+          title: "SSE",
+          url: "notes/sse.html",
+          title_ko: "SSE", title_ja: "SSE",
+          desc: "One connection held open while the server pushes values into it. Opening the connection is not the same as the first value arriving, and one slow consumer can block the rest.",
+          desc_ko: "연결을 한 번 맺어 두고 서버가 값을 밀어 넣는 방식. 연결이 열린 시각과 첫 값이 온 시각은 다르고 느린 소비자 하나가 나머지를 막을 수 있습니다.",
+          desc_ja: "接続を一度張っておきサーバーが値を押し込む方式。接続が開いたことと最初の値が来たことは違い、遅い消費者一つが残りを塞ぐことがあります。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          tags: ["SSE", "Performance"]
+        },
         {
           title: "Harness",
           url: "notes/load-test-harness.html",
@@ -653,7 +664,7 @@
   }
 
   /* "이건 사이드 프로젝트인가 회사 일인가"는 독자가 주장의 무게를 정할 때 먼저 묻는 것이다.
-     source 가 없는 항목에는 아무것도 그리지 않는다: 확인하지 않은 분류를 붙이면 배지 전체가
+     source가 없는 항목에는 아무것도 그리지 않는다: 확인하지 않은 분류를 붙이면 배지 전체가
      못 믿을 것이 된다. */
   function sourceTag(it) {
     if (!it.source || !it.sourceLabel) return "";
@@ -672,7 +683,7 @@
   /* 섹션 인덱스는 **행**으로 그린다.
      카드 격자였을 때는 열세 장이 전부 같은 무게로 서 있고 카드마다 요약이 네댓 줄이라
      "먼저 읽을 것"이 보이지 않았다. 행으로 바꾸면 제목이 왼쪽 한 줄로 정렬돼 훑는 축이 하나가
-     되고, 요약을 한 줄로 자르면 행 높이가 균일해져 눈이 흔들리지 않는다. 테두리도 사라진다.
+     되고 요약을 한 줄로 자르면 행 높이가 균일해져 눈이 흔들리지 않는다. 테두리도 사라진다.
      날짜·배지는 **제목 위**에 둔다(사용자 지시, 2026-09-11). 왼쪽 칸에 두면 훑는 축이 둘이 된다. */
   function cardArticle(it) {
     return (
@@ -782,19 +793,19 @@
       );
     }
 
-    // 아무것도 걸러내지 못하는 레일은 숨긴다. 태그가 없거나(항목에 tags 가 없음), 있어도 모든
-    // 태그가 전체 건수와 같으면(News 의 #2026 처럼 연도 하나뿐) 눌러도 목록이 그대로다 —
+    // 아무것도 걸러내지 못하는 레일은 숨긴다. 태그가 없거나(항목에 tags가 없음), 있어도 모든
+    // 태그가 전체 건수와 같으면(News의 #2026 처럼 연도 하나뿐) 눌러도 목록이 그대로다 —
     // 고를 것이 없는 필터는 자리만 차지하고 "여기서 뭘 고르지"를 매번 다시 묻게 만든다.
     var narrows = tagList.some(function (t) { return countOf(t) < sec.items.length; });
     if (tagRowEl && !narrows) {
       tagRowEl.hidden = true;
       var browse = tagRowEl.closest && tagRowEl.closest(".section-browse");
       if (browse) browse.classList.add("no-facets");
-      // 레일이 없으면 본문을 바깥으로 밀 이유도 없다 — 컨테이너에도 표시해 CSS 가 밀기를 끈다.
+      // 레일이 없으면 본문을 바깥으로 밀 이유도 없다 — 컨테이너에도 표시해 CSS가 밀기를 끈다.
       var page = tagRowEl.closest && tagRowEl.closest(".container");
       if (page) page.classList.add("no-facets");
     } else if (tagRowEl) {
-      // 섹션이 tagGroups 를 선언하면 그 순서·묶음대로, 아니면 한 덩어리로 그린다.
+      // 섹션이 tagGroups를 선언하면 그 순서·묶음대로, 아니면 한 덩어리로 그린다.
       var groups = sec.tagGroups || null;
       var html = hasAll ? facetRow(allLabel, initial === allLabel) : "";
       if (groups) {
@@ -859,12 +870,12 @@
   };
 
   /* 기사 왼쪽 레일.
-     오른쪽은 이 글 안을 오가는 목차이고, 왼쪽은 **이 글 밖으로** 나가는 길이다 —
+     오른쪽은 이 글 안을 오가는 목차이고 왼쪽은 **이 글 밖으로** 나가는 길이다 —
      같은 주제의 다른 글과 같은 프로젝트의 다른 글. 글 끝에 붙이면 끝까지 읽은 사람만 보지만,
      레일에 두면 읽는 도중에도 "이 얘기 딴 데서 더 봤나"에 답할 수 있다.
 
-     slug 는 언어 접미사를 뗀 이름이다(`a-pooler-fixes-only-one`). 한국어판에서 눌러도
-     lang.js 가 저장된 언어 선호를 보고 손으로 쓴 판으로 데려간다. */
+     slug는 언어 접미사를 뗀 이름이다(`a-pooler-fixes-only-one`). 한국어판에서 눌러도
+     lang.js가 저장된 언어 선호를 보고 손으로 쓴 판으로 데려간다. */
   window.renderArticleAside = function (el, key, slug) {
     if (!el || !DATA[key]) return;
     var items = DATA[key].items;
@@ -943,7 +954,7 @@
     /* 관련 글은 **주제**로 고른다(사용자 지시, 2026-09-12).
        예전에는 `source` 가 같은 글 넷을 그냥 잘라 왔다. 「회사 업무」가 같다는 것은 주제가
        아니라 출처라, 볼륨 목록 글 옆에 프라이버시 보장선 글이 붙었다. 태그가 겹치는 수로
-       줄을 세우고, 겹치는 것이 없을 때만 같은 출처로 내려간다. */
+       줄을 세우고 겹치는 것이 없을 때만 같은 출처로 내려간다. */
     /* 겹치는 태그를 그냥 세면 **흔한 태그가 이긴다.** `#Method` 는 거의 모든 글에 붙어 있어서
        그것 하나만 겹치는 글 넷이 올라왔다. 태그마다 **드문 정도**로 무게를 준다. */
     var df = {};
@@ -970,7 +981,7 @@
     }
     /* 읽는 사람의 언어로 된 제목이 있는 글을 먼저 올린다. 영문 전용 네 편이 한국어 레일에
        영어 제목으로 서면, 「제목만으로 무슨 말인지 모르겠다」가 그대로 남는다. 빼지는 않는다 —
-       관련 있는 글인 것은 사실이고, 뒤로 밀 뿐이다. */
+       관련 있는 글인 것은 사실이고 뒤로 밀 뿐이다. */
     function sameLang(it) {
       return lang === "en" || it["title_" + lang] ? 1 : 0;
     }
