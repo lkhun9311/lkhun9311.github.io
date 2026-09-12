@@ -359,12 +359,12 @@
           tags: ["Admin Console", "Performance", "Method"]
         },
         {
-          title: "A Ten-Second Query Polled Every Five Seconds Blocked the Dialog",
+          title: "Pre-fetching Everything and Polling a Ten-Second Query Blocked the Dialog",
           url: "writing/slow-screens-6-polling-pileup.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "10초 걸리는 조회를 5초마다 불러 볼륨 생성 창이 막혔습니다",
+          title_ko: "안 고른 것까지 미리 받고 10초 조회를 5초마다 불러 창이 막혔습니다",
           desc_ko: "버튼을 눌러도 창이 안 열리고 로딩만 돌았습니다. 개발자 도구에는 끝나지 않은 요청이 4건 남아 있었습니다. 목록 조회가 10초 넘게 걸리는데 화면은 5초마다 다시 불렀고 창이 열려 있는 동안에도 멈추지 않았습니다. 그리고 그 5초가 Backend Cache 결정의 근거가 됐습니다. 연작 ‘느린 화면’ ⑥.",
-          title_ja: "10 秒かかる取得を 5 秒ごとに呼んでダイアログが塞がりました",
+          title_ja: "選んでいないものまで先に取り、10 秒の取得を 5 秒ごとに呼んでダイアログが塞がりました",
           desc_ja: "ボタンを押してもダイアログが開かず、ローディングだけが回っていました。開発者ツールには未完了のリクエストが 4 件。一覧の取得に 10 秒以上かかるのに画面は 5 秒ごとに取り直し、ダイアログが開いているあいだも止まりませんでした。そしてその 5 秒が Backend Cache の判断の根拠になりました。連載「遅い画面」⑥。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "Clicking the create button left the dialog spinning. DevTools showed four requests still pending. The list query took over ten seconds while the screen re-fetched it every five, and kept doing so while the dialog was open — and those five seconds became the reason behind a backend cache setting. Slow Screens, part six. Also in Korean and Japanese.",
