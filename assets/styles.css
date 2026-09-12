@@ -1430,10 +1430,12 @@ footer a:hover {
   color: var(--muted);   /* 부제는 회색. 제목과 같은 검정이면 두 줄이 한 덩어리로 읽힌다 */
 }
 
+/* 부제는 회색(--muted). --text-soft(#3b3344)는 거의 검정이라 제목과 한 덩어리로 읽힌다
+   (사용자 지시, 2026-09-11 · 같은 지시를 두 번 받았다 — h1-sub 만 고치고 여기를 빠뜨렸다). */
 .lead {
   max-width: 720px;
   margin: 0;
-  color: var(--text-soft);
+  color: var(--muted);
   font-size: 1.12rem;
 }
 
@@ -2845,6 +2847,40 @@ html[lang="ja"] .container.reading .article-body figure.diagram figcaption::befo
   color: var(--aside);
   text-decoration: none;
 }
+
+/* 관련 글은 제목 한 줄로는 안 읽힌다(사용자 지시, 2026-09-12).
+   제목 밑에 요약 첫 문장을 회색 작은 글씨로 붙인다. 태그 목록(#GPU)은 한 줄 그대로 둔다. */
+.article-aside .aside-more li { margin: 0 0 10px; }
+
+.article-aside .aside-more a {
+  padding: 7px 8px 8px;
+  line-height: 1.4;
+}
+
+.article-aside .aside-more-title {
+  display: block;
+  font-size: 0.99rem;
+  font-weight: 650;
+  color: var(--text-soft);
+  letter-spacing: -0.02em;
+}
+
+.article-aside .aside-more-sub {
+  display: block;
+  margin-top: 3px;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--muted);
+  /* 두 줄에서 자른다 — 세 줄이면 레일이 본문만큼 길어져 훑는 눈이 갈린다. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+.article-aside .aside-more a:hover .aside-more-title,
+.article-aside .aside-more a:focus-visible .aside-more-title { color: var(--aside); }
 
 /* ---- per-section source links --------------------------------------------------------------- */
 /* A heading can point at the code it is describing. When the repository is public the icon is a

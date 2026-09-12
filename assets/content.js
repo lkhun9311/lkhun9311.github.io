@@ -850,13 +850,62 @@
         }).join("") + "</ul></div>";
     }
 
-    var siblings = items.filter(function (it) {
-      return it !== me && it.source && it.source === me.source;
-    }).slice(0, 4);
+    /* 관련 글은 **주제**로 고른다(사용자 지시, 2026-09-12).
+       예전에는 `source` 가 같은 글 넷을 그냥 잘라 왔다. 「회사 업무」가 같다는 것은 주제가
+       아니라 출처라, 볼륨 목록 글 옆에 프라이버시 보장선 글이 붙었다. 태그가 겹치는 수로
+       줄을 세우고, 겹치는 것이 없을 때만 같은 출처로 내려간다. */
+    /* 겹치는 태그를 그냥 세면 **흔한 태그가 이긴다.** `#Method` 는 거의 모든 글에 붙어 있어서
+       그것 하나만 겹치는 글 넷이 올라왔다. 태그마다 **드문 정도**로 무게를 준다. */
+    var df = {};
+    items.forEach(function (it) {
+      (it.tags || []).forEach(function (t) { df[t] = (df[t] || 0) + 1; });
+    });
+    /* 연작은 서로가 가장 관련 있는 글이다. 파일 이름의 첫 낱말이 같으면 같은 연작으로 본다.
+       ⚠️ 다만 `a-pooler-…` 와 `a-stopped-…` 처럼 흔한 낱말은 연작이 아니다. 그래서
+       **세 편 이상이 공유하는 첫 낱말만** 연작으로 인정한다 — 목록이 늘어도 손댈 것이 없다. */
+    function head(u) { return ((u || "").split("/").pop().split("-")[0] || ""); }
+    var headCount = {};
+    items.forEach(function (it) { var h = head(it.url); if (h) headCount[h] = (headCount[h] || 0) + 1; });
+    function series(u) {
+      var h = head(u);
+      return h && headCount[h] >= 3 ? h : null;
+    }
+    var mySeries = series(me.url);
+
+    function overlap(it) {
+      var a = it.tags || [], n = 0;
+      for (var i = 0; i < a.length; i++) if (tags.indexOf(a[i]) >= 0) n += 1 / df[a[i]];
+      if (mySeries && series(it.url) === mySeries) n += 1;
+      return n;
+    }
+    var pool = items.filter(function (it) { return it !== me && it.url; });
+    pool.sort(function (x, y) {
+      var d = overlap(y) - overlap(x);
+      if (Math.abs(d) > 1e-9) return d;
+      var sx = x.source === me.source ? 1 : 0, sy = y.source === me.source ? 1 : 0;
+      if (sy - sx) return sy - sx;
+      return (y.date || "") < (x.date || "") ? -1 : 1;   // 최신 먼저
+    });
+    var siblings = pool.slice(0, 4);
+
+    /* 제목만 넣으면 무슨 글인지 안 읽힌다(사용자 지시, 2026-09-12).
+       카드 요약의 **첫 문장**을 제목 밑에 회색 한 줄로 붙인다. 요약 전체는 너무 길다. */
+    function firstSentence(t) {
+      if (!t) return "";
+      /* ⚠️ `[.。]` 만 보면 **소수점에서 끊긴다** — 「6.8 초」가 「6.」이 됐다.
+         마침표 뒤가 숫자면 문장 끝이 아니다. */
+      var m = /^[\s\S]*?(?:다\.|요\.|니다\.|。|\.(?!\d))/.exec(t);
+      var out = (m ? m[0] : t).trim();
+      return out.length > 90 ? out.slice(0, 88).replace(/\s+\S*$/, "") + "…" : out;
+    }
     if (siblings.length) {
-      html += '<div class="aside-group"><p class="aside-label">' + esc(L.more) +
+      html += '<div class="aside-group aside-more"><p class="aside-label">' + esc(L.more) +
         '</p><ul>' + siblings.map(function (it) {
-          return '<li><a class="notranslate" href="' + BASE + esc(it.url) + '">' + esc(f(it, "title")) + "</a></li>";
+          var sub = firstSentence(f(it, "desc"));
+          return '<li><a class="notranslate" href="' + BASE + esc(it.url) + '">' +
+            '<span class="aside-more-title">' + esc(f(it, "title")) + "</span>" +
+            (sub ? '<span class="aside-more-sub">' + esc(sub) + "</span>" : "") +
+            "</a></li>";
         }).join("") + "</ul></div>";
     }
 
