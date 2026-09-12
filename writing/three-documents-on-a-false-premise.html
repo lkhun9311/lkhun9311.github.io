@@ -80,7 +80,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-this-is-about">What this is about</a></li>
             <li><a href="#are-they-even-the-same">Are they even the same?</a></li>
             <li><a href="#i-did-not-trust-date-order">I did not trust date order</a></li>
             <li><a href="#the-method-itself-was-different">The method itself was different</a></li>
@@ -94,27 +93,18 @@
         </nav>
       <article class="article-body">
 
-        <p><strong>Scope.</strong> In July 2026 I prepared an upgrade of a customer's live OpenStack-based
-        private cloud portal to a release <strong>2,255 commits ahead</strong> of the one they were running. I
-        do not name the product, the version numbers, the customer, or ticket IDs. What I actually did
-        was the isolated reproduction and the procedure and runbooks — this is not a record of me
-        performing the production cutover. The numbers come from mixed sources — the migration results
-        (3 of 3, 0 failures) are from the isolated container; the commit counts, the release
-        comparison and the 48-table column check are repository and schema surveys; the
-        startup failure is local troubleshooting.</p>
+        <p>In July 2026 I prepared an upgrade of an OpenStack-based private cloud portal running at a
+        customer site to a release <strong>2,255 commits ahead</strong>. The authentication model changed,
+        which reset every user's password, and two database schemas were merged into one. It was a
+        production database, so there was no zero-downtime path and a rollback route was mandatory.</p>
 
-        <p>The shape of the job: two breaking changes — the authentication model changed and reset every
-        user's password, and two database schemas were merged into one. It is a production database, so there
-        is no zero-downtime path and a rollback route is mandatory. And
-        the official migration guide was written against a version one step above the one in the
-        field.</p>
+        <p>The natural way to write a procedure for a job like this is to read the official guide and
+        reason from it. That is how I wrote three of them.</p>
 
-        <p>The natural way to write a procedure here is to read the documents and reason. That is how I wrote
-        three of them. And the premise of all three was wrong. I did not learn that by reasoning
-        more carefully. I learned it by standing the old version up in an isolated environment and running
-        the part that could be reproduced end to end — and, in the middle of that, by reading
-        the guide again, properly this time.</p>
-
+        <p><strong>The premise of all three was wrong.</strong> The official path was not applying patches
+        in order; it was standing up a new database and migrating the data into it. I did not learn that
+        by reasoning more carefully. I learned it by standing the old version up in an isolated
+        environment and running the reproducible part end to end.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -122,22 +112,6 @@
           <li>You have to upgrade a product running at a live customer site</li>
           <li>You have written an upgrade runbook from the documents alone</li>
           <li>You assume "apply the patches in date order and you arrive"</li>
-        </ul>
-
-        <h2 id="what-this-is-about">What this is about<a class="anchor" href="#what-this-is-about" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li>I prepared the runbook for moving a live portal <strong>2,255 commits forward</strong>. Two
-          breaking changes, a production database, so a rollback path was mandatory.</li>
-          <li>While preparing it I found that <strong>three documents I had already written rested on a false
-          premise.</strong> The official path is not sequential patching; it is
-          rebuilding a new database and migrating the data.</li>
-          <li>Skimming did not surface that. It came from reading the overview rather than the
-          procedure list, and everything else came out of actually checking something.</li>
-          <li>So I stood the old version up in an isolated environment and broke it once on
-          purpose. A startup failure did fire, and an item left as "needs confirmation" resolved with it.</li>
-          <li>⚠️ What I did here ends at reproduction and runbook preparation. This is not a
-          record of me performing the upgrade on site.</li>
         </ul>
 
         <h2 id="are-they-even-the-same">Are they even the same?<a class="anchor" href="#are-they-even-the-same" aria-label="Link to this section">#</a></h2>
@@ -473,6 +447,8 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
         <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
         <ul>
+          <li>I do not name the product, the version numbers, the customer, or ticket IDs. The numbers come from mixed sources: the migration results (3 of 3, 0 failures) are from the isolated container; the commit counts, the release comparison and the 48-table column check are repository and schema surveys; the startup failure is local troubleshooting.</li>
+
           <li><strong>Not a claim that I completed the production migration.</strong> What I did was verify the
           reproducible part of the path and prepare the field procedure and installation runbooks. Not
           <strong>the whole path</strong> — the authentication stretch was not reproduced, as below.</li>

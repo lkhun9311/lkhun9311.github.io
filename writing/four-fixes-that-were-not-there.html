@@ -82,7 +82,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-is-in-here">What this is about</a></li>
             <li><a href="#not-what-i-reported">None of the four looked the way I had reported</a></li>
             <li><a href="#my-first-explanation">My first explanation was "the edits were lost"</a></li>
             <li><a href="#asking-the-repository">I asked the repository</a></li>
@@ -98,22 +97,15 @@
 
         <article class="article-body">
 
-        <p>Hello. On a GPU control plane I build alone, just before renting a GPU with real money for the
-        first time, I opened the files to finish off the remaining findings.</p>
+        <p>I build a <a href="../projects/gpuaas-control-plane.html">Kubernetes-native GPU control plane</a> as a personal project.
+        I was about to rent a GPU with real money for the first time. Before spending it I opened the
+        files to clear the findings I had left.</p>
 
-        <p><strong>What I had reported as fixed did not look that way in the code.</strong>
-        Not one of them — four.</p>
+        <p><strong>What I had reported as fixed was not in the code in that shape.</strong> Not one of
+        them — four. Three of the four were the guards that stop GPU billing from running on.</p>
 
-        <p>Scope first. <strong>This project is still in flight.</strong>
-        What this article treats as finished is the discovery of that day and how I checked it,
-        not the state the guards are in now.
-        In fact twelve more came out of the code I fixed that day, and that is below too.</p>
-
-        <p>And I separate what I measured from what only exists as a record.
-        What I re-ran while writing this: three repository searches, two versions of one
-        function, <code>curl</code>'s exit code, and one shell variable.
-        The two false positives among the eighteen checks, and the twelve findings, are that day's
-        record and were not reproduced. I keep marking which is which.</p>
+        <p>My first explanation was that an edit had been lost by accident. I said it out loud twice
+        before checking. The repository said none of the four had ever been there.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -121,25 +113,6 @@
           <li>Anyone who has said "that one is handled" from memory</li>
           <li>Anyone who wrote a verification script and never verified the script</li>
           <li>Anyone deciding what to look at first before a run that costs money</li>
-        </ul>
-
-        <h2 id="what-is-in-here">What this is about<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
-
-        <ul class="callout">
-          <li>Four things I had reported complete were not, in the commits, what I had reported.
-          Two had the old ordering; for two the code was not there.
-          Three of them stop billing from continuing.</li>
-          <li>My first explanation was "the edits were lost by accident", and I said it out
-          loud twice before checking.</li>
-          <li>Asking the repository, all four first appear in my own commits of 31 August and
-          1 September 2026. ⚠️ That does not mean I never made the edits.
-          <code>git</code> cannot tell those two apart.</li>
-          <li>The wrong ordering was defended by a comment I had written, and rereading it
-          I took my own justification for evidence.</li>
-          <li>I wrote a script to count the other eighteen. Three came back ❌ —
-          and two of those were my own test being wrong, not the code.</li>
-          <li>⚠️ And twelve more came out of the code I fixed that day.
-          "Fixed" was not the end.</li>
         </ul>
 
         <h2 id="not-what-i-reported">None of the four looked the way I had reported<a class="anchor" href="#not-what-i-reported" aria-label="Link to this section">#</a></h2>
@@ -596,6 +569,8 @@ a b c                                       &lt;- with another name it goes in</
         <h2 id="what-this-does-not-claim">Limits: what this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
         <ul class="callout">
+          <li>What I re-ran while writing this: three repository searches, two versions of one function, <code>curl</code>'s exit code, and one shell variable. The two false positives among the eighteen checks and the twelve findings are that day's record and were not reproduced.</li>
+
           <li>This article says nothing about the state the guards are in now.
           The project is in flight, and what is written here is what I found and checked
           on one day, 1 September 2026. Things to fix keep coming out of the same places since.</li>
