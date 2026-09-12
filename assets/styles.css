@@ -2715,43 +2715,39 @@ html[lang="ja"] .container.reading .article-body figure.diagram figcaption::befo
   letter-spacing: 0.01em;
 }
 
-/* 프로젝트 태그 — 「이 글은 어디 것인가」를 오른쪽 위에 하나만 둔다(사용자 지시, 2026-09-12).
-   두 단계를 거쳐 여기 왔다. 처음에는 부제 문장 뒤에 「…고칩니다. 출시 전 소셜 투표 플랫폼 점검」
-   처럼 **명사구로 붙어** 있었고(외부 검토가 23편 전부 같은 문법 파손으로 지적), 그다음에는
-   태그 두 개였다. 범위 태그(#출시전점검)는 뺐다 — 부제가 이미 그 이야기를 한다.
+/* 프로젝트 태그 — 「이 글은 어느 프로젝트의 것인가」.
+   세 단계를 거쳐 여기 왔다. 처음에는 부제 문장 뒤에 「…고칩니다. 출시 전 소셜 투표 플랫폼 점검」
+   처럼 **명사구로 붙어** 있었고(외부 검토가 23편 전부 같은 문법 파손으로 지적), 그다음 제목 위
+   오른쪽의 보라색 칩이었다가, 지금은 **머리의 다른 칩 옆**이다(사용자 지시, 2026-09-12).
 
-   제목 글자가 아니므로 <h1> 밖으로 뺐다. 색은 보라(--aside) — 이 사이트에서 보라는
-   「이 글 밖으로 나가는 길」이다.
-   ⚠️ 갈 곳이 있는 것만 <a> 다. **모양만 태그이고 아무 데도 안 가는 칩은 만들지 않는다** —
-   누를 수 있게 보이면 눌린다. 사내 업무처럼 공개 페이지가 없는 것은 <span> 으로 둔다. */
-.container.reading .page-hero .hero-tag {
-  display: flex;
-  justify-content: flex-end;
-  margin: 0 0 6px;
-}
+   색을 옆 칩과 같게 두는 이유: 한 줄에 색이 둘이면 「이건 다른 종류인가」를 먼저 묻게 된다.
+   출처(사업화 프로젝트)·저장소(Private)·프로젝트는 전부 같은 종류의 꼬리표다.
+   글자는 프로젝트 페이지에 실린 **실제 이름**을 쓴다 — 줄임말을 쓰면 그 이름으로 실린 것이 없다.
 
-.container.reading .page-hero .h1-tag {
-  display: inline-block;
-  padding: 4px 13px 5px;
-  border: 1px solid var(--aside-line);
+   ⚠️ 누르면 목록이 그 프로젝트로 걸러진다. **모양만 태그이고 아무 데도 안 가는 칩은 만들지 않는다.** */
+.hero-top .project-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 5px 14px;
   border-radius: 999px;
-  background: var(--aside-faint);
-  color: var(--aside-soft);
-  font-size: 0.88rem;
-  font-weight: 650;
-  line-height: 1.5;
+  border: 1px solid rgba(214, 41, 118, 0.55);
+  background-color: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 20px rgba(214, 41, 118, 0.20);
+  color: var(--ig-pink);
+  font-size: 0.84rem;
+  font-weight: 800;
+  font-style: normal;
   letter-spacing: 0.01em;
+  vertical-align: 2px;
   text-decoration: none;
+  transition: background-color 0.16s ease, color 0.16s ease;
 }
 
-.container.reading .page-hero a.h1-tag {
-  transition: background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease;
-}
-
-.container.reading .page-hero a.h1-tag:hover,
-.container.reading .page-hero a.h1-tag:focus-visible {
-  border-color: var(--aside);
-  background: var(--aside);
+.hero-top .project-tag:hover,
+.hero-top .project-tag:focus-visible {
+  background-color: var(--ig-pink);
   color: #fff;
   text-decoration: none;
 }

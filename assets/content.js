@@ -148,7 +148,7 @@
       tagGroups: {
         /* 프로젝트를 맨 위에 둔다 — 「어느 시스템 이야기인가」가 독자의 첫 질문이다.
            글 머리의 #태그 버튼이 여기로 걸러 들어온다. */
-        "Project": ["Admin Console", "GPU Control Plane", "Social Polling", "Private Cloud"],
+        "Project": ["IaaS Backend", "GPUaaS Control Plane", "Social Polling Platform"],
         "Area": ["GPU", "Kubernetes", "Backend", "Postgres", "IaaS", "Control Plane"],
         "Perspective": ["Method", "Observability", "Reliability", "Performance",
                 "Security", "Privacy", "Cost", "Operations", "Migration"]
@@ -164,7 +164,7 @@
           desc_ja: "スナップショットスケジューラの実行履歴を画面に付けたのに、対象が消えて停止した実行は履歴が一行も残りませんでした。照会の失敗を対象無しと読み、一時的な障害が永久停止になっていました。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "A run history was attached to the scheduler, and a run stopped by a deleted target left no row at all. A failed lookup was read as absent, turning a transient error into a permanent stop. Also in Korean and Japanese.",
-          tags: ["Admin Console", "Observability", "Reliability", "Method"]
+          tags: ["IaaS Backend", "Observability", "Reliability", "Method"]
         },
         {
           title: "A Snapshot Schedule Failed Every Run and the Screen Said STARTED",
@@ -176,7 +176,7 @@
           desc_ja: "プロジェクトのスナップショットクォータが満杯だとスケジューラが毎回失敗するのに画面は STARTED でした。FAILED という状態値はすでにあり、それを書くコードがありませんでした。そしてその瞬間にコードは前のバックアップを先に消していました。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "A full snapshot quota made every run fail while the screen stayed healthy. The FAILED state already existed and nothing wrote it, and the code was deleting the previous backup first. Also in Korean and Japanese.",
-          tags: ["Admin Console", "Reliability", "Backend", "Method"]
+          tags: ["IaaS Backend", "Reliability", "Backend", "Method"]
         },
         {
           title: "Defending Poll Aggregates Axis by Axis Broke Five Times",
@@ -188,7 +188,7 @@
           date: "2026-09", dateLabel: "Sep 2026",
           source: "commercial", sourceLabel: "Commercial project",
           desc: "A defence written per dimension breaks the moment a dimension is added. Five tickets in, what ended the privacy track was not a sixth repair but writing the guarantee as a sentence — and computing the difference between the goal and what was already true. Also in Korean and Japanese.",
-          tags: ["Social Polling", "Privacy", "Security", "Method"]
+          tags: ["Social Polling Platform", "Privacy", "Security", "Method"]
         },
         {
           title: "The Moderation Throughput Ceiling Was an SDK Default",
@@ -200,7 +200,7 @@
           date: "2026-09", dateLabel: "Sep 2026",
           source: "commercial", sourceLabel: "Commercial project",
           desc: "Post creation would not go past 6.27 req/s. Twice the write threads did nothing, three times the database pool did nothing. The limit was a default of five connections per host, inside an HTTP client the AWS SDK pulled in for S3 — a layer only on the runtime classpath, which reading could never have found. Also in Korean and Japanese.",
-          tags: ["Social Polling", "Performance", "Backend", "Method"]
+          tags: ["Social Polling Platform", "Performance", "Backend", "Method"]
         },
         {
           title: "Adding RDS Proxy Would Not Have Fixed the Exhaustion",
@@ -212,7 +212,7 @@
           date: "2026-09", dateLabel: "Sep 2026",
           source: "commercial", sourceLabel: "Commercial project",
           desc: "A pre-launch review of a social polling platform. Connection exhaustion has two causes behind one symptom and a pooler fixes only one of them \u2014 then a JMeter harness put numbers on it: an unrelated read path at 4 ms against 6,047 ms, and a second fix that halved post-create latency. Also in Korean and Japanese.",
-          tags: ["Social Polling", "Postgres", "Backend", "Method"]
+          tags: ["Social Polling Platform", "Postgres", "Backend", "Method"]
         },
         {
           title: "Four GPU Quota Defences Broke the Same Way",
@@ -224,7 +224,7 @@
           desc_ja: "同じやり方で破られた防御が 4 件。すべて読んで見つけたのではなく攻撃して見つけた。検査は自分が読んだものについては正しく、誤っていたのはテナントが書く値をテナントについての証拠として読んだ側だった。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "Four quota defences broken the same way, each found by attacking it. Forged ownerReferences, a self-granted exemption, a grace period the victim sets, and a reservation for Pods that can never exist. Also in Korean and Japanese.",
-          tags: ["GPU Control Plane", "Kubernetes", "Security", "GPU"]
+          tags: ["GPUaaS Control Plane", "Kubernetes", "Security", "GPU"]
         },
         {
           title: "Only the Budget Alert Caught a Cost Error in My AWS GPU Lab",
@@ -236,7 +236,7 @@
           desc_ja: "個人の GPU ラボアカウントにおけるコストとアカウント運用の記録。手で作った予算アラート 1 つが、私の見積りから丸ごと抜けていた項目を見つけた。そして Terraform がそのアラートを静かに消すところだった。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "Several layers of cost control on a GPU lab account, and the one that caught an error in the cost itself was a hand-made budget alert Terraform nearly deleted. Also in Korean and Japanese.",
-          tags: ["GPU Control Plane", "Cost", "Operations", "Method"]
+          tags: ["GPUaaS Control Plane", "Cost", "Operations", "Method"]
         },
         {
           title: "GPU Admission Control Did Not Protect p99. It Dropped Requests.",
@@ -248,7 +248,7 @@
           desc_ja: "GPU 1 枚の上での 4-arm 実験。拒否 0 件だという Arm の完了数が、プレミアムの要求数とぴったり同じだった。レポートの判定がすべて比だったため、4 回の有料実行の間それは見えなかった。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "A four-arm experiment on one A10G. The arm that rejected nothing completed exactly the premium request count, and every check was a tail ratio. Also in Korean and Japanese.",
-          tags: ["GPU Control Plane", "GPU", "Method", "Observability"]
+          tags: ["GPUaaS Control Plane", "GPU", "Method", "Observability"]
         },
         {
           title: "A 2,255-Commit Migration Made Three Runbooks Wrong",
@@ -260,7 +260,7 @@
           desc_ja: "2,255 コミットを飛び越えるバージョン移行。文書からの推論ではどこで壊れるか分からないので、隔離環境に旧バージョンを立てて一度壊してみた。すると私が先に書いた文書 3 本の前提が誤りだと分かった。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "A migration across 2,255 commits. Reasoning from documents could not say where it breaks, so the old version went up in an isolated container and broke once. Also in Korean and Japanese.",
-          tags: ["Private Cloud", "Migration", "Method"]
+          tags: ["IaaS Backend", "Migration", "Method"]
         },
         {
           title: "Seven of Eight Node HA Scenarios Should Not Recover",
@@ -272,7 +272,7 @@
           desc_ja: "スイッチ障害で生きているコンピュートノードが障害と判定され、復旧が大量に実行された。検知を精緻にする代わりに、どの信号が何を証言できるかを決めた。8 シナリオのうち 7 つが保留になった。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "A switch failure made live compute nodes look dead and recovery ran at scale. Grading what each signal is entitled to testify to left seven of eight scenarios on hold. Also in Korean and Japanese.",
-          tags: ["Private Cloud", "Reliability", "Method"]
+          tags: ["IaaS Backend", "Reliability", "Method"]
         },
         {
           title: "Four GPU Guard Fixes I Reported Were Not in the Commits",
@@ -284,7 +284,7 @@
           desc_ja: "はじめてお金を払って GPU を借りる直前に、完了と報告したガード 4 件がコードではその姿ではありませんでした。3 つは課金が続くのを止める装置です。リポジトリに聞くと 4 つとも私のコミットではじめて入っていましたが、git は失った編集と書かなかった編集を分けられません。残りを数えるスクリプトを書いたら、今度は判定式が誤っていました。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "Right before renting a GPU with real money for the first time, four guards I had reported complete did not look that way in the code. Three of them stop billing from continuing. The repository says all four first appear in my own commits, though git cannot tell a lost edit from one never made. Then I wrote a script to count the rest, and its own test was wrong. Also in Korean and Japanese.",
-          tags: ["GPU Control Plane", "Verification", "Method", "GPU"]
+          tags: ["GPUaaS Control Plane", "Verification", "Method", "GPU"]
         },
         {
           title: "head -c Split a Character and the Design Review Never Ran",
@@ -296,7 +296,7 @@
           desc_ja: "設計文書を直すと外部レビューが自動で回るようにしていました。フォルダには結果が溜まっていたのに、head -c が文字ではなくバイトを数えるせいで切れた位置が文字の真ん中でした。6 万バイトを超えたコミット 4 つを測ると全部そうでした。そして同じ欠陥を私は三度書き間違えました。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "Editing a design document was set up to trigger an outside review, and the folder kept filling up. But head -c counts bytes, not characters, and every one of the four commits over 60,000 bytes is cut inside a character. I also wrote the same defect down wrong three times. Also in Korean and Japanese.",
-          tags: ["Social Polling", "Tooling", "Method", "Verification"]
+          tags: ["Social Polling Platform", "Tooling", "Method", "Verification"]
         },
         {
           title: "Merging Three Monitoring Caches Made Them Erase Each Other",
@@ -308,7 +308,7 @@
           desc_ja: "三画面が同じ源を別々に収集していたので Cache 三つを一つにまとめました。まとめた直後に、一つの画面だけ開いていると別の画面の最後の値が消える回帰が出ました。分離された Cache が黙って持っていた契約が消えたのであり、誰もそれを書き残していませんでした。連載「統合モニタリング」⑤、最終編。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "The three screens were collecting the same source separately, so the three caches became one. Merging produced a regression at once: with only one screen open, another screen's last value disappeared. The contract the separated caches had been keeping silently was gone, and nobody had ever written it down. Unified Monitoring, part five and last. Also in Korean and Japanese.",
-          tags: ["Admin Console", "Concurrency", "Reliability", "Method"]
+          tags: ["IaaS Backend", "Concurrency", "Reliability", "Method"]
         },
         {
           title: "Fixing Only REST or Only SSE Left the Screen Where It Was",
@@ -320,7 +320,7 @@
           desc_ja: "仮想リソース画面には別々に始まる経路が二つあり、片方だけ直しても速くなりませんでした。プロジェクトごとに回る呼び出しを並列化ではなくリクエストから外し、空のリストを成功として受け取ると既存の値が 0 で塗り替えられるという指摘を受けました。そして SSE が速くなると隠れていた順序依存が表に出ました。連載「統合モニタリング」④。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "The virtual resources screen had two independently starting paths, so fixing one did not make it faster. The per-project fan-out came off the request instead of being parallelised, a review caught that an empty list accepted as success overwrites the value with zero, and speeding up SSE exposed a hidden ordering dependency. Unified Monitoring, part four. Also in Korean and Japanese.",
-          tags: ["Admin Console", "Performance", "Method", "Observability"]
+          tags: ["IaaS Backend", "Performance", "Method", "Observability"]
         },
         {
           title: "An Empty List Could Mean Zero Nodes or a Failed Query",
@@ -332,7 +332,7 @@
           desc_ja: "物理ノード画面に同じ serve-stale のパターンを移す途中で「空の結果を 0 台として公開してよいのか」で止まりました。対象が無くて空なのと、取れなくて空なのが同じ形で届きます。空の結果を五つに分け、二つだけを新しい値として公開しました。連載「統合モニタリング」③。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "Carrying the same serve-stale pattern to the physical nodes screen stopped at one question: may an empty result be published as zero nodes? Empty because nothing is there and empty because nothing could be fetched arrive in the same shape. Empty results were split five ways, two published as new values and the rest keeping the last good one. Unified Monitoring, part three. Also in Korean and Japanese.",
-          tags: ["Admin Console", "Observability", "Reliability", "Method"]
+          tags: ["IaaS Backend", "Observability", "Reliability", "Method"]
         },
         {
           title: "Adding One Cache to a Monitoring Screen Created Three Kinds of Race",
@@ -344,7 +344,7 @@
           desc_ja: "ダッシュボードの最初のデータが 6.8 秒だった理由は、接続がそのまま計算だったからです。リクエスト経路から計算を外して 10ms になりましたが、その過程で更新が取り消されること・同じ値を全体に何度も配ること・Timeout 一つが他人のクエリを切ることという競合が三つ出てきました。連載「統合モニタリング」②。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "First data on the dashboard took 6.8 seconds because connecting was computing. Moving the computation off the request path brought it to 10 ms, and along the way three races appeared: a cancelled refresh, the same value broadcast many times, and one timeout cutting somebody else's query. Unified Monitoring, part two. Also in Korean and Japanese.",
-          tags: ["Admin Console", "Performance", "Concurrency", "Method"]
+          tags: ["IaaS Backend", "Performance", "Concurrency", "Method"]
         },
         {
           title: "The Screen I Found No Case to Fix Took 6.8 Seconds",
@@ -356,7 +356,7 @@
           desc_ja: "モニタリング画面 3 つをレビューして「直す根拠が見つからなかった」と公開したのに、同じ画面の最初のデータが 6.8 秒でした。私は REST の応答を測り、利用者は SSE の最初の data を待っていました。リクエスト経路から計算を外すと、三画面とも約 23ms になりました。連載「統合モニタリング」①。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "I reviewed three monitoring screens, published that there was no case for a change, and first data on the same screen took 6.8 seconds. I had measured the REST response while users waited for the first SSE data event. Taking the computation off the request path brought all three screens to about 23 ms. Unified Monitoring, part one. Also in Korean and Japanese.",
-          tags: ["Admin Console", "Performance", "Method", "Verification"]
+          tags: ["IaaS Backend", "Performance", "Method", "Verification"]
         },
         {
           title: "I Pinned the Declared Load Conditions Across Six Runs",
@@ -368,7 +368,7 @@
           desc_ja: "構成 6 通りを比べるには同じ条件で 6 回まわす必要があります。負荷条件を定数に移して JMX を生成する Harness を書きました。ところが結果ファイルが 1 つもなくても実行スクリプトは「完了」と出して 0 で終わり、どの回がどの構成だったかは道具の外にしか残りませんでした。連載「遅い画面」⑧、最終編。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "Comparing six configurations means six runs under the same conditions. I moved the load conditions into constants and generated the JMX from them. Then I found the run script printing a completion message and exiting zero with no result files at all, and nothing in the output naming which run was which. Slow Screens, part eight and last. Also in Korean and Japanese.",
-          tags: ["Admin Console", "Performance", "Tooling", "Method"]
+          tags: ["IaaS Backend", "Performance", "Tooling", "Method"]
         },
         {
           title: "A Performance Review That Found No Case to Change Anything",
@@ -380,7 +380,7 @@
           desc_ja: "モニタリング画面 3 つをレビューしましたが、新しく最適化する根拠が見つかりませんでした。Cache を足そうとした場所は削れるものが小さく、過剰に見えた設定 1 つはグラフのちらつきを防いでいました。負荷試験は回しておらず、なぜ回さなかったのかも書きます。連載「遅い画面」⑦。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "I reviewed three monitoring screens and found no case for a new optimisation. Where a cache would have gone there was little to save, and a setting that looked excessive was keeping the graph from flickering. I never ran a load test, and the article says why. Slow Screens, part seven. Also in Korean and Japanese.",
-          tags: ["Admin Console", "Performance", "Method"]
+          tags: ["IaaS Backend", "Performance", "Method"]
         },
         {
           title: "Pre-fetching Everything and Polling a Ten-Second Query Blocked the Dialog",
@@ -392,7 +392,7 @@
           desc_ja: "ボタンを押してもダイアログが開かず、ローディングだけが回っていました。開発者ツールには未完了のリクエストが 4 件。一覧の取得に 10 秒以上かかるのに画面は 5 秒ごとに取り直し、ダイアログが開いているあいだも止まりませんでした。そしてその 5 秒が Backend Cache の判断の根拠になりました。連載「遅い画面」⑥。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "Clicking the create button left the dialog spinning. DevTools showed four requests still pending. The list query took over ten seconds while the screen re-fetched it every five, and kept doing so while the dialog was open — and those five seconds became the reason behind a backend cache setting. Slow Screens, part six. Also in Korean and Japanese.",
-          tags: ["Admin Console", "Frontend", "Performance", "Method"]
+          tags: ["IaaS Backend", "Frontend", "Performance", "Method"]
         },
         {
           title: "A Monitoring Screen's Initial Load Authenticated Once Per Project",
@@ -404,7 +404,7 @@
           desc_ja: "時系列グラフを描く画面なのでクエリを疑いましたが違いました。初期ロードがプロジェクトごとに Client を作り直しており、使っていたファクトリは Client を渡すたびに Keystone へ認証します。ただしこの記事には前後を測った数値がありません。なぜ無いのかが記事の半分です。連載「遅い画面」④。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "It draws time-series graphs, so the query looked like the suspect. It was not. The initial load built a new client per project, and that factory authenticates to Keystone every time it hands one out. This article has no before-and-after numbers, and why it does not is half the story. Slow Screens, part four. Also in Korean and Japanese.",
-          tags: ["Admin Console", "Performance", "Backend", "Method"]
+          tags: ["IaaS Backend", "Performance", "Backend", "Method"]
         },
         {
           title: "A Project Role Lookup: 1,409 ms → 1 ms",
@@ -416,7 +416,7 @@
           desc_ja: "画面にはすでに Cache があり、その Cache のせいで遅くなっていました。解決できた 8 行はすべて 0ms、できなかった 6 行を足すと 1,409ms でタイマーの合計と同じでした。解決できないたびにプロジェクト全件を取り直しており、その 6 つの id は取り直しても存在しません。連載「遅い画面」③。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "The screen already had a cache, and the cache was why it was slow. The eight rows that resolved cost 0 ms; the six that did not sum to 1,409 ms, the whole recorded span. Every failed lookup refetched the entire project list, and those six ids were never in it. Slow Screens, part three. Also in Korean and Japanese.",
-          tags: ["Admin Console", "Performance", "Backend", "Method"]
+          tags: ["IaaS Backend", "Performance", "Backend", "Method"]
         },
         {
           title: "Listing Instances: 54 Seconds → One",
@@ -428,7 +428,7 @@
           desc_ja: "Instance は 20 個なのに一覧が Timeout しました。同じ取得を CLI で実行しても 54 秒で、コードが容疑から外れました。Swap が 8.0GiB すべて埋まり、instances テーブルには削除の印だけが付いた行が 1,021 件。そして私が使ったコマンドは本番で使ってはいけないものでした。連載「遅い画面」②。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "Twenty instances, and the list screen timed out. The same query from the CLI also took 54 seconds, which ruled the application code out. Swap was full and the instances table held 1,021 rows only marked deleted. The commands that fixed it are not ones to run in production, and this article says so. Slow Screens, part two. Also in Korean and Japanese.",
-          tags: ["Admin Console", "Performance", "Backend", "Method"]
+          tags: ["IaaS Backend", "Performance", "Backend", "Method"]
         },
         {
           title: "A Volume List: Ten-Minute Timeout → 23 ms",
@@ -440,7 +440,7 @@
           desc_ja: "管理ボリューム一覧が 6 回に 5 回 Timeout しました。直したあと構成を 6 通りに分けて同じ負荷で測ると、秒を最も減らしたのは Cache 1 つで、並列化は中央値と裾を逆方向に動かしました。連載「遅い画面」①。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "An admin volume list timed out five runs out of six. Measured across six configurations under the same load: one cache bought the largest drop in seconds, and parallelising moved the median and the tail in opposite directions. Slow Screens, part one. Also in Korean and Japanese.",
-          tags: ["Admin Console", "Performance", "Backend", "Method"]
+          tags: ["IaaS Backend", "Performance", "Backend", "Method"]
         },
         {
           title: "Going Parallel Made the Volume List p99 Twice as Bad",
@@ -452,7 +452,7 @@
           desc_ja: "キャッシュ設定を固定したまま逐次を並列に変えると、p99 が 42.6 秒から 79.0 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンがロックされる。6 構成を同条件で測って初めて見えたこと。連載「遅い画面」⑤。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "With the cache held fixed, going parallel took p99 from 42.6s to 79.0s. An external call inside computeIfAbsent, and the six-configuration test that made it visible. Slow Screens, part five. Also in Korean and Japanese.",
-          tags: ["Admin Console", "Performance", "Method"]
+          tags: ["IaaS Backend", "Performance", "Method"]
         },
         {
           title: "Reclaim Admitted the Owner in 120 ms. The Device Came 10 Seconds Later.",
@@ -460,7 +460,7 @@
           source: "side", sourceLabel: "Personal project",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "A tenant GPU budget declared once and enforced where the work is admitted. Kueue reclaim measured both ways on one ledger: 0 wasted GPU-seconds against 39.3, and what the admission figure turned out not to mean. English only.",
-          tags: ["GPU Control Plane", "Kubernetes", "GPU", "Design"]
+          tags: ["GPUaaS Control Plane", "Kubernetes", "GPU", "Design"]
         },
         {
           title: "A Stopped Kubelet Quarantined the Node in 46 Seconds",
@@ -468,7 +468,7 @@
           source: "side", sourceLabel: "Personal project",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "Node readiness as an explicit CRD phase rather than an operational assumption. Observation first, then one taint, and four things declined on purpose. English only.",
-          tags: ["GPU Control Plane", "Kubernetes", "GPU", "Observability"]
+          tags: ["GPUaaS Control Plane", "Kubernetes", "GPU", "Observability"]
         },
         {
           title: "Thirteen Write-Ups, and Two Results That Came Out Backwards",
@@ -476,7 +476,7 @@
           source: "company", sourceLabel: "Company work",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "Four screens that each looked like a slow query and were not, six configurations measured one at a time, and the two results that came out the opposite way round from what the review expected. English only.",
-          tags: ["Admin Console", "Performance", "Backend", "Method"]
+          tags: ["IaaS Backend", "Performance", "Backend", "Method"]
         },
         {
           title: "Ten Bugs, Zero Failed Tests",
@@ -484,7 +484,7 @@
           source: "side", sourceLabel: "Personal project",
           date: "2026-08", dateLabel: "Aug 2026",
           desc: "Control-plane verification on a Kubernetes GPU operator. What each defect broke, how it was found, and the guard that now holds it.",
-          tags: ["GPU Control Plane", "Kubernetes", "Observability", "GPU"]
+          tags: ["GPUaaS Control Plane", "Kubernetes", "Observability", "GPU"]
         }
       ]
     },

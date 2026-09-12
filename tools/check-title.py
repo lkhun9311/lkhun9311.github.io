@@ -6,10 +6,11 @@
 부제가 「…하나만 고칩니다. 출시 전 소셜 투표 플랫폼 점검」 꼴이었다. 뒤쪽은 서술어가 없어
 문장이 아니고, 문장 뒤에 그냥 붙어 있어 부제로 읽히지 않는다.
 
-  1) 모든 글에 `<div class="hero-tag">#프로젝트</div>` 와 `<h1>제목<br><span class="h1-sub">…</span></h1>`
+  1) 모든 글에 머리의 `<a class="project-tag">#프로젝트</a>` 와
+     `<h1>제목<br><span class="h1-sub">…</span></h1>`
   2) 부제는 **문장으로 끝난다** — 한국어는 `다.`/`요.`, 영어는 `.`, 일본어는 `。`
   3) 부제 안에 맥락 표지가 다시 들어 있으면 안 된다 (‘사내 …’·‘A personal project…’)
-  4) 프로젝트 태그는 **하나**이고 `#` 으로 시작하며 안에 빈칸이 없다
+  4) 프로젝트 태그는 **하나**이고 `#` 으로 시작한다
   5) 태그가 `<a>` 면 가리키는 파일이 실제로 있어야 한다 — 누를 수 있게 보이면 눌린다
 """
 import glob
@@ -45,18 +46,18 @@ def main():
         n += 1
         h = m.group(1)
         sub = re.search(r'<span class="h1-sub">(.*?)</span>', h, re.S)
-        ctx = re.search(r'<div class="hero-tag[^"]*">(.*?)</div>', s, re.S)
+        ctx = re.search(r'<div class="article-meta">(.*?)</div>', s, re.S)
         if not ctx:
-            bad.append("%s: 프로젝트 태그(hero-tag)가 없다" % b)
+            bad.append("%s: 머리(article-meta)가 없다" % b)
             continue
-        chips = re.findall(r'<(a|span) class="h1-tag"[^>]*>(.*?)</\1>', ctx.group(1), re.S)
+        chips = re.findall(r'<(a) class="project-tag[^"]*"[^>]*>(.*?)</\1>', ctx.group(1), re.S)
         if len(chips) != 1:
             bad.append("%s: 프로젝트 태그가 하나가 아니다 — %d개" % (b, len(chips)))
         for kind, txt in chips:
             t = re.sub(r"<[^>]+>", "", txt).strip()
-            if not t.startswith("#") or " " in t:
+            if not t.startswith("#"):
                 bad.append("%s: 태그 꼴이 아니다 — 「%s」" % (b, t))
-        for href in re.findall(r'<a class="h1-tag" href="([^"]+)"', ctx.group(1)):
+        for href in re.findall(r'<a class="project-tag[^"]*" href="([^"]+)"', ctx.group(1)):
             # ⚠️ 물음표 뒤를 떼고 파일을 본다. 안 떼면 `index.html?tag=X` 가 「없는 파일」이 된다.
             path, _, query = href.partition("?")
             tgt = os.path.normpath(os.path.join(os.path.dirname(p), path))
