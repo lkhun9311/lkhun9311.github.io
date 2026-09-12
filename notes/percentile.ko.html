@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>p50 · p95 · p99 란? | Kwanghun Lee</title>
+  <title>Percentile | Kwanghun Lee</title>
   <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/notes/percentile.html" />
   <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/notes/percentile.ko.html" />
   <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/notes/percentile.ja.html" />
@@ -13,14 +13,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
   <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
-  <meta name="description" content="응답시간을 줄 세웠을 때 특정 위치의 값. p95는 5%가 그보다 느렸다는 뜻입니다." />
+  <meta name="description" content="값을 줄 세웠을 때 특정 자리에 있는 값. p99는 100건 중 99건이 그보다 빨랐다는 뜻입니다." />
   <meta property="og:type" content="article" />
   <meta property="og:locale" content="ko_KR" />
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="p50 · p95 · p99 란? | Kwanghun Lee" />
-  <meta property="og:description" content="응답시간을 줄 세웠을 때 특정 위치의 값. p95는 5%가 그보다 느렸다는 뜻입니다." />
+  <meta property="og:title" content="Percentile" />
+  <meta property="og:description" content="값을 줄 세웠을 때 특정 자리에 있는 값. p99는 100건 중 99건이 그보다 빨랐다는 뜻입니다." />
   <meta property="og:locale" content="ko_KR" />
   <link rel="stylesheet" href="../assets/styles.css?v=557c3ff3d7" />
 </head>
@@ -70,45 +70,105 @@
         <nav class="article-toc" aria-label="목차">
           <p class="toc-label">목차</p>
           <ul>
-            <li><a href="#평균">왜 평균을 안 쓰나</a></li>
-            <li><a href="#계산">계산 방식이 두 가지입니다</a></li>
-            <li><a href="#어디">어디를 봐야 하나</a></li>
+            <li><a href="#무엇">무엇인가요?</a></li>
+            <li><a href="#원리">어떻게 만들어지나요?</a></li>
+            <li><a href="#왜">왜 평균 대신 쓰나요?</a></li>
+            <li><a href="#다음">다음에 볼 것</a></li>
           </ul>
         </nav>
       <article class="article-body">
 
-        <p class="term-oneline">응답시간을 <strong>느린 순으로 줄 세웠을 때 특정 위치의 값</strong>입니다. p95 = 100건 중 95번째로 빠른 요청의 시간, 즉 <strong>5%는 이보다 느렸다</strong>는 뜻입니다.</p>
+        <p><strong>백분위(Percentile)는 값을 줄 세웠을 때 특정 자리에 있는 값입니다.</strong>
+        p99는 앞에서 99%가 되는 자리의 값이고 100건 중 99건이 그보다 빨랐다는 뜻입니다.</p>
 
+        <h2 id="무엇">무엇인가요?<a class="anchor" href="#무엇" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <h2 id="평균">왜 평균을 안 쓰나<a class="anchor" href="#평균" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>평균은 <strong>소수의 아주 느린 요청을 숨깁니다.</strong> 100건 중 99건이 5ms이고 1건이 6s면
-        평균은 65ms입니다. "65ms면 괜찮네"로 읽히지만 실제로는 <strong>100명 중 한 명이 6s를 기다린</strong> 것입니다.</p>
+        <p>응답 시간을 잴 때 가장 먼저 나오는 숫자는 평균입니다. 평균은 전부 더해서 개수로 나눈
+        값입니다. 그런데 그 값을 실제로 겪은 사람은 없을 수도 있습니다.</p>
 
-        <p>그 한 명은 매번 다른 사람이고 요청을 여러 번 하는 사용자는 결국 그 구간을 만납니다. 그래서 사용자 경험은
-        평균이 아니라 꼬리(tail)가 정합니다.</p>
-        <h2 id="계산">계산 방식이 두 가지입니다<a class="anchor" href="#계산" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>같은 데이터로도 도구마다 p95가 다르게 나옵니다. 정의가 다르기 때문입니다.</p>
+        <p>백분위는 다릅니다. 값을 작은 것부터 줄 세우고 그중 한 자리를 가리킵니다. p50은 한가운데,
+        p95는 앞에서 95%, p99는 앞에서 99% 자리입니다. <strong>고른 값이므로 그 값을 낸 요청이
+        실제로 있습니다.</strong></p>
 
-        <ul>
-          <li><strong>최근접 순위(nearest-rank)</strong>: 정렬된 표본에서 <code>ceil(0.95 × N)</code> 번째 값을 그냥 씁니다.
-          항상 <strong>실제로 관측된 값</strong>이 나옵니다.</li>
-          <li>선형 보간: 이웃한 두 값 사이를 비례로 채웁니다. 관측되지 않은 값이 나올 수 있습니다.</li>
+                <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="pc-t pc-d" class="figure-svg">
+            <title id="pc-t">백분위가 만들어지는 순서</title>
+            <desc id="pc-d">왼쪽부터 상자가 넷, 회색 화살표로 이어집니다. 첫째는 요청마다 걸린 시간을 모으는 것, 둘째는 그 값을 작은 것부터 줄 세우는 것, 셋째는 앞에서 99%가 되는 자리를 고르는 것, 넷째는 그 자리의 값이 p99라는 것입니다. 아래에 분홍색으로 평균과 달리 실제로 있었던 한 요청의 값이라고 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">모은다</text>
+              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">요청마다 걸린 시간</text>
+              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#pc-a)"/>
+              <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">줄 세운다</text>
+              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">작은 것부터</text>
+              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#pc-a)"/>
+              <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">자리를 고른다</text>
+              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">앞에서 99%</text>
+              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#pc-a)"/>
+              <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">그 값이 p99</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">실제로 있던 값</text>
+              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">평균과 달리 실제로 있었던 한 요청의 값</text>
+            </g>
+            <defs>
+              <marker id="pc-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>백분위는 계산해서 만든 값이 아니라 줄에서 고른 값입니다. 그래서 그 값을 낸 요청이 실제로 있습니다.</figcaption>
+        </figure>
+
+        <h2 id="원리">어떻게 만들어지나요?<a class="anchor" href="#원리" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>네 단계입니다. 요청마다 걸린 시간을 모으고 작은 것부터 줄 세우고 원하는 자리를 고르고
+        그 자리의 값을 읽습니다.</p>
+
+        <p>세 번째 단계에 선택이 하나 숨어 있습니다. 표본이 20건일 때 99% 자리는 19.8번째인데
+        19.8번째 값은 없습니다. <strong>그 자리를 어떻게 정하느냐가 도구마다 다릅니다.</strong>
+        그 이야기는 <a href="percentile-calc.ko.html">계산 방식이 두 가지입니다</a>에 있습니다.</p>
+
+                <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="avg-t avg-d" class="figure-svg">
+            <title id="avg-t">평균과 p99가 다른 것을 보는 이유</title>
+            <desc id="avg-d">왼쪽 상자는 평균이 보는 것, 오른쪽 상자는 p99가 보는 것입니다. 왼쪽은 전부 더해서 개수로 나눈 값 하나이고 느린 것이 적으면 묻힙니다. 오른쪽은 줄의 99% 자리이고 100명 중 1명이 겪는 값입니다. 아래에 분홍색으로 100명 중 1명은 하루에도 여러 번이라고 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">평균</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">전부 더해 개수로 나눔</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">느린 것이 묻힘</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">아무도 안 겪은 값일 수 있음</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">p99</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">줄의 99% 자리</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">100명 중 1명이 겪음</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">실제로 있던 값</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">100명 중 1명은 하루에도 여러 번</text>
+            </g>
+          </svg>
+          <figcaption>요청이 하루 100만 건이면 p99 바깥은 1만 건입니다. 드문 값이 아니라 매일 있는 값입니다.</figcaption>
+        </figure>
+
+        <h2 id="왜">왜 평균 대신 쓰나요?<a class="anchor" href="#왜" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>평균은 느린 것을 묻습니다. 요청 100건 중 99건이 10ms이고 1건이 10s면 평균은 약 110ms입니다.
+        화면은 대부분 빠른데 평균만 보면 전부 조금씩 느린 것처럼 보입니다. 반대로 느린 1건은
+        평균 안에 숨습니다.</p>
+
+        <p>그리고 그 1건은 드물지 않습니다. 요청이 하루 100만 건이면 p99 바깥은 1만 건입니다.
+        <strong>같은 사람이 하루에 여러 번 겪습니다.</strong></p>
+
+        <h2 id="다음">다음에 볼 것<a class="anchor" href="#다음" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li><a href="percentile-average.ko.html">왜 평균을 안 쓰나</a> · 평균이 무엇을 숨기는지 숫자로</li>
+          <li><a href="percentile-calc.ko.html">계산 방식이 두 가지입니다</a> · 같은 데이터에서 다른 p99가 나오는 이유</li>
+          <li><a href="percentile-where.ko.html">어디를 봐야 하나</a> · p50·p95·p99 중 무엇을 볼 것인가</li>
         </ul>
 
-        <p>둘을 섞어 비교하면 정의가 다른 값을 견주게 됩니다. 그래서 요약기는 한 가지만 쓰고 그 사실을 출력에
-        같이 적습니다. 예: 표본이 1..20일 때 최근접 순위 p95는 <code>ceil(19) = 19</code> 번째 값 = 19입니다.</p>
-        <h2 id="어디">어디를 봐야 하나<a class="anchor" href="#어디" aria-label="이 절로 가는 링크">#</a></h2>
-        <p><strong>p50은 "보통 이렇다", p95·p99는 "나쁠 때 이렇다"</strong>입니다. 둘을 같이 봐야 합니다.</p>
-
-        <p>p50과 p95가 거의 같으면 시스템이 안정적입니다(모든 요청이 비슷하게 처리됨).
-        p50은 낮은데 p95가 훨씬 크면 대기열이 있다는 신호입니다. 대부분은 빨리 처리되지만 일부가
-        줄을 서고 있는 것입니다.</p>
-
-        <p>실제 예: Connection Pool이 고갈된 실행에서 피드 조회 p50이 4ms에서 6,047ms로 갔는데
-        <strong>오류율은 0%</strong>였습니다. 실패가 아니라 대기였기 때문입니다. 오류율만 보면
-        아무 문제가 없어 보입니다.</p>
-
-        </article>
+      </article>
     </main>
     <footer class="notranslate">
       <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
@@ -118,7 +178,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e7c9698ad3"></script>
-  <script src="../assets/content.js?v=80bb8a3b40"></script>
+  <script src="../assets/content.js?v=80892ebc27"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

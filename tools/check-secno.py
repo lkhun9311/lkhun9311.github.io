@@ -47,7 +47,16 @@ def main():
                 p = "notes/%s%s.html" % (slug, suf)
                 if not mm or not os.path.exists(p):
                     continue
-                ids = re.findall(r'\["([^"]*)","[^"]*"\]', mm.group(1))
+                # 셋째 칸이 1이면 **쪽 목록**이라 본문 절과 견줄 것이 아니다.
+                # 그때는 그 쪽들이 실제로 있는지만 본다.
+                items = re.findall(r'\["([^"]*)","(?:[^"]|\\")*",(\d)\]', mm.group(1))
+                if items and items[0][1] == "1":
+                    for sub, _ in items:
+                        q = "notes/%s%s.html" % (sub, suf)
+                        if not os.path.exists(q):
+                            bad.append("%s: 나무가 없는 쪽을 가리킨다 — %s" % (slug, q))
+                    continue
+                ids = [x for x, _ in items]
                 a = re.search(r"<article.*?</article>",
                               io.open(p, encoding="utf-8").read(), re.S)
                 body = re.findall(r'<h2 id="([^"]+)"', a.group(0)) if a else []

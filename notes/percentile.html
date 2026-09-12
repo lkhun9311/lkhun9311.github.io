@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>What are p50 · p95 · p99? | Kwanghun Lee</title>
+  <title>Percentile | Kwanghun Lee</title>
   <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/notes/percentile.html" />
   <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/notes/percentile.ko.html" />
   <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/notes/percentile.ja.html" />
@@ -13,14 +13,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
   <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
-  <meta name="description" content="The value at one position once the response times are lined up. p95 means 5% were slower." />
+  <meta name="description" content="The value at a given position once the values are sorted. p99 means 99 of every 100 requests were faster." />
   <meta property="og:type" content="article" />
   <meta property="og:locale" content="en_US" />
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="What are p50 · p95 · p99? | Kwanghun Lee" />
-  <meta property="og:description" content="The value at one position once the response times are lined up. p95 means 5% were slower." />
+  <meta property="og:title" content="Percentile" />
+  <meta property="og:description" content="The value at a given position once the values are sorted. p99 means 99 of every 100 requests were faster." />
   <meta property="og:locale" content="ko_KR" />
   <link rel="stylesheet" href="../assets/styles.css?v=557c3ff3d7" />
 </head>
@@ -70,44 +70,104 @@
         <nav class="article-toc" aria-label="Contents">
           <p class="toc-label">Contents</p>
           <ul>
-            <li><a href="#평균">Why not the average</a></li>
-            <li><a href="#계산">There are two ways to compute it</a></li>
-            <li><a href="#어디">Which one to read</a></li>
+            <li><a href="#무엇">What it is</a></li>
+            <li><a href="#원리">How it is produced</a></li>
+            <li><a href="#왜">Why not the average</a></li>
+            <li><a href="#다음">Where to go next</a></li>
           </ul>
         </nav>
       <article class="article-body">
 
-        <p class="term-oneline"><strong>The value at one position once the response times are lined up</strong>. p95 is the time of the 95th fastest request out of 100, which is to say <strong>5% were slower than this</strong>.</p>
+        <p><strong>A percentile is the value at a given position once the values are sorted.</strong>
+        p99 is the value at the position 99% of the way along: 99 of every 100 requests were faster.</p>
 
+        <h2 id="무엇">What it is<a class="anchor" href="#무엇" aria-label="Link to this section">#</a></h2>
 
-        <h2 id="평균">Why not the average<a class="anchor" href="#평균" aria-label="Link to this section">#</a></h2>
-        <p>An average <strong>hides the few very slow requests.</strong> If 99 of 100 take 5 ms and one takes 6 seconds,
-        the average is 65 ms. That reads as "65 ms, fine", when in fact <strong>one person in a hundred waited six seconds</strong>.</p>
+        <p>The first number anyone reaches for on response time is the average: everything added up and
+        divided by the count. Nobody may have actually experienced that value.</p>
 
-        <p>That one person is a different person each time, and a user who makes several requests eventually meets that
-        stretch. So the experience is set by the tail, not the average.</p>
-        <h2 id="계산">There are two ways to compute it<a class="anchor" href="#계산" aria-label="Link to this section">#</a></h2>
-        <p>The same data gives a different p95 in different tools, because the definitions differ.</p>
+        <p>A percentile is different. The values are sorted smallest first and one position is pointed
+        at. p50 is the middle, p95 is 95% along, p99 is 99% along. <strong>Because it is chosen rather
+        than computed, a request that produced it exists.</strong></p>
 
-        <ul>
-          <li><strong>Nearest-rank</strong> — take the <code>ceil(0.95 × N)</code>-th value of the sorted sample as it is.
-          The result is always <strong>a value that was actually observed</strong>.</li>
-          <li>Linear interpolation — fill between the two neighbouring values proportionally. The result may be a value never observed.</li>
+                <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="pc-t pc-d" class="figure-svg">
+            <title id="pc-t">How a percentile is produced</title>
+            <desc id="pc-d">Four boxes run left to right, joined by grey arrows: collect the time each request took, sort them smallest first, pick the position 99% of the way along, and read the value there. A pink line underneath says that unlike an average it is a value some request actually had.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">collect</text>
+              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">time per request</text>
+              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#pc-a)"/>
+              <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">sort</text>
+              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">smallest first</text>
+              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#pc-a)"/>
+              <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">pick a position</text>
+              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">99% along</text>
+              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#pc-a)"/>
+              <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">that is p99</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">a value that existed</text>
+              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">Unlike an average, a value some request actually had</text>
+            </g>
+            <defs>
+              <marker id="pc-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>A percentile is not computed, it is chosen from the line. So a request that produced it exists.</figcaption>
+        </figure>
+
+        <h2 id="원리">How it is produced<a class="anchor" href="#원리" aria-label="Link to this section">#</a></h2>
+
+        <p>Four steps: collect the time each request took, sort them, pick the position, read the value.</p>
+
+        <p>A choice hides in the third step. With 20 samples the 99% position is the 19.8th, and there is
+        no 19.8th value. <strong>How that position is settled differs between tools.</strong> That is in
+        <a href="percentile-calc.html">There are two ways to compute it</a>.</p>
+
+                <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="avg-t avg-d" class="figure-svg">
+            <title id="avg-t">What an average sees and what p99 sees</title>
+            <desc id="avg-d">The left box is what an average sees, the right box what p99 sees. Left: everything added and divided by the count, so slow cases are buried. Right: the 99% position in the line, the value one person in a hundred meets. A pink line underneath says one in a hundred is several times a day.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">average</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">added up, divided by count</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">slow cases get buried</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">may be a value nobody met</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">p99</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">the 99% position</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">one person in a hundred</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">a value that existed</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">One in a hundred is several times a day</text>
+            </g>
+          </svg>
+          <figcaption>At a million requests a day, beyond p99 is ten thousand requests. Not rare; daily.</figcaption>
+        </figure>
+
+        <h2 id="왜">Why not the average<a class="anchor" href="#왜" aria-label="Link to this section">#</a></h2>
+
+        <p>An average buries the slow ones. With 99 requests at 10ms and one at 10s the average is about
+        110ms. Most of the screen is fast, and the average makes all of it look slightly slow; meanwhile
+        the one slow request disappears inside it.</p>
+
+        <p>And that one is not rare. At a million requests a day, beyond p99 is ten thousand requests.
+        <strong>The same person meets it several times a day.</strong></p>
+
+        <h2 id="다음">Where to go next<a class="anchor" href="#다음" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li><a href="percentile-average.html">Why not the average</a> · what an average hides, in numbers</li>
+          <li><a href="percentile-calc.html">There are two ways to compute it</a> · why one dataset gives two p99s</li>
+          <li><a href="percentile-where.html">Which one to read</a> · choosing between p50, p95 and p99</li>
         </ul>
 
-        <p>Mix the two and you are comparing values with different definitions. So the summariser uses one and
-        prints which one it used. For a sample of 1..20, nearest-rank p95 is the <code>ceil(19) = 19</code>th value = 19.</p>
-        <h2 id="어디">Which one to read<a class="anchor" href="#어디" aria-label="Link to this section">#</a></h2>
-        <p><strong>p50 says "this is normal"; p95 and p99 say "this is what bad looks like".</strong> You need both.</p>
-
-        <p>When p50 and p95 are close the system is steady — every request is handled much the same.
-        A low p50 with a far larger p95 is the signature of a queue: most are served quickly and some are standing in line.</p>
-
-        <p>A real example: in a run where the connection pool was exhausted, the feed read went from a p50 of 4 ms to 6,047 ms
-        while the <strong>error rate stayed at 0%</strong>. It was waiting, not failing. Read the error rate alone
-        and nothing looks wrong.</p>
-
-        </article>
+      </article>
     </main>
     <footer class="notranslate">
       <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
@@ -117,7 +177,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e7c9698ad3"></script>
-  <script src="../assets/content.js?v=80bb8a3b40"></script>
+  <script src="../assets/content.js?v=80892ebc27"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

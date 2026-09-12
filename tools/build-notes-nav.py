@@ -17,6 +17,8 @@ import re
 import sys
 
 SKIP = {"index", "tags", "engineering", "study-reading"}
+# 01 쪽의 이름 — 나무에서 개요 쪽을 가리키는 말
+OVERVIEW = {"ko": "개요", "en": "Overview", "ja": "概要"}
 SUFFIX = {"ko": ".ko.html", "ja": ".ja.html", "en": ".html"}
 # 「이 사이트에서 쓰인 곳」·「함께 볼 용어」는 어느 용어에나 있는 꼬리다 — 트리에 넣지 않는다.
 TAIL = re.compile(r"(이 사이트에서 쓰인 곳|함께 볼 용어"
@@ -34,7 +36,21 @@ def slugs():
     return sorted(out)
 
 
-def sections(path):
+def subpages(path):
+    """개요 쪽 맨 아래 「다음에 볼 것」 목록이 하위 쪽의 순서를 정한다."""
+    s = io.open(path, encoding="utf-8").read()
+    m = re.search(r"<article.*?</article>", s, re.S)
+    if not m:
+        return []
+    order = []
+    for a in re.finditer(r'<li><a href="([a-z0-9-]+)(?:\.(?:ko|ja))?\.html">', m.group(0)):
+        if a.group(1) not in order:
+            order.append(a.group(1))
+    return order
+
+
+def anchors(path):
+    """아직 안 쪼갠 용어는 자기 절을 앵커로 담는다."""
     s = io.open(path, encoding="utf-8").read()
     m = re.search(r"<article.*?</article>", s, re.S)
     if not m:
@@ -42,9 +58,7 @@ def sections(path):
     out = []
     for h in re.finditer(r'<h2 id="([^"]+)"[^>]*>(.*?)</h2>', m.group(0), re.S):
         t = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", h.group(2))).strip().rstrip("#").strip()
-        if TAIL.search(t):
-            continue
-        out.append([h.group(1), t])
+        out.append([h.group(1), t, 0])
     return out
 
 
@@ -55,13 +69,23 @@ def title_of(path):
 
 
 def build():
+    """쪼갠 용어는 쪽 목록, 아직 안 쪼갠 용어는 절 앵커."""
     nav = {}
-    for sl in slugs():
+    allslugs = set(slugs())
+    bases = [x for x in allslugs if not any(x.startswith(o + "-") for o in allslugs if o != x)]
+    for sl in sorted(bases):
         e = {}
         for lang, suf in SUFFIX.items():
             p = "notes/%s%s" % (sl, suf)
-            if os.path.exists(p):
-                e[lang] = {"title": title_of(p), "sections": sections(p)}
+            if not os.path.exists(p):
+                continue
+            subs = [x for x in subpages(p) if os.path.exists("notes/%s%s" % (x, suf))]
+            if subs:
+                pages = [[sl, OVERVIEW[lang], 1]]
+                pages += [[x, title_of("notes/%s%s" % (x, suf)), 1] for x in subs]
+            else:
+                pages = anchors(p)
+            e[lang] = {"title": title_of(p), "sections": pages}
         if e:
             nav[sl] = e
     return nav
