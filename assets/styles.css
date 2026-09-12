@@ -2613,15 +2613,28 @@ html[lang="ja"] .container.reading .article-body .table-note::before {
 /* 절 번호. 목차의 `toc` 카운터와 같은 것을 세므로 두 자리의 숫자가 언제나 같다. */
 .container.reading .article-body h2 { counter-increment: sec; }
 
+/* 번호는 제목과 **같은 줄 왼쪽**에 둔다(사용자 지시, 2026-09-12).
+   윗줄에 두면 절마다 줄이 하나씩 늘고, 제목과 번호 사이에 빈칸이 생겨 둘이 따로 읽힌다.
+   제목이 두 줄로 접혀도 둘째 줄이 번호 아래로 흘러들지 않게 번호 폭만큼 들여쓴다. */
+.container.reading .article-body h2 {
+  /* 번호 폭과 같은 값으로 매달아 쓴다 — 제목이 두 줄로 접혀도 둘째 줄이 번호 아래로 안 흘러든다.
+     ⚠️ 단위를 rem 으로 맞춘다. h2 의 em 은 1.62rem 이고 ::before 의 em 은 그보다 작아,
+     둘 다 em 으로 쓰면 번호 폭과 제목 시작 자리가 1rem 가까이 어긋난다. */
+  padding-left: 2.6rem;
+  text-indent: -2.6rem;
+}
+
 .container.reading .article-body h2::before {
   content: counter(sec, decimal-leading-zero);
-  display: block;
-  margin-bottom: 4px;
-  font-size: 0.82rem;
+  display: inline-block;
+  width: 2.6rem;
+  text-indent: 0;
+  font-size: 1rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   font-variant-numeric: tabular-nums;
   color: var(--muted, #7b7186);
+  vertical-align: 0.18em;
 }
 
 /* 맺음말 상자 안의 절 번호는 그 상자의 색을 따른다 — 상자 안에서 회색은 떠 보인다. */
