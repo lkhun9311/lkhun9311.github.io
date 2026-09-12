@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>履歴タブを作ってみたら履歴が残らない経路がありました | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/the-history-tab-that-had-a-hole.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/the-history-tab-that-had-a-hole.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/the-history-tab-that-had-a-hole.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/the-history-tab-that-had-a-hole.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="履歴タブを作ってみたら履歴が残らない経路がありました" />
+  <meta property="og:description" content="スナップショットスケジューラの実行履歴を画面に付けたのに、対象が消えて停止した実行は履歴が一行も残りませんでした。そして照会の失敗を対象無しと読み、一時的な障害が永久停止になりました。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/the-history-tab-that-had-a-hole.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="履歴タブを作ってみたら履歴が残らない経路がありました" />
+  <meta name="twitter:description" content="スナップショットスケジューラの実行履歴を画面に付けたのに、対象が消えて停止した実行は履歴が一行も残りませんでした。そして照会の失敗を対象無しと読み、一時的な障害が永久停止になりました。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="スナップショットスケジューラの実行履歴を画面に付けたのに、対象が消えて停止した実行は履歴が一行も残りませんでした。そして照会の失敗を対象無しと読み、一時的な障害が永久停止になりました。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=06b177b952" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"the-history-tab-that-had-a-hole.html","ko":"the-history-tab-that-had-a-hole.ko.html","ja":"the-history-tab-that-had-a-hole.ja.html"}'>
+          <option value="ja" selected>日本語</option>
+          <option value="en">English</option>
+          <option value="ko">한국어</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ戻る</a>
+        <div class="article-meta"><span class="source-tag company notranslate">会社の業務</span></div>
+      </div>
+      <section class="page-hero">
+        <div class="hero-tag notranslate"><a class="h1-tag" href="../writing/index.html?tag=Admin%20Console">#AdminConsole</a></div>
+        <h1>履歴タブを作ってみたら履歴が残らない経路がありました<br><span class="h1-sub">実行していないように見える実行には、履歴が一行も残りませんでした。</span></h1>
+        <p class="article-date">2026年9月</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="the-history-tab-that-had-a-hole"></aside>
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#想定読者">この記事の想定読者</a></li>
+            <li><a href="#一実行一行">実行一回を一行で残しました</a></li>
+            <li><a href="#穴">失敗を見せるために作った画面に穴がありました</a></li>
+            <li><a href="#無しと見られない">無しと見られないを分けていませんでした</a></li>
+            <li><a href="#メッセージから取らない">理由をメッセージから取り出しませんでした</a></li>
+            <li><a href="#矛盾する数">成功だけ数えて終わると数が矛盾します</a></li>
+            <li><a href="#六回書き直し">説明の文言を六回書き直しました</a></li>
+            <li><a href="#主張しないこと">この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
+          </ul>
+        </nav>
+      <article class="article-body">
+
+        <p>前の記事で、スナップショットスケジューラの失敗が画面まで届かないのを直しました。そのとき
+        失敗の理由と時刻は<a href="a-schedule-that-failed-in-silence.ja.html">あえてスケジュールの行に
+        入れず</a>、後回しにしました。一行に最後の失敗だけを残すと、その前に何があったかは結局ログに
+        しか残らないからです。</p>
+
+        <p>そこで実行一回を一行で残す履歴を作りました。成功・部分成功・失敗と理由を、詳細画面のタブで
+        新しい順に見ます。</p>
+
+        <p><strong>ところが作ったあとに見直すと、履歴が一行も残らない経路がありました。</strong>
+        失敗を見せるために作った画面に穴がありました。</p>
+
+        <h2 id="想定読者">この記事の想定読者<a class="anchor" href="#想定読者" aria-label="この節へのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>周期ジョブの実行履歴を画面に付けようとしている方</li>
+          <li>失敗の理由を例外メッセージから分類している方</li>
+          <li>部分的に成功しうるジョブで、成功数と全体数の数え方を決める必要がある方</li>
+        </ul>
+
+                <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="hole-t hole-d" class="figure-svg">
+            <title id="hole-t">履歴が一行も残らない経路</title>
+            <desc id="hole-d">左から箱が四つ、灰色の矢印でつながります。一つ目は実行開始、二つ目は対象確認で無しと判定、三つ目はスケジューラを停止して戻ること、四つ目は実行していないように見えて履歴が残らないことです。下にピンクで、対象が消えて止まったことを画面から知りようがないと書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">実行開始</text>
+              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">決めた時刻</text>
+              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#hole-a)"/>
+              <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">対象確認</text>
+              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">無しと判定</text>
+              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#hole-a)"/>
+              <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">停止</text>
+              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">stop して戻る</text>
+              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#hole-a)"/>
+              <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">履歴</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">一行も無し</text>
+              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">対象が消えて止まったことを画面から知れない状態</text>
+            </g>
+            <defs>
+              <marker id="hole-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>履歴タブは失敗を見せるために作りました。ところがこの経路は履歴自体を残しません。</figcaption>
+        </figure>
+
+        <h2 id="一実行一行">実行一回を一行で残しました<a class="anchor" href="#一実行一行" aria-label="この節へのリンク">#</a></h2>
+
+        <p>追加だけの表を一つ置き、バッチが実行ごとに一行書きます。結果は三つです。すべて確定すれば
+        成功、対象が複数あって一部だけ確定すれば部分成功、一つも作れなければ失敗です。</p>
+
+        <p>理由は二つの欄に分けました。一つは<strong>理由コード</strong>、もう一つは人が読む説明です。
+        コードがあるから画面が言語に合わせて翻訳でき、説明があるから同じコードの中で何が違ったかが
+        残ります。</p>
+
+        <p>履歴の保存はベストエフォートにしました。履歴を書けなかったからといってバックアップの
+        成功・失敗の判定が覆ってはいけません。記録する側が記録される側を変えたら、その記録はもう
+        証拠ではありません。</p>
+
+                <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="3st-t 3st-d" class="figure-svg">
+            <title id="3st-t">対象確認を二択で見るときと三択で見るとき</title>
+            <desc id="3st-d">左の箱は直す前、右の箱は直した後です。左は有りと無しの二択で、照会の例外も無しに落ちて永久停止かつ無記録です。右は有り・無し・確認失敗の三択で、無しなら記録して停止、確認失敗なら記録だけして次の周期に見直します。下にピンクで、無しと見られないを分けないと一時的な障害が永久停止になると書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">二択</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">有り / 無し</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">照会の例外も無しに</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">永久停止 + 無記録</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">三択</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">有り / 無し / 確認失敗</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">無しなら記録して停止</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">確認失敗なら記録だけ</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">無しと見られないを分けないと一時障害が永久停止になる状態</text>
+            </g>
+          </svg>
+          <figcaption>一度の照会失敗でスケジュールが二度と回らなくなります。そしてその事実がどこにも残りません。</figcaption>
+        </figure>
+
+        <h2 id="穴">失敗を見せるために作った画面に穴がありました<a class="anchor" href="#穴" aria-label="この節へのリンク">#</a></h2>
+
+        <p>バッチは実行を始めるとき、まず対象があるかを見ます。無ければスケジューラを停止して戻ります。
+        その上で履歴を書くコードは<strong>実行が回ったときだけ</strong>呼ばれます。だからこの経路は
+        実行していないように見えて、履歴が一行も残りません。</p>
+
+        <p>対象が消えてスケジューラが自ら止まるのは正しい動作です。問題はそれを画面から知れないことです。
+        スケジュールは止まっていて、なぜ止まったかはどこにもありません。</p>
+
+        <p>この欠陥は機能の目的に正面から反します。履歴タブはログにしか無かったものを画面へ上げるために
+        作ったのに、そのタブが見られない経路が残っていました。</p>
+
+        <h2 id="無しと見られない">無しと見られないを分けていませんでした<a class="anchor" href="#無しと見られない" aria-label="この節へのリンク">#</a></h2>
+
+        <p>同じ場所をさらに見て、その後ろにあるものを見つけました。対象があるかを見る関数が、照会に
+        失敗すると例外を飲み込んで<strong>無いと返していました。</strong></p>
+
+        <p>すると一度の一時的な照会エラーがスケジュールを永久に止めます。そしていま見たとおり、その
+        事実がどこにも残りません。二つの欠陥が重なると「ある日からバックアップが止まっているのに誰も
+        知らない」になります。</p>
+
+        <p>直し方は選択肢を一つ増やすことでした。有り・無し・確認失敗の三つで見て、無ければ履歴を書いて
+        停止し、確認に失敗したら履歴だけ書いて停止しません。次の周期にまた見ます。</p>
+
+        <p>三択に変えるのにコードは数行でした。難しかったのは二択では足りないと気づくことです。
+        関数の名前が有るか無いかを問うているので、三つ目の答えがあるという発想になりません。</p>
+
+                <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="rsn-t rsn-d" class="figure-svg">
+            <title id="rsn-t">失敗の理由を決める二つの方法</title>
+            <desc id="rsn-d">左の箱はメッセージ文字列で分類する方法、右の箱は失敗した場所でコードを付ける方法です。左は英語の原文をパターンで分け、文言が変わると静かにずれます。右は失敗したその場で理由コードを決め、原文は説明として別に置きます。下にピンクで、役割が見つからないを対象が無いと読み違えた例が書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">メッセージで分類</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">英語の原文をパターンで</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">文言が変わるとずれる</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">誤分類に気づけない</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">失敗地点で収集</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">その場で理由コード</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">原文は説明として別に</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">画面はコードを翻訳</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">役割が見つからないを対象が無いと読み違えた例</text>
+            </g>
+          </svg>
+          <figcaption>メッセージは人が読むために書いたものです。分岐の条件に使うために書いたものではありません。</figcaption>
+        </figure>
+
+        <h2 id="メッセージから取らない">理由をメッセージから取り出しませんでした<a class="anchor" href="#メッセージから取らない" aria-label="この節へのリンク">#</a></h2>
+
+        <p>理由を決める楽な方法は、例外メッセージを見て分類することです。クォータという語が入っていれば
+        クォータ、見つからないと書いてあれば対象無しと決めるやり方です。最初はそうしようとしてやめました。</p>
+
+        <p>反例がすぐ出ました。スナップショット専用ユーザーの権限を照会して出るエラーのメッセージにも
+        「見つからない」が入ります。それを対象無しと読むと、画面は<em>「対象のボリュームがありません」</em>と
+        言うのに、実際は権限の設定が抜けているだけです。運用者は無いボリュームを探しに行きます。</p>
+
+        <p>そこで理由は<strong>失敗したその場で</strong>コードとして付けました。クォータを確認して失敗した
+        場所でクォータのコードを、待って時間が過ぎた場所で時間切れのコードを付けます。準備段階のように
+        対象ごとの集計がそもそも無い失敗だけを、例外の型で分けました。</p>
+
+        <h2 id="矛盾する数">成功だけ数えて終わると数が矛盾します<a class="anchor" href="#矛盾する数" aria-label="この節へのリンク">#</a></h2>
+
+        <p>Instance 一つに複数のボリュームが付いていれば対象は複数です。だから成功数と全体数を一緒に
+        書きます。2/3 のように見えます。</p>
+
+        <p>ここに罠がありました。成功を先に数えて失敗を後で数える作りなので、成功をいくつか数えたところで
+        例外で抜けると<strong>成功 1・全体 1</strong> になります。画面には「1/1 部分成功」と出ます。
+        すべて成功したのに部分成功だと言うことになります。</p>
+
+        <p>集計されなかった失敗一件を反映して全体を一つ増やすように直しました。数を一つ足すだけの話ですが、
+        これをしないと画面が自分で矛盾する文を言います。</p>
+
+        <p>レビューで仮説が二つ棄却されました。一つ目は、成功の確定後に回る保存・整理のコードが失敗したとき
+        成功が部分成功として誤って記録される可能性です。それらのメソッドは全て内部で例外を飲んでいたので
+        そうはなりませんでした。二つ目は、Instance とボリュームを一緒に数えたときに重複する可能性です。
+        対象数と正確に一致していました。仮説はコードで確かめ、どちらも違いました。</p>
+
+        <h2 id="六回書き直し">説明の文言を六回書き直しました<a class="anchor" href="#六回書き直し" aria-label="この節へのリンク">#</a></h2>
+
+        <p>機能が動いたあとも、画面の説明の文言を六回書き直しました。最初の文言はこうでした。
+        <em>「対象ボリューム a7c21f3e…: ボリュームスナップショット available 時間超過」。</em></p>
+
+        <p>三つ誤っていました。識別子を先頭に置いて人が読むものを後ろへ押しやり、理由の欄にすでにある
+        言葉を説明の欄で繰り返し、英語の語がそのまま出ていました。</p>
+
+        <p>最後の文言は割り当て画面が使う用語に合わせました。
+        <em>「ボリュームスナップショット不足 (必要 1 個 / 残りの余裕 0 個)」。</em>同じものを二つの画面が
+        違う名前で呼ぶと、運用者はそれが同じものかどうかから確かめなければなりません。</p>
+
+        <p>カウントにも説明を付けました。2/3 の 3 は今回の実行で作ろうとしたスナップショットの数で、
+        保持数とは関係ありません。数字だけ置くと「保持 3 個のうち 2 個が残った」と読まれます。</p>
+
+        <h2 id="主張しないこと">この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="この節へのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>製品名・バージョン・顧客名・チケット番号・サーバーアドレスは書きません。画面の取り込みも
+          載せません。</li>
+          <li>この履歴の穴で、運用中にスケジュールが止まったまま放置されたことがあるかは分かりません。
+          コード経路としてありうるというところまでです。</li>
+          <li>検証はバッチの単体テスト 19 件とコントローラのスライステスト 3 件、そしてローカルでタブを
+          開いたところまでです。Instance の場合の画面確認は実際のバックアップではなく合成の履歴行を
+          入れて行いました。バッチのロジックはその表どおりに理由を作りますが、その経路を最後まで
+          回したわけではありません。</li>
+          <li>敵対的レビューを付けましたが、ファイルが大きく二度時間切れになり総合結論は得られませんでした。
+          途中の結論がここに書いたものと一致したところまでです。</li>
+          <li>残したものがあります。実行関数のレベルの統合履歴経路はモックが重く、まだ覆えていません。</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="この節へのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>見せるために作った機能にも、見えない場所があります。履歴を付けたら、履歴が残らない経路を
+          別に数えるべきです。</li>
+          <li>有るかを問う関数が、見られなかったとき何を返すかを確かめるべきです。無しに落ちると
+          一時的な障害が永久停止になります。</li>
+          <li>例外メッセージは人が読むために書いたものです。分岐に使うと、文言が変わる日に静かにずれます。</li>
+          <li>部分成功を数える画面は、分母が何かを一緒に書くべきです。数字だけ置くと読者が自分の分母を
+          作って読みます。</li>
+        </ul>
+
+        <p>失敗を画面に上げる仕事は、失敗を数える仕事より広いです。実行していないように見える実行が
+        あるかどうかまで見て、はじめて終わります。</p>
+
+        <p>お読みいただきありがとうございました。</p>
+        </div>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=07ce86b446"></script>
+  <script src="../assets/content.js?v=356806a2b1"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
