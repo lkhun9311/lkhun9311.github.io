@@ -451,8 +451,10 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
   → 앱 connection 1개당 DB connection 1개
   → connection pooler가 줄여 주는 게 없음</code></pre>
 
-        <p>Connection Pooler는 짧은 Transaction이 많을 때 값을 하는 도구입니다. 원인 ②인 상태에서
-        도입하면 돈을 쓰고도 아무것도 나아지지 않습니다. 사실 더 나쁜 건 그다음입니다.
+        <p>Connection Pooler는 짧은 Transaction이 많을 때 값을 하는 도구입니다. 이 Harness에는
+        Pooler를 붙인 Arm이 없어 직접 재지는 않았습니다. 다만 Transaction 하나가 살아 있는 동안
+        Backend Connection 하나가 묶이는 조건에서는 그 구간을 나눠 쓸 수가 없으므로 원인 ②인 상태로
+        도입하면 이 병목의 처리량은 그대로일 것으로 봤습니다. 사실 더 나쁜 건 그다음입니다.
         “이제 대비했다”고 믿게 됩니다. 그 믿음이 다음 점검을 막습니다.</p>
 
         <h2 id="순서가-있습니다">고칠 순서가 이미 정해져 있었습니다<a class="anchor" href="#순서가-있습니다" aria-label="이 절로 가는 링크">#</a></h2>
