@@ -100,7 +100,7 @@
         bottom shows which projects they belong to and in what role. That table was spinning for over a
         second.</p>
 
-        <p>The roles are in our own database, but the project names live on the OpenStack side — in
+        <p>The roles are in our own database, but the project names live on the OpenStack side, in
         Keystone, which owns users and projects. So every role row needs one project lookup, and that
         lookup already had a cache in front of it: the same CacheManager from part one, with a ten-minute
         retention. <strong>So this article is not “we added a cache and it got faster”. There was a
@@ -108,7 +108,7 @@
 
         <p>Hit-or-miss and elapsed time were already being logged for every lookup. Opening the log of a
         pre-fix run: of 14 role rows, eight were 0 ms and the remaining six were around 230 ms each.
-        Adding those six gives 1,409 ms — exactly the total the timer recorded for that run. That changed
+        Adding those six gives 1,409 ms, exactly the total the timer recorded for that run. That changed
         the question. Not “why is the cache not helping” but “why does one miss cost 235 ms”.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
