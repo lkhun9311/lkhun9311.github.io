@@ -79,6 +79,15 @@ def main():
         if mm:
             bad.append("%s: 부제 안에 맥락 표지가 다시 있다 — 「%s」" % (b, mm.group(0)))
 
+    # 용어 노트에는 부제를 두지 않는다(사용자 지시, 2026-09-12).
+    # 제목이 곧 용어이고 바로 아래 첫 절이 그 뜻을 말한다 — 부제는 그 절을 한 번 더 말한다.
+    for p in sorted(glob.glob("notes/*.html")):
+        b = os.path.basename(p)
+        if re.sub(r"\.(ko|ja)?\.?html$", "", b) in ("index", "tags", "engineering", "study-reading"):
+            continue
+        if 'class="h1-sub"' in io.open(p, encoding="utf-8").read():
+            bad.append("%s: 용어 노트에 부제가 있다 — 첫 절이 그 일을 한다" % b)
+
     if bad:
         print("\n".join("  ✘ " + x for x in bad))
         print("\n결과: 실패 — %d건" % len(bad))
