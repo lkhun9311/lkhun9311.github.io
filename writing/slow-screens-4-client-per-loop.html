@@ -82,7 +82,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-is-in-here">What this is about</a></li>
             <li><a href="#the-screen">The screen</a></li>
             <li><a href="#the-query-first">The query is what you want to open first</a></li>
             <li><a href="#the-cause">The cause: getting a client is authenticating</a></li>
@@ -97,11 +96,18 @@
 
         <article class="article-body">
 
-        <p>Hello. I write the backend of an internal cloud admin console. A report came in that the
-        monitoring screen was slow.</p>
+        <p>I write the backend of an internal cloud admin console. A report came in that the monitoring
+        screen was slow. It draws time-series graphs, so the slow part looked like it would be the query.
+        It was not.</p>
 
-        <p>One thing first. <strong>This article has no before-and-after numbers.</strong>
-        The previous three had them; this one does not. Why it does not is half the article.</p>
+        <p>The initial load was building a new client for every project, and the <code>serviceClient()</code>
+        we were using authenticates against Keystone on every call. N projects means N authentications,
+        in order. <strong>And there was a cache sitting right there that nobody was reading.</strong></p>
+
+        <p>The fix was one client, built outside the loop and reused. N authentications become one. How
+        much faster it got, though, I do not know. I did not measure it, and the load scenario we
+        normally run does not send traffic through this stretch at all. Why I could not measure it is
+        half of this article.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -110,26 +116,6 @@
           <li>You have seen code that gets a client inside a loop.</li>
           <li>Your first move on a slow screen is to open the query.</li>
         </ul>
-
-        <h2 id="what-is-in-here">What this is about<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li>The screen draws time-series graphs, so <strong>it is easy to assume the query is the slow
-          part.</strong> It was not.</li>
-          <li>The initial load <strong>built a new client for every project</strong>, and
-          the <code>serviceClient()</code> we used authenticates to Keystone on every call.
-          N projects means N authentications, one after another.</li>
-          <li>There was also a cache that nothing was reading.
-          “We added a cache” and “we read the cache” are different things.</li>
-          <li>The fix was building one client outside the loop and reusing it.
-          N authentications become one.</li>
-          <li>⚠️ How much faster it got, I do not know. It was never measured, and
-          the load-test scenario people usually write does not include this stretch.</li>
-        </ul>
-
-        <p>This is an internal product, so the code here is not the code that shipped.
-        Product names, customers and internal addresses are gone; only the structure stays.
-        Class and function names are generalised as far as the story needs.</p>
 
         <h2 id="the-screen">The screen<a class="anchor" href="#the-screen" aria-label="Link to this section">#</a></h2>
 

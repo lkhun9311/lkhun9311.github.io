@@ -80,7 +80,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-this-is-about">What this is about</a></li>
             <li><a href="#six-rows">Six rows</a></li>
             <li><a href="#why-3-is-worse-than-2">Why ③ is worse than ②</a></li>
             <li><a href="#not-caching-absence">The second defect: absence was never cached</a></li>
@@ -92,21 +91,21 @@
         </nav>
       <article class="article-body">
 
-        <p>Scope. In May 2026 I fixed the volume list screen of an
-        OpenStack-based private cloud management console. I do not name the product, its version, or any
-        customer. Every number below was measured with JMeter in an internal test environment,
-        not against production traffic. The load profile is identical across all six configurations —
-        <strong>50 concurrent users, 2-minute ramp-up, 10-minute duration, 2–5s think time</strong>. Code is
-        quoted from the real source with internal identifiers removed.</p>
+        <p>The volume list screen of an OpenStack-based private cloud management console degraded
+        linearly as volumes accumulated, and eventually died on a 10-minute timeout. The cause was a loop
+        calling an external API once per volume, sequentially, and the prescription looked obvious. Run
+        it in parallel.</p>
 
-        <p>The screen degraded linearly as volumes accumulated and eventually died on a 10-minute timeout.
-        The cause was a loop calling an external API once per volume, sequentially, and the prescription
-        looked obvious. Run it in parallel.</p>
+        <p><strong>Running it in parallel made it slower.</strong> Holding the cache setting fixed and
+        switching sequential to parallel took p99 from 42.6s to 79.0s.</p>
 
-        <p>Running it in parallel made it slower. Holding the cache setting fixed and switching
-        sequential to parallel took p99 from <strong>42.6s to 79.0s</strong>. This is about what that one cell
-        told me, and about the test design that made the cell visible at all.</p>
-
+        <p>The reason was that the external API was being called inside the mapping function of a
+        <code>computeIfAbsent</code>. That entry stays locked while a network round trip completes, so
+        threads using the same key queue up single file even in parallel code. Nothing was gained, and
+        thread pool occupancy and context switching both went up. The only reason that cell was visible
+        is that the changes did not go in together: the configuration was split into six steps and each
+        was measured under identical conditions. This article is about those six rows and about the test
+        design that made them visible.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -114,21 +113,6 @@
           <li>You have shipped several changes together and measured only before and after</li>
           <li>You expect a sequential loop to get faster once it runs in parallel</li>
           <li>You have seen an external call inside <code>computeIfAbsent</code></li>
-        </ul>
-
-        <h2 id="what-this-is-about">What this is about<a class="anchor" href="#what-this-is-about" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li>The volume list screen called an external API <strong>once per volume, sequentially</strong>.
-          The prescription looked obvious: run it in parallel.</li>
-          <li>Going parallel made it slower. With the cache configuration held fixed, p99 went
-          from <strong>42.6s to 79.0s</strong>.</li>
-          <li>The cause was calling the external API inside the mapping function of
-          <code>computeIfAbsent</code>. That bin stays locked for the whole round trip.</li>
-          <li>The reason that single cell was visible at all: the changes were not shipped together.
-          Six configurations were measured one at a time under the same conditions.</li>
-          <li>⚠️ Measured with JMeter in an internal test environment, once per configuration.
-          Only multiple-fold differences are used as evidence.</li>
         </ul>
 
         <h2 id="six-rows">Six rows<a class="anchor" href="#six-rows" aria-label="Link to this section">#</a></h2>
@@ -459,6 +443,8 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
         <ul>
+          <li>I do not name the product, its version, or any customer. Every number below was measured with JMeter in an internal test environment, not against production traffic. The load profile is identical across all six configurations: 50 concurrent users, 2-minute ramp-up, 10-minute duration, 2–5s think time. Code is quoted from the real source with internal identifiers removed.</li>
+
           <li>Not that parallelism is bad. Parallelising code that does I/O inside a lock is
           bad. But none of these six configurations removes that condition while staying parallel, so
           whether parallelism pays once it is removed is not something this experiment shows. ③→④ changes only
