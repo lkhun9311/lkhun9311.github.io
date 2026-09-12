@@ -57,6 +57,21 @@
     return it.dateLabel || (MONTH_EN[m - 1] + (d ? " " + d + "," : "") + " " + y);
   }
 
+  /* 용어 노트의 절 목록. **손으로 고치지 않는다** —
+     `python3 tools/build-notes-nav.py` 가 파일에서 구워 넣고,
+     `--check` 가 어긋남을 잡는다. */
+  var NOTES_NAV = {
+    "arm": {ko:{t:"Arm",s:[["어원","왜 이 말을 쓰나"],["단일변수","한 변수만 바꿉니다"],["패치","코드 비교는 패치로 관리합니다"]]}, en:{t:"Arm",s:[["어원","Why this word"],["단일변수","Change one variable"],["패치","Keep a code difference in a patch"]]}, ja:{t:"Arm",s:[["어원","なぜこの言葉を使うのか"],["단일변수","変数は一つだけ変える"],["패치","コードの差はパッチで管理する"]]}},
+    "connection-pool": {ko:{t:"Connection Pool",s:[["왜","왜 재사용하나"],["상한","블로킹 JDBC에서는 이것이 동시성 상한입니다"],["불변식","불변식 하나"]]}, en:{t:"Connection Pool",s:[["왜","Why reuse them"],["상한","On blocking JDBC this is the concurrency limit"],["불변식","One invariant"]]}, ja:{t:"Connection Pool",s:[["왜","なぜ再利用するのか"],["상한","ブロッキング JDBC ではこれが同時実行の上限"],["불변식","不変条件が一つ"]]}},
+    "connection-pooler": {ko:{t:"Connection Pooler",s:[["왜","왜 필요한가"],["구별","Connection Pool과 다른 것입니다"],["한계","무엇을 못 고치나"]]}, en:{t:"Connection Pooler",s:[["왜","Why it exists"],["구별","It is not the same as a connection pool"],["한계","What it cannot fix"]]}, ja:{t:"Connection Pooler",s:[["왜","なぜ必要か"],["구별","Connection Pool とは別のもの"],["한계","何を直せないか"]]}},
+    "fail-closed": {ko:{t:"Fail-closed",s:[["방향","어느 쪽으로 넘어질 것인가"],["대가","대가"],["조용함","조용한 Fail-open이 제일 위험합니다"]]}, en:{t:"Fail-closed",s:[["방향","Which way it falls"],["대가","What it costs"],["조용함","A silent fail-open is the worst case"]]}, ja:{t:"Fail-closed",s:[["방향","どちらへ倒れるか"],["대가","代償"],["조용함","静かな Fail-open が一番危ない"]]}},
+    "load-test-harness": {ko:{t:"Harness",s:[["뜻","말 자체의 뜻"],["조건","무엇이 Harness를 Harness로 만드나"],["흐름","어떻게 도나: 실행 한 번의 흐름"],["오해","흔한 오해"]]}, en:{t:"Harness",s:[["뜻","What the word means"],["조건","What makes a harness a harness"],["흐름","How one run goes"],["오해","Common misreadings"]]}, ja:{t:"Harness",s:[["뜻","言葉そのものの意味"],["조건","何が Harness を Harness にするのか"],["흐름","どう回るか — 実行一回の流れ"],["오해","よくある誤解"]]}},
+    "mutation-testing": {ko:{t:"Mutation Testing",s:[["왜","왜 필요한가"],["방법","어떻게 하나"],["경로","경로마다 따로 걸어야 합니다"]]}, en:{t:"Mutation Testing",s:[["왜","Why it is needed"],["방법","How to do it"],["경로","Do it one path at a time"]]}, ja:{t:"Mutation Testing",s:[["왜","なぜ必要か"],["방법","どうやるか"],["경로","経路ごとに別々にかける"]]}},
+    "percentile": {ko:{t:"Percentile",s:[["평균","왜 평균을 안 쓰나"],["계산","계산 방식이 두 가지입니다"],["어디","어디를 봐야 하나"]]}, en:{t:"Percentile",s:[["평균","Why not the average"],["계산","There are two ways to compute it"],["어디","Which one to read"]]}, ja:{t:"Percentile",s:[["평균","なぜ平均を使わないのか"],["계산","計算方式が二つある"],["어디","どこを見るべきか"]]}},
+    "transaction-pooling": {ko:{t:"Transaction Pooling",s:[["모드","세 가지 모드"],["성질","핵심 성질: 언제 묶이나"],["핀","핀(Pin)이 걸리는 패턴"]]}, en:{t:"Transaction Pooling",s:[["모드","Three modes"],["성질","The property that matters — when it pins"],["핀","Patterns that Pin"]]}, ja:{t:"Transaction Pooling",s:[["모드","三つのモード"],["성질","核心的な性質 — いつ固定されるか"],["핀","ピン(Pin)がかかるパターン"]]}},
+    "warmup": {ko:{t:"Warm-up",s:[["원인","무엇이 앞부분을 다르게 만드나"],["길이","얼마나 버리나"]]}, en:{t:"Warm-up",s:[["원인","What makes the front different"],["길이","How much to throw away"]]}, ja:{t:"Warm-up",s:[["원인","何が先頭を違うものにするのか"],["길이","どれだけ捨てるか"]]}}
+  };
+
   var DATA = {
     /* 「무엇을 하고 있다」가 아니라 **무엇을 냈고 무엇을 고쳤는지** 적는다. 앞의 형태로는
        2월에 멈춘 세 줄이 9월의 발행과 정정을 하나도 보여 주지 못했다. */
@@ -868,6 +883,35 @@
     })[lang] || { tags: "Tags", more: "Related" };
 
     var html = "";
+
+    /* 용어 노트에는 **용어 나무**를 맨 위에 둔다. <details> 라 JavaScript 없이도 펴고 접힌다. */
+    if (key === "notes" && NOTES_NAV) {
+      var treeLabel = ({ ko: "용어", ja: "用語" })[lang] || "Terms";
+      var suffix = ({ ko: ".ko", ja: ".ja" })[lang] || "";
+      var slugs = [];
+      for (var k in NOTES_NAV) if (NOTES_NAV.hasOwnProperty(k)) slugs.push(k);
+      slugs.sort(function (a, b) {
+        var ta = (NOTES_NAV[a][lang] || NOTES_NAV[a].en).t;
+        var tb = (NOTES_NAV[b][lang] || NOTES_NAV[b].en).t;
+        return ta.localeCompare(tb);
+      });
+      var rows = slugs.map(function (sl) {
+        var e = NOTES_NAV[sl][lang] || NOTES_NAV[sl].en;
+        var href = BASE + "notes/" + sl + suffix + ".html";
+        var here = sl === slug;
+        var secs = e.s.map(function (x) {
+          /* 한글 id 를 인코딩하지 않는다 — 본문 목차가 `#예상-독자` 로 쓰고 있어 모양이 갈린다. */
+          return '<li><a href="' + esc(href) + "#" + esc(x[0]) + '">' + esc(x[1]) + "</a></li>";
+        }).join("");
+        if (!secs) return '<li class="term-leaf"><a href="' + esc(href) + '">' + esc(e.t) + "</a></li>";
+        return '<li><details class="term"' + (here ? " open" : "") + ">" +
+               '<summary><a href="' + esc(href) + '"' + (here ? ' aria-current="page"' : "") +
+               ">" + esc(e.t) + "</a></summary><ul>" + secs + "</ul></details></li>";
+      }).join("");
+      html += '<div class="aside-group aside-terms"><p class="aside-label">' + esc(treeLabel) +
+              "</p><ul>" + rows + "</ul></div>";
+    }
+
     var tags = me.tags || [];
     if (tags.length) {
       html += '<div class="aside-group"><p class="aside-label notranslate">' + esc(L.tags) + '</p><ul>' +
