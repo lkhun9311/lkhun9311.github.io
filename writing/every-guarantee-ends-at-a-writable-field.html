@@ -80,7 +80,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-this-is-about">What this is about</a></li>
             <li><a href="#at-first-nothing-stopped-it">At first, nothing stopped it</a></li>
             <li><a href="#an-ownerreference-is-a-claim">An ownerReference is a claim, not a fact</a></li>
             <li><a href="#an-exemption-anyone-can-grant">An exemption anyone can grant is not an exemption</a></li>
@@ -94,15 +93,15 @@
         </nav>
       <article class="article-body">
 
-        <p><strong>Scope.</strong> Attacking and repairing multi-tenant quota enforcement in a personal
-        project, a <a href="../projects/gpuaas-control-plane.html">Kubernetes-native GPU control plane</a>.
-        The GPUs here are <strong>simulated — advertised by a fake device plugin</strong>. So the findings are
-        about Kubernetes admission and trust boundaries, not about how devices behave. And, as
-        the end of this says, the guard is currently enabled on no namespace at all.</p>
+        <p>I build a <a href="../projects/gpuaas-control-plane.html">Kubernetes-native GPU control plane</a> as a personal project. I attacked
+        the quota guard that enforces how many GPUs a tenant may hold, myself.</p>
 
-        <p>Four defences turned out to be broken the same way. Every one was found
-        by attacking it rather than by reading it. They are collected here because
-        the pattern is the finding, not any one of them.</p>
+        <p><strong>It broke four times.</strong> And every break had the same shape. The value the check
+        read was a value the tenant could write.</p>
+
+        <p>There was no bug in the checking code. The check was right about what it read; what was wrong
+        was reading that value as evidence about the tenant. That is why the four are collected in one
+        place. The pattern is the finding, not any one of them.</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">scroll sideways for the rest</p>
@@ -127,22 +126,6 @@
           <li>You build the side that enforces per-tenant resource limits on Kubernetes</li>
           <li>You guarantee "this is blocked" with an admission webhook or a controller</li>
           <li>You have had a check whose code was right and whose guarantee still broke</li>
-        </ul>
-
-        <h2 id="what-this-is-about">What this is about<a class="anchor" href="#what-this-is-about" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li>I <strong>attacked my own quota guard</strong>, the one that decides how many GPUs a tenant may
-          hold. It broke four times.</li>
-          <li>Every break had the same shape. <strong>The tenant could write the value the check read.</strong>
-          That field is the middle column of the table above.</li>
-          <li>The checking code had no bug in it. Each check was correct about what it read;
-          what was wrong was treating that value as evidence about the tenant.</li>
-          <li>The four repairs do not look alike. Either you replace the input with one you can
-          trust, or you narrow who may supply it to a set the tenant is not in, or,
-          failing both, you cap the damage.</li>
-          <li>⚠️ The GPUs are simulated and the guard is enabled on no namespace today. This
-          is about admission and trust boundaries, not about device behaviour.</li>
         </ul>
 
         <figure class="diagram">
@@ -181,7 +164,7 @@
           <figcaption>All four guards read a value from <strong>the box on the left</strong> as evidence. The checking code was correct; what was wrong was never counting the fact that the value came from the left of the boundary.</figcaption>
         </figure>
 
-        <h2 id="at-first-nothing-stopped-it">At first, nothing stopped it<a class="anchor" href="#at-first-nothing-stopped-it" aria-label="Link to this section">#</a></h2>
+<h2 id="at-first-nothing-stopped-it">At first, nothing stopped it<a class="anchor" href="#at-first-nothing-stopped-it" aria-label="Link to this section">#</a></h2>
 
         <p>The design goes like this. Kueue's ClusterQueue is the single authority over a namespace's GPU
         budget, and the controller <strong>deliberately</strong> stops the namespace
@@ -437,6 +420,8 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
         <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
         <ul>
+          <li>The GPUs here are simulated, advertised by a fake device plugin. So the findings are about Kubernetes admission and trust boundaries, not about how devices behave.</li>
+
           <li>Not a claim that this guard is protecting anything right now. As above, no
           namespace is currently governed by it.</li>
           <li>The GPUs are simulated. A fake device plugin advertises

@@ -80,7 +80,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-this-is-about">What this is about</a></li>
             <li><a href="#the-observer-was-the-one-isolated">The observer's isolation was read as the subject's failure</a></li>
             <li><a href="#entitlement-not-accuracy">Not accuracy — entitlement</a></li>
             <li><a href="#two-different-questions">"Is it broken" and "is it safe to act" are different questions</a></li>
@@ -93,21 +92,18 @@
         </nav>
       <article class="article-body">
 
-        <p><strong>Scope.</strong> In March 2026 I redesigned instance-HA failure handling for an
-        OpenStack-based private cloud product. I do not name the product, its version, the customer, or ticket
-        numbers. The deliverable was a design document; another engineer took the implementation.
-        So there is no "this shipped and misjudgements fell by N" measurement here. What there is is a
-        decision procedure, and the result of running every scenario through it.</p>
+        <p>In March 2026 I redesigned instance-HA failure handling for an OpenStack-based private cloud
+        product. The incident is one sentence. An L2/L3 switch failed, compute nodes that were running
+        perfectly well were judged dead, and recovery ran at scale.</p>
 
-        <p>The incident is one sentence. <strong>An L2/L3 switch failed, compute nodes that were running
-        perfectly well were judged dead, and recovery ran at scale.</strong> Recovery in instance HA means a
-        Nova evacuate — bringing the same VM up on another node. If the original is still alive when the copy
-        attaches to the same volume, both write to it.</p>
+        <p>Recovery here means a Nova evacuate — bringing the same VM up on another node. If the original
+        is still alive when the copy attaches to the same volume, both write to it.
+        <strong>This is the case where automatic recovery costs more than the failure.</strong></p>
 
-        <p>The redesign did not make detection sharper. It decided which signal is entitled to testify
-        to what — and once eight scenarios were judged against that, exactly one of them was safe to
-        recover.</p>
-
+        <p>Detection had not failed. The compute nodes were still saying “I am alive”. What had failed was
+        that nobody had decided whose word to believe. So instead of making detection sharper, I decided
+        first what each signal is entitled to testify to. Judged against that, exactly one of eight
+        scenarios was safe to recover.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -115,21 +111,6 @@
           <li>You run automatic recovery that restarts VMs elsewhere when a node dies</li>
           <li>You have written "detection was inaccurate" as a root cause</li>
           <li>You have to decide when recovery should not run</li>
-        </ul>
-
-        <h2 id="what-this-is-about">What this is about<a class="anchor" href="#what-this-is-about" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li>A switch died and <strong>healthy compute nodes were judged down</strong>, so recovery ran in
-          bulk. Recovery here means bringing the same VM up on another node.</li>
-          <li>If the original is still alive when the copy attaches to the same volume,
-          <strong>both write at once.</strong> That is when recovery costs more than the failure.</li>
-          <li>Detection did not fail. The compute nodes kept saying "I am alive." What failed was
-          never deciding whose word to believe.</li>
-          <li>So instead of sharpening detection I first decided what each signal is entitled to
-          testify to. Judged against that, one of eight scenarios should recover.</li>
-          <li>⚠️ The deliverable was a design document; a teammate took the implementation.
-          So there is no after-the-fact measurement here saying failures went down.</li>
         </ul>
 
         <h2 id="the-observer-was-the-one-isolated">The observer's isolation was read as the subject's failure<a class="anchor" href="#the-observer-was-the-one-isolated" aria-label="Link to this section">#</a></h2>
@@ -451,6 +432,8 @@ Compute-02 → VM-A evacuated       → writes /dev/vdb   (new attachment)</code
         <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
         <ul>
+          <li>The deliverable was a design document; another engineer took the implementation. So there is no “this shipped and misjudgements fell by N” measurement here. What there is is a decision procedure, and the result of running every scenario through it. I do not name the product, its version, the customer, or ticket numbers.</li>
+
           <li>Not a claim that I implemented it. My scope ended at the design document;
           another engineer took the implementation.</li>
           <li>There is no after-measurement. I do not have a number for how many

@@ -80,7 +80,6 @@
           <p class="toc-label">目次</p>
           <ul>
             <li><a href="#想定読者">想定読者</a></li>
-            <li><a href="#この記事の内容">何の話ですか</a></li>
             <li><a href="#nothing-stopped-it">最初は何も止めませんでした</a></li>
             <li><a href="#ownerreference-is-a-claim">ownerReference は主張であって事実ではありません</a></li>
             <li><a href="#exemption-anyone-can-grant">誰でも与えられる免除は免除ではありません</a></li>
@@ -94,15 +93,15 @@
         </nav>
       <article class="article-body">
 
-        <p><strong>範囲.</strong> 個人プロジェクトである
-        <a href="../projects/gpuaas-control-plane.html">Kubernetes ネイティブ GPU コントロールプレーン</a>の
-        マルチテナントのクォータ強制を攻撃し、修理した記録です。ここでの GPU は
-        <strong>偽の Device Plugin が広告するシミュレーション装置</strong>です。したがってこの記事の発見は
-        Kubernetes のアドミッションと信頼境界についてであって、装置の挙動についてではありません。
-        そして最後に書くが、このガードは現在どの名前空間でも有効になっていません。</p>
+        <p>個人プロジェクトとして <a href="../projects/gpuaas-control-plane.html">Kubernetes ネイティブ GPU コントロールプレーン</a> を作っています。
+        テナントが GPU を何枚まで持てるかを強制するクォータガードを、自分で攻撃してみました。</p>
 
-        <p>同じやり方で破られた防御が 4 件出ました。すべて文書を読んで見つけたのではなく攻撃して
-        見つけました。4 件を一箇所に集める理由は、発見はそれぞれではなくそのパターンだからです。</p>
+        <p><strong>4 回破られました。</strong>そして破られた場所がすべて同じ形でした。
+        検査が読んだ値を、テナント自身が書けたのです。</p>
+
+        <p>検査コードにバグはありませんでした。検査は自分が読んだものについては正しく、
+        誤っていたのはその値をテナントに関する証拠として読んだ側です。4 件を一箇所に集める理由が
+        それです。発見はそれぞれではなく、そのパターンです。</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
@@ -127,22 +126,6 @@
           <li>Kubernetes でテナントごとの資源上限を強制する側を作っている方</li>
           <li>admission webhook やコントローラで「これは止まる」を保証している方</li>
           <li>検査のコードは正しいのに、なぜ破られたのか説明できないことがある方</li>
-        </ul>
-
-        <h2 id="この記事の内容">何の話ですか<a class="anchor" href="#この記事の内容" aria-label="このセクションへのリンク">#</a></h2>
-
-        <ul>
-          <li>テナントが GPU を何枚まで持てるかを強制する<strong>クォータのガードを自分で攻撃しました。</strong>
-          4 回破れました。</li>
-          <li>破れ方がすべて同じ形でした。<strong>検査が読む値をテナント自身が書けました。</strong>
-          上の表の真ん中の列がそのフィールドです。</li>
-          <li>検査のコードにバグはありませんでした。検査は自分が読んだものについては正しく、
-          誤っていたのはその値をテナントについての証拠として読んだ側でした。</li>
-          <li>4 つの修理は形が違います。入力を信じられないものから信じられるものに替えるか、
-          その入力を渡せる側をテナントが入れない集合に狭めるか、どちらもできないなら
-          被害を上限で縛るかです。</li>
-          <li>⚠️ GPU はシミュレーションであり、このガードは現在どの名前空間でも有効になっていません。
-          この記事が扱うのはアドミッションと信頼境界であって、装置の挙動ではありません。</li>
         </ul>
 
         <figure class="diagram">
@@ -181,7 +164,7 @@
           <figcaption>四つのガードはすべて<strong>左の箱の値</strong>を証拠として読んでいました。検査のコードは正しく、誤っていたのは、その値が境界の左から来たという事実を数えなかった側です。</figcaption>
         </figure>
 
-        <h2 id="nothing-stopped-it">最初は何も止めませんでした<a class="anchor" href="#nothing-stopped-it" aria-label="このセクションへのリンク">#</a></h2>
+<h2 id="nothing-stopped-it">最初は何も止めませんでした<a class="anchor" href="#nothing-stopped-it" aria-label="このセクションへのリンク">#</a></h2>
 
         <p>設計はこうです。テナントごとの GPU 予算の単一の権威は Kueue の ClusterQueue であり、コントローラは同じ装置が
         二重に計上されないよう、名前空間の <code>ResourceQuota</code> が GPU を制限するのを<strong>意図的に</strong>
@@ -435,6 +418,8 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
         <h2 id="what-this-does-not-claim">この記事が主張しないこと<a class="anchor" href="#what-this-does-not-claim" aria-label="このセクションへのリンク">#</a></h2>
 
         <ul>
+          <li>ここでの GPU は偽の Device Plugin が広告するシミュレーション装置です。したがってこの記事の発見は Kubernetes のアドミッションと信頼境界についてであって、装置の挙動についてではありません。</li>
+
           <li>このガードが今何かを守っているという主張ではありません。上に書いたとおり、現在どの名前空間も
           このガードの統制下にません。</li>
           <li>GPU はシミュレーションです。偽の Device Plugin が <code>nvidia.com/gpu</code> を
