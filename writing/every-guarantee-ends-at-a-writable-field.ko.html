@@ -80,7 +80,6 @@
           <p class="toc-label">목차</p>
           <ul>
             <li><a href="#예상-독자">이 글의 예상 독자</a></li>
-            <li><a href="#무슨-내용">무슨 내용인가요?</a></li>
             <li><a href="#처음엔-아무것도-막지-않았다">처음엔 아무것도 막지 않았습니다</a></li>
             <li><a href="#ownerreference는-주장이지-사실이-아니다">ownerReference는 주장이지 사실이 아닙니다</a></li>
             <li><a href="#아무나-줄-수-있는-면제">아무나 줄 수 있는 면제는 면제가 아닙니다</a></li>
@@ -94,32 +93,17 @@
         </nav>
       <article class="article-body">
 
-        <p><strong>범위.</strong> 개인 프로젝트인
-        <a href="../projects/gpuaas-control-plane.html">Kubernetes 네이티브 GPU 컨트롤 플레인</a>의 멀티테넌트
-        쿼터 강제를 공격하고 고친 기록입니다. 여기의 GPU는 <strong>가짜 Device Plugin이 광고하는 시뮬레이션
-        장치</strong>입니다. 그러므로 이 글의 발견은 쿠버네티스 입장 제어와 신뢰 경계에 관한 것이지
-        장치 동작에 관한 것이 아닙니다. 그리고 마지막에 적겠지만 이 가드는 현재 어떤 네임스페이스에도
-        켜져 있지 않습니다.</p>
+        <p>개인 프로젝트로 <a href="../projects/gpuaas-control-plane.html">Kubernetes 네이티브 GPU
+        Control Plane</a>을 만들고 있습니다. 테넌트가 GPU를 몇 장까지 쓸 수 있는지 강제하는 쿼터
+        가드를 제가 직접 공격해 봤습니다.</p>
 
-        <p>같은 방식으로 뚫린 방어가 4건 나왔습니다. 전부 문서를 읽어서가 아니라 공격해서 찾았습니다.
-        4건을 한자리에 모으는 이유는, 발견은 각각이 아니라 그 패턴이기 때문입니다.</p>
+        <p><strong>네 번 뚫렸습니다.</strong> 그리고 뚫린 자리가 전부 같은 모양이었습니다.
+        검사가 읽은 값을 테넌트가 직접 쓸 수 있었습니다.</p>
 
-        <div class="table-scroll">
-<p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
-<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
-        <table>
-          <caption class="sr-only">뚫린 보장 4건과, 각각에서 테넌트가 쓰는 필드.</caption>
-          <thead><tr><th scope="col">보장</th><th scope="col">테넌트가 쓰는 필드</th><th scope="col">공격자가 얻은 것</th></tr></thead>
-          <tbody>
-            <tr><td>GPU 쿼터가 강제된다</td><td><code>ownerReferences</code></td><td>계상되지 않은 장치 2개</td></tr>
-            <tr><td>GPU 쿼터가 강제된다</td><td><code>quota-exempt</code> 어노테이션</td><td>장치 수 제한 없음</td></tr>
-            <tr><td>회수된 장치는 돌아온다</td><td><code>terminationGracePeriodSeconds</code></td><td>회수된 장치를 301초</td></tr>
-            <tr><td>예산은 쓸 수 있는 쪽에 간다</td><td>Pod이 전부 거부되는 Job</td><td>예산 전체를 무기한</td></tr>
-          </tbody>
-        </table>
-        </div>
-        </div>
+        <p>검사 코드에는 버그가 없었습니다. 검사는 자기가 읽은 것에 대해 옳았고 틀린 것은 그 값을
+        테넌트에 관한 증거로 읽은 쪽이었습니다.</p>
 
+        <p>네 건을 한자리에 모으는 이유가 그것입니다. 발견은 각각이 아니라 그 패턴입니다.</p>
 
         <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -128,58 +112,6 @@
           <li>admission webhook이나 컨트롤러로 「이건 막힙니다」를 보장하고 계신 분</li>
           <li>검사 코드는 맞는데 왜 뚫렸는지 설명이 안 될 때가 있는 분</li>
         </ul>
-
-        <h2 id="무슨-내용">무슨 내용인가요?<a class="anchor" href="#무슨-내용" aria-label="이 절로 가는 링크">#</a></h2>
-
-        <ul>
-          <li>테넌트가 GPU를 몇 장까지 쓸 수 있는지 강제하는 <strong>쿼터 가드를 제가 직접 공격했습니다.</strong>
-          네 번 뚫렸습니다.</li>
-          <li>뚫린 자리가 전부 같은 모양이었습니다. <strong>검사가 읽은 값을 테넌트가 직접 쓸 수 있었습니다.</strong>
-          위 표의 가운데 칸이 그 필드입니다.</li>
-          <li>검사 코드에는 버그가 없었습니다. 검사는 자기가 읽은 것에 대해 옳았고 틀린 것은
-          그 값을 테넌트에 관한 증거로 읽은 쪽이었습니다.</li>
-          <li>수리 넷의 모양이 서로 다릅니다. 입력을 못 믿을 것에서 믿을 것으로 바꾸거나,
-          그 입력을 줄 수 있는 쪽을 테넌트가 낄 수 없는 집합으로 좁히거나, 둘 다 못 하면
-          피해를 상한으로 묶는 것입니다.</li>
-          <li>⚠️ GPU는 시뮬레이션이고 이 가드는 지금 어떤 네임스페이스에도 켜져 있지 않습니다.
-          이 글이 말하는 것은 입장 제어와 신뢰 경계이지 장치 동작이 아닙니다.</li>
-        </ul>
-
-        <figure class="diagram">
-          <svg viewBox="0 0 720 230" role="img" aria-labelledby="tb-t tb-d" class="figure-svg">
-            <title id="tb-t">테넌트가 쓰는 필드를 가드가 증거로 읽는 구조</title>
-            <desc id="tb-d">왼쪽 상자에 테넌트가 직접 쓰는 필드 셋이 분홍색으로 적혀 있습니다. 가운데 세로 점선이 신뢰 경계입니다. 분홍 화살표가 그 경계를 넘어 오른쪽 파란 상자인 가드로 들어갑니다. 가드는 그 값을 읽어 판정을 냅니다. 오른쪽 끝에 판정 결과가 적혀 있습니다.</desc>
-            <g font-family="Inter, sans-serif">
-              <rect x="16" y="46" width="150" height="132" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
-              <text x="91" y="36" font-size="11.5" fill="#8a8a8a" text-anchor="middle">테넌트가 쓰는 곳</text>
-              <text x="91" y="72" font-size="11" fill="#4a4a4a" text-anchor="middle">Pod · Job 명세</text>
-              <text x="91" y="102" font-size="11" fill="#d62976" text-anchor="middle"><tspan font-family="ui-monospace, monospace">ownerReferences</tspan></text>
-              <text x="91" y="128" font-size="11" fill="#d62976" text-anchor="middle"><tspan font-family="ui-monospace, monospace">quota-exempt</tspan></text>
-              <text x="91" y="154" font-size="11" fill="#d62976" text-anchor="middle"><tspan font-family="ui-monospace, monospace">grace period</tspan></text>
-
-              <path d="M330 20 V 206" fill="none" stroke="#c9c9c9" stroke-width="1.4" stroke-dasharray="5 4"/>
-              <text x="330" y="14" font-size="11" fill="#8a8a8a" text-anchor="middle">신뢰 경계</text>
-
-              <path d="M170 112 H 322" fill="none" stroke="#d62976" stroke-width="1.8" marker-end="url(#tb-ar)"/>
-
-              <rect x="392" y="72" width="150" height="80" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
-              <text x="467" y="62" font-size="11.5" fill="#4f5bd5" text-anchor="middle">가드(입장 제어)</text>
-              <text x="467" y="118" font-size="11" fill="#4a4a4a" text-anchor="middle">읽은 값 = 증거</text>
-
-              <path d="M546 112 H 664" fill="none" stroke="#4f5bd5" stroke-width="1.8" marker-end="url(#tb-ab)"/>
-              <text x="620" y="102" font-size="11" fill="#4f5bd5" text-anchor="middle">판정</text>
-            </g>
-            <defs>
-              <marker id="tb-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
-              </marker>
-              <marker id="tb-ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-                <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
-              </marker>
-            </defs>
-          </svg>
-          <figcaption>가드 넷이 전부 <strong>왼쪽 상자의 값</strong>을 증거로 읽었습니다. 검사 코드는 옳았고 틀린 것은 그 값이 경계 왼쪽에서 왔다는 사실을 세지 않은 쪽입니다.</figcaption>
-        </figure>
 
         <h2 id="처음엔-아무것도-막지-않았다">처음엔 아무것도 막지 않았습니다<a class="anchor" href="#처음엔-아무것도-막지-않았다" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -426,6 +358,8 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
         <h2 id="이-글이-주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#이-글이-주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul>
+          <li>여기의 GPU는 가짜 Device Plugin이 광고하는 시뮬레이션 장치입니다. 그러므로 이 글의 발견은 쿠버네티스 입장 제어와 신뢰 경계에 관한 것이지 장치 동작에 관한 것이 아닙니다.</li>
+
           <li>이 가드가 지금 무언가를 지키고 있다는 주장이 아닙니다. 위에 적었듯 현재 어떤
           네임스페이스도 이 가드의 통제를 받지 않습니다.</li>
           <li>GPU는 시뮬레이션입니다. 가짜 Device Plugin이 <code>nvidia.com/gpu</code>를
