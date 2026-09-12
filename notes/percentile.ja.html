@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>p50 · p95 · p99 とは? | Kwanghun Lee</title>
+  <title>Percentile | Kwanghun Lee</title>
   <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/notes/percentile.html" />
   <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/notes/percentile.ko.html" />
   <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/notes/percentile.ja.html" />
@@ -13,14 +13,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
   <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
-  <meta name="description" content="応答時間を並べたときの特定の位置の値。p95 は 5% がそれより遅かったという意味です。" />
+  <meta name="description" content="値を並べたときに特定の位置にある値。p99 は 100 件のうち 99 件がそれより速かったという意味です。" />
   <meta property="og:type" content="article" />
   <meta property="og:locale" content="ja_JP" />
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="p50 · p95 · p99 とは? | Kwanghun Lee" />
-  <meta property="og:description" content="応答時間を並べたときの特定の位置の値。p95 は 5% がそれより遅かったという意味です。" />
+  <meta property="og:title" content="Percentile" />
+  <meta property="og:description" content="値を並べたときに特定の位置にある値。p99 は 100 件のうち 99 件がそれより速かったという意味です。" />
   <meta property="og:locale" content="ko_KR" />
   <link rel="stylesheet" href="../assets/styles.css?v=557c3ff3d7" />
 </head>
@@ -70,44 +70,104 @@
         <nav class="article-toc" aria-label="目次">
           <p class="toc-label">目次</p>
           <ul>
-            <li><a href="#평균">なぜ平均を使わないのか</a></li>
-            <li><a href="#계산">計算方式が二つある</a></li>
-            <li><a href="#어디">どこを見るべきか</a></li>
+            <li><a href="#무엇">何か</a></li>
+            <li><a href="#원리">どうやってできるのか</a></li>
+            <li><a href="#왜">なぜ平均ではないのか</a></li>
+            <li><a href="#다음">次に見るもの</a></li>
           </ul>
         </nav>
       <article class="article-body">
 
-        <p class="term-oneline"><strong>応答時間を遅い順に並べたときの特定の位置の値</strong>です。p95 は 100 件中 95 番目に速いリクエストの時間、つまり <strong>5% はこれより遅かった</strong>という意味です。</p>
+        <p><strong>パーセンタイルは、値を並べたときに特定の位置にある値です。</strong>
+        p99 は前から 99% の位置の値で、100 件のうち 99 件がそれより速かったという意味です。</p>
 
+        <h2 id="무엇">何か<a class="anchor" href="#무엇" aria-label="この節へのリンク">#</a></h2>
 
-        <h2 id="평균">なぜ平均を使わないのか<a class="anchor" href="#평균" aria-label="このセクションへのリンク">#</a></h2>
-        <p>平均は<strong>ごく少数のとても遅いリクエストを隠します。</strong>100 件中 99 件が 5ms で 1 件が 6 秒なら
-        平均は 65ms です。「65ms なら大丈夫」と読めますが、実際には<strong>100 人に 1 人が 6 秒待った</strong>のです。</p>
+        <p>応答時間を測るとき最初に出てくる数字は平均です。全部足して個数で割った値です。ところが
+        その値を実際に経験した人はいないかもしれません。</p>
 
-        <p>その 1 人は毎回別の人で、何度もリクエストする利用者はいずれその区間に当たります。ですから体験を決めるのは
-        平均ではなくテールです。</p>
-        <h2 id="계산">計算方式が二つある<a class="anchor" href="#계산" aria-label="このセクションへのリンク">#</a></h2>
-        <p>同じデータでも道具ごとに p95 が違って出ます。定義が違うからです。</p>
+        <p>パーセンタイルは違います。値を小さい順に並べ、そのうちの一つの位置を指します。p50 は真ん中、
+        p95 は前から 95%、p99 は前から 99% です。<strong>計算ではなく選んだ値なので、その値を出した
+        リクエストが実在します。</strong></p>
 
-        <ul>
-          <li><strong>最近接順位(nearest-rank)</strong> — ソートした標本の <code>ceil(0.95 × N)</code> 番目の値をそのまま使います。
-          常に<strong>実際に観測された値</strong>が出ます。</li>
-          <li>線形補間 — 隣り合う二つの値の間を比例で埋めます。観測されていない値が出ることがあります。</li>
+                <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="pc-t pc-d" class="figure-svg">
+            <title id="pc-t">パーセンタイルができるまで</title>
+            <desc id="pc-d">左から箱が四つ、灰色の矢印でつながります。一つ目はリクエストごとの所要時間を集めること、二つ目は小さい順に並べること、三つ目は前から 99% の位置を選ぶこと、四つ目はその位置の値が p99 だということです。下にピンクで、平均と違って実際にあったリクエストの値だと書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">集める</text>
+              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">リクエストごとの時間</text>
+              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#pc-a)"/>
+              <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">並べる</text>
+              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">小さい順に</text>
+              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#pc-a)"/>
+              <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">位置を選ぶ</text>
+              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">前から 99%</text>
+              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#pc-a)"/>
+              <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">それが p99</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">実際にあった値</text>
+              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">平均と違って実際にあったリクエストの値</text>
+            </g>
+            <defs>
+              <marker id="pc-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>パーセンタイルは計算して作る値ではなく、列から選ぶ値です。だからその値を出したリクエストが実在します。</figcaption>
+        </figure>
+
+        <h2 id="원리">どうやってできるのか<a class="anchor" href="#원리" aria-label="この節へのリンク">#</a></h2>
+
+        <p>四段階です。リクエストごとの時間を集め、小さい順に並べ、位置を選び、その値を読みます。</p>
+
+        <p>三段目に選択が一つ隠れています。標本が 20 件のとき 99% の位置は 19.8 番目ですが、
+        19.8 番目の値はありません。<strong>その位置の決め方がツールごとに違います。</strong>
+        その話は<a href="percentile-calc.ja.html">計算方式が二つある</a>にあります。</p>
+
+                <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="avg-t avg-d" class="figure-svg">
+            <title id="avg-t">平均が見るものと p99 が見るもの</title>
+            <desc id="avg-d">左の箱は平均が見るもの、右の箱は p99 が見るものです。左は全部足して個数で割った値一つで、遅いものが埋もれます。右は列の 99% の位置で、100 人に 1 人が出会う値です。下にピンクで、100 人に 1 人は一日に何度もだと書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">平均</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">全部足して個数で割る</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">遅いものが埋もれる</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">誰も出会っていない値かも</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">p99</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">列の 99% の位置</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">100 人に 1 人が出会う</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">実際にあった値</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">100 人に 1 人は一日に何度も</text>
+            </g>
+          </svg>
+          <figcaption>リクエストが一日 100 万件なら p99 の外は 1 万件です。まれな値ではなく毎日ある値です。</figcaption>
+        </figure>
+
+        <h2 id="왜">なぜ平均ではないのか<a class="anchor" href="#왜" aria-label="この節へのリンク">#</a></h2>
+
+        <p>平均は遅いものを埋めます。100 件のうち 99 件が 10ms で 1 件が 10s なら平均は約 110ms です。
+        画面はほとんど速いのに、平均だけを見ると全部が少しずつ遅いように見えます。逆に遅い 1 件は
+        平均の中に隠れます。</p>
+
+        <p>そしてその 1 件はまれではありません。リクエストが一日 100 万件なら p99 の外は 1 万件です。
+        <strong>同じ人が一日に何度も出会います。</strong></p>
+
+        <h2 id="다음">次に見るもの<a class="anchor" href="#다음" aria-label="この節へのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li><a href="percentile-average.ja.html">なぜ平均を使わないのか</a> · 平均が何を隠すかを数字で</li>
+          <li><a href="percentile-calc.ja.html">計算方式が二つある</a> · 同じデータから違う p99 が出る理由</li>
+          <li><a href="percentile-where.ja.html">どれを見るか</a> · p50・p95・p99 のうち何を見るか</li>
         </ul>
 
-        <p>二つを混ぜて比べると、定義の違う値を見比べることになります。そこで集計は一つだけを使い、
-        どちらを使ったかを出力に併記します。例: 標本が 1..20 のとき最近接順位の p95 は <code>ceil(19) = 19</code> 番目の値 = 19 です。</p>
-        <h2 id="어디">どこを見るべきか<a class="anchor" href="#어디" aria-label="このセクションへのリンク">#</a></h2>
-        <p><strong>p50 は「普段はこう」、p95・p99 は「悪いときはこう」</strong>です。両方を一緒に見ます。</p>
-
-        <p>p50 と p95 がほぼ同じならシステムは安定しています(すべてのリクエストが同じように処理される)。
-        p50 が低いのに p95 がはるかに大きいなら待ち行列のしるしです — ほとんどは速く処理され、一部が並んでいます。</p>
-
-        <p>実例: Connection Pool が枯渇した実行でフィード取得の p50 が 4ms から 6,047ms になったのに
-        <strong>エラー率は 0%</strong> でした。失敗ではなく待ちだったからです。エラー率だけ見ると
-        何の問題もないように見えます。</p>
-
-        </article>
+      </article>
     </main>
     <footer class="notranslate">
       <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
@@ -117,7 +177,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e7c9698ad3"></script>
-  <script src="../assets/content.js?v=80bb8a3b40"></script>
+  <script src="../assets/content.js?v=80892ebc27"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

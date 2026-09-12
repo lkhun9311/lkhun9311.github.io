@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Which one to read | Kwanghun Lee</title>
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/notes/percentile-where.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/notes/percentile-where.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/notes/percentile-where.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/notes/percentile-where.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <meta name="description" content="p50, p95 and p99 answer different questions. The distance between them separates a slow system from a slow tail." />
+  <meta property="og:type" content="article" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="Which one to read" />
+  <meta property="og:description" content="p50, p95 and p99 answer different questions. The distance between them separates a slow system from a slow tail." />
+  <meta property="og:locale" content="ko_KR" />
+  <link rel="stylesheet" href="../assets/styles.css?v=557c3ff3d7" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no"
+                  data-authored='{"en": "percentile-where.html", "ko": "percentile-where.ko.html", "ja": "percentile-where.ja.html"}' aria-label="Select language" data-i18n-attr="aria-label:a11y.lang">
+          <option value="ko">한국어</option>
+          <option value="en" selected>English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing">Writing</a>
+        <a href="../index.html#notes" class="active">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Notes</a>
+        <div class="article-meta"><span class="source-tag glossary notranslate">Term</span></div>
+      </div>
+      <section class="page-hero">
+        <h1>Which one to read</h1>
+        <p class="article-date">Performance measurement<span aria-hidden="true"> · </span><span class="notranslate">#Percentile</span></p>
+      </section>
+      <aside class="article-aside" data-aside="notes" data-slug="percentile-where"></aside>
+        <nav class="article-toc" aria-label="Contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#셋">What each one answers</a></li>
+            <li><a href="#모양">What the distance between p50 and p99 says</a></li>
+            <li><a href="#함정">Why one number is not enough</a></li>
+          </ul>
+        </nav>
+      <article class="article-body">
+
+        <p class="note-nav">← <a href="percentile.html">Percentile overview</a></p>
+
+        <p><strong>p50, p95 and p99 answer different questions.</strong> Read one and some questions
+        have no answer; read all three and the problem narrows.</p>
+
+        <h2 id="셋">What each one answers<a class="anchor" href="#셋" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>p50 · how long it usually takes. Bad here means everyone is slow.</li>
+          <li>p95 · the bad case people meet often. One time in twenty.</li>
+          <li>p99 · the tail. Unusually long here means the cause is somewhere else entirely.</li>
+        </ul>
+
+        <h2 id="모양">What the distance between p50 and p99 says<a class="anchor" href="#모양" aria-label="Link to this section">#</a></h2>
+
+        <p>Close together means the whole thing is evenly slow. The code simply takes that long.</p>
+
+        <p>Far apart means <strong>most requests are fast and some are blocked.</strong> The cause is then
+        usually not the average code path but queueing: a lock, a shortage of connections, retries, GC.</p>
+
+        <p>The <a href="../writing/slow-screens-1-volume-list.html">volume list</a> article on this site
+        had that shape. The median got 21 times faster while p99 got 1.9 times worse. The two numbers
+        moved in opposite directions, and that gap is what sent the search toward a lock.</p>
+
+        <h2 id="함정">Why one number is not enough<a class="anchor" href="#함정" aria-label="Link to this section">#</a></h2>
+
+        <p>Report only p99 and there is no way to tell <strong>whether everything got worse or only the
+        tail did.</strong> Report only p50 and the tail is invisible.</p>
+
+        <p>And say whether failed requests were included. Measure with timed-out requests excluded and
+        p99 looks better, but what happened is that the slow requests were deleted.</p>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e7c9698ad3"></script>
+  <script src="../assets/content.js?v=80892ebc27"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

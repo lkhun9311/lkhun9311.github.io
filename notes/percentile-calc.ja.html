@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>計算方式が二つある | Kwanghun Lee</title>
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/notes/percentile-calc.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/notes/percentile-calc.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/notes/percentile-calc.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/notes/percentile-calc.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <meta name="description" content="同じデータからツールごとに違う p99 が出ます。99% の位置の決め方が二つあるからです。" />
+  <meta property="og:type" content="article" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="計算方式が二つある" />
+  <meta property="og:description" content="同じデータからツールごとに違う p99 が出ます。99% の位置の決め方が二つあるからです。" />
+  <meta property="og:locale" content="ko_KR" />
+  <link rel="stylesheet" href="../assets/styles.css?v=557c3ff3d7" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no"
+                  data-authored='{"en": "percentile-calc.html", "ko": "percentile-calc.ko.html", "ja": "percentile-calc.ja.html"}' aria-label="Select language" data-i18n-attr="aria-label:a11y.lang">
+          <option value="ko">한국어</option>
+          <option value="en">English</option>
+          <option value="ja" selected>日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing">Writing</a>
+        <a href="../index.html#notes" class="active">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>ノート</a>
+        <div class="article-meta"><span class="source-tag glossary notranslate">用語</span></div>
+      </div>
+      <section class="page-hero">
+        <h1>計算方式が二つある</h1>
+        <p class="article-date">性能測定<span aria-hidden="true"> · </span><span class="notranslate">#Percentile</span></p>
+      </section>
+      <aside class="article-aside" data-aside="notes" data-slug="percentile-calc"></aside>
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#자리">19.8 番目の値はありません</a></li>
+            <li><a href="#최근접">最近接順位</a></li>
+            <li><a href="#보간">線形補間</a></li>
+            <li><a href="#실무">では何をするか</a></li>
+          </ul>
+        </nav>
+      <article class="article-body">
+
+        <p class="note-nav">← <a href="percentile.ja.html">Percentile 概要</a></p>
+
+        <p><strong>同じデータからツールごとに違う p99 が出ます。</strong>計算が誤っているのではなく、
+        「99% の位置」の決め方が二つあるからです。</p>
+
+        <h2 id="자리">19.8 番目の値はありません<a class="anchor" href="#자리" aria-label="この節へのリンク">#</a></h2>
+
+        <p>標本が 20 件のとき 95% の位置は 19 番目と 20 番目の間、正確には 19.8 番目です。そんな値は
+        列にありません。ここで道が分かれます。</p>
+
+                <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="calc-t calc-d" class="figure-svg">
+            <title id="calc-t">同じ標本で位置を決める二つの方法</title>
+            <desc id="calc-d">左の箱は最近接順位、右の箱は線形補間です。左は位置を切り上げて列にある値をそのまま使い、右は二つの値の間を計算して使います。下にピンクで、標本 20 件の p95 が一方は 19 番目の値、もう一方はその間の値だと書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">最近接順位</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">位置を切り上げる</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">列にある値をそのまま</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">実際にあった値</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">線形補間</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">二つの値の間を計算</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">列に無い値が出る</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">標本が少ないほど差が大きい</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">標本 20 件の p95 · 19 番目の値とその間の値</text>
+            </g>
+          </svg>
+          <figcaption>ツールがどちらかを明かさなければ、二つのツールの p99 を並べられません。</figcaption>
+        </figure>
+
+        <h2 id="최근접">最近接順位<a class="anchor" href="#최근접" aria-label="この節へのリンク">#</a></h2>
+
+        <p>位置を切り上げて 20 番目の値を使います。列に実際にある値なので
+        <strong>「その値を出したリクエストがある」がそのまま真です。</strong>JMeter がこの方式です。</p>
+
+        <p>かわりに標本が少ないと階段のように動きます。20 件が 21 件になると同じ位置が違う値を指します。</p>
+
+        <h2 id="보간">線形補間<a class="anchor" href="#보간" aria-label="この節へのリンク">#</a></h2>
+
+        <p>19 番目と 20 番目の値の間を比率で計算します。標本が増えるとき値が滑らかに動きます。
+        Prometheus の <code>histogram_quantile</code> がこの系統です。</p>
+
+        <p>かわりに出た値が<strong>列に無い値</strong>でありえます。「p95 が 187ms」なのに 187ms の
+        リクエストは無いかもしれません。</p>
+
+        <h2 id="실무">では何をするか<a class="anchor" href="#실무" aria-label="この節へのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>二つのツールの p99 を並べる前に、二つが同じ方式かをまず見ます。</li>
+          <li>標本が少ないと方式の差が大きくなります。20〜30 件の比較で「p99 が変わった」は方式の差かもしれません。</li>
+          <li>レポートにパーセンタイルを書くときは標本数も一緒に書きます。標本数が無ければその値がどれだけ揺れるか分かりません。</li>
+        </ul>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e7c9698ad3"></script>
+  <script src="../assets/content.js?v=80892ebc27"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

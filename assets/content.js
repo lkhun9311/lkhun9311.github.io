@@ -61,15 +61,15 @@
      `python3 tools/build-notes-nav.py` 가 파일에서 구워 넣고,
      `--check` 가 어긋남을 잡는다. */
   var NOTES_NAV = {
-    "arm": {ko:{t:"Arm",s:[["어원","왜 이 말을 쓰나"],["단일변수","한 변수만 바꿉니다"],["패치","코드 비교는 패치로 관리합니다"]]}, en:{t:"Arm",s:[["어원","Why this word"],["단일변수","Change one variable"],["패치","Keep a code difference in a patch"]]}, ja:{t:"Arm",s:[["어원","なぜこの言葉を使うのか"],["단일변수","変数は一つだけ変える"],["패치","コードの差はパッチで管理する"]]}},
-    "connection-pool": {ko:{t:"Connection Pool",s:[["왜","왜 재사용하나"],["상한","블로킹 JDBC에서는 이것이 동시성 상한입니다"],["불변식","불변식 하나"]]}, en:{t:"Connection Pool",s:[["왜","Why reuse them"],["상한","On blocking JDBC this is the concurrency limit"],["불변식","One invariant"]]}, ja:{t:"Connection Pool",s:[["왜","なぜ再利用するのか"],["상한","ブロッキング JDBC ではこれが同時実行の上限"],["불변식","不変条件が一つ"]]}},
-    "connection-pooler": {ko:{t:"Connection Pooler",s:[["왜","왜 필요한가"],["구별","Connection Pool과 다른 것입니다"],["한계","무엇을 못 고치나"]]}, en:{t:"Connection Pooler",s:[["왜","Why it exists"],["구별","It is not the same as a connection pool"],["한계","What it cannot fix"]]}, ja:{t:"Connection Pooler",s:[["왜","なぜ必要か"],["구별","Connection Pool とは別のもの"],["한계","何を直せないか"]]}},
-    "fail-closed": {ko:{t:"Fail-closed",s:[["방향","어느 쪽으로 넘어질 것인가"],["대가","대가"],["조용함","조용한 Fail-open이 제일 위험합니다"]]}, en:{t:"Fail-closed",s:[["방향","Which way it falls"],["대가","What it costs"],["조용함","A silent fail-open is the worst case"]]}, ja:{t:"Fail-closed",s:[["방향","どちらへ倒れるか"],["대가","代償"],["조용함","静かな Fail-open が一番危ない"]]}},
-    "load-test-harness": {ko:{t:"Harness",s:[["뜻","말 자체의 뜻"],["조건","무엇이 Harness를 Harness로 만드나"],["흐름","어떻게 도나: 실행 한 번의 흐름"],["오해","흔한 오해"]]}, en:{t:"Harness",s:[["뜻","What the word means"],["조건","What makes a harness a harness"],["흐름","How one run goes"],["오해","Common misreadings"]]}, ja:{t:"Harness",s:[["뜻","言葉そのものの意味"],["조건","何が Harness を Harness にするのか"],["흐름","どう回るか — 実行一回の流れ"],["오해","よくある誤解"]]}},
-    "mutation-testing": {ko:{t:"Mutation Testing",s:[["왜","왜 필요한가"],["방법","어떻게 하나"],["경로","경로마다 따로 걸어야 합니다"]]}, en:{t:"Mutation Testing",s:[["왜","Why it is needed"],["방법","How to do it"],["경로","Do it one path at a time"]]}, ja:{t:"Mutation Testing",s:[["왜","なぜ必要か"],["방법","どうやるか"],["경로","経路ごとに別々にかける"]]}},
-    "percentile": {ko:{t:"Percentile",s:[["평균","왜 평균을 안 쓰나"],["계산","계산 방식이 두 가지입니다"],["어디","어디를 봐야 하나"]]}, en:{t:"Percentile",s:[["평균","Why not the average"],["계산","There are two ways to compute it"],["어디","Which one to read"]]}, ja:{t:"Percentile",s:[["평균","なぜ平均を使わないのか"],["계산","計算方式が二つある"],["어디","どこを見るべきか"]]}},
-    "transaction-pooling": {ko:{t:"Transaction Pooling",s:[["모드","세 가지 모드"],["성질","핵심 성질: 언제 묶이나"],["핀","핀(Pin)이 걸리는 패턴"]]}, en:{t:"Transaction Pooling",s:[["모드","Three modes"],["성질","The property that matters — when it pins"],["핀","Patterns that Pin"]]}, ja:{t:"Transaction Pooling",s:[["모드","三つのモード"],["성질","核心的な性質 — いつ固定されるか"],["핀","ピン(Pin)がかかるパターン"]]}},
-    "warmup": {ko:{t:"Warm-up",s:[["원인","무엇이 앞부분을 다르게 만드나"],["길이","얼마나 버리나"]]}, en:{t:"Warm-up",s:[["원인","What makes the front different"],["길이","How much to throw away"]]}, ja:{t:"Warm-up",s:[["원인","何が先頭を違うものにするのか"],["길이","どれだけ捨てるか"]]}}
+    "arm": {ko:{t:"Arm",s:[["어원","왜 이 말을 쓰나",0],["단일변수","한 변수만 바꿉니다",0],["패치","코드 비교는 패치로 관리합니다",0]]}, en:{t:"Arm",s:[["어원","Why this word",0],["단일변수","Change one variable",0],["패치","Keep a code difference in a patch",0]]}, ja:{t:"Arm",s:[["어원","なぜこの言葉を使うのか",0],["단일변수","変数は一つだけ変える",0],["패치","コードの差はパッチで管理する",0]]}},
+    "connection-pool": {ko:{t:"Connection Pool",s:[["왜","왜 재사용하나",0],["상한","블로킹 JDBC에서는 이것이 동시성 상한입니다",0],["불변식","불변식 하나",0]]}, en:{t:"Connection Pool",s:[["왜","Why reuse them",0],["상한","On blocking JDBC this is the concurrency limit",0],["불변식","One invariant",0]]}, ja:{t:"Connection Pool",s:[["왜","なぜ再利用するのか",0],["상한","ブロッキング JDBC ではこれが同時実行の上限",0],["불변식","不変条件が一つ",0]]}},
+    "connection-pooler": {ko:{t:"Connection Pooler",s:[["왜","왜 필요한가",0],["구별","Connection Pool과 다른 것입니다",0],["한계","무엇을 못 고치나",0]]}, en:{t:"Connection Pooler",s:[["왜","Why it exists",0],["구별","It is not the same as a connection pool",0],["한계","What it cannot fix",0]]}, ja:{t:"Connection Pooler",s:[["왜","なぜ必要か",0],["구별","Connection Pool とは別のもの",0],["한계","何を直せないか",0]]}},
+    "fail-closed": {ko:{t:"Fail-closed",s:[["방향","어느 쪽으로 넘어질 것인가",0],["대가","대가",0],["조용함","조용한 Fail-open이 제일 위험합니다",0]]}, en:{t:"Fail-closed",s:[["방향","Which way it falls",0],["대가","What it costs",0],["조용함","A silent fail-open is the worst case",0]]}, ja:{t:"Fail-closed",s:[["방향","どちらへ倒れるか",0],["대가","代償",0],["조용함","静かな Fail-open が一番危ない",0]]}},
+    "load-test-harness": {ko:{t:"Harness",s:[["뜻","말 자체의 뜻",0],["조건","무엇이 Harness를 Harness로 만드나",0],["흐름","어떻게 도나: 실행 한 번의 흐름",0],["오해","흔한 오해",0]]}, en:{t:"Harness",s:[["뜻","What the word means",0],["조건","What makes a harness a harness",0],["흐름","How one run goes",0],["오해","Common misreadings",0]]}, ja:{t:"Harness",s:[["뜻","言葉そのものの意味",0],["조건","何が Harness を Harness にするのか",0],["흐름","どう回るか — 実行一回の流れ",0],["오해","よくある誤解",0]]}},
+    "mutation-testing": {ko:{t:"Mutation Testing",s:[["왜","왜 필요한가",0],["방법","어떻게 하나",0],["경로","경로마다 따로 걸어야 합니다",0]]}, en:{t:"Mutation Testing",s:[["왜","Why it is needed",0],["방법","How to do it",0],["경로","Do it one path at a time",0]]}, ja:{t:"Mutation Testing",s:[["왜","なぜ必要か",0],["방법","どうやるか",0],["경로","経路ごとに別々にかける",0]]}},
+    "percentile": {ko:{t:"Percentile",s:[["percentile","개요",1],["percentile-average","왜 평균을 안 쓰나",1],["percentile-calc","계산 방식이 두 가지입니다",1],["percentile-where","어디를 봐야 하나",1]]}, en:{t:"Percentile",s:[["percentile","Overview",1],["percentile-average","Why not the average",1],["percentile-calc","There are two ways to compute it",1],["percentile-where","Which one to read",1]]}, ja:{t:"Percentile",s:[["percentile","概要",1],["percentile-average","なぜ平均を使わないのか",1],["percentile-calc","計算方式が二つある",1],["percentile-where","どれを見るか",1]]}},
+    "transaction-pooling": {ko:{t:"Transaction Pooling",s:[["모드","세 가지 모드",0],["성질","핵심 성질: 언제 묶이나",0],["핀","핀(Pin)이 걸리는 패턴",0]]}, en:{t:"Transaction Pooling",s:[["모드","Three modes",0],["성질","The property that matters — when it pins",0],["핀","Patterns that Pin",0]]}, ja:{t:"Transaction Pooling",s:[["모드","三つのモード",0],["성질","核心的な性質 — いつ固定されるか",0],["핀","ピン(Pin)がかかるパターン",0]]}},
+    "warmup": {ko:{t:"Warm-up",s:[["원인","무엇이 앞부분을 다르게 만드나",0],["길이","얼마나 버리나",0]]}, en:{t:"Warm-up",s:[["원인","What makes the front different",0],["길이","How much to throw away",0]]}, ja:{t:"Warm-up",s:[["원인","何が先頭を違うものにするのか",0],["길이","どれだけ捨てるか",0]]}}
   };
 
   var DATA = {
@@ -872,7 +872,10 @@
     for (var i = 0; i < items.length; i++) {
       if (items[i].url && items[i].url.split("/").pop() === slug + ".html") { me = items[i]; break; }
     }
-    if (!me) return;   // 데이터에 없는 글이면 레일을 그리지 않는다 — 빈 상자보다 낫다.
+    /* ⚠️ 용어 노트의 **하위 쪽은 목록 데이터에 없다.** 카드로 뜨는 것은 용어 9개뿐이고
+       02.. 쪽은 나무에만 있다. 여기서 돌아가 버리면 하위 쪽의 레일이 통째로 비어 버린다.
+       나무는 `me` 가 없어도 그릴 수 있으므로, 노트는 그냥 지나간다. */
+    if (!me && key !== "notes") return;   // 데이터에 없는 글이면 레일을 그리지 않는다.
 
     /* 레일 제목은 **읽는 사람의 언어**를 따른다. 페이지 언어를 따르게 두면, 한국어 독자가
        한국어판이 없는 영문 글을 볼 때 메뉴는 한국어인데 이 레일만 영어로 남는다. */
@@ -884,7 +887,8 @@
 
     var html = "";
 
-    /* 용어 노트에는 **용어 나무**를 맨 위에 둔다. <details> 라 JavaScript 없이도 펴고 접힌다. */
+    /* 용어 노트에는 **용어 나무**를 맨 위에 둔다. <details> 라 JavaScript 없이도 펴고 접힌다.
+       용어 하나가 여러 쪽이다 — 01 개요, 02.. 주제별 쪽. 나무의 항목은 앵커가 아니라 **주소**다. */
     if (key === "notes" && NOTES_NAV) {
       var treeLabel = ({ ko: "용어", ja: "用語" })[lang] || "Terms";
       var suffix = ({ ko: ".ko", ja: ".ja" })[lang] || "";
@@ -897,26 +901,32 @@
       });
       var rows = slugs.map(function (sl) {
         var e = NOTES_NAV[sl][lang] || NOTES_NAV[sl].en;
-        var href = BASE + "notes/" + sl + suffix + ".html";
-        var here = sl === slug;
-        var secs = e.s.map(function (x, i) {
-          /* 한글 id 를 인코딩하지 않는다 — 본문 목차가 `#예상-독자` 로 쓰고 있어 모양이 갈린다.
-             번호는 본문·목차와 **같은 수**여야 한다. 나무는 꼬리 두 절을 빼고 담으므로
-             본문 순서 그대로 1부터 센다. */
+        /* 이 용어의 어느 쪽에 있어도 그 용어는 펴 둔다. */
+        var here = slug === sl || (slug || "").indexOf(sl + "-") === 0;
+        /* 셋째 칸이 1이면 그 항목은 **쪽**이고 0이면 이 쪽 안의 **절**이다.
+           용어를 한 번에 다 쪼갤 수 없으므로 두 모양이 섞여 있어도 맞게 그린다. */
+        var pages = e.s.map(function (x, i) {
+          var isPage = x[2] === 1;
+          var href = isPage
+            ? BASE + "notes/" + x[0] + suffix + ".html"
+            : BASE + "notes/" + sl + suffix + ".html#" + x[0];
+          var cur = isPage && slug === x[0];
           var no = ("0" + (i + 1)).slice(-2);
-          return '<li><a href="' + esc(href) + "#" + esc(x[0]) + '">' +
-                 '<span class="sec-no">' + no + "</span>" + esc(x[1]) + "</a></li>";
+          return '<li><a href="' + esc(href) + '"' + (cur ? ' aria-current="page" class="is-here"' : "") +
+                 '><span class="sec-no">' + no + "</span>" + esc(x[1]) + "</a></li>";
         }).join("");
-        if (!secs) return '<li class="term-leaf"><a href="' + esc(href) + '">' + esc(e.t) + "</a></li>";
+        if (!pages) {
+          return '<li class="term-leaf"><a href="' + esc(BASE + "notes/" + sl + suffix + ".html") +
+                 '">' + esc(e.t) + "</a></li>";
+        }
         return '<li><details class="term"' + (here ? " open" : "") + ">" +
-               '<summary><a href="' + esc(href) + '"' + (here ? ' aria-current="page"' : "") +
-               ">" + esc(e.t) + "</a></summary><ul>" + secs + "</ul></details></li>";
+               "<summary>" + esc(e.t) + "</summary><ul>" + pages + "</ul></details></li>";
       }).join("");
       html += '<div class="aside-group aside-terms"><p class="aside-label">' + esc(treeLabel) +
               "</p><ul>" + rows + "</ul></div>";
     }
 
-    var tags = me.tags || [];
+    var tags = (me && me.tags) || [];
     /* 용어 노트에는 태그도 관련 글도 안 붙인다 — 나무 하나로 끝낸다(사용자 지시, 2026-09-12). */
     if (key === "notes") {
       if (html) el.innerHTML = html;
