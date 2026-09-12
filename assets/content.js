@@ -1041,10 +1041,12 @@
 
     var html = "";
 
-    /* 용어 노트에는 **용어 나무**를 맨 위에 둔다. <details> 라 JavaScript 없이도 펴고 접힌다.
-       용어 하나가 여러 쪽이다 — 01 개요, 02.. 주제별 쪽. 나무의 항목은 앵커가 아니라 **주소**다. */
+    /* 노트 쪽에는 **노트 나무**를 맨 위에 둔다. <details> 라 JavaScript 없이도 펴고 접힌다.
+       한 항목이 여러 쪽이다 — 01 개요, 02.. 주제별 쪽. 나무의 항목은 앵커가 아니라 **주소**다.
+       ⚠️ 라벨을 「용어」라고 불렀었다. 노트에는 원리·자격증·컨퍼런스도 들어오므로 그 이름이
+       칸을 좁게 만들었다(사용자 지시, 2026-09-12). */
     if (key === "notes" && NOTES_NAV) {
-      var treeLabel = ({ ko: "용어", ja: "用語" })[lang] || "Terms";
+      var treeLabel = ({ ko: "노트", ja: "ノート" })[lang] || "Notes";
       var suffix = ({ ko: ".ko", ja: ".ja" })[lang] || "";
       var slugs = [];
       for (var k in NOTES_NAV) if (NOTES_NAV.hasOwnProperty(k)) slugs.push(k);
