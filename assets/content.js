@@ -913,6 +913,11 @@
     }
 
     var tags = me.tags || [];
+    /* 용어 노트에는 태그도 관련 글도 안 붙인다 — 나무 하나로 끝낸다(사용자 지시, 2026-09-12). */
+    if (key === "notes") {
+      if (html) el.innerHTML = html;
+      return;
+    }
     if (tags.length) {
       html += '<div class="aside-group"><p class="aside-label notranslate">' + esc(L.tags) + '</p><ul>' +
         tags.map(function (t) {
