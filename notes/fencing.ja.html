@@ -3,24 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Apdex | Kwanghun Lee</title>
-  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/notes/apdex.html" />
-  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/notes/apdex.ko.html" />
-  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/notes/apdex.ja.html" />
-  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/notes/apdex.html" />
+  <title>Fencing | Kwanghun Lee</title>
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/notes/fencing.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/notes/fencing.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/notes/fencing.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/notes/fencing.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
   <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
-  <meta name="description" content="応答時間を 0 から 1 の点数一つに変えた値。基準時間 T を書かなければほかのレポートと比べられません。" />
+  <meta name="description" content="復旧を始める前に元を確実に切ること。切れなければ立てません。" />
   <meta property="og:type" content="article" />
   <meta property="og:locale" content="ja_JP" />
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Apdex" />
-  <meta property="og:description" content="応答時間を 0 から 1 の点数一つに変えた値。基準時間 T を書かなければほかのレポートと比べられません。" />
+  <meta property="og:title" content="Fencing" />
+  <meta property="og:description" content="復旧を始める前に元を確実に切ること。切れなければ立てません。" />
   <meta property="og:locale" content="ko_KR" />
   <link rel="stylesheet" href="../assets/styles.css?v=557c3ff3d7" />
 </head>
@@ -30,7 +30,7 @@
       <a class="site-name" href="../index.html#about">Kwanghun</a>
       <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
         <select id="langPicker" class="lang-picker notranslate" translate="no"
-                  data-authored='{"en": "apdex.html", "ko": "apdex.ko.html", "ja": "apdex.ja.html"}' aria-label="Select language" data-i18n-attr="aria-label:a11y.lang">
+                  data-authored='{"en": "fencing.html", "ko": "fencing.ko.html", "ja": "fencing.ja.html"}' aria-label="Select language" data-i18n-attr="aria-label:a11y.lang">
           <option value="ko">한국어</option>
           <option value="en">English</option>
           <option value="ja" selected>日本語</option>
@@ -63,81 +63,86 @@
         <div class="article-meta"><span class="source-tag glossary notranslate">用語</span></div>
       </div>
       <section class="page-hero">
-        <h1>Apdex</h1>
+        <h1>Fencing</h1>
         <p class="article-date">性能測定<span aria-hidden="true"> · </span><span class="notranslate">#Warm-up</span></p>
       </section>
-      <aside class="article-aside" data-aside="notes" data-slug="apdex"></aside>
+      <aside class="article-aside" data-aside="notes" data-slug="fencing"></aside>
         <nav class="article-toc" aria-label="目次">
           <p class="toc-label">目次</p>
           <ul>
-            <li><a href="#계산">どうやって出るのか</a></li>
-            <li><a href="#읽는법">何を教えてくれるのか</a></li>
-            <li><a href="#함정">T を書かなければ比べられません</a></li>
+            <li><a href="#왜">なぜ必要か</a></li>
+            <li><a href="#어떻게">どうやって切るか</a></li>
+            <li><a href="#없으면">経路が無ければ復旧も無い</a></li>
             <li><a href="#쓰인-곳">このサイトで使われている記事</a></li>
           </ul>
         </nav>
       <article class="article-body">
 
-        <p><strong>Apdex は応答時間を 0 から 1 のあいだの点数一つに変えた値です。</strong>
-        1 に近いほど良く、基準時間 T を何にしたかで値が変わります。</p>
+        <p><strong>フェンシング(Fencing)は復旧を始める前に元を確実に切ることです。</strong>
+        切れたことを確認できなければ復旧しません。</p>
 
-        <h2 id="계산">どうやって出るのか<a class="anchor" href="#계산" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="왜">なぜ必要か<a class="anchor" href="#왜" aria-label="この節へのリンク">#</a></h2>
 
-        <p>まず基準時間 T を決めます。次にリクエストを三つに分けます。T 以内に終わったものは満足、
-        4T 以内は我慢、それより遅いか失敗したものは不満です。</p>
+        <p>応答しないノードは死んだように見えます。ところが応答が無いというのは
+        <strong>こちらから見えない</strong>という意味で、<strong>向こうが止まった</strong>という意味では
+        ありません。スイッチが切れただけでノードは回り続けているかもしれません。</p>
 
-        <p>満足に 1 点、我慢に 0.5 点、不満に 0 点を与え、全体の件数で割ります。このサイトの表では
-        T が 0.5s なので、満足は 0.5s 以内、我慢は 1.5s 以内です。</p>
+        <p>その状態で別のノードに同じ VM を立てると、元と複製が同じボリュームに同時に書きます。
+        ファイルシステムはそんなアクセスを前提にしていないのでデータが壊れます。自動復旧が障害より
+        高くつく場合がこれです。</p>
 
                 <figure class="diagram">
-          <svg viewBox="0 0 720 200" role="img" aria-labelledby="apx-t apx-d" class="figure-svg">
-            <title id="apx-t">Apdex ができるまで</title>
-            <desc id="apx-d">左から箱が四つ、灰色の矢印でつながります。一つ目は基準時間 T を決めること、二つ目はリクエストを三つの群に分けること、三つ目は満足に 1 点、我慢に 0.5 点を与えること、四つ目は全体で割った値が Apdex だということです。下にピンクで、T を書かなければ二つのレポートの Apdex を並べられないと書かれています。</desc>
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="fen-t fen-d" class="figure-svg">
+            <title id="fen-t">フェンシング無しで復旧したときに起きること</title>
+            <desc id="fen-d">左から箱が四つ、灰色の矢印でつながります。一つ目はノードが応答しないこと、二つ目は死んだと判定すること、三つ目は別のノードで同じ VM を立ち上げること、四つ目は元が生きていて同じボリュームに二つが書くことです。下にピンクで、応答が無いことは死んだという意味ではないと書かれています。</desc>
             <g font-family="Inter, sans-serif">
               <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
-              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">T を決める</text>
-              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">この表では 0.5s</text>
-              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#apx-a)"/>
+              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">応答が無い</text>
+              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">ネットワークかも</text>
+              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#fen-a)"/>
               <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
-              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">三つの群に</text>
-              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">満足・我慢・不満</text>
-              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#apx-a)"/>
+              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">死んだと判定</text>
+              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">観測者側の根拠</text>
+              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#fen-a)"/>
               <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
-              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">点を与える</text>
-              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">1 点 · 0.5 点 · 0 点</text>
-              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#apx-a)"/>
+              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">複製を起動</text>
+              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">別のノードで</text>
+              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#fen-a)"/>
               <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
-              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">全体で割る</text>
-              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">0 から 1 のあいだ</text>
-              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">T を書かなければ二つのレポートの Apdex を並べられない</text>
+              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">二つが書く</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">同じボリュームに</text>
+              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">応答が無いことは死んだという意味ではない</text>
             </g>
             <defs>
-              <marker id="apx-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <marker id="fen-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
                 <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
               </marker>
             </defs>
           </svg>
-          <figcaption>Apdex は時間ではなく点数です。同じデータでも T を変えれば違う値になります。</figcaption>
+          <figcaption>復旧が障害より高くつく場合です。片方を確実に切るまでもう片方を立ててはいけません。</figcaption>
         </figure>
 
-        <h2 id="읽는법">何を教えてくれるのか<a class="anchor" href="#읽는법" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="어떻게">どうやって切るか<a class="anchor" href="#어떻게" aria-label="この節へのリンク">#</a></h2>
 
-        <p>パーセンタイルが「どの位置の値がいくつか」を言うのに対し、Apdex は
-        <strong>「使えると見なせるリクエストが何パーセントか」</strong>に近いです。失敗したリクエストも
-        不満として数えるので、エラー率が高ければ一緒に下がります。</p>
+        <p>ノード自身に頼んで切ることはできません。頼めないからこの状況になったのです。だから
+        フェンシングは<strong>ノードの外の経路</strong>で行います。</p>
 
-        <p>だから中央値が良くなっても Apdex は上がらないことがあります。中央値は真ん中の一件で、
-        Apdex は分布全体だからです。</p>
+        <ul class="callout">
+          <li>電源 · BMC や IPMI で電源を落とします。確実ですが、その経路が生きている必要があります。</li>
+          <li>ストレージ · そのノードのボリューム権限を剥がします。ノードは回っても書けません。</li>
+          <li>ネットワーク · スイッチでポートを落とします。ただし既に開いたセッションは残ることがあります。</li>
+        </ul>
 
-        <h2 id="함정">T を書かなければ比べられません<a class="anchor" href="#함정" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="없으면">経路が無ければ復旧も無い<a class="anchor" href="#없으면" aria-label="この節へのリンク">#</a></h2>
 
-        <p>Apdex は T に付いた値です。T を 2s にすれば同じデータで点数が大きく上がります。
-        <strong>T を書いていない Apdex は、ほかのレポートの Apdex と並べられません。</strong></p>
+        <p>フェンシングの経路そのものが切れていれば切ることができず、切れなければ立ててはいけません。
+        このとき正しい答えは<strong>何もせず人を呼ぶこと</strong>です。自動復旧を諦めるのではなく、
+        確信できないときの既定値を停止にするということです。</p>
 
         <h2 id="쓰인-곳">このサイトで使われている記事<a class="anchor" href="#쓰인-곳" aria-label="この節へのリンク">#</a></h2>
 
         <ul class="callout">
-          <li><a href="../writing/slow-screens-1-volume-list.ja.html">ボリューム一覧の P99 が 10 分の Timeout → 23ms になりました</a> · 0.014 から 0.526 へ</li>
+          <li><a href="../writing/seven-of-eight-should-not-recover.ja.html">ノード HA の 8 シナリオのうち 7 つは復旧してはいけません</a></li>
         </ul>
 
       </article>
