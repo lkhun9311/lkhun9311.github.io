@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="시계열 그래프를 그리는 화면이라 쿼리를 의심했는데 아니었습니다. 초기 로드가 프로젝트마다 Client를 새로 만들고 있었고 우리가 쓰던 팩터리는 Client를 줄 때마다 Keystone에 인증합니다. 다만 이 글에는 전후를 잰 숫자가 없습니다. 왜 없는지가 글의 절반입니다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=b0ef7ac9b6" />
+  <link rel="stylesheet" href="../assets/styles.css?v=ddc4ff3716" />
 </head>
 <body>
   <div class="topbar">
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span></div>
       </div>
               <section class="page-hero">
-          <h1>모니터링 화면 초기 로드가 프로젝트 수만큼 Keystone에 인증했습니다<br><span class="h1-sub">Client를 만드는 것이 곧 Keystone 인증이었습니다.</span><span class="h1-context notranslate">사내 Cloud 관리 Console · 느린 화면 연작 ④</span></h1>
+          <h1>모니터링 화면 초기 로드가 프로젝트 수만큼 Keystone에 인증했습니다<br><span class="h1-sub">Client를 만드는 것이 곧 Keystone 인증이었습니다.</span><span class="h1-tags notranslate"><span class="h1-tag">#관리Console</span><span class="h1-tag">#느린화면④</span></span></h1>
           <p class="article-date">2026년 9월</p>
         </section>
 
@@ -175,12 +175,12 @@
 
         <h2 id="쿼리부터">쿼리부터 열고 싶어집니다<a class="anchor" href="#쿼리부터" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>「시계열 그래프가 느리다」는 말을 들으면 손이 먼저 가는 곳이 있습니다. 쿼리입니다.
+        <p>‘시계열 그래프가 느리다’는 말을 들으면 손이 먼저 가는 곳이 있습니다. 쿼리입니다.
         조회식을 다듬고 결과를 Cache하고 그러고 나서 부하 도구로 사용자를 늘려 확인하는 것.
         <strong>순서가 자연스러운데, 여기서는 느린 구간이 그쪽이 아니었습니다.</strong></p>
 
         <p>시계열 조회는 <strong>15초에 한 번</strong> 돕니다. 그것도 열린 화면 수와 상관없이 한 번입니다.
-        그 빈도만으로 「싸다」고 판정할 수는 없습니다. 다만 기록에서 먼저 볼 구간으로
+        그 빈도만으로 ‘싸다’고 판정할 수는 없습니다. 다만 기록에서 먼저 볼 구간으로
         지목된 곳은 여기가 아니었습니다.</p>
 
         <blockquote><p>실행 시간이 긴 함수가 곧 사용자가 기다리는 구간은 아닙니다.
@@ -282,11 +282,11 @@
         <p>같은 경로에 쿼터 Cache가 이미 들어 있었습니다. 그런데 <strong>읽는 코드가 없었습니다.</strong>
         채우기만 하고 매번 live 호출을 하고 있었습니다.</p>
 
-        <blockquote><p><strong>「Cache를 넣었다」와 「Cache를 읽는다」는 다른 일입니다.</strong>
+        <blockquote><p><strong>‘Cache를 넣었다’와 ‘Cache를 읽는다’는 다른 일입니다.</strong>
         읽지 않는 Cache는 없는 것보다 나쁩니다. 있다고 믿게 만들기 때문입니다.</p></blockquote>
 
-        <p>앞의 <a href="slow-screens-3-role-lookup.ko.html">③편</a>이 「Cache가 있는데 그 Cache 때문에
-        느렸다」였다면 여기는 「Cache가 있는데 아무도 안 봤다」입니다.</p>
+        <p>앞의 <a href="slow-screens-3-role-lookup.ko.html">③편</a>이 ‘Cache가 있는데 그 Cache 때문에
+        느렸다’였다면 여기는 ‘Cache가 있는데 아무도 안 봤다’입니다.</p>
 
         <h2 id="수정">수정: 인증을 반복문 밖으로 꺼냈습니다<a class="anchor" href="#수정" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -308,7 +308,7 @@ for (String projectId : projects) {
         <p>정확히 하겠습니다. <strong>인증이 없어진 것이 아니라 요청 1건당 N회가 1회가 된 것</strong>입니다.
         Client는 이 메서드 안에서 만들어지므로 다음 요청은 다시 한 번 인증합니다.</p>
 
-        <p>그리고 <strong>「1회」에도 조건이 붙습니다.</strong> 반복문이 도는 동안 토큰이 만료되면
+        <p>그리고 <strong>‘1회’에도 조건이 붙습니다.</strong> 반복문이 도는 동안 토큰이 만료되면
         그다음 호출은 거부됩니다. 그때 라이브러리가 스스로 다시 인증하고 재시도할지는
         쓰는 버전과 커넥터에 달렸고 이 글은 확인하지 않았습니다.
         토큰 유효 기간이 이 반복문이 도는 시간보다 훨씬 길어서 문제가 드러나지 않았을 뿐입니다.</p>
@@ -333,11 +333,11 @@ for (String projectId : projects) {
 
         <p>여기서부터가 이 글이 앞의 세 편과 다른 부분입니다.</p>
 
-        <p>사내 기록에 남은 숫자는 두 개인데 <strong>서로 다릅니다.</strong> 한쪽은 「N프로젝트면 응답
-        5~10초」라고 적혀 있고 다른 쪽은 「초기 로드가 수 초에서 수십 초」라고 적혀 있습니다.
+        <p>사내 기록에 남은 숫자는 두 개인데 <strong>서로 다릅니다.</strong> 한쪽은 ‘N프로젝트면 응답
+        5~10초’라고 적혀 있고 다른 쪽은 ‘초기 로드가 수 초에서 수십 초’라고 적혀 있습니다.
         <strong>어느 쪽도 어떻게 잰 값인지 적혀 있지 않고 고친 뒤의 값은 아예 없습니다.</strong></p>
 
-        <p>그래서 이 글은 「몇 배 빨라졌다」를 쓸 수 없습니다. 쓸 수 있는 것은
+        <p>그래서 이 글은 ‘몇 배 빨라졌다’를 쓸 수 없습니다. 쓸 수 있는 것은
         코드에서 확인되는 것까지입니다.</p>
 
         <div class="table-scroll">
@@ -361,7 +361,7 @@ for (String projectId : projects) {
 
         <h2 id="부하-도구">부하 도구는 시나리오가 밟은 경로만 잽니다<a class="anchor" href="#부하-도구" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>「그럼 재면 되지 않나」가 다음 질문입니다. 그런데 이 화면은
+        <p>‘그럼 재면 되지 않나’가 다음 질문입니다. 그런데 이 화면은
         흔히 쓰는 시나리오로는 느린 구간이 테스트에 안 들어갑니다.</p>
 
         <p>부하 도구를 켜고 동시 사용자를 늘리는 것이 보통 하는 일입니다. 그런데 이 화면에서
@@ -369,7 +369,7 @@ for (String projectId : projects) {
         <strong>15초마다 서버가 한 번 계산해 열려 있는 모든 화면에 같은 값을 밀어 주는</strong> 구조입니다.</p>
 
         <blockquote><p>사용자를 10명으로 늘려도 Tick당 계산은 여전히 1회입니다.
-        연결을 붙들고 있는 시나리오라면 그래프는 「사용자를 늘려도 끄떡없다」로 나옵니다.
+        연결을 붙들고 있는 시나리오라면 그래프는 ‘사용자를 늘려도 끄떡없다’로 나옵니다.
         그건 아키텍처의 성질이지 느린 경로를 밟았다는 뜻이 아닙니다.</p></blockquote>
 
         <p>도구 탓이 아닙니다. 사용자 10명이 각자 화면을 새로 열면 초기 로드도 10번
@@ -413,10 +413,10 @@ for (String projectId : projects) {
         <ul>
           <li>사내 제품이라 코드를 그대로 옮기지 않았습니다. 제품명·고객사·내부 주소는 빼고 구조만 남겼습니다. 클래스와 함수 이름은 이야기에 필요한 만큼만 일반화해서 씁니다.</li>
 
-          <li>전후 측정치가 없습니다. 「5~10초」와 「수 초에서 수십 초」는 사내 기록의
+          <li>전후 측정치가 없습니다. ‘5~10초’와 ‘수 초에서 수십 초’는 사내 기록의
           두 문장이고 방법이 적혀 있지 않습니다. 고친 뒤의 값은 없습니다. 이 글의 어떤 문장도
           속도 개선폭을 주장하지 않습니다.</li>
-          <li><strong>인증 1회가 얼마인지 모릅니다.</strong> 그래서 「N−1회를 덜 낸다」는 말이
+          <li><strong>인증 1회가 얼마인지 모릅니다.</strong> 그래서 ‘N−1회를 덜 낸다’는 말이
           몇 초인지도 모릅니다.</li>
           <li><strong>Client를 얻는 일이 인증이라는 것은 사내 문서 2건에서 확인했습니다.</strong>
           <code>serviceClient()</code>의 구현 자체는 저장소에 없고 이 글도 그것을 옮기지 않았습니다.
@@ -434,14 +434,14 @@ for (String projectId : projects) {
         <ul>
           <li><strong>이름이 비용을 숨깁니다.</strong> <code>serviceClient()</code>는 공짜처럼 생겼는데
           네트워크 왕복입니다. <strong>반복문 안에서 Client를 얻는 코드는 항상 한 번 의심할 값</strong>이 있습니다.</li>
-          <li>「Cache를 넣었다」와 「Cache를 읽는다」는 다른 일입니다.</li>
+          <li>‘Cache를 넣었다’와 ‘Cache를 읽는다’는 다른 일입니다.</li>
           <li>부하 테스트 결과는 시나리오가 실제로 보낸 요청에 대해서만 유효합니다.
           축이 맞지 않으면 평평한 그래프가 나오고 그 그래프는 안 밟은 경로에 대해 아무것도 말하지 않습니다.</li>
           <li>고쳤는데 못 쟀으면 못 쟀다고 씁니다. 코드에서 확실한 것과
           재야 아는 것을 갈라 놓으면 적어도 다음 사람이 무엇을 재야 하는지는 압니다.</li>
         </ul>
 
-        <p>측정하기 전에 「사용자가 무엇을 기다리는가」와 「이 시나리오가 그 경로를 보내는가」를
+        <p>측정하기 전에 ‘사용자가 무엇을 기다리는가’와 ‘이 시나리오가 그 경로를 보내는가’를
         먼저 물어야 합니다. 이번에는 느린 구간을 찾아 고쳐 놓고도,
         그 구간을 지나가는 시나리오를 쓰지 않아 전후를 못 쟀습니다.</p>
 
@@ -462,7 +462,7 @@ for (String projectId : projects) {
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=07ce86b446"></script>
-  <script src="../assets/content.js?v=48d76e85c8"></script>
+  <script src="../assets/content.js?v=b500d370a1"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

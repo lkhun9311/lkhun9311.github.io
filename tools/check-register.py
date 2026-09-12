@@ -85,6 +85,10 @@ def count(path):
     # 인라인 태그는 지우고 블록 태그만 공백으로 바꾼다.
     art = re.sub(r"</?(?:strong|em|code|b|i|span|a|sup|sub)\b[^>]*>", "", art)
     txt = re.sub(r"<[^>]+>", " ", art)
+    # ⚠️ 따온 말 안의 평서체는 **인용된 쪽의 문체**다. 이 글의 문체가 아니므로 세지 않는다.
+    #    2026-09-12 에 「」를 작은따옴표로 바꾸자 그 안의 문장 둘이 새로 잡혔다.
+    #    부호를 바꿨을 뿐 글은 그대로였으니, 세던 규칙이 부호에 기대고 있었던 것이다.
+    txt = re.sub(r"[‘“][^’”]{0,200}[’”]", lambda x: " " * (x.end() - x.start()), txt)
     hits = [re.sub(r"\s+", " ", txt[max(0, h.start() - 60):h.end()]).strip()
             for h in _plain_spans(txt)]
     return len(hits), hits
