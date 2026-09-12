@@ -3,24 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fencing | Kwanghun Lee</title>
-  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/notes/fencing.html" />
-  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/notes/fencing.ko.html" />
-  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/notes/fencing.ja.html" />
-  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/notes/fencing.html" />
+  <title>Cache Stampede | Kwanghun Lee</title>
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/notes/cache-stampede.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/notes/cache-stampede.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/notes/cache-stampede.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/notes/cache-stampede.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
   <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
-  <meta name="description" content="Making sure the original is off before recovery starts. If it cannot be turned off, nothing starts." />
+  <meta name="description" content="One key goes missing and everyone calls the origin at once. It is worst when you are busiest." />
   <meta property="og:type" content="article" />
   <meta property="og:locale" content="en_US" />
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Fencing" />
-  <meta property="og:description" content="Making sure the original is off before recovery starts. If it cannot be turned off, nothing starts." />
+  <meta property="og:title" content="Cache Stampede" />
+  <meta property="og:description" content="One key goes missing and everyone calls the origin at once. It is worst when you are busiest." />
   <meta property="og:locale" content="ko_KR" />
   <link rel="stylesheet" href="../assets/styles.css?v=557c3ff3d7" />
 </head>
@@ -30,7 +30,7 @@
       <a class="site-name" href="../index.html#about">Kwanghun</a>
       <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
         <select id="langPicker" class="lang-picker notranslate" translate="no"
-                  data-authored='{"en": "fencing.html", "ko": "fencing.ko.html", "ja": "fencing.ja.html"}' aria-label="Select language" data-i18n-attr="aria-label:a11y.lang">
+                  data-authored='{"en": "cache-stampede.html", "ko": "cache-stampede.ko.html", "ja": "cache-stampede.ja.html"}' aria-label="Select language" data-i18n-attr="aria-label:a11y.lang">
           <option value="ko">한국어</option>
           <option value="en" selected>English</option>
           <option value="ja">日本語</option>
@@ -63,85 +63,80 @@
         <div class="article-meta"><span class="source-tag glossary notranslate">Term</span></div>
       </div>
       <section class="page-hero">
-        <h1>Fencing</h1>
+        <h1>Cache Stampede</h1>
         <p class="article-date">Performance measurement<span aria-hidden="true"> · </span><span class="notranslate">#Warm-up</span></p>
       </section>
-      <aside class="article-aside" data-aside="notes" data-slug="fencing"></aside>
+      <aside class="article-aside" data-aside="notes" data-slug="cache-stampede"></aside>
         <nav class="article-toc" aria-label="Contents">
           <p class="toc-label">Contents</p>
           <ul>
-            <li><a href="#왜">Why it is needed</a></li>
-            <li><a href="#어떻게">How it is done</a></li>
-            <li><a href="#없으면">No path means no recovery</a></li>
+            <li><a href="#무엇">There is a gap between checking and filling</a></li>
+            <li><a href="#없음">“Nothing” is also a value</a></li>
+            <li><a href="#막기">The fix belongs to the data structure, not to a lock</a></li>
             <li><a href="#쓰인-곳">Where it is used on this site</a></li>
           </ul>
         </nav>
       <article class="article-body">
 
-        <p><strong>Fencing is making sure the original is off before recovery starts.</strong> If that
-        cannot be confirmed, recovery does not run.</p>
+        <p><strong>A cache stampede is what happens when one key goes missing and everyone who needed it
+        calls the origin at once.</strong> The cache exists, and behaves as if it did not, precisely when
+        things are busiest.</p>
 
-        <h2 id="왜">Why it is needed<a class="anchor" href="#왜" aria-label="Link to this section">#</a></h2>
+        <h2 id="무엇">There is a gap between checking and filling<a class="anchor" href="#무엇" aria-label="Link to this section">#</a></h2>
 
-        <p>A node that stops answering looks dead. But not answering means <strong>I cannot see it</strong>,
-        not <strong>it has stopped</strong>. A switch may have failed while the node kept running.</p>
+        <p>A hand-written cache usually looks like this: check whether it is empty, and if it is, fetch and
+        fill. Between those two lines there is <strong>room for another thread</strong>.</p>
 
-        <p>Start the same VM elsewhere in that state and the original and the copy write to one volume at
-        once. No filesystem assumes that, so the data breaks. This is the case where automatic recovery
-        costs more than the failure did.</p>
+        <p>When N parallel threads clear the check in the same moment, all N call the external API. A cache
+        built to make one call ends up making N. N grows with load, so
+        <strong>it is worst exactly when you are busiest.</strong></p>
 
                 <figure class="diagram">
-          <svg viewBox="0 0 720 200" role="img" aria-labelledby="fen-t fen-d" class="figure-svg">
-            <title id="fen-t">What happens when recovery runs without fencing</title>
-            <desc id="fen-d">Four boxes run left to right, joined by grey arrows: a node stops answering, it is judged dead, the same VM is started on another node, and the original is still alive so two writers share one volume. A pink line underneath says not answering is not the same as being dead.</desc>
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="cs-t cs-d" class="figure-svg">
+            <title id="cs-t">A hand-written check and one loader per key</title>
+            <desc id="cs-d">The left box is a hand-written cache. N threads pass the emptiness check at the same moment, N external calls go out, and a zero-row result stores nothing. The right box is a cache with a loader: the loader runs once per key, everyone else waits on that result, and an empty result is stored as a value. A pink line underneath says only the side that stores “nothing” stops the next request.</desc>
             <g font-family="Inter, sans-serif">
-              <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
-              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">no answer</text>
-              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">could be the network</text>
-              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#fen-a)"/>
-              <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
-              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">judged dead</text>
-              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">evidence from the observer</text>
-              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#fen-a)"/>
-              <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
-              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">start a copy</text>
-              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">on another node</text>
-              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#fen-a)"/>
-              <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
-              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">two writers</text>
-              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">on one volume</text>
-              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">Not answering is not the same as being dead</text>
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">hand-written check</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">N threads pass the check</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">N external calls</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">zero rows stores nothing</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">one loader per key</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">loader runs once</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">others wait on it</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">an empty result is a value</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">Only the side that stores “nothing” stops the next request</text>
             </g>
-            <defs>
-              <marker id="fen-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
-              </marker>
-            </defs>
           </svg>
-          <figcaption>This is where recovery costs more than the failure. Nothing starts until the other side is off.</figcaption>
+          <figcaption>Both sides are called a cache. Only the right one actually stops the next request.</figcaption>
         </figure>
 
-        <h2 id="어떻게">How it is done<a class="anchor" href="#어떻게" aria-label="Link to this section">#</a></h2>
+        <h2 id="없음">“Nothing” is also a value<a class="anchor" href="#없음" aria-label="Link to this section">#</a></h2>
 
-        <p>Asking the node to stop itself does not work; being unable to ask is what created the
-        situation. Fencing goes through a path <strong>outside the node</strong>.</p>
+        <p>A longer-lived defect lives in the same place. If the lookup returns zero rows, the filling loop
+        never runs and nothing lands in the cache. The next request reads the cache as empty and calls again.</p>
 
-        <ul class="callout">
-          <li>Power · cut it through the BMC or IPMI. Certain, as long as that path is alive.</li>
-          <li>Storage · revoke the node's access to the volume. It keeps running but cannot write.</li>
-          <li>Network · shut the port at the switch, though sessions already open may survive.</li>
-        </ul>
+        <p><strong>“There is no value” and “we have not asked yet” were flattened into one check.</strong>
+        If zero rows is a common answer on that path, the cache does nothing at all in the most frequent
+        case. And nobody suspects it, because the code plainly has a cache in it. Not until somebody counts
+        whether it ever gets filled.</p>
 
-        <h2 id="없으면">No path means no recovery<a class="anchor" href="#없으면" aria-label="Link to this section">#</a></h2>
+        <h2 id="막기">The fix belongs to the data structure, not to a lock<a class="anchor" href="#막기" aria-label="Link to this section">#</a></h2>
 
-        <p>If the fencing path itself is down, the original cannot be turned off, and nothing may be
-        started. The right answer then is <strong>to do nothing and call a person</strong>. Not giving up
-        on automatic recovery, but setting the default to stop when certainty is missing.</p>
+        <p>Caffeine's LoadingCache runs the loader exactly once per key on a miss and lets the other callers
+        wait on that result. If the loader returns an empty list, <strong>the empty list is stored as the
+        value.</strong> That is why both defects above disappear together.</p>
+
+        <p><code>computeIfAbsent</code> can also force a single call, but it charges separately for it: the
+        waiting threads stand there holding a bucket of the map. That is written up in
+        <a href="bin-lock.html">bin lock</a>.</p>
 
         <h2 id="쓰인-곳">Where it is used on this site<a class="anchor" href="#쓰인-곳" aria-label="Link to this section">#</a></h2>
 
         <ul class="callout">
-          <li><a href="../writing/seven-of-eight-should-not-recover.html">Seven of Eight Node HA Scenarios Should Not Recover</a></li>
+          <li><a href="../writing/parallelism-made-the-tail-worse.html">Going Parallel Made the Volume List p99 Twice as Bad</a></li>
+          <li><a href="../writing/slow-screens-1-volume-list.html">A Volume List: Ten-Minute Timeout → 23 ms</a></li>
         </ul>
 
       </article>
