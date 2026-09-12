@@ -82,7 +82,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-is-in-here">What this is about</a></li>
             <li><a href="#the-screen">The screen</a></li>
             <li><a href="#the-symptom">The symptom: clicking does not open it</a></li>
             <li><a href="#cause-a">Cause 1: fetching everything up front</a></li>
@@ -98,11 +97,19 @@
 
         <article class="article-body">
 
-        <p>Hello. I build an internal cloud admin console. On the volume list screen,
-        <strong>clicking “create volume” left a spinner instead of opening the dialog.</strong></p>
+        <p>I build an internal cloud admin console. On the volume list screen, clicking “create volume”
+        left a spinner instead of opening the dialog. A button that does nothing reads as a front-end
+        problem. Half right.</p>
 
-        <p>A button that does nothing <strong>reads as a front-end problem.</strong> Half right.
-        There was one cause on each side.</p>
+        <p>The developer tools showed four requests stuck at (pending), and there was one cause on each
+        side. On the screen side, opening the dialog pre-fetched everything, including the options nobody
+        had picked. On the backend side, that list query took over ten seconds while the screen re-issued
+        it every five. <strong>The next one arrives before the previous one finishes.</strong></p>
+
+        <p>So both were fixed together: refreshing stops while the dialog is open, and only the option
+        actually picked is fetched, at that moment. And this “five seconds” becomes the basis for a
+        backend decision later — it is the five seconds in the
+        <code>refreshAfterWrite(5s)</code> from part one.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -111,28 +118,6 @@
           <li>You prefetch what a dialog is likely to need before it opens.</li>
           <li>You have had to work out which side a symptom actually came from.</li>
         </ul>
-
-        <h2 id="what-is-in-here">What this is about<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li>The dialog failed to open because <strong>two things overlapped</strong>:
-          <strong>fetching everything up front</strong> and re-fetching every five seconds.</li>
-          <li>The list query took over ten seconds while the screen re-fetched it
-          every five. The next one goes out before the previous one is done.</li>
-          <li>DevTools showed four requests still <code>(pending)</code>.</li>
-          <li>The fix was pausing the refresh while a dialog is open and
-          fetching only what the user selected, when they select it.</li>
-          <li>⚠️ But “requests piled up” is more than I verified. What the screenshot shows is
-          that four requests had not finished at that moment, and I never timed how long the
-          dialog took to open, before or after.</li>
-          <li>And those five seconds shaped a backend decision. They are the five in
-          <a href="slow-screens-1-volume-list.html">part one</a>'s <code>refreshAfterWrite(5s)</code>.</li>
-        </ul>
-
-        <p>This is an internal product, so neither the screens nor the code are reproduced as they
-        are. Product names, customers and internal addresses are gone; only the structure stays.
-        No screenshot containing the product UI is used, and the DevTools panel appears
-        cropped, with the request names masked.</p>
 
         <h2 id="the-screen">The screen<a class="anchor" href="#the-screen" aria-label="Link to this section">#</a></h2>
 
