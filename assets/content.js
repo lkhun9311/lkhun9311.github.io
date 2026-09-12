@@ -71,7 +71,9 @@
     "min-n": {ko:{t:"min-n",s:[["무엇","무엇을 막나요?",0],["한계","한 장면 안에서만 참입니다",0],["축","축이 늘면 다시 뚫립니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"min-n",s:[["무엇","What it stops",0],["한계","It is true within one frame",0],["축","Add an axis and it breaks again",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"min-n",s:[["무엇","何を防ぐのか",0],["한계","一つの場面の中でだけ真です",0],["축","軸が増えればまた破れます",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "mutation-testing": {ko:{t:"Mutation Testing",s:[["왜","왜 필요한가",0],["방법","어떻게 하나",0],["경로","경로마다 따로 걸어야 합니다",0]]}, en:{t:"Mutation Testing",s:[["왜","Why it is needed",0],["방법","How to do it",0],["경로","Do it one path at a time",0]]}, ja:{t:"Mutation Testing",s:[["왜","なぜ必要か",0],["방법","どうやるか",0],["경로","経路ごとに別々にかける",0]]}},
     "percentile": {ko:{t:"Percentile",s:[["percentile","개요",1],["percentile-average","왜 평균을 안 쓰나",1],["percentile-calc","계산 방식이 두 가지입니다",1],["percentile-where","어디를 봐야 하나",1]]}, en:{t:"Percentile",s:[["percentile","Overview",1],["percentile-average","Why not the average",1],["percentile-calc","There are two ways to compute it",1],["percentile-where","Which one to read",1]]}, ja:{t:"Percentile",s:[["percentile","概要",1],["percentile-average","なぜ平均を使わないのか",1],["percentile-calc","計算方式が二つある",1],["percentile-where","どれを見るか",1]]}},
+    "soft-delete": {ko:{t:"Soft Delete",s:[["무엇","지운 것이 아니라 가린 것입니다",0],["표시","표시 값이 행마다 다를 수 있습니다",0],["지우기","지우는 자리는 본 테이블이 아닙니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Soft Delete",s:[["무엇","It is hidden, not deleted",0],["표시","The marker is not always zero and one",0],["지우기","The main table is not where you delete",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Soft Delete",s:[["무엇","消したのではなく隠したのです",0],["표시","マークの値は行ごとに違うことがあります",0],["지우기","消す場所は本テーブルではありません",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "sse": {ko:{t:"SSE",s:[["무엇","무엇인가요?",0],["첫값","연결이 열린 것과 값이 온 것은 다릅니다",0],["느린소비자","느린 한 명이 전부를 막습니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"SSE",s:[["무엇","What it is",0],["첫값","An open connection is not an arrived value",0],["느린소비자","One slow consumer blocks the rest",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"SSE",s:[["무엇","何か",0],["첫값","接続が開いたことと値が来たことは違います",0],["느린소비자","遅い一人が全体を塞ぎます",0],["쓰인-곳","このサイトで使われている記事",0]]}},
+    "swap": {ko:{t:"Swap",s:[["무엇","RAM이 늘어난 것이 아닙니다",0],["점유","꽉 찬 것은 정황이지 원인이 아닙니다",0],["끄기","끄는 명령은 되돌릴 준비를 하고 씁니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Swap",s:[["무엇","It did not give you more RAM",0],["점유","Full is circumstance, not cause",0],["끄기","Turning it off needs an undo written first",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Swap",s:[["무엇","RAM が増えたわけではありません",0],["점유","埋まっているのは状況で、原因ではありません",0],["끄기","切る命令は戻す手順を先に書きます",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "transaction-pooling": {ko:{t:"Transaction Pooling",s:[["모드","세 가지 모드",0],["성질","핵심 성질: 언제 묶이나",0],["핀","핀(Pin)이 걸리는 패턴",0]]}, en:{t:"Transaction Pooling",s:[["모드","Three modes",0],["성질","The property that matters — when it pins",0],["핀","Patterns that Pin",0]]}, ja:{t:"Transaction Pooling",s:[["모드","三つのモード",0],["성질","核心的な性質 — いつ固定されるか",0],["핀","ピン(Pin)がかかるパターン",0]]}},
     "warmup": {ko:{t:"Warm-up",s:[["원인","무엇이 앞부분을 다르게 만드나",0],["길이","얼마나 버리나",0]]}, en:{t:"Warm-up",s:[["원인","What makes the front different",0],["길이","How much to throw away",0]]}, ja:{t:"Warm-up",s:[["원인","何が先頭を違うものにするのか",0],["길이","どれだけ捨てるか",0]]}}
   };
@@ -512,12 +514,32 @@
       /* 왼쪽 필터의 묶음. 용어 노트(#Harness 처럼 말 자체가 태그인 것)와 분류를 갈라 놓는다 —
          한 줄에 섞여 있으면 "무엇으로 고르는 목록인지"를 매번 다시 읽어야 한다. */
       tagGroups: {
-        "Term": ["Harness", "Percentile", "SSE", "Apdex", "Fencing", "min-n", "Warm-up", "Arm", "Connection Pool", "Connection Pooler",
+        "Term": ["Harness", "Percentile", "SSE", "Apdex", "Fencing", "min-n", "Swap", "Soft Delete", "Warm-up", "Arm", "Connection Pool", "Connection Pooler",
                 "Transaction Pooling", "Mutation Testing", "Fail-closed"],
         "Kind": ["Performance", "Database", "Verification", "Design",
                 "Troubleshooting", "Operating", "Debugging", "Chore", "Certification"]
       },
       items: [
+        {
+          title: "Swap",
+          url: "notes/swap.html",
+          title_ko: "Swap", title_ja: "Swap",
+          desc: "The place the kernel parks pages on disk when RAM runs short. A full swap is circumstance, not cause \u2014 the verdict is in the flow, si and so and major page faults.",
+          desc_ko: "RAM이 모자랄 때 페이지를 디스크로 내려두는 자리. 꽉 찬 것은 정황일 뿐이고 판정은 오가는 양, 즉 si · so와 major page fault에 있습니다.",
+          desc_ja: "RAM が足りないときにページをディスクへ退避させる場所。埋まっているのは状況にすぎず、判定は流量、つまり si · so と major page fault にあります。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          tags: ["Swap", "Performance"]
+        },
+        {
+          title: "Soft Delete",
+          url: "notes/soft-delete.html",
+          title_ko: "Soft Delete", title_ja: "Soft Delete",
+          desc: "Flipping a deletion marker instead of removing the row. It disappears from reads and stays in the table, so the pile has to be archived and purged somewhere other than the main table.",
+          desc_ko: "행을 없애지 않고 삭제 표시만 바꾸는 방식. 조회에서는 사라지고 테이블에는 남으므로 쌓인 것은 본 테이블이 아닌 다른 자리에서 Archive 하고 Purge 해야 합니다.",
+          desc_ja: "行を消さずに削除マークだけ変える方式。読み取りからは消えテーブルには残るので、積もったものは本テーブルではない場所で Archive し Purge する必要があります。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          tags: ["Soft Delete", "Database"]
+        },
         {
           title: "min-n",
           url: "notes/min-n.html",

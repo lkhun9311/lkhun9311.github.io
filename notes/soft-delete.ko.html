@@ -3,24 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Apdex | Kwanghun Lee</title>
-  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/notes/apdex.html" />
-  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/notes/apdex.ko.html" />
-  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/notes/apdex.ja.html" />
-  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/notes/apdex.html" />
+  <title>Soft Delete | Kwanghun Lee</title>
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/notes/soft-delete.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/notes/soft-delete.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/notes/soft-delete.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/notes/soft-delete.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
   <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
-  <meta name="description" content="응답 시간을 0에서 1 사이 점수 하나로 바꾼 값. 기준 시간 T를 안 적으면 다른 보고서와 견줄 수 없습니다." />
+  <meta name="description" content="행을 없애지 않고 삭제 표시만 바꾸는 방식. 조회에서는 사라지고 테이블에는 남습니다." />
   <meta property="og:type" content="article" />
   <meta property="og:locale" content="ko_KR" />
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Apdex" />
-  <meta property="og:description" content="응답 시간을 0에서 1 사이 점수 하나로 바꾼 값. 기준 시간 T를 안 적으면 다른 보고서와 견줄 수 없습니다." />
+  <meta property="og:title" content="Soft Delete" />
+  <meta property="og:description" content="행을 없애지 않고 삭제 표시만 바꾸는 방식. 조회에서는 사라지고 테이블에는 남습니다." />
   <meta property="og:locale" content="ko_KR" />
   <link rel="stylesheet" href="../assets/styles.css?v=557c3ff3d7" />
 </head>
@@ -30,7 +30,7 @@
       <a class="site-name" href="../index.html#about">Kwanghun</a>
       <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
         <select id="langPicker" class="lang-picker notranslate" translate="no"
-                  data-authored='{"en": "apdex.html", "ko": "apdex.ko.html", "ja": "apdex.ja.html"}' aria-label="Select language" data-i18n-attr="aria-label:a11y.lang">
+                  data-authored='{"en": "soft-delete.html", "ko": "soft-delete.ko.html", "ja": "soft-delete.ja.html"}' aria-label="Select language" data-i18n-attr="aria-label:a11y.lang">
           <option value="ko" selected>한국어</option>
           <option value="en">English</option>
           <option value="ja">日本語</option>
@@ -63,81 +63,83 @@
         <div class="article-meta"><span class="source-tag glossary notranslate">용어</span></div>
       </div>
       <section class="page-hero">
-        <h1>Apdex</h1>
+        <h1>Soft Delete</h1>
         <p class="article-date">성능 측정<span aria-hidden="true"> · </span><span class="notranslate">#Warm-up</span></p>
       </section>
-      <aside class="article-aside" data-aside="notes" data-slug="apdex"></aside>
+      <aside class="article-aside" data-aside="notes" data-slug="soft-delete"></aside>
         <nav class="article-toc" aria-label="목차">
           <p class="toc-label">목차</p>
           <ul>
-            <li><a href="#계산">어떻게 나오나요?</a></li>
-            <li><a href="#읽는법">무엇을 말해 주나요?</a></li>
-            <li><a href="#함정">T를 안 적으면 비교가 안 됩니다</a></li>
+            <li><a href="#무엇">지운 것이 아니라 가린 것입니다</a></li>
+            <li><a href="#표시">표시 값이 행마다 다를 수 있습니다</a></li>
+            <li><a href="#지우기">지우는 자리는 본 테이블이 아닙니다</a></li>
             <li><a href="#쓰인-곳">이 사이트에서 쓰인 곳</a></li>
           </ul>
         </nav>
       <article class="article-body">
 
-        <p><strong>Apdex는 응답 시간을 0에서 1 사이의 점수 하나로 바꾼 값입니다.</strong>
-        1에 가까울수록 좋고 기준 시간 T를 무엇으로 잡았느냐에 따라 값이 달라집니다.</p>
+        <p><strong>Soft Delete는 행을 없애지 않고 삭제 표시만 바꾸는 방식입니다.</strong>
+        조회는 그 표시를 걸러서 읽으므로 화면에서는 사라진 것처럼 보이고 테이블에는 그대로 남습니다.</p>
 
-        <h2 id="계산">어떻게 나오나요?<a class="anchor" href="#계산" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="무엇">지운 것이 아니라 가린 것입니다<a class="anchor" href="#무엇" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>먼저 기준 시간 T를 정합니다. 그다음 요청을 셋으로 나눕니다. T 안에 끝난 것은 만족,
-        4T 안에 끝난 것은 참음, 그보다 느리거나 실패한 것은 불만입니다.</p>
+        <p>되살릴 수 있고 이력이 남는다는 것이 이 방식의 값어치입니다. 대신 지불하는 것은
+        <strong>테이블이 줄지 않는다</strong>는 사실입니다. 화면이 20행을 원해도 테이블은 1,041행을 담고 있을 수 있습니다.</p>
 
-        <p>만족에 1점, 참음에 0.5점, 불만에 0점을 주고 전체 건수로 나눕니다. 이 사이트의 표에서는
-        T가 0.5s라 만족은 0.5s 안, 참음은 1.5s 안입니다.</p>
+        <p>딸린 테이블도 같이 자랍니다. 본 테이블 하나만 보고 「그만큼이겠지」 하면 실제로 쌓인 양을 놓칩니다.</p>
 
                 <figure class="diagram">
-          <svg viewBox="0 0 720 200" role="img" aria-labelledby="apx-t apx-d" class="figure-svg">
-            <title id="apx-t">Apdex가 만들어지는 순서</title>
-            <desc id="apx-d">왼쪽부터 상자가 넷, 회색 화살표로 이어집니다. 첫째는 기준 시간 T를 정하는 것, 둘째는 요청을 세 무리로 나누는 것, 셋째는 만족한 것에 1점 참은 것에 0.5점을 주는 것, 넷째는 전체로 나눈 값이 Apdex라는 것입니다. 아래에 분홍색으로 T를 안 적으면 두 보고서의 Apdex를 견줄 수 없다고 적혀 있습니다.</desc>
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="sd-t sd-d" class="figure-svg">
+            <title id="sd-t">삭제 표시된 행이 거치는 네 자리</title>
+            <desc id="sd-d">왼쪽부터 상자가 넷, 회색 화살표로 이어집니다. 첫째는 살아 있는 행으로 deleted가 0입니다. 둘째는 Soft Delete로 본 테이블에 그대로 남고 삭제 후 30일까지입니다. 셋째는 Archive로 Shadow 테이블로 옮겨져 삭제 후 90일까지입니다. 넷째는 Purge로 아무 데도 남지 않습니다. 아래에 분홍색으로 본 테이블이 작아지는 시점은 Archive 라고 적혀 있습니다.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
-              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">T를 정한다</text>
-              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">이 표에서는 0.5s</text>
-              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#apx-a)"/>
+              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">살아 있는 행</text>
+              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">deleted = 0</text>
+              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#sd-a)"/>
               <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
-              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">세 무리로</text>
-              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">만족·참음·불만</text>
-              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#apx-a)"/>
+              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">Soft Delete</text>
+              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">본 테이블 · 30일</text>
+              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#sd-a)"/>
               <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
-              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">점수를 준다</text>
-              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">1점 · 0.5점 · 0점</text>
-              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#apx-a)"/>
+              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">Archive</text>
+              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">Shadow 테이블 · 90일</text>
+              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#sd-a)"/>
               <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
-              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">전체로 나눈다</text>
-              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">0에서 1 사이</text>
-              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">T를 안 적으면 두 보고서의 Apdex를 견줄 수 없음</text>
+              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">Purge</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">남지 않음</text>
+              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">본 테이블이 작아지는 시점은 Archive</text>
             </g>
             <defs>
-              <marker id="apx-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <marker id="sd-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
                 <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
               </marker>
             </defs>
           </svg>
-          <figcaption>Apdex는 시간이 아니라 점수입니다. 같은 데이터라도 T를 바꾸면 다른 값이 나옵니다.</figcaption>
+          <figcaption>Soft Delete는 지우는 단계가 아니라 미루는 단계입니다. 실제로 본 테이블이 작아지는 곳은 세 번째 칸입니다.</figcaption>
         </figure>
 
-        <h2 id="읽는법">무엇을 말해 주나요?<a class="anchor" href="#읽는법" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="표시">표시 값이 행마다 다를 수 있습니다<a class="anchor" href="#표시" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>백분위가 「어느 자리의 값이 얼마인가」를 말한다면 Apdex는
-        <strong>「쓸 만하다고 볼 요청이 몇 퍼센트인가」</strong>에 가깝습니다. 실패한 요청도 불만으로
-        세므로 오류율이 높으면 같이 떨어집니다.</p>
+        <p>삭제 표시가 0과 1이라고 넘겨짚기 쉽습니다. Nova의 <code>instances</code>는 그렇지 않습니다.
+        삭제될 때 <code>deleted</code>에 <strong>그 행의 id</strong>가 들어갑니다. 삭제된 행은 저마다 다른 값을 갖습니다.</p>
 
-        <p>그래서 중앙값이 좋아져도 Apdex는 안 오를 수 있습니다. 중앙값은 한가운데 한 건이고
-        Apdex는 전체 분포이기 때문입니다.</p>
+        <p>그래서 <code>GROUP BY deleted</code>의 묶음 수가 삭제된 행 수만큼 나옵니다. 살아 있는 행 20 개와
+        삭제 표시 1,021 개가 있으면 묶음은 1,022 개, 행은 1,041 개입니다.
+        <strong>1,022를 행 수로 읽으면 19 행이 통째로 사라진 셈</strong>이 됩니다. 스키마를 안 보고 쓴 질의는 자기가 무엇을 셌는지 말해 주지 않습니다.</p>
 
-        <h2 id="함정">T를 안 적으면 비교가 안 됩니다<a class="anchor" href="#함정" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="지우기">지우는 자리는 본 테이블이 아닙니다<a class="anchor" href="#지우기" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>Apdex는 T에 딸린 값입니다. T를 2s로 잡으면 같은 데이터에서 점수가 크게 오릅니다.
-        <strong>T를 안 적은 Apdex는 다른 보고서의 Apdex와 견줄 수 없습니다.</strong></p>
+        <p>급할 때 본 테이블에 <code>DELETE</code>를 넣고 싶어집니다. 그 길에는 외래키 검사를 끄는 순간이 따라오는데
+        검사를 끈 세션에서는 참조 위반이 그냥 통과하고 <strong>다시 켜도 이미 생긴 불일치를 되짚어 주지 않습니다.</strong></p>
+
+        <p>제대로 된 길은 옆으로 옮기는 것입니다. 같은 모양이고 조회 경로에서 빠져 있는 Shadow 테이블로 Archive 하고
+        기간이 지나면 Purge 합니다. 한 번 지우는 것은 오늘까지만 막아 주고 <strong>Soft Delete는 내일도 쌓입니다.</strong></p>
 
         <h2 id="쓰인-곳">이 사이트에서 쓰인 곳<a class="anchor" href="#쓰인-곳" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul class="callout">
-          <li><a href="../writing/slow-screens-1-volume-list.ko.html">볼륨 목록 P99가 10min → 23ms로 줄었습니다</a> · 0.014에서 0.526으로</li>
+          <li><a href="../writing/slow-screens-2-instance-list.ko.html">Instance 목록 조회가 54s → 1s로 줄었습니다</a></li>
         </ul>
 
       </article>
