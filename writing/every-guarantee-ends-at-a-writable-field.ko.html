@@ -113,6 +113,42 @@
           <li>검사 코드는 맞는데 왜 뚫렸는지 설명이 안 될 때가 있는 분</li>
         </ul>
 
+<figure class="diagram">
+          <svg viewBox="0 0 720 230" role="img" aria-labelledby="tb-t tb-d" class="figure-svg">
+            <title id="tb-t">테넌트가 쓰는 필드를 가드가 증거로 읽는 구조</title>
+            <desc id="tb-d">왼쪽 상자에 테넌트가 직접 쓰는 필드 셋이 분홍색으로 적혀 있습니다. 가운데 세로 점선이 신뢰 경계입니다. 분홍 화살표가 그 경계를 넘어 오른쪽 파란 상자인 가드로 들어갑니다. 가드는 그 값을 읽어 판정을 냅니다. 오른쪽 끝에 판정 결과가 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="16" y="46" width="150" height="132" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.4"/>
+              <text x="91" y="36" font-size="11.5" fill="#8a8a8a" text-anchor="middle">테넌트가 쓰는 곳</text>
+              <text x="91" y="72" font-size="11" fill="#4a4a4a" text-anchor="middle">Pod · Job 명세</text>
+              <text x="91" y="102" font-size="11" fill="#d62976" text-anchor="middle"><tspan font-family="ui-monospace, monospace">ownerReferences</tspan></text>
+              <text x="91" y="128" font-size="11" fill="#d62976" text-anchor="middle"><tspan font-family="ui-monospace, monospace">quota-exempt</tspan></text>
+              <text x="91" y="154" font-size="11" fill="#d62976" text-anchor="middle"><tspan font-family="ui-monospace, monospace">grace period</tspan></text>
+
+              <path d="M330 20 V 206" fill="none" stroke="#c9c9c9" stroke-width="1.4" stroke-dasharray="5 4"/>
+              <text x="330" y="14" font-size="11" fill="#8a8a8a" text-anchor="middle">신뢰 경계</text>
+
+              <path d="M170 112 H 322" fill="none" stroke="#d62976" stroke-width="1.8" marker-end="url(#tb-ar)"/>
+
+              <rect x="392" y="72" width="150" height="80" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="467" y="62" font-size="11.5" fill="#4f5bd5" text-anchor="middle">가드(입장 제어)</text>
+              <text x="467" y="118" font-size="11" fill="#4a4a4a" text-anchor="middle">읽은 값 = 증거</text>
+
+              <path d="M546 112 H 664" fill="none" stroke="#4f5bd5" stroke-width="1.8" marker-end="url(#tb-ab)"/>
+              <text x="620" y="102" font-size="11" fill="#4f5bd5" text-anchor="middle">판정</text>
+            </g>
+            <defs>
+              <marker id="tb-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+              <marker id="tb-ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>가드 넷이 전부 <strong>왼쪽 상자의 값</strong>을 증거로 읽었습니다. 검사 코드는 옳았고 틀린 것은 그 값이 경계 왼쪽에서 왔다는 사실을 세지 않은 쪽입니다.</figcaption>
+        </figure>
+
         <h2 id="처음엔-아무것도-막지-않았다">처음엔 아무것도 막지 않았습니다<a class="anchor" href="#처음엔-아무것도-막지-않았다" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>설계는 이렇습니다. 테넌트별 GPU 예산의 단일 권위는 Kueue의 ClusterQueue이고 컨트롤러는 같은 장치가
