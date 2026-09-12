@@ -69,6 +69,7 @@
     "connection-pooler": {ko:{t:"Connection Pooler",s:[["왜","왜 필요한가",0],["구별","Connection Pool과 다른 것입니다",0],["한계","무엇을 못 고치나",0]]}, en:{t:"Connection Pooler",s:[["왜","Why it exists",0],["구별","It is not the same as a connection pool",0],["한계","What it cannot fix",0]]}, ja:{t:"Connection Pooler",s:[["왜","なぜ必要か",0],["구별","Connection Pool とは別のもの",0],["한계","何を直せないか",0]]}},
     "fail-closed": {ko:{t:"Fail-closed",s:[["방향","어느 쪽으로 넘어질 것인가",0],["대가","대가",0],["조용함","조용한 Fail-open이 제일 위험합니다",0]]}, en:{t:"Fail-closed",s:[["방향","Which way it falls",0],["대가","What it costs",0],["조용함","A silent fail-open is the worst case",0]]}, ja:{t:"Fail-closed",s:[["방향","どちらへ倒れるか",0],["대가","代償",0],["조용함","静かな Fail-open が一番危ない",0]]}},
     "fencing": {ko:{t:"Fencing",s:[["왜","왜 필요한가요?",0],["어떻게","어떻게 끄나요?",0],["없으면","경로가 없으면 복구도 없습니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Fencing",s:[["왜","Why it is needed",0],["어떻게","How it is done",0],["없으면","No path means no recovery",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Fencing",s:[["왜","なぜ必要か",0],["어떻게","どうやって切るか",0],["없으면","経路が無ければ復旧も無い",0],["쓰인-곳","このサイトで使われている記事",0]]}},
+    "grace-period": {ko:{t:"Grace Period",s:[["무엇","회수는 종료를 기다리고 종료는 이 값을 기다립니다",0],["누가","값을 적는 쪽은 회수당하는 쪽입니다",0],["상한","상한을 두는 것이 가장 약하고 가장 정직한 수리입니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Grace Period",s:[["무엇","Reclaim waits on termination, termination waits on this",0],["누가","The side being reclaimed writes the value",0],["상한","A cap is the weakest and the most honest repair",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Grace Period",s:[["무엇","回収は終了を待ち、終了はこの値を待ちます",0],["누가","値を書くのは回収される側です",0],["상한","上限を置くのが最も弱く、最も正直な修理です",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "load-test-harness": {ko:{t:"Harness",s:[["뜻","말 자체의 뜻",0],["조건","무엇이 Harness를 Harness로 만드나",0],["흐름","어떻게 도나: 실행 한 번의 흐름",0],["오해","흔한 오해",0]]}, en:{t:"Harness",s:[["뜻","What the word means",0],["조건","What makes a harness a harness",0],["흐름","How one run goes",0],["오해","Common misreadings",0]]}, ja:{t:"Harness",s:[["뜻","言葉そのものの意味",0],["조건","何が Harness を Harness にするのか",0],["흐름","どう回るか — 実行一回の流れ",0],["오해","よくある誤解",0]]}},
     "min-n": {ko:{t:"min-n",s:[["무엇","무엇을 막나요?",0],["한계","한 장면 안에서만 참입니다",0],["축","축이 늘면 다시 뚫립니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"min-n",s:[["무엇","What it stops",0],["한계","It is true within one frame",0],["축","Add an axis and it breaks again",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"min-n",s:[["무엇","何を防ぐのか",0],["한계","一つの場面の中でだけ真です",0],["축","軸が増えればまた破れます",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "mutation-testing": {ko:{t:"Mutation Testing",s:[["왜","왜 필요한가",0],["방법","어떻게 하나",0],["경로","경로마다 따로 걸어야 합니다",0]]}, en:{t:"Mutation Testing",s:[["왜","Why it is needed",0],["방법","How to do it",0],["경로","Do it one path at a time",0]]}, ja:{t:"Mutation Testing",s:[["왜","なぜ必要か",0],["방법","どうやるか",0],["경로","経路ごとに別々にかける",0]]}},
@@ -76,6 +77,7 @@
     "soft-delete": {ko:{t:"Soft Delete",s:[["무엇","지운 것이 아니라 가린 것입니다",0],["표시","표시 값이 행마다 다를 수 있습니다",0],["지우기","지우는 자리는 본 테이블이 아닙니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Soft Delete",s:[["무엇","It is hidden, not deleted",0],["표시","The marker is not always zero and one",0],["지우기","The main table is not where you delete",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Soft Delete",s:[["무엇","消したのではなく隠したのです",0],["표시","マークの値は行ごとに違うことがあります",0],["지우기","消す場所は本テーブルではありません",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "sse": {ko:{t:"SSE",s:[["무엇","무엇인가요?",0],["첫값","연결이 열린 것과 값이 온 것은 다릅니다",0],["느린소비자","느린 한 명이 전부를 막습니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"SSE",s:[["무엇","What it is",0],["첫값","An open connection is not an arrived value",0],["느린소비자","One slow consumer blocks the rest",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"SSE",s:[["무엇","何か",0],["첫값","接続が開いたことと値が来たことは違います",0],["느린소비자","遅い一人が全体を塞ぎます",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "swap": {ko:{t:"Swap",s:[["무엇","RAM이 늘어난 것이 아닙니다",0],["점유","꽉 찬 것은 정황이지 원인이 아닙니다",0],["끄기","끄는 명령은 되돌릴 준비를 하고 씁니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Swap",s:[["무엇","It did not give you more RAM",0],["점유","Full is circumstance, not cause",0],["끄기","Turning it off needs an undo written first",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Swap",s:[["무엇","RAM が増えたわけではありません",0],["점유","埋まっているのは状況で、原因ではありません",0],["끄기","切る命令は戻す手順を先に書きます",0],["쓰인-곳","このサイトで使われている記事",0]]}},
+    "timeout": {ko:{t:"Timeout",s:[["두-종류","Connect와 Read는 다른 구간을 자릅니다",0],["설정값","설정값은 측정값이 아닙니다",0],["상한","상한에 걸린 값은 지연이 아닙니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Timeout",s:[["두-종류","Connect and read cut different intervals",0],["설정값","A configured value is not a measured one",0],["상한","A value pinned to the ceiling is not a latency",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Timeout",s:[["두-종류","Connect と Read は別の区間を切ります",0],["설정값","設定値は測定値ではありません",0],["상한","上限に貼り付いた値は遅延ではありません",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "transaction-pooling": {ko:{t:"Transaction Pooling",s:[["모드","세 가지 모드",0],["성질","핵심 성질: 언제 묶이나",0],["핀","핀(Pin)이 걸리는 패턴",0]]}, en:{t:"Transaction Pooling",s:[["모드","Three modes",0],["성질","The property that matters — when it pins",0],["핀","Patterns that Pin",0]]}, ja:{t:"Transaction Pooling",s:[["모드","三つのモード",0],["성질","核心的な性質 — いつ固定されるか",0],["핀","ピン(Pin)がかかるパターン",0]]}},
     "warmup": {ko:{t:"Warm-up",s:[["원인","무엇이 앞부분을 다르게 만드나",0],["길이","얼마나 버리나",0]]}, en:{t:"Warm-up",s:[["원인","What makes the front different",0],["길이","How much to throw away",0]]}, ja:{t:"Warm-up",s:[["원인","何が先頭を違うものにするのか",0],["길이","どれだけ捨てるか",0]]}}
   };
@@ -516,12 +518,32 @@
       /* 왼쪽 필터의 묶음. 용어 노트(#Harness 처럼 말 자체가 태그인 것)와 분류를 갈라 놓는다 —
          한 줄에 섞여 있으면 "무엇으로 고르는 목록인지"를 매번 다시 읽어야 한다. */
       tagGroups: {
-        "Term": ["Harness", "Percentile", "SSE", "Apdex", "Fencing", "min-n", "Swap", "Soft Delete", "Bin Lock", "Cache Stampede", "Warm-up", "Arm", "Connection Pool", "Connection Pooler",
+        "Term": ["Harness", "Percentile", "SSE", "Apdex", "Fencing", "min-n", "Swap", "Soft Delete", "Bin Lock", "Cache Stampede", "Timeout", "Grace Period", "Warm-up", "Arm", "Connection Pool", "Connection Pooler",
                 "Transaction Pooling", "Mutation Testing", "Fail-closed"],
         "Kind": ["Performance", "Database", "Verification", "Design",
                 "Troubleshooting", "Operating", "Debugging", "Chore", "Certification"]
       },
       items: [
+        {
+          title: "Timeout",
+          url: "notes/timeout.html",
+          title_ko: "Timeout", title_ja: "Timeout",
+          desc: "A ceiling placed on waiting. Connect and read cut different intervals, a configured value is not a measured one, and a number pinned to the ceiling is not a latency.",
+          desc_ko: "기다림에 걸어 두는 상한. Connect와 Read는 다른 구간을 자르고 설정값은 측정값이 아니며 상한에 걸린 숫자는 지연이 아닙니다.",
+          desc_ja: "待つことに掛ける上限。Connect と Read は別の区間を切り、設定値は測定値ではなく、上限に貼り付いた数字は遅延ではありません。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          tags: ["Timeout", "Performance"]
+        },
+        {
+          title: "Grace Period",
+          url: "notes/grace-period.html",
+          title_ko: "Grace Period", title_ja: "Grace Period",
+          desc: "How long a process gets after the termination signal before it is killed. Reclaim waits on it, and the side being reclaimed is the side that writes the value.",
+          desc_ko: "종료 신호를 보낸 뒤 강제로 죽이기까지 기다려 주는 시간. 회수가 그 시간을 기다리는데 값을 적는 쪽은 회수당하는 쪽입니다.",
+          desc_ja: "終了信号を送ったあと強制的に殺すまで待つ時間。回収がその時間を待ちますが、値を書くのは回収される側です。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          tags: ["Grace Period", "Design"]
+        },
         {
           title: "Bin Lock",
           url: "notes/bin-lock.html",
