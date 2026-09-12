@@ -524,9 +524,10 @@
       tagGroups: {
         "Term": ["Harness", "Percentile", "SSE", "Apdex", "Fencing", "min-n", "Swap", "Soft Delete", "Bin Lock", "Cache Stampede", "Timeout", "Grace Period", "Admission Control", "Stub", "Quorum", "TTL", "Warm-up", "Arm", "Connection Pool", "Connection Pooler",
                 "Transaction Pooling", "Mutation Testing", "Fail-closed"],
-        "Kind": ["Performance", "Database", "Verification", "Design",
+        "Kind": ["Performance", "Database", "Verification", "Design", "Reliability", "Privacy",
                 "Troubleshooting", "Operating", "Debugging", "Chore", "Certification"]
       },
+      facetGroups: ["Kind"],
       items: [
         {
           title: "Admission Control",
@@ -829,10 +830,12 @@
      되고 요약을 한 줄로 자르면 행 높이가 균일해져 눈이 흔들리지 않는다. 테두리도 사라진다.
      날짜·배지는 **제목 위**에 둔다(사용자 지시, 2026-09-11). 왼쪽 칸에 두면 훑는 축이 둘이 된다. */
   function cardArticle(it) {
+    /* 날짜는 목록에서 빼고 상세 쪽에만 둔다(사용자 지시, 2026-09-12).
+       배지가 없으면 `.entry-meta` 자체를 안 그린다 — 빈 칸이 남으면 행 높이만 들쭉날쭉해진다. */
+    var badge = sourceTag(it);
     return (
       '<a class="entry-row" href="' + BASE + esc(it.url) + '">' +
-      '<div class="entry-meta"><span class="notranslate">' + esc(dateLabel(it)) + "</span>" +
-      sourceTag(it) + "</div>" +
+      (badge ? '<div class="entry-meta">' + badge + "</div>" : "") +
       '<div class="entry-main">' +
       '<h2 class="entry-title notranslate">' + esc(f(it, "title")) + "</h2>" +
       '<p class="entry-desc">' + esc(f(it, "desc")) + "</p></div></a>"
@@ -931,7 +934,7 @@
     function facetRow(t, active) {
       return (
         '<button type="button" class="facet' + (active ? " active" : "") + '" data-tag="' + esc(t) + '">' +
-        '<span class="facet-label">' + (t === allLabel ? esc(t) : "#" + esc(t)) + "</span>" +
+        '<span class="facet-label">' + esc(t) + "</span>" +
         '<span class="n">' + countOf(t) + "</span></button>"
       );
     }
@@ -953,15 +956,27 @@
       var html = hasAll ? facetRow(allLabel, initial === allLabel) : "";
       if (groups) {
         var placed = {};
-        Object.keys(groups).forEach(function (name) {
+        /* 이 줄은 **카테고리**다(사용자 지시, 2026-09-12). 용어 노트의 `Term` 처럼 태그 하나가
+           항목 하나인 묶음은 고를 것이 없으므로 버튼으로 내지 않는다. 태그 자체는 남아 있어서
+           `?tag=` 주소로는 그대로 걸린다. */
+        var shown = sec.facetGroups
+          ? Object.keys(groups).filter(function (n) { return sec.facetGroups.indexOf(n) !== -1; })
+          : Object.keys(groups);
+        /* 숨긴 묶음의 태그가 아래 Other 로 새지 않게 미리 자리를 잡아 둔다. */
+        Object.keys(groups).forEach(function (n) {
+          groups[n].forEach(function (t) { placed[t] = 1; });
+        });
+        /* 묶음이 하나뿐이면 이름표는 군더더기다 — 버튼만 낸다. */
+        var oneGroup = shown.length === 1;
+        shown.forEach(function (name) {
           // 묶음 안에서는 **개수 많은 순**으로. 큰 덩어리가 먼저 보여야 훑는 값이 있다.
           // 같은 개수면 이름순 — 순서가 실행마다 바뀌면 "어디 있었더라"가 매번 새로 시작된다.
           var inGroup = groups[name]
             .filter(function (t) { return tagList.indexOf(t) !== -1; })
             .sort(function (a, b) { return countOf(b) - countOf(a) || a.localeCompare(b); });
           if (!inGroup.length) return;
-          inGroup.forEach(function (t) { placed[t] = 1; });
-          html += '<div class="facet-group"><h3>' + esc(name) + "</h3>" +
+          html += '<div class="facet-group">' +
+                  (oneGroup ? "" : "<h3>" + esc(name) + "</h3>") +
                   inGroup.map(function (t) { return facetRow(t, t === initial); }).join("") + "</div>";
         });
         var rest = tagList.filter(function (t) { return !placed[t]; })

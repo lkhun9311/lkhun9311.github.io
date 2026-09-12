@@ -32,6 +32,50 @@ TAGS = set(re.findall(r'"([^"]+)"', " ".join(
     re.findall(r"tags: \[(.*?)\]", io.open("assets/content.js", encoding="utf-8").read()))))
 
 
+def lang_of(name):
+    return "ko" if name.endswith(".ko.html") else ("ja" if name.endswith(".ja.html") else "en")
+
+
+# 노트 쪽의 날짜는 content.js 가 원본이다. 세 언어의 표기를 여기서 만든다 —
+# 사이트가 dateLabel() 로 만드는 것과 같은 규칙이다.
+MONTH_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+
+def _note_dates():
+    src = io.open("assets/content.js", encoding="utf-8").read()
+    i = src.find("notes:")
+    seg = src[i:src.find("\n  };", i)]
+    out = {}
+    for m in re.finditer(r'url: "notes/([^".]+)\.html"[\s\S]{0,900}?date: "([0-9-]+)", dateLabel: "([^"]+)"', seg):
+        slug, date, lab = m.group(1), m.group(2), m.group(3)
+        y, mo = date.split("-")[0], int(date.split("-")[1])
+        out[slug] = {"ko": "%s년 %d월" % (y, mo),
+                     "ja": "%s年%d月" % (y, mo),
+                     "en": lab or "%s %s" % (MONTH_EN[mo - 1], y)}
+    # 하위 쪽(percentile-average …)은 목록에 없다 — 개요 쪽의 날짜를 쓴다.
+    return out
+
+
+NOTE_DATE = _note_dates()
+for _s in list(NOTE_DATE):
+    pass
+
+
+def _fill_subpages():
+    import glob as _g
+    for f in _g.glob("notes/*.html"):
+        slug = re.sub(r"\.(ko|ja)\.html$|\.html$", "", os.path.basename(f))
+        if slug in NOTE_DATE:
+            continue
+        for k in NOTE_DATE:
+            if slug.startswith(k + "-"):
+                NOTE_DATE[slug] = NOTE_DATE[k]
+                break
+
+
+_fill_subpages()
+
+
 def main():
     bad, n = [], 0
     for p in sorted(glob.glob("writing/*.html")):
@@ -81,12 +125,28 @@ def main():
 
     # 용어 노트에는 부제를 두지 않는다(사용자 지시, 2026-09-12).
     # 제목이 곧 용어이고 바로 아래 첫 절이 그 뜻을 말한다 — 부제는 그 절을 한 번 더 말한다.
+    #
+    # 그리고 제목 아래 한 줄은 **그 쪽의 날짜**다(사용자 지시, 2026-09-12).
+    # ⚠️ 왜 이 검사가 생겼나: 노트 45쪽이 껍데기를 빌려 오면서 그 줄을 그대로 물려받아
+    #    전부 「성능 측정 · #Warm-up」 이라고 적고 있었다. 태그가 TAGS 안에 있으니 위의 검사는
+    #    통과했다 — **그 쪽 자신의 것인지**를 아무도 안 봤다. 날짜와 대조하면 그 구멍이 막힌다.
     for p in sorted(glob.glob("notes/*.html")):
         b = os.path.basename(p)
-        if re.sub(r"\.(ko|ja)?\.?html$", "", b) in ("index", "tags", "engineering", "study-reading"):
+        if re.sub(r"\.(ko|ja)?\.?html$", "", b) in ("index", "tags"):
             continue
-        if 'class="h1-sub"' in io.open(p, encoding="utf-8").read():
+        s2 = io.open(p, encoding="utf-8").read()
+        if 'class="h1-sub"' in s2:
             bad.append("%s: 용어 노트에 부제가 있다 — 첫 절이 그 일을 한다" % b)
+        md = re.search(r'<p class="article-date[^"]*">(.*?)</p>', s2, re.S)
+        if not md:
+            bad.append("%s: 제목 아래 날짜 줄이 없다" % b)
+            continue
+        line = re.sub(r"<[^>]+>", "", md.group(1)).strip()
+        want = NOTE_DATE.get(re.sub(r"\.(ko|ja)\.html$|\.html$", "", b),
+                             {}).get(lang_of(b))
+        if want and line != want:
+            bad.append("%s: 날짜 줄이 그 쪽의 것이 아니다 — 「%s」 (맞는 값 「%s」)"
+                       % (b, line[:32], want))
 
     if bad:
         print("\n".join("  ✘ " + x for x in bad))
