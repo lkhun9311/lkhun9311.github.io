@@ -80,7 +80,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-this-is-about">What this is about</a></li>
             <li><a href="#the-arm-that-makes-it-falsifiable">The arm that makes it falsifiable</a></li>
             <li><a href="#the-numbers">The numbers</a></li>
             <li><a href="#three-sentences">Three sentences that cannot all be true</a></li>
@@ -93,20 +92,17 @@
         </nav>
       <article class="article-body">
 
-        <p>Scope. This is milestone M5-b of a personal project, a
-        <a href="../projects/gpuaas-control-plane.html">Kubernetes-native GPU control plane</a>. The numbers
-        come from a run <strong>on a real GPU — one A10G — on 2026-09-03</strong> and an engine-level
-        microtest on <strong>2026-09-04</strong>. The raw evidence for both is in the repository.
-        The project is in progress, and this article covers only what is settled as of
-        2026-09-05. One run has been pre-registered and not yet bought; its result changes the last
-        section.</p>
+        <p>I build a <a href="../projects/gpuaas-control-plane.html">Kubernetes-native GPU control plane</a> as a personal project. When a premium
+        tenant shares one GPU with a long-context noisy neighbour, does the gateway's KV-cache-aware
+        admission control protect the premium tenant's p99? I measured it.</p>
 
-        <p>What was being measured: when a premium tenant shares one GPU with a long-context noisy neighbour,
-        does the gateway's KV-cache-aware admission guard protect the premium tail?</p>
+        <p><strong>It does not.</strong> The arm that rejected nothing had a completion count exactly
+        equal to the premium request count. It did not protect them; it dropped them.</p>
 
-        <p>The answer was no. The more valuable finding was
-        why four paid repetitions could not see that.</p>
-
+        <p>The more valuable finding was why four paid repetitions could not see that. Every verdict in
+        the report was a ratio, and shrink the denominator too and the ratio improves. Finding it out
+        cost no new money: a forty-cent microtest, and a re-reading of evidence already bought along a
+        different axis.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -114,21 +110,6 @@
           <li>You work on letting several tenants share one GPU</li>
           <li>You get told "p99 improved" and have to decide what else to ask</li>
           <li>You choose what to measure first when the experiment costs money</li>
-        </ul>
-
-        <h2 id="what-this-is-about">What this is about<a class="anchor" href="#what-this-is-about" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li>I put a <strong>premium tenant and a long-context noisy neighbour</strong> on one GPU and
-          measured whether the gateway's KV-cache-aware admission control protects the premium tenant's p99.</li>
-          <li>It does not. The arm that rejected <strong>nothing</strong> had a completion count
-          exactly equal to the premium request count. It did not protect them; it dropped them.</li>
-          <li>The report missed it because every verdict was a ratio. Shrink the denominator
-          too and the ratio improves.</li>
-          <li>Finding that out cost no new money: a forty-cent microtest and a re-reading of
-          evidence already bought, along a different axis.</li>
-          <li>⚠️ What was falsified holds for one signal, one workload, one card. This is not
-          a claim about admission control in general.</li>
         </ul>
 
         <figure class="diagram">
@@ -162,7 +143,7 @@
           <figcaption>Admission control sits <strong>in front of the engine</strong>. Only admitted requests reach it, so reading the metric from the completed side means the requests the gate removed are not in the number at all.</figcaption>
         </figure>
 
-        <h2 id="the-arm-that-makes-it-falsifiable">The arm that makes it falsifiable<a class="anchor" href="#the-arm-that-makes-it-falsifiable" aria-label="Link to this section">#</a></h2>
+<h2 id="the-arm-that-makes-it-falsifiable">The arm that makes it falsifiable<a class="anchor" href="#the-arm-that-makes-it-falsifiable" aria-label="Link to this section">#</a></h2>
 
         <p>Four arms, replaying one recorded open-loop trace under four conditions.</p>
 

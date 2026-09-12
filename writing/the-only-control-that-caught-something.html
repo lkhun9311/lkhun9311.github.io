@@ -80,7 +80,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-this-is-about">What this is about</a></li>
             <li><a href="#eighty-percent-is-not-early">80% is not an early warning</a></li>
             <li><a href="#the-line-item-i-had-omitted">The line item my estimate had omitted</a></li>
             <li><a href="#terraform-nearly-deleted-it">And Terraform nearly deleted it</a></li>
@@ -94,21 +93,19 @@
         </nav>
       <article class="article-body">
 
-        <p>Scope. Cost and account operations on the AWS lab account behind a personal
-        project, a <a href="../projects/gpuaas-control-plane.html">Kubernetes-native GPU control plane</a>.
-        The figures come from mixed sources — <strong>$14.56 and $0.40 come from billing and
-        accounting</strong>, <strong>the ~$8 is my own estimate</strong>, and $0.05 and $0.18 are
-        billed time multiplied by the hourly rate. Either way this is personal-lab scale, not
-        production. Account and policy identifiers are omitted.</p>
+        <p>I build a <a href="../projects/gpuaas-control-plane.html">Kubernetes-native GPU control plane</a> as a personal project, and I rent GPUs
+        for it on an AWS lab account. The frightening failure there is not a wrong experiment. It is
+        leaving something switched on.</p>
 
-        <p>On a personal project that rents GPUs, the frightening failure is not a wrong experiment. It is
-        leaving something switched on. So I built several layers of control: a service
-        control policy, a TTL scale-down schedule, a monthly budget, ephemeral apply and destroy.</p>
+        <p>So I built four layers of control: a service control policy, a TTL scale-down schedule, a
+        monthly budget alarm, and ephemeral apply and destroy. After a month the rehearsal had caught a
+        policy defect and the TTL had proved it fires. <strong>But exactly one of the four had ever
+        caught an error in the cost itself — the budget alarm.</strong> A line item missing from my
+        estimate altogether was on the bill, and the alarm made it visible by putting estimate and bill
+        side by side.</p>
 
-        <p>After a month of running it, the rehearsal had caught a policy defect and the TTL had proved it fires.
-        But exactly one of them had ever caught an error in the cost itself. And that one was
-        not in the code.</p>
-
+        <p>And Terraform almost deleted that alarm without saying so. It had been created outside the
+        state file, so the next apply had it in the plan as a destroy.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -116,21 +113,6 @@
           <li>You rent GPUs in the cloud on a personal card</li>
           <li>You have layered several safeguards: budget alerts, policies, scheduled shutdowns</li>
           <li>You have not yet checked whether those safeguards actually fire</li>
-        </ul>
-
-        <h2 id="what-this-is-about">What this is about<a class="anchor" href="#what-this-is-about" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li>On a personal project renting GPUs, the thing to fear is not a wrong experiment but
-          <strong>forgetting something left running</strong>. So I built four layers of control.</li>
-          <li>A service control policy, a TTL scale-down, a monthly budget alert, and temporary apply/destroy.
-          After a month, <strong>the only one that caught a cost error was the budget alert.</strong></li>
-          <li>An item entirely missing from my estimate was on the bill, and the alert made it
-          visible by putting my estimate and the real charge side by side.</li>
-          <li>And Terraform nearly deleted that alert without saying so. It was created
-          outside the state file, so the next plan listed it for destruction.</li>
-          <li>⚠️ A budget alert is a detective control. It reports spend, it does not stop it.
-          The amounts are personal-lab sized, small enough that one wrong item stood out.</li>
         </ul>
 
         <h2 id="eighty-percent-is-not-early">80% is not an early warning<a class="anchor" href="#eighty-percent-is-not-early" aria-label="Link to this section">#</a></h2>
@@ -407,6 +389,8 @@ error     : ResourceNotFoundException</code></pre>
         <h2 id="what-this-does-not-claim">What this does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
         <ul>
+          <li>The figures come from mixed sources: $14.56 and $0.40 come from billing and accounting, the ~$8 is my own estimate, and $0.05 and $0.18 are billed time multiplied by the hourly rate. Either way this is personal-lab scale, not production. Account and policy identifiers are omitted.</li>
+
           <li><strong>Not a claim that the TTL prevented a cost incident.</strong> What was verified is that
           the schedule emits a call on time; the target was deliberately a name that does not exist. And the
           control's scope is scaling a node group to zero, not capping account-wide spend.</li>
