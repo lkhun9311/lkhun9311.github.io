@@ -82,7 +82,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-is-in-here">What this is about</a></li>
             <li><a href="#what-i-set-up">Editing a design doc was supposed to trigger a review</a></li>
             <li><a href="#inside-a-character">The cut landed inside a character</a></li>
             <li><a href="#every-revision">I measured every revision that survives</a></li>
@@ -99,18 +98,17 @@
 
         <article class="article-body">
 
-        <p>Hello. On a social polling service I build alone, editing a design document with my editing tool
-        was set up to <strong>kick off an outside review automatically.</strong> The results pile up in a
-        folder.</p>
+        <p>On a social polling service I build alone, editing a design document was set up to
+        <strong>kick off an outside review automatically.</strong> Result files piled up in a folder.
+        I believed it was working.</p>
 
-        <p>Results were piling up. But when I rebuilt the string that gets handed to that review,
-        <strong>it turned out to be cut through the middle of a character</strong>, and an argument like
-        that is rejected before it ever reaches a model.</p>
+        <p>I rebuilt the string that gets handed to that review.
+        <strong>It was cut through the middle of a character.</strong> The review tool rejects an
+        argument like that before it ever reaches a model.</p>
 
-        <p>Let me say this at the top. What this article measured is "what happens when
-        the documents that survive today are cut by that command". What the hook actually received back
-        then, and how it actually ended, is not recorded anywhere. The gap between the two
-        is inference, and I will keep marking which is which.</p>
+        <p>I was cutting the document with <code>head -c 60000</code>. That command counts bytes, not
+        characters. In a Korean document the 60,000th byte can land inside a three-byte character.
+        And when it failed that way, nothing anywhere said so.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -118,23 +116,6 @@
           <li>Anyone who set up an automated check and then reassured themselves by looking at the output folder</li>
           <li>Anyone who types <code>2&gt;/dev/null</code> out of habit</li>
           <li>Anyone piping Korean or Japanese documents into a tool</li>
-        </ul>
-
-        <h2 id="what-is-in-here">What this is about<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
-
-        <ul class="callout">
-          <li>The document was cut with <code>head -c 60000</code> before being handed to the review tool.
-          That command keeps the first 60,000 bytes. It counts bytes, not characters.</li>
-          <li>Pulling out the four commits of the large design document that are over
-          60,000 bytes and measuring them, all four are cut inside a character.
-          Five, counting the copy I am working on now.</li>
-          <li>Given an argument like that, the tool ends with 2 without reaching a model.
-          I reproduced it to check.</li>
-          <li>Failure leaves three signals, and a different thing erased each one: the
-          redirection that creates the output file up front, <code>2&gt;/dev/null</code>, and the
-          <code>exit 0</code> at the end of the script.</li>
-          <li>⚠️ Under 60,000 bytes there is nothing to cut, so it is fine. Results for the
-          shorter document kept accumulating and the folder looked healthy.</li>
         </ul>
 
         <h2 id="what-i-set-up">Editing a design doc was supposed to trigger a review<a class="anchor" href="#what-i-set-up" aria-label="Link to this section">#</a></h2>
@@ -621,6 +602,8 @@ fi</code></pre>
         <h2 id="what-this-does-not-claim">Limits: what this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
 
         <ul class="callout">
+          <li>What this article actually measured is “what happens when the documents that survive today are cut by that command”. What the hook received back then, and how it ended, is not recorded. The gap is inference, and the body keeps marking which is which.</li>
+
           <li>The cause of the five zero-byte files is unconfirmed. stderr was being
           discarded, so the reasons from that time are gone. What the reproduction shows is
           one path that produces the same shape, not the cause of those five.

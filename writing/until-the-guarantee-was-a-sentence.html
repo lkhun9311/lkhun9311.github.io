@@ -80,7 +80,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-this-is-about">What this is about</a></li>
             <li><a href="#defence-per-dimension">A defence written per dimension breaks when a dimension is added</a></li>
             <li><a href="#delay-is-the-defence">Delay is not a cost, it is the defence</a></li>
             <li><a href="#stopping-condition">It took five tickets to ask for a stopping condition</a></li>
@@ -95,14 +94,16 @@
         </nav>
       <article class="article-body">
 
-        <p><strong>Scope.</strong> A record of a <strong>pre-launch privacy review</strong> of a personal project
-        (a social polling platform, Kotlin · Spring Boot). No attack was ever observed; every defect here
-        was found by attacking my own code. k=5 and the threshold of 30 are estimates, not measurements
-        — the instrumentation is wired but real traffic has not run through it.</p>
+        <p>A social polling platform I build alone (Kotlin · Spring Boot) publishes poll results as
+        totals and by option, gender, age, region and trend. Before launch I attacked those screens
+        myself to see whether an individual could be traced back out of them.</p>
 
-        <p>This track consumed five tickets and still would not end. Each fix sent the full review off to find
-        another one. What ended it was not a sixth repair but writing the guarantee as a sentence.</p>
+        <p>The defence was min-n: if a group has fewer than five people, that cell is hidden. But it was
+        attached to the population axes only, and <strong>the time axis arrived later.</strong> Every new
+        axis opened the same hole again.</p>
 
+        <p>This track consumed five tickets and still would not end. What ended it was not a sixth repair
+        but writing the guarantee as a single sentence.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -110,21 +111,6 @@
           <li>You publish aggregates or statistics on a screen</li>
           <li>You already have a suppression rule like "hide groups under n"</li>
           <li>Every fix produces a new finding and you cannot tell when it ends</li>
-        </ul>
-
-        <h2 id="what-this-is-about">What this is about<a class="anchor" href="#what-this-is-about" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li>A polling app publishes results as totals, per option, and by gender, age, region and trend.
-          I found the places a person could be re-identified <strong>by attacking my own code.</strong></li>
-          <li>The defence was min-n (suppress a cell under five people), but it was
-          wired to the demographic axes only, and the time axis arrived later.</li>
-          <li>A defence written per axis breaks automatically when an axis is added.
-          Plugging one cell at a time has no end.</li>
-          <li>The track ate five tickets and still did not close. What closed it was not a sixth repair but
-          writing the guarantee as one sentence.</li>
-          <li>⚠️ No real attack was ever observed, and <strong>k=5 and the threshold of 30 are estimates,
-          not measurements.</strong> This is not differential privacy.</li>
         </ul>
 
         <h2 id="defence-per-dimension">A defence written per dimension breaks when a dimension is added<a class="anchor" href="#defence-per-dimension" aria-label="Link to this section">#</a></h2>
