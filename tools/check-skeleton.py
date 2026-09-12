@@ -8,6 +8,7 @@
 id 는 링크가 걸려 있어 안 바뀐다.
 """
 import glob
+import os
 import io
 import re
 import sys
@@ -65,6 +66,8 @@ def main():
         if missing:
             fails.append("%s: 뼈대 없음 — %s" % (f, " · ".join(missing)))
     print("본문 있는 글 %d 편 검사" % n)
+    fails += check_openings()
+
     if fails:
         print("결과: %d 건 실패" % len(fails))
         for x in fails:
@@ -72,6 +75,32 @@ def main():
         return 1
     print("결과: OK")
     return 0
+
+
+# ── 2026-09-12: 도입부는 장면으로 연다 ─────────────────────────────────────────
+# 두 가지를 더 본다. 셋 다 세 언어에 같이 적용한다.
+#   1) 「무슨 내용인가요?」/「What this is about」/「どんな内容」 절 — **결론을 미리 뱉는 스포일러다.**
+#      23편에서 걷어냈다. 도입부 산문이 그 일을 하고, 유보는 「한계」 절이 받는다.
+#   2) 「범위.」/「Scope.」/「範囲.」 로 시작하는 도입 — 면책부터 읽히면 장면이 안 선다.
+def check_openings():
+    import glob as _g, os
+    bad = []
+    SPOIL = ("what-is-in-here", "what-this-is-about", "どんな内容", "この記事の内容", "何の話")
+    for p in sorted(_g.glob("writing/*.html")):
+        if os.path.basename(p) == "index.html":
+            continue
+        s = io.open(p, encoding="utf-8").read()
+        m = re.search(r"<article.*?</article>", s, re.S)
+        if not m:
+            continue
+        a = m.group(0)
+        for sp in SPOIL:
+            if 'id="%s"' % sp in a:
+                bad.append("%s: 스포일러 절 「%s」" % (os.path.basename(p), sp))
+        lead = re.sub(r"<[^>]+>", "", a[:a.find("<h2")]).strip()
+        if lead.startswith(("Scope", "범위", "範囲")):
+            bad.append("%s: 도입이 면책으로 시작 「%s…」" % (os.path.basename(p), lead[:14]))
+    return bad
 
 
 if __name__ == "__main__":
