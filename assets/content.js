@@ -899,9 +899,13 @@
         var e = NOTES_NAV[sl][lang] || NOTES_NAV[sl].en;
         var href = BASE + "notes/" + sl + suffix + ".html";
         var here = sl === slug;
-        var secs = e.s.map(function (x) {
-          /* 한글 id 를 인코딩하지 않는다 — 본문 목차가 `#예상-독자` 로 쓰고 있어 모양이 갈린다. */
-          return '<li><a href="' + esc(href) + "#" + esc(x[0]) + '">' + esc(x[1]) + "</a></li>";
+        var secs = e.s.map(function (x, i) {
+          /* 한글 id 를 인코딩하지 않는다 — 본문 목차가 `#예상-독자` 로 쓰고 있어 모양이 갈린다.
+             번호는 본문·목차와 **같은 수**여야 한다. 나무는 꼬리 두 절을 빼고 담으므로
+             본문 순서 그대로 1부터 센다. */
+          var no = ("0" + (i + 1)).slice(-2);
+          return '<li><a href="' + esc(href) + "#" + esc(x[0]) + '">' +
+                 '<span class="sec-no">' + no + "</span>" + esc(x[1]) + "</a></li>";
         }).join("");
         if (!secs) return '<li class="term-leaf"><a href="' + esc(href) + '">' + esc(e.t) + "</a></li>";
         return '<li><details class="term"' + (here ? " open" : "") + ">" +
