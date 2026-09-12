@@ -61,6 +61,7 @@
      `python3 tools/build-notes-nav.py` 가 파일에서 구워 넣고,
      `--check` 가 어긋남을 잡는다. */
   var NOTES_NAV = {
+    "admission-control": {ko:{t:"Admission Control",s:[["자리","엔진 앞에 서기 때문에 모수가 바뀝니다",0],["세기","거절 0건이라는 리포트를 믿지 않습니다",0],["약속","무엇을 지키는 장치인지 먼저 적습니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Admission Control",s:[["자리","Standing in front changes the population",0],["세기","A report of zero rejections is not evidence",0],["약속","Write down what it protects, before turning it on",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Admission Control",s:[["자리","前に立つので母数が変わります",0],["세기","拒否 0 件というレポートは証拠になりません",0],["약속","何を守る仕掛けなのかを先に書きます",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "apdex": {ko:{t:"Apdex",s:[["계산","어떻게 나오나요?",0],["읽는법","무엇을 말해 주나요?",0],["함정","T를 안 적으면 비교가 안 됩니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Apdex",s:[["계산","How it is produced",0],["읽는법","What it tells you",0],["함정","Without T there is nothing to compare",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Apdex",s:[["계산","どうやって出るのか",0],["읽는법","何を教えてくれるのか",0],["함정","T を書かなければ比べられません",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "arm": {ko:{t:"Arm",s:[["어원","왜 이 말을 쓰나",0],["단일변수","한 변수만 바꿉니다",0],["패치","코드 비교는 패치로 관리합니다",0]]}, en:{t:"Arm",s:[["어원","Why this word",0],["단일변수","Change one variable",0],["패치","Keep a code difference in a patch",0]]}, ja:{t:"Arm",s:[["어원","なぜこの言葉を使うのか",0],["단일변수","変数は一つだけ変える",0],["패치","コードの差はパッチで管理する",0]]}},
     "bin-lock": {ko:{t:"Bin Lock",s:[["무엇","세그먼트가 아니라 버킷입니다",0],["시간","잠긴 자리에서 기다리면 병렬이 줄서기가 됩니다",0],["고치기","안전한 것과 빠른 것은 다릅니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Bin Lock",s:[["무엇","Bins, not segments",0],["시간","Wait inside the lock and parallel becomes a queue",0],["고치기","Safe and fast are different claims",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Bin Lock",s:[["무엇","セグメントではなくバケットです",0],["시간","ロックの中で待てば並列が行列になります",0],["고치기","安全なことと速いことは別です",0],["쓰인-곳","このサイトで使われている記事",0]]}},
@@ -74,11 +75,14 @@
     "min-n": {ko:{t:"min-n",s:[["무엇","무엇을 막나요?",0],["한계","한 장면 안에서만 참입니다",0],["축","축이 늘면 다시 뚫립니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"min-n",s:[["무엇","What it stops",0],["한계","It is true within one frame",0],["축","Add an axis and it breaks again",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"min-n",s:[["무엇","何を防ぐのか",0],["한계","一つの場面の中でだけ真です",0],["축","軸が増えればまた破れます",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "mutation-testing": {ko:{t:"Mutation Testing",s:[["왜","왜 필요한가",0],["방법","어떻게 하나",0],["경로","경로마다 따로 걸어야 합니다",0]]}, en:{t:"Mutation Testing",s:[["왜","Why it is needed",0],["방법","How to do it",0],["경로","Do it one path at a time",0]]}, ja:{t:"Mutation Testing",s:[["왜","なぜ必要か",0],["방법","どうやるか",0],["경로","経路ごとに別々にかける",0]]}},
     "percentile": {ko:{t:"Percentile",s:[["percentile","개요",1],["percentile-average","왜 평균을 안 쓰나",1],["percentile-calc","계산 방식이 두 가지입니다",1],["percentile-where","어디를 봐야 하나",1]]}, en:{t:"Percentile",s:[["percentile","Overview",1],["percentile-average","Why not the average",1],["percentile-calc","There are two ways to compute it",1],["percentile-where","Which one to read",1]]}, ja:{t:"Percentile",s:[["percentile","概要",1],["percentile-average","なぜ平均を使わないのか",1],["percentile-calc","計算方式が二つある",1],["percentile-where","どれを見るか",1]]}},
+    "quorum": {ko:{t:"Quorum",s:[["증언","쿼럼은 우리 자신에 대한 신호입니다",0],["고립","고립된 쪽이 혼자 판단하면 두 쪽이 같은 볼륨을 잡습니다",0],["두-질문","「장애인가」와 「지금 복구해도 되는가」는 다른 질문입니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Quorum",s:[["증언","A quorum is a signal about yourself",0],["고립","An isolated side deciding alone puts two sides on one volume",0],["두-질문","“Is it failed” and “is it safe to recover now” are different questions",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Quorum",s:[["증언","クォーラムは自分についての信号です",0],["고립","孤立した側が一人で判断すると二つがボリュームを掴みます",0],["두-질문","「障害か」と「今復旧してよいか」は別の問いです",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "soft-delete": {ko:{t:"Soft Delete",s:[["무엇","지운 것이 아니라 가린 것입니다",0],["표시","표시 값이 행마다 다를 수 있습니다",0],["지우기","지우는 자리는 본 테이블이 아닙니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Soft Delete",s:[["무엇","It is hidden, not deleted",0],["표시","The marker is not always zero and one",0],["지우기","The main table is not where you delete",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Soft Delete",s:[["무엇","消したのではなく隠したのです",0],["표시","マークの値は行ごとに違うことがあります",0],["지우기","消す場所は本テーブルではありません",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "sse": {ko:{t:"SSE",s:[["무엇","무엇인가요?",0],["첫값","연결이 열린 것과 값이 온 것은 다릅니다",0],["느린소비자","느린 한 명이 전부를 막습니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"SSE",s:[["무엇","What it is",0],["첫값","An open connection is not an arrived value",0],["느린소비자","One slow consumer blocks the rest",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"SSE",s:[["무엇","何か",0],["첫값","接続が開いたことと値が来たことは違います",0],["느린소비자","遅い一人が全体を塞ぎます",0],["쓰인-곳","このサイトで使われている記事",0]]}},
+    "stub": {ko:{t:"Stub",s:[["왜","앱에 「느린 모드」를 넣지 않기 위해서입니다",0],["신원","Stub이 그 값으로 답하는지 신원으로 확인합니다",0],["한계","Stub이 상한인지 앱이 상한인지 갈라 둡니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Stub",s:[["왜","So the app never grows a “slow mode”",0],["신원","Check by identity that the stub answers with that value",0],["한계","Separate a ceiling in the stub from a ceiling in the app",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Stub",s:[["왜","アプリに「遅いモード」を入れないためです",0],["신원","その値で答えているかを素性で確かめます",0],["한계","上限が Stub 側か アプリ側かを分けます",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "swap": {ko:{t:"Swap",s:[["무엇","RAM이 늘어난 것이 아닙니다",0],["점유","꽉 찬 것은 정황이지 원인이 아닙니다",0],["끄기","끄는 명령은 되돌릴 준비를 하고 씁니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Swap",s:[["무엇","It did not give you more RAM",0],["점유","Full is circumstance, not cause",0],["끄기","Turning it off needs an undo written first",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Swap",s:[["무엇","RAM が増えたわけではありません",0],["점유","埋まっているのは状況で、原因ではありません",0],["끄기","切る命令は戻す手順を先に書きます",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "timeout": {ko:{t:"Timeout",s:[["두-종류","Connect와 Read는 다른 구간을 자릅니다",0],["설정값","설정값은 측정값이 아닙니다",0],["상한","상한에 걸린 값은 지연이 아닙니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Timeout",s:[["두-종류","Connect and read cut different intervals",0],["설정값","A configured value is not a measured one",0],["상한","A value pinned to the ceiling is not a latency",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Timeout",s:[["두-종류","Connect と Read は別の区間を切ります",0],["설정값","設定値は測定値ではありません",0],["상한","上限に貼り付いた値は遅延ではありません",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "transaction-pooling": {ko:{t:"Transaction Pooling",s:[["모드","세 가지 모드",0],["성질","핵심 성질: 언제 묶이나",0],["핀","핀(Pin)이 걸리는 패턴",0]]}, en:{t:"Transaction Pooling",s:[["모드","Three modes",0],["성질","The property that matters — when it pins",0],["핀","Patterns that Pin",0]]}, ja:{t:"Transaction Pooling",s:[["모드","三つのモード",0],["성질","核心的な性質 — いつ固定されるか",0],["핀","ピン(Pin)がかかるパターン",0]]}},
+    "ttl": {ko:{t:"TTL",s:[["세-곳","같은 이름이 세 가지를 가리킵니다",0],["만료","만료는 「없음」이 아니라 「모름」입니다",0],["보안","공개 집계에서는 성능 손잡이가 아니라 보안 손잡이입니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"TTL",s:[["세-곳","One name, three meanings",0],["만료","Expiry means unknown, not absent",0],["보안","For published aggregates it is a security knob, not a performance one",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"TTL",s:[["세-곳","同じ名前が三つを指します",0],["만료","期限切れは「無い」ではなく「分からない」です",0],["보안","公開集計では性能のつまみではなく安全のつまみです",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "warmup": {ko:{t:"Warm-up",s:[["원인","무엇이 앞부분을 다르게 만드나",0],["길이","얼마나 버리나",0]]}, en:{t:"Warm-up",s:[["원인","What makes the front different",0],["길이","How much to throw away",0]]}, ja:{t:"Warm-up",s:[["원인","何が先頭を違うものにするのか",0],["길이","どれだけ捨てるか",0]]}}
   };
 
@@ -518,12 +522,52 @@
       /* 왼쪽 필터의 묶음. 용어 노트(#Harness 처럼 말 자체가 태그인 것)와 분류를 갈라 놓는다 —
          한 줄에 섞여 있으면 "무엇으로 고르는 목록인지"를 매번 다시 읽어야 한다. */
       tagGroups: {
-        "Term": ["Harness", "Percentile", "SSE", "Apdex", "Fencing", "min-n", "Swap", "Soft Delete", "Bin Lock", "Cache Stampede", "Timeout", "Grace Period", "Warm-up", "Arm", "Connection Pool", "Connection Pooler",
+        "Term": ["Harness", "Percentile", "SSE", "Apdex", "Fencing", "min-n", "Swap", "Soft Delete", "Bin Lock", "Cache Stampede", "Timeout", "Grace Period", "Admission Control", "Stub", "Quorum", "TTL", "Warm-up", "Arm", "Connection Pool", "Connection Pooler",
                 "Transaction Pooling", "Mutation Testing", "Fail-closed"],
         "Kind": ["Performance", "Database", "Verification", "Design",
                 "Troubleshooting", "Operating", "Debugging", "Chore", "Certification"]
       },
       items: [
+        {
+          title: "Admission Control",
+          url: "notes/admission-control.html",
+          title_ko: "Admission Control", title_ja: "Admission Control",
+          desc: "Deciding whether to take work before it starts. It stands in front of the engine, so switching it on quietly changes the population the latency metric is computed over.",
+          desc_ko: "일이 시작되기 전에 받을지 말지를 정하는 장치. 엔진 앞에 서기 때문에, 켜는 순간 지연 지표가 계산되는 모수가 조용히 바뀝니다.",
+          desc_ja: "仕事が始まる前に受けるかどうかを決める仕掛け。エンジンの前に立つので、入れた瞬間に遅延指標の母数が静かに変わります。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          tags: ["Admission Control", "Design"]
+        },
+        {
+          title: "Stub",
+          url: "notes/stub.html",
+          title_ko: "Stub", title_ja: "Stub",
+          desc: "A fake server standing in for an external dependency while you measure. Confirm it answers with the value you asked for by identity, not by timing.",
+          desc_ko: "측정하는 동안 외부 의존을 대신 세워 두는 가짜 서버. 요청한 값으로 답하는지는 시간이 아니라 신원으로 확인합니다.",
+          desc_ja: "測定のあいだ外部依存の代わりに立てる偽のサーバー。要求した値で答えているかは時間ではなく素性で確かめます。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          tags: ["Stub", "Verification"]
+        },
+        {
+          title: "Quorum",
+          url: "notes/quorum.html",
+          title_ko: "Quorum", title_ja: "Quorum",
+          desc: "The minimum number needed to reach agreement. It tells you whether you have standing to decide, not whether the other side died.",
+          desc_ko: "합의를 이루는 데 필요한 최소 인원. 상대가 죽었는지가 아니라 지금 판정할 자격이 있는지를 말해 줍니다.",
+          desc_ja: "合意を作るのに必要な最小の数。相手が死んだかではなく、今判定する資格があるかを教えます。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          tags: ["Quorum", "Reliability"]
+        },
+        {
+          title: "TTL",
+          url: "notes/ttl.html",
+          title_ko: "TTL", title_ja: "TTL",
+          desc: "How long a value counts as valid. Expiry means unknown rather than absent, and for published aggregates the interval is a security knob.",
+          desc_ko: "값을 언제까지 유효하다고 볼지 정하는 시간. 만료는 「없음」이 아니라 「모름」이고 공개 집계에서는 그 간격이 보안 손잡이입니다.",
+          desc_ja: "値をいつまで有効と見るかを決める時間。期限切れは「無い」ではなく「分からない」で、公開集計ではその間隔が安全のつまみです。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          tags: ["TTL", "Design"]
+        },
         {
           title: "Timeout",
           url: "notes/timeout.html",

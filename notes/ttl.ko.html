@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TTL | Kwanghun Lee</title>
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/notes/ttl.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/notes/ttl.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/notes/ttl.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/notes/ttl.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <meta name="description" content="값을 언제까지 유효하다고 볼지 정하는 시간. 만료는 「없음」이 아니라 「모름」입니다." />
+  <meta property="og:type" content="article" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="TTL" />
+  <meta property="og:description" content="값을 언제까지 유효하다고 볼지 정하는 시간. 만료는 「없음」이 아니라 「모름」입니다." />
+  <meta property="og:locale" content="ko_KR" />
+  <link rel="stylesheet" href="../assets/styles.css?v=557c3ff3d7" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no"
+                  data-authored='{"en": "ttl.html", "ko": "ttl.ko.html", "ja": "ttl.ja.html"}' aria-label="Select language" data-i18n-attr="aria-label:a11y.lang">
+          <option value="ko" selected>한국어</option>
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing">Writing</a>
+        <a href="../index.html#notes" class="active">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
+        <div class="article-meta"><span class="source-tag glossary notranslate">용어</span></div>
+      </div>
+      <section class="page-hero">
+        <h1>TTL</h1>
+        <p class="article-date">성능 측정<span aria-hidden="true"> · </span><span class="notranslate">#Warm-up</span></p>
+      </section>
+      <aside class="article-aside" data-aside="notes" data-slug="ttl"></aside>
+        <nav class="article-toc" aria-label="목차">
+          <p class="toc-label">목차</p>
+          <ul>
+            <li><a href="#세-곳">같은 이름이 세 가지를 가리킵니다</a></li>
+            <li><a href="#만료">만료는 「없음」이 아니라 「모름」입니다</a></li>
+            <li><a href="#보안">공개 집계에서는 성능 손잡이가 아니라 보안 손잡이입니다</a></li>
+            <li><a href="#쓰인-곳">이 사이트에서 쓰인 곳</a></li>
+          </ul>
+        </nav>
+      <article class="article-body">
+
+        <p><strong>TTL은 값을 언제까지 유효하다고 볼지 정하는 시간입니다.</strong>
+        이 사이트에서만도 세 곳에서 다른 것을 가리킵니다. Cache의 신선도, 하트비트의 유효기간, 그리고 예약된 만료입니다.</p>
+
+        <h2 id="세-곳">같은 이름이 세 가지를 가리킵니다<a class="anchor" href="#세-곳" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>Cache의 TTL은 다시 계산하기까지의 간격입니다. 5s로 두면 최대 5s 묵은 값을 보게 됩니다.
+        하트비트의 TTL은 「살아 있음」이라는 주장의 유효기간입니다. 30s 안에 새 신호가 오면 정상으로 봅니다.
+        예약 종료의 TTL은 시각이 되면 실행될 명령입니다. 앞의 둘과 달리 이것은 무언가를 끕니다.</p>
+
+        <p>셋이 같은 이름을 쓰므로 문서에서 섞입니다. 「TTL을 줄이자」는 말이 세 곳에서 각각
+        비용 · 오판 · 중단을 뜻합니다. 어느 TTL인지 적지 않은 문장은 <strong>읽는 사람마다 다르게 읽힙니다.</strong></p>
+
+                <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="tt-t tt-d" class="figure-svg">
+            <title id="tt-t">TTL이 정하는 것과 정하지 않는 것</title>
+            <desc id="tt-d">왼쪽 상자는 TTL이 정하는 것입니다. 값을 언제까지 유효하다고 볼지, 언제 다시 물을지, 바깥에서 보는 변화의 간격이 얼마인지입니다. 오른쪽 상자는 TTL이 정하지 않는 것입니다. 만료된 값이 틀렸는지, 상대가 죽었는지, 다음 값이 언제 도착하는지입니다. 아래에 분홍색으로 만료는 「없음」이 아니라 「모름」이라고 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">TTL이 정하는 것</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">유효하다고 볼 기간</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">다시 묻는 시점</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">밖에서 보이는 간격</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">정하지 않는 것</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">만료된 값의 진위</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">상대의 생사</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">다음 값의 도착</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">만료는 「없음」이 아니라 「모름」</text>
+            </g>
+          </svg>
+          <figcaption>TTL은 유효기간의 끝을 정할 뿐입니다. 그 끝 뒤에 무엇이 참인지는 다른 장치가 답해야 합니다.</figcaption>
+        </figure>
+
+        <h2 id="만료">만료는 「없음」이 아니라 「모름」입니다<a class="anchor" href="#만료" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>하트비트 TTL이 지났다는 것은 노드가 죽었다는 판정이 아닙니다. <strong>최근 소식이 없다</strong>는 관측입니다.
+        그래서 절차는 여기서 끝나지 않고 외부 프로브 같은 추가 검증으로 갑니다.</p>
+
+        <p>Cache도 같습니다. 만료된 항목은 틀린 값이 아니라 보증이 끝난 값입니다.
+        만료를 「값이 없다」로 읽으면 <a href="cache-stampede.ko.html">Cache Stampede</a>의 두 번째 결함과 같은 자리에 서게 됩니다.</p>
+
+        <h2 id="보안">공개 집계에서는 성능 손잡이가 아니라 보안 손잡이입니다<a class="anchor" href="#보안" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>집계를 공개하는 서비스에서는 <strong>공개 갱신 입도가 곧 Cache TTL</strong>입니다. 둘은 같은 파라미터입니다.
+        보통 「결과가 T초 늦게 반영된다」는 감수할 비용으로만 읽힙니다.</p>
+
+        <p>그런데 시간축 차분 공격에서는 그 간격이 그대로 방어 장치입니다. 공개본 두 개의 차이가 새는 통로이므로
+        간격이 좁아질수록 통로가 늘어납니다. 그래서 나중에 「성능 때문에 TTL 줄이자」가 나오면
+        <strong>그것은 성능 결정이 아니라 보안 결정입니다.</strong> 그 등가성은 결정 문서에 적어 둬야 합니다.</p>
+
+        <h2 id="쓰인-곳">이 사이트에서 쓰인 곳<a class="anchor" href="#쓰인-곳" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li><a href="../writing/until-the-guarantee-was-a-sentence.ko.html">투표 집계 재식별 방어를 축마다 세우다 다섯 번 뚫렸습니다</a></li>
+          <li><a href="../writing/seven-of-eight-should-not-recover.ko.html">노드 HA 여덟 시나리오 중 일곱은 복구하면 안 됩니다</a></li>
+          <li><a href="../writing/the-only-control-that-caught-something.ko.html">AWS GPU 랩 비용 오류를 잡은 것은 예산 알람뿐이었습니다</a></li>
+        </ul>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e7c9698ad3"></script>
+  <script src="../assets/content.js?v=f05c4dba70"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
