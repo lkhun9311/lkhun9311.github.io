@@ -82,7 +82,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-is-in-here">What this is about</a></li>
             <li><a href="#the-screen">The screen</a></li>
             <li><a href="#the-guess">The guess: I thought sequential calls were the problem</a></li>
             <li><a href="#six-configurations">The result: six configurations, measured separately</a></li>
@@ -100,12 +99,19 @@
 
         <article class="article-body">
 
-        <p>Hello. I write the backend of an internal cloud admin console. Its volume list screen was
-        <strong>running past ten minutes and timing out</strong>. It failed about five times in six.</p>
+        <p>I write the backend of an internal cloud admin console. Its volume list screen was running past
+        ten minutes and timing out. Open it six times and five of them ended that way.</p>
 
-        <p>After fixing it I <strong>split the work into six configurations</strong> and
-        measured each one under the same load. That table is the whole article.
-        It shows which change bought how much, and which change made something worse.</p>
+        <p>The cause was a loop calling an external API once per volume, in order, and the prescription
+        looked obvious: run them in parallel and add a cache. I did both, and p99 went from ten minutes
+        to 23 ms.</p>
+
+        <p>That one sentence leaves nothing to carry to the next screen, though. It does not say which
+        change bought how much, or whether any of them made something worse. So after the fix I split the
+        work into six configurations and measured each under the same load. <strong>One cell in that
+        table came out backwards.</strong> Hold the cache fixed and switch sequential to parallel, and
+        the median got 21 times faster while p99 got 1.9 times slower. This article is about those six
+        rows, and about that one cell.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -114,31 +120,6 @@
           <li>You have hand-rolled a cache on top of <code>ConcurrentHashMap.computeIfAbsent</code>.</li>
           <li>You have thought “can’t we just grow the thread pool?”</li>
         </ul>
-
-        <h2 id="what-is-in-here">What this is about<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li>Six configurations, measured one at a time. Measure only “before and after”
-          and you never learn which change did the work.</li>
-          <li>Holding the cache fixed and switching sequential to parallel made
-          <strong>the median 21x faster and P99 1.9x slower.</strong> Neither “faster” nor “slower” is the answer.</li>
-          <li>The largest drop in seconds came from adding one cache: a 579.0 s average became 13.1 s.
-          The final <strong>23 ms</strong> came from putting Caffeine’s refresh behaviour on top of that.</li>
-          <li>The hand-rolled cache had a defect. It never stored an empty answer,
-          so it asked again every time there was nothing to find.</li>
-        </ul>
-
-        <p>⚠️ The claim that parallelising can make things slower has
-        <a href="parallelism-made-the-tail-worse.html">its own article</a>. That one holds the cache fixed
-        and compares sequential against parallel. This one looks at all six configurations.</p>
-
-        <p>This is an internal product, so the code here is not the code that shipped.
-        Product names, customers and internal addresses are gone; the structure and the numbers stay.
-        Class names are generalised only as far as the story needs.</p>
-
-        <p>⚠️ One thing up front. The numbers below were measured with JMeter in an
-        isolated test environment, not taken from production. The “ten minutes” is the load test’s
-        own timeout ceiling, not a wait any real user sat through.</p>
 
         <h2 id="the-screen">The screen<a class="anchor" href="#the-screen" aria-label="Link to this section">#</a></h2>
 
