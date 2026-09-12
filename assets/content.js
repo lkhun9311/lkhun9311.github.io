@@ -61,6 +61,7 @@
      `python3 tools/build-notes-nav.py` 가 파일에서 구워 넣고,
      `--check` 가 어긋남을 잡는다. */
   var NOTES_NAV = {
+    "apdex": {ko:{t:"Apdex",s:[["계산","어떻게 나오나요?",0],["읽는법","무엇을 말해 주나요?",0],["함정","T를 안 적으면 비교가 안 됩니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Apdex",s:[["계산","How it is produced",0],["읽는법","What it tells you",0],["함정","Without T there is nothing to compare",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Apdex",s:[["계산","どうやって出るのか",0],["읽는법","何を教えてくれるのか",0],["함정","T を書かなければ比べられません",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "arm": {ko:{t:"Arm",s:[["어원","왜 이 말을 쓰나",0],["단일변수","한 변수만 바꿉니다",0],["패치","코드 비교는 패치로 관리합니다",0]]}, en:{t:"Arm",s:[["어원","Why this word",0],["단일변수","Change one variable",0],["패치","Keep a code difference in a patch",0]]}, ja:{t:"Arm",s:[["어원","なぜこの言葉を使うのか",0],["단일변수","変数は一つだけ変える",0],["패치","コードの差はパッチで管理する",0]]}},
     "connection-pool": {ko:{t:"Connection Pool",s:[["왜","왜 재사용하나",0],["상한","블로킹 JDBC에서는 이것이 동시성 상한입니다",0],["불변식","불변식 하나",0]]}, en:{t:"Connection Pool",s:[["왜","Why reuse them",0],["상한","On blocking JDBC this is the concurrency limit",0],["불변식","One invariant",0]]}, ja:{t:"Connection Pool",s:[["왜","なぜ再利用するのか",0],["상한","ブロッキング JDBC ではこれが同時実行の上限",0],["불변식","不変条件が一つ",0]]}},
     "connection-pooler": {ko:{t:"Connection Pooler",s:[["왜","왜 필요한가",0],["구별","Connection Pool과 다른 것입니다",0],["한계","무엇을 못 고치나",0]]}, en:{t:"Connection Pooler",s:[["왜","Why it exists",0],["구별","It is not the same as a connection pool",0],["한계","What it cannot fix",0]]}, ja:{t:"Connection Pooler",s:[["왜","なぜ必要か",0],["구별","Connection Pool とは別のもの",0],["한계","何を直せないか",0]]}},
@@ -509,12 +510,22 @@
       /* 왼쪽 필터의 묶음. 용어 노트(#Harness 처럼 말 자체가 태그인 것)와 분류를 갈라 놓는다 —
          한 줄에 섞여 있으면 "무엇으로 고르는 목록인지"를 매번 다시 읽어야 한다. */
       tagGroups: {
-        "Term": ["Harness", "Percentile", "SSE", "Warm-up", "Arm", "Connection Pool", "Connection Pooler",
+        "Term": ["Harness", "Percentile", "SSE", "Apdex", "Warm-up", "Arm", "Connection Pool", "Connection Pooler",
                 "Transaction Pooling", "Mutation Testing", "Fail-closed"],
         "Kind": ["Performance", "Database", "Verification", "Design",
                 "Troubleshooting", "Operating", "Debugging", "Chore", "Certification"]
       },
       items: [
+        {
+          title: "Apdex",
+          url: "notes/apdex.html",
+          title_ko: "Apdex", title_ja: "Apdex",
+          desc: "Response times turned into one score between 0 and 1, using a threshold T. Without its T an Apdex cannot be placed next to one from another report.",
+          desc_ko: "응답 시간을 기준 시간 T로 나눠 0에서 1 사이 점수 하나로 바꾼 값. T를 안 적은 Apdex는 다른 보고서의 Apdex와 견줄 수 없습니다.",
+          desc_ja: "応答時間を基準時間 T で分け、0 から 1 の点数一つに変えた値。T を書いていない Apdex はほかのレポートと並べられません。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          tags: ["Apdex", "Performance"]
+        },
         {
           title: "SSE",
           url: "notes/sse.html",
