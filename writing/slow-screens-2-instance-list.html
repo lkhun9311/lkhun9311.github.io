@@ -82,7 +82,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-is-in-here">What this is about</a></li>
             <li><a href="#the-screen">The screen</a></li>
             <li><a href="#the-fork">The fork: the CLI took 54 seconds too</a></li>
             <li><a href="#cause-a">Cause 1: swap was full, all 8.0GiB of it</a></li>
@@ -98,12 +97,18 @@
 
         <article class="article-body">
 
-        <p>Hello. I write the backend of an internal cloud admin console. Its instance list screen
-        spun and spun and then <strong>timed out.</strong> There were <strong>20 instances</strong> running
-        at the time.</p>
+        <p>I write the backend of an internal cloud admin console. Its instance list screen spun and spun
+        and then timed out. There were 20 instances running at the time. This was not code that could
+        fail on 20 rows.</p>
 
-        <p>This was not code that could fail on 20 rows. So this article
-        starts without opening a single source file.</p>
+        <p>So before opening a source file I fetched the same list from the CLI. That took 54 seconds
+        too. If it is 54 seconds without going through our backend, the slow stretch is below us.</p>
+
+        <p>Below us, two abnormal things were visible at once. Swap was using all 8.0 GiB, and the
+        instances table still held 1,021 rows that were only marked as deleted. Clearing both brought the
+        same CLI query to 1.0 second. <strong>And the command I used that day was one you must not run in
+        production.</strong> A month later I wrote the proper answer to the same problem as a document.
+        This article records both.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -112,27 +117,6 @@
           <li>Your first move on a slow screen is to open the application code.</li>
           <li>You have typed a <code>DELETE</code> straight into a database because it was urgent.</li>
         </ul>
-
-        <h2 id="what-is-in-here">What this is about<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li><strong>The CLI took 54 seconds for the same list.</strong> Which puts the slow stretch below
-          our backend.</li>
-          <li>Two abnormal things showed up together. Swap was full at 8.0GiB of 8.0GiB, and the
-          <code>instances</code> table still held <strong>1,021 rows that were only marked deleted.</strong></li>
-          <li>After the fix the CLI query went from 54 seconds to 1.002 seconds.</li>
-          <li>⚠️ But the commands I used are not ones you should run in production.
-          A month later I wrote up the proper answer for the same problem. This article carries both.</li>
-        </ul>
-
-        <p>This is an internal product, so neither the code nor the screens are reproduced as they
-        are. Product names, customers and internal addresses are gone; the structure and the numbers
-        stay. The screenshot of the console is not used at all. The product is the whole
-        picture there. Terminal output appears with the host name masked.</p>
-
-        <p>⚠️ One thing up front. The numbers below are measurements from a QA test
-        environment, not production statistics. And as you will see, two fixes went in at once,
-        so how much each one cut off the query time was never measured separately.</p>
 
         <h2 id="the-screen">The screen<a class="anchor" href="#the-screen" aria-label="Link to this section">#</a></h2>
 

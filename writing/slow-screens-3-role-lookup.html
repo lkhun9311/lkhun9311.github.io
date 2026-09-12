@@ -82,7 +82,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-is-in-here">What this is about</a></li>
             <li><a href="#the-screen">The screen</a></li>
             <li><a href="#the-log">The log had already recorded where the time went</a></li>
             <li><a href="#the-cause">The cause: one failed lookup pulled the whole list</a></li>
@@ -97,16 +96,20 @@
 
         <article class="article-body">
 
-        <p>Hello. I write the backend of an internal cloud admin console. On the user detail screen,
-        <strong>the role list spun for over a second</strong> without finishing.</p>
+        <p>I write the backend of an internal cloud admin console. Open one user and a table at the
+        bottom shows which projects they belong to and in what role. That table was spinning for over a
+        second.</p>
 
-        <p>The <strong>1,409 ms in this article is not the screen’s response time.</strong> The timer in the
-        code starts after the database query returns, and covers only the stretch that turns
-        role rows into DTOs. The database query, serialisation and transport all sit outside it.
-        What the user waited is longer than this. Every number here is from that stretch.</p>
+        <p>The roles are in our own database, but the project names live on the OpenStack side — in
+        Keystone, which owns users and projects. So every role row needs one project lookup, and that
+        lookup already had a cache in front of it: the same CacheManager from part one, with a ten-minute
+        retention. <strong>So this article is not “we added a cache and it got faster”. There was a
+        cache, and the cache was why it was slow.</strong></p>
 
-        <p>This screen already had a cache. So this article is not “we added a cache and it got
-        faster” but “there was a cache, and the cache was why it was slow”.</p>
+        <p>Hit-or-miss and elapsed time were already being logged for every lookup. Opening the log of a
+        pre-fix run: of 14 role rows, eight were 0 ms and the remaining six were around 230 ms each.
+        Adding those six gives 1,409 ms — exactly the total the timer recorded for that run. That changed
+        the question. Not “why is the cache not helping” but “why does one miss cost 235 ms”.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -115,34 +118,6 @@
           <li>You have had to decide what to reload when a cache lookup fails.</li>
           <li>You have missed the fact that some lookups are searching for something that is not there.</li>
         </ul>
-
-        <h2 id="what-is-in-here">What this is about<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li>One screen request brings back 14 role rows, and each row
-          resolves one project id. Eight resolve, six do not.</li>
-          <li><strong>The eight that resolve cost 0 ms each.</strong> Add up the six that do not and you get
-          <strong>1,409 ms</strong>, the same figure the timer recorded for the whole stretch in this
-          run.</li>
-          <li>The cause is that <code>CacheBox.project()</code> pulled the entire project list again
-          every time it failed to resolve one. And those six ids
-          are not in that list however many times you fetch it.</li>
-          <li>After the fix the same stretch takes 1 ms. ⚠️ But
-          six rows still fail to resolve. What went down is not how often it fails but
-          what a failure costs.</li>
-        </ul>
-
-        <p>⚠️ The log says <code>[Hit]</code> and <code>[Miss]</code>, but it is not measuring anything
-        inside the cache. Those labels come from whether a call to <code>CacheBox</code> returned a
-        project. A read can hit the cache perfectly and still be logged <code>[Miss]</code> because the id is
-        not in the list. Below I will call them resolved and unresolved.</p>
-
-        <p>This is an internal product, so neither the code nor the logs are reproduced as they
-        are. Product names, customers and internal addresses are gone; the structure and the numbers
-        stay. The logs appear with the logger name and the project ids masked.
-        The milliseconds are as recorded. ⚠️ The per-row milliseconds were transcribed by hand from log
-        screenshots pasted into the internal document. What the document states as text are the
-        totals: 1,409 ms, 250 ms, 1 ms.</p>
 
         <h2 id="the-screen">The screen<a class="anchor" href="#the-screen" aria-label="Link to this section">#</a></h2>
 
@@ -450,6 +425,8 @@ var project = CacheBox.projects().stream()
         <h2 id="limits">Limits: what this article does not claim<a class="anchor" href="#limits" aria-label="Link to this section">#</a></h2>
 
         <ul>
+          <li>The 1,409 ms is not the screen's response time. The timer starts after the database query returns and covers only the stretch that turns role rows into DTOs; the query, serialisation and transport all sit outside it. What the user waited is longer than this.</li>
+
           <li>The measurement is <code>System.currentTimeMillis()</code> plus <code>log.info</code>.
           <code>currentTimeMillis()</code> is not a monotonic clock; change the system time and the value moves.
           One log call sits inside each row's span while the one after it falls outside.
