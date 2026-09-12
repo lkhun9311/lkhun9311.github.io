@@ -80,7 +80,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-is-in-here">What is in here</a></li>
             <li><a href="#what-is-the-service">What is the service?</a></li>
             <li><a href="#i-thought-a-pooler">At first I thought a pooler would do it</a></li>
             <li><a href="#the-conclusion-first">One symptom, two causes</a></li>
@@ -101,18 +100,19 @@
         </nav>
       <article class="article-body">
 
-        <p>I am building a <strong>social polling platform</strong> on my own, and it has not launched yet.</p>
+        <p>I am building a social polling platform on my own, and it has not launched yet. When someone
+        writes a post, the server sends it to an external moderation API to ask whether the content is
+        harmful before it goes into the database. That call has a read timeout of 10 seconds. And the
+        call was sitting inside a database transaction.</p>
 
-        <p>When someone writes a post, the server sends it to an external moderation API to ask whether the
-        content is harmful before it goes into the database. That call has a read timeout of
-        <strong>10 seconds</strong>. And the call was sitting inside a database transaction.</p>
+        <p>Looking at that, the first thing I thought was the ordinary thing. “Traffic will grow,
+        connections will run short, so put something like RDS Proxy in front.”
+        <strong>It was the wrong thought.</strong></p>
 
-        <p>Looking at that, the first thing I thought was the ordinary thing.
-        “Traffic will grow, connections will run short, so put something like RDS Proxy in front.”
-        It was the wrong thought.</p>
-
-        <p>This is the story of why it was wrong, and of what I should have checked before buying a tool.</p>
-
+        <p>Connection exhaustion has two causes, and a connection pooler fixes one of them. Why it cannot
+        fix the other does not come from the product's documentation; it comes from the definition of
+        transaction pooling. So before adopting the tool I checked whether the tool would work on this
+        code at all.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -124,29 +124,6 @@
           <li>You have seen code that calls an external API inside a transaction — or you are writing it right
           now.</li>
         </ul>
-
-        <h2 id="what-is-in-here">What is in here<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li>Connection exhaustion has <strong>two</strong> causes, and a pooler fixes <strong>one</strong> of
-          them.</li>
-          <li>Why it cannot fix the other comes from the definition of transaction pooling, not
-          from a vendor document.</li>
-          <li>So before adopting the tool I checked whether the tool works in this code.</li>
-          <li>The fix is the kind that one line of <code>@Transactional</code> undoes, so the regression guard
-          went on the cause rather than the effect.</li>
-        </ul>
-
-        <p>The code is in a private repository. The app has not launched, so the
-        repository is not open. So there are no GitHub links in this article; only the quoted
-        fragments of the code appear in the text. Package and environment-variable names are the anonymised ones from the
-        original notes.</p>
-
-        <p>⚠️ One thing up front. The numbers here come from a local harness,
-        not from production, and the outbound latency is a value configured on a stub.
-        Nothing ever broke in production. The “up to 10 seconds” below is a
-        configured read timeout on the outbound call, not a measurement that each request
-        actually held a connection that long.</p>
 
         <h2 id="what-is-the-service">What is the service?<a class="anchor" href="#what-is-the-service" aria-label="Link to this section">#</a></h2>
 

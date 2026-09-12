@@ -82,7 +82,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-is-in-here">What is in here</a></li>
             <li><a href="#three-problems">Three problems in the structure before merging</a></li>
             <li><a href="#partial-failure">Partial failure is carried per item</a></li>
             <li><a href="#the-regression">Merging produced a regression immediately</a></li>
@@ -96,18 +95,19 @@
 
         <article class="article-body">
 
-        <p>I build the backend of an internal cloud admin console. By
-        <a href="monitoring-two-gates-one-screen.html">part four</a> all three screens were fixed individually.
-        First data was fast everywhere, and <strong>each screen was still collecting the same source
-        separately.</strong></p>
+        <p>I build the backend of an internal cloud admin console. By part four all three screens were
+        fixed individually. First data was fast everywhere, and each screen was still collecting the same
+        source separately. Node metrics were read twice, by the dashboard and by physical nodes.
+        Instance metrics were read twice, by the dashboard and by virtual resources.</p>
 
-        <p>Node metrics were read twice, by the dashboard and by physical nodes. Instance metrics were read
-        twice, by the dashboard and by virtual resources.
-        <strong>Merging the three caches into one removes the duplication.</strong></p>
+        <p>Merging the three caches into one removes that duplication. It looked small — three data
+        structures becoming one. <strong>The actual work was much larger</strong>, because everything
+        that separation had been protecting by accident became a contract that had to be written down.</p>
 
-        <p>The actual work was much larger than turning three data structures into one, because
-        everything that separation had been protecting by accident became a contract that had
-        to be written down.</p>
+        <p>A regression showed up the moment they merged. Leave one screen open and the other screen's
+        last value vanished from the cache; re-entering took 5,115 ms. This part writes those contracts
+        down one at a time: carrying partial failure per item, not sharing a mutable DTO, and not letting
+        a failure settle as an empty value.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -116,22 +116,6 @@
           <li>Anyone whose several consumers each read the same source</li>
           <li>Anyone who started with “a refactor to reduce object count” and ended up rewriting contracts</li>
         </ul>
-
-        <h2 id="what-is-in-here">What is in here<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li>There were three problems before merging.
-          <strong>Duplicate collection, a shared mutable DTO, and treating an outage as an empty value.</strong></li>
-          <li><strong>Partial failure is carried per item.</strong> An instance metric failing does not roll the
-          successfully collected nodes back to an earlier generation.</li>
-          <li>Merging produced a regression immediately. With only one screen open, the other
-          screen's last value disappeared from the cache. Re-entry took 5,115 ms.</li>
-          <li>Slow consumers were separated from collection. The synchronous send itself did not go
-          away.</li>
-        </ul>
-
-        <p>This is an internal product, so the code and the screens are not reproduced literally.
-        Product names, customers and internal addresses are out; the structure and the contracts stay.</p>
 
         <h2 id="three-problems">Three problems in the structure before merging<a class="anchor" href="#three-problems" aria-label="Link to this section">#</a></h2>
 

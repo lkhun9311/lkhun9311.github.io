@@ -82,7 +82,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-is-in-here">What is in here</a></li>
             <li><a href="#connecting-was-computing">Connecting was computing</a></li>
             <li><a href="#endless-spinner">It looked like an endless spinner, not an error</a></li>
             <li><a href="#off-the-request-path">I took the computation off the request path</a></li>
@@ -96,15 +95,17 @@
 
         <article class="article-body">
 
-        <p>I build the backend of an internal cloud admin console. In
-        <a href="monitoring-the-screen-i-said-not-to-fix.html">part one</a> I wrote that first data on the
-        dashboard took 6.8 seconds, and that taking the computation off the request path brought it to 23 ms.</p>
+        <p>I build the backend of an internal cloud admin console. In part one I wrote that first data on
+        the dashboard took 6.8 seconds, and that taking the computation off the request path brought it
+        to 23 ms. In one line, the fix was “build the snapshot ahead of time and hand it to the
+        connection.”</p>
 
-        <p>In one line, the fix was <strong>“build the snapshot ahead of time and hand it to the
-        connection.”</strong> One line makes it sound easy. The implementation review turned up
-        <strong>three races that the happy path never shows.</strong></p>
+        <p>Moving that one line into code turned up <strong>three races</strong>. None of them shows on
+        the happy path. One person connecting once and getting a value reveals nothing; the trouble only
+        starts where the refresh, the connection and the periodic job meet at the same place.</p>
 
-        <p>This part is about those three.</p>
+        <p>This part walks through the three: a refresh that gets cancelled, the same value published to
+        everyone several times over, and one timeout cutting off somebody else's query.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -114,28 +115,6 @@
           refresh the same slot</li>
           <li>Anyone broadcasting the same value to many sessions over SSE or WebSocket</li>
         </ul>
-
-        <h2 id="what-is-in-here">What is in here<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li>It was slow because connecting was computing. The cache that existed held
-          “who is there”, and the “how much is each using right now” that the screen needed was
-          outside it.</li>
-          <li>An exception was being swallowed, so the connection stayed alive while no data came
-          and the screen showed an endless spinner instead of an error.</li>
-          <li>Once the computation moved off the request path, three races appeared: a refresh
-          being cancelled, the same value broadcast to everyone several times, and
-          one timeout cutting somebody else's query.</li>
-          <li>The median went from 6,776 ms to <strong>10 ms.</strong> I also wrote down
-          what I did not do.</li>
-        </ul>
-
-        <p>This is an internal product, so the code and the screens are not reproduced literally.
-        Product names, customers and internal addresses are out; the structure and the configured values stay.</p>
-
-        <blockquote><p>⚠️ <strong>These are 30 sequential runs by a single user.</strong>
-        Not concurrent throughput, so I did not read throughput here as scalability.
-        What means something is the latency distribution to first business data, and the error rate.</p></blockquote>
 
         <h2 id="connecting-was-computing">Connecting was computing<a class="anchor" href="#connecting-was-computing" aria-label="Link to this section">#</a></h2>
 

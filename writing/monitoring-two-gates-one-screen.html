@@ -82,7 +82,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-is-in-here">What is in here</a></li>
             <li><a href="#the-formula">I wrote the completion condition as a formula</a></li>
             <li><a href="#first-gate">The first gate, one call per project</a></li>
             <li><a href="#second-gate">The second gate, and what speed exposed</a></li>
@@ -95,16 +94,17 @@
 
         <article class="article-body">
 
-        <p>I build the backend of an internal cloud admin console. Two screens were done by
-        <a href="monitoring-empty-is-not-zero.html">part three</a>. The third one, virtual resources, was
-        different from the other two.</p>
+        <p>I build the backend of an internal cloud admin console. Two screens were done by part three.
+        The third one, virtual resources, was different from the other two.</p>
 
-        <p>This screen had <strong>two data paths that start independently.</strong> REST builds the per-project
-        quota and usage; SSE pushes the virtual machine metrics. Before the change REST was about 2.6 seconds
-        and SSE first data about 1.4 seconds.</p>
+        <p>This screen had two data paths that start independently. REST builds the per-project quota and
+        usage; SSE pushes the virtual machine metrics. Before the change REST was about 2.6 seconds and
+        SSE first data about 1.4 seconds. So fixing one of them does not make the screen faster.
+        <strong>The screen finishes not at the sum of the two but at whichever finishes last.</strong>
+        I wrote that expression down before starting.</p>
 
-        <p><strong>Fixing one of them does not make the screen faster.</strong>
-        Total loading time is not their sum but whichever finishes last.</p>
+        <p>After the fix something that had been hiding came out. Once SSE dropped to 24 ms it arrived
+        ahead of REST and the screen went blank. The slow path had been keeping the order.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -113,24 +113,6 @@
           <li>Anyone with code that walks a list and calls an external API per item</li>
           <li>Anyone who has made one side fast and watched the screen stay the same</li>
         </ul>
-
-        <h2 id="what-is-in-here">What is in here<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li>I wrote the screen's completion condition <strong>as a formula first.</strong> A maximum, not a sum.</li>
-          <li>The REST path made one external call per project. Rather than
-          <strong>running them in parallel</strong>, I took that fan-out off the request.</li>
-          <li>A review caught something there. Accepting an empty list as a success overwrites
-          the existing value with <code>0/0</code>. A failure had to be expressed as a failure.</li>
-          <li>And getting faster exposed a hidden ordering dependency. Once SSE reached 24 ms it
-          arrived before REST, and the screen went blank.</li>
-        </ul>
-
-        <p>This is an internal product, so the code and the screens are not reproduced literally.
-        Product names, customers and internal addresses are out; the structure and the numbers stay.</p>
-
-        <blockquote><p>⚠️ These are sequential single-user measurements.
-        Not a concurrency load test, so I have not read them as “it handles N users”.</p></blockquote>
 
         <h2 id="the-formula">I wrote the completion condition as a formula<a class="anchor" href="#the-formula" aria-label="Link to this section">#</a></h2>
 
