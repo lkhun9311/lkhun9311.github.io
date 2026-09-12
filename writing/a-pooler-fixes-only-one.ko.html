@@ -80,7 +80,6 @@
           <p class="toc-label">목차</p>
           <ul>
             <li><a href="#예상-독자">이 글의 예상 독자</a></li>
-            <li><a href="#무슨-내용">무슨 내용인가요?</a></li>
             <li><a href="#어떤-서비스">어떤 서비스인가요?</a></li>
             <li><a href="#pooler를-붙이면">Pooler 하나면 되는 줄 알았습니다</a></li>
             <li><a href="#결론부터">증상은 하나인데 원인은 둘이었습니다</a></li>
@@ -101,19 +100,21 @@
         </nav>
       <article class="article-body">
 
-        <p>안녕하세요. 출시를 앞둔 <strong>소셜 투표 플랫폼</strong>을 혼자 만들고 있습니다.</p>
+        <p>출시를 앞둔 <a href="../projects/index.html">소셜 투표 플랫폼</a>을 혼자 만들고 있습니다.
+        이 서비스에서 글을 하나 쓰면 서버는 그것을 DB에 넣기 전에 외부 모더레이션 API로 보내
+        유해한 내용인지 묻습니다. 그 호출에는 Read Timeout이 10초로 걸려 있고 호출 자체가
+        DB Transaction 안에 있었습니다.</p>
 
-        <p>이 서비스에서 글을 하나 쓰면 서버는 그것을 DB에 넣기 전에 외부 모더레이션 API로 보내
-        유해한 내용인지 묻습니다. 그 호출에는 Read Timeout이 <strong>10초</strong>로 걸려 있습니다.
-        그리고 그 호출이 DB Transaction 안에 있었습니다.</p>
+        <p>이 구조를 보고 처음 든 생각은 아주 흔한 것이었습니다. “트래픽이 늘면 Connection이
+        모자랄 테니 RDS Proxy 같은 것을 하나 앞에 세우면 되겠다.”</p>
 
-        <p>이 구조를 보고 처음 든 생각은 아주 흔한 것이었습니다.
-        “트래픽이 늘면 Connection이 모자랄 테니 RDS Proxy 같은 것을 하나 앞에 세우면 되겠다.”
-        틀린 생각이었습니다.</p>
+        <p>틀린 생각이었습니다. Connection 고갈에는 원인이 두 가지 있고 <strong>Connection Pooler는
+        그중 하나만 고칩니다.</strong> 왜 못 고치는지는 제품 문서가 아니라 Transaction Pooling이라는
+        방식의 정의에서 나옵니다.</p>
 
-        <p>이 글은 그 판단이 왜 틀렸는지, 그리고 도구를 사기 전에 무엇을 먼저 확인했어야 했는지에
+        <p>그래서 도구를 도입하기 전에 이 코드에서 그 도구가 동작하는지부터 확인했습니다.
+        이 글은 그 판단이 왜 틀렸는지, 그리고 도구를 사기 전에 무엇을 먼저 확인했어야 했는지에
         대한 이야기입니다.</p>
-
 
         <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -122,27 +123,6 @@
           <li><em>“Connection이 부족하면 RDS Proxy 같은 걸 붙이면 되지 않나?”</em>라고 생각해 보신 분</li>
           <li>Transaction 안에서 외부 API를 호출하는 코드를 보신 적이 있거나, 지금 그렇게 쓰고 계신 분</li>
         </ul>
-
-        <h2 id="무슨-내용">무슨 내용인가요?<a class="anchor" href="#무슨-내용" aria-label="이 절로 가는 링크">#</a></h2>
-
-        <ul>
-          <li>Connection 고갈에는 원인이 <strong>두 가지</strong> 있고 Connection Pooler는 그중 <strong>하나만</strong>
-          고칩니다.</li>
-          <li>왜 못 고치는지는 제품 문서가 아니라 Transaction Pooling이라는 방식의 정의에서 나옵니다.</li>
-          <li>그래서 도구를 도입하기 전에 이 코드에서 그 도구가 동작하는지부터 확인했습니다.</li>
-          <li>수정이 <code>@Transactional</code> 한 줄로 되돌아갈 수 있는 종류라 회귀 방어를
-          결과가 아니라 원인에 걸었습니다.</li>
-        </ul>
-
-        <p>코드는 비공개 저장소에 있습니다. 아직 출시 전이라 저장소를 열어 두지
-        않았습니다. 그래서 이 글에는 GitHub 링크가 없습니다. 코드는 인용한 조각만 본문에 옮겼습니다.
-        패키지 이름과 환경변수 이름은 원본 기록에서 이미 익명화된 것을 그대로 씁니다.</p>
-
-        <p>⚠️ 미리 말씀드릴 것이 있습니다. 이 글의 수치는 로컬 Harness로 잰
-        것이지 운영 수치가 아닙니다. 외부 호출 지연은 Stub에 설정한 값입니다.
-        장애가 난 적도 없습니다. 아래에 나오는 “최대 10초”는 외부 호출에
-        설정해 둔 Read Timeout 값이지 요청마다 실제로 그만큼 붙잡고 있었다고 측정한 값이
-        아닙니다.</p>
 
         <h2 id="어떤-서비스">어떤 서비스인가요?<a class="anchor" href="#어떤-서비스" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -902,6 +882,9 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
           <p>정리하면 이렇습니다.</p>
 
           <ul>
+          <li>수치는 로컬 Harness로 잰 것이지 운영 수치가 아닙니다. 외부 호출 지연은 Stub에 설정한 값이고 장애가 난 적도 없습니다. 「최대 10초」는 외부 호출에 설정해 둔 Read Timeout 값이지 요청마다 실제로 그만큼 붙잡고 있었다고 측정한 값이 아닙니다.</li>
+          <li>코드는 비공개 저장소에 있습니다. 아직 출시 전이라 저장소를 열어 두지 않아 이 글에는 GitHub 링크가 없고 인용한 조각만 본문에 옮겼습니다. 패키지와 환경변수 이름은 원본 기록에서 이미 익명화된 것을 그대로 씁니다.</li>
+
             <li>Connection 고갈의 원인은 <strong>개수</strong>와 <strong>점유 시간</strong> 두 가지이고 증상이
             같아서 헷갈립니다.</li>
             <li>Connection Pooler는 개수 문제를 고치는 도구입니다. 점유 시간 문제에서는 앱 Connection 1개당 DB Connection
