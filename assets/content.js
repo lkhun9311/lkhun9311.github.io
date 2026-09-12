@@ -155,6 +155,18 @@
       },
       items: [
         {
+          title: "The Run History Tab Had a Path That Left No History",
+          url: "writing/the-history-tab-that-had-a-hole.html",
+          source: "company", sourceLabel: "Company work",
+          title_ko: "이력 탭을 만들고 보니 이력이 안 남는 경로가 있었습니다",
+          desc_ko: "스냅샷 스케줄러의 실행 이력을 화면에 붙였는데 대상이 사라져 정지한 실행은 이력이 한 줄도 남지 않았습니다. 조회 실패를 대상 없음으로 읽어 일시 오류가 영구 정지가 되고 있었습니다.",
+          title_ja: "履歴タブを作ってみたら履歴が残らない経路がありました",
+          desc_ja: "スナップショットスケジューラの実行履歴を画面に付けたのに、対象が消えて停止した実行は履歴が一行も残りませんでした。照会の失敗を対象無しと読み、一時的な障害が永久停止になっていました。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "A run history was attached to the scheduler, and a run stopped by a deleted target left no row at all. A failed lookup was read as absent, turning a transient error into a permanent stop. Also in Korean and Japanese.",
+          tags: ["Admin Console", "Observability", "Reliability", "Method"]
+        },
+        {
           title: "A Snapshot Schedule Failed Every Run and the Screen Said STARTED",
           url: "writing/a-schedule-that-failed-in-silence.html",
           source: "company", sourceLabel: "Company work",
