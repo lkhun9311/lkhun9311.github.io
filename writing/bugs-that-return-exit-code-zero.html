@@ -25,7 +25,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="Ten defects found in a Kubernetes GPU control plane. Control-plane verification on a Kubernetes GPU operator: what each defect broke, how it was found, and what guards it now." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=24808288b9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=b0ef7ac9b6" />
 </head>
 <body>
   <div class="topbar">
@@ -65,7 +65,7 @@
         <div class="article-meta"><span class="source-tag side notranslate">Personal project</span></div>
       </div>
       <section class="page-hero">
-        <h1>Ten Bugs, Zero Failed Tests<br><span class="h1-sub">None of the ten failed a test, crashed a process, or returned a non-zero exit code.</span><span class="h1-context notranslate">GPU control plane · control-plane verification</span></h1>
+        <h1>Ten Bugs, Zero Failed Tests<br><span class="h1-sub">None of the ten failed a test, crashed a process, or returned a non-zero exit code.</span><span class="h1-context notranslate">GPU Control Plane · Control Plane Verification</span></h1>
         <p class="article-date">Aug 2026</p>
         </section>
       <aside class="article-aside" data-aside="writing" data-slug="bugs-that-return-exit-code-zero"></aside>
@@ -287,7 +287,7 @@ run 3:  counter = 31      while every run saw 9 failures</code></pre>
         never went away. External code review caught this, not me.</p>
 
         <p>The fix and its guard. Updates pass once <code>DeletionTimestamp</code> is set.
-        Two specs pin it, one against the validator and one through a real apiserver, plus a control asserting
+        Two specs Pin it, one against the validator and one through a real apiserver, plus a control asserting
         the same spec is still refused on a live object. Removing the bypass turns both red:</p>
 
 <pre data-lang="text"><code>admission webhook "vmltrainingjob.kb.io" denied the request:

@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="時系列グラフを描く画面なのでクエリを疑いましたが、違いました。初期ロードがプロジェクトごとに Client を作り直しており、使っていたファクトリは Client を渡すたびに Keystone へ認証します。ただしこの記事には前後を測った数値がありません。なぜ無いのかが記事の半分です。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=24808288b9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=b0ef7ac9b6" />
 </head>
 <body>
   <div class="topbar">
@@ -159,7 +159,7 @@
               <rect x="330" y="126" width="382" height="32" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
               <text x="521" y="146" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">時系列ストアから計算</text>
               <rect x="158" y="170" width="554" height="18" rx="3" fill="rgba(79,91,213,0.18)" stroke="#4f5bd5" stroke-width="1.5"/>
-              <text x="435" y="184" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">push · 計算は tick ごとに 1 回</text>
+              <text x="435" y="184" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">push · 計算は Tick ごとに 1 回</text>
               <defs>
                 <marker id="mn-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                   <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
@@ -366,7 +366,7 @@ for (String projectId : projects) {
         ユーザーが待つ重い区間は <strong>初期ロード 1 回</strong>で、その後は
         <strong>15 秒ごとにサーバーが 1 回計算して、開いているすべての画面へ同じ値を送る</strong>構造です。</p>
 
-        <blockquote><p>ユーザーを 10 人に増やしても tick ごとの計算は 1 回のままです。
+        <blockquote><p>ユーザーを 10 人に増やしても Tick ごとの計算は 1 回のままです。
         接続を持ち続けるシナリオなら、グラフは「ユーザーを増やしても平気」と出ます。
         それはアーキテクチャの性質であって、遅い経路を踏んだという意味ではありません。</p></blockquote>
 
@@ -380,14 +380,14 @@ for (String projectId : projects) {
             <svg viewBox="0 0 720 160" role="img" aria-labelledby="axis-t axis-d" xmlns="http://www.w3.org/2000/svg">
               <title id="axis-t">2 つの軸で予想される呼び出し回数の概念図</title>
               <desc id="axis-d">測った値ではなく、コードから予想される呼び出し回数を描いた概念図です。左は接続を保つ
-              ユーザーを増やす軸で、ユーザーが増えても tick ごとの計算は 1 回のままなので線が平らです。
+              ユーザーを増やす軸で、ユーザーが増えても Tick ごとの計算は 1 回のままなので線が平らです。
               右はプロジェクト数を増やす軸で、プロジェクトが増えると初期ロードの認証回数も一緒に増えるので
               線が斜めに上がります。</desc>
 
               <text x="10" y="18" font-size="12.5" fill="#7b7186" font-weight="700">軸: 接続を保つユーザー数</text>
               <rect x="10" y="30" width="330" height="86" rx="6" fill="none" stroke="#7b7186" stroke-width="1.5"/>
               <path d="M40 96 H 310" fill="none" stroke="#7b7186" stroke-width="2" stroke-dasharray="4 3"/>
-              <text x="175" y="88" font-size="12" fill="#7b7186" text-anchor="middle">tick ごとの計算 1 回 · 平ら</text>
+              <text x="175" y="88" font-size="12" fill="#7b7186" text-anchor="middle">Tick ごとの計算 1 回 · 平ら</text>
               <text x="175" y="132" font-size="12" fill="#7b7186" text-anchor="middle">ユーザー 1 人 → 50 人</text>
 
               <text x="380" y="18" font-size="12.5" fill="#d62976" font-weight="700">軸: プロジェクト数</text>

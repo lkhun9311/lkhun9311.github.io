@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="同じやり方で破られた防御が 4 件。すべて読んで見つけたのではなく攻撃して見つけた。検査は自分が読んだものについては正しく、誤っていたのはテナントが書く値をテナントについての証拠として読んだ側だった。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=24808288b9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=b0ef7ac9b6" />
 </head>
 <body>
   <div class="topbar">
@@ -138,7 +138,7 @@
               <text x="91" y="72" font-size="11" fill="#4a4a4a" text-anchor="middle">Pod · Job の仕様</text>
               <text x="91" y="102" font-size="11" fill="#d62976" text-anchor="middle"><tspan font-family="ui-monospace, monospace">ownerReferences</tspan></text>
               <text x="91" y="128" font-size="11" fill="#d62976" text-anchor="middle"><tspan font-family="ui-monospace, monospace">quota-exempt</tspan></text>
-              <text x="91" y="154" font-size="11" fill="#d62976" text-anchor="middle"><tspan font-family="ui-monospace, monospace">grace period</tspan></text>
+              <text x="91" y="154" font-size="11" fill="#d62976" text-anchor="middle"><tspan font-family="ui-monospace, monospace">Grace Period</tspan></text>
 
               <path d="M330 20 V 206" fill="none" stroke="#c9c9c9" stroke-width="1.4" stroke-dasharray="5 4"/>
               <text x="330" y="14" font-size="11" fill="#8a8a8a" text-anchor="middle">信頼境界</text>
@@ -279,8 +279,8 @@ forged-owner   1/1   Running</code></pre>
 <p class="table-scroll-hint">横にスクロールすると続きが見えます</p>
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表: 横にスクロールすると続きが見えます">
         <table>
-          <caption class="sr-only">grace の設定と、装置を握っていた時間。</caption>
-          <thead><tr><th scope="col">grace</th><th scope="col">装置を握っていた時間</th></tr></thead>
+          <caption class="sr-only">Grace の設定と、装置を握っていた時間。</caption>
+          <thead><tr><th scope="col">Grace</th><th scope="col">装置を握っていた時間</th></tr></thead>
           <tbody>
             <tr><td>30 秒</td><td>32 秒</td></tr>
             <tr><td>300 秒</td><td><strong>301 秒</strong></td></tr>
@@ -293,10 +293,10 @@ forged-owner   1/1   Running</code></pre>
         <code>占有 = min(残作業, grace)</code>。</p>
 
         <p>同じ境界を反対側からも測りました。SIGTERM に反応しないワークロードは
-        残りのサービスが grace に収まる間は回収を完全に無効化し、収まらなくなった瞬間にちょうど
-        grace で切られます。</p>
+        残りのサービスが Grace に収まる間は回収を完全に無効化し、収まらなくなった瞬間にちょうど
+        Grace で切られます。</p>
 
-        <p><strong>修理 — そしてこれは前の 2 つと違います。</strong>grace は本当にワークロードのものです。
+        <p><strong>修理 — そしてこれは前の 2 つと違います。</strong>Grace は本当にワークロードのものです。
         チェックポイントを書いて死ぬには時間が要り、その必要は正当です。だから信頼できる値に置き換えることも、
         書ける側を制限することもできませんでした。代わりに上限を置いた — 装置を握る Pod は 120 秒。</p>
 
@@ -321,14 +321,14 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
         何も実行しないまま予算を無期限に握ります。</p>
 
         <p>修理。Pod の運命を決めるルールをその Pod を生み出すテンプレートに、予約が
-        起きる時点で適用します。装置を要求する Job は、テンプレートの grace が上限を超えるか、キューラベルが
+        起きる時点で適用します。装置を要求する Job は、テンプレートの Grace が上限を超えるか、キューラベルが
         無ければ拒否されます。</p>
 
         <p>ラベルはJob で検査します。Kueue がそのラベルを読むのがそこであり、Pod で拒否すると
         利用者に、自分の Pod には無いフィールドを直せと言うことになるからです。</p>
 
         <p>デプロイ後に再攻撃した — 両方の Job が <code>Forbidden</code>、<code>used</code> は 1 のまま変わらず、
-        grace 90 の普通のキュー Job はそのまま動きました。</p>
+        Grace 90 の普通のキュー Job はそのまま動きました。</p>
 
         <h2 id="why-fixes-differ">4 つの修理の形が違う理由<a class="anchor" href="#why-fixes-differ" aria-label="このセクションへのリンク">#</a></h2>
 
@@ -347,7 +347,7 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
           <tbody>
             <tr><td>① ownerReference</td><td>置換</td><td>信頼できない入力を信頼できる入力に替えた — 要求者は認証され、オブジェクトはされない</td></tr>
             <tr><td>② 免除アノテーション</td><td>制限</td><td>その入力を供給できる側を、テナントが入れない集合に狭めた</td></tr>
-            <tr><td>③ grace</td><td>上限</td><td>どちらもできず<em>被害を縛った</em>。最も弱く、最も正直な修理である</td></tr>
+            <tr><td>③ Grace</td><td>上限</td><td>どちらもできず<em>被害を縛った</em>。最も弱く、最も正直な修理である</td></tr>
             <tr><td>④ Job の予約</td><td>位置の移動</td><td>ルールはそのままに、約束が起きる地点へ検査を移した</td></tr>
           </tbody>
         </table>

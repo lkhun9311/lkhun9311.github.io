@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="管理ボリューム一覧を 6 通りの構成に分けて測りました。Cache を固定したまま逐次を並列に変えると、中央値は 21 倍速くなり P99 は 1.9 倍遅くなりました。コードでは Cache のキーを 1 つ握ったまま外部 API を待っていましたが、この試験だけではそれが原因だと切り分けられません。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=24808288b9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=b0ef7ac9b6" />
 </head>
 <body>
   <div class="topbar">
@@ -190,7 +190,7 @@
 
         <blockquote><p>呼び出しが逐次だから遅いのだ。並列にすれば N 倍とはいかなくても大きく減る。</p></blockquote>
 
-        <p><code>CompletableFuture.supplyAsync</code> でボリュームごとに task を作り Executor に投げました。
+        <p><code>CompletableFuture.supplyAsync</code> でボリュームごとに Task を作り Executor に投げました。
         そして繰り返しの呼び出しを減らすため、<code>ConcurrentHashMap</code> で Cache を 1 つ置きました。
         同じグループ id は 1 回呼べば足りるからです。</p>
 
@@ -357,13 +357,13 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
     .map(CompletableFuture::join)
     .collect(Collectors.toList());</code></pre>
 
-        <p>ボリュームが N 個なら Executor に task が N 個入ります。そのうち
+        <p>ボリュームが N 個なら Executor に Task が N 個入ります。そのうち
         <strong>同じグループ id を持つものが M 個あれば、M 個の Thread が同時に同じキーで
         <code>computeIfAbsent</code> に入ります。</strong>
         1 つが外部 API を往復するあいだ、残りの M−1 個はその場で待ちます。</p>
 
         <p>待っているあいだも、その Thread たちは <strong>Executor の席を握っています。</strong>
-        そのため別のボリュームの task が後ろに詰まります。</p>
+        そのため別のボリュームの Task が後ろに詰まります。</p>
 
         <p>この因果はコードを読んで立てたもので、試験が証明したものではありません。
         6 通りの試験が示すのは「Cache を固定したまま並列にすると悪化した」までです。
@@ -448,7 +448,7 @@ if (messages == null || messages.isEmpty()) {
 
         <p><code>ConcurrentHashMap</code> はマップ全体を Lock しません。だから「並行データ構造を使ったから
         大丈夫」と読みやすいのです。ところが <code>computeIfAbsent</code> は
-        <strong>そのキーが住む枠(bin)を Lock して</strong>マッピング関数を回します。</p>
+        <strong>そのキーが住む枠(Bin)を Lock して</strong>マッピング関数を回します。</p>
 
         <blockquote><p><strong>同じキーは完全に塞がります。</strong>そしてその時間は、マッピング関数がする仕事の
         時間です。別のキーでも hash が同じ枠に落ちれば一緒に塞がります。</p></blockquote>
@@ -457,7 +457,7 @@ if (messages == null || messages.isEmpty()) {
         ネットワークの往復でした。ミリ秒単位ではなく、数十・数百ミリ秒です。</p>
 
         <p>社内文書ではこれを「セグメント Lock」と書いていましたが、正確ではありません。
-        セグメントは Java 7 の実装で、Java 8 から <code>ConcurrentHashMap</code> は bin 単位で
+        セグメントは Java 7 の実装で、Java 8 から <code>ConcurrentHashMap</code> は Bin 単位で
         Lock します。誤った名前を使うと、次の人が間違った場所を探しに行くことになります。</p>
 
         <h2 id="修正">修正: Lock をうまく扱うのではなく、Lock に入る理由をなくしました<a class="anchor" href="#修正" aria-label="この節へのリンク">#</a></h2>
@@ -471,7 +471,7 @@ if (messages == null || messages.isEmpty()) {
 
         <p>ですからこの画面でやったことは、Lock をうまく扱う方ではなく Lock に入る理由をなくす方
         でした。自作の Cache と <code>synchronized</code> ブロックを取り除いて Caffeine に替えました。
-        キーごとに Loader が 1 つと保証されるので、stampede を防ぐために別途 Lock を掛ける必要がなくなります。</p>
+        キーごとに Loader が 1 つと保証されるので、Stampede を防ぐために別途 Lock を掛ける必要がなくなります。</p>
 
         <p>⑥ で得たのは 更新の方式です。値が古くなったら消して次の人に埋めさせる代わりに、
         古い値をそのまま返しながら裏で読み直します。
@@ -488,8 +488,8 @@ if (messages == null || messages.isEmpty()) {
           <li>サーバー起動時に先に埋めます。<code>ApplicationReadyEvent</code> を受けて
           <code>CompletableFuture.runAsync</code> で埋めます。起動を止めません。
           ですからこれはコールドスタートを無くす仕掛けではなく、出くわす確率を下げる仕掛けです。
-          warming が終わる前に来た最初のリクエストは、やはり自分で読みます。warming が失敗したときも同じです。
-          設計文書ではこの段階を「同期 warming」と書いていましたが、コードは <code>runAsync</code> でした。
+          Warming が終わる前に来た最初のリクエストは、やはり自分で読みます。Warming が失敗したときも同じです。
+          設計文書ではこの段階を「同期 Warming」と書いていましたが、コードは <code>runAsync</code> でした。
           文書ではなくコードを書きました。</li>
           <li>ボリュームを作成・削除したら Cache を無効化します。ただし消して空のままにはしません。
           持っていた値を残したまま裏で読み直し、原子的に差し替えます。</li>

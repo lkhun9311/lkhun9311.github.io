@@ -1475,8 +1475,12 @@ footer a:hover {
   gap: 6px 8px;
   /* 0.86rem · --muted 였을 때 「2026년 9월」이 읽히지 않는다는 지적을 받았다(2026-09-12).
      날짜는 목록에서 **먼저 훑는 축**이므로 요약(0.98rem)보다 작지 않게 두고 색도 한 단계 올린다. */
-  font-size: 0.95rem;
+  /* 날짜는 **글자체로** 구별한다(사용자 지시, 2026-09-12). 숫자가 Newsreader 로 떨어져
+     본문 산세리프와 확실히 갈리고, 한글 부분은 대체 글꼴이 받는다. */
+  font-family: var(--font-serif);
+  font-size: 1rem;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
   color: var(--text-soft);
   /* 규약 11 — 한글은 기울이면 자형이 무너져 강조가 아니라 흐림으로 읽힌다. 날짜와 배지는 한국어·일본어다. */
   font-style: normal;
@@ -2675,8 +2679,10 @@ html[lang="ja"] .container.reading .article-body figure.diagram figcaption::befo
 .container.reading .article-date {
   margin: 14px 0 0;
   color: var(--text-soft);
-  font-size: 1.02rem;
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
   letter-spacing: 0.01em;
 }
 
@@ -3144,10 +3150,12 @@ html[lang="ja"] .article-toc {
    본문 링크는 밖으로 나가므로 보라를 쓴다 — 색이 방향을 뜻하게 둔다.
 
    `.anchor`(절 링크 #)·`.term`(용어 점선)·`.h2-src`(출처 줄)는 각자 모습이 있으므로 뺀다. */
-.article-body p > a:not([class]),
-.article-body li > a:not([class]),
-.article-body td > a:not([class]),
-.article-body figcaption > a:not([class]),
+/* ⚠️ `p > a` 로 쓰면 <strong> 안에 든 링크를 놓친다. 실측 4곳이 그랬다.
+   클래스 없는 링크만 고르는 것은 `:not([class])` 가 이미 하므로 자손 선택자로 넓힌다. */
+.article-body p a:not([class]),
+.article-body li a:not([class]),
+.article-body td a:not([class]),
+.article-body figcaption a:not([class]),
 .article-body blockquote a:not([class]) {
   font-weight: 700;
   color: var(--aside);
@@ -3158,13 +3166,13 @@ html[lang="ja"] .article-toc {
   transition: color 0.16s ease, text-decoration-color 0.16s ease;
 }
 
-.article-body p > a:not([class]):hover,
-.article-body li > a:not([class]):hover,
-.article-body td > a:not([class]):hover,
-.article-body figcaption > a:not([class]):hover,
+.article-body p a:not([class]):hover,
+.article-body li a:not([class]):hover,
+.article-body td a:not([class]):hover,
+.article-body figcaption a:not([class]):hover,
 .article-body blockquote a:not([class]):hover,
-.article-body p > a:not([class]):focus-visible,
-.article-body li > a:not([class]):focus-visible {
+.article-body p a:not([class]):focus-visible,
+.article-body li a:not([class]):focus-visible {
   color: var(--brand);
   text-decoration-color: currentColor;
 }

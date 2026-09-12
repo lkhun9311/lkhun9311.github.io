@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="대시보드의 첫 데이터가 6.8초였던 이유는 접속이 곧 계산이었기 때문입니다. 요청 경로에서 계산을 떼어 내 10ms가 됐는데 그 과정에서 갱신이 취소되는 것·같은 값을 전체에 여러 번 뿌리는 것·Timeout 하나가 남의 쿼리를 끊는 것, 경합 셋이 나왔습니다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=24808288b9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=b0ef7ac9b6" />
 </head>
 <body>
   <div class="topbar">
@@ -117,7 +117,7 @@
         <h2 id="접속이-곧-계산">접속이 곧 계산이었습니다<a class="anchor" href="#접속이-곧-계산" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>SSE 연결 자체는 즉시 맺어졌습니다. 그런데 <strong>데이터를 만드는 경로</strong>에
-        시계열 measurement 여러 개를 합치는 쿼리, 전역 자원 목록 조회, 인증, DTO 조립이
+        시계열 Measurement 여러 개를 합치는 쿼리, 전역 자원 목록 조회, 인증, DTO 조립이
         <strong>직렬로</strong> 놓여 있었습니다.</p>
 
         <figure class="diagram">
@@ -166,7 +166,7 @@
         </figure>
 
         <p>분포도 그 모양이었습니다. 직전 계산과 타이밍이 맞으면 빨랐고 어긋나면
-        다음 tick을 기다린 뒤 수초짜리 계산까지 기다렸습니다. 빠른 표본과 6~9초 표본으로
+        다음 Tick을 기다린 뒤 수초짜리 계산까지 기다렸습니다. 빠른 표본과 6~9초 표본으로
         갈라진 이유입니다.</p>
 
         <h2 id="무한-로딩">오류가 아니라 무한 로딩으로 보였습니다<a class="anchor" href="#무한-로딩" aria-label="이 절로 가는 링크">#</a></h2>
@@ -256,7 +256,7 @@
         <p><strong>첫째, 갱신이 취소되면 기다리는 사람이 생깁니다.</strong>
         부팅 워밍업이 도는 중에 사용자가 접속하면 그 접속이 요청한 갱신은 「이미 갱신 중」이라 취소됩니다.
         그런데 워밍업이 결과를 Cache에만 넣고 방송하지 않으면 그 사용자는
-        다음 15초 tick까지 기다립니다. 워밍업·주기 작업·접속 갱신을 한 함수로 모으고
+        다음 15초 Tick까지 기다립니다. 워밍업·주기 작업·접속 갱신을 한 함수로 모으고
         실제로 갱신을 이긴 쪽이 항상 결과를 게시하도록 바꿨습니다.</p>
 
         <p>둘째, 같은 값을 전체에 여러 번 뿌립니다.

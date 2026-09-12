@@ -14,10 +14,17 @@ import re
 import sys
 
 TERMS = ["connection pooler", "connection pool", "transaction pooling", "control plane",
+         "cache stampede", "soft delete",
          "cache", "connection", "transaction", "thread", "backend", "harness", "pooler",
          "pooling", "pool", "timeout", "stub", "instance", "worker", "monolith", "mutation",
          "console", "cloud", "lock", "arm", "swap", "client", "baseline", "executor",
          "payload", "loader", "plugin", "device", "polling", "producer",
+         # 2026-09-12 전수에서 나온 것들 — 한국어 문장 안에서 **용어로 쓰이는** 낱말이다.
+         # (명령 `git`·`bash`·`cron`·`apply`·`destroy`, 식별자 `stderr`·`ownerReference`,
+         #  따온 값 `off`·`all`·`invalid`·`fcfs`·`priority` 는 일부러 뺐다 — 바꾸면 틀린다.)
+         "shadow", "archive", "purge", "bin", "enum", "pin", "tick", "task", "warming",
+         "cell", "spy", "schema", "park", "blob", "staleness", "stampede", "outbox",
+         "measurement", "grace", "refresh", "mover", "host", "compute", "deque",
          "fail-closed", "fail-open"]
 PATS = [re.compile(r"(?<![A-Za-z0-9_/.-])" + t.replace(" ", r"\s+") + r"(?![A-Za-z0-9_/.-])")
         for t in TERMS]

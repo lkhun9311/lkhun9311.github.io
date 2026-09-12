@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="출시 전 소셜 투표 플랫폼을 점검하다가 Connection Pooler를 붙이려고 했습니다. 그런데 Connection 고갈에는 원인이 두 가지 있고 Connection Pooler는 그중 하나만 고칩니다. 왜 못 고치는지는 제품 문서가 아니라 Transaction Pooling의 정의에서 나옵니다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=24808288b9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=b0ef7ac9b6" />
 </head>
 <body>
   <div class="topbar">
@@ -376,7 +376,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
 
         <blockquote><p>Connection을 다시 쓰는 일은 Transaction과 Transaction <em>사이</em>에서만 일어납니다.
         Transaction이 열려 있는 동안에는 그 Backend Connection이 그 클라이언트에
-        묶입니다(pin).</p></blockquote>
+        묶입니다(Pin).</p></blockquote>
 
         <p>당연한 이야기이기도 합니다. Transaction은 상태이고 열려 있는 중간에 다른 세션에 빌려주면 격리가
         깨지니까요.</p>
@@ -437,7 +437,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
               <text x="116" y="263" font-size="13" fill="#7b7186">B는 대기 · 끼어들 틈 없음</text>
 
               <rect x="104" y="280" width="604" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="116" y="297" font-size="13" fill="#18121d">A에 묶임(pin) · Transaction이 열려 있는 내내</text>
+              <text x="116" y="297" font-size="13" fill="#18121d">A에 묶임(Pin) · Transaction이 열려 있는 내내</text>
               <text x="696" y="297" font-size="14" fill="#d62976" font-weight="700" text-anchor="end">앱 1 → DB 1</text>
             </svg>
           </div>
@@ -471,7 +471,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
             <tr><td>②</td><td>유입 제어. 동시 처리 상한을 의도적으로 정하기</td><td>실패를 빠르고 예측 가능하게 만듭니다</td></tr>
             <tr><td>③</td><td>Connection Pooler</td><td>①이 끝나야 효과가 있습니다</td></tr>
             <tr><td>④</td><td>읽기 분리·Cache</td><td>Connection을 <em>덜 쓰게</em> 만드는 유일한 층입니다</td></tr>
-            <tr><td>⑤</td><td>비동기 오프로드(outbox)</td><td>요청당 DB 작업 자체를 줄입니다</td></tr>
+            <tr><td>⑤</td><td>비동기 오프로드(Outbox)</td><td>요청당 DB 작업 자체를 줄입니다</td></tr>
           </tbody>
         </table>
         </div>
@@ -515,7 +515,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         하고 있었습니다. Connection과 행 Lock, 두 자원을 동시에 쥐고 있었던 겁니다.</p>
 
         <p>글과 댓글 두 경로를 먼저 고치고 투표 첨부는 검열에 넣는 입력이 <em>잠근 행에서</em> 나오는 탓에
-        staleness(값이 낡았는지) 재확인이 필요해서 한 번 미뤘다가 같은 날 뒤에 고쳤습니다.
+        Staleness(값이 낡았는지) 재확인이 필요해서 한 번 미뤘다가 같은 날 뒤에 고쳤습니다.
         기록에는 「의도적 미착수」로 남겨 두었고 그날 후속 세션에서 처리했습니다.</p>
 
         <p>결론을 한 줄로 적으면 이렇습니다.
@@ -567,7 +567,7 @@ spring:
 
         <p>①과 ②를 하고 나니 이제 ③을 볼 차례였습니다. 그런데 ③에는 조건이 하나 더
         붙어 있었습니다. Transaction Pooling에는
-        <strong>핀(pin)을 유발하는 패턴</strong>이 있고 코드에 그게 있으면 Connection Pooler가 무력해집니다.
+        <strong>핀(Pin)을 유발하는 패턴</strong>이 있고 코드에 그게 있으면 Connection Pooler가 무력해집니다.
         핀이 걸리면 그 Connection은 Transaction이 끝나도 그 클라이언트에 계속 묶여 있게 됩니다.</p>
 
         <ul class="callout">
@@ -619,7 +619,7 @@ VoteRepository.kt        pg_advisory_xact_lock(...)</code></pre>
         정상입니다. 증상은 부하가 걸리는 날에만 나옵니다.</p>
 
         <p>“Connection을 오래 안 잡는다”는 것은 직접 관측하기가 어렵습니다. 그래서 결과 대신
-        원인을 단언했습니다. 실제 HTTP 클라이언트가 앉는 인터페이스 자리에 spy를 앉히고
+        원인을 단언했습니다. 실제 HTTP 클라이언트가 앉는 인터페이스 자리에 Spy를 앉히고
         호출이 일어나는 그 시점에 Transaction이 활성인지를 기록합니다.</p>
 
 <pre data-lang="kotlin"><code>class TransactionProbe : ContentModerationApi {
@@ -647,8 +647,8 @@ ModerationOutsideTransactionTest > the moderation call does not hold a database 
 ModerationOutsideTransactionTest > creating a post also screens outside a transaction() FAILED</code></pre>
 
         <p>글과 댓글 경로에서는 해당 가드만 빨간불이 됐습니다. 그런데 투표 첨부 경로는
-        달랐습니다. Mutation이 처음엔 초록불이었습니다. staleness 가드가 겨누는 조건이
-        테스트 안에서 만들어지지 않았기 때문이고 spy의 <code>onScreen</code> 훅으로 검열 구간에 행을 바꿔
+        달랐습니다. Mutation이 처음엔 초록불이었습니다. Staleness 가드가 겨누는 조건이
+        테스트 안에서 만들어지지 않았기 때문이고 Spy의 <code>onScreen</code> 훅으로 검열 구간에 행을 바꿔
         조건을 만든 뒤에야 빨간불을 봤습니다.</p>
 
         <p>여기서 배운 것이 이 글에서 제일 옮길 만한 것입니다.

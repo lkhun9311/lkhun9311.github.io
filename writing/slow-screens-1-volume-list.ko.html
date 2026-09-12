@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="볼륨 목록 조회를 6단계로 나눠 쟀습니다. 순차를 병렬로 바꾸자 중앙값은 21배 빨라지고 P99는 1.9배 느려졌습니다. 코드에서는 Cache의 키 하나를 잠근 채 외부 API를 기다리고 있었는데 이 테스트만으로는 그것이 원인이라고 가르지 못합니다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=24808288b9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=b0ef7ac9b6" />
 </head>
 <body>
   <div class="topbar">
@@ -191,7 +191,7 @@
 
         <blockquote><p>호출이 순차라서 느린 것이다. 병렬로 바꾸면 N배까지는 아니어도 크게 줄어든다.</p></blockquote>
 
-        <p><code>CompletableFuture.supplyAsync</code>로 볼륨마다 task를 만들어 Executor에 던졌습니다.
+        <p><code>CompletableFuture.supplyAsync</code>로 볼륨마다 Task를 만들어 Executor에 던졌습니다.
         그리고 반복 호출을 줄이려고 <code>ConcurrentHashMap</code>으로 Cache를 하나 놓았습니다.
         같은 그룹 id는 한 번만 부르면 되니까요.</p>
 
@@ -358,12 +358,12 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
     .map(CompletableFuture::join)
     .collect(Collectors.toList());</code></pre>
 
-        <p>볼륨이 N개면 Executor에 task가 N개 들어갑니다. 그중 <strong>같은 그룹 id를 가진 것이 M개라면
+        <p>볼륨이 N개면 Executor에 Task가 N개 들어갑니다. 그중 <strong>같은 그룹 id를 가진 것이 M개라면
         M개의 Thread가 동시에 같은 키로 <code>computeIfAbsent</code>에 들어갑니다.</strong>
         하나가 외부 API를 왕복하는 동안 나머지 M−1개는 그 자리에서 기다립니다.</p>
 
         <p>기다리는 동안에도 그 Thread들은 <strong>Executor의 자리를 쥐고 있습니다.</strong>
-        그래서 다른 볼륨의 task가 밀립니다.</p>
+        그래서 다른 볼륨의 Task가 밀립니다.</p>
 
         <p>이 인과는 코드를 읽어서 세운 것이지 테스트가 증명한 것이 아닙니다.
         6단계 테스트가 보여 주는 것은 「Cache를 고정한 채 병렬로 바꾸니 나빠졌다」까지입니다.
@@ -446,7 +446,7 @@ if (messages == null || messages.isEmpty()) {
         <h2 id="왜-줄을-서나">이유: ConcurrentHashMap인데도 줄을 섭니다<a class="anchor" href="#왜-줄을-서나" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p><code>ConcurrentHashMap</code>은 맵 전체를 잠그지 않습니다. 그래서 「동시성 자료구조를 썼으니 괜찮다」고
-        읽기 쉽습니다. 그런데 <code>computeIfAbsent</code>는 <strong>그 키가 사는 칸(bin)을 잠그고</strong> 매핑 함수를 돌립니다.</p>
+        읽기 쉽습니다. 그런데 <code>computeIfAbsent</code>는 <strong>그 키가 사는 칸(Bin)을 잠그고</strong> 매핑 함수를 돌립니다.</p>
 
         <blockquote><p><strong>같은 키는 완전히 막힙니다.</strong> 그리고 그 시간은 매핑 함수가 하는 일의
         시간입니다. 다른 키라도 hash가 같은 칸에 떨어지면 같이 막힙니다.</p></blockquote>
@@ -455,7 +455,7 @@ if (messages == null || messages.isEmpty()) {
         네트워크 왕복이었습니다. 밀리초 단위가 아니라 수십·수백 밀리초입니다.</p>
 
         <p>사내 문서에는 이걸 「세그먼트 Lock」이라고 적어 뒀는데 정확하지 않습니다.
-        세그먼트는 Java 7의 구현이고 Java 8부터 <code>ConcurrentHashMap</code>은 bin 단위로 잠급니다.
+        세그먼트는 Java 7의 구현이고 Java 8부터 <code>ConcurrentHashMap</code>은 Bin 단위로 잠급니다.
         틀린 이름을 쓰면 다음 사람이 잘못된 곳을 찾아보게 됩니다.</p>
 
         <h2 id="수정">수정: Lock을 잘 다루기보다 Lock에 들어갈 일을 없앴습니다<a class="anchor" href="#수정" aria-label="이 절로 가는 링크">#</a></h2>
@@ -469,7 +469,7 @@ if (messages == null || messages.isEmpty()) {
 
         <p>그래서 이 화면에서 한 일은 Lock을 잘 다루는 쪽이 아니라 Lock에 들어갈 일을 없애는 쪽이었습니다.
         직접 짠 Cache와 <code>synchronized</code> 블록을 걷어내고 Caffeine으로 바꿨습니다.
-        키마다 Loader 하나가 보장되므로 stampede를 막으려고 따로 Lock을 걸 일이 없어집니다.</p>
+        키마다 Loader 하나가 보장되므로 Stampede를 막으려고 따로 Lock을 걸 일이 없어집니다.</p>
 
         <p>⑥에서 얻은 것은 갱신 방식입니다. 값이 낡으면 지우고 다음 사람이 채우게 하는 대신,
         옛 값을 그대로 돌려주면서 뒤에서 새로 읽습니다.
@@ -486,8 +486,8 @@ if (messages == null || messages.isEmpty()) {
           <li>서버가 뜰 때 미리 채웁니다. <code>ApplicationReadyEvent</code>를 받아
           <code>CompletableFuture.runAsync</code>로 채웁니다. 기동을 막지 않습니다.
           그래서 이것은 콜드 스타트를 없애는 장치가 아니라 겪을 확률을 낮추는 장치입니다.
-          warming이 끝나기 전에 들어온 첫 요청은 여전히 자기가 읽습니다. warming이 실패해도 마찬가지입니다.
-          설계 문서에는 이 단계를 「동기 warming」이라고 적어 두었는데 코드는 <code>runAsync</code>였습니다.
+          Warming이 끝나기 전에 들어온 첫 요청은 여전히 자기가 읽습니다. Warming이 실패해도 마찬가지입니다.
+          설계 문서에는 이 단계를 「동기 Warming」이라고 적어 두었는데 코드는 <code>runAsync</code>였습니다.
           문서가 아니라 코드를 적었습니다.</li>
           <li>볼륨을 만들거나 지우면 Cache를 무효화합니다. 다만 지우고 비워 두지 않습니다.
           있던 값을 유지한 채 뒤에서 새로 읽어 원자적으로 바꿔 끼웁니다.</li>

@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="콘텐츠 검열 경로의 처리량이 6.27 req/s에서 안 올라갔습니다. 쓰기를 2배로 올려도 DB Pool을 3배로 키워도 그대로였습니다. 원인은 S3를 쓰려고 넣은 AWS SDK가 끌고 들어온 HTTP 클라이언트의 기본값 5였고 그 층은 컴파일 클래스패스에 없어서 읽어서는 찾을 수 없었습니다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=24808288b9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=b0ef7ac9b6" />
 </head>
 <body>
   <div class="topbar">
@@ -323,8 +323,8 @@
         <strong>제 코드에는 10도, 5도 적혀 있지 않기 때문입니다.</strong></p>
 
         <p>그래서 부하가 걸린 상태에서 Thread 덤프를 떴습니다. 톰캣 Worker 16개 중
-        <strong>5개는 소켓 입출력 중(RUNNABLE)</strong>이었고 11개는 park 상태였습니다.
-        park 한 쪽의 스택이 답이었습니다.</p>
+        <strong>5개는 소켓 입출력 중(RUNNABLE)</strong>이었고 11개는 Park 상태였습니다.
+        Park 한 쪽의 스택이 답이었습니다.</p>
 
 <pre data-lang="text"><code>at org.apache.hc.core5.pool.StrictConnPool$1.get(StrictConnPool.java:183)
 at org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager$3.get(...)

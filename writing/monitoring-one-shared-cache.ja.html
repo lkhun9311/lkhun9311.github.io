@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="三画面が同じ源を別々に収集していたので Cache 三つを一つにまとめました。まとめた直後に、一つの画面だけ開いていると別の画面の最後の値が消える回帰が出ました。分離された Cache が黙って持っていた契約が消えたのであり、誰もそれを書き残していませんでした。連載の最終編です。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=24808288b9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=b0ef7ac9b6" />
 </head>
 <body>
   <div class="topbar">
@@ -325,7 +325,7 @@ lastPageByPath[経路]   各経路の最後に成功した payload
 
         <p>ところが通常の実行キューにセッションごとの処理を入れると、小さな Pool では
         <strong>前のセッションだけが繰り返し受け入れられ、後ろのセッションが拒否され続ける飢餓</strong>が
-        起こりえました。送信器は準備 deque と常駐 Worker を使います。</p>
+        起こりえました。送信器は準備 Deque と常駐 Worker を使います。</p>
 
         <ul>
           <li>セッションごとに待ちの Payload はいちばん大きい世代を一つだけ持ちます。</li>
