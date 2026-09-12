@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="볼륨 목록 조회를 6단계로 나눠 쟀습니다. 순차를 병렬로 바꾸자 중앙값은 21배 빨라지고 P99는 1.9배 느려졌습니다. 코드에서는 Cache의 키 하나를 잠근 채 외부 API를 기다리고 있었는데 이 테스트만으로는 그것이 원인이라고 가르지 못합니다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=b0ef7ac9b6" />
+  <link rel="stylesheet" href="../assets/styles.css?v=ddc4ff3716" />
 </head>
 <body>
   <div class="topbar">
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span></div>
       </div>
               <section class="page-hero">
-          <h1>볼륨 목록 P99가 10분에서 23ms로 줄었습니다<br><span class="h1-sub">직접 짠 Cache가 키 하나를 잠근 채 외부 API를 기다리고 있었습니다.</span><span class="h1-context notranslate">사내 Cloud 관리 Console · 느린 화면 연작 ①</span></h1>
+          <h1>볼륨 목록 P99가 10분에서 23ms로 줄었습니다<br><span class="h1-sub">직접 짠 Cache가 키 하나를 잠근 채 외부 API를 기다리고 있었습니다.</span><span class="h1-tags notranslate"><span class="h1-tag">#관리Console</span><span class="h1-tag">#느린화면①</span></span></h1>
           <p class="article-date">2026년 9월</p>
         </section>
 
@@ -199,7 +199,7 @@
 
         <p>한 줄로 줄이면 이렇습니다.</p>
 
-        <blockquote><p>「고치기 전과 후」만 재면 무엇이 효과를 냈는지 모릅니다.
+        <blockquote><p>‘고치기 전과 후’만 재면 무엇이 효과를 냈는지 모릅니다.
         6가지 구성을 차례로 재니 병렬화가 중앙값과 꼬리를 반대 방향으로 움직인다는 것이 드러났습니다.</p></blockquote>
 
         <p>표를 먼저 보겠습니다. 부하 조건은 6번 모두 같습니다.
@@ -251,7 +251,7 @@
         </div>
         </div>
         <p class="table-note">병렬화는 중앙값을 21배 빠르게 하고 꼬리를 1.9배 느리게 했습니다.
-        「더 느려졌다」는 한 마디로는 이 분포를 설명할 수 없습니다.</p>
+        ‘더 느려졌다’는 한 마디로는 이 분포를 설명할 수 없습니다.</p>
 
         <figure class="diagram">
           <img src="../assets/figures/volume-jmeter-seq.png" alt="단계 ② JMeter 리포트. Apdex 0.014, 표본 1,641건, 중앙값 10,974밀리초, P99 42,644밀리초." loading="lazy" width="876" height="383">
@@ -267,13 +267,13 @@
         </figure>
 
         <p>가운데 있는 요청은 빨라졌습니다. 대신 느린 쪽 1%가 79초 너머로 밀렸습니다.
-        P99는 「100명 중 1명이 79초를 기다렸다」가 아니라 요청을 느린 순서로 줄 세웠을 때
+        P99는 ‘100명 중 1명이 79초를 기다렸다’가 아니라 요청을 느린 순서로 줄 세웠을 때
         위에서 1%가 걸리는 선입니다. 사용자 1명이 여러 번 부르므로 사람 수와 바로 맞바꿀 수 없습니다.</p>
 
         <p>Apdex도 0.014에서 0.526으로 올랐습니다. Apdex는 0.5초 안에 끝난 요청과
         1.5초 안에 끝난 요청의 비율이지 중앙값에서 나오는 값이 아닙니다.
         이 구간에 들어온 요청이 늘어서 오른 것입니다.
-        평균만 보면 「1.13배 느려졌다」이고 그 한 줄이 두 방향을 다 지웁니다.</p>
+        평균만 보면 ‘1.13배 느려졌다’이고 그 한 줄이 두 방향을 다 지웁니다.</p>
 
         <p>어느 단계가 얼마를 벌었는지는 어느 지표로 보느냐에 따라 답이 다릅니다.
         평균으로 재면 초를 가장 많이 줄인 것은 ①→②입니다. 579.0초가 13.1초가 됐으니
@@ -333,7 +333,7 @@
               </defs>
             </svg>
           </div>
-          <figcaption><strong>두 카드의 차이는 「줄을 서느냐」가 아닙니다.</strong> 동기식
+          <figcaption><strong>두 카드의 차이는 ‘줄을 서느냐’가 아닙니다.</strong> 동기식
           <code>LoadingCache.get</code>도 Loader가 끝날 때까지 나머지를 기다리게 합니다.
           다른 것은 맵의 Lock을 쥔 채 기다리느냐입니다. 위 카드에서는 그 키가 사는 칸이
           잠겨 있어 같은 칸의 다른 키까지 영향을 받습니다.</figcaption>
@@ -366,7 +366,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         그래서 다른 볼륨의 Task가 밀립니다.</p>
 
         <p>이 인과는 코드를 읽어서 세운 것이지 테스트가 증명한 것이 아닙니다.
-        6단계 테스트가 보여 주는 것은 「Cache를 고정한 채 병렬로 바꾸니 나빠졌다」까지입니다.
+        6단계 테스트가 보여 주는 것은 ‘Cache를 고정한 채 병렬로 바꾸니 나빠졌다’까지입니다.
         그 악화가 Lock 경합 때문인지, Thread 전환 비용인지, 외부 API 쪽 제한인지는
         이 테스트로는 가르지 못합니다. 가르려면 Lock을 뺀 병렬 Arm을 따로 돌려야 하는데
         그건 하지 않았습니다.</p>
@@ -390,12 +390,12 @@ if (messages == null || messages.isEmpty()) {
         <ul>
           <li><strong>0건이면 아무것도 저장되지 않습니다.</strong> <code>forEach</code>가 한 번도 돌지 않으니까요.
           <strong>조회 결과가 0건이면 그 답이 Cache에 남지 않으므로 다음 요청이 다시 외부 API를 부릅니다.</strong>
-          원본에는 「0건이 얼마나 잦았나」가 남아 있지 않습니다. 구조가 그렇다는 것까지가 확인한 범위입니다.</li>
+          원본에는 ‘0건이 얼마나 잦았나’가 남아 있지 않습니다. 구조가 그렇다는 것까지가 확인한 범위입니다.</li>
           <li>검사와 저장 사이가 열려 있습니다. 여러 Thread가 동시에 <code>isEmpty()</code>를 통과하면
           전부 외부 API를 부릅니다.</li>
         </ul>
 
-        <p>「없음」을 담지 않는 Cache는 그 답에 대해서는 Cache가 아닙니다.</p>
+        <p>‘없음’을 담지 않는 Cache는 그 답에 대해서는 Cache가 아닙니다.</p>
 
                 <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
@@ -445,7 +445,7 @@ if (messages == null || messages.isEmpty()) {
 
         <h2 id="왜-줄을-서나">이유: ConcurrentHashMap인데도 줄을 섭니다<a class="anchor" href="#왜-줄을-서나" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p><code>ConcurrentHashMap</code>은 맵 전체를 잠그지 않습니다. 그래서 「동시성 자료구조를 썼으니 괜찮다」고
+        <p><code>ConcurrentHashMap</code>은 맵 전체를 잠그지 않습니다. 그래서 ‘동시성 자료구조를 썼으니 괜찮다’고
         읽기 쉽습니다. 그런데 <code>computeIfAbsent</code>는 <strong>그 키가 사는 칸(Bin)을 잠그고</strong> 매핑 함수를 돌립니다.</p>
 
         <blockquote><p><strong>같은 키는 완전히 막힙니다.</strong> 그리고 그 시간은 매핑 함수가 하는 일의
@@ -454,7 +454,7 @@ if (messages == null || messages.isEmpty()) {
         <p>매핑 함수가 메모리 계산이면 그 시간은 마이크로초입니다. 그런데 여기서는
         네트워크 왕복이었습니다. 밀리초 단위가 아니라 수십·수백 밀리초입니다.</p>
 
-        <p>사내 문서에는 이걸 「세그먼트 Lock」이라고 적어 뒀는데 정확하지 않습니다.
+        <p>사내 문서에는 이걸 ‘세그먼트 Lock’이라고 적어 뒀는데 정확하지 않습니다.
         세그먼트는 Java 7의 구현이고 Java 8부터 <code>ConcurrentHashMap</code>은 Bin 단위로 잠급니다.
         틀린 이름을 쓰면 다음 사람이 잘못된 곳을 찾아보게 됩니다.</p>
 
@@ -462,7 +462,7 @@ if (messages == null || messages.isEmpty()) {
 
         <p>먼저 분명히 해 둘 것이 있습니다. <strong><code>computeIfAbsent</code>도 같은 키의 매핑 함수는
         하나만 실행하고 나머지는 기다립니다.</strong> Caffeine의 <code>LoadingCache</code>로 바꾼다고
-        줄이 사라지지는 않습니다. 둘의 차이는 「줄을 서느냐」가 아니라 <strong>맵의 Lock을 쥔 채 기다리느냐</strong>이고
+        줄이 사라지지는 않습니다. 둘의 차이는 ‘줄을 서느냐’가 아니라 <strong>맵의 Lock을 쥔 채 기다리느냐</strong>이고
         그 차이만으로 10분이 23ms가 되지는 않습니다.
         (매핑 함수가 <code>null</code>을 돌려주면 아무것도 저장되지 않아 다음 호출이 다시 계산합니다.
         지워진 그룹을 조회하는 경로가 그렇습니다.)</p>
@@ -487,7 +487,7 @@ if (messages == null || messages.isEmpty()) {
           <code>CompletableFuture.runAsync</code>로 채웁니다. 기동을 막지 않습니다.
           그래서 이것은 콜드 스타트를 없애는 장치가 아니라 겪을 확률을 낮추는 장치입니다.
           Warming이 끝나기 전에 들어온 첫 요청은 여전히 자기가 읽습니다. Warming이 실패해도 마찬가지입니다.
-          설계 문서에는 이 단계를 「동기 Warming」이라고 적어 두었는데 코드는 <code>runAsync</code>였습니다.
+          설계 문서에는 이 단계를 ‘동기 Warming’이라고 적어 두었는데 코드는 <code>runAsync</code>였습니다.
           문서가 아니라 코드를 적었습니다.</li>
           <li>볼륨을 만들거나 지우면 Cache를 무효화합니다. 다만 지우고 비워 두지 않습니다.
           있던 값을 유지한 채 뒤에서 새로 읽어 원자적으로 바꿔 끼웁니다.</li>
@@ -507,7 +507,7 @@ if (messages == null || messages.isEmpty()) {
         <strong>5초라는 숫자에는 근거가 있습니다.</strong> 화면이 5초마다 목록을 다시 부르고 있어서
         그 주기 안에서만 낡으면 된다고 팀에서 합의한 값입니다.</p>
 
-        <p>다만 <strong>「5초」는 상한이 아닙니다.</strong> 볼륨 목록에 걸어 둔 것은
+        <p>다만 <strong>‘5초’는 상한이 아닙니다.</strong> 볼륨 목록에 걸어 둔 것은
         <code>refreshAfterWrite(5s)</code> 하나뿐이고 만료는 없습니다. 새로 읽기는
         5초가 지난 뒤 누군가 그 값을 다시 찾을 때 시작되고 그 사람은 옛 값을 받아 갑니다.
         아무도 안 찾으면 갱신도 없습니다. 새로 읽다가 실패하면 옛 값이 그대로 남습니다.
@@ -573,15 +573,15 @@ if (messages == null || messages.isEmpty()) {
 
         <ul>
           <li>사내 제품이라 코드를 그대로 옮기지 않았습니다. 제품명·고객사·내부 주소는 빼고 구조와 수치만 남겼습니다. 클래스 이름은 이야기에 필요한 만큼만 일반화해서 씁니다.</li>
-          <li>수치는 격리된 테스트 환경에서 JMeter로 잰 값이지 운영 통계가 아닙니다. 「10분」은 부하 테스트의 Timeout 상한에 걸린 값이고 실제 운영에서 사용자가 10분을 기다렸다는 뜻이 아닙니다.</li>
+          <li>수치는 격리된 테스트 환경에서 JMeter로 잰 값이지 운영 통계가 아닙니다. ‘10분’은 부하 테스트의 Timeout 상한에 걸린 값이고 실제 운영에서 사용자가 10분을 기다렸다는 뜻이 아닙니다.</li>
           <li>순차를 병렬로 바꾸면 오히려 느려질 수 있다는 이야기 자체는 <a href="parallelism-made-the-tail-worse.ko.html">따로 쓴 글</a>에 있습니다. 그쪽은 Cache를 고정한 채 순차와 병렬만 비교하고 이 글은 여섯 단계 전체를 봅니다.</li>
 
           <li><strong>운영 수치가 아닙니다.</strong> 격리된 테스트 환경에서 JMeter로 잰 값입니다.
-          「10분」은 부하 테스트의 Timeout 상한이지 사용자가 실제로 기다린 시간이 아닙니다.</li>
+          ‘10분’은 부하 테스트의 Timeout 상한이지 사용자가 실제로 기다린 시간이 아닙니다.</li>
           <li>병렬화가 나쁘다는 이야기가 아닙니다. 이 코드에서 병렬화가 해로웠던 이유로
           Lock 안의 네트워크를 의심했고 그 Lock을 걷어낸 뒤에는 병렬화가 값을 합니다.
           다만 의심의 근거는 코드이지 이 테스트가 아닙니다.</li>
-          <li>Caffeine이어야 하는 것도 아닙니다. 필요한 성질은 「키마다 Loader 하나」이지
+          <li>Caffeine이어야 하는 것도 아닙니다. 필요한 성질은 ‘키마다 Loader 하나’이지
           특정 라이브러리가 아닙니다. 직접 짜도 되지만 직접 짠 것이 이 글의 원인이었습니다.</li>
           <li>네 화면의 수치를 한 원인으로 돌리지 않습니다. 화면마다 곁가지 원인이 조금씩
           달랐고 이 글이 자세히 적은 것은 첫 화면뿐입니다.</li>
@@ -600,11 +600,11 @@ if (messages == null || messages.isEmpty()) {
           <li><strong>병렬화가 느려지게 만들 수 있습니다.</strong> 없던 경합을 만들면 그렇습니다.</li>
           <li><code>computeIfAbsent</code>의 매핑 함수는 <strong>짧고 단순해야 합니다.</strong>
           Java 문서가 그렇게 적어 두었습니다. 그 안에 I/O가 있으면 그 키는 왕복 시간만큼 잠깁니다.</li>
-          <li>「없음」도 값입니다. 0건을 담지 않는 Cache는 조회 결과가 0건인 동안 Cache가 아닙니다.</li>
+          <li>‘없음’도 값입니다. 0건을 담지 않는 Cache는 조회 결과가 0건인 동안 Cache가 아닙니다.</li>
           <li>동시성 자료구조를 썼다는 것과 경합이 없다는 것은 다릅니다.</li>
         </ul>
 
-        <p>「고치기 전과 후」만 재면 무엇이 효과를 냈는지 모릅니다.
+        <p>‘고치기 전과 후’만 재면 무엇이 효과를 냈는지 모릅니다.
         6가지 구성을 나눠 재고 나서야 병렬화가 이 코드에서 해로운 구간이 있다는 것이 보였습니다.</p>
 
         <p>다음 편은 같은 제품의 다른 화면입니다. 이번에는 코드에 문제가 없었는데
@@ -623,7 +623,7 @@ if (messages == null || messages.isEmpty()) {
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=07ce86b446"></script>
-  <script src="../assets/content.js?v=48d76e85c8"></script>
+  <script src="../assets/content.js?v=b500d370a1"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

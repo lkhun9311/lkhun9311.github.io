@@ -2686,15 +2686,24 @@ html[lang="ja"] .container.reading .article-body figure.diagram figcaption::befo
   letter-spacing: 0.01em;
 }
 
-/* 맥락 표지 — 「어느 시스템의 어느 범위 이야기인가」.
+/* 맥락 태그 — 「어느 시스템의 어느 범위 이야기인가」를 태그 두 개로 보인다.
    2026-09-12 이전에는 이 내용이 **부제 문장 뒤에 그냥 붙어** 있었다.
    「…하나만 고칩니다. 출시 전 소셜 투표 플랫폼 점검」처럼 문장 뒤에 서술어 없는 명사구가
    따라붙는 꼴이라, 외부 검토에서 23편 전부 같은 문법 파손으로 지적받았다.
-   표지는 문장이 아니므로 **문장에서 떼어 내 표지처럼** 보이게 둔다.
-   색은 보라(--aside) — 이 사이트에서 보라는 「이 글 밖을 가리키는 것」이다. */
-.container.reading .page-hero h1 .h1-context {
+   문장에서 떼어 낸 뒤 표지 모양을 거쳐 **태그**로 갔다(사용자 지시).
+
+   색은 보라(--aside) — 이 사이트에서 보라는 「이 글 밖으로 나가는 길」이다.
+   ⚠️ 갈 곳이 있는 태그만 <a> 다. **모양만 태그이고 아무 데도 안 가는 칩은 만들지 않는다** —
+   누를 수 있게 보이면 눌린다. 사내 업무처럼 공개 페이지가 없는 것은 <span> 으로 둔다. */
+.container.reading .page-hero h1 .h1-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.container.reading .page-hero h1 .h1-tag {
   display: inline-block;
-  margin-top: 14px;
   padding: 4px 12px 5px;
   border: 1px solid var(--aside-line);
   border-radius: 999px;
@@ -2704,6 +2713,19 @@ html[lang="ja"] .container.reading .article-body figure.diagram figcaption::befo
   font-weight: 650;
   line-height: 1.5;
   letter-spacing: 0.01em;
+  text-decoration: none;
+}
+
+.container.reading .page-hero h1 a.h1-tag {
+  transition: background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+}
+
+.container.reading .page-hero h1 a.h1-tag:hover,
+.container.reading .page-hero h1 a.h1-tag:focus-visible {
+  border-color: var(--aside);
+  background: var(--aside);
+  color: #fff;
+  text-decoration: none;
 }
 
 .container.reading .page-hero h1 .h1-sub {

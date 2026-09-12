@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="모니터링 화면 3개를 검토했는데 새로 최적화할 근거를 못 찾았습니다. Cache를 더 넣으려던 자리는 줄일 것이 작아 보였고 과해 보이던 설정 하나는 화면 깜빡임을 막고 있었습니다. 부하 테스트는 돌리지 않았고 왜 안 돌렸는지도 적었습니다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=b0ef7ac9b6" />
+  <link rel="stylesheet" href="../assets/styles.css?v=ddc4ff3716" />
 </head>
 <body>
   <div class="topbar">
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span></div>
       </div>
               <section class="page-hero">
-          <h1>모니터링 성능 검토에서 고칠 근거를 못 찾았습니다<br><span class="h1-sub">이미 싼 경로에 Cache를 넣으면 낡음과 복잡도만 늘어납니다.</span><span class="h1-context notranslate">사내 Cloud 관리 Console · 느린 화면 연작 ⑦</span></h1>
+          <h1>모니터링 성능 검토에서 고칠 근거를 못 찾았습니다<br><span class="h1-sub">이미 싼 경로에 Cache를 넣으면 낡음과 복잡도만 늘어납니다.</span><span class="h1-tags notranslate"><span class="h1-tag">#관리Console</span><span class="h1-tag">#느린화면⑦</span></span></h1>
           <p class="article-date">2026년 9월</p>
         </section>
 
@@ -87,7 +87,7 @@
             <li><a href="#cache-안-넣음">그래서 Cache를 더 넣지 않았습니다</a></li>
             <li><a href="#과한-설정">과해 보이는 설정을 일부러 뒀습니다</a></li>
             <li><a href="#부하-테스트">부하 테스트는 돌리지 않았습니다</a></li>
-            <li><a href="#확인이-어렵다">「하지 마라」로 끝난 검토는 확인하기 어렵습니다</a></li>
+            <li><a href="#확인이-어렵다">‘하지 마라’로 끝난 검토는 확인하기 어렵습니다</a></li>
             <li><a href="#주장하지-않는-것">한계: 이 글이 주장하지 않는 것</a></li>
             <li><a href="#마치며">마치며</a></li>
           </ul>
@@ -95,23 +95,23 @@
 
         <article class="article-body">
 
-        <p>사내 Cloud 관리 Console의 Backend를 만들고 있습니다. 「모니터링이 느리다」는 보고를 받고
-        화면 셋을 검토했습니다. 결론은 <strong>「고쳐야 한다고 말할 근거를 못 찾았다」</strong>였습니다.</p>
+        <p>사내 Cloud 관리 Console의 Backend를 만들고 있습니다. ‘모니터링이 느리다’는 보고를 받고
+        화면 셋을 검토했습니다. 결론은 <strong>‘고쳐야 한다고 말할 근거를 못 찾았다’</strong>였습니다.</p>
 
-        <p>그 결론은 「고칠 것이 없다」와 다른 말이고 이 글은 그 차이를 계속 지킵니다. 검토에서 실제로 한
+        <p>그 결론은 ‘고칠 것이 없다’와 다른 말이고 이 글은 그 차이를 계속 지킵니다. 검토에서 실제로 한
         판단은 둘입니다. Cache를 더 넣지 않기로 했고 과해 보이는 설정 하나는 일부러 그대로 뒀습니다.
         넣으려던 자리는 이미 싼 경로였고 조회 창을 좁히면 화면이 깜빡였기 때문입니다.</p>
 
         <p>그리고 이 결론은 뒤에 틀린 것으로 드러났습니다. 같은 화면의 첫 데이터를 다시 재 보니
         <strong>6.8초</strong>였고 이 글이 넣지 않기로 한 자리에 Cache를 넣어 23ms가 됐습니다.
         무엇을 안 재서 틀렸는지는
-        <a href="monitoring-the-screen-i-said-not-to-fix.ko.html">「고칠 게 없다고 쓴 모니터링 화면이 6.8초였습니다」</a>에
+        <a href="monitoring-the-screen-i-said-not-to-fix.ko.html">‘고칠 게 없다고 쓴 모니터링 화면이 6.8초였습니다’</a>에
         적었습니다. 아래 본문은 그때 쓴 그대로 둡니다.</p>
 
         <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul class="callout">
-          <li>「느리다」는 보고를 받고 어디부터 볼지 정해야 하는 분</li>
+          <li>‘느리다’는 보고를 받고 어디부터 볼지 정해야 하는 분</li>
           <li>부하 테스트 결과가 좋게 나왔는데 왠지 미덥지 않았던 분</li>
           <li>Cache를 더 넣을지 말지 정해야 하는 분</li>
         </ul>
@@ -121,7 +121,7 @@
         <p>모니터링 화면이 3개입니다. <strong>대시보드</strong>, <strong>물리 자원</strong>,
         가상 자원. 셋 다 시계열 저장소에서 값을 읽어 그래프를 그립니다.</p>
 
-        <p>「느리다」는 말은 3개를 구분하지 않고 옵니다. 그래서 첫 일은
+        <p>‘느리다’는 말은 3개를 구분하지 않고 옵니다. 그래서 첫 일은
         어느 화면의 어느 구간이 느린지 나누는 것이었습니다.</p>
 
         <figure class="diagram">
@@ -234,7 +234,7 @@
           <figcaption>점선은 요청과 무관한 시각에 따로 도는 갱신입니다.</figcaption>
         </figure>
 
-        <blockquote><p>「요청마다 밖에 나가서 받아 온다」를 「뒤에서 미리 채워 둔다」로 바꾸면
+        <blockquote><p>‘요청마다 밖에 나가서 받아 온다’를 ‘뒤에서 미리 채워 둔다’로 바꾸면
         요청 처리에서 기다림이 빠집니다. 이 둘은 그 수정이 이미 끝나 있었습니다.</p></blockquote>
 
         <p>그 전에는 돌면서 자는 방식이었습니다. 반복문 안에서 잠깐 자고 다시 확인하는
@@ -242,7 +242,7 @@
 
         <h2 id="cache-안-넣음">그래서 Cache를 더 넣지 않았습니다<a class="anchor" href="#cache-안-넣음" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>남은 후보는 <strong>15초마다 계산하는 그 값</strong>이었습니다. 「이것도 Cache하면 되지 않나」가
+        <p>남은 후보는 <strong>15초마다 계산하는 그 값</strong>이었습니다. ‘이것도 Cache하면 되지 않나’가
         자연스러운 다음 생각입니다.</p>
 
         <p>그런데 그 계산은 <strong>15초에 한 번</strong> 돕니다. 그리고 화면이 몇 개 열려 있든
@@ -264,7 +264,7 @@
         </div>
         </div>
         <p class="table-note">왼쪽 칸이 한 줄뿐이고 그 한 줄도 15초에 한 번입니다.
-        이건 「싸다」를 잰 것이 아닙니다. 빈도와 구조를 보고 줄일 것이 작아
+        이건 ‘싸다’를 잰 것이 아닙니다. 빈도와 구조를 보고 줄일 것이 작아
         보인다고 판단한 것입니다. 그 계산이 몇 ms인지, CPU를 얼마나 쓰는지는 재지 않았습니다.
         <a href="slow-screens-4-client-per-loop.ko.html">④편</a>에도 적었듯 빈도만으로는 비용을 정할 수
         없습니다.</p>
@@ -279,11 +279,11 @@
         15초마다 갱신하는 화면에 180초는 <strong>12배 넓습니다.</strong></p>
 
         <p>좁히려다 멈췄습니다. 좁히면 화면이 깜빡입니다. 수집이 한 박자 늦거나 한 번 빠지면
-        창 안에 값이 하나도 없게 되고 그러면 그래프가 「데이터 없음」으로 잠깐 비었다가 돌아옵니다.</p>
+        창 안에 값이 하나도 없게 되고 그러면 그래프가 ‘데이터 없음’으로 잠깐 비었다가 돌아옵니다.</p>
 
         <blockquote><p>넓은 창은 값이 잠깐 안 와도 화면이 안 비게 해 줍니다.
         넓게 두는 비용은 재지 않았습니다. 좁혔을 때 깜빡인 것은 봤고
-        넓을 때 얼마를 더 내는지는 모릅니다. 사내 기록도 「과하지만 저렴」이라는 판단만 적어 두었습니다.</p></blockquote>
+        넓을 때 얼마를 더 내는지는 모릅니다. 사내 기록도 ‘과하지만 저렴’이라는 판단만 적어 두었습니다.</p></blockquote>
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
@@ -336,7 +336,7 @@
         <p>의미 있는 축은 동시 사용자가 아니라 프로젝트 수라고 기록에 적어 뒀습니다.
         적어만 뒀고 재지는 않았습니다.</p>
 
-        <h2 id="확인이-어렵다">「하지 마라」로 끝난 검토는 확인하기 어렵습니다<a class="anchor" href="#확인이-어렵다" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="확인이-어렵다">‘하지 마라’로 끝난 검토는 확인하기 어렵습니다<a class="anchor" href="#확인이-어렵다" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>여기가 이 글에서 가장 불편한 부분입니다.</p>
 
@@ -345,7 +345,7 @@
         <strong>이 검토로는 알 수 없습니다.</strong></p>
 
         <p>그래서 한 것이 같은 대상을 두 번 따로 보는 것이었습니다. 기록에는
-        「독립 리뷰 2회, 결론 수렴」이라고만 남아 있습니다.
+        ‘독립 리뷰 2회, 결론 수렴’이라고만 남아 있습니다.
         누가 언제 무엇을 물었는지는 기록에 없고 남은 것은 두 번 봤다는 것과
         결론이 같았다는 것뿐입니다.</p>
 
@@ -357,17 +357,17 @@
 
         <ul>
           <li>부하 테스트를 돌리지 않았습니다. 흔한 시나리오로는 이 구조에서 평평한 그래프가 나올 것이라고 코드를 보고 판단했고 실제로 돌려서 확인하지는 않았습니다.</li>
-          <li>「하지 마라」로 끝난 검토는 맞았는지 확인하기가 어렵습니다. 안 했으니 나빠지지 않은 것도 증명할 수 없습니다.</li>
+          <li>‘하지 마라’로 끝난 검토는 맞았는지 확인하기가 어렵습니다. 안 했으니 나빠지지 않은 것도 증명할 수 없습니다.</li>
           <li>사내 제품이라 코드와 화면을 그대로 옮기지 않았습니다. 제품명·고객사·내부 주소는 빼고 구조와 설정값만 남겼습니다.</li>
 
-          <li><strong>부하 테스트를 돌린 기록이 없습니다.</strong> 「사용자를 늘려도 평평하다」는
+          <li><strong>부하 테스트를 돌린 기록이 없습니다.</strong> ‘사용자를 늘려도 평평하다’는
           코드를 보고 한 예상이지 관측이 아닙니다. 이 글의 어떤 문장도
           부하 테스트 결과를 인용하지 않습니다.</li>
-          <li>「이미 싸다」는 잰 값이 아닙니다. 15초에 한 번이고 접속자 수와 무관하다는
+          <li>‘이미 싸다’는 잰 값이 아닙니다. 15초에 한 번이고 접속자 수와 무관하다는
           빈도와 구조가 근거입니다. 그 계산이 몇 ms인지는 모릅니다.</li>
-          <li><strong>180초가 「크게 안 비싸다」도 잰 값이 아닙니다.</strong> 좁혔을 때 깜빡였다는 것은
+          <li><strong>180초가 ‘크게 안 비싸다’도 잰 값이 아닙니다.</strong> 좁혔을 때 깜빡였다는 것은
           본 것이고 넓게 두는 비용은 재지 않았습니다.</li>
-          <li>「고칠 것이 없다」는 그 시점의 판단입니다. 자원이 늘거나 화면이 늘면
+          <li>‘고칠 것이 없다’는 그 시점의 판단입니다. 자원이 늘거나 화면이 늘면
           같은 검토가 다른 결론을 낼 수 있습니다.</li>
           <li>Cache를 넣지 않은 결정이 넣는 쪽보다 나았는지 증명할 수 없습니다.
           안 했으니 비교할 대상이 없습니다. 이 글은 그 한계를 안고 있습니다.</li>
@@ -378,7 +378,7 @@
           <p>여기까지 일곱 편에서 남은 것을 적어 둡니다.</p>
 
         <ul>
-          <li><strong>「느리다」는 말은 구간을 가리키지 않습니다.</strong> 어느 화면의 어느 구간인지
+          <li><strong>‘느리다’는 말은 구간을 가리키지 않습니다.</strong> 어느 화면의 어느 구간인지
           나누는 것이 먼저이고 그 나누기가 절반입니다.</li>
           <li><strong>Cache는 비싼 것을 싸게 만드는 도구입니다.</strong> 싼 곳에 넣으면 낡음과 복잡도만
           남고 있는데 안 읽으면 없는 것보다 나쁩니다.</li>
@@ -405,7 +405,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=07ce86b446"></script>
-  <script src="../assets/content.js?v=48d76e85c8"></script>
+  <script src="../assets/content.js?v=b500d370a1"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

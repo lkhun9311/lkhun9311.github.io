@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="대시보드의 첫 데이터가 6.8초였던 이유는 접속이 곧 계산이었기 때문입니다. 요청 경로에서 계산을 떼어 내 10ms가 됐는데 그 과정에서 갱신이 취소되는 것·같은 값을 전체에 여러 번 뿌리는 것·Timeout 하나가 남의 쿼리를 끊는 것, 경합 셋이 나왔습니다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=b0ef7ac9b6" />
+  <link rel="stylesheet" href="../assets/styles.css?v=ddc4ff3716" />
 </head>
 <body>
   <div class="topbar">
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span></div>
       </div>
               <section class="page-hero">
-          <h1>모니터링 화면에 Cache를 넣자 세 종류의 경합이 생겼습니다<br><span class="h1-sub">부팅 워밍업·주기 작업·새 접속이 같은 자리를 두고 다퉜습니다.</span><span class="h1-context notranslate">사내 Cloud 관리 Console · 통합 모니터링 연작 ②</span></h1>
+          <h1>모니터링 화면에 Cache를 넣자 세 종류의 경합이 생겼습니다<br><span class="h1-sub">부팅 워밍업·주기 작업·새 접속이 같은 자리를 두고 다퉜습니다.</span><span class="h1-tags notranslate"><span class="h1-tag">#관리Console</span><span class="h1-tag">#통합모니터링②</span></span></h1>
           <p class="article-date">2026년 9월</p>
         </section>
 
@@ -109,7 +109,7 @@
         <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul class="callout">
-          <li>「미리 계산해 두고 주면 된다」는 구조를 넣으려는 분</li>
+          <li>‘미리 계산해 두고 주면 된다’는 구조를 넣으려는 분</li>
           <li>부팅 워밍업과 주기 작업과 요청 트리거가 같은 자리를 갱신하는 코드를 가진 분</li>
           <li>SSE나 WebSocket으로 여러 세션에 같은 값을 뿌리는 분</li>
         </ul>
@@ -162,7 +162,7 @@
             </defs>
           </svg>
           <figcaption>Cache가 있었다는 사실보다 <strong>비싼 층이 Cache 안에 들어갔는지</strong>가 중요했습니다.
-          기존 Cache는 「누가 있는가」까지였습니다.</figcaption>
+          기존 Cache는 ‘누가 있는가’까지였습니다.</figcaption>
         </figure>
 
         <p>분포도 그 모양이었습니다. 직전 계산과 타이밍이 맞으면 빨랐고 어긋나면
@@ -249,12 +249,12 @@
               </marker>
             </defs>
           </svg>
-          <figcaption>세 갈래가 같은 자리를 갱신합니다. 「이미 갱신 중이면 취소」는 중복을 막지만
+          <figcaption>세 갈래가 같은 자리를 갱신합니다. ‘이미 갱신 중이면 취소’는 중복을 막지만
           <strong>취소된 쪽이 기다리던 사람</strong>일 수 있습니다.</figcaption>
         </figure>
 
         <p><strong>첫째, 갱신이 취소되면 기다리는 사람이 생깁니다.</strong>
-        부팅 워밍업이 도는 중에 사용자가 접속하면 그 접속이 요청한 갱신은 「이미 갱신 중」이라 취소됩니다.
+        부팅 워밍업이 도는 중에 사용자가 접속하면 그 접속이 요청한 갱신은 ‘이미 갱신 중’이라 취소됩니다.
         그런데 워밍업이 결과를 Cache에만 넣고 방송하지 않으면 그 사용자는
         다음 15초 Tick까지 기다립니다. 워밍업·주기 작업·접속 갱신을 한 함수로 모으고
         실제로 갱신을 이긴 쪽이 항상 결과를 게시하도록 바꿨습니다.</p>
@@ -312,11 +312,11 @@
 
         <blockquote><p>셋 다 측정으로 찾은 것이 아닙니다. 구현 검토에서 코드를 읽다 나왔습니다.
         부하를 걸어 재현한 것이 아니라 일어날 수 있다고 판단해서 고친 것입니다.
-        그러니 「이 셋이 실제로 일어나고 있었다」고는 쓰지 않겠습니다.</p></blockquote>
+        그러니 ‘이 셋이 실제로 일어나고 있었다’고는 쓰지 않겠습니다.</p></blockquote>
 
         <h2 id="결과">결과<a class="anchor" href="#결과" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>같은 「첫 <code>data</code>」 정의로 다시 쟀습니다.</p>
+        <p>같은 ‘첫 <code>data</code>’ 정의로 다시 쟀습니다.</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
@@ -371,18 +371,18 @@
 
           <ul>
             <li><strong>Cache를 넣었다는 사실보다 비싼 층이 그 안에 들어갔는지가 중요합니다.</strong>
-            「누가 있는가」는 담겨 있었고 「지금 얼마인가」는 밖에 있었습니다.</li>
+            ‘누가 있는가’는 담겨 있었고 ‘지금 얼마인가’는 밖에 있었습니다.</li>
             <li>중복을 막는 장치는 기다리는 사람을 취소할 수 있습니다.
-            「이미 갱신 중이면 취소」는 맞는 말인데, 취소된 쪽이 게시를 못 하면 그 사람은 다음 주기까지 기다립니다.</li>
+            ‘이미 갱신 중이면 취소’는 맞는 말인데, 취소된 쪽이 게시를 못 하면 그 사람은 다음 주기까지 기다립니다.</li>
             <li>공유 클라이언트에 건 상한은 남의 경로에도 걸립니다.
             총시간 상한 대신 단계별 상한이 필요했습니다.</li>
           </ul>
 
-          <p>「미리 만들어 두고 준다」는 한 줄이지만 누가 만들고 누가 게시하는지를 정하지 않으면
+          <p>‘미리 만들어 두고 준다’는 한 줄이지만 누가 만들고 누가 게시하는지를 정하지 않으면
           한 줄이 아닙니다.</p>
 
           <p>다음 편은 물리 노드입니다. 같은 패턴을 옮기려다
-          <strong>「빈 목록을 정상 0대로 발행해도 되는가」</strong>를 만났습니다. 읽어 주셔서 감사합니다.</p>
+          <strong>‘빈 목록을 정상 0대로 발행해도 되는가’</strong>를 만났습니다. 읽어 주셔서 감사합니다.</p>
         </div>
 
 
@@ -396,7 +396,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=07ce86b446"></script>
-  <script src="../assets/content.js?v=48d76e85c8"></script>
+  <script src="../assets/content.js?v=b500d370a1"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
