@@ -919,9 +919,9 @@
       if (wanted && tagList.indexOf(wanted) !== -1) initial = wanted;
     } catch (e) { /* 잘못 인코딩된 주소는 그냥 무시한다 */ }
 
-    /* 태그는 **왼쪽 세로 목록**으로만 그린다. 18개가 칩 한 줄로 세 줄씩 감기면 고르는 게 아니라
-       읽는 일이 된다. 세로로 세우면 묶어서 나눌 수 있고 개수도 붙일 수 있다(AWS 문서의 좌측 내비와
-       같은 형태). 홈에는 태그 줄 자체가 없다 — 미리보기 5건에 필터는 번잡하기만 하다. */
+    /* 태그는 **제목 아래 가로 버튼 줄**로 그린다(사용자 지시, 2026-09-12).
+       묶음(Term·Kind)과 개수는 그대로 두고 줄을 감는 대신 가로로 민다 — 25개가 세 줄로 감기면
+       목록이 그만큼 아래로 밀린다. 홈에는 태그 줄 자체가 없다 — 미리보기 5건에 필터는 번잡하기만 하다. */
 
     function countOf(tag) {
       if (tag === allLabel) return sec.items.length;
@@ -977,6 +977,19 @@
                   .map(function (t) { return facetRow(t, t === initial); }).join("") + "</div>";
       }
       tagRowEl.innerHTML = html;
+
+      /* 세로 휠로도 밀 수 있게 한다. 트랙패드에는 가로 제스처가 있지만 마우스 휠에는 없어서,
+         칩이 잘려 보여도 미는 방법을 못 찾는다. 양 끝에 닿으면 가로채지 않고 페이지에 돌려준다 —
+         가로채 버리면 목록 화면에서 휠이 멈춘 것처럼 보인다. */
+      tagRowEl.addEventListener("wheel", function (e) {
+        if (!e.deltaY || e.shiftKey) return;
+        var max = tagRowEl.scrollWidth - tagRowEl.clientWidth;
+        if (max <= 0) return;
+        var next = tagRowEl.scrollLeft + e.deltaY;
+        if (next < 0 || next > max) return;
+        e.preventDefault();
+        tagRowEl.scrollLeft = next;
+      }, { passive: false });
     }
 
     function draw(tag) {
@@ -995,6 +1008,9 @@
         var bs = tagRowEl.querySelectorAll(".facet");
         for (var i = 0; i < bs.length; i++) bs[i].classList.remove("active");
         btn.classList.add("active");
+        /* 누른 칩이 줄 밖으로 반쯤 걸쳐 있으면 안으로 끌어 온다. 어느 것을 눌렀는지 안 보이면
+           방금 한 일이 지워진다. */
+        if (btn.scrollIntoView) btn.scrollIntoView({ inline: "nearest", block: "nearest" });
         draw(btn.getAttribute("data-tag"));
       });
     }
