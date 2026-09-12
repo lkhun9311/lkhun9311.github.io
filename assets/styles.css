@@ -2608,7 +2608,24 @@ html[lang="ja"] .container.reading .article-body .table-note::before {
 /* Numbered, so the prose can say "그림 2" and mean something. The counter lives on the body so the
    numbering is per article, and the label follows the page's language. */
 
-.container.reading .article-body { counter-reset: fig tbl; }
+.container.reading .article-body { counter-reset: fig tbl sec; }
+
+/* 절 번호. 목차의 `toc` 카운터와 같은 것을 세므로 두 자리의 숫자가 언제나 같다. */
+.container.reading .article-body h2 { counter-increment: sec; }
+
+.container.reading .article-body h2::before {
+  content: counter(sec, decimal-leading-zero);
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted, #7b7186);
+}
+
+/* 맺음말 상자 안의 절 번호는 그 상자의 색을 따른다 — 상자 안에서 회색은 떠 보인다. */
+.container.reading .article-body .wrapup > h2::before { color: var(--wrap); }
 .container.reading .article-body figure.diagram { counter-increment: fig; }
 
 .container.reading .article-body figure.diagram figcaption {
@@ -2973,6 +2990,17 @@ html[lang="ja"] .container.reading .article-body figure.diagram figcaption::befo
 }
 
 .article-aside .term > ul a { font-size: 0.98rem; }
+
+.article-aside .term > ul .sec-no {
+  display: inline-block;
+  width: 1.85em;
+  margin-right: 2px;
+  font-size: 0.86em;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted, #7b7186);
+}
 
 .article-aside .term-leaf > a { padding-left: 19px; }
 
