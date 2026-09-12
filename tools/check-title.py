@@ -17,6 +17,7 @@ import io
 import os
 import re
 import sys
+import urllib.parse
 
 CTX_IN_SUB = {
     "ko": re.compile(r"(사내 Cloud|개인 프로젝트|소셜 투표 플랫폼 ·|OpenStack 기반|연작 [①-⑧])"),
@@ -24,6 +25,10 @@ CTX_IN_SUB = {
     "ja": re.compile(r"(社内クラウド管理コンソール|個人プロジェクト|連載「)"),
 }
 END = {"ko": re.compile(r"[다요]\.$"), "en": re.compile(r"[.?]$"), "ja": re.compile(r"[。]$")}
+
+# content.js 에 실제로 있는 태그 — 「눌러도 안 걸러지는 태그」를 잡으려면 이것이 필요하다.
+TAGS = set(re.findall(r'"([^"]+)"', " ".join(
+    re.findall(r"tags: \[(.*?)\]", io.open("assets/content.js", encoding="utf-8").read()))))
 
 
 def main():
@@ -52,9 +57,17 @@ def main():
             if not t.startswith("#") or " " in t:
                 bad.append("%s: 태그 꼴이 아니다 — 「%s」" % (b, t))
         for href in re.findall(r'<a class="h1-tag" href="([^"]+)"', ctx.group(1)):
-            tgt = os.path.normpath(os.path.join(os.path.dirname(p), href))
+            # ⚠️ 물음표 뒤를 떼고 파일을 본다. 안 떼면 `index.html?tag=X` 가 「없는 파일」이 된다.
+            path, _, query = href.partition("?")
+            tgt = os.path.normpath(os.path.join(os.path.dirname(p), path))
             if not os.path.exists(tgt):
-                bad.append("%s: 태그가 없는 곳을 가리킨다 — %s" % (b, href))
+                bad.append("%s: 태그가 없는 파일을 가리킨다 — %s" % (b, path))
+                continue
+            # 그리고 **그 태그가 실제로 거르는 태그인지**까지 본다. 파일만 있으면
+            # 눌렀을 때 전체 목록이 나오고, 그건 안 눌리는 것보다 나쁘다.
+            m2 = re.search(r"tag=([^&]+)", query)
+            if m2 and TAGS and urllib.parse.unquote(m2.group(1)) not in TAGS:
+                bad.append("%s: 거르지 못하는 태그를 가리킨다 — %s" % (b, m2.group(1)))
         if not sub:
             bad.append("%s: 부제(h1-sub)가 없다" % b)
             continue
