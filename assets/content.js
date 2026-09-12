@@ -380,22 +380,22 @@
           tags: ["Performance", "Backend", "Method"]
         },
         {
-          title: "A Project Role Lookup Fell From 1,409 ms to 1 ms",
+          title: "A Project Role Lookup: 1,409 ms → 1 ms",
           url: "writing/slow-screens-3-role-lookup.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "프로젝트 역할 조회가 1,409ms에서 1ms로 줄었습니다",
+          title_ko: "프로젝트 역할 조회가 1,409ms → 1ms로 줄었습니다",
           desc_ko: "화면에 Cache가 이미 있었는데 그 Cache 때문에 느렸습니다. 찾은 8줄은 전부 0ms였고 못 찾은 6줄을 더하면 1,409ms로 타이머가 찍은 총계와 같았습니다. 못 찾을 때마다 프로젝트 전체 목록을 다시 부르고 있었는데 그 6개 id는 다시 받아도 없는 프로젝트였습니다. 연작 ‘느린 화면’ ③.",
-          title_ja: "プロジェクトのロール取得が 1,409ms から 1ms に減りました",
+          title_ja: "プロジェクトのロール取得が 1,409ms → 1ms に減りました",
           desc_ja: "画面にはすでに Cache があり、その Cache のせいで遅くなっていました。解決できた 8 行はすべて 0ms、できなかった 6 行を足すと 1,409ms でタイマーの合計と同じでした。解決できないたびにプロジェクト全件を取り直しており、その 6 つの id は取り直しても存在しません。連載「遅い画面」③。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "The screen already had a cache, and the cache was why it was slow. The eight rows that resolved cost 0 ms; the six that did not sum to 1,409 ms, the whole recorded span. Every failed lookup refetched the entire project list, and those six ids were never in it. Slow Screens, part three. Also in Korean and Japanese.",
           tags: ["Performance", "Backend", "Method"]
         },
         {
-          title: "Listing Instances Went from 54 Seconds to One",
+          title: "Listing Instances: 54 Seconds → One",
           url: "writing/slow-screens-2-instance-list.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "Instance 목록 조회가 54초에서 1초로 줄었습니다",
+          title_ko: "Instance 목록 조회가 54초 → 1초로 줄었습니다",
           desc_ko: "Instance는 20개인데 목록이 Timeout이 났습니다. CLI로 불러도 54초여서 느린 구간이 Backend 아래에 있다는 것까지는 알았습니다. Swap이 8.0GiB 전부 차 있었고 instances 테이블에는 삭제 표시만 된 행이 1,021개 남아 있었습니다. 그리고 제가 쓴 명령은 운영에서 쓰면 안 되는 것이었습니다. 연작 ‘느린 화면’ ②.",
           title_ja: "Instance 一覧が 54 秒から 1 秒になりました",
           desc_ja: "Instance は 20 個なのに一覧が Timeout しました。同じ取得を CLI で実行しても 54 秒で、コードが容疑から外れました。Swap が 8.0GiB すべて埋まり、instances テーブルには削除の印だけが付いた行が 1,021 件。そして私が使ったコマンドは本番で使ってはいけないものでした。連載「遅い画面」②。",
@@ -404,12 +404,12 @@
           tags: ["Performance", "Backend", "Method"]
         },
         {
-          title: "A Volume List Went From a Ten-Minute Timeout to 23 ms",
+          title: "A Volume List: Ten-Minute Timeout → 23 ms",
           url: "writing/slow-screens-1-volume-list.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "볼륨 목록 P99가 10분에서 23ms로 줄었습니다",
+          title_ko: "볼륨 목록 P99가 10분 → 23ms로 줄었습니다",
           desc_ko: "관리 볼륨 목록이 6번에 5번 Timeout이 났습니다. 고친 뒤 구성을 6가지로 나눠 같은 부하로 따로 쟀더니, 초를 가장 많이 줄인 것은 Cache 하나였고 병렬화는 중앙값과 꼬리를 반대 방향으로 움직였습니다. 연작 ‘느린 화면’ ①.",
-          title_ja: "ボリューム一覧の P99 が 10 分の Timeout から 23ms になりました",
+          title_ja: "ボリューム一覧の P99 が 10 分の Timeout → 23ms になりました",
           desc_ja: "管理ボリューム一覧が 6 回に 5 回 Timeout しました。直したあと構成を 6 通りに分けて同じ負荷で測ると、秒を最も減らしたのは Cache 1 つで、並列化は中央値と裾を逆方向に動かしました。連載「遅い画面」①。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "An admin volume list timed out five runs out of six. Measured across six configurations under the same load: one cache bought the largest drop in seconds, and parallelising moved the median and the tail in opposite directions. Slow Screens, part one. Also in Korean and Japanese.",

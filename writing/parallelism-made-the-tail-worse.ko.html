@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="Cache 설정을 고정한 채 순차를 병렬로 바꾸니 P99가 42.6초에서 79.0초로 악화됐습니다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다. 여섯 구성을 같은 조건으로 재고 나서야 보인 것." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=ddc4ff3716" />
+  <link rel="stylesheet" href="../assets/styles.css?v=06b177b952" />
 </head>
 <body>
   <div class="topbar">
@@ -72,7 +72,8 @@
         <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span></div>
       </div>
       <section class="page-hero">
-        <h1>볼륨 목록을 병렬로 바꾸자 P99가 2배 나빠졌습니다<br><span class="h1-sub">computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다.</span><span class="h1-tags notranslate"><span class="h1-tag">#관리Console</span><span class="h1-tag">#느린화면⑤</span></span></h1>
+        <div class="hero-tag notranslate"><span class="h1-tag">#관리Console</span></div>
+        <h1>볼륨 목록을 병렬로 바꾸자 P99가 2배 나빠졌습니다<br><span class="h1-sub">computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다.</span></h1>
         <p class="article-date">2026년 9월</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="parallelism-made-the-tail-worse"></aside>
@@ -96,7 +97,7 @@
         처방은 뻔해 보였습니다. 병렬로 돌리면 됩니다.</p>
 
         <p>병렬로 돌리자 <strong>더 느려졌습니다.</strong> Cache 설정을 고정한 채 순차를 병렬로만
-        바꾸니 P99가 42.6초에서 79.0초가 됐습니다.</p>
+        바꾸니 P99가 42.6초 → 79.0초가 됐습니다.</p>
 
         <p>느려진 이유는 <code>computeIfAbsent</code>의 매핑 함수 안에서 외부 API를 부른 것이었습니다.
         그 자리가 잠긴 채 네트워크 왕복을 기다리므로 같은 키를 쓰는 Thread들은 병렬 코드에서도
@@ -146,7 +147,7 @@
 
         <p>Cache를 고정한 쌍은 ②와 ④입니다. 둘 다 Cache 5초이고 순차냐 병렬이냐만 다릅니다.</p>
 
-        <p>P99가 42.6초에서 79.0초로 올랐습니다. Thread를 늘렸는데 꼬리가 1.85배가 됐습니다.
+        <p>P99가 42.6초 → 79.0초로 올랐습니다. Thread를 늘렸는데 꼬리가 1.85배가 됐습니다.
         이것이 이 실험에서 병렬화 단독의 효과로 말할 수 있는 전부이고 방향은 분명합니다. 해로웠습니다.</p>
 
         <h2 id="왜-3이-2보다-나쁜가">왜 ③이 ②보다 나쁜가<a class="anchor" href="#왜-3이-2보다-나쁜가" aria-label="이 절로 가는 링크">#</a></h2>
@@ -485,7 +486,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=07ce86b446"></script>
-  <script src="../assets/content.js?v=b500d370a1"></script>
+  <script src="../assets/content.js?v=bb9cb7a4a4"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
