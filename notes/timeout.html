@@ -3,24 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>There are two ways to compute it | Kwanghun Lee</title>
-  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/notes/percentile-calc.html" />
-  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/notes/percentile-calc.ko.html" />
-  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/notes/percentile-calc.ja.html" />
-  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/notes/percentile-calc.html" />
+  <title>Timeout | Kwanghun Lee</title>
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/notes/timeout.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/notes/timeout.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/notes/timeout.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/notes/timeout.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
   <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
-  <meta name="description" content="The same data gives different p99s in different tools, because there are two ways to settle the position." />
+  <meta name="description" content="A ceiling placed on waiting. Not a claim that it took that long, nor that anything under it is safe." />
   <meta property="og:type" content="article" />
   <meta property="og:locale" content="en_US" />
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="There are two ways to compute it" />
-  <meta property="og:description" content="The same data gives different p99s in different tools, because there are two ways to settle the position." />
+  <meta property="og:title" content="Timeout" />
+  <meta property="og:description" content="A ceiling placed on waiting. Not a claim that it took that long, nor that anything under it is safe." />
   <meta property="og:locale" content="ko_KR" />
   <link rel="stylesheet" href="../assets/styles.css?v=557c3ff3d7" />
 </head>
@@ -30,7 +30,7 @@
       <a class="site-name" href="../index.html#about">Kwanghun</a>
       <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
         <select id="langPicker" class="lang-picker notranslate" translate="no"
-                  data-authored='{"en": "percentile-calc.html", "ko": "percentile-calc.ko.html", "ja": "percentile-calc.ja.html"}' aria-label="Select language" data-i18n-attr="aria-label:a11y.lang">
+                  data-authored='{"en": "timeout.html", "ko": "timeout.ko.html", "ja": "timeout.ja.html"}' aria-label="Select language" data-i18n-attr="aria-label:a11y.lang">
           <option value="ko">한국어</option>
           <option value="en" selected>English</option>
           <option value="ja">日本語</option>
@@ -63,76 +63,81 @@
         <div class="article-meta"><span class="source-tag glossary notranslate">Term</span></div>
       </div>
       <section class="page-hero">
-        <h1>There are two ways to compute it</h1>
-        <p class="article-date">Performance measurement<span aria-hidden="true"> · </span><span class="notranslate">#Percentile</span></p>
+        <h1>Timeout</h1>
+        <p class="article-date">Performance measurement<span aria-hidden="true"> · </span><span class="notranslate">#Warm-up</span></p>
       </section>
-      <aside class="article-aside" data-aside="notes" data-slug="percentile-calc"></aside>
+      <aside class="article-aside" data-aside="notes" data-slug="timeout"></aside>
         <nav class="article-toc" aria-label="Contents">
           <p class="toc-label">Contents</p>
           <ul>
-            <li><a href="#자리">There is no 19.8th value</a></li>
-            <li><a href="#최근접">Nearest rank</a></li>
-            <li><a href="#보간">Linear interpolation</a></li>
-            <li><a href="#실무">What to do about it</a></li>
+            <li><a href="#두-종류">Connect and read cut different intervals</a></li>
+            <li><a href="#설정값">A configured value is not a measured one</a></li>
+            <li><a href="#상한">A value pinned to the ceiling is not a latency</a></li>
+            <li><a href="#쓰인-곳">Where it is used on this site</a></li>
           </ul>
         </nav>
       <article class="article-body">
 
-        <p class="note-nav">← <a href="percentile.html">Percentile overview</a></p>
+        <p><strong>A timeout is a ceiling placed on waiting.</strong> Being a ceiling, it does not mean two
+        things: that a call actually took that long, or that anything up to it is safe.</p>
 
-        <p><strong>The same data gives different p99s in different tools.</strong> Not because the
-        arithmetic is wrong, but because there are two ways to settle what “the 99% position” means.</p>
+        <h2 id="두-종류">Connect and read cut different intervals<a class="anchor" href="#두-종류" aria-label="Link to this section">#</a></h2>
 
-        <h2 id="자리">There is no 19.8th value<a class="anchor" href="#자리" aria-label="Link to this section">#</a></h2>
+        <p>A connection timeout caps <strong>establishing the connection</strong>. A read timeout caps
+        <strong>waiting for the response</strong> after the request goes out. If the peer accepts the
+        connection instantly and then says nothing, the connection timeout does nothing at all.</p>
 
-        <p>With 20 samples the 95% position falls between the 19th and the 20th, at the 19.8th. No such
-        value is in the line. This is where the two paths separate.</p>
+        <p>With neither, a request waits without a ceiling. And when a timeout disappears,
+        healthy responses keep arriving healthily. Replace a client factory wholesale, lose
+        the timeouts autoconfiguration had been attaching, and there is no symptom on an ordinary day. The
+        symptom shows up on the day the peer slows down.</p>
 
                 <figure class="diagram">
-          <svg viewBox="0 0 720 216" role="img" aria-labelledby="calc-t calc-d" class="figure-svg">
-            <title id="calc-t">Two ways to settle the position in the same sample</title>
-            <desc id="calc-d">The left box is nearest rank, the right box linear interpolation. Left rounds the position up and uses a value that is in the line. Right computes between two values, so the result may not be in the line. A pink line underneath says p95 of 20 samples is the 19th value on one side and a value between two on the other.</desc>
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="to-t to-d" class="figure-svg">
+            <title id="to-t">What each timeout actually cuts</title>
+            <desc id="to-d">The left box is the connection timeout. It caps the time spent establishing a connection and does nothing about a peer that answers slowly. The right box is the read timeout. It caps the wait for a response after the request is sent and does nothing about a connection that never forms. A pink line underneath says capping one side leaves the other side uncapped.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
-              <text x="204" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">nearest rank</text>
-              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">round the position up</text>
-              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">a value from the line</text>
-              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">a value that existed</text>
+              <text x="204" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">connection timeout</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">establishing the connection</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">no cap on a slow answer</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">3s for example</text>
               <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
-              <text x="556" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">linear interpolation</text>
-              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">compute between two values</text>
-              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">the result is not in the line</text>
-              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">differs more on small samples</text>
-              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">p95 of 20 samples · the 19th value versus a value between two</text>
+              <text x="556" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">read timeout</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">waiting for the response</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">no cap on a failed connect</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">10s for example</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">Cap one side and the other stays uncapped</text>
             </g>
           </svg>
-          <figcaption>Unless a tool says which it uses, two tools' p99s cannot be put side by side.</figcaption>
+          <figcaption>The two values do not stand in for each other. The names are similar, the intervals are not.</figcaption>
         </figure>
 
-        <h2 id="최근접">Nearest rank<a class="anchor" href="#최근접" aria-label="Link to this section">#</a></h2>
+        <h2 id="설정값">A configured value is not a measured one<a class="anchor" href="#설정값" aria-label="Link to this section">#</a></h2>
 
-        <p>Round the position up and use the 20th value. It is a value that is actually in the line, so
-        <strong>“a request produced this value” stays literally true.</strong> JMeter works this way.</p>
+        <p>“This call takes up to 10s” is usually read off a config file. It is not an observation that each
+        request held anything for that long. Measured p95 for the same call can be 5ms against 8ms.</p>
 
-        <p>The cost is that small samples move in steps. Going from 20 samples to 21 makes the same
-        position point at a different value.</p>
+        <p>In capacity arithmetic that gap multiplies out.
+        <strong>Feed the ceiling in as occupancy and the resource comes out hundreds of times larger than it is.</strong>
+        Write down that an unmeasured value is unmeasured, and put the measured one into the arithmetic.</p>
 
-        <h2 id="보간">Linear interpolation<a class="anchor" href="#보간" aria-label="Link to this section">#</a></h2>
+        <h2 id="상한">A value pinned to the ceiling is not a latency<a class="anchor" href="#상한" aria-label="Link to this section">#</a></h2>
 
-        <p>Compute proportionally between the 19th and 20th values. The number moves smoothly as samples
-        accumulate. Prometheus's <code>histogram_quantile</code> is in this family.</p>
+        <p>A load test report showing a p99 of 600,017ms is showing a value pinned to a 10-minute ceiling.
+        Those requests never finished. <strong>The latency of a request that never finished is not “600s”,
+        it is unknown.</strong></p>
 
-        <p>The cost is that the result <strong>may not be in the line</strong>. “p95 is 187ms” can be true
-        while no request took 187ms.</p>
+        <p>Quoting that cell as a p99 is claiming to have measured what was never measured. In a run with an
+        83.3% error rate, the percentile describes the surviving 16.7%, not the whole. Leave the cell in the
+        table, and write down how to read it.</p>
 
-        <h2 id="실무">What to do about it<a class="anchor" href="#실무" aria-label="Link to this section">#</a></h2>
+        <h2 id="쓰인-곳">Where it is used on this site<a class="anchor" href="#쓰인-곳" aria-label="Link to this section">#</a></h2>
 
         <ul class="callout">
-          <li>Before putting two tools' p99s side by side, check that both use the same method.</li>
-          <li>The gap widens on small samples. On a 20 to 30 sample comparison, “p99 changed” may be the
-          method, not the system.</li>
-          <li>When a percentile goes in a report, put the sample count next to it. Without it there is no
-          way to know how much that number moves.</li>
+          <li><a href="../writing/slow-screens-4-client-per-loop.html">A Monitoring Screen's Initial Load Authenticated Once Per Project</a></li>
+          <li><a href="../writing/the-ceiling-was-not-in-the-code.html">The Moderation Throughput Ceiling Was an SDK Default</a></li>
+          <li><a href="../writing/slow-screens-1-volume-list.html">A Volume List: Ten-Minute Timeout → 23 ms</a></li>
         </ul>
 
       </article>

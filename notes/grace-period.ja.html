@@ -3,24 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fencing | Kwanghun Lee</title>
-  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/notes/fencing.html" />
-  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/notes/fencing.ko.html" />
-  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/notes/fencing.ja.html" />
-  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/notes/fencing.html" />
+  <title>Grace Period | Kwanghun Lee</title>
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/notes/grace-period.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/notes/grace-period.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/notes/grace-period.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/notes/grace-period.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
   <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
-  <meta name="description" content="復旧を始める前に元を確実に切ること。切れなければ立てません。" />
+  <meta name="description" content="終了信号を送ったあと強制的に殺すまで待つ時間。回収される側がその値を書きます。" />
   <meta property="og:type" content="article" />
   <meta property="og:locale" content="ja_JP" />
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Fencing" />
-  <meta property="og:description" content="復旧を始める前に元を確実に切ること。切れなければ立てません。" />
+  <meta property="og:title" content="Grace Period" />
+  <meta property="og:description" content="終了信号を送ったあと強制的に殺すまで待つ時間。回収される側がその値を書きます。" />
   <meta property="og:locale" content="ko_KR" />
   <link rel="stylesheet" href="../assets/styles.css?v=557c3ff3d7" />
 </head>
@@ -30,7 +30,7 @@
       <a class="site-name" href="../index.html#about">Kwanghun</a>
       <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
         <select id="langPicker" class="lang-picker notranslate" translate="no"
-                  data-authored='{"en": "fencing.html", "ko": "fencing.ko.html", "ja": "fencing.ja.html"}' aria-label="Select language" data-i18n-attr="aria-label:a11y.lang">
+                  data-authored='{"en": "grace-period.html", "ko": "grace-period.ko.html", "ja": "grace-period.ja.html"}' aria-label="Select language" data-i18n-attr="aria-label:a11y.lang">
           <option value="ko">한국어</option>
           <option value="en">English</option>
           <option value="ja" selected>日本語</option>
@@ -63,86 +63,84 @@
         <div class="article-meta"><span class="source-tag glossary notranslate">用語</span></div>
       </div>
       <section class="page-hero">
-        <h1>Fencing</h1>
+        <h1>Grace Period</h1>
         <p class="article-date">性能測定<span aria-hidden="true"> · </span><span class="notranslate">#Warm-up</span></p>
       </section>
-      <aside class="article-aside" data-aside="notes" data-slug="fencing"></aside>
+      <aside class="article-aside" data-aside="notes" data-slug="grace-period"></aside>
         <nav class="article-toc" aria-label="目次">
           <p class="toc-label">目次</p>
           <ul>
-            <li><a href="#왜">なぜ必要か</a></li>
-            <li><a href="#어떻게">どうやって切るか</a></li>
-            <li><a href="#없으면">経路が無ければ復旧も無い</a></li>
+            <li><a href="#무엇">回収は終了を待ち、終了はこの値を待ちます</a></li>
+            <li><a href="#누가">値を書くのは回収される側です</a></li>
+            <li><a href="#상한">上限を置くのが最も弱く、最も正直な修理です</a></li>
             <li><a href="#쓰인-곳">このサイトで使われている記事</a></li>
           </ul>
         </nav>
       <article class="article-body">
 
-        <p><strong>フェンシング(Fencing)は復旧を始める前に元を確実に切ることです。</strong>
-        切れたことを確認できなければ復旧しません。</p>
+        <p><strong>Grace Period は終了信号を送ったあと、強制的に殺すまで待つ時間です。</strong>
+        Kubernetes では <code>terminationGracePeriodSeconds</code> で、Pod 仕様に書かれます。</p>
 
-        <h2 id="왜">なぜ必要か<a class="anchor" href="#왜" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="무엇">回収は終了を待ち、終了はこの値を待ちます<a class="anchor" href="#무엇" aria-label="この節へのリンク">#</a></h2>
 
-        <p>応答しないノードは死んだように見えます。ところが応答が無いというのは
-        <strong>こちらから見えない</strong>という意味で、<strong>向こうが止まった</strong>という意味では
-        ありません。スイッチが切れただけでノードは回り続けているかもしれません。</p>
+        <p>クォータの回収はたいていプリエンプションで動きます。プリエンプションは対象が終わるのを待ち、その終了は
+        Grace を待ちます。だから<strong>回収を決めた時刻と資源が実際に戻る時刻のあいだに、この値がまるごと入ります。</strong></p>
 
-        <p>その状態で別のノードに同じ VM を立てると、元と複製が同じボリュームに同時に書きます。
-        ファイルシステムはそんなアクセスを前提にしていないのでデータが壊れます。自動復旧が障害より
-        高くつく場合がこれです。</p>
+        <p>実測もその形でした。残りの作業量を 43s に固定して Grace だけ変えると、装置を保持していた時間が
+        30s で 32s、300s で 301s と付いてきました。占有時間を決めたのは作業量ではなく、このパラメータです。</p>
 
                 <figure class="diagram">
-          <svg viewBox="0 0 720 200" role="img" aria-labelledby="fen-t fen-d" class="figure-svg">
-            <title id="fen-t">フェンシング無しで復旧したときに起きること</title>
-            <desc id="fen-d">左から箱が四つ、灰色の矢印でつながります。一つ目はノードが応答しないこと、二つ目は死んだと判定すること、三つ目は別のノードで同じ VM を立ち上げること、四つ目は元が生きていて同じボリュームに二つが書くことです。下にピンクで、応答が無いことは死んだという意味ではないと書かれています。</desc>
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="gp-t gp-d" class="figure-svg">
+            <title id="gp-t">回収の決定から装置が戻るまで</title>
+            <desc id="gp-d">左から箱が四つ、灰色の矢印でつながっています。一つ目は回収の決定で、プリエンプションが始まります。二つ目は SIGTERM の送達で、ここでは装置がまだ押さえられています。三つ目は Grace の待ちで、値は Pod 仕様から来ます。四つ目は SIGKILL で、ここで装置が解放されます。下にピンクで、装置が戻る時点は最後の箱だと書かれています。</desc>
             <g font-family="Inter, sans-serif">
               <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
-              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">応答が無い</text>
-              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">ネットワークかも</text>
-              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#fen-a)"/>
+              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">回収の決定</text>
+              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">プリエンプション開始</text>
+              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#gp-a)"/>
               <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
-              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">死んだと判定</text>
-              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">観測者側の根拠</text>
-              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#fen-a)"/>
+              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">SIGTERM</text>
+              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">装置はまだ保持</text>
+              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#gp-a)"/>
               <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
-              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">複製を起動</text>
-              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">別のノードで</text>
-              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#fen-a)"/>
+              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">Grace の待ち</text>
+              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">値は Pod 仕様</text>
+              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#gp-a)"/>
               <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
-              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">二つが書く</text>
-              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">同じボリュームに</text>
-              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">応答が無いことは死んだという意味ではない</text>
+              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">SIGKILL</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">装置の解放</text>
+              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">装置が戻る時点は最後の箱</text>
             </g>
             <defs>
-              <marker id="fen-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <marker id="gp-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
                 <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
               </marker>
             </defs>
           </svg>
-          <figcaption>復旧が障害より高くつく場合です。片方を確実に切るまでもう片方を立ててはいけません。</figcaption>
+          <figcaption>回収を決めた時刻と資源が実際に戻る時刻のあいだに、この箱がまるごと入ります。</figcaption>
         </figure>
 
-        <h2 id="어떻게">どうやって切るか<a class="anchor" href="#어떻게" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="누가">値を書くのは回収される側です<a class="anchor" href="#누가" aria-label="この節へのリンク">#</a></h2>
 
-        <p>ノード自身に頼んで切ることはできません。頼めないからこの状況になったのです。だから
-        フェンシングは<strong>ノードの外の経路</strong>で行います。</p>
+        <p>ここがこの値の性質です。Grace は回収する側ではなく<strong>プリエンプションされる Pod 自身が書きます。</strong>
+        信号に反応しないワークロードは、残りの作業が Grace に収まるあいだ回収を完全に無力化し、
+        その範囲を超えた瞬間にちょうど Grace で切られます。</p>
 
-        <ul class="callout">
-          <li>電源 · BMC や IPMI で電源を落とします。確実ですが、その経路が生きている必要があります。</li>
-          <li>ストレージ · そのノードのボリューム権限を剥がします。ノードは回っても書けません。</li>
-          <li>ネットワーク · スイッチでポートを落とします。ただし既に開いたセッションは残ることがあります。</li>
-        </ul>
+        <p>かといって無くせる値でもありません。チェックポイントを残して死ぬには時間が要り、その必要は正当です。
+        <strong>本当にワークロードのものであり、同時に攻撃者が握る取っ手</strong>でもある場所です。</p>
 
-        <h2 id="없으면">経路が無ければ復旧も無い<a class="anchor" href="#없으면" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="상한">上限を置くのが最も弱く、最も正直な修理です<a class="anchor" href="#상한" aria-label="この節へのリンク">#</a></h2>
 
-        <p>フェンシングの経路そのものが切れていれば切ることができず、切れなければ立ててはいけません。
-        このとき正しい答えは<strong>何もせず人を呼ぶこと</strong>です。自動復旧を諦めるのではなく、
-        確信できないときの既定値を停止にするということです。</p>
+        <p>値を無くすことも、与える側を狭めることもできないなら、残るのは<strong>被害を縛ること</strong>です。
+        装置を要求する Job は、テンプレートの Grace が上限を超えれば拒否し、普通の値はそのまま通します。</p>
+
+        <p>この修理は攻撃を止められないと認める修理です。代わりに一度に失う時間の大きさを決めます。
+        止めたと書けないときに<strong>どこまで失うかを書いておくこと</strong>が、次に正直な場所です。</p>
 
         <h2 id="쓰인-곳">このサイトで使われている記事<a class="anchor" href="#쓰인-곳" aria-label="この節へのリンク">#</a></h2>
 
         <ul class="callout">
-          <li><a href="../writing/seven-of-eight-should-not-recover.ja.html">ノード HA の 8 シナリオのうち 7 つは復旧してはいけません</a></li>
+          <li><a href="../writing/every-guarantee-ends-at-a-writable-field.ja.html">GPU クォータの防御 4 件が同じ形で破れました</a></li>
         </ul>
 
       </article>
