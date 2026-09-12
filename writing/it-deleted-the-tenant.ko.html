@@ -80,7 +80,6 @@
           <p class="toc-label">목차</p>
           <ul>
             <li><a href="#예상-독자">이 글의 예상 독자</a></li>
-            <li><a href="#무슨-내용">무슨 내용인가요?</a></li>
             <li><a href="#반증-가능하게-만드는-arm">반증 가능하게 만드는 Arm</a></li>
             <li><a href="#숫자">숫자</a></li>
             <li><a href="#세-문장이-동시에-참일-수-없다">세 문장이 동시에 참일 수 없습니다</a></li>
@@ -93,19 +92,19 @@
         </nav>
       <article class="article-body">
 
-        <p>범위. 개인 프로젝트인
-        <a href="../projects/gpuaas-control-plane.html">Kubernetes 네이티브 GPU 컨트롤 플레인</a>의 M5-b
-        마일스톤 기록입니다. 이 글의 숫자는 <strong>2026-09-03에 실제 GPU(A10G 한 장) 위에서 돌린 실행</strong>과
-        <strong>2026-09-04의 엔진 마이크로테스트</strong>에서 나왔습니다. 두 실행의 원시 자료는 리포에 있습니다.
-        이 프로젝트는 진행 중이고 이 글은 2026-09-05 기준으로 확정된 것까지만 씁니다. 아직 사지
-        않은 실행이 하나 있고 그 결과는 마지막 절을 바꿉니다.</p>
+        <p>개인 프로젝트로 <a href="../projects/gpuaas-control-plane.html">Kubernetes 네이티브 GPU
+        Control Plane</a>을 만들고 있습니다. 프리미엄 테넌트와 긴 컨텍스트를 쓰는 시끄러운 이웃이
+        GPU 한 장을 나눠 쓸 때, 게이트웨이의 KV Cache인지 입장 제어가 프리미엄의 p99를 지켜 주는지
+        쟀습니다.</p>
 
-        <p>재려던 것은 이것입니다. 프리미엄 테넌트와 긴 컨텍스트를 쓰는 시끄러운 이웃이 GPU 한 장을 나눠 쓸 때,
-        게이트웨이의 KV Cache인지 입장 제어가 프리미엄의 꼬리 지연(tail latency, 느린 쪽 소수의 응답 시간)을 지켜 주는가.</p>
+        <p>답은 <strong>아니오</strong>였습니다. 거절을 0건 했다는 Arm의 완료 수가 프리미엄 요청 수와
+        정확히 같았습니다. 지킨 것이 아니라 버린 것입니다.</p>
 
-        <p>답은 아니오였습니다. 그리고 그보다 더 값이 나간 것은,
-        왜 유료 반복 4회 동안 그 사실이 보이지 않았는가였습니다.</p>
+        <p>그보다 값이 나간 것은 왜 유료 반복 네 번 동안 그 사실이 안 보였는가입니다. 리포트의
+        판정이 전부 비율이었기 때문입니다. 분모가 같이 줄면 비율은 좋아집니다.</p>
 
+        <p>알아내는 데 새 돈이 들지는 않았습니다. 40센트짜리 마이크로테스트와, 이미 산 증거를
+        다른 축으로 다시 읽은 것으로 충분했습니다.</p>
 
         <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -114,52 +113,6 @@
           <li>「p99가 좋아졌습니다」는 보고를 받고 무엇을 더 물어야 할지 정해야 하는 분</li>
           <li>돈이 나가는 실험에서 무엇부터 재야 할지 고르시는 분</li>
         </ul>
-
-        <h2 id="무슨-내용">무슨 내용인가요?<a class="anchor" href="#무슨-내용" aria-label="이 절로 가는 링크">#</a></h2>
-
-        <ul>
-          <li>GPU 한 장 위에 <strong>프리미엄 테넌트와 긴 컨텍스트를 쓰는 시끄러운 이웃</strong>을 같이 올리고
-          게이트웨이의 KV Cache인지 입장 제어가 프리미엄의 p99를 지켜 주는지 쟀습니다.</li>
-          <li>답은 아니오였습니다. 거절을 0건 했다는 Arm의 완료 수가 프리미엄 요청 수와
-          정확히 같았습니다. 지킨 것이 아니라 버린 것입니다.</li>
-          <li>리포트가 그것을 못 본 이유는 판정이 전부 비율이었기 때문입니다. 분모가 같이 줄면
-          비율은 좋아집니다.</li>
-          <li>알아내는 데 새 돈이 들지 않았습니다. <strong>40센트짜리 마이크로테스트</strong>와, 이미 산 증거를
-          다른 축으로 다시 읽은 것으로 충분했습니다.</li>
-          <li>⚠️ 반증된 것은 하나의 신호·하나의 워크로드·한 장의 카드 위에서입니다.
-          입장 제어 일반에 대한 주장이 아닙니다.</li>
-        </ul>
-
-        <figure class="diagram">
-          <svg viewBox="0 0 720 200" role="img" aria-labelledby="sh-t sh-d" class="figure-svg">
-            <title id="sh-t">GPU 한 장을 두 테넌트가 나눠 쓰고 게이트웨이가 그 앞에 서는 구조</title>
-            <desc id="sh-d">왼쪽부터 상자가 넷, 회색 화살표로 이어집니다. 첫째는 프리미엄과 시끄러운 이웃 두 테넌트, 둘째는 게이트웨이의 입장 제어, 셋째는 A10G 한 장 위의 엔진, 넷째는 완료와 거절로 갈리는 결과입니다. 아래에 분홍색으로 지표가 보는 곳은 완료뿐이라고 적혀 있습니다.</desc>
-            <g font-family="Inter, sans-serif">
-              <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
-              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">도착</text>
-              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">프리미엄 · 시끄러운 이웃</text>
-              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#sh-a)"/>
-              <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
-              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">게이트웨이</text>
-              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">입장 제어</text>
-              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#sh-a)"/>
-              <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
-              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">엔진</text>
-              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">A10G 1장</text>
-              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#sh-a)"/>
-              <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
-              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">결과</text>
-              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">완료 · 거절 · 유실</text>
-              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">지표가 보는 곳 · 완료뿐</text>
-            </g>
-            <defs>
-              <marker id="sh-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
-              </marker>
-            </defs>
-          </svg>
-          <figcaption>입장 제어는 <strong>엔진 앞</strong>에 섭니다. 통과한 요청만 엔진에 닿으므로 지표를 완료 쪽에서만 읽으면 게이트에서 사라진 요청은 숫자에 없습니다.</figcaption>
-        </figure>
 
         <h2 id="반증-가능하게-만드는-arm">반증 가능하게 만드는 Arm<a class="anchor" href="#반증-가능하게-만드는-arm" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -409,6 +362,9 @@
         <h2 id="이-글이-주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#이-글이-주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul>
+          <li>숫자는 2026-09-03에 실제 GPU(A10G 한 장) 위에서 돌린 실행과 2026-09-04의 엔진 마이크로테스트에서 나왔습니다. 두 실행의 원시 자료는 리포에 있습니다.</li>
+          <li>이 프로젝트는 진행 중이고 이 글은 2026-09-05 기준으로 확정된 것까지만 씁니다. 아직 사지 않은 실행이 하나 있고 그 결과는 마지막 절을 바꿉니다.</li>
+
           <li><strong>비교군 하나가 무효였습니다.</strong> <code>static-cap</code>은 설정 오류로 아무것도
           통과시키지 못해 대조군이 아니라 두 번째 격리 Arm이 됐습니다. 그래서 사전 등록한 체크 셋 중 둘
           (증분 가치·입장 일치)은 실패가 아니라 <strong>무효</strong>입니다. 유효하게 실패한 것은 절대 보호 하나입니다.</li>
