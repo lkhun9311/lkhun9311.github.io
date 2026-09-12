@@ -82,7 +82,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-is-in-here">What is in here</a></li>
             <li><a href="#same-pattern">Same pattern, different question</a></li>
             <li><a href="#five-meanings">“Empty” had five meanings</a></li>
             <li><a href="#arrival-order">Arrival order is data too</a></li>
@@ -95,16 +94,19 @@
 
         <article class="article-body">
 
-        <p>I build the backend of an internal cloud admin console. In
-        <a href="monitoring-three-races-in-one-cache.html">part two</a> the dashboard computation moved off the
-        request path. Carrying the same pattern to the physical nodes screen looked like a copy job.</p>
+        <p>I build the backend of an internal cloud admin console. In part two the dashboard computation
+        moved off the request path. Carrying the same pattern to the physical nodes screen looked like a
+        copy job.</p>
 
-        <p>It stopped at one question.
-        <strong>When the metric query returns an empty list, may that be published as “zero nodes”?</strong></p>
+        <p>It stopped at one question. When the metric query returns an empty list, may that be published
+        as “zero nodes”? <strong>It may not.</strong> The list can be empty because there really is
+        nothing, or because collection failed. Without separating those, the moment something breaks a
+        healthy screen gets overwritten with zero.</p>
 
-        <p>It may not. The list can be empty because there really is nothing, or because
-        <strong>collection failed.</strong> Without separating those, the moment something breaks
-        a healthy screen gets overwritten with zero.</p>
+        <p>So “empty” was split into five cases, and only one of them publishes a new value. In the other
+        four the last good value stays. And the value and the collection status travel separately,
+        because that is the only way to build a screen that says “this is the last value, and collection
+        is failing right now.” The median went from 3,938 ms to 23 ms.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -114,25 +116,6 @@
           <li>Anyone choosing which of a false zero, a blank screen or an endless spinner to avoid
           during an outage</li>
         </ul>
-
-        <h2 id="what-is-in-here">What is in here<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li>The same serve-stale pattern moved across, but <strong>what “empty” means</strong> differed per screen.</li>
-          <li>Empty results were split five ways. Only two are published as new
-          values; the rest keep the last good one.</li>
-          <li>The value and the collection status travel separately. That is what makes
-          “showing the last value, and the current collection failed” expressible.</li>
-          <li>The median went from 3,938 ms to <strong>23 ms.</strong></li>
-        </ul>
-
-        <p>This is an internal product, so the code and the screens are not reproduced literally.
-        Product names, customers and internal addresses are out; the structure and the decision rules stay.</p>
-
-        <blockquote><p>⚠️ This part includes something I did not get right at first.
-        In the physical nodes implementation the five branches were not complete.
-        “Fetch succeeded but the result was empty” could still be read as healthy, and it took
-        the shared cache work in part five to lift it into a common judgement.</p></blockquote>
 
         <h2 id="same-pattern">Same pattern, different question<a class="anchor" href="#same-pattern" aria-label="Link to this section">#</a></h2>
 

@@ -82,7 +82,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-is-in-here">What is in here</a></li>
             <li><a href="#which-screens">Which screens?</a></li>
             <li><a href="#the-article-was-wrong">The article I published was wrong</a></li>
             <li><a href="#where-i-measured">Where I measured was not where users waited</a></li>
@@ -96,18 +95,19 @@
 
         <article class="article-body">
 
-        <p>I build the backend of an internal cloud admin console.</p>
-
-        <p>In <a href="slow-screens-7-nothing-to-fix.html">part seven</a> I reviewed three monitoring screens
-        and wrote that <strong>I could not find a case for changing anything.</strong> That article also
-        contains this sentence. “I decided not to add more cache. The place I was going to add it
+        <p>I build the backend of an internal cloud admin console. In part seven I reviewed three
+        monitoring screens and wrote that I could not find a case for changing anything. That article
+        also contains this sentence. “I decided not to add more cache. The place I was going to add it
         was already a cheap path, and a cache there buys staleness and complexity.”</p>
 
-        <p><strong>First data on that screen took 6.8 seconds.</strong> And the fix was
-        a cache in exactly that place. It became 23 ms.</p>
+        <p>First data on that screen took 6.8 seconds. And the fix was a cache in exactly that place.
+        It became 23 ms.</p>
 
-        <p>This is the story of why that judgement was wrong, and of what I had failed to measure.
-        Four parts after this one go screen by screen.</p>
+        <p><strong>What was wrong was not the reasoning but where I had measured.</strong> I measured the
+        REST response time; the user was waiting for the first SSE data. “InfluxDB runs once every
+        15 seconds, so it is already cheap” held for the periodic refresh only. Every time a connection
+        opened, the same computation ran once more, synchronously. Four parts after this one go screen by
+        screen.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
@@ -116,29 +116,6 @@
           <li>Anyone pushing first data over SSE or WebSocket</li>
           <li>Anyone who has written off a path as “already cheap” and moved on</li>
         </ul>
-
-        <h2 id="what-is-in-here">What is in here<a class="anchor" href="#what-is-in-here" aria-label="Link to this section">#</a></h2>
-
-        <ul>
-          <li>An article I published reached the wrong conclusion. I wrote that there was no
-          case for a change, and first data on the same screen was 6.8 seconds.</li>
-          <li>What was wrong was not the arithmetic but where I measured. I measured the REST
-          response. The user was waiting for the first SSE <code>data</code> event.</li>
-          <li>“The time-series store is cheap because it runs once every 15 seconds” was true
-          only of the periodic refresh. The same computation also ran
-          synchronously on every new connection.</li>
-          <li>I fixed the three screens one at a time, then merged three caches into one. Medians went from
-          <strong>6,776 ms, 3,938 ms and 1,436 ms to about 23 ms each.</strong></li>
-        </ul>
-
-        <p>This is an internal product, so the code and the screens are not reproduced literally.
-        Product names, customers and internal addresses are out; the structure and the configured values stay.</p>
-
-        <blockquote><p>⚠️ One thing up front. These numbers are
-        <strong>30 runs by a single user</strong>, not production statistics. And between the review in
-        part seven (August) and this measurement (September)
-        someone else's improvement landed as well. I did not separate their contribution
-        from mine. It is in “what this article does not claim” below.</p></blockquote>
 
         <h2 id="which-screens">Which screens?<a class="anchor" href="#which-screens" aria-label="Link to this section">#</a></h2>
 
