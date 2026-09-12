@@ -68,6 +68,7 @@
     "fail-closed": {ko:{t:"Fail-closed",s:[["방향","어느 쪽으로 넘어질 것인가",0],["대가","대가",0],["조용함","조용한 Fail-open이 제일 위험합니다",0]]}, en:{t:"Fail-closed",s:[["방향","Which way it falls",0],["대가","What it costs",0],["조용함","A silent fail-open is the worst case",0]]}, ja:{t:"Fail-closed",s:[["방향","どちらへ倒れるか",0],["대가","代償",0],["조용함","静かな Fail-open が一番危ない",0]]}},
     "fencing": {ko:{t:"Fencing",s:[["왜","왜 필요한가요?",0],["어떻게","어떻게 끄나요?",0],["없으면","경로가 없으면 복구도 없습니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Fencing",s:[["왜","Why it is needed",0],["어떻게","How it is done",0],["없으면","No path means no recovery",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Fencing",s:[["왜","なぜ必要か",0],["어떻게","どうやって切るか",0],["없으면","経路が無ければ復旧も無い",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "load-test-harness": {ko:{t:"Harness",s:[["뜻","말 자체의 뜻",0],["조건","무엇이 Harness를 Harness로 만드나",0],["흐름","어떻게 도나: 실행 한 번의 흐름",0],["오해","흔한 오해",0]]}, en:{t:"Harness",s:[["뜻","What the word means",0],["조건","What makes a harness a harness",0],["흐름","How one run goes",0],["오해","Common misreadings",0]]}, ja:{t:"Harness",s:[["뜻","言葉そのものの意味",0],["조건","何が Harness を Harness にするのか",0],["흐름","どう回るか — 実行一回の流れ",0],["오해","よくある誤解",0]]}},
+    "min-n": {ko:{t:"min-n",s:[["무엇","무엇을 막나요?",0],["한계","한 장면 안에서만 참입니다",0],["축","축이 늘면 다시 뚫립니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"min-n",s:[["무엇","What it stops",0],["한계","It is true within one frame",0],["축","Add an axis and it breaks again",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"min-n",s:[["무엇","何を防ぐのか",0],["한계","一つの場面の中でだけ真です",0],["축","軸が増えればまた破れます",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "mutation-testing": {ko:{t:"Mutation Testing",s:[["왜","왜 필요한가",0],["방법","어떻게 하나",0],["경로","경로마다 따로 걸어야 합니다",0]]}, en:{t:"Mutation Testing",s:[["왜","Why it is needed",0],["방법","How to do it",0],["경로","Do it one path at a time",0]]}, ja:{t:"Mutation Testing",s:[["왜","なぜ必要か",0],["방법","どうやるか",0],["경로","経路ごとに別々にかける",0]]}},
     "percentile": {ko:{t:"Percentile",s:[["percentile","개요",1],["percentile-average","왜 평균을 안 쓰나",1],["percentile-calc","계산 방식이 두 가지입니다",1],["percentile-where","어디를 봐야 하나",1]]}, en:{t:"Percentile",s:[["percentile","Overview",1],["percentile-average","Why not the average",1],["percentile-calc","There are two ways to compute it",1],["percentile-where","Which one to read",1]]}, ja:{t:"Percentile",s:[["percentile","概要",1],["percentile-average","なぜ平均を使わないのか",1],["percentile-calc","計算方式が二つある",1],["percentile-where","どれを見るか",1]]}},
     "sse": {ko:{t:"SSE",s:[["무엇","무엇인가요?",0],["첫값","연결이 열린 것과 값이 온 것은 다릅니다",0],["느린소비자","느린 한 명이 전부를 막습니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"SSE",s:[["무엇","What it is",0],["첫값","An open connection is not an arrived value",0],["느린소비자","One slow consumer blocks the rest",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"SSE",s:[["무엇","何か",0],["첫값","接続が開いたことと値が来たことは違います",0],["느린소비자","遅い一人が全体を塞ぎます",0],["쓰인-곳","このサイトで使われている記事",0]]}},
@@ -511,12 +512,22 @@
       /* 왼쪽 필터의 묶음. 용어 노트(#Harness 처럼 말 자체가 태그인 것)와 분류를 갈라 놓는다 —
          한 줄에 섞여 있으면 "무엇으로 고르는 목록인지"를 매번 다시 읽어야 한다. */
       tagGroups: {
-        "Term": ["Harness", "Percentile", "SSE", "Apdex", "Fencing", "Warm-up", "Arm", "Connection Pool", "Connection Pooler",
+        "Term": ["Harness", "Percentile", "SSE", "Apdex", "Fencing", "min-n", "Warm-up", "Arm", "Connection Pool", "Connection Pooler",
                 "Transaction Pooling", "Mutation Testing", "Fail-closed"],
         "Kind": ["Performance", "Database", "Verification", "Design",
                 "Troubleshooting", "Operating", "Debugging", "Chore", "Certification"]
       },
       items: [
+        {
+          title: "min-n",
+          url: "notes/min-n.html",
+          title_ko: "min-n", title_ja: "min-n",
+          desc: "A rule that hides any cell holding fewer than n people. It is true only within one snapshot, so the difference between two published snapshots becomes a way through.",
+          desc_ko: "한 칸에 든 사람이 n명 미만이면 그 칸을 숨기는 규칙. 한 스냅샷 안에서만 참이라 공개본 두 개의 차이가 새 통로가 됩니다.",
+          desc_ja: "あるマスに入った人が n 人未満ならそのマスを隠す規則。一つのスナップショットの中でだけ真なので、公開版二つの差が通り道になります。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          tags: ["min-n", "Privacy"]
+        },
         {
           title: "Fencing",
           url: "notes/fencing.html",
