@@ -69,7 +69,7 @@
     <main>
       <div class="hero-top">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
-        <div class="article-meta"><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a><span class="source-tag company notranslate">회사 업무</span></div>
+        <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div>
       </div>
               <section class="page-hero">
           <h1>선언한 부하 조건을 상수로 고정해 여섯 번을 쟀습니다<br><span class="h1-sub">화면에서 손으로 채우면 여섯 번이 같은 조건이었는지 증명할 수 없습니다.</span></h1>
@@ -90,7 +90,7 @@
             <li><a href="#회차-보존">리포트는 회차별로 쌓고 원본은 안 남겼습니다</a></li>
             <li><a href="#조용한-성공">결과가 하나도 없어도 성공으로 끝났습니다</a></li>
             <li><a href="#조건이-안-남음">어느 회차가 어느 구성이었는지가 안 남습니다</a></li>
-            <li><a href="#인증">10분을 버티는 인증이 필요했습니다</a></li>
+            <li><a href="#인증">10min을 버티는 인증이 필요했습니다</a></li>
             <li><a href="#주장하지-않는-것">한계: 이 글이 주장하지 않는 것</a></li>
             <li><a href="#마치며">마치며</a></li>
           </ul>
@@ -275,12 +275,12 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
 &lt;stringProp name="ThreadGroup.duration"&gt;600&lt;/stringProp&gt;</code></pre>
 
         <p>첫 줄이 참이면 Thread 묶음이 한 번에 하나씩 차례로 돕니다.
-        아래 넷은 <strong>반복은 무제한이고 시간이 600초</strong>라는 뜻입니다.
+        아래 넷은 <strong>반복은 무제한이고 시간이 600s</strong>라는 뜻입니다.
         위의 두 줄은 같은 말을 두 번 한 것입니다. <code>-1</code>이 곧 ‘무제한’이라
         <code>continue_forever</code>가 따로 켜져 있어도 더 달라지는 것이 없습니다.</p>
 
         <p>반복 횟수가 <code>-1</code>이 아니었다면 횟수와 시간 중 먼저 닿는 쪽에서
-        멈춥니다. 여기서는 횟수 쪽이 안 닿으니 <strong>정상적으로 끝나는 경로가 그 600초</strong>입니다.
+        멈춥니다. 여기서는 횟수 쪽이 안 닿으니 <strong>정상적으로 끝나는 경로가 그 600s</strong>입니다.
         물론 밖에서 멈추거나 오류 정책에 걸리면 그 전에도 끝납니다.</p>
 
         <figure class="diagram">
@@ -288,9 +288,9 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
             <title id="sz-t">‘all’로 돌렸을 때의 시간 배치</title>
             <desc id="sz-d">위아래 두 묶음이 같은 시간축과 같은 막대 길이를 씁니다. 위 묶음은 흔히
             상상하는 모습으로, 막대들이 줄을 달리해 쌓여 있지만 모두 같은 지점에서 시작해 같은 지점에서
-            끝납니다. 즉 시간축에서 같은 구간을 차지하고 전체가 10분입니다. 아래 묶음은 실제 설정으로,
+            끝납니다. 즉 시간축에서 같은 구간을 차지하고 전체가 10min입니다. 아래 묶음은 실제 설정으로,
             같은 길이의 막대들이 시간축에서 겹치지 않고 왼쪽부터 차례로 이어져 있으며 그 아래에 전체
-            구간을 표시한 선이 설정상 100분이라고 적혀 있습니다. 두 묶음 모두 막대를 다섯 개만 그리고
+            구간을 표시한 선이 설정상 100min이라고 적혀 있습니다. 두 묶음 모두 막대를 다섯 개만 그리고
             나머지는 줄임표로 생략했습니다.</desc>
             <g font-family="Inter, sans-serif">
               <text x="12" y="18" font-size="12" fill="#8a8a8a" font-weight="700">상상한 것 · 10가지가 같은 시간에</text>
@@ -299,7 +299,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
                 <rect x="12" y="54" width="62" height="10" rx="3"/><rect x="12" y="68" width="62" height="10" rx="3"/>
                 <rect x="12" y="82" width="62" height="10" rx="3"/>
               </g>
-              <text x="86" y="60" font-size="11.5" fill="#8a8a8a">… · 전체 10분</text>
+              <text x="86" y="60" font-size="11.5" fill="#8a8a8a">… · 전체 10min</text>
 
               <text x="12" y="118" font-size="12" fill="#d62976" font-weight="700">설정된 것 · 한 번에 하나씩</text>
               <g fill="none" stroke="#d62976" stroke-width="1.8">
@@ -311,7 +311,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
               <g stroke="#d62976" stroke-width="1.4" fill="none">
                 <path d="M12 208 H 632"/><path d="M12 203 V 213"/><path d="M632 203 V 213"/>
               </g>
-              <text x="322" y="224" font-size="11.5" fill="#d62976" font-weight="700" text-anchor="middle">설정상 100분</text>
+              <text x="322" y="224" font-size="11.5" fill="#d62976" font-weight="700" text-anchor="middle">설정상 100min</text>
               <path d="M12 238 H 700" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#sz-ar)"/>
               <text x="690" y="232" font-size="11" fill="#8a8a8a" text-anchor="end">시간</text>
             </g>
@@ -321,7 +321,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
               </marker>
             </defs>
           </svg>
-          <figcaption>막대 길이가 둘 다 10분입니다. 위에서는 겹쳐 있고 아래에서는 이어져 있습니다.
+          <figcaption>막대 길이가 둘 다 10min입니다. 위에서는 겹쳐 있고 아래에서는 이어져 있습니다.
           막대는 다섯 개만 그렸습니다.</figcaption>
         </figure>
 
@@ -329,14 +329,14 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
         한 번에 하나씩 재는 것을 10번 이어 붙인 것입니다.
         앞 절에 적었듯 커서와 Cache와 JVM은 이어지므로 10번이 서로 독립은 아닙니다.</p>
 
-        <blockquote><p>실제로 100분이 걸렸다는 기록은 없습니다.
+        <blockquote><p>실제로 100min이 걸렸다는 기록은 없습니다.
         설정이 그렇게 돼 있다는 것까지가 확인한 것이고 그 값으로 <code>"all"</code>을
         끝까지 돌린 회차가 있었는지는 남아 있지 않습니다.</p></blockquote>
 
-        <p>그리고 설정상 100분이지 정확히 100분은 아닙니다.
+        <p>그리고 설정상 100min이지 정확히 100min은 아닙니다.
         JMeter는 요청과 요청 사이에서 시간을 확인할 뿐, 진행 중인 요청은 안 끊습니다.
-        마지막 요청이 응답을 오래 기다리면 그 묶음은 600초를 넘겨서 끝납니다.
-        <a href="slow-screens-1-volume-list.ko.html">①편</a>처럼 Timeout이 10분인 화면이면
+        마지막 요청이 응답을 오래 기다리면 그 묶음은 600s를 넘겨서 끝납니다.
+        <a href="slow-screens-1-volume-list.ko.html">①편</a>처럼 Timeout이 10min인 화면이면
         그 초과가 작지 않습니다.</p>
 
         <h2 id="안-남길-것">무엇을 저장하지 않을지가 설계였습니다<a class="anchor" href="#안-남길-것" aria-label="이 절로 가는 링크">#</a></h2>
@@ -355,7 +355,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
 
         <p>거짓이면 결과가 <strong>CSV 한 줄씩</strong> 쌓입니다.
         그리고 CSV에는 응답 본문을 담을 칸이 아예 없습니다.
-        Thread 50개를 10분 굴리는 테스트에서 본문까지 쌓이지 않은 이유가 이겁니다.</p>
+        Thread 50개를 10min 굴리는 테스트에서 본문까지 쌓이지 않은 이유가 이겁니다.</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
@@ -393,7 +393,7 @@ GROUP          = "01"  # "all" | "volume" | "snapshot" | "01"~"10"</code></pre>
         그 아래에 <strong>측정 대상마다 따로</strong> 리포트를 만들게 했습니다.</p>
 
         <figure class="diagram">
-          <img src="../assets/figures/volume-jmeter-after.png" alt="JMeter 리포트 화면. Apdex 1.000, 표본 7,658건 전부 성공, 평균 5.34밀리초, P99 23밀리초, 초당 12.82건." loading="lazy" width="645" height="317">
+          <img src="../assets/figures/volume-jmeter-after.png" alt="JMeter 리포트 화면. Apdex 1.000, 표본 7,658건 전부 성공, 평균 5.34ms, P99 23ms, 초당 12.82건." loading="lazy" width="645" height="317">
           <figcaption>회차 폴더 안에 이런 리포트가 측정 대상 수만큼 생깁니다.
           이건 <a href="slow-screens-1-volume-list.ko.html">①편</a>에 쓴 마지막 단계의 것입니다.
           6단계 측정이 전부 이 Harness에서 나왔다고 사내 기록에 적혀 있습니다.
@@ -505,7 +505,7 @@ done
         <ul class="callout">
           <li>개수만 맞으면 통과합니다. 기대한 대상 하나가 빠지고 엉뚱한 결과 파일 하나가
           들어와도 총수가 같으면 넘어갑니다. 이름 목록을 대조해야 합니다.</li>
-          <li>1바이트짜리 <code>index.html</code>도 통과합니다. 리포트는 파일 여러 개로
+          <li>1 bytes짜리 <code>index.html</code>도 통과합니다. 리포트는 파일 여러 개로
           이뤄지는데 그중 하나만 봅니다.</li>
           <li>10번째에서 죽으면 앞의 9개가 남습니다. 그 폴더는 완성된 회차처럼
           보입니다. 다 끝났을 때 표시를 하나 남기거나, 임시 폴더에 만들고 마지막에 이름을
@@ -552,9 +552,9 @@ done
         그렇게 해도 그 JMX로 실제로 돌렸는지까지 증명되지는 않습니다.
         줄어드는 것은 ‘나중에 사람에게 물어봐야 하는 양’이지 0이 되는 것은 아닙니다.</p>
 
-        <h2 id="인증">10분을 버티는 인증이 필요했습니다<a class="anchor" href="#인증" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="인증">10min을 버티는 인증이 필요했습니다<a class="anchor" href="#인증" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>부하 테스트는 10분을 끊기지 않고 돌아야 합니다.
+        <p>부하 테스트는 10min을 끊기지 않고 돌아야 합니다.
         중간에 인증이 만료돼 거절이 나오기 시작하면 그때부터의 숫자는 응답 시간이 아니라
         <strong>거절당하는 속도</strong>입니다.</p>
 
@@ -562,10 +562,10 @@ done
         읽어야 했습니다. 무엇이었는지는 적지 않습니다.</p>
 
         <blockquote><p>부하 테스트를 만들기 전에 인증 구조를 먼저 알아야 했습니다.
-        모르면 도구를 짜는 게 아니라 <strong>10분을 버티는 것부터</strong> 막힙니다.</p></blockquote>
+        모르면 도구를 짜는 게 아니라 <strong>10min을 버티는 것부터</strong> 막힙니다.</p></blockquote>
 
-        <p>그리고 10분은 <code>GROUP</code>이 하나일 때 이야기입니다.
-        <code>"all"</code>은 설정상 100분짜리인데, 그동안 인증을 한 번 얻어 계속 쓰는지
+        <p>그리고 10min은 <code>GROUP</code>이 하나일 때 이야기입니다.
+        <code>"all"</code>은 설정상 100min짜리인데, 그동안 인증을 한 번 얻어 계속 쓰는지
         묶음마다 다시 얻는지 저는 모릅니다.
         테스트 계획만으로는 안 나오고 그렇게 돌려 본 기록도 없습니다.</p>
 
@@ -585,8 +585,8 @@ done
           <li>PowerShell 쪽은 안 봤습니다. 이 Harness에는 Windows용 실행 스크립트도 있는데
           앞 절에서 따진 빈 결과·오류 스트림·종료 코드가 그쪽에서 어떻게 되는지는
           확인하지 않았습니다. 이 글의 결함 지적은 bash 쪽에 한정됩니다.</li>
-          <li>‘all’로 100분을 실제로 돌린 기록은 없습니다. 설정이 그렇다는 것까지가
-          확인한 범위이고 그 100분도 명목값입니다.</li>
+          <li>‘all’로 100min을 실제로 돌린 기록은 없습니다. 설정이 그렇다는 것까지가
+          확인한 범위이고 그 100min도 명목값입니다.</li>
           <li>고친 스크립트는 제안입니다. 사내 코드에 반영된 것이 아니라
           따로 만든 환경에서 확인한 형태입니다.</li>
           <li>도구 선택을 일반화하지 않습니다. JMeter를 고른 이유는 리포트가 기본으로
@@ -630,7 +630,7 @@ done
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=07ce86b446"></script>
-  <script src="../assets/content.js?v=8e19bcc47c"></script>
+  <script src="../assets/content.js?v=77d20d5e81"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

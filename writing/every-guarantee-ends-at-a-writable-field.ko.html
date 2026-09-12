@@ -69,7 +69,7 @@
     <main>
       <div class="hero-top">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
-        <div class="article-meta"><a class="project-tag notranslate" href="../writing/index.html?tag=GPUaaS%20Control%20Plane">#GPUaaS Control Plane</a><span class="source-tag side notranslate">개인 프로젝트</span></div>
+        <div class="article-meta"><span class="source-tag side notranslate">개인 프로젝트</span><a class="project-tag notranslate" href="../writing/index.html?tag=GPUaaS%20Control%20Plane">#GPUaaS Control Plane</a></div>
       </div>
       <section class="page-hero">
         <h1>GPU 쿼터 방어 4건이 같은 방식으로 뚫렸습니다<br><span class="h1-sub">검사가 읽은 필드를 테넌트가 직접 쓸 수 있었습니다.</span></h1>
@@ -114,7 +114,7 @@
           <tbody>
             <tr><td>GPU 쿼터가 강제된다</td><td><code>ownerReferences</code></td><td>계상되지 않은 장치 2개</td></tr>
             <tr><td>GPU 쿼터가 강제된다</td><td><code>quota-exempt</code> 어노테이션</td><td>장치 수 제한 없음</td></tr>
-            <tr><td>회수된 장치는 돌아온다</td><td><code>terminationGracePeriodSeconds</code></td><td>회수된 장치를 301초</td></tr>
+            <tr><td>회수된 장치는 돌아온다</td><td><code>terminationGracePeriodSeconds</code></td><td>회수된 장치를 301s</td></tr>
             <tr><td>예산은 쓸 수 있는 쪽에 간다</td><td>Pod이 전부 거부되는 Job</td><td>예산 전체를 무기한</td></tr>
           </tbody>
         </table>
@@ -280,23 +280,23 @@ forged-owner   1/1   Running</code></pre>
           <caption class="sr-only">Grace 설정에 따른 장치 점유 시간.</caption>
           <thead><tr><th scope="col">Grace</th><th scope="col">장치를 쥐고 있던 시간</th></tr></thead>
           <tbody>
-            <tr><td>30초</td><td>32초</td></tr>
-            <tr><td>300초</td><td><strong>301초</strong></td></tr>
+            <tr><td>30s</td><td>32s</td></tr>
+            <tr><td>300s</td><td><strong>301s</strong></td></tr>
           </tbody>
         </table>
         </div>
         </div>
 
-        <p>남은 작업량을 43초로 고정하고 파라미터를 훑으면 모델이 나오고 예측한 자리에 무릎이 생깁니다.         <code>점유 = min(남은 작업, grace)</code>.</p>
+        <p>남은 작업량을 43s로 고정하고 파라미터를 훑으면 모델이 나오고 예측한 자리에 무릎이 생깁니다.         <code>점유 = min(남은 작업, grace)</code>.</p>
 
         <p>같은 경계를 반대쪽에서도 쟀습니다. SIGTERM에 반응하지 않는 워크로드는 남은 작업이 Grace 안에
         들어가는 동안에는 회수를 완전히 무력화하고 그 범위를 넘어서는 순간 정확히 Grace에서 잘립니다.</p>
 
         <p>이 수리는 앞의 둘과 다릅니다. Grace는 진짜로 워크로드의 것입니다.
         체크포인트를 남기고 죽으려면 시간이 필요하고 그 필요는 정당합니다. 그래서 신뢰할 수 있는 값으로 바꿀 수도,
-        쓸 수 있는 쪽을 제한할 수도 없었습니다. <strong>대신 상한을 뒀습니다. 장치를 쥔 Pod은 120초.</strong></p>
+        쓸 수 있는 쪽을 제한할 수도 없었습니다. <strong>대신 상한을 뒀습니다. 장치를 쥔 Pod은 120s.</strong></p>
 
-        <p>왜 30이 아닌가. SIGTERM에서 체크포인트를 쓰는 학습 스텝은 30초로 부족하고 그걸 거부하면 테넌트는
+        <p>왜 30이 아닌가. SIGTERM에서 체크포인트를 쓰는 학습 스텝은 30s로 부족하고 그걸 거부하면 테넌트는
         SIGTERM을 무시하는 쪽으로 갑니다. 그리고 측정이 보여준 바로는, 소유자에게 가장 비싼 것이
         정확히 그 경우입니다.</p>
 
@@ -374,7 +374,7 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
               <rect x="64" y="160" width="248" height="40" rx="9" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
               <text x="188" y="185" font-size="11.5" fill="#8a8a8a" text-anchor="middle">③ 피해 상한</text>
               <path d="M318 180 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rp-a)"/>
-              <text x="384" y="185" font-size="11.5" fill="#4a4a4a">무제한 → 120초</text>
+              <text x="384" y="185" font-size="11.5" fill="#4a4a4a">무제한 → 120s</text>
             </g>
             <defs>
               <marker id="rp-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
@@ -417,9 +417,9 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
           <li>GPU는 시뮬레이션입니다. 가짜 Device Plugin이 <code>nvidia.com/gpu</code>를
           광고하고 "장치 2개"는 그 가짜 장치입니다. 이 글의 발견은 입장 제어와 신뢰 경계에 관한
           것이지, 실제 장치가 어떻게 점유되는지에 관한 것이 아닙니다.</li>
-          <li><strong>32초·301초는 이 클러스터에서의 관측</strong>이고 모델은 남은 작업을 43초로 고정한 스윕에서
+          <li><strong>32s·301s는 이 클러스터에서의 관측</strong>이고 모델은 남은 작업을 43s로 고정한 스윕에서
           나왔습니다. 다른 작업 길이·다른 kubelet 설정에서 같은 상수가 나온다는 뜻이 아닙니다.</li>
-          <li><strong>120초는 측정에서 유도한 값이 아닙니다.</strong> 두 실패 방식(체크포인트를 못 쓰게 하는 것 대
+          <li><strong>120s는 측정에서 유도한 값이 아닙니다.</strong> 두 실패 방식(체크포인트를 못 쓰게 하는 것 대
           장치를 오래 쥐는 것) 사이의 판단이고 측정이 뒷받침하는 것은 "SIGTERM을 무시하는 쪽이 소유자에게 가장
           비싸다"는 부분까지입니다.</li>
           <li>4건이 전부라는 뜻이 아닙니다. 공격해서 찾은 것이 넷이고 공격하지 않은 표면은
@@ -457,7 +457,7 @@ t=240s   used=2  admitted=2  job.status.failed=0</code></pre>
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=07ce86b446"></script>
-  <script src="../assets/content.js?v=8e19bcc47c"></script>
+  <script src="../assets/content.js?v=77d20d5e81"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

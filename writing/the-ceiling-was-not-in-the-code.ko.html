@@ -69,7 +69,7 @@
     <main>
       <div class="hero-top">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
-        <div class="article-meta"><a class="project-tag notranslate" href="../writing/index.html?tag=Social%20Polling%20Platform">#소셜 투표 플랫폼</a><span class="source-tag commercial notranslate">사업화 프로젝트</span><span class="repo-private notranslate" translate="no">Private</span></div>
+        <div class="article-meta"><span class="source-tag commercial notranslate">사업화 프로젝트</span><span class="repo-private notranslate" translate="no">Private</span><a class="project-tag notranslate" href="../writing/index.html?tag=Social%20Polling%20Platform">#소셜 투표 플랫폼</a></div>
       </div>
       <section class="page-hero">
         <h1>콘텐츠 검열 처리량 상한이 SDK 기본값에 있었습니다<br><span class="h1-sub">S3를 붙이며 딸려 온 HTTP 클라이언트의 호스트당 Connection이 5였습니다.</span></h1>
@@ -128,7 +128,7 @@
         사람들이 투표하고 그 결과 차트를 앱 밖으로 공유합니다. Kotlin과 Spring Boot로 만든 단일
         Monolith이고 데이터베이스는 관리형 PostgreSQL 하나를 씁니다.</p>
 
-        <p>사용자가 올린 글은 <strong>모더레이션 게이트</strong>를 통과해야 게시됩니다. 게이트는 네 겹이고
+        <p>사용자가 올린 글은 <strong>Moderation 게이트</strong>를 통과해야 게시됩니다. 게이트는 네 겹이고
         그중 ③ 유해분류와 ④ 저격판정 두 겹이 외부 API를 부릅니다.
         게이트는 <a class="term" href="../notes/fail-closed.html">Fail-closed</a> 라서, 이 호출이 실패하면
         글은 게시되지 않습니다.</p>
@@ -136,8 +136,8 @@
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
             <svg viewBox="0 0 720 238" role="img" aria-labelledby="gate-t gate-d" xmlns="http://www.w3.org/2000/svg">
-              <title id="gate-t">글 하나가 지나가는 모더레이션 게이트의 네 겹</title>
-              <desc id="gate-d">사용자가 글을 올리면 API 서버의 모더레이션 게이트가 네 겹의 검사를 합니다.
+              <title id="gate-t">글 하나가 지나가는 Moderation 게이트의 네 겹</title>
+              <desc id="gate-d">사용자가 글을 올리면 API 서버의 Moderation 게이트가 네 겹의 검사를 합니다.
               첫째 금칙어 검사와 둘째 연락처 검사는 애플리케이션 안에서 끝나므로 빠릅니다. 셋째 유해분류와 넷째
               저격판정은 외부 API를 호출하며 두 호출은 서로 독립이라 겹쳐서 보냅니다. 즉 글 한 건마다 외부
               호출이 두 개 나갑니다. 네 겹을 모두 통과해야 글이 PostgreSQL에 저장되고 게시됩니다.</desc>
@@ -148,7 +148,7 @@
               <path d="M128 78 H 174" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#g-ar)"/>
 
               <rect x="182" y="30" width="212" height="96" rx="6" fill="none" stroke="#18121d" stroke-width="2"/>
-              <text x="288" y="52" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">모더레이션 게이트</text>
+              <text x="288" y="52" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">Moderation 게이트</text>
               <text x="196" y="76" font-size="13" fill="#3b3344">① 금칙어 · ② 연락처</text>
               <text x="196" y="94" font-size="12" fill="#7b7186">앱 내부</text>
               <text x="196" y="115" font-size="13" fill="#d62976" font-weight="700">③ 유해분류 · ④ 저격판정</text>
@@ -232,7 +232,7 @@
           </tbody>
         </table></div><p class="table-scroll-hint" aria-hidden="true">→ 표를 옆으로 넘길 수 있습니다</p></div>
 
-        <p>INSERT 경로 자체는 8밀리초입니다. 초당 1,398건을 받습니다. 쓰기는 이 시스템의
+        <p>INSERT 경로 자체는 8ms입니다. 초당 1,398건을 받습니다. 쓰기는 이 시스템의
         문제가 아니었고 따라서 쓰기를 큐로 빼는 설계는 고칠 것이 없는 곳을 고치는 일이
         됩니다.</p>
 
@@ -274,7 +274,7 @@
               <title id="cap-t">조건을 바꿔도 외부 호출 동시 실행은 10에서 움직이지 않는다</title>
               <desc id="cap-d">세 가지 조건을 비교합니다. 쓰기 16에 DB Pool 10, 쓰기 16에 DB Pool 30, 쓰기 32에 DB Pool 30입니다.
               세 경우 모두 외부 호출의 최고 동시 실행은 10으로 같고 처리량도 초당 6.27, 6.27, 6.26건으로 같습니다.
-              달라지는 것은 응답시간뿐이어서 쓰기를 32로 올리면 중앙값이 2,592밀리초에서 5,119밀리초로 늘어납니다.
+              달라지는 것은 응답시간뿐이어서 쓰기를 32로 올리면 중앙값이 2,592ms에서 5,119ms로 늘어납니다.
               늘린 만큼 일이 더 되는 것이 아니라 대기열만 길어졌다는 뜻입니다.</desc>
 
               <text x="8" y="22" font-size="14" fill="#7b7186">외부 호출 최고 동시 실행</text>
@@ -309,13 +309,13 @@
         움직이지 않습니다. 늘어나는 것은 응답시간뿐입니다(2,592 → 5,119ms). 이건 전형적인
         대기열 신호입니다. 일이 더 되는 게 아니라 줄만 길어진 겁니다.</p>
 
-        <p>Stub이 범인일 가능성은 따로 지웠습니다. 같은 Stub을 앱 없이 32 Worker로 20초 두드리면
+        <p>Stub이 범인일 가능성은 따로 지웠습니다. 같은 Stub을 앱 없이 32 Worker로 20s 두드리면
         동시 32 · 40 req/s를 냅니다. 그러니 10은 Stub의 한계가 아니라
         앱이 밖으로 나가는 길의 한계입니다.</p>
 
         <p>여기서 산수가 맞아떨어집니다. 글 1건이 호출 2개를 내므로 동시 10은
         동시에 검열 중인 글 5건입니다. 호출 한 번이 800ms니까
-        5 ÷ 0.8초 = 약 6.3 req/s. 관측된 6.27과 같습니다.</p>
+        5 ÷ 0.8s = 약 6.3 req/s. 관측된 6.27과 같습니다.</p>
 
         <h2 id="thread-덤프">Thread 덤프가 어디서 멈췄는지 알려 줬습니다<a class="anchor" href="#thread-덤프" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -566,7 +566,7 @@ class OutboundHttpConfig {
         돌아오니까요. 문제는 응답이 안 오는 서버를 만났을 때만 드러납니다.</p>
 
         <p>다행히 이 저장소에는 그걸 겨누는 테스트가 이미 있었습니다.
-        “응답 없는 서버에 매달리지 않는다”는 가드가 <strong>40초 만에 실패</strong>했습니다.
+        “응답 없는 서버에 매달리지 않는다”는 가드가 <strong>40s 만에 실패</strong>했습니다.
         그 가드가 없었으면 무한 대기가 조용히 돌아왔을 겁니다.</p>
 
         <p>고친 방법은 값을 복제하지 않는 것이었습니다. 같은 속성 키를 읽습니다.
@@ -679,7 +679,7 @@ assertThat(factories[0]).isSameAs(factories[1])</code></pre>
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=07ce86b446"></script>
-  <script src="../assets/content.js?v=8e19bcc47c"></script>
+  <script src="../assets/content.js?v=77d20d5e81"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

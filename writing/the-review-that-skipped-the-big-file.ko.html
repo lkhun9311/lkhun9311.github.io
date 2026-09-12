@@ -69,7 +69,7 @@
     <main>
       <div class="hero-top">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
-        <div class="article-meta"><a class="project-tag notranslate" href="../writing/index.html?tag=Social%20Polling%20Platform">#소셜 투표 플랫폼</a><span class="source-tag commercial notranslate">사업화 프로젝트</span></div>
+        <div class="article-meta"><span class="source-tag commercial notranslate">사업화 프로젝트</span><a class="project-tag notranslate" href="../writing/index.html?tag=Social%20Polling%20Platform">#소셜 투표 플랫폼</a></div>
       </div>
               <section class="page-hero">
           <h1>head -c가 한글을 쪼개서 설계 리뷰가 안 돌았습니다<br><span class="h1-sub">바이트로 자르면 글자 가운데가 잘리고 도구는 그 인자를 거절합니다.</span></h1>
@@ -88,7 +88,7 @@
             <li><a href="#도구가-거부">거절한 것이 제가 생각한 프로그램이 아니었습니다</a></li>
             <li><a href="#세-가지-덮개">서로 다른 것이 실패 신호를 하나씩 지웠습니다</a></li>
             <li><a href="#폴더는-차-있었다">그동안 폴더는 차 있었습니다</a></li>
-            <li><a href="#대조-실험">1바이트를 버리니 통과했습니다</a></li>
+            <li><a href="#대조-실험">1 bytes를 버리니 통과했습니다</a></li>
             <li><a href="#고친-것">고친 것과 아직 못 고친 것</a></li>
             <li><a href="#내가-틀리게-적었다">같은 결함을 세 번 틀리게 적었습니다</a></li>
             <li><a href="#주장하지-않는-것">한계: 이 글이 주장하지 않는 것</a></li>
@@ -147,9 +147,9 @@ exit 0</code></pre>
 
         <h2 id="자르는-자리">자르는 자리가 글자 안이었습니다<a class="anchor" href="#자르는-자리" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p><code>head -c</code>는 <strong>바이트</strong>를 셉니다. ASCII 문자는 한 글자가 1바이트라
-        둘이 같지만 <strong>지금 쓰는 한글 음절은 한 글자가 3바이트</strong>입니다.
-        (한국어 문장에도 숫자·기호 같은 1바이트 글자가 섞이고 4바이트짜리 글자나 여러 조각으로 된 이모지도 있습니다.)</p>
+        <p><code>head -c</code>는 <strong>바이트</strong>를 셉니다. ASCII 문자는 한 글자가 1 bytes라
+        둘이 같지만 <strong>지금 쓰는 한글 음절은 한 글자가 3 bytes</strong>입니다.
+        (한국어 문장에도 숫자·기호 같은 1 bytes 글자가 섞이고 4 bytes짜리 글자나 여러 조각으로 된 이모지도 있습니다.)</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 200" role="img" aria-labelledby="by-t by-d" class="figure-svg">
@@ -204,7 +204,7 @@ exit 0</code></pre>
 
         <p>‘글자가 갈릴 수 있다’와 ‘그때 갈렸다’는 다른 말입니다.
         그래서 이 문서의 커밋으로 남은 리비전을 하나씩 꺼내 두 가지를 봤습니다.
-        원본 전체가 유효한지, 그리고 <strong>앞 60,000바이트가 유효한지</strong>입니다.
+        원본 전체가 유효한지, 그리고 <strong>앞 60,000 bytes가 유효한지</strong>입니다.
         원본이 이미 망가져 있었다면 자른 자리 탓이 아니니까요.</p>
 
 <pre data-lang="bash"><code>blob=$(git rev-parse "$commit:docs/DESIGN.md")
@@ -217,14 +217,14 @@ git cat-file -p "$blob" | head -c 60000 | iconv -f UTF-8 -t UTF-8 &gt; /dev/null
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
         <table>
           <caption class="sr-only">설계 문서 리비전별 크기와 원본·절단본의 유효성.</caption>
-          <thead><tr><th>리비전</th><th>크기</th><th>원본 전체</th><th>앞 60,000바이트</th></tr></thead>
+          <thead><tr><th>리비전</th><th>크기</th><th>원본 전체</th><th>앞 60,000 bytes</th></tr></thead>
           <tbody>
-            <tr><td>7월 17일</td><td>51,927 바이트</td><td>유효</td><td>자를 것 없음</td></tr>
-            <tr><td>8월 2일</td><td>75,281 바이트</td><td>유효</td><td>글자 안에서 잘림</td></tr>
-            <tr><td>8월 16일</td><td>111,834 바이트</td><td>유효</td><td>글자 안에서 잘림</td></tr>
-            <tr><td>8월 23일</td><td>114,909 바이트</td><td>유효</td><td>글자 안에서 잘림</td></tr>
-            <tr><td>8월 26일</td><td>115,891 바이트</td><td>유효</td><td>글자 안에서 잘림</td></tr>
-            <tr><td>작업 트리(지금)</td><td>130,939 바이트</td><td>유효</td><td>글자 안에서 잘림</td></tr>
+            <tr><td>7월 17일</td><td>51,927 bytes</td><td>유효</td><td>자를 것 없음</td></tr>
+            <tr><td>8월 2일</td><td>75,281 bytes</td><td>유효</td><td>글자 안에서 잘림</td></tr>
+            <tr><td>8월 16일</td><td>111,834 bytes</td><td>유효</td><td>글자 안에서 잘림</td></tr>
+            <tr><td>8월 23일</td><td>114,909 bytes</td><td>유효</td><td>글자 안에서 잘림</td></tr>
+            <tr><td>8월 26일</td><td>115,891 bytes</td><td>유효</td><td>글자 안에서 잘림</td></tr>
+            <tr><td>작업 트리(지금)</td><td>130,939 bytes</td><td>유효</td><td>글자 안에서 잘림</td></tr>
           </tbody>
         </table>
         </div>
@@ -379,7 +379,7 @@ $ timeout 60 echo "&lt;깨진 인자&gt;"             → 125</code></pre>
           <thead><tr><th>시기</th><th>결과 파일</th></tr></thead>
           <tbody>
             <tr><td>7월 초 ~ 8월 8일</td><td>내용 있는 파일 <strong>28개</strong></td></tr>
-            <tr><td>7월 13일 · 8월 12~13일</td><td><strong>0바이트 파일 5개</strong></td></tr>
+            <tr><td>7월 13일 · 8월 12~13일</td><td><strong>0 bytes 파일 5개</strong></td></tr>
             <tr><td>8월 14일 ~ 8월 31일</td><td>파일 자체가 없음</td></tr>
             <tr><td>9월 초</td><td>내용 있는 파일 5개 (그중 4개는 고친 뒤)</td></tr>
           </tbody>
@@ -387,7 +387,7 @@ $ timeout 60 echo "&lt;깨진 인자&gt;"             → 125</code></pre>
         </div>
         </div>
         <p class="table-note">이 표는 세어 본 것이고 뜻은 세어 본 것이 아닙니다.
-        0바이트 파일이 ‘불렀는데 실패’인지는 그때 stderr를 버려서 알 수 없습니다.
+        0 bytes 파일이 ‘불렀는데 실패’인지는 그때 stderr를 버려서 알 수 없습니다.
         도구를 못 찾았어도 같은 모양이 됩니다. 파일이 없는 것도 ‘안 불렸다’의 증거는 아닙니다.</p>
 
 
@@ -395,7 +395,7 @@ $ timeout 60 echo "&lt;깨진 인자&gt;"             → 125</code></pre>
           <svg viewBox="0 0 720 190" role="img" aria-labelledby="tl-t tl-d" class="figure-svg">
             <title id="tl-t">7월 초부터 9월 초까지의 리뷰 결과</title>
             <desc id="tl-d">가로가 시간축입니다. 축 위쪽의 작은 동그라미가 내용이 있는 결과 파일이고
-            축 아래쪽의 가위표가 0바이트 파일입니다. 왼쪽 끝 7월 초에 동그라미가 셋 모여 있고 조금 뒤
+            축 아래쪽의 가위표가 0 bytes 파일입니다. 왼쪽 끝 7월 초에 동그라미가 셋 모여 있고 조금 뒤
             7월 중순에 동그라미 하나와 가위표 하나가 나란히 있습니다. 그 뒤로 3주 가까이 아무 표시가
             없다가 8월 초에 동그라미가 다섯 이어지고 8월 중순에 가위표가 넷 모여 있습니다. 이어지는
             8월 14일부터 31일까지는 축 위아래 모두 비어 있고 그 구간이 옅게 칠해져 있습니다. 오른쪽 끝
@@ -439,7 +439,7 @@ $ timeout 60 echo "&lt;깨진 인자&gt;"             → 125</code></pre>
                 <g stroke="#d62976" stroke-width="2" stroke-linecap="round">
                   <path d="M186 166 L 194 174"/><path d="M194 166 L 186 174"/>
                 </g>
-                <text x="202" y="174">0바이트 파일</text>
+                <text x="202" y="174">0 bytes 파일</text>
               </g>
             </g>
             <defs>
@@ -449,22 +449,22 @@ $ timeout 60 echo "&lt;깨진 인자&gt;"             → 125</code></pre>
             </defs>
           </svg>
           <figcaption>동그라미는 <strong>날짜마다 하나씩만</strong> 그렸습니다. 실제로는 같은 날 여러 건이
-          있습니다. 가위표는 0바이트 파일 다섯 개를 그대로 그렸습니다.
+          있습니다. 가위표는 0 bytes 파일 다섯 개를 그대로 그렸습니다.
           점선 오른쪽이 큰 문서가 잘리기 시작한 구간인데
           동그라미는 그 뒤에도 한동안 이어집니다.</figcaption>
         </figure>
 
         <p>그리고 이 표를 이렇게 놓고 보면 이상한 곳이 눈에 띕니다.
-        0바이트 파일도, 2주 넘는 공백도 그렇습니다. 제가 못 본 것은
+        0 bytes 파일도, 2주 넘는 공백도 그렇습니다. 제가 못 본 것은
         이렇게 놓고 안 봤기 때문입니다. 파일이 늘어나는 것만 이따금
         확인했습니다. 크기도 날짜 간격도 안 봤습니다.</p>
 
-        <p>7월 13일의 0바이트는 이 글의 원인으로는 설명되지 않습니다.
+        <p>7월 13일의 0 bytes는 이 글의 원인으로는 설명되지 않습니다.
         그때 문서는 6만 바이트보다 짧아서 자를 것이 없었습니다.
         그 실패의 원인은 모릅니다.</p>
 
         <p>8월 초에는 내용 있는 리뷰가 계속 나왔습니다. 그때 설계 문서가 두 개였고
-        새로 쓰던 쪽은 31,965 바이트였습니다. 6만보다 짧으니 자를 것이 없습니다.
+        새로 쓰던 쪽은 31,965 bytes였습니다. 6만보다 짧으니 자를 것이 없습니다.
         그 리뷰들의 내용도 그 새 문서 쪽 이야기였습니다.
         결과물에 파일 이름이 안 적혀 있어서 내용을 읽고 짐작한 것이고
         어느 리뷰가 어느 문서를 봤는지 결과물로는 구분할 수 없습니다.</p>
@@ -472,7 +472,7 @@ $ timeout 60 echo "&lt;깨진 인자&gt;"             → 125</code></pre>
         <blockquote><p>그래서 폴더는 더 건강해 보였습니다.
         짧은 쪽 문서를 고칠 때마다 결과가 또박또박 쌓이는 것처럼 보였으니까요.</p></blockquote>
 
-        <h2 id="대조-실험">1바이트를 버리니 통과했습니다<a class="anchor" href="#대조-실험" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="대조-실험">1 bytes를 버리니 통과했습니다<a class="anchor" href="#대조-실험" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>고치는 방법은 파이프 하나입니다. 유효하지 않은 바이트를 버리는 변환을 끼웁니다.</p>
 
@@ -488,7 +488,7 @@ $ timeout 60 echo "&lt;깨진 인자&gt;"             → 125</code></pre>
 [iconv 거쳐서]
   잘라 낸 조각 59,999 바이트 → 종료 코드 0 · 문서 제목을 정확히 답함</code></pre>
 
-        <blockquote><p><strong>차이는 1바이트입니다.</strong> 잘린 글자의 조각 하나를 버리니
+        <blockquote><p><strong>차이는 1 bytes입니다.</strong> 잘린 글자의 조각 하나를 버리니
         도구가 문서를 읽고 답했습니다.</p></blockquote>
 
         <p>위 숫자는 잘라 낸 조각의 크기이지 실제로 넘어간 인자의 크기가 아닙니다.
@@ -524,7 +524,7 @@ fi</code></pre>
           붙여 이유를 화면까지 가져옵니다.
           로그로 가는 것은 그 한 줄의 stderr뿐입니다. 앞의 <code>iconv</code>가
           내는 진단문은 여전히 밖으로 샙니다.</li>
-          <li>실패하면 0바이트 파일을 지웁니다. ‘리뷰됨’으로 오인되는 것을 막습니다.</li>
+          <li>실패하면 0 bytes 파일을 지웁니다. ‘리뷰됨’으로 오인되는 것을 막습니다.</li>
           <li><code>&lt; /dev/null</code>을 붙였습니다. 이 훅은 뒤에서 도는데
           도구가 표준 입력을 물고 기다리는 상황이 생기면 매달려도 아무도 모릅니다.
           인자로 지시를 넘겼으니 원래는 안 기다립니다. 물려받은 입력이 열려 있을 때를 막는 장치입니다.</li>
@@ -555,7 +555,7 @@ fi</code></pre>
         (결과 폴더에 <code>design-*</code> 0개).</p></blockquote>
 
         <p>둘 다 틀렸습니다. 그날 이미 결과 폴더에는 <code>design-*</code> 파일이
-        <strong>38개</strong> 있었고 그중 0바이트는 <strong>5개</strong>였습니다.
+        <strong>38개</strong> 있었고 그중 0 bytes는 <strong>5개</strong>였습니다.
         커밋된 것만 세면 34개이고 나머지 4개는 그때까지 커밋 전이었습니다.
         ‘실측’이라고 써 놓고 세어 보지 않았습니다.
         그리고 그 문장을 훅 코드 주석에도 그대로 복사해 뒀습니다.</p>
@@ -585,7 +585,7 @@ fi</code></pre>
         <h2 id="주장하지-않는-것">한계: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul class="callout">
-          <li>0바이트 파일 5건의 원인을 확인하지 못했습니다. 그때 stderr를 버리고 있어서
+          <li>0 bytes 파일 5건의 원인을 확인하지 못했습니다. 그때 stderr를 버리고 있어서
           당시의 실패 이유가 남아 있지 않습니다. 재현으로 보인 것은
           같은 모양을 만드는 한 가지 경로이지 그 5건의 원인이 아닙니다.
           그중 7월 13일 것은 그 경로로는 설명되지 않습니다.</li>
@@ -634,7 +634,7 @@ fi</code></pre>
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=07ce86b446"></script>
-  <script src="../assets/content.js?v=8e19bcc47c"></script>
+  <script src="../assets/content.js?v=77d20d5e81"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

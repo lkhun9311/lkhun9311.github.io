@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="볼륨 목록을 병렬로 바꾸자 P99가 2배 나빠졌습니다 | Kwanghun Lee" />
-  <meta property="og:description" content="Cache 설정을 고정한 채 순차를 병렬로 바꾸니 P99가 42.6초에서 79.0초로 악화됐습니다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다. 여섯 구성을 같은 조건으로 재고 나서야 보인 것." />
+  <meta property="og:description" content="Cache 설정을 고정한 채 순차를 병렬로 바꾸니 P99가 42.6s에서 79.0s로 악화됐습니다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다. 여섯 구성을 같은 조건으로 재고 나서야 보인 것." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -27,9 +27,9 @@
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="볼륨 목록을 병렬로 바꾸자 P99가 2배 나빠졌습니다 | Kwanghun Lee" />
-  <meta name="twitter:description" content="Cache를 고정한 채 병렬화하니 P99가 42.6초에서 79.0초로 악화됐습니다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다." />
+  <meta name="twitter:description" content="Cache를 고정한 채 병렬화하니 P99가 42.6s에서 79.0s로 악화됐습니다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="Cache 설정을 고정한 채 순차를 병렬로 바꾸니 P99가 42.6초에서 79.0초로 악화됐습니다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다. 여섯 구성을 같은 조건으로 재고 나서야 보인 것." />
+  <meta name="description" content="Cache 설정을 고정한 채 순차를 병렬로 바꾸니 P99가 42.6s에서 79.0s로 악화됐습니다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다. 여섯 구성을 같은 조건으로 재고 나서야 보인 것." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=1daf6cc6f0" />
 </head>
@@ -69,7 +69,7 @@
     <main>
       <div class="hero-top">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
-        <div class="article-meta"><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a><span class="source-tag company notranslate">회사 업무</span></div>
+        <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div>
       </div>
       <section class="page-hero">
         <h1>볼륨 목록을 병렬로 바꾸자 P99가 2배 나빠졌습니다<br><span class="h1-sub">computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다.</span></h1>
@@ -92,11 +92,11 @@
       <article class="article-body">
 
         <p>사내 Cloud 관리 Console의 볼륨 목록 화면이 볼륨이 늘수록 선형으로 느려지다가 결국
-        10분 Timeout으로 죽었습니다. 원인은 볼륨 하나마다 외부 API를 순차로 부르는 루프였고
+        10min Timeout으로 죽었습니다. 원인은 볼륨 하나마다 외부 API를 순차로 부르는 루프였고
         처방은 뻔해 보였습니다. 병렬로 돌리면 됩니다.</p>
 
         <p>병렬로 돌리자 <strong>더 느려졌습니다.</strong> Cache 설정을 고정한 채 순차를 병렬로만
-        바꾸니 P99가 42.6초 → 79.0초가 됐습니다.</p>
+        바꾸니 P99가 42.6s → 79.0s가 됐습니다.</p>
 
         <p>느려진 이유는 <code>computeIfAbsent</code>의 매핑 함수 안에서 외부 API를 부른 것이었습니다.
         그 자리가 잠긴 채 네트워크 왕복을 기다리므로 같은 키를 쓰는 Thread들은 병렬 코드에서도
@@ -127,9 +127,9 @@
           <thead><tr><th scope="col">#</th><th scope="col">구성</th><th scope="col">Samples</th><th scope="col">Error</th><th scope="col">Median</th><th scope="col">P99</th><th scope="col">TPS</th><th scope="col">Apdex</th></tr></thead>
           <tbody>
             <tr><td>①</td><td>Cache 없음, 순차</td><td>54</td><td><strong>83.3%</strong></td><td>600,002</td><td>600,017</td><td>0.06</td><td>0.000</td></tr>
-            <tr><td>②</td><td>Cache 5초, 순차</td><td>1,641</td><td>0%</td><td>10,974</td><td>42,644</td><td>2.69</td><td>0.014</td></tr>
+            <tr><td>②</td><td>Cache 5s, 순차</td><td>1,641</td><td>0%</td><td>10,974</td><td>42,644</td><td>2.69</td><td>0.014</td></tr>
             <tr><td>③</td><td>Cache 없음, 병렬</td><td>541</td><td>0%</td><td>45,075</td><td><strong>129,880</strong></td><td>0.87</td><td>0.000</td></tr>
-            <tr><td>④</td><td>Cache 5초, 병렬</td><td>1,560</td><td>0%</td><td>508</td><td>78,997</td><td>2.46</td><td>0.526</td></tr>
+            <tr><td>④</td><td>Cache 5s, 병렬</td><td>1,560</td><td>0%</td><td>508</td><td>78,997</td><td>2.46</td><td>0.526</td></tr>
             <tr><td>⑤</td><td>④ + 부가정보 조회 최적화</td><td>5,991</td><td>0%</td><td>32</td><td>6,859</td><td>10.01</td><td>0.711</td></tr>
             <tr><td>⑥</td><td>⑤ + Caffeine Refresh</td><td>7,658</td><td>0%</td><td>4</td><td>23</td><td>12.82</td><td>1.000</td></tr>
           </tbody>
@@ -137,16 +137,16 @@
         </div>
         </div>
 
-        <p>단위는 밀리초입니다. ①의 600,017ms는 측정값이 아니라 10분 Timeout 상한에 붙은 값입니다.         그 구성은 요청의 83.3%가 끝나지 못했습니다. 끝나지 못한 요청의 지연은 "600초"가 아니라 모른다가
+        <p>단위는 밀리초입니다. ①의 600,017ms는 측정값이 아니라 10min Timeout 상한에 붙은 값입니다.         그 구성은 요청의 83.3%가 끝나지 못했습니다. 끝나지 못한 요청의 지연은 "600s"가 아니라 모른다가
         정답이고 표의 그 칸은 그렇게 읽어야 합니다.</p>
 
-        <p>③이 ②보다 나쁘다는 게 먼저 눈에 걸립니다. 42.6초 대 129.9초입니다. 그런데
-        이 두 줄은 서로의 대조군이 아닙니다. ②는 Cache 5초에 순차이고 ③은 Cache 없음에 병렬이라
+        <p>③이 ②보다 나쁘다는 게 먼저 눈에 걸립니다. 42.6s 대 129.9s입니다. 그런데
+        이 두 줄은 서로의 대조군이 아닙니다. ②는 Cache 5s에 순차이고 ③은 Cache 없음에 병렬이라
         두 변수가 동시에 바뀝니다. 이 차이에서 병렬화의 효과만 떼어낼 수 없습니다.</p>
 
-        <p>Cache를 고정한 쌍은 ②와 ④입니다. 둘 다 Cache 5초이고 순차냐 병렬이냐만 다릅니다.</p>
+        <p>Cache를 고정한 쌍은 ②와 ④입니다. 둘 다 Cache 5s이고 순차냐 병렬이냐만 다릅니다.</p>
 
-        <p>P99가 42.6초 → 79.0초로 올랐습니다. Thread를 늘렸는데 꼬리가 1.85배가 됐습니다.
+        <p>P99가 42.6s → 79.0s로 올랐습니다. Thread를 늘렸는데 꼬리가 1.85배가 됐습니다.
         이것이 이 실험에서 병렬화 단독의 효과로 말할 수 있는 전부이고 방향은 분명합니다. 해로웠습니다.</p>
 
         <h2 id="왜-3이-2보다-나쁜가">왜 ③이 ②보다 나쁜가<a class="anchor" href="#왜-3이-2보다-나쁜가" aria-label="이 절로 가는 링크">#</a></h2>
@@ -265,7 +265,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
           <figcaption>같은 키의 요청은 버킷 하나에 모입니다. 실선이 호출 중인 T1, 점선이 대기 중인 T2·T3·T4입니다. 매핑 함수 안의 외부 호출이 그 버킷을 왕복 시간만큼 잡고 있고 나머지 Thread는 Pool 자리를 쥔 채 기다립니다. 다른 키의 버킷은 잠기지 않습니다. 매핑 함수는 <strong>한 번만</strong> 실행되고 값이 게시되면 대기가 풀립니다. 즉 늘어난 것은 호출 횟수가 아니라 Pool 점유와 컨텍스트 스위칭이고 줄서기는 그대로 남습니다.</figcaption>
         </figure>
 
-        <p>그래서 ③은 ②보다 나쁩니다. ②는 5초 Cache 덕분에 외부 호출 횟수 자체가 적었고 ③은 Cache가 없어
+        <p>그래서 ③은 ②보다 나쁩니다. ②는 5s Cache 덕분에 외부 호출 횟수 자체가 적었고 ③은 Cache가 없어
         모든 요청이 그 잠긴 자리를 통과해야 했습니다.</p>
 
         <blockquote><p>용어 하나. 이 구조를 "세그먼트 Lock"이라고 부르는 문서를 자주 봅니다.
@@ -281,20 +281,20 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         <figure class="diagram">
           <svg viewBox="0 0 720 300" role="img" aria-labelledby="p9-t p9-d" class="figure-svg">
             <title id="p9-t">여섯 구성 중 네 줄의 P99를 나란히 놓은 막대</title>
-            <desc id="p9-d">가로 막대가 넷 있습니다. 위에서부터 Cache 없음 순차, Cache 없음 병렬, Cache 5초 순차, Cache 5초 병렬 순서입니다. Cache를 고정한 두 쌍이 각각 같은 색으로 묶여 있습니다. 아래에 분홍색으로 Cache를 고정한 쌍만 비교할 수 있다고 적혀 있습니다.</desc>
+            <desc id="p9-d">가로 막대가 넷 있습니다. 위에서부터 Cache 없음 순차, Cache 없음 병렬, Cache 5s 순차, Cache 5s 병렬 순서입니다. Cache를 고정한 두 쌍이 각각 같은 색으로 묶여 있습니다. 아래에 분홍색으로 Cache를 고정한 쌍만 비교할 수 있다고 적혀 있습니다.</desc>
             <g font-family="Inter, sans-serif">
               <text x="176" y="70" font-size="11.5" fill="#8a8a8a" text-anchor="end">① Cache 없음 · 순차</text>
               <rect x="190" y="50" width="430" height="28" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.8"/>
-              <text x="630" y="70" font-size="11.5" fill="#4a4a4a">600초 · Timeout 상한</text>
+              <text x="630" y="70" font-size="11.5" fill="#4a4a4a">600s · Timeout 상한</text>
               <text x="176" y="122" font-size="11.5" fill="#8a8a8a" text-anchor="end">③ Cache 없음 · 병렬</text>
               <rect x="190" y="102" width="92" height="28" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.8"/>
-              <text x="292" y="122" font-size="11.5" fill="#4a4a4a">129.9초</text>
-              <text x="176" y="174" font-size="11.5" fill="#4f5bd5" text-anchor="end">② Cache 5초 · 순차</text>
+              <text x="292" y="122" font-size="11.5" fill="#4a4a4a">129.9s</text>
+              <text x="176" y="174" font-size="11.5" fill="#4f5bd5" text-anchor="end">② Cache 5s · 순차</text>
               <rect x="190" y="154" width="30" height="28" rx="5" fill="none" stroke="#4f5bd5" stroke-width="1.8"/>
-              <text x="230" y="174" font-size="11.5" fill="#4a4a4a">42.6초</text>
-              <text x="176" y="226" font-size="11.5" fill="#d62976" text-anchor="end">④ Cache 5초 · 병렬</text>
+              <text x="230" y="174" font-size="11.5" fill="#4a4a4a">42.6s</text>
+              <text x="176" y="226" font-size="11.5" fill="#d62976" text-anchor="end">④ Cache 5s · 병렬</text>
               <rect x="190" y="206" width="56" height="28" rx="5" fill="none" stroke="#d62976" stroke-width="1.8"/>
-              <text x="256" y="226" font-size="11.5" fill="#4a4a4a">79.0초 · 1.85배</text>
+              <text x="256" y="226" font-size="11.5" fill="#4a4a4a">79.0s · 1.85배</text>
               <text x="360" y="282" font-size="11.5" fill="#d62976" text-anchor="middle">Cache를 고정한 쌍 · ②와 ④</text>
             </g>
           </svg>
@@ -366,17 +366,17 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
           <thead><tr><th scope="col">전이</th><th scope="col">바뀐 것</th><th scope="col">효과</th></tr></thead>
           <tbody>
             <tr><td>① → ②</td><td>Cache 도입</td><td>오류율 <strong>83.3% → 0%</strong>. 완주하게 만든 것이 첫 조치의 성과다</td></tr>
-            <tr><td>② → ④</td><td>병렬화만 (Cache 고정)</td><td>악화. P99 42.6초 → 79.0초 (1.85배)</td></tr>
+            <tr><td>② → ④</td><td>병렬화만 (Cache 고정)</td><td>악화. P99 42.6s → 79.0s (1.85배)</td></tr>
             <tr><td>② ↔ ③</td><td>Cache와 실행 방식이 동시에 바뀜</td><td><em>비교 불가.</em> 어느 쪽 효과인지 나눌 수 없다</td></tr>
-            <tr><td>④ → ⑤</td><td>부가정보 조회 최적화</td><td>P99 79.0초 → <strong>6.9초</strong></td></tr>
-            <tr><td>⑤ → ⑥</td><td>Caffeine Refresh</td><td>P99 6.9초 → 23ms</td></tr>
+            <tr><td>④ → ⑤</td><td>부가정보 조회 최적화</td><td>P99 79.0s → <strong>6.9s</strong></td></tr>
+            <tr><td>⑤ → ⑥</td><td>Caffeine Refresh</td><td>P99 6.9s → 23ms</td></tr>
           </tbody>
         </table>
         </div>
         </div>
 
-        <p>마지막 한 단계가 배수로는 가장 컸습니다. 6.9초에서 23ms로 약 300배입니다.
-        절대량으로는 ④→⑤ 가 더 큽니다(약 72.1초 감소 대 약 6.84초). 둘 다 참이고 어느 쪽을
+        <p>마지막 한 단계가 배수로는 가장 컸습니다. 6.9s에서 23ms로 약 300배입니다.
+        절대량으로는 ④→⑤ 가 더 큽니다(약 72.1s 감소 대 약 6.84s). 둘 다 참이고 어느 쪽을
         "가장 컸다"고 부를지는 척도가 정합니다. 다만 어느 척도로 보든 그 단계는 맨 마지막에 넣은
         것이라, 전후만 쟀다면 앞선 네 조치의 공으로 돌아갔을 것입니다.</p>
 
@@ -394,10 +394,10 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
           <caption class="sr-only">개선 전후의 네 화면.</caption>
           <thead><tr><th scope="col">화면</th><th scope="col">Error</th><th scope="col">P99</th><th scope="col">TPS</th><th scope="col">Apdex</th></tr></thead>
           <tbody>
-            <tr><td>볼륨 (관리)</td><td>83.3% → 0%</td><td>10분 Timeout → 23ms</td><td>0.06 → 12.82</td><td>0.0 → 1.000</td></tr>
-            <tr><td>볼륨 (프로젝트)</td><td>0% → 0%</td><td>6분 → 345ms</td><td>0.38 → 12.89</td><td>0.0 → 0.996</td></tr>
-            <tr><td>스냅샷 (관리)</td><td>0% → 0%</td><td>7분 → 14ms</td><td>0.32 → 12.86</td><td>0.006 → 1.000</td></tr>
-            <tr><td>스냅샷 (프로젝트)</td><td>0% → 0%</td><td>8분 30초 → 97ms</td><td>0.19 → 12.85</td><td>0.000 → 0.998</td></tr>
+            <tr><td>볼륨 (관리)</td><td>83.3% → 0%</td><td>10min Timeout → 23ms</td><td>0.06 → 12.82</td><td>0.0 → 1.000</td></tr>
+            <tr><td>볼륨 (프로젝트)</td><td>0% → 0%</td><td>6min → 345ms</td><td>0.38 → 12.89</td><td>0.0 → 0.996</td></tr>
+            <tr><td>스냅샷 (관리)</td><td>0% → 0%</td><td>7min → 14ms</td><td>0.32 → 12.86</td><td>0.006 → 1.000</td></tr>
+            <tr><td>스냅샷 (프로젝트)</td><td>0% → 0%</td><td>8min 30s → 97ms</td><td>0.19 → 12.85</td><td>0.000 → 0.998</td></tr>
           </tbody>
         </table>
         </div>
@@ -406,7 +406,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         <h2 id="전후만-쟀다면">전후만 쟀다면 무엇을 잘못 보고했을까<a class="anchor" href="#전후만-쟀다면" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>①과 ⑥만 쟀다면 보고서는 이렇게 나왔을 것입니다. <em>"Cache와 병렬화를 적용해 오류율 83.3%를 0%로,
-        P99를 10분에서 23ms로 개선했다."</em></p>
+        P99를 10min에서 23ms로 개선했다."</em></p>
 
         <p>모든 숫자가 참입니다. 그리고 <strong>병렬화가 기여했다는 함의는 거짓</strong>입니다. 병렬화는 단독으로는
         해로웠습니다. Cache를 고정해도 병렬이 순차보다 나빴으므로 이 실험은 병렬화의 양의 기여를 보이지 않습니다. 그 사실을 모른 채 다른 화면에 "여기도 병렬화하자"를 처방했다면
@@ -429,7 +429,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
 
         <ul>
           <li>2026년 5월, OpenStack 기반 프라이빗 클라우드 관리 콘솔의 볼륨 목록 화면을 고친 기록입니다. 제품명·버전·고객사는 쓰지 않고 코드는 실제 코드를 인용하되 사내 식별자는 지웠습니다.</li>
-          <li>숫자는 전부 사내 테스트 환경에서 JMeter로 잰 값이고 프로덕션 트래픽이 아닙니다. 부하 조건은 여섯 구성 모두 같습니다. 동시 사용자 50명 · Ramp-Up 2분 · 지속 10분 · Think Time 2~5초.</li>
+          <li>숫자는 전부 사내 테스트 환경에서 JMeter로 잰 값이고 프로덕션 트래픽이 아닙니다. 부하 조건은 여섯 구성 모두 같습니다. 동시 사용자 50명 · Ramp-Up 2min · 지속 10min · Think Time 2~5s.</li>
 
           <li>병렬화가 나쁘다는 주장이 아닙니다. Lock 안에서 I/O를 하는 코드를 병렬화하면 나쁩니다.
           다만 이 여섯 구성 안에 그 조건을 없앤 병렬 구성이 없으므로 없앴을 때 병렬화가
@@ -437,7 +437,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
           <li>프로덕션 측정이 아닙니다. 사내 테스트 환경에서 합성 부하로 잰 값입니다. 실제 사용자
           분포·데이터 규모·네트워크는 다릅니다.</li>
           <li>②와 ③은 서로의 대조군이 아닙니다. Cache와 실행 방식이 동시에 바뀌므로 그
-          차이(42.6초 → 129.9초)에서 어느 쪽 효과인지 나눌 수 없습니다. 이 글이 병렬화 단독의 근거로 쓰는 것은
+          차이(42.6s → 129.9s)에서 어느 쪽 효과인지 나눌 수 없습니다. 이 글이 병렬화 단독의 근거로 쓰는 것은
           Cache를 고정한 ②→④ 뿐입니다.</li>
           <li><strong>Apdex 1.000은 표본 전체가 만족 임계 안이라는 증명이 아닙니다.</strong> 도구 표기가 소수
           셋째 자리 반올림이면 소수의 tolerating 표본이 있어도 1.000으로 보입니다. 반올림 전 원시값은
@@ -445,7 +445,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
           <li>구성마다 한 번씩만 쟀습니다. 반복 측정으로 분산을 낸 것이 아니라서, 인접한 두 구성의
           차이가 작을 때는 그 차이를 근거로 삼지 않았습니다. 이 글이 근거로 쓰는 것은 ②→④ 처럼
           배 단위의 차이뿐입니다.</li>
-          <li><strong>①의 600초는 지연이 아닙니다.</strong> Timeout 상한입니다. ①의 P99를 "600초"로 인용하면
+          <li><strong>①의 600s는 지연이 아닙니다.</strong> Timeout 상한입니다. ①의 P99를 "600s"로 인용하면
           측정하지 못한 것을 측정한 척하는 것이 됩니다.</li>
           <li>Apdex 임계는 도구 기본값을 그대로 썼습니다. 서비스 수준 목표를 별도로 정의해 맞춘 값이
           아닙니다.</li>
@@ -485,7 +485,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=07ce86b446"></script>
-  <script src="../assets/content.js?v=8e19bcc47c"></script>
+  <script src="../assets/content.js?v=77d20d5e81"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

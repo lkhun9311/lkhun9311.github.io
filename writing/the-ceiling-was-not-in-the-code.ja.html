@@ -69,7 +69,7 @@
     <main>
       <div class="hero-top">
         <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>一覧</a>
-        <div class="article-meta"><a class="project-tag notranslate" href="../writing/index.html?tag=Social%20Polling%20Platform">#ソーシャル投票プラットフォーム</a><span class="source-tag commercial notranslate">事業化プロジェクト</span><span class="repo-private notranslate" translate="no">Private</span></div>
+        <div class="article-meta"><span class="source-tag commercial notranslate">事業化プロジェクト</span><span class="repo-private notranslate" translate="no">Private</span><a class="project-tag notranslate" href="../writing/index.html?tag=Social%20Polling%20Platform">#ソーシャル投票プラットフォーム</a></div>
       </div>
       <section class="page-hero">
         <h1>検閲経路のスループット上限は SDK の既定値でした<br><span class="h1-sub">S3 のために入った HTTP クライアントのホストあたり Connection が 5 でした。</span></h1>
@@ -128,7 +128,7 @@
         他の人が匿名で投票し、その結果のチャートをアプリの外へ共有します。Kotlin と Spring Boot で作った単一の
  Monolith で、データベースはマネージドの PostgreSQL 一つです。</p>
 
-        <p>投稿は<strong>モデレーションゲート</strong>を通らないと公開されません。ゲートは四層あり、そのうち
+        <p>投稿は<strong>Moderationゲート</strong>を通らないと公開されません。ゲートは四層あり、そのうち
         ③ 有害分類と④ 攻撃判定の二層が外部 API を呼びます。ゲートは
         <a class="term" href="../notes/fail-closed.html">Fail-closed</a> なので、この呼び出しが失敗すると投稿は
         公開されません。</p>
@@ -136,8 +136,8 @@
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロールできる図">
             <svg viewBox="0 0 720 238" role="img" aria-labelledby="gate-t gate-d" xmlns="http://www.w3.org/2000/svg">
-              <title id="gate-t">投稿一件が通るモデレーションゲートの四層</title>
-              <desc id="gate-d">ユーザーが投稿すると、API サーバーのモデレーションゲートが四つの検査を行います。
+              <title id="gate-t">投稿一件が通るModerationゲートの四層</title>
+              <desc id="gate-d">ユーザーが投稿すると、API サーバーのModerationゲートが四つの検査を行います。
               一つ目の禁止語検査と二つ目の連絡先検査はアプリケーションの中で完結するので高速です。三つ目の有害分類と
               四つ目の攻撃判定は外部 API を呼び、この二つは互いに独立なので重ねて送ります。つまり投稿一件ごとに外部
               呼び出しが二つ出ます。四層すべてを通過してはじめて投稿が PostgreSQL に保存され、公開されます。</desc>
@@ -148,7 +148,7 @@
               <path d="M128 78 H 174" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#g-ar)"/>
 
               <rect x="182" y="30" width="212" height="96" rx="6" fill="none" stroke="#18121d" stroke-width="2"/>
-              <text x="288" y="52" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">モデレーションゲート</text>
+              <text x="288" y="52" font-size="14" fill="#18121d" font-weight="700" text-anchor="middle">Moderationゲート</text>
               <text x="196" y="76" font-size="13" fill="#3b3344">① 禁止語 · ② 連絡先</text>
               <text x="196" y="94" font-size="12" fill="#7b7186">アプリ内</text>
               <text x="196" y="115" font-size="13" fill="#d62976" font-weight="700">③ 有害分類 · ④ 名指し判定</text>
@@ -669,7 +669,7 @@ assertThat(factories[0]).isSameAs(factories[1])</code></pre>
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=07ce86b446"></script>
-  <script src="../assets/content.js?v=8e19bcc47c"></script>
+  <script src="../assets/content.js?v=77d20d5e81"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
