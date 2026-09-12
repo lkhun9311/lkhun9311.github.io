@@ -878,8 +878,16 @@
       if (mySeries && series(it.url) === mySeries) n += 1;
       return n;
     }
+    /* 읽는 사람의 언어로 된 제목이 있는 글을 먼저 올린다. 영문 전용 네 편이 한국어 레일에
+       영어 제목으로 서면, 「제목만으로 무슨 말인지 모르겠다」가 그대로 남는다. 빼지는 않는다 —
+       관련 있는 글인 것은 사실이고, 뒤로 밀 뿐이다. */
+    function sameLang(it) {
+      return lang === "en" || it["title_" + lang] ? 1 : 0;
+    }
     var pool = items.filter(function (it) { return it !== me && it.url; });
     pool.sort(function (x, y) {
+      var l = sameLang(y) - sameLang(x);
+      if (l) return l;
       var d = overlap(y) - overlap(x);
       if (Math.abs(d) > 1e-9) return d;
       var sx = x.source === me.source ? 1 : 0, sy = y.source === me.source ? 1 : 0;
