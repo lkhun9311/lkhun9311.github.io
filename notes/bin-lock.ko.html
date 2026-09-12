@@ -3,24 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>min-n | Kwanghun Lee</title>
-  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/notes/min-n.html" />
-  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/notes/min-n.ko.html" />
-  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/notes/min-n.ja.html" />
-  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/notes/min-n.html" />
+  <title>Bin Lock | Kwanghun Lee</title>
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/notes/bin-lock.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/notes/bin-lock.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/notes/bin-lock.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/notes/bin-lock.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
   <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
-  <meta name="description" content="한 칸에 든 사람이 n명 미만이면 그 칸을 숨기는 규칙. 한 스냅샷 안에서만 참입니다." />
+  <meta name="description" content="ConcurrentHashMap이 키가 속한 버킷 하나만 잠그는 방식. 매핑 함수는 그 잠금 안에서 돕니다." />
   <meta property="og:type" content="article" />
   <meta property="og:locale" content="ko_KR" />
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="min-n" />
-  <meta property="og:description" content="한 칸에 든 사람이 n명 미만이면 그 칸을 숨기는 규칙. 한 스냅샷 안에서만 참입니다." />
+  <meta property="og:title" content="Bin Lock" />
+  <meta property="og:description" content="ConcurrentHashMap이 키가 속한 버킷 하나만 잠그는 방식. 매핑 함수는 그 잠금 안에서 돕니다." />
   <meta property="og:locale" content="ko_KR" />
   <link rel="stylesheet" href="../assets/styles.css?v=557c3ff3d7" />
 </head>
@@ -30,7 +30,7 @@
       <a class="site-name" href="../index.html#about">Kwanghun</a>
       <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
         <select id="langPicker" class="lang-picker notranslate" translate="no"
-                  data-authored='{"en": "min-n.html", "ko": "min-n.ko.html", "ja": "min-n.ja.html"}' aria-label="Select language" data-i18n-attr="aria-label:a11y.lang">
+                  data-authored='{"en": "bin-lock.html", "ko": "bin-lock.ko.html", "ja": "bin-lock.ja.html"}' aria-label="Select language" data-i18n-attr="aria-label:a11y.lang">
           <option value="ko" selected>한국어</option>
           <option value="en">English</option>
           <option value="ja">日本語</option>
@@ -63,73 +63,78 @@
         <div class="article-meta"><span class="source-tag glossary notranslate">용어</span></div>
       </div>
       <section class="page-hero">
-        <h1>min-n</h1>
+        <h1>Bin Lock</h1>
         <p class="article-date">성능 측정<span aria-hidden="true"> · </span><span class="notranslate">#Warm-up</span></p>
       </section>
-      <aside class="article-aside" data-aside="notes" data-slug="min-n"></aside>
+      <aside class="article-aside" data-aside="notes" data-slug="bin-lock"></aside>
         <nav class="article-toc" aria-label="목차">
           <p class="toc-label">목차</p>
           <ul>
-            <li><a href="#무엇">무엇을 막나요?</a></li>
-            <li><a href="#한계">한 장면 안에서만 참입니다</a></li>
-            <li><a href="#축">축이 늘면 다시 뚫립니다</a></li>
+            <li><a href="#무엇">세그먼트가 아니라 버킷입니다</a></li>
+            <li><a href="#시간">잠긴 자리에서 기다리면 병렬이 줄서기가 됩니다</a></li>
+            <li><a href="#고치기">안전한 것과 빠른 것은 다릅니다</a></li>
             <li><a href="#쓰인-곳">이 사이트에서 쓰인 곳</a></li>
           </ul>
         </nav>
       <article class="article-body">
 
-        <p><strong>min-n은 한 칸에 든 사람이 n명 미만이면 그 칸을 숨기는 규칙입니다.</strong>
-        집계를 공개하면서 개인을 되짚지 못하게 하는 가장 흔한 장치입니다.</p>
+        <p><strong>Bin Lock은 ConcurrentHashMap이 맵 전체가 아니라 키가 속한 버킷 하나만 잠그는 방식입니다.</strong>
+        <code>computeIfAbsent</code>의 매핑 함수는 그 잠금 안에서 돕니다.</p>
 
-        <h2 id="무엇">무엇을 막나요?<a class="anchor" href="#무엇" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="무엇">세그먼트가 아니라 버킷입니다<a class="anchor" href="#무엇" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>집계는 사람을 가리지만 칸이 작아지면 다시 드러납니다. 어떤 지역의 어떤 연령대에 한 명뿐이면
-        그 칸의 값은 <strong>그 한 사람의 값</strong>입니다. 이름을 지워도 지운 것이 아닙니다.</p>
+        <p>이 구조를 세그먼트 Lock이라고 부르는 문서를 자주 봅니다. 세그먼트는 Java 7 시절 용어입니다.
+        Java 8 이후의 ConcurrentHashMap은 세그먼트를 없애고 <strong>버킷(Bin) 단위로 잠급니다.</strong></p>
 
-        <p>min-n은 그 칸을 아예 안 보여 줍니다. n을 5로 잡으면 다섯 명 미만인 칸이 사라집니다.
-        k-익명성과 같은 생각인데, 데이터를 고치는 대신 <strong>내보낼 때 거르는</strong> 쪽입니다.</p>
+        <p>달라진 것은 잠기는 <strong>범위</strong>입니다. 잠긴다는 사실 자체는 그대로입니다.
+        범위가 좁아진 것이 그 안에서 오래 걸리는 일을 해도 된다는 뜻은 아닙니다.</p>
 
                 <figure class="diagram">
-          <svg viewBox="0 0 720 216" role="img" aria-labelledby="mn-t mn-d" class="figure-svg">
-            <title id="mn-t">한 스냅샷에 건 제약과 두 스냅샷 사이</title>
-            <desc id="mn-d">왼쪽 상자는 한 스냅샷 안에서 보는 것, 오른쪽 상자는 두 스냅샷 사이에서 새는 것입니다. 왼쪽은 칸마다 다섯 명 이상이어서 제약이 성립합니다. 오른쪽은 두 스냅샷의 차이가 한 칸에서 1이라 그 1이 한 사람입니다. 아래에 분홍색으로 점유 제약은 차분 제약을 함의하지 않는다고 적혀 있습니다.</desc>
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="bl-t bl-d" class="figure-svg">
+            <title id="bl-t">매핑 함수가 계산일 때와 I/O일 때</title>
+            <desc id="bl-d">왼쪽 상자는 매핑 함수가 계산으로 끝나는 경우입니다. 잠긴 시간이 나노초 단위이고 같은 키의 다른 Thread는 사실상 기다리지 않습니다. 오른쪽 상자는 매핑 함수가 외부 호출을 하는 경우입니다. 네트워크 왕복 시간만큼 버킷이 잠기고 같은 키의 나머지 Thread는 Pool 자리를 쥔 채 줄을 섭니다. 아래에 분홍색으로 잠김 범위가 아니라 잠김 시간이 문제라고 적혀 있습니다.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
-              <text x="204" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">한 스냅샷</text>
-              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">칸마다 다섯 명 이상</text>
-              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">제약 성립</text>
-              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">숨길 칸 없음</text>
+              <text x="204" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">매핑 함수가 계산</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">잠김 나노초</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">대기 사실상 없음</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">Pool 자리 회전</text>
               <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
-              <text x="556" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">두 스냅샷 사이</text>
-              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">한 칸의 차이 1</text>
-              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">그 1이 한 사람</text>
-              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">제약은 그대로 성립</text>
-              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">점유 제약은 차분 제약을 함의하지 않음</text>
+              <text x="556" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">매핑 함수가 I/O</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">잠김 왕복 시간</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">같은 키 M−1 개 대기</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">Pool 자리 묶임</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">잠김 범위가 아니라 잠김 시간이 문제</text>
             </g>
           </svg>
-          <figcaption>min-n은 한 장면 안에서만 참입니다. 장면이 두 개가 되면 그 사이가 새 통로가 됩니다.</figcaption>
+          <figcaption>같은 자료구조, 같은 Lock입니다. 달라지는 것은 그 Lock을 쥔 채 무엇을 하느냐뿐입니다.</figcaption>
         </figure>
 
-        <h2 id="한계">한 장면 안에서만 참입니다<a class="anchor" href="#한계" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="시간">잠긴 자리에서 기다리면 병렬이 줄서기가 됩니다<a class="anchor" href="#시간" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>여기에 함정이 있습니다. min-n은 <strong>한 스냅샷 안</strong>의 제약입니다.
-        공개본이 두 개가 되면 그 둘의 차이가 새 통로가 됩니다.</p>
+        <p>매핑 함수가 맵을 읽고 끝나는 계산이면 잠긴 구간은 나노초 단위입니다. 거기서 외부 API를 부르면
+        <strong>네트워크 왕복 시간 내내 그 버킷이 잠깁니다.</strong></p>
 
-        <p>모든 칸이 다섯 명 이상인 두 스냅샷을 놓고 빼 보면 어떤 칸의 차이가 1일 수 있습니다.
-        그 1이 한 사람입니다. 두 스냅샷 각각에서는 제약이 참인 채로 그렇습니다.</p>
+        <p>같은 키를 쓰는 작업이 M 개면 하나가 왕복하는 동안 나머지 M−1 개가 그 버킷 앞에 줄을 섭니다.
+        순차 코드에서 서던 줄이 병렬 코드에서도 그대로 서고 그동안 Thread Pool 자리는 묶여 있습니다.
+        늘어난 것은 호출 횟수가 아니라 <strong>Pool 점유와 컨텍스트 스위칭</strong>입니다.
+        다른 키의 버킷은 잠기지 않으므로 그쪽 작업은 진행합니다.</p>
 
-        <h2 id="축">축이 늘면 다시 뚫립니다<a class="anchor" href="#축" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="고치기">안전한 것과 빠른 것은 다릅니다<a class="anchor" href="#고치기" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>방어를 축마다 붙이면 축이 하나 늘 때 그 축에는 아무것도 없습니다. 인구 축에 min-n을 걸어 두고
-        나중에 시간 축이 생기면 시간 축은 안 걸린 채로 공개됩니다.</p>
+        <p>ConcurrentHashMap을 썼으니 안전하다는 말은 맞습니다. 물어야 할 것은 그 안전성을 무엇으로 사느냐입니다.
+        여기서는 왕복 시간만큼의 직렬화로 샀습니다.</p>
 
-        <p>그래서 방어는 축이 아니라 <strong>공개하는 값 전체</strong>에 걸어야 합니다. 축 목록이 아니라
-        「비작성자가 볼 수 있는 모든 값」을 대상으로 문장을 씁니다.</p>
+        <p>고치는 방법은 Lock을 직접 다루는 일을 그만두는 것입니다. Caffeine의 LoadingCache는 키마다 로더를
+        정확히 한 번 실행하고 나머지 호출자는 그 결과를 기다립니다. 같은 「한 번만 부른다」를 보장하면서
+        <strong>기다리는 쪽이 맵의 버킷을 붙들고 있지 않습니다.</strong>
+        이 자리에서 함께 나오는 것이 <a href="cache-stampede.ko.html">Cache Stampede</a>입니다.</p>
 
         <h2 id="쓰인-곳">이 사이트에서 쓰인 곳<a class="anchor" href="#쓰인-곳" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul class="callout">
-          <li><a href="../writing/until-the-guarantee-was-a-sentence.ko.html">투표 집계 재식별 방어를 축마다 세우다 다섯 번 뚫렸습니다</a></li>
+          <li><a href="../writing/parallelism-made-the-tail-worse.ko.html">볼륨 목록을 병렬로 바꾸자 P99가 2배 나빠졌습니다</a></li>
+          <li><a href="../writing/slow-screens-1-volume-list.ko.html">볼륨 목록 P99가 10min → 23ms로 줄었습니다</a></li>
         </ul>
 
       </article>

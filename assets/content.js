@@ -63,6 +63,8 @@
   var NOTES_NAV = {
     "apdex": {ko:{t:"Apdex",s:[["계산","어떻게 나오나요?",0],["읽는법","무엇을 말해 주나요?",0],["함정","T를 안 적으면 비교가 안 됩니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Apdex",s:[["계산","How it is produced",0],["읽는법","What it tells you",0],["함정","Without T there is nothing to compare",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Apdex",s:[["계산","どうやって出るのか",0],["읽는법","何を教えてくれるのか",0],["함정","T を書かなければ比べられません",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "arm": {ko:{t:"Arm",s:[["어원","왜 이 말을 쓰나",0],["단일변수","한 변수만 바꿉니다",0],["패치","코드 비교는 패치로 관리합니다",0]]}, en:{t:"Arm",s:[["어원","Why this word",0],["단일변수","Change one variable",0],["패치","Keep a code difference in a patch",0]]}, ja:{t:"Arm",s:[["어원","なぜこの言葉を使うのか",0],["단일변수","変数は一つだけ変える",0],["패치","コードの差はパッチで管理する",0]]}},
+    "bin-lock": {ko:{t:"Bin Lock",s:[["무엇","세그먼트가 아니라 버킷입니다",0],["시간","잠긴 자리에서 기다리면 병렬이 줄서기가 됩니다",0],["고치기","안전한 것과 빠른 것은 다릅니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Bin Lock",s:[["무엇","Bins, not segments",0],["시간","Wait inside the lock and parallel becomes a queue",0],["고치기","Safe and fast are different claims",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Bin Lock",s:[["무엇","セグメントではなくバケットです",0],["시간","ロックの中で待てば並列が行列になります",0],["고치기","安全なことと速いことは別です",0],["쓰인-곳","このサイトで使われている記事",0]]}},
+    "cache-stampede": {ko:{t:"Cache Stampede",s:[["무엇","검사와 채움 사이가 벌어져 있습니다",0],["없음","「없음」도 값입니다",0],["막기","막는 자리는 Lock이 아니라 자료구조입니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Cache Stampede",s:[["무엇","There is a gap between checking and filling",0],["없음","“Nothing” is also a value",0],["막기","The fix belongs to the data structure, not to a lock",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Cache Stampede",s:[["무엇","検査と充填のあいだが空いています",0],["없음","「無い」も値です",0],["막기","止める場所はロックではなくデータ構造です",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "connection-pool": {ko:{t:"Connection Pool",s:[["왜","왜 재사용하나",0],["상한","블로킹 JDBC에서는 이것이 동시성 상한입니다",0],["불변식","불변식 하나",0]]}, en:{t:"Connection Pool",s:[["왜","Why reuse them",0],["상한","On blocking JDBC this is the concurrency limit",0],["불변식","One invariant",0]]}, ja:{t:"Connection Pool",s:[["왜","なぜ再利用するのか",0],["상한","ブロッキング JDBC ではこれが同時実行の上限",0],["불변식","不変条件が一つ",0]]}},
     "connection-pooler": {ko:{t:"Connection Pooler",s:[["왜","왜 필요한가",0],["구별","Connection Pool과 다른 것입니다",0],["한계","무엇을 못 고치나",0]]}, en:{t:"Connection Pooler",s:[["왜","Why it exists",0],["구별","It is not the same as a connection pool",0],["한계","What it cannot fix",0]]}, ja:{t:"Connection Pooler",s:[["왜","なぜ必要か",0],["구별","Connection Pool とは別のもの",0],["한계","何を直せないか",0]]}},
     "fail-closed": {ko:{t:"Fail-closed",s:[["방향","어느 쪽으로 넘어질 것인가",0],["대가","대가",0],["조용함","조용한 Fail-open이 제일 위험합니다",0]]}, en:{t:"Fail-closed",s:[["방향","Which way it falls",0],["대가","What it costs",0],["조용함","A silent fail-open is the worst case",0]]}, ja:{t:"Fail-closed",s:[["방향","どちらへ倒れるか",0],["대가","代償",0],["조용함","静かな Fail-open が一番危ない",0]]}},
@@ -514,12 +516,32 @@
       /* 왼쪽 필터의 묶음. 용어 노트(#Harness 처럼 말 자체가 태그인 것)와 분류를 갈라 놓는다 —
          한 줄에 섞여 있으면 "무엇으로 고르는 목록인지"를 매번 다시 읽어야 한다. */
       tagGroups: {
-        "Term": ["Harness", "Percentile", "SSE", "Apdex", "Fencing", "min-n", "Swap", "Soft Delete", "Warm-up", "Arm", "Connection Pool", "Connection Pooler",
+        "Term": ["Harness", "Percentile", "SSE", "Apdex", "Fencing", "min-n", "Swap", "Soft Delete", "Bin Lock", "Cache Stampede", "Warm-up", "Arm", "Connection Pool", "Connection Pooler",
                 "Transaction Pooling", "Mutation Testing", "Fail-closed"],
         "Kind": ["Performance", "Database", "Verification", "Design",
                 "Troubleshooting", "Operating", "Debugging", "Chore", "Certification"]
       },
       items: [
+        {
+          title: "Bin Lock",
+          url: "notes/bin-lock.html",
+          title_ko: "Bin Lock", title_ja: "Bin Lock",
+          desc: "How ConcurrentHashMap locks just the bucket a key falls into. The mapping function of computeIfAbsent runs inside that lock, so an external call there keeps the bin locked for a whole round trip.",
+          desc_ko: "ConcurrentHashMap이 키가 속한 버킷 하나만 잠그는 방식. computeIfAbsent의 매핑 함수가 그 잠금 안에서 돌기 때문에 거기서 외부 호출을 하면 왕복 시간 내내 버킷이 잠깁니다.",
+          desc_ja: "ConcurrentHashMap がキーの属するバケット一つだけをロックする方式。computeIfAbsent のマッピング関数がその中で回るので、そこで外部呼び出しをすると往復のあいだずっとバケットがロックされます.",
+          date: "2026-09", dateLabel: "Sep 2026",
+          tags: ["Bin Lock", "Performance"]
+        },
+        {
+          title: "Cache Stampede",
+          url: "notes/cache-stampede.html",
+          title_ko: "Cache Stampede", title_ja: "Cache Stampede",
+          desc: "One key goes missing and everyone who needed it calls the origin at once. The companion defect is not caching “nothing”, which makes the cache useless in the most frequent case.",
+          desc_ko: "키 하나가 비는 순간 그 키를 필요로 하던 여럿이 동시에 원본을 부르는 일. 짝이 되는 결함은 「없음」을 담지 않는 것이고 그러면 가장 흔한 경우에 Cache가 통째로 작동하지 않습니다.",
+          desc_ja: "あるキーが空になった瞬間に、それを必要としていた複数が同時に原本を呼ぶ事象。対になる欠陥は「無い」を保存しないことで、最も頻繁な場合に Cache がまるごと効かなくなります。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          tags: ["Cache Stampede", "Performance"]
+        },
         {
           title: "Swap",
           url: "notes/swap.html",
