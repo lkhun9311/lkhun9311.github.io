@@ -2899,6 +2899,56 @@ html[lang="ja"] .container.reading .article-body figure.diagram figcaption::befo
 
 .article-aside .aside-group { margin: 0 0 20px; }
 
+/* ---- 왼쪽 레일의 용어 나무 ------------------------------------------------------------------ */
+/* 용어 하나에 절이 서넛인데, 그 목록을 보려면 그 페이지에 들어가야만 했다(사용자 지적, 2026-09-12).
+   AWS 문서처럼 **옆에서 펴 보는 나무**를 두면 한 번 들어와서 다른 용어의 절까지 열어 볼 수 있다.
+   지금 보는 용어만 펴 두고 나머지는 접는다 — 아홉이 다 펴져 있으면 그건 나무가 아니라 목록이다.
+
+   `<details>` 를 쓴 이유: 펴고 접는 데 JavaScript 가 필요 없다. 스크립트가 안 뜨는 화면에서도
+   목록이 그대로 보이고, 접힌 것은 브라우저가 연다. */
+.article-aside .aside-terms > ul { margin: 0; padding: 0; list-style: none; }
+
+.article-aside .term > summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.article-aside .term > summary::-webkit-details-marker { display: none; }
+
+/* 펼침 표시는 **삼각형 하나**로. 화살표를 두 개(열림·닫힘) 그리면 그것부터 읽게 된다. */
+.article-aside .term > summary::before {
+  content: "";
+  flex: none;
+  width: 0;
+  height: 0;
+  margin-left: 6px;
+  border-left: 5px solid var(--muted, #7b7186);
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  transition: transform 0.14s ease;
+}
+
+.article-aside .term[open] > summary::before { transform: rotate(90deg); }
+
+.article-aside .term > summary > a { flex: 1 1 auto; padding-left: 2px; }
+
+.article-aside .term[open] > summary > a { color: var(--aside); font-weight: 700; }
+
+.article-aside .term > ul {
+  margin: 0 0 6px;
+  padding: 0 0 0 19px;
+  list-style: none;
+  border-left: 1px solid var(--aside-line);
+}
+
+.article-aside .term > ul a { font-size: 0.98rem; }
+
+.article-aside .term-leaf > a { padding-left: 19px; }
+
 .article-aside li { margin: 0 0 4px; }
 
 /* 링크는 쉴 때 중립색이다. 레일 전체가 색이면 「지금 어디」와 「어디로 갈 수 있나」가
