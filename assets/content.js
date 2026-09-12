@@ -524,6 +524,10 @@
       tagGroups: {
         "Term": ["Harness", "Percentile", "SSE", "Apdex", "Fencing", "min-n", "Swap", "Soft Delete", "Bin Lock", "Cache Stampede", "Timeout", "Grace Period", "Admission Control", "Stub", "Quorum", "TTL", "Warm-up", "Arm", "Connection Pool", "Connection Pooler",
                 "Transaction Pooling", "Mutation Testing", "Fail-closed"],
+        /* 뒤쪽 다섯(Troubleshooting…Certification)은 **자리를 잡아 둔 것**이다. 지금 이 태그를 단
+           노트가 없으므로 버튼도 안 나온다 — 자격증·컨퍼런스 노트를 실제로 쓰면 그때 돌아온다.
+           ⚠️ 이 다섯은 원래 안내문만 있는 가짜 노트 두 쪽이 받치고 있었다. 그 둘을 지웠다
+           (사용자 지시, 2026-09-12). 항목 없는 태그를 버튼으로 내면 눌러도 빈 목록이 나온다. */
         "Kind": ["Performance", "Database", "Verification", "Design", "Reliability", "Privacy",
                 "Troubleshooting", "Operating", "Debugging", "Chore", "Certification"]
       },
@@ -749,28 +753,6 @@
           desc_ko: "비교 실험에서 한 갈래의 실행입니다. 한 변수만 다르고 나머지는 같아야 합니다.",
           desc_ja: "比較実験の一方の実行。変数は一つだけ違い、残りは同じにする。",
           tags: ["Arm", "Performance"]
-        },
-        {
-          title: "Engineering Notes",
-          title_ko: "엔지니어링 노트",
-          title_ja: "エンジニアリングノート",
-          url: "notes/engineering.html",
-          date: "2026-02", dateLabel: "Feb 2026",
-          desc: "GPUaaS build logs, Kubernetes operator implementation notes, and observability records.",
-          desc_ko: "GPUaaS 빌드 기록, Kubernetes 오퍼레이터 구현 노트, 관측 기록.",
-          desc_ja: "GPUaaS のビルドログ、Kubernetes オペレータの実装ノート、可観測性の記録。",
-          tags: ["Troubleshooting", "Operating", "Debugging"]
-        },
-        {
-          title: "Study / Reading Notes",
-          title_ko: "학습 · 독서 노트",
-          title_ja: "学習・読書ノート",
-          url: "notes/study-reading.html",
-          date: "2026-01", dateLabel: "Jan 2026",
-          desc: "Conference notes, reading notes, code interview notes, and short technical memos.",
-          desc_ko: "콘퍼런스 노트, 독서 노트, 코딩 인터뷰 노트, 짧은 기술 메모.",
-          desc_ja: "カンファレンスノート、読書ノート、コーディング面接ノート、短い技術メモ。",
-          tags: ["Performance", "Chore", "Certification"]
         }
       ]
     }
