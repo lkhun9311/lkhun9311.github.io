@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="リリース前のソーシャル投票プラットフォームを点検していて、 Connection Pooler を前に立てようとしました。ところが Connection 枯渇には原因が二つあり、 Pooler はそのうち一つしか直しません。なぜ直せないのかは製品ドキュメントではなく Transaction Pooling の定義から出てきます。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=24808288b9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=b0ef7ac9b6" />
 </head>
 <body>
   <div class="topbar">
@@ -378,7 +378,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
 
         <blockquote><p>Connection を再利用することは、 Transaction と Transaction の
         <em>間</em>でしか起きません。Transaction が開いている間は、その backendconnection が
-        そのクライアントに固定されます（pin）。</p></blockquote>
+        そのクライアントに固定されます（Pin）。</p></blockquote>
 
         <p>当然の話でもあります。 Transaction は状態であり、開いている途中で他のセッションに貸せば分離が
         壊れるからです。</p>
@@ -440,7 +440,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
               <text x="116" y="263" font-size="13" fill="#7b7186">B は待ち · 割り込む隙がない</text>
 
               <rect x="104" y="280" width="604" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="116" y="297" font-size="13" fill="#18121d">A に固定（pin）· Transaction が開いている間ずっと</text>
+              <text x="116" y="297" font-size="13" fill="#18121d">A に固定（Pin）· Transaction が開いている間ずっと</text>
               <text x="696" y="297" font-size="14" fill="#d62976" font-weight="700" text-anchor="end">アプリ1 → DB1</text>
             </svg>
           </div>
@@ -474,7 +474,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
             <tr><td>②</td><td>流入制御 — 同時処理の上限を意図的に決める</td><td>失敗を速く予測可能にします</td></tr>
             <tr><td>③</td><td>Connection Pooler</td><td>①が終わってはじめて効きます</td></tr>
             <tr><td>④</td><td>読み取り分離・ Cache</td><td>Connection を<em>使わなく</em>する唯一の層です</td></tr>
-            <tr><td>⑤</td><td>非同期オフロード（outbox）</td><td>リクエストあたりの DB 作業そのものを減らします</td></tr>
+            <tr><td>⑤</td><td>非同期オフロード（Outbox）</td><td>リクエストあたりの DB 作業そのものを減らします</td></tr>
           </tbody>
         </table>
         </div>
@@ -517,7 +517,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         していました。 Connection と行 Lock 、二つの資源を同時に握っていたのです。</p>
 
         <p>投稿とコメントの二経路を先に直し、投票添付は検閲に入れる入力が<em>Lock した行から</em>出てくるため
-        staleness（値が古くなっていないか）の再確認が必要で、意図的に後回しにして同じ日のうちに直しました。</p>
+        Staleness（値が古くなっていないか）の再確認が必要で、意図的に後回しにして同じ日のうちに直しました。</p>
 
         <p>結論を一行で書けばこうです。コード修正は Connection Pooler の代替ではなく前提条件でした。
         直してみてはじめて、 Pooler が価値を出せる状態になりました。</p>
@@ -568,7 +568,7 @@ spring:
 
         <p>① と ② を終えて、いよいよ ③ の番でした。ところが ③ には条件がもう一つ付いていました。
         Transaction Pooling には
-        <strong>ピン（pin）を誘発するパターン</strong>があり、コードにそれがあると Connection Pooler が
+        <strong>ピン（Pin）を誘発するパターン</strong>があり、コードにそれがあると Connection Pooler が
         無力になります。ピンが掛かると、その Connection は Transaction が終わってもそのクライアントに
         固定されたままになります。</p>
 
@@ -621,7 +621,7 @@ VoteRepository.kt        pg_advisory_xact_lock(...)</code></pre>
         かかる日にしか出ません。</p>
 
         <p>「 Connection を長く握らない」ということは直接観測しにくいです。そこで結果の代わりに
-        原因を表明しました。実際の HTTP クライアントが座るインターフェースの位置に spy を
+        原因を表明しました。実際の HTTP クライアントが座るインターフェースの位置に Spy を
         置き、呼び出しが起きるその時点で Transaction が活性かどうかを記録します。</p>
 
 <pre data-lang="kotlin"><code>class TransactionProbe : ContentModerationApi {
@@ -649,8 +649,8 @@ ModerationOutsideTransactionTest > the moderation call does not hold a database 
 ModerationOutsideTransactionTest > creating a post also screens outside a transaction() FAILED</code></pre>
 
         <p>投稿とコメントの経路では該当のガードだけが赤信号になりました。ところが投票添付の
-        経路は違いました — Mutation が最初はグリーンでした。staleness ガードが狙う
-        条件がテストの中で作られていなかったためで、spy の <code>onScreen</code> フックで検閲の区間に行を
+        経路は違いました — Mutation が最初はグリーンでした。Staleness ガードが狙う
+        条件がテストの中で作られていなかったためで、Spy の <code>onScreen</code> フックで検閲の区間に行を
         変えて条件を作ってはじめて赤信号を見ました。</p>
 
         <p>ここで学んだことがこの記事で一番持ち出せるものです。

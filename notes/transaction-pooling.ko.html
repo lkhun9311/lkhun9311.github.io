@@ -22,7 +22,7 @@
   <meta property="og:title" content="Transaction Pooling이란? | Kwanghun Lee" />
   <meta property="og:description" content="Connection Pooler가 Transaction 단위로 Connection을 빌려주고 돌려받는 방식." />
   <meta property="og:locale" content="ko_KR" />
-  <link rel="stylesheet" href="../assets/styles.css?v=24808288b9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=b0ef7ac9b6" />
 </head>
 <body>
   <div class="topbar">
@@ -72,7 +72,7 @@
           <ul>
             <li><a href="#모드">세 가지 모드</a></li>
             <li><a href="#성질">핵심 성질: 언제 묶이나</a></li>
-            <li><a href="#핀">핀(pin)이 걸리는 패턴</a></li>
+            <li><a href="#핀">핀(Pin)이 걸리는 패턴</a></li>
             <li><a href="#쓰인-곳">이 사이트에서 쓰인 곳</a></li>
             <li><a href="#함께-볼-용어">함께 볼 용어</a></li>
           </ul>
@@ -94,7 +94,7 @@
         <p>이 한 줄이 전부입니다.</p>
 
         <blockquote><p>Connection 재사용은 Transaction과 Transaction <strong>사이</strong>에서만 일어난다.
-        Transaction이 열려 있는 동안에는 그 Connection이 그 클라이언트에 <strong>묶인다(pin)</strong>.</p></blockquote>
+        Transaction이 열려 있는 동안에는 그 Connection이 그 클라이언트에 <strong>묶인다(Pin)</strong>.</p></blockquote>
 
         <p>당연한 이야기입니다. Transaction은 상태이고 열려 있는 중간에 다른 세션에 빌려주면 격리가 깨집니다.</p>
 
@@ -107,7 +107,7 @@
 
         <p>즉 짧은 Transaction이 많을 때 값을 하는 도구입니다. Transaction 안에서 외부 API를 기다리는
         코드에는 효과가 없습니다.</p>
-        <h2 id="핀">핀(pin)이 걸리는 패턴<a class="anchor" href="#핀" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="핀">핀(Pin)이 걸리는 패턴<a class="anchor" href="#핀" aria-label="이 절로 가는 링크">#</a></h2>
         <p>아래 패턴이 코드에 있으면 Transaction이 끝나도 Connection이 계속 묶여, Pooler가 무력해집니다.</p>
 
         <ul>

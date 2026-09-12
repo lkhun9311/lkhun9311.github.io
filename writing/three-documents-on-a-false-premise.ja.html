@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="2,255 コミットを飛び越えるバージョン移行。文書からの推論ではどこで壊れるか分からないので、隔離環境に旧バージョンを立てて一度壊してみた。すると私が先に書いた文書 3 本の前提が誤りだと分かった。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=24808288b9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=b0ef7ac9b6" />
 </head>
 <body>
   <div class="topbar">
@@ -320,15 +320,15 @@ find . -type f -exec md5sum {} \;          # 両方の全ファイルで md5 が
   ↑
 BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → configures findAll</code></pre>
 
-        <p>スタックトレースから呼び出し経路を逆にたどって enum 変換の地点を突き止め、git 履歴から原因コミットを
-        特定しました。ある機能をロールバックする際にenum 定数とパッチ SQL と初期データ行をまとめて削除した
+        <p>スタックトレースから呼び出し経路を逆にたどって Enum 変換の地点を突き止め、git 履歴から原因コミットを
+        特定しました。ある機能をロールバックする際にEnum 定数とパッチ SQL と初期データ行をまとめて削除した
         コミットでした。</p>
 
-        <p>コードは enum を消しました。ところが既存 DB にはその値を持つ行が残っていました。起動時に ORM が
-        その行を enum へマッピングしようとして失敗し、コンテキストのロードに失敗すれば起動自体ができません。</p>
+        <p>コードは Enum を消しました。ところが既存 DB にはその値を持つ行が残っていました。起動時に ORM が
+        その行を Enum へマッピングしようとして失敗し、コンテキストのロードに失敗すれば起動自体ができません。</p>
 
         <p>重要なのはその次です。この種の欠陥は<strong>再起動のたびに 1 つずつ</strong>現れます。最初の地雷を除去すると
-        次の地雷が出ます。そこでローカル DB 3 つをコードの enum 定数と全数照合し、残っている stale
+        次の地雷が出ます。そこでローカル DB 3 つをコードの Enum 定数と全数照合し、残っている stale
         キーがそれ 1 つだけであることを先に確定してから削除しました。</p>
 
         <p>この件の価値は <code>DELETE</code> 1 行ではありません。これを追跡する過程で

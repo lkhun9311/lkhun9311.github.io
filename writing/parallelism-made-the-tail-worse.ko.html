@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="Cache 설정을 고정한 채 순차를 병렬로 바꾸니 P99가 42.6초에서 79.0초로 악화됐습니다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다. 여섯 구성을 같은 조건으로 재고 나서야 보인 것." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=24808288b9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=b0ef7ac9b6" />
 </head>
 <body>
   <div class="topbar">
@@ -131,7 +131,7 @@
             <tr><td>③</td><td>Cache 없음, 병렬</td><td>541</td><td>0%</td><td>45,075</td><td><strong>129,880</strong></td><td>0.87</td><td>0.000</td></tr>
             <tr><td>④</td><td>Cache 5초, 병렬</td><td>1,560</td><td>0%</td><td>508</td><td>78,997</td><td>2.46</td><td>0.526</td></tr>
             <tr><td>⑤</td><td>④ + 부가정보 조회 최적화</td><td>5,991</td><td>0%</td><td>32</td><td>6,859</td><td>10.01</td><td>0.711</td></tr>
-            <tr><td>⑥</td><td>⑤ + Caffeine refresh</td><td>7,658</td><td>0%</td><td>4</td><td>23</td><td>12.82</td><td>1.000</td></tr>
+            <tr><td>⑥</td><td>⑤ + Caffeine Refresh</td><td>7,658</td><td>0%</td><td>4</td><td>23</td><td>12.82</td><td>1.000</td></tr>
           </tbody>
         </table>
         </div>
@@ -270,7 +270,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
 
         <blockquote><p>용어 하나. 이 구조를 "세그먼트 Lock"이라고 부르는 문서를 자주 봅니다.
         세그먼트는 <strong>Java 7 시절 용어</strong>입니다. Java 8 이후 <code>ConcurrentHashMap</code>은 세그먼트를
-        없애고 버킷(bin) 단위로 잠급니다. 잠김의 범위가 더 좁아졌을 뿐, <em>매핑 함수가 도는 동안
+        없애고 버킷(Bin) 단위로 잠급니다. 잠김의 범위가 더 좁아졌을 뿐, <em>매핑 함수가 도는 동안
         그 자리가 잠긴다</em>는 사실은 그대로입니다. Lock 범위가 좁아진 것이 Lock 안에서 I/O를 해도 된다는
         뜻은 아닙니다.</p></blockquote>
 
@@ -319,7 +319,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         <p>결함이 두 겹입니다.</p>
 
         <p><strong>하나.</strong> 병렬화된 N 개 Thread가 <code>isEmpty()</code> 검사를 동시에 통과하면
-        <strong>N 개가 전부</strong> 외부 API를 부릅니다. 흔한 Cache stampede입니다.</p>
+        <strong>N 개가 전부</strong> 외부 API를 부릅니다. 흔한 Cache Stampede입니다.</p>
 
         <p>둘. 조회 결과가 0건이면 <code>forEach</code>가 한 번도 돌지 않습니다. 그러면
         Cache에 아무것도 저장되지 않습니다. 다음 요청도 Cache를 비어 있다고 보고 또 부릅니다.
@@ -369,7 +369,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
             <tr><td>② → ④</td><td>병렬화만 (Cache 고정)</td><td>악화. P99 42.6초 → 79.0초 (1.85배)</td></tr>
             <tr><td>② ↔ ③</td><td>Cache와 실행 방식이 동시에 바뀜</td><td><em>비교 불가.</em> 어느 쪽 효과인지 나눌 수 없다</td></tr>
             <tr><td>④ → ⑤</td><td>부가정보 조회 최적화</td><td>P99 79.0초 → <strong>6.9초</strong></td></tr>
-            <tr><td>⑤ → ⑥</td><td>Caffeine refresh</td><td>P99 6.9초 → 23ms</td></tr>
+            <tr><td>⑤ → ⑥</td><td>Caffeine Refresh</td><td>P99 6.9초 → 23ms</td></tr>
           </tbody>
         </table>
         </div>
@@ -381,7 +381,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         것이라, 전후만 쟀다면 앞선 네 조치의 공으로 돌아갔을 것입니다.</p>
 
         <p>⑤→⑥ 이 왜 그렇게 큰가. ⑤까지는 만료된 Cache를 읽으려는 요청이 새로 채워질 때까지 기다립니다.
-        Caffeine의 refresh는 만료 시점에 기존 값을 계속 돌려주면서 백그라운드에서 갱신합니다.
+        Caffeine의 Refresh는 만료 시점에 기존 값을 계속 돌려주면서 백그라운드에서 갱신합니다.
         즉 마지막 단계가 없앤 것은 조회 비용이 아니라 갱신을 기다리는 시간이었고 그 시간이
         꼬리 지연의 대부분이었습니다.</p>
 

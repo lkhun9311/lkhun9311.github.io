@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="시계열 그래프를 그리는 화면이라 쿼리를 의심했는데 아니었습니다. 초기 로드가 프로젝트마다 Client를 새로 만들고 있었고 우리가 쓰던 팩터리는 Client를 줄 때마다 Keystone에 인증합니다. 다만 이 글에는 전후를 잰 숫자가 없습니다. 왜 없는지가 글의 절반입니다." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=24808288b9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=b0ef7ac9b6" />
 </head>
 <body>
   <div class="topbar">
@@ -159,7 +159,7 @@
               <rect x="330" y="126" width="382" height="32" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/>
               <text x="521" y="146" font-size="12.5" fill="#4f5bd5" font-weight="700" text-anchor="middle">시계열 저장소에서 계산</text>
               <rect x="158" y="170" width="554" height="18" rx="3" fill="rgba(79,91,213,0.18)" stroke="#4f5bd5" stroke-width="1.5"/>
-              <text x="435" y="184" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">push · 계산은 tick당 1회</text>
+              <text x="435" y="184" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">push · 계산은 Tick당 1회</text>
               <defs>
                 <marker id="mn-arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                   <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
@@ -368,7 +368,7 @@ for (String projectId : projects) {
         사용자가 기다리는 무거운 구간은 <strong>초기 로드 1회</strong>이고 그 뒤는
         <strong>15초마다 서버가 한 번 계산해 열려 있는 모든 화면에 같은 값을 밀어 주는</strong> 구조입니다.</p>
 
-        <blockquote><p>사용자를 10명으로 늘려도 tick당 계산은 여전히 1회입니다.
+        <blockquote><p>사용자를 10명으로 늘려도 Tick당 계산은 여전히 1회입니다.
         연결을 붙들고 있는 시나리오라면 그래프는 「사용자를 늘려도 끄떡없다」로 나옵니다.
         그건 아키텍처의 성질이지 느린 경로를 밟았다는 뜻이 아닙니다.</p></blockquote>
 
@@ -382,14 +382,14 @@ for (String projectId : projects) {
             <svg viewBox="0 0 720 160" role="img" aria-labelledby="axis-t axis-d" xmlns="http://www.w3.org/2000/svg">
               <title id="axis-t">두 축에서 예상되는 호출 횟수 개념도</title>
               <desc id="axis-d">잰 값이 아니라 코드에서 예상되는 호출 횟수를 그린 개념도입니다. 왼쪽은 연결을
-              유지하는 사용자를 늘리는 축으로, 사용자가 늘어도 tick당 계산은 1회로 그대로여서 선이
+              유지하는 사용자를 늘리는 축으로, 사용자가 늘어도 Tick당 계산은 1회로 그대로여서 선이
               평평합니다. 오른쪽은 프로젝트 수를 늘리는 축으로, 프로젝트가 늘면 초기 로드의 인증 횟수가
               같이 늘어 선이 비스듬히 올라갑니다.</desc>
 
               <text x="10" y="18" font-size="12.5" fill="#7b7186" font-weight="700">축: 연결을 유지하는 사용자 수</text>
               <rect x="10" y="30" width="330" height="86" rx="6" fill="none" stroke="#7b7186" stroke-width="1.5"/>
               <path d="M40 96 H 310" fill="none" stroke="#7b7186" stroke-width="2" stroke-dasharray="4 3"/>
-              <text x="175" y="88" font-size="12" fill="#7b7186" text-anchor="middle">tick당 계산 1회 · 평평</text>
+              <text x="175" y="88" font-size="12" fill="#7b7186" text-anchor="middle">Tick당 계산 1회 · 평평</text>
               <text x="175" y="132" font-size="12" fill="#7b7186" text-anchor="middle">사용자 1명 → 50명</text>
 
               <text x="380" y="18" font-size="12.5" fill="#d62976" font-weight="700">축: 프로젝트 수</text>

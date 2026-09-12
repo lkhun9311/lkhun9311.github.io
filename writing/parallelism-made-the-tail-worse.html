@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="Holding the cache setting fixed, going from sequential to parallel took p99 from 42.6s to 79.0s. An external call inside computeIfAbsent holds the bin, and only a six-configuration test made that visible." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=24808288b9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=b0ef7ac9b6" />
 </head>
 <body>
   <div class="topbar">
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">Company work</span></div>
       </div>
       <section class="page-hero">
-        <h1>Going Parallel Made the Volume List p99 Twice as Bad<br><span class="h1-sub">An external call inside computeIfAbsent locks the bin it runs in.</span><span class="h1-context notranslate">Internal cloud admin console · Slow Screens ⑤</span></h1>
+        <h1>Going Parallel Made the Volume List p99 Twice as Bad<br><span class="h1-sub">An external call inside computeIfAbsent locks the Bin it runs in.</span><span class="h1-context notranslate">Internal Cloud Admin Console · Slow Screens ⑤</span></h1>
         <p class="article-date">Sep 2026</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="parallelism-made-the-tail-worse"></aside>
@@ -178,7 +178,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         <p>It is easy to read <code>ConcurrentHashMap</code> and conclude this is safe. It is safe. The
         question is not safety but <strong>what the safety is bought with</strong>.</p>
 
-        <p><code>computeIfAbsent</code> runs the mapping function while holding the bin that the key
+        <p><code>computeIfAbsent</code> runs the mapping function while holding the Bin that the key
         hashes to. If the mapping function reads a map and returns, that window is nanoseconds. Here
         it performs a network round trip inside it.</p>
 
@@ -191,10 +191,10 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="Scrollable diagram">
             <svg viewBox="0 0 720 312" role="img" aria-labelledby="cia-t cia-d" xmlns="http://www.w3.org/2000/svg">
-              <title id="cia-t">How an external call inside computeIfAbsent holds the bin</title>
+              <title id="cia-t">How an external call inside computeIfAbsent holds the Bin</title>
               <desc id="cia-d">Four tasks keyed by the same group ID are submitted in parallel to four executor threads. Because the key
-              is the same they all reach one bin. T1 holds that bin and calls the external API from inside the mapping
-              function, and the bin stays held until the network round trip completes. T2, T3 and T4 queue in front of it
+              is the same they all reach one bin. T1 holds that Bin and calls the external API from inside the mapping
+              function, and the Bin stays held until the network round trip completes. T2, T3 and T4 queue in front of it
               while continuing to occupy their pool slots. Bins belonging to other keys are not held, so that work
               proceeds. The mapping function runs exactly once, and the waiting ends when the value is published. What
               grows is not the number of calls: the queue that was there in the sequential code remains, and pool
@@ -270,7 +270,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
               </defs>
             </svg>
           </div>
-          <figcaption>Requests sharing a key land in one bin. The solid box is T1, which is calling; the dashed ones are T2·T3·T4, which are waiting. An external call inside the mapping function holds that bin for a round trip while the other threads wait, still occupying pool slots. Bins for other keys are not held. The mapping function still runs <strong>once</strong>, and the wait clears when the value is published. What grew is pool occupancy and context switching, not the number of calls; the queueing is exactly the queueing the sequential code already had.</figcaption>
+          <figcaption>Requests sharing a key land in one bin. The solid box is T1, which is calling; the dashed ones are T2·T3·T4, which are waiting. An external call inside the mapping function holds that Bin for a round trip while the other threads wait, still occupying pool slots. Bins for other keys are not held. The mapping function still runs <strong>once</strong>, and the wait clears when the value is published. What grew is pool occupancy and context switching, not the number of calls; the queueing is exactly the queueing the sequential code already had.</figcaption>
         </figure>
 
         <p>That is why ③ is worse than ②. In ②, the 5-second cache kept the number of external calls low. In
@@ -278,13 +278,13 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
 
         <blockquote><p>One term. Documents often call this a "segment lock". Segments are
         <strong>Java 7 vocabulary</strong>. Since Java 8, <code>ConcurrentHashMap</code> has no segments and
-        locks at bin granularity. The lock got narrower; the fact that <em>the bin is held
+        locks at Bin granularity. The lock got narrower; the fact that <em>the Bin is held
         for as long as the mapping function runs</em> did not change. A narrower lock is not a licence to do
         I/O inside it.</p></blockquote>
 
         <p>The fix is to stop hand-rolling the lock. Caffeine's <code>LoadingCache</code> guarantees that on a
         miss the loader runs exactly once per key while the other callers wait for its
-        result. Same "call it once" guarantee, except the waiters are not holding a bin of the map.</p>
+        result. Same "call it once" guarantee, except the waiters are not holding a Bin of the map.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 300" role="img" aria-labelledby="p9-t p9-d" class="figure-svg">
@@ -344,7 +344,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
 
         <figure class="diagram">
           <svg viewBox="0 0 720 216" role="img" aria-labelledby="bk-t bk-d" class="figure-svg">
-            <title id="bk-t">Sequential against parallel in front of the same bin</title>
+            <title id="bk-t">Sequential against parallel in front of the same Bin</title>
             <desc id="bk-d">Two boxes side by side. The left is sequential execution: one call to the external API at a time. The right is parallel execution: four threads queue in front of the same bin. A pink line at the bottom says the queue stays and only pool occupancy grows.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
@@ -354,13 +354,13 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
               <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">one thread pool slot</text>
               <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
               <text x="556" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">parallel</text>
-              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">same key means the same bin</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">same key means the same Bin</text>
               <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">four threads queue in front of it</text>
               <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">four thread pool slots held</text>
               <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">the queue stays · pool occupancy grows</text>
             </g>
           </svg>
-          <figcaption><code>computeIfAbsent</code> runs the mapping function <strong>with the bin locked</strong>. Do a network round trip in there and requests for the same key still queue, even in parallel code.</figcaption>
+          <figcaption><code>computeIfAbsent</code> runs the mapping function <strong>with the Bin locked</strong>. Do a network round trip in there and requests for the same key still queue, even in parallel code.</figcaption>
         </figure>
 
         <h2 id="which-fix-actually-mattered">Which fix actually mattered<a class="anchor" href="#which-fix-actually-mattered" aria-label="Link to this section">#</a></h2>
@@ -473,7 +473,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
           <li><strong>Ship every change at once and all you keep is "it got faster."</strong> Which change
           bought how much only comes out if you split the configurations and measure each one.</li>
           <li><strong>Hold a lock across a network round trip and going parallel only adds waiters.</strong>
-          More threads make the queue in front of that bin longer, not shorter.</li>
+          More threads make the queue in front of that Bin longer, not shorter.</li>
           <li>If the data structure cannot tell "no value" from "not asked yet," the cache
           freezes an empty result into the answer.</li>
           <li>The table pointed at the code. Parallel being worse with the cache held fixed

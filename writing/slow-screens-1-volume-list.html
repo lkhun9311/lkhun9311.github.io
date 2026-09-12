@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="I measured one admin volume list under six configurations. Holding the cache fixed and switching sequential calls to parallel made the median 21x faster and P99 1.9x slower. The code was holding a lock on one cache key while waiting on an external API, but this test alone cannot prove that was the cause." />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=24808288b9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=b0ef7ac9b6" />
 </head>
 <body>
   <div class="topbar">
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">Company work</span></div>
       </div>
               <section class="page-hero">
-          <h1>A Volume List Went From a Ten-Minute Timeout to 23 ms<br><span class="h1-sub">A hand-rolled cache was holding one key locked while it waited on an external API.</span><span class="h1-context notranslate">Internal cloud admin console · Slow Screens ①</span></h1>
+          <h1>A Volume List Went From a Ten-Minute Timeout to 23 ms<br><span class="h1-sub">A hand-rolled cache was holding one key locked while it waited on an external API.</span><span class="h1-context notranslate">Internal Cloud Admin Console · Slow Screens ①</span></h1>
           <p class="article-date">Sep 2026</p>
         </section>
 
@@ -296,8 +296,8 @@
               <title id="lock-t">Threads sharing one key queue in front of computeIfAbsent</title>
               <desc id="lock-d">Two cards, each drawing the same list query. The upper card is before the fix:
               four threads sharing a group id enter computeIfAbsent together and only T1 makes the external round
-              trip, while the other three wait with the map bin held. The lower card is after the fix: threads
-              waiting on the same key still wait, but they do not hold the map bin, so threads looking up a
+              trip, while the other three wait with the map Bin held. The lower card is after the fix: threads
+              waiting on the same key still wait, but they do not hold the map Bin, so threads looking up a
               different key are not blocked.</desc>
 
               <rect x="0" y="0" width="720" height="112" rx="10" fill="rgba(214,41,118,0.06)"/>
@@ -341,8 +341,8 @@
           </div>
           <figcaption><strong>The difference between the two cards is not whether threads queue.</strong>
           A synchronous <code>LoadingCache.get</code> also makes the rest wait until the loader returns.
-          What differs is whether they wait holding the map’s lock. In the upper card the bin
-          that key lives in is locked, so other keys in the same bin are affected as well.</figcaption>
+          What differs is whether they wait holding the map’s lock. In the upper card the Bin
+          that key lives in is locked, so other keys in the same Bin are affected as well.</figcaption>
         </figure>
 
         <h2 id="cause-a">Cause 1: the network wait happened inside a lock<a class="anchor" href="#cause-a" aria-label="Link to this section">#</a></h2>
@@ -455,7 +455,7 @@ if (messages == null || messages.isEmpty()) {
 
         <p><code>ConcurrentHashMap</code> does not lock the whole map, which makes it easy to read
         “we used a concurrent data structure, so we are fine”. But <code>computeIfAbsent</code>
-        <strong>locks the bin that key lives in</strong> and then runs the mapping function.</p>
+        <strong>locks the Bin that key lives in</strong> and then runs the mapping function.</p>
 
         <blockquote><p><strong>The same key is blocked completely,</strong> and for exactly as long as the
         mapping function takes. Even a different key is blocked too if its hash lands in the same

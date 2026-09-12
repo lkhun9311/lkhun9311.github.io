@@ -29,7 +29,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="Cache 設定を固定したまま逐次を並列に変えると、P99 が 42.6 秒から 79.0 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンが Lock される。6 構成を同条件で測って初めて見えたこと。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=24808288b9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=b0ef7ac9b6" />
 </head>
 <body>
   <div class="topbar">
@@ -70,7 +70,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">会社の業務</span></div>
       </div>
       <section class="page-hero">
-        <h1>ボリューム一覧を並列にしたら P99 が 2 倍悪化しました<br><span class="h1-sub">computeIfAbsent の中で外部 API を呼ぶと、その bin が固定されます。</span><span class="h1-context notranslate">社内クラウド管理コンソール · 連載「遅い画面」⑤</span></h1>
+        <h1>ボリューム一覧を並列にしたら P99 が 2 倍悪化しました<br><span class="h1-sub">computeIfAbsent の中で外部 API を呼ぶと、その Bin が固定されます。</span><span class="h1-context notranslate">社内クラウド管理コンソール · 連載「遅い画面」⑤</span></h1>
         <p class="article-date">2026年9月</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="parallelism-made-the-tail-worse"></aside>
@@ -127,7 +127,7 @@
             <tr><td>③</td><td>Cache なし・並列</td><td>541</td><td>0%</td><td>45,075</td><td><strong>129,880</strong></td><td>0.87</td><td>0.000</td></tr>
             <tr><td>④</td><td>Cache 5 秒・並列</td><td>1,560</td><td>0%</td><td>508</td><td>78,997</td><td>2.46</td><td>0.526</td></tr>
             <tr><td>⑤</td><td>④ + 付随情報取得の最適化</td><td>5,991</td><td>0%</td><td>32</td><td>6,859</td><td>10.01</td><td>0.711</td></tr>
-            <tr><td>⑥</td><td>⑤ + Caffeine refresh</td><td>7,658</td><td>0%</td><td>4</td><td>23</td><td>12.82</td><td>1.000</td></tr>
+            <tr><td>⑥</td><td>⑤ + Caffeine Refresh</td><td>7,658</td><td>0%</td><td>4</td><td>23</td><td>12.82</td><td>1.000</td></tr>
           </tbody>
         </table>
         </div>
@@ -181,11 +181,11 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="スクロール可能な図">
             <svg viewBox="0 0 720 312" role="img" aria-labelledby="cia-t cia-d" xmlns="http://www.w3.org/2000/svg">
-              <title id="cia-t">computeIfAbsent 内の外部呼び出しが bin を Lock する構造</title>
+              <title id="cia-t">computeIfAbsent 内の外部呼び出しが Bin を Lock する構造</title>
               <desc id="cia-d">同じグループ ID をキーとする 4 つの作業が Executor の 4 Thread に並列で投入されます。キーが同じなので
-              4 Thread は 1 つの bin に集まります。T1 がその bin を保持したままマッピング関数の中で外部 API を呼び、ネットワーク
-              往復が終わるまで bin は Lock されます。T2・T3・T4 はその前に並び、その間も Thread Pool の枠を占有し続けます。
-              別のキーが属する bin は Lock されないので、そちらの作業は進行できます。マッピング関数は一度だけ実行され、値が
+              4 Thread は 1 つの Bin に集まります。T1 がその Bin を保持したままマッピング関数の中で外部 API を呼び、ネットワーク
+              往復が終わるまで Bin は Lock されます。T2・T3・T4 はその前に並び、その間も Thread Pool の枠を占有し続けます。
+              別のキーが属する Bin は Lock されないので、そちらの作業は進行できます。マッピング関数は一度だけ実行され、値が
               公開されると待機は解けます。つまり呼び出し回数が増えるのではなく、逐次コードにあった行列がそのまま残り、枠の
               占有とコンテキストスイッチだけが追加されます。</desc>
 
@@ -227,7 +227,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
                 <text x="306" y="275">別のキー · 進行できる</text>
               </g>
               <rect x="294" y="118" width="170" height="116" rx="6" fill="none" stroke="#d62976" stroke-width="3"/>
-              <text x="306" y="143" font-size="15" fill="#18121d" font-weight="700">gid=A の bin · Lock</text>
+              <text x="306" y="143" font-size="15" fill="#18121d" font-weight="700">gid=A の Bin · Lock</text>
               <rect x="310" y="156" width="138" height="40" rx="5" fill="none" stroke="#3b3344" stroke-width="1.5"/>
               <text x="322" y="181" font-size="14" fill="#18121d">マッピング関数の実行</text>
               <text x="316" y="224" font-size="14" fill="#7b7186">待ち T2 · T3 · T4</text>
@@ -259,7 +259,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
               </defs>
             </svg>
           </div>
-          <figcaption>同じキーのリクエストは 1 つの bin に集まります。実線が呼び出し中の T1、点線が待っている T2・T3・T4 です。マッピング関数の中の外部呼び出しがその bin を往復の間つかんでおり、残りの Thread は枠を占有したまま待ちます。別のキーの bin は Lock されません。マッピング関数は<strong>一度だけ</strong>実行され、値が公開されれば待ちは解けます。つまり増えたのは呼び出し回数ではなくPool 占有とコンテキストスイッチで、行列は逐次コードのまま残ります。</figcaption>
+          <figcaption>同じキーのリクエストは 1 つの Bin に集まります。実線が呼び出し中の T1、点線が待っている T2・T3・T4 です。マッピング関数の中の外部呼び出しがその Bin を往復の間つかんでおり、残りの Thread は枠を占有したまま待ちます。別のキーの Bin は Lock されません。マッピング関数は<strong>一度だけ</strong>実行され、値が公開されれば待ちは解けます。つまり増えたのは呼び出し回数ではなくPool 占有とコンテキストスイッチで、行列は逐次コードのまま残ります。</figcaption>
         </figure>
 
         <p>だから ③ は ② より悪いです。② は 5 秒 Cache のおかげで外部呼び出しの回数自体が少なく、③ は Cache が
@@ -267,7 +267,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
 
         <blockquote><p>用語をひとつ. この構造を「セグメント Lock 」と呼ぶ文書をよく見ます。セグメント
         は<strong>Java 7 時代の用語</strong>です。Java 8 以降の <code>ConcurrentHashMap</code> はセグメントを廃し、
-        ビン(bin)単位で Lock します。 Lock の範囲が狭くなっただけで、<em>マッピング関数が走る間その
+        ビン(Bin)単位で Lock します。 Lock の範囲が狭くなっただけで、<em>マッピング関数が走る間その
         場所が Lock される</em>という事実は変わりません。 Lock 範囲が狭くなったことは、
         Lock の中で I/O をしてよいという意味ではありません。</p></blockquote>
 
@@ -333,8 +333,8 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
 
         <figure class="diagram">
           <svg viewBox="0 0 720 216" role="img" aria-labelledby="bk-t bk-d" class="figure-svg">
-            <title id="bk-t">逐次と並列が同じ bin の前でどう違うかを分けた図</title>
-            <desc id="bk-d">箱が二つ並んでいます。左は逐次実行で、一度に一つが外部 API を呼ぶと書かれています。右は並列実行で、四つの Thread が同じ bin の前に並ぶと書かれています。一番下にピンクで、行列はそのままで Pool の占有だけが増えると書かれています。</desc>
+            <title id="bk-t">逐次と並列が同じ Bin の前でどう違うかを分けた図</title>
+            <desc id="bk-d">箱が二つ並んでいます。左は逐次実行で、一度に一つが外部 API を呼ぶと書かれています。右は並列実行で、四つの Thread が同じ Bin の前に並ぶと書かれています。一番下にピンクで、行列はそのままで Pool の占有だけが増えると書かれています。</desc>
             <g font-family="Inter, sans-serif">
               <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
               <text x="204" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">逐次実行</text>
@@ -343,13 +343,13 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
               <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">Thread Pool の枠 1 つ</text>
               <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
               <text x="556" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">並列実行</text>
-              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">同じキー → 同じ bin 一つ</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">同じキー → 同じ Bin 一つ</text>
               <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">四つの Thread がその前に並ぶ</text>
               <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">Thread Pool の枠 4 つを占有</text>
               <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">行列はそのまま · Pool 占有だけ増加</text>
             </g>
           </svg>
-          <figcaption><code>computeIfAbsent</code> はマッピング関数を<strong>bin をロックしたまま</strong>実行します。その中でネットワーク往復をすると、同じキーの要求は並列コードでも一列に並びます。</figcaption>
+          <figcaption><code>computeIfAbsent</code> はマッピング関数を<strong>Bin をロックしたまま</strong>実行します。その中でネットワーク往復をすると、同じキーの要求は並列コードでも一列に並びます。</figcaption>
         </figure>
 
         <h2 id="which-fix-actually-mattered">どの修正が実際に効いたのか<a class="anchor" href="#which-fix-actually-mattered" aria-label="このセクションへのリンク">#</a></h2>
@@ -367,7 +367,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
             <tr><td>② → ④</td><td>並列化のみ(Cache 固定)</td><td>悪化。P99 42.6 秒 → 79.0 秒(1.85 倍)</td></tr>
             <tr><td>② ↔ ③</td><td>Cache と実行方式が同時に変わる</td><td><em>比較不可。</em>どちらの効果か分けられない</td></tr>
             <tr><td>④ → ⑤</td><td>付随情報取得の最適化</td><td>P99 79.0 秒 → <strong>6.9 秒</strong></td></tr>
-            <tr><td>⑤ → ⑥</td><td>Caffeine refresh</td><td>P99 6.9 秒 → 23ms</td></tr>
+            <tr><td>⑤ → ⑥</td><td>Caffeine Refresh</td><td>P99 6.9 秒 → 23ms</td></tr>
           </tbody>
         </table>
         </div>
@@ -379,7 +379,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         前後だけを測っていたら先行する 4 つの対策の手柄になっていただろいます。</p>
 
         <p>なぜ ⑤→⑥ がこれほど大きいのでしょうか。⑤ までは、期限切れの Cache を読もうとしたリクエストが
-        新しく埋まるまで待ちます。Caffeine の refresh は期限切れの時点で既存の値を返し続けながら、
+        新しく埋まるまで待ちます。Caffeine の Refresh は期限切れの時点で既存の値を返し続けながら、
         バックグラウンドで更新する。つまり最後の段が消したのは取得コストではなく
         更新を待つ時間であり、それがテール遅延の大部分でした。</p>
 
@@ -455,7 +455,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
           <li><strong>対策をまとめて入れると「速くなった」しか残りません。</strong>何がどれだけ効いたかは、
           構成を分けてそれぞれ測らないと出てきません。</li>
           <li><strong>Lock を握ったままネットワーク往復をすると、並列化は待ち行列を増やすだけです。</strong>
-          Thread を増やしても同じ bin の前の列が伸びるだけです。</li>
+          Thread を増やしても同じ Bin の前の列が伸びるだけです。</li>
           <li>「値が無い」と「まだ訊いていない」をデータ構造が区別できないと、Cache は空の結果を
           答えとして固めてしまいます。</li>
           <li>表がコードを指しました。Cache を固定したまま並列の方が悪いということは、ボトルネックが

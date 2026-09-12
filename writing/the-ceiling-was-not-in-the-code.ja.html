@@ -31,7 +31,7 @@
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="投稿作成のスループットが 6.27 req/s から動きませんでした。書き込み Thread を2倍にしても、DB Pool を3倍にしても同じです。原因は S3 を使うために入れた AWS SDK が連れてきた HTTP クライアントの既定値「ホストあたり5」でした。この層はランタイムのクラスパスにしかなく、コードを読んでも見つかりません。" />
   <!-- og:end -->
-  <link rel="stylesheet" href="../assets/styles.css?v=24808288b9" />
+  <link rel="stylesheet" href="../assets/styles.css?v=b0ef7ac9b6" />
 </head>
 <body>
   <div class="topbar">
@@ -320,7 +320,7 @@
         <strong>私のコードには10も5も書かれていないからです。</strong></p>
 
         <p>そこで負荷がかかった状態でThread ダンプを取りました。Tomcat worker16のうち
-        <strong>5つはソケット入出力中(RUNNABLE)</strong>、11は park でした。park 側のスタックが
+        <strong>5つはソケット入出力中(RUNNABLE)</strong>、11は Park でした。Park 側のスタックが
         答えでした。</p>
 
 <pre data-lang="text"><code>at org.apache.hc.core5.pool.StrictConnPool$1.get(StrictConnPool.java:183)
