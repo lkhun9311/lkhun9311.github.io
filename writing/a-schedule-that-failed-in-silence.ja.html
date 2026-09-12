@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>スナップショットスケジューラが毎回失敗しても画面は STARTED でした | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/a-schedule-that-failed-in-silence.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/a-schedule-that-failed-in-silence.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/a-schedule-that-failed-in-silence.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/a-schedule-that-failed-in-silence.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="スナップショットスケジューラが毎回失敗しても画面は STARTED でした" />
+  <meta property="og:description" content="プロジェクトのスナップショットクォータが満杯だとスケジューラが毎回失敗するのに画面は STARTED でした。そしてその瞬間にコードは前のバックアップを先に消していました。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/a-schedule-that-failed-in-silence.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="スナップショットスケジューラが毎回失敗しても画面は STARTED でした" />
+  <meta name="twitter:description" content="プロジェクトのスナップショットクォータが満杯だとスケジューラが毎回失敗するのに画面は STARTED でした。そしてその瞬間にコードは前のバックアップを先に消していました。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="プロジェクトのスナップショットクォータが満杯だとスケジューラが毎回失敗するのに画面は STARTED でした。そしてその瞬間にコードは前のバックアップを先に消していました。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=06b177b952" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"a-schedule-that-failed-in-silence.html","ko":"a-schedule-that-failed-in-silence.ko.html","ja":"a-schedule-that-failed-in-silence.ja.html"}'>
+          <option value="ja" selected>日本語</option>
+          <option value="en">English</option>
+          <option value="ko">한국어</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ戻る</a>
+        <div class="article-meta"><span class="source-tag company notranslate">会社の業務</span></div>
+      </div>
+      <section class="page-hero">
+        <div class="hero-tag notranslate"><a class="h1-tag" href="../writing/index.html?tag=Admin%20Console">#AdminConsole</a></div>
+        <h1>スナップショットスケジューラが毎回失敗しても画面は STARTED でした<br><span class="h1-sub">FAILED という状態値はあり、それを書くコードがありませんでした。</span></h1>
+        <p class="article-date">2026年9月</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="a-schedule-that-failed-in-silence"></aside>
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#想定読者">この記事の想定読者</a></li>
+            <li><a href="#画面まで届かない">失敗が画面まで届きませんでした</a></li>
+            <li><a href="#他人のプロジェクト">検査が他人のプロジェクトを見ていました</a></li>
+            <li><a href="#最も危険な瞬間">クォータが満杯のときが最も危険でした</a></li>
+            <li><a href="#三つの時点">登録・実行・画面を一組で合わせました</a></li>
+            <li><a href="#中立を廃止">TIMEOUT を中立に置く案を廃止しました</a></li>
+            <li><a href="#主張しないこと">この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
+          </ul>
+        </nav>
+      <article class="article-body">
+
+        <p>OpenStack ベースのプライベートクラウドポータルのスナップショットスケジューラを担当しました。
+        決めた時刻ごとにボリュームと Instance のスナップショットを取っておく機能です。プロジェクトの
+        スナップショットクォータが満杯になると、その時刻ごとに作成要求が 413 で拒否されます。</p>
+
+        <p><strong>ところがスケジュールの状態はずっと STARTED でした。</strong>スナップショットは一枚も
+        作られないのに、画面は正常に見えます。失敗の理由はバッチログにしか残りませんでした。確かめると
+        FAILED という状態値はすでに Enum にあり、その値を書くコードがどこにもありませんでした。</p>
+
+        <p>原因を追ううちに、もっと大きいものが出てきました。クォータが満杯で作成が失敗する、まさにその
+        状況で、コードが前のスナップショットを<strong>先に消してから</strong>新しいものを作っていました。</p>
+
+        <h2 id="想定読者">この記事の想定読者<a class="anchor" href="#想定読者" aria-label="この節へのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>周期ジョブの失敗を画面や通知に上げるコードを書いている方</li>
+          <li>バックアップやスナップショットのように、前のものを消して新しく作る保持ポリシーを扱う方</li>
+          <li>クォータや上限を検査するコードがどの範囲を見ているか、確かめたことのない方</li>
+        </ul>
+
+                <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="sil-t sil-d" class="figure-svg">
+            <title id="sil-t">失敗が画面まで届かなかった経路</title>
+            <desc id="sil-d">左から箱が四つ、灰色の矢印でつながります。一つ目はクォータ満杯、二つ目は作成要求が 413 で拒否、三つ目は例外をログに書いて投げ直すこと、四つ目は状態を書くコードが無く画面が STARTED のままです。下にピンクで、FAILED という状態値はすでにあったと書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">クォータ満杯</text>
+              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">スナップショット 3/3</text>
+              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#sil-a)"/>
+              <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">作成拒否</text>
+              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">413</text>
+              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#sil-a)"/>
+              <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">例外</text>
+              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">ログして投げ直す</text>
+              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#sil-a)"/>
+              <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">画面</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">STARTED のまま</text>
+              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">すでにあった状態値と、それを書かないコード</text>
+            </g>
+            <defs>
+              <marker id="sil-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>失敗はバッチログで終わりました。状態を書くコードが無ければ、画面は失敗を知りようがありません。</figcaption>
+        </figure>
+
+        <h2 id="画面まで届かない">失敗が画面まで届きませんでした<a class="anchor" href="#画面まで届かない" aria-label="この節へのリンク">#</a></h2>
+
+        <p>バッチは作成を呼び、例外が出たらログに書いて投げ直します。それだけです。その上で例外を受けて
+        状態を変える場所がありませんでした。だから実行は失敗し、状態はそのままです。</p>
+
+        <p>ここで一度間違えました。最初はこれを<em>「FAILED 状態を追加しなければならない」</em>と書きました。
+        コードを開くとその値はすでにありました。無かったのはその値を設定するロジックです。似て見えて
+        直す場所が違います。前者は Enum を直す仕事で、後者は失敗経路をつなぐ仕事です。</p>
+
+        <p>失敗経路がもう一つありました。ボリュームが付いていない Instance は、失敗しても
+        <strong>何も言わずに戻ります。</strong>ログも残りません。例外を投げる経路だけ直すと、こちらは
+        そのまま残ります。</p>
+
+                <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="chk-t chk-d" class="figure-svg">
+            <title id="chk-t">登録検査が読んでいた値と、読むべきだった値</title>
+            <desc id="chk-d">左の箱は検査が実際に読んでいたもの、右の箱は読むべきだったものです。左はクォータクラスの既定値とスコープのプロジェクトのスナップショット一覧、右は対象プロジェクト自身の上限と使用量です。下にピンクで、左の二つはどちらも対象プロジェクトのものではないと書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">読んでいたもの</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">クォータクラスの既定値</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">スコープのプロジェクトの一覧</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">二つを >= で比較</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">読むべきだったもの</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">対象プロジェクトの上限</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">対象プロジェクトの使用量</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">残りで判定</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">左の二つはどちらも対象プロジェクトのものではない</text>
+            </g>
+          </svg>
+          <figcaption>正当な登録を拒み、危険な登録は通していました。二方向に同時に誤った検査です。</figcaption>
+        </figure>
+
+        <h2 id="他人のプロジェクト">検査が他人のプロジェクトを見ていました<a class="anchor" href="#他人のプロジェクト" aria-label="この節へのリンク">#</a></h2>
+
+        <p>スケジュールを登録するときにクォータを検査するコードがありました。その検査が二つを誤って
+        見ていました。</p>
+
+        <p>一つは上限です。プロジェクトごとの上限ではなく、クォータクラスの既定値を読んでいました。
+        プロジェクトが別に上げておいた上限は無視されます。</p>
+
+        <p>もう一つは使用量です。対象プロジェクトを渡さずにスナップショット一覧を呼びました。すると
+        クライアントが認証したスコープのプロジェクトの一覧が返ります。つまり検査は、他人のプロジェクトの
+        スナップショット数を他人の既定上限と比べていました。</p>
+
+        <p>二方向に同時に誤っていました。スコープのプロジェクトにスナップショットが多ければ正当な登録が
+        拒まれ、対象プロジェクトがすでに満杯でも登録は通ります。そして修正の経路はそもそも検査を
+        していませんでした。</p>
+
+                <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="ord-t ord-d" class="figure-svg">
+            <title id="ord-t">削除と作成の順序</title>
+            <desc id="ord-d">左の箱は直す前の順序、右の箱は直した後です。左は前のスナップショットを削除し、新しいものを作り、作成が失敗するとバックアップが一つも残りません。右は新しいものを作り、active を確認し、確定してからはじめて前のものを削除します。下にピンクで、クォータが満杯のときこそ作成が最も失敗しやすいと書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">直す前</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">前のスナップショットを削除</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">新しいものを作成</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">作成失敗 → バックアップ 0</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">直した後</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">新しいものを作成</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">active の確定を確認</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">確定後にだけ前のものを削除</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">作成が最も失敗しやすい瞬間に置かれた削除</text>
+            </g>
+          </svg>
+          <figcaption>クォータゲートでは直せません。ゲートを通っても作成は別の理由で失敗しえます。</figcaption>
+        </figure>
+
+        <h2 id="最も危険な瞬間">クォータが満杯のときが最も危険でした<a class="anchor" href="#最も危険な瞬間" aria-label="この節へのリンク">#</a></h2>
+
+        <p>保持ポリシーがあります。何枚までを残し、あふれたら古いものを消します。Instance にボリュームが
+        付いている経路は、その削除を<strong>作成より先に</strong>行っていました。</p>
+
+        <p>作成が成功すれば何の問題もありません。作成が失敗すると、最後のバックアップまで消えます。
+        そして作成が最も失敗しやすいのはクォータが満杯のときです。このチケットが直そうとしていた
+        まさにその状況が、バックアップを全滅させる条件でした。</p>
+
+        <p>クォータゲートでは直せません。ゲートはクォータのせいで失敗するものを先に止めるだけで、作成は
+        API エラー・Timeout・状態の失敗でも失敗します。順序の問題は順序で直すしかありません。</p>
+
+        <p>そこで「新しい写しが active として確定するまでは、最後の写しを消さない」をコードで強制しました。
+        待ち関数が active かどうかを返すようにし、確定でなければ削除経路に届く前に戻ります。</p>
+
+        <p>レビューがここでもう一つ穴を見つけました。確定失敗で戻ると、作られたイメージが DB の行なしで
+        残ります。保持ポリシーは行を数えるので回収できません。直しながら新しく作った漏れでした。未確定の
+        イメージを失敗経路ごとに消すようにして、「完全な新しいスナップショットでなければ何も残さない」に
+        合わせました。</p>
+
+        <h2 id="三つの時点">登録・実行・画面を一組で合わせました<a class="anchor" href="#三つの時点" aria-label="この節へのリンク">#</a></h2>
+
+        <p>一か所だけ直すと別の場所がずれます。三つの時点をまとめて決めました。</p>
+
+        <ul class="callout">
+          <li>登録・修正: 対象プロジェクトの実際の使用量で検査します。足りなければ警告し進行は許しますが、
+          一枚も作れない状態なら止めます。照会自体が失敗したら開けておきます。検査ができなかったからと
+          登録を止めると、検査の障害が機能の障害になります。</li>
+          <li>実行: 作成の直前にもう一度クォータを見ます。足りなければ作成も削除もせずに失敗で終えます。</li>
+          <li>画面: 一覧と詳細に FAILED を出し、次の実行が成功したら STARTED に戻します。</li>
+        </ul>
+
+        <p>失敗の理由と時刻は、あえてスケジュールの行に入れませんでした。一行に最後の失敗だけを残すと、
+        その前に何があったかは結局ログにしかありません。理由は実行単位の履歴として別に扱うことにし、
+        後続チケットに回しました。</p>
+
+        <h2 id="中立を廃止">TIMEOUT を中立に置く案を廃止しました<a class="anchor" href="#中立を廃止" aria-label="この節へのリンク">#</a></h2>
+
+        <p>最初の設計は Timeout を罰しないようにしていました。まだ作成中かもしれないので失敗と数えない、
+        という考えです。</p>
+
+        <p>レビューが二つを指摘しました。一つは成功との取り違えです。中立に置くと画面は正常に見えるのに
+        スナップショットは確定していません。この記事が直そうとしていたまさにその形です。もう一つは孤児です。
+        確定していないものをそのままにすると、回収する主体がいません。</p>
+
+        <p>そこで確定していないものはすべて片づけて失敗として伝えるようにしました。かわりに待ち時間を
+        サイズに比例させ、その値を設定テーブルから実行時に読むようにしました。再起動なしで調整できて
+        はじめて、「もう少し待てばよかったのに失敗と記録される」を運用で直せます。</p>
+
+        <h2 id="主張しないこと">この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="この節へのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>製品名・バージョン・顧客名・チケット番号・サーバーアドレスは書きません。コードの引用も
+          クラス名なしで動作だけ書きました。</li>
+          <li>運用でこの欠陥によってバックアップが実際に消えたことがあるかは分かりません。コード経路として
+          ありうるというところまでが確認したことで、事故記録を照会したわけではありません。</li>
+          <li>「毎回の実行が全種類 413 で失敗する」は誇張でした。Instance 本体のスナップショットは
+          イメージサービスを使うのでボリュームのクォータとは無関係です。チケットのその一文をそのまま
+          受けず、経路ごとに分けました。</li>
+          <li>検証はコンパイルと単体テスト、そして登録警告と FAILED 表示をブラウザで確認したところまでです。
+          負荷や長期運用での挙動は測っていません。</li>
+          <li>残したものがあります。Timeout の時点で作成中だったスナップショットの完全な回収は、まだ
+          ベストエフォートです。名前ベースのジョブキーのせいでスケジュール名を変えると新旧のジョブが
+          一緒に発火する問題も、別チケットに残しました。</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="この節へのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>状態値があることと、その値が書かれることは別です。FAILED は最初からあり、誰も書きませんでした。
+          Enum を数えてもこれは見つかりません。</li>
+          <li>上限を検査するコードは、どのプロジェクトの上限をどのプロジェクトの使用量と比べるのかを
+          書いておく必要があります。両方誤っていてもコンパイルは通ります。</li>
+          <li>消してから作る順序は、作成が失敗する日にだけ現れます。そしてその日はたいてい、すでに
+          ほかの何かが壊れている日です。</li>
+          <li>失敗を中立に置く設計は、画面で成功と区別できません。区別できないものは無いのと同じです。</li>
+        </ul>
+
+        <p>周期ジョブは誰も見ていないときに回ります。失敗がどこまで届くのかをコードに書いておかなければ、
+        失敗はログファイルの中で終わります。</p>
+
+        <p>お読みいただきありがとうございました。</p>
+        </div>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=07ce86b446"></script>
+  <script src="../assets/content.js?v=20a7de7af6"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

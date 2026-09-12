@@ -155,6 +155,18 @@
       },
       items: [
         {
+          title: "A Snapshot Schedule Failed Every Run and the Screen Said STARTED",
+          url: "writing/a-schedule-that-failed-in-silence.html",
+          source: "company", sourceLabel: "Company work",
+          title_ko: "스냅샷 스케줄러가 매번 실패했는데 화면은 STARTED였습니다",
+          desc_ko: "프로젝트 스냅샷 쿼터가 차면 스케줄러가 매 실행 실패하는데 화면은 STARTED였습니다. FAILED라는 상태값은 이미 있었고 그 값을 쓰는 코드가 없었습니다. 그리고 쿼터가 찬 그 순간에 코드가 이전 백업을 먼저 지우고 있었습니다.",
+          title_ja: "スナップショットスケジューラが毎回失敗しても画面は STARTED でした",
+          desc_ja: "プロジェクトのスナップショットクォータが満杯だとスケジューラが毎回失敗するのに画面は STARTED でした。FAILED という状態値はすでにあり、それを書くコードがありませんでした。そしてその瞬間にコードは前のバックアップを先に消していました。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "A full snapshot quota made every run fail while the screen stayed healthy. The FAILED state already existed and nothing wrote it, and the code was deleting the previous backup first. Also in Korean and Japanese.",
+          tags: ["Admin Console", "Reliability", "Backend", "Method"]
+        },
+        {
           title: "Defending Poll Aggregates Axis by Axis Broke Five Times",
           url: "writing/until-the-guarantee-was-a-sentence.html",
           title_ko: "투표 집계 재식별 방어를 축마다 세우다 다섯 번 뚫렸습니다",
