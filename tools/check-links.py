@@ -15,6 +15,12 @@ import sys
 
 HREF = re.compile(r'(?:href|src)="([^"#?:]+\.(?:html|css|js|png|svg|jpg|pdf))(?:[#?][^"]*)?"')
 
+# 아무 데도 가지 않는 링크. `href="#"` 는 **보이지만 안 눌리는** 것이라 없는 것보다 나쁘다 —
+# 누른 사람은 자기가 잘못 눌렀다고 생각한다.
+# ⚠️ 실측(2026-09-13): LinkedIn 아이콘이 163쪽에서, 이력서 내려받기가 1쪽에서 이 꼴이었다.
+#    주소를 못 채우면 링크를 지우고, 채울 수 있으면 채운다. 둘 중 하나다.
+DEAD = re.compile(r'<a\b[^>]*href="#"[^>]*>')
+
 
 def main():
     fails = []
@@ -27,6 +33,10 @@ def main():
             target = os.path.normpath(os.path.join(d, m.group(1)))
             if not os.path.exists(target):
                 fails.append("%s → %s (없음)" % (f, m.group(1)))
+        for m in DEAD.finditer(s):
+            lab = re.search(r'aria-label="([^"]*)"', m.group(0))
+            fails.append("%s: 아무 데도 가지 않는 링크 — %s"
+                         % (f, lab.group(1) if lab else m.group(0)[:40]))
     print("내부 링크 %d 개 검사" % n)
     if fails:
         print("결과: %d 건 실패" % len(fails))

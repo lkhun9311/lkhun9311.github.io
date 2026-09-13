@@ -2245,6 +2245,8 @@ html[lang="ja"] .container.reading .article-body .table-note::before {
 /* GitHub, and any other mark that replaced its own word.
    The label lives in aria-label and title rather than in text: the mark is recognised faster than the word,
    and a link whose only content is an icon is unreadable without one. */
+/* 아이콘 한 개가 곧 하나의 연락처다. 과녁은 40px 로 두고(손가락 최소 치수), 그림은 22px 로
+   그 안에 둔다 — 과녁을 그림 크기에 맞추면 눌러야 하는 곳이 눈에 보이는 것보다 작아진다. */
 .icon-link {
   display: inline-flex;
   align-items: center;
@@ -2254,14 +2256,30 @@ html[lang="ja"] .container.reading .article-body .table-note::before {
   border-radius: 999px;
   color: var(--text-soft);
   border: 1px solid transparent;
+  transition: color 0.16s ease, border-color 0.16s ease, background-color 0.16s ease, transform 0.16s ease;
 }
 
-.icon-link:hover,
-.icon-link:focus-visible {
+.icon-link:hover {
   color: var(--ig-pink);
   border-color: rgba(214, 41, 118, 0.32);
   background: rgba(255, 255, 255, 0.6);
   text-decoration: none;
+  transform: translateY(-1px);
+}
+
+/* 키보드로 온 초점은 **마우스와 다르게** 보여야 한다. 같은 모양이면 지금 어디에 있는지
+   테두리 색 하나로만 구별해야 하고, 그 차이는 배경 위에서 잘 안 보인다. */
+.icon-link:focus-visible {
+  color: var(--ig-pink);
+  background: rgba(255, 255, 255, 0.6);
+  outline: 2px solid var(--ig-pink);
+  outline-offset: 3px;
+  text-decoration: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon-link { transition: none; }
+  .icon-link:hover { transform: none; }
 }
 
 /* The footer is now three marks and nothing else, so they carry the whole row and are sized to be aimed at
