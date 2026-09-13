@@ -87,14 +87,14 @@
         <strong>내가 못 본다</strong>는 뜻이지 그쪽이 멈췄다는 뜻이 아닙니다.
         스위치가 끊겼을 뿐 노드는 계속 돌고 있을 수 있습니다.</p>
 
-        <p>그 상태에서 다른 노드에 같은 VM을 띄우면 원본과 복제본이 같은 볼륨에 동시에 씁니다.
+        <p>그 상태에서 다른 노드에 같은 VM을 띄우면 원본과 복제본이 같은 Volume에 동시에 씁니다.
         파일 시스템은 그런 접근을 가정하지 않으므로 데이터가 깨집니다. 자동 복구가 장애보다 비싼 경우가
         이것입니다.</p>
 
                 <figure class="diagram">
           <svg viewBox="0 0 720 200" role="img" aria-labelledby="fen-t fen-d" class="figure-svg">
             <title id="fen-t">펜싱 없이 복구했을 때 생기는 것</title>
-            <desc id="fen-d">왼쪽부터 상자가 넷, 회색 화살표로 이어집니다. 첫째는 노드가 응답하지 않는 것, 둘째는 죽었다고 판정하는 것, 셋째는 다른 노드에서 같은 VM을 띄우는 것, 넷째는 원본이 살아 있어 같은 볼륨에 둘이 쓰는 것입니다. 아래에 분홍색으로 응답이 없다는 것은 죽었다는 뜻이 아니라고 적혀 있습니다.</desc>
+            <desc id="fen-d">왼쪽부터 상자가 넷, 회색 화살표로 이어집니다. 첫째는 노드가 응답하지 않는 것, 둘째는 죽었다고 판정하는 것, 셋째는 다른 노드에서 같은 VM을 띄우는 것, 넷째는 원본이 살아 있어 같은 Volume에 둘이 쓰는 것입니다. 아래에 분홍색으로 응답이 없다는 것은 죽었다는 뜻이 아니라고 적혀 있습니다.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
               <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">응답 없음</text>
@@ -110,7 +110,7 @@
               <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#fen-a)"/>
               <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
               <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">둘이 쓴다</text>
-              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">같은 볼륨에</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">같은 Volume에</text>
               <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">응답이 없다는 것은 죽었다는 뜻이 아님</text>
             </g>
             <defs>
@@ -129,7 +129,7 @@
 
         <ul class="callout">
           <li>전원 쪽 · BMC나 IPMI로 전원을 내립니다. 확실하지만 그 경로가 살아 있어야 합니다.</li>
-          <li>저장 쪽 · 그 노드의 볼륨 접근 권한을 뺏습니다. 노드는 돌지만 쓰지 못합니다.</li>
+          <li>저장 쪽 · 그 노드의 Volume 접근 권한을 뺏습니다. 노드는 돌지만 쓰지 못합니다.</li>
           <li>망 쪽 · 스위치에서 포트를 내립니다. 다만 이미 열린 세션은 남을 수 있습니다.</li>
         </ul>
 
@@ -155,7 +155,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=7afc28f09a"></script>
+  <script src="../assets/content.js?v=c03cb004ee"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>
