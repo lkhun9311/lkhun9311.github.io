@@ -70,21 +70,20 @@
         <nav class="article-toc" aria-label="目次">
           <p class="toc-label">目次</p>
           <ul>
-            <li><a href="#원인">何が先頭を違うものにするのか</a></li>
+            <li><a href="#원인">概要</a></li>
             <li><a href="#길이">どれだけ捨てるか</a></li>
           </ul>
         </nav>
       <article class="article-body">
 
-        <p class="term-oneline">測定の<strong>先頭を捨てる区間</strong>です。JIT コンパイル・Connection Pool の充填・Cache が空の状態は定常状態ではないので、その区間を混ぜると二つの実行の差がウォームアップの長さの差として現れます。</p>
+        <h2 id="원인">概要<a class="anchor" href="#원인" aria-label="このセクションへのリンク">#</a></h2>
 
-
-        <h2 id="원인">何が先頭を違うものにするのか<a class="anchor" href="#원인" aria-label="このセクションへのリンク">#</a></h2>
+<p class="term-oneline">測定の<strong>先頭を捨てる区間</strong>です。JIT コンパイル・Connection Pool の充填・Cache が空の状態は定常状態ではないので、その区間を混ぜると二つの実行の差がウォームアップの長さの差として現れます。</p>
         <p>JVM では少なくとも三つあります。</p>
 
         <ul>
           <li><strong>JIT コンパイル</strong> — 最初はインタプリタで動き、よく呼ばれるコードから機械語にコンパイルされます。序盤は遅いです。</li>
-          <li><strong>Connection Pool の充填</strong> — Pool が最小サイズから始まると、序盤のリクエストが Connection を開く費用を払います。</li>
+          <li>Connection Pool の充填 — Pool が最小サイズから始まると、序盤のリクエストが Connection を開く費用を払います。</li>
           <li>Cache・バッファ — DB のバッファ Cache が空だと、序盤のクエリはディスクを読みます。</li>
         </ul>
         <h2 id="길이">どれだけ捨てるか<a class="anchor" href="#길이" aria-label="このセクションへのリンク">#</a></h2>
@@ -103,7 +102,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c5d680fa02"></script>
+  <script src="../assets/content.js?v=503645dd2e"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

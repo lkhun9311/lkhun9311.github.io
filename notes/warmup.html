@@ -70,21 +70,20 @@
         <nav class="article-toc" aria-label="Contents">
           <p class="toc-label">Contents</p>
           <ul>
-            <li><a href="#원인">What makes the front different</a></li>
+            <li><a href="#원인">Overview</a></li>
             <li><a href="#길이">How much to throw away</a></li>
           </ul>
         </nav>
       <article class="article-body">
 
-        <p class="term-oneline">The stretch at the front of a measurement that <strong>gets thrown away</strong>. JIT compilation, filling the connection pool and a cold cache are not steady state, so leaving that stretch in makes the difference between two runs show up as a difference in warm-up length.</p>
+        <h2 id="원인">Overview<a class="anchor" href="#원인" aria-label="Link to this section">#</a></h2>
 
-
-        <h2 id="원인">What makes the front different<a class="anchor" href="#원인" aria-label="Link to this section">#</a></h2>
+<p class="term-oneline">The stretch at the front of a measurement that <strong>gets thrown away</strong>. JIT compilation, filling the connection pool and a cold cache are not steady state, so leaving that stretch in makes the difference between two runs show up as a difference in warm-up length.</p>
         <p>On the JVM there are at least three.</p>
 
         <ul>
           <li><strong>JIT compilation</strong> — it starts interpreted, and the code called most often is compiled to machine code first. The beginning is slow.</li>
-          <li><strong>Filling the connection pool</strong> — if the pool starts at its minimum size, the early requests pay for opening connections.</li>
+          <li>Filling the connection pool — if the pool starts at its minimum size, the early requests pay for opening connections.</li>
           <li>Cache and buffers — with an empty database buffer cache, the early queries read from disk.</li>
         </ul>
         <h2 id="길이">How much to throw away<a class="anchor" href="#길이" aria-label="Link to this section">#</a></h2>
@@ -103,7 +102,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c5d680fa02"></script>
+  <script src="../assets/content.js?v=503645dd2e"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

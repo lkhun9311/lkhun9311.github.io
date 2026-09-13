@@ -70,7 +70,7 @@
         <nav class="article-toc" aria-label="目次">
           <p class="toc-label">目次</p>
           <ul>
-            <li><a href="#무엇">RAM が増えたわけではありません</a></li>
+            <li><a href="#무엇">概要</a></li>
             <li><a href="#점유">埋まっているのは状況で、原因ではありません</a></li>
             <li><a href="#끄기">切る命令は戻す手順を先に書きます</a></li>
             <li><a href="#쓰인-곳">このサイトで使われている記事</a></li>
@@ -78,17 +78,17 @@
         </nav>
       <article class="article-body">
 
+        <h2 id="무엇">概要<a class="anchor" href="#무엇" aria-label="この節へのリンク">#</a></h2>
+
         <p><strong>Swap は RAM が足りないときにページをディスクへ退避させる場所です。</strong>
         降りれば Swap Out、また必要になって上がれば Swap In です。プロセスはその間を知りません。
         読み取り 1 件のコストだけが静かに変わります。</p>
-
-        <h2 id="무엇">RAM が増えたわけではありません<a class="anchor" href="#무엇" aria-label="この節へのリンク">#</a></h2>
 
         <p>Swap はメモリを増やす仕掛けに見えますが、増えたのは<strong>アドレス空間</strong>であって速度ではありません。
         RAM で終わったはずの読み取りがディスクの往復になるので、同じ問い合わせがそのままで遅くなります。
         桁で言えば RAM は 0.0001ms 側、Swap は 10ms 側です。</p>
 
-        <p>つまり Swap のある機器の性能は、問い合わせやコードではなく<strong>ページが今どこにあるか</strong>で決まります。
+        <p>つまり Swap のある機器の性能は、問い合わせやコードではなくページが今どこにあるかで決まります。
         上の層をいくら覗いても理由の出てこない種類の遅さは、ここから来ます。</p>
 
                 <figure class="diagram">
@@ -149,7 +149,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c5d680fa02"></script>
+  <script src="../assets/content.js?v=503645dd2e"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

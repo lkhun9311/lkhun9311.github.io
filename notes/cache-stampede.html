@@ -70,7 +70,7 @@
         <nav class="article-toc" aria-label="Contents">
           <p class="toc-label">Contents</p>
           <ul>
-            <li><a href="#무엇">There is a gap between checking and filling</a></li>
+            <li><a href="#무엇">Overview</a></li>
             <li><a href="#없음">“Nothing” is also a value</a></li>
             <li><a href="#막기">The fix belongs to the data structure, not to a lock</a></li>
             <li><a href="#쓰인-곳">Where it is used on this site</a></li>
@@ -78,18 +78,18 @@
         </nav>
       <article class="article-body">
 
+        <h2 id="무엇">Overview<a class="anchor" href="#무엇" aria-label="Link to this section">#</a></h2>
+
         <p><strong>A cache stampede is what happens when one key goes missing and everyone who needed it
         calls the origin at once.</strong> The cache exists, and behaves as if it did not, precisely when
         things are busiest.</p>
-
-        <h2 id="무엇">There is a gap between checking and filling<a class="anchor" href="#무엇" aria-label="Link to this section">#</a></h2>
 
         <p>A hand-written cache usually looks like this: check whether it is empty, and if it is, fetch and
         fill. Between those two lines there is <strong>room for another thread</strong>.</p>
 
         <p>When N parallel threads clear the check in the same moment, all N call the external API. A cache
         built to make one call ends up making N. N grows with load, so
-        <strong>it is worst exactly when you are busiest.</strong></p>
+        it is worst exactly when you are busiest.</p>
 
                 <figure class="diagram">
           <svg viewBox="0 0 720 216" role="img" aria-labelledby="cs-t cs-d" class="figure-svg">
@@ -149,7 +149,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c5d680fa02"></script>
+  <script src="../assets/content.js?v=503645dd2e"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

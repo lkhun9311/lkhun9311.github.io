@@ -70,22 +70,21 @@
         <nav class="article-toc" aria-label="目次">
           <p class="toc-label">目次</p>
           <ul>
-            <li><a href="#모드">三つのモード</a></li>
+            <li><a href="#모드">概要</a></li>
             <li><a href="#성질">核心的な性質 — いつ固定されるか</a></li>
             <li><a href="#핀">ピン(Pin)がかかるパターン</a></li>
           </ul>
         </nav>
       <article class="article-body">
 
-        <p class="term-oneline">Connection Pooler が後ろの Connection を再利用する方式の一つで、<strong>Transaction 単位で貸し出して返してもらいます。</strong>Transaction が終わってはじめて、その Connection は次のクライアントに渡ります。</p>
+        <h2 id="모드">概要<a class="anchor" href="#모드" aria-label="このセクションへのリンク">#</a></h2>
 
-
-        <h2 id="모드">三つのモード<a class="anchor" href="#모드" aria-label="このセクションへのリンク">#</a></h2>
+<p class="term-oneline">Connection Pooler が後ろの Connection を再利用する方式の一つで、<strong>Transaction 単位で貸し出して返してもらいます。</strong>Transaction が終わってはじめて、その Connection は次のクライアントに渡ります。</p>
         <p>PgBouncer では三つあります。後ろへ行くほど再利用は効きますが、使える機能は減ります。</p>
 
         <ul>
           <li><strong>セッションプーリング</strong> — クライアントが切断するまで Connection を握ります。再利用はほとんどありません。</li>
-          <li><strong>Transaction Pooling</strong> — Transaction 単位。実務でいちばん使われるモードです。</li>
+          <li>Transaction Pooling — Transaction 単位。実務でいちばん使われるモードです。</li>
           <li>ステートメントプーリング — クエリ一つ単位。Transaction は使えません。</li>
         </ul>
         <h2 id="성질">核心的な性質 — いつ固定されるか<a class="anchor" href="#성질" aria-label="このセクションへのリンク">#</a></h2>
@@ -128,7 +127,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c5d680fa02"></script>
+  <script src="../assets/content.js?v=503645dd2e"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>
