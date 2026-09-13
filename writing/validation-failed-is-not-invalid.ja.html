@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>セッション検証が失敗したときにログアウトさせると、最も熱心に使う人だけが追い出されます | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/validation-failed-is-not-invalid.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/validation-failed-is-not-invalid.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/validation-failed-is-not-invalid.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/validation-failed-is-not-invalid.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="セッション検証が失敗したときにログアウトさせると、最も熱心に使う人だけが追い出されます" />
+  <meta property="og:description" content="上位の認証ポータルが揺れてユーザーが静かに弾き出されました。引き金はこちらの判定ではなく、ポータルが押し出した満了通知でした。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/validation-failed-is-not-invalid.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="セッション検証が失敗したときにログアウトさせると、最も熱心に使う人だけが追い出されます" />
+  <meta name="twitter:description" content="上位の認証ポータルが揺れてユーザーが静かに弾き出されました。引き金はこちらの判定ではなく、ポータルが押し出した満了通知でした。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="上位の認証ポータルが揺れてユーザーが静かに弾き出されました。引き金はこちらの判定ではなく、ポータルが押し出した満了通知でした。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=746f99ac07" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"validation-failed-is-not-invalid.html","ko":"validation-failed-is-not-invalid.ko.html","ja":"validation-failed-is-not-invalid.ja.html"}'>
+          <option value="ja" selected>日本語</option>
+          <option value="en">English</option>
+          <option value="ko">한국어</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ戻る</a>
+        <div class="article-meta"><span class="source-tag company notranslate">会社の業務</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS バックエンド</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>セッション検証が失敗したときにログアウトさせると、最も熱心に使う人だけが追い出されます<br><span class="h1-sub">ポーリングを回すのはブラウザなので、席を外した人にはそもそも検証が回りません。</span></h1>
+        <p class="article-date">2026年9月</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="validation-failed-is-not-invalid"></aside>
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#想定読者">この記事の想定読者</a></li>
+            <li><a href="#静かに弾き出された">ユーザーが静かに弾き出されました</a></li>
+            <li><a href="#上から降りてきた通知">こちらの判定ではなく、上から降りてきた通知でした</a></li>
+            <li><a href="#誰を追い出すか">「検証できなければログアウト」は熱心に使う人だけを追い出します</a></li>
+            <li><a href="#戻り道">ログアウトの復旧経路が同じ障害を共有します</a></li>
+            <li><a href="#決定的と最善努力">決定的なものと最善努力のものを分けました</a></li>
+            <li><a href="#クッキーのゲート">クッキーを見るゲートは、クッキーが消えれば常に偽です</a></li>
+            <li><a href="#主張しないこと">この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
+          </ul>
+        </nav>
+      <article class="article-body">
+
+        <p>社内クラウド管理コンソールのバックエンドを作っています。ある現場ではログインを上位の認証ポータルが担い、
+        管理コンソールはそのポータルに、一定周期でセッションがまだ有効かを尋ねます。</p>
+
+        <p>その現場で、ユーザーが作業中に<strong>何の知らせもなくポータル画面へ弾き出される</strong>という報告が出ました。
+        社内環境では再現しませんでした。</p>
+
+        <p>ログを見ると、引き金はこちらが下した判定ではありませんでした。ポータルが自分の不安定のさなかに
+        セッション満了をストリームで押し出し、こちらはそれをそのまま渡していました。
+        そしてこの事象に対して最初に出た処方が<strong>「検証できないなら安全にログアウトさせよう」</strong>でした。
+        この記事はその処方を退けた理由と、代わりに入れたものについてです。</p>
+
+        <h2 id="想定読者">この記事の想定読者<a class="anchor" href="#想定読者" aria-label="この節へのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>外部の認証サーバーにセッションの有効性を尋ねる画面を作る方</li>
+          <li>「確認できなければ塞ぐ」を既定にしている方</li>
+          <li>ブラウザが回す周期チェックでセッションを守ろうとしたことのある方</li>
+        </ul>
+
+        <h2 id="静かに弾き出された">ユーザーが静かに弾き出されました<a class="anchor" href="#静かに弾き出された" aria-label="この節へのリンク">#</a></h2>
+
+        <p>症状は一行です。作業していた画面が消え、ポータルの最初の画面が出ています。警告も理由もありません。
+        ユーザーに見えるのは、自分がしていたことが無くなったという事実だけです。</p>
+
+        <p>現場のログでは、その時刻にポータルの検証エンドポイント二つが<strong>500 と接続拒否</strong>を返していました。
+        ポータル自身のログイン画面でも呼び出しが失敗していました。つまりその瞬間のポータルは、
+        「このセッションは有効か」に答えられる状態ではありませんでした。</p>
+
+                <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="fc1-t fc1-d" class="figure-svg">
+            <title id="fc1-t">ユーザーが弾き出されるまでに通った四つの場所</title>
+            <desc id="fc1-d">左から箱が四つ、灰色の矢印でつながっています。一つ目は上位の認証ポータルの検証が 500 と接続拒否を返すことです。二つ目はそのポータルがセッション満了をストリームで押し出すことです。三つ目は管理コンソールがそれを受けてセッションを終え、ブラウザへそのまま中継することです。四つ目はブラウザが即座にポータル画面へ移動することです。下にピンクで、こちらのポーリングはすでに寛容だったと書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">ポータル検証の失敗</text>
+              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">500 · 接続拒否</text>
+              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#fc1-a)"/>
+              <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">ポータルの満了通知</text>
+              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">ストリームで push</text>
+              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#fc1-a)"/>
+              <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">管理コンソール</text>
+              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">セッション終了 · 中継</text>
+              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#fc1-a)"/>
+              <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">ブラウザ</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">即座に移動</text>
+              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">こちらのポーリングはすでに寛容だった</text>
+            </g>
+            <defs>
+              <marker id="fc1-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>引き金はこちらが下した判定ではなく、上から降りてきた通知でした。私たちはそれをそのまま渡していました。</figcaption>
+        </figure>
+
+        <h2 id="上から降りてきた通知">こちらの判定ではなく、上から降りてきた通知でした<a class="anchor" href="#上から降りてきた通知" aria-label="この節へのリンク">#</a></h2>
+
+        <p>ここで一つ分かれます。こちらの周期チェックはすでに<strong>通信の失敗を「不明」として扱い、セッションを維持</strong>
+        していました。だからそのチェックがユーザーを追い出したのではありません。</p>
+
+        <p>実際の引き金は、ポータルがストリームで押し出したセッション満了の通知でした。管理コンソールはそれを受けて
+        セッションを終え、ブラウザへ渡し、画面は即座に移動しました。こちらのコードから読めば正常な動作です。
+        満了したと言われたので終えました。</p>
+
+        <p>ところがその通知を送った側は、同じ時刻に自分の検証 API で 500 を返していました。
+        「満了した」と「今は答えられない」を<strong>同じ信号で送った</strong>のです。受け取る側では二つを区別できません。</p>
+
+        <h2 id="誰を追い出すか">「検証できなければログアウト」は熱心に使う人だけを追い出します<a class="anchor" href="#誰を追い出すか" aria-label="この節へのリンク">#</a></h2>
+
+        <p>そこで出た処方は逆向きでした。検証が N 回連続で失敗したらセッションを終えよう、というものです。
+        確認できないなら塞ぐほうが安全だ、という感覚は自然です。</p>
+
+        <p>この仕掛けが誰に掛かるかを詰めると裏返ります。周期チェックを回しているのはブラウザです。
+        本当に危険なのはユーザーが席を外した、タブを背面にした、ウィンドウを閉じたときですが、
+        <strong>そのときはチェック自体が止まります。</strong>連続失敗が溜まらないので、ログアウトも掛かりません。</p>
+
+                <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="fc2-t fc2-d" class="figure-svg">
+            <title id="fc2-t">Fail-closed が実際に掛かる側と掛からない側</title>
+            <desc id="fc2-d">左の箱は危険が大きい側です。席を外す、タブを背面に送る、ウィンドウを閉じるとポーリング自体が止まり、検証が回らないので連続失敗も溜まらず、ログアウトが掛かりません。右の箱は危険が小さい側です。画面を使い続けていればポーリングが回り、ポータルが揺れているあいだ失敗が溜まって真っ先に追い出されます。下にピンクで、監視が必要な側で監視が切れると書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">席を外したユーザー</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">ポーリング停止</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">連続失敗 0</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">ログアウトは掛からない</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">使い続けるユーザー</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">ポーリング継続</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">連続失敗が蓄積</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">真っ先に追い出される</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">監視が必要な側で監視が切れる</text>
+            </g>
+          </svg>
+          <figcaption>ポーリングをブラウザが回すかぎり、この仕掛けは危険な側を避けて安全な側にだけ掛かります。</figcaption>
+        </figure>
+
+        <p>逆に画面を見続けているユーザーはチェックが回り続けるので、ポータルが揺れているあいだ失敗が溜まります。
+        この仕掛けは結局<strong>最も危険の小さいユーザーだけを選んで追い出します。</strong>
+        クライアントが回すヘルスチェックは「不在」を検知できません。監視が最も要る瞬間に切れています。</p>
+
+        <h2 id="戻り道">ログアウトの復旧経路が同じ障害を共有します<a class="anchor" href="#戻り道" aria-label="この節へのリンク">#</a></h2>
+
+        <p>二つ目の理由のほうが重いです。ログアウトさせられたユーザーは再ログインしようとします。
+        ところがログインのトークン交換も同じポータルを通ります。</p>
+
+        <p>ポータルが不通のあいだにログアウトさせれば、再ログインもできません。乗り切れたはずの数分の揺れが
+        <strong>全面ロックアウトに格上げ</strong>されます。そしてポータルが回復した瞬間、追い出された人が一斉に
+        再ログインを試みて回復を妨げます。</p>
+
+        <p>三つ目の理由はすでに掛かっている上限です。セッションにはアイドルタイムアウトと絶対満了があり、
+        露出時間はすでに有限です。Fail-closed が追加で防ぐのは障害直前に失効したセッションのような狭い隅で、
+        それすら上限の内側に入ります。得るものは狭く、失うものは全面です。</p>
+
+        <p><a class="term" href="../notes/fail-closed.ja.html">Fail-closed</a> は<strong>アクセスを許すかどうかを決める場所</strong>では正しいです。
+        すでに上限の掛かったセッションを維持するかどうかを決める場所では過剰です。</p>
+
+        <h2 id="決定的と最善努力">決定的なものと最善努力のものを分けました<a class="anchor" href="#決定的と最善努力" aria-label="この節へのリンク">#</a></h2>
+
+        <p>直すべきは「出るかどうか」ではなく<strong>「静かに出るかどうか」</strong>でした。だから規則を一つに減らしました。
+        上位ポータルによる強制的な離脱は、すべて確認を受けたあとにだけ移動します。例外はありません。</p>
+
+        <p>すると「通信が不安定なので出ます」と「セッションが本当に満了したので出ます」のどちらを見せるかが残ります。
+        これは推測です。ユーザーごとに直近の不安定の痕跡を短い寿命で持ち、それで選びます。</p>
+
+                <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="fc3-t fc3-d" class="figure-svg">
+            <title id="fc3-t">決定的に決めたことと、最善努力に留めたこと</title>
+            <desc id="fc3-d">左の箱は決定的に決めたことです。強制的な離脱は必ず確認を受けたあとにだけ移動し、この規則に例外は無く、だから静かな離脱が構造的に起きません。右の箱は最善努力に留めたことです。どの文言を見せるかは不安定の痕跡から選び、外れても代価はやや不正確な一行で、移動するかどうかはこの判断に懸かっていません。下にピンクで、間違えたときの代価が違うと書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">決定的 · 安全</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">確認のあとにだけ移動</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">例外なし</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">静かな離脱は不可</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">最善努力 · 文言</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">痕跡で文言を選ぶ</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">外れても文言だけ</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">移動の可否とは無関係</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">間違えたときの代価が違う</text>
+            </g>
+          </svg>
+          <figcaption>一つの機能の中でも層を分けます。安全は推測に懸けず、文言だけを推測に懸けます。</figcaption>
+        </figure>
+
+        <p>ここがこの設計の核です。<strong>推測が外れたときの代価を文言に限定</strong>しました。
+        痕跡の追跡が外れてもユーザーは確認の窓を見てから出ます。狂うのはその窓に書かれた理由の一行だけです。
+        安全は推測に懸けず、文言だけを推測に懸けます。</p>
+
+        <p>理由を一度だけ分類し、三つの経路が同じ分類を使うようにしたのも同じ理由です。
+        401 応答のヘッダとストリームの通知と周期チェックの結果がそれぞれ理由を決めれば、先に届いたほうが文言を決めます。
+        同じ事象について人ごとに違う文言を見ることになります。</p>
+
+        <h2 id="クッキーのゲート">クッキーを見るゲートは、クッキーが消えれば常に偽です<a class="anchor" href="#クッキーのゲート" aria-label="この節へのリンク">#</a></h2>
+
+        <p>実装をレビューに掛けたら、<strong>直そうとしていたのと同じ欠陥</strong>が直したコードの中に入っていました。</p>
+
+        <p>画面側のゲートが「このセッションはポータルのセッションか」を満了時刻のクッキーで判断していました。
+        ところがその判断を引き起こす 401 応答が同じクッキーを消します。
+        条件を見る時点ではクッキーがもう無いので判定が常に偽になり、警告なしにそのまま出ます。</p>
+
+                <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="fc4-t fc4-d" class="figure-svg">
+            <title id="fc4-t">クッキーを条件にしたゲートが自分で切れる順序</title>
+            <desc id="fc4-d">左から箱が四つ、灰色の矢印でつながっています。一つ目はサーバーが 401 を返し理由ヘッダを付けることです。二つ目は同じ応答が満了時刻のクッキーを消すことです。三つ目は画面のゲートがクッキーと理由を一緒に見て警告を出すか決めることです。四つ目はクッキーがすでに無いので判定が常に偽になり、警告なしに離脱することです。下にピンクで、消える値を条件に使えば条件も消えると書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">サーバー 401</text>
+              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">理由ヘッダを付与</text>
+              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#fc4-a)"/>
+              <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">同じ応答</text>
+              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">満了クッキーを削除</text>
+              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#fc4-a)"/>
+              <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">画面のゲート</text>
+              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">クッキーと理由を確認</text>
+              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#fc4-a)"/>
+              <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">結果</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">常に偽 · 静かな離脱</text>
+              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">消える値を条件に使えば条件も消える</text>
+            </g>
+            <defs>
+              <marker id="fc4-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>直そうとしていた欠陥が、直したコードの中に戻ってきていました。レビューが無ければそのまま出ていました。</figcaption>
+        </figure>
+
+        <p>直し方は理由ヘッダの有無だけで判定することです。クッキーが消えたかどうかと無関係になります。
+        設計が誤っていたのではなく、<strong>消える値を条件に使ったこと</strong>が誤りでした。
+        消えるものを条件に入れれば、その条件はまさに必要な瞬間に無くなります。</p>
+
+        <h2 id="主張しないこと">この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="この節へのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>数値がありません。この記事に測った値はありません。根拠は現場のログと設計の判断で、
+          直したあとの再発頻度も測っていません。比べる前後の数値が無いという意味です。</li>
+          <li>社内では再現しませんでした。特定の現場構成でのみ出た事象なので、
+          一般的な頻度は言えません。</li>
+          <li>ポータル側は別のチームのものです。この記事が扱うのは受け取る側の対応で、
+          ポータルがなぜその通知を送ったかは私の範囲の外です。</li>
+          <li>Fail-closed が悪いという一般の主張ではありません。退けたのはすでに上限の掛かったセッションに
+          それを重ねて掛ける場所です。</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="この節へのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>「確認できない」と「無効だ」は違います。</strong>同じ信号で送れば受け取る側は区別できず、
+          同じ処理でまとめれば揺れが全面障害になります。</li>
+          <li><strong>安全装置を入れるときは、それが誰に掛かるかを先に描きます。</strong>
+          この仕掛けは危険な側を避けて安全な側にだけ掛かっていました。</li>
+          <li>一つの機能の中でも層を分けます。安全は推測に懸けず、文言だけを推測に懸けます。</li>
+          <li>消える値を条件に使えば、その条件はまさに必要な瞬間に無くなります。</li>
+        </ul>
+        </div>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=c5d680fa02"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
