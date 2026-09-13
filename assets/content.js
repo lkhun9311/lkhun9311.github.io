@@ -284,12 +284,12 @@
           tags: ["GPUaaS Control Plane", "Cost", "Operations", "Method"]
         },
         {
-          title: "GPU Admission Control Did Not Protect p99. It Dropped Requests.",
+          title: "GPU Admission Control Did Not Protect p99. It Dropped 1,788 Requests.",
           url: "writing/it-deleted-the-tenant.html",
           source: "side", sourceLabel: "Personal project",
-          title_ko: "GPU 입장 제어가 p99를 지킨 게 아니라 요청을 버렸습니다",
+          title_ko: "GPU 입장 제어가 p99를 지킨 게 아니라 요청 1,788건을 버렸습니다",
           desc_ko: "GPU 한 장 위의 4-arm 실험. 거절을 0건 했다는 Arm이 완료 수는 프리미엄 요청 수와 정확히 같았습니다. 리포트의 판정이 전부 비율이라 유료 반복 4회 동안 아무도 그것을 보지 못했습니다.",
-          title_ja: "GPU 入場制御は p99 を守らず、リクエストを捨てていました",
+          title_ja: "GPU 入場制御は p99 を守らず、リクエスト 1,788 件を捨てていました",
           desc_ja: "GPU 1 枚の上での 4-arm 実験。拒否 0 件だという Arm の完了数が、プレミアムの要求数とぴったり同じだった。レポートの判定がすべて比だったため、4 回の有料実行の間それは見えなかった。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "A four-arm experiment on one A10G. The arm that rejected nothing completed exactly the premium request count, and every check was a tail ratio. Also in Korean and Japanese.",
@@ -488,12 +488,12 @@
           tags: ["IaaS Backend", "Performance", "Backend", "Method"]
         },
         {
-          title: "Going Parallel Made the Volume List p99 Twice as Bad",
+          title: "Going Parallel Made the Volume List p99 1.85 Times Worse",
           url: "writing/parallelism-made-the-tail-worse.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "볼륨 목록을 병렬로 바꾸자 P99가 2배 나빠졌습니다",
+          title_ko: "볼륨 목록을 병렬로 바꾸자 P99가 1.85배 나빠졌습니다",
           desc_ko: "Cache 설정을 고정한 채 순차를 병렬로 바꾸니 P99가 42.6s에서 79.0s로 나빠졌습니다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다. 여섯 구성을 같은 조건으로 재고 나서야 보였습니다. 연작 ‘느린 화면’ ⑤.",
-          title_ja: "ボリューム一覧を並列にしたら P99 が 2 倍悪化しました",
+          title_ja: "ボリューム一覧を並列にしたら P99 が 1.85 倍悪化しました",
           desc_ja: "キャッシュ設定を固定したまま逐次を並列に変えると、p99 が 42.6 秒から 79.0 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンがロックされる。6 構成を同条件で測って初めて見えたこと。連載「遅い画面」⑤。",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "With the cache held fixed, going parallel took p99 from 42.6s to 79.0s. An external call inside computeIfAbsent, and the six-configuration test that made it visible. Slow Screens, part five. Also in Korean and Japanese.",
