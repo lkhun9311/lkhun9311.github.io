@@ -70,17 +70,16 @@
         <nav class="article-toc" aria-label="目次">
           <p class="toc-label">目次</p>
           <ul>
-            <li><a href="#왜">なぜ再利用するのか</a></li>
+            <li><a href="#왜">概要</a></li>
             <li><a href="#상한">ブロッキング JDBC ではこれが同時実行の上限</a></li>
             <li><a href="#불변식">不変条件が一つ</a></li>
           </ul>
         </nav>
       <article class="article-body">
 
-        <p class="term-oneline">アプリが DB Connection を<strong>毎回作り直さず再利用するために持っている一覧</strong>です。Spring Boot の既定は HikariCP です。</p>
+        <h2 id="왜">概要<a class="anchor" href="#왜" aria-label="このセクションへのリンク">#</a></h2>
 
-
-        <h2 id="왜">なぜ再利用するのか<a class="anchor" href="#왜" aria-label="このセクションへのリンク">#</a></h2>
+<p class="term-oneline">アプリが DB Connection を<strong>毎回作り直さず再利用するために持っている一覧</strong>です。Spring Boot の既定は HikariCP です。</p>
         <p>DB Connection を新しく開くのは高くつきます — TCP 接続、認証、セッション初期化が毎回起きます。リクエストごとにやると
         クエリの時間より接続の時間の方が長くなります。そこであらかじめ何本か開いておき、<strong>貸し出して返してもらいます。</strong></p>
         <h2 id="상한">ブロッキング JDBC ではこれが同時実行の上限<a class="anchor" href="#상한" aria-label="このセクションへのリンク">#</a></h2>
@@ -109,7 +108,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c5d680fa02"></script>
+  <script src="../assets/content.js?v=503645dd2e"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

@@ -70,7 +70,7 @@
         <nav class="article-toc" aria-label="目次">
           <p class="toc-label">目次</p>
           <ul>
-            <li><a href="#무엇">検査と充填のあいだが空いています</a></li>
+            <li><a href="#무엇">概要</a></li>
             <li><a href="#없음">「無い」も値です</a></li>
             <li><a href="#막기">止める場所はロックではなくデータ構造です</a></li>
             <li><a href="#쓰인-곳">このサイトで使われている記事</a></li>
@@ -78,17 +78,17 @@
         </nav>
       <article class="article-body">
 
+        <h2 id="무엇">概要<a class="anchor" href="#무엇" aria-label="この節へのリンク">#</a></h2>
+
         <p><strong>Cache Stampede は、あるキーが空になった瞬間に、それを必要としていた複数が同時に原本を呼ぶ事象です。</strong>
         Cache はあるのに、いちばん忙しい瞬間だけ無いかのように振る舞います。</p>
-
-        <h2 id="무엇">検査と充填のあいだが空いています<a class="anchor" href="#무엇" aria-label="この節へのリンク">#</a></h2>
 
         <p>自作の Cache はたいていこうです。空かどうかを見て、空なら呼んで詰めます。
         その二行のあいだに<strong>他の Thread が入る隙</strong>があります。</p>
 
         <p>並列化された N 個の Thread が同じ瞬間に検査を通過すれば、N 個すべてが外部 API を呼びます。
         一度だけ呼ぶために作った Cache の前で N 回呼ぶことになります。負荷が集まるほど N が大きくなるので
-        <strong>いちばん忙しいときにいちばん悪くなります。</strong></p>
+        いちばん忙しいときにいちばん悪くなります。</p>
 
                 <figure class="diagram">
           <svg viewBox="0 0 720 216" role="img" aria-labelledby="cs-t cs-d" class="figure-svg">
@@ -146,7 +146,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c5d680fa02"></script>
+  <script src="../assets/content.js?v=503645dd2e"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

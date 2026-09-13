@@ -70,17 +70,16 @@
         <nav class="article-toc" aria-label="Contents">
           <p class="toc-label">Contents</p>
           <ul>
-            <li><a href="#왜">Why it exists</a></li>
+            <li><a href="#왜">Overview</a></li>
             <li><a href="#구별">It is not the same as a connection pool</a></li>
             <li><a href="#한계">What it cannot fix</a></li>
           </ul>
         </nav>
       <article class="article-body">
 
-        <p class="term-oneline"><strong>A middle server that folds the thousands of connections an application opens into dozens of database connections</strong>. RDS Proxy, PgBouncer, Supavisor.</p>
+        <h2 id="왜">Overview<a class="anchor" href="#왜" aria-label="Link to this section">#</a></h2>
 
-
-        <h2 id="왜">Why it exists<a class="anchor" href="#왜" aria-label="Link to this section">#</a></h2>
+<p class="term-oneline"><strong>A middle server that folds the thousands of connections an application opens into dozens of database connections</strong>. RDS Proxy, PgBouncer, Supavisor.</p>
         <p>PostgreSQL creates <strong>one backend process per connection</strong>. That process uses memory even while it does
         nothing. So the more app instances there are, the sooner the database side hits its limit.</p>
 
@@ -88,7 +87,7 @@
 but only 50 are actually running a query right now
 the other 1,950 are merely open</pre>
 
-        <p>A connection pooler takes those 2,000 and lays <strong>only the ones with work</strong> onto 50 backend connections.
+        <p>A connection pooler takes those 2,000 and lays only the ones with work onto 50 backend connections.
         It removes the cost of connections that are merely open.</p>
         <h2 id="구별">It is not the same as a connection pool<a class="anchor" href="#구별" aria-label="Link to this section">#</a></h2>
         <p>The names are close enough to be confused often.</p>
@@ -121,7 +120,7 @@ the other 1,950 are merely open</pre>
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c5d680fa02"></script>
+  <script src="../assets/content.js?v=503645dd2e"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

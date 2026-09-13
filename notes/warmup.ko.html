@@ -70,21 +70,20 @@
         <nav class="article-toc" aria-label="목차">
           <p class="toc-label">목차</p>
           <ul>
-            <li><a href="#원인">무엇이 앞부분을 다르게 만드나</a></li>
+            <li><a href="#원인">개요</a></li>
             <li><a href="#길이">얼마나 버리나</a></li>
           </ul>
         </nav>
       <article class="article-body">
 
-        <p class="term-oneline">측정 <strong>앞부분을 버리는 구간</strong>입니다. JIT 컴파일·Connection Pool 채움·Cache가 비어 있는 상태는 정상 상태가 아니므로 그 구간을 섞으면 두 실행의 차이가 워밍업 길이의 차이로 나타납니다.</p>
+        <h2 id="원인">개요<a class="anchor" href="#원인" aria-label="이 절로 가는 링크">#</a></h2>
 
-
-        <h2 id="원인">무엇이 앞부분을 다르게 만드나<a class="anchor" href="#원인" aria-label="이 절로 가는 링크">#</a></h2>
+<p class="term-oneline">측정 <strong>앞부분을 버리는 구간</strong>입니다. JIT 컴파일·Connection Pool 채움·Cache가 비어 있는 상태는 정상 상태가 아니므로 그 구간을 섞으면 두 실행의 차이가 워밍업 길이의 차이로 나타납니다.</p>
         <p>JVM 기준으로 최소 세 가지입니다.</p>
 
         <ul>
           <li><strong>JIT 컴파일</strong>: 처음엔 인터프리터로 돌다가 자주 호출되는 코드부터 기계어로 컴파일됩니다. 초반은 느립니다.</li>
-          <li><strong>Connection Pool 채움</strong>: Pool이 최소 크기에서 시작하면 초반 요청이 Connection을 새로 여는 비용을 냅니다.</li>
+          <li>Connection Pool 채움: Pool이 최소 크기에서 시작하면 초반 요청이 Connection을 새로 여는 비용을 냅니다.</li>
           <li>Cache·버퍼: DB 버퍼 Cache가 비어 있으면 초반 쿼리는 디스크를 읽습니다.</li>
         </ul>
         <h2 id="길이">얼마나 버리나<a class="anchor" href="#길이" aria-label="이 절로 가는 링크">#</a></h2>
@@ -103,7 +102,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c5d680fa02"></script>
+  <script src="../assets/content.js?v=503645dd2e"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

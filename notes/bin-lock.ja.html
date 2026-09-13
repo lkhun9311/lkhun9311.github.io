@@ -70,7 +70,7 @@
         <nav class="article-toc" aria-label="目次">
           <p class="toc-label">目次</p>
           <ul>
-            <li><a href="#무엇">セグメントではなくバケットです</a></li>
+            <li><a href="#무엇">概要</a></li>
             <li><a href="#시간">ロックの中で待てば並列が行列になります</a></li>
             <li><a href="#고치기">安全なことと速いことは別です</a></li>
             <li><a href="#쓰인-곳">このサイトで使われている記事</a></li>
@@ -78,15 +78,15 @@
         </nav>
       <article class="article-body">
 
+        <h2 id="무엇">概要<a class="anchor" href="#무엇" aria-label="この節へのリンク">#</a></h2>
+
         <p><strong>Bin Lock は ConcurrentHashMap がマップ全体ではなくキーの属するバケット一つだけをロックする方式です。</strong>
         <code>computeIfAbsent</code> のマッピング関数はそのロックの中で回ります。</p>
-
-        <h2 id="무엇">セグメントではなくバケットです<a class="anchor" href="#무엇" aria-label="この節へのリンク">#</a></h2>
 
         <p>この構造をセグメントロックと呼ぶ文書をよく見ます。セグメントは Java 7 の頃の用語です。
         Java 8 以降の ConcurrentHashMap はセグメントを無くし<strong>バケット(Bin)単位でロックします。</strong></p>
 
-        <p>変わったのはロックの<strong>範囲</strong>です。ロックされること自体は同じです。
+        <p>変わったのはロックの範囲です。ロックされること自体は同じです。
         範囲が狭くなったことは、その中で時間のかかる仕事をしてよいという意味ではありません。</p>
 
                 <figure class="diagram">
@@ -147,7 +147,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c5d680fa02"></script>
+  <script src="../assets/content.js?v=503645dd2e"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

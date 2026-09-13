@@ -70,22 +70,21 @@
         <nav class="article-toc" aria-label="Contents">
           <p class="toc-label">Contents</p>
           <ul>
-            <li><a href="#모드">Three modes</a></li>
+            <li><a href="#모드">Overview</a></li>
             <li><a href="#성질">The property that matters — when it pins</a></li>
             <li><a href="#핀">Patterns that Pin</a></li>
           </ul>
         </nav>
       <article class="article-body">
 
-        <p class="term-oneline">One of the ways a connection pooler reuses backend connections: <strong>it lends and reclaims per transaction.</strong> Only when the transaction ends does that connection go to the next client.</p>
+        <h2 id="모드">Overview<a class="anchor" href="#모드" aria-label="Link to this section">#</a></h2>
 
-
-        <h2 id="모드">Three modes<a class="anchor" href="#모드" aria-label="Link to this section">#</a></h2>
+<p class="term-oneline">One of the ways a connection pooler reuses backend connections: <strong>it lends and reclaims per transaction.</strong> Only when the transaction ends does that connection go to the next client.</p>
         <p>PgBouncer has three. Further down the list, reuse improves and the features you can use shrink.</p>
 
         <ul>
           <li><strong>session pooling</strong> — holds the connection until the client disconnects. Almost no reuse.</li>
-          <li><strong>transaction pooling</strong> — per transaction. The mode used most in practice.</li>
+          <li>transaction pooling — per transaction. The mode used most in practice.</li>
           <li>statement pooling — per single query. Transactions cannot be used.</li>
         </ul>
         <h2 id="성질">The property that matters — when it pins<a class="anchor" href="#성질" aria-label="Link to this section">#</a></h2>
@@ -128,7 +127,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c5d680fa02"></script>
+  <script src="../assets/content.js?v=503645dd2e"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

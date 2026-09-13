@@ -70,17 +70,16 @@
         <nav class="article-toc" aria-label="목차">
           <p class="toc-label">목차</p>
           <ul>
-            <li><a href="#왜">왜 필요한가</a></li>
+            <li><a href="#왜">개요</a></li>
             <li><a href="#구별">Connection Pool과 다른 것입니다</a></li>
             <li><a href="#한계">무엇을 못 고치나</a></li>
           </ul>
         </nav>
       <article class="article-body">
 
-        <p class="term-oneline">애플리케이션이 여는 <strong>Connection 수천 개를 DB Connection 수십 개로 묶어 주는 중간 서버</strong>입니다. RDS Proxy · PgBouncer · Supavisor 같은 것들입니다.</p>
+        <h2 id="왜">개요<a class="anchor" href="#왜" aria-label="이 절로 가는 링크">#</a></h2>
 
-
-        <h2 id="왜">왜 필요한가<a class="anchor" href="#왜" aria-label="이 절로 가는 링크">#</a></h2>
+<p class="term-oneline">애플리케이션이 여는 <strong>Connection 수천 개를 DB Connection 수십 개로 묶어 주는 중간 서버</strong>입니다. RDS Proxy · PgBouncer · Supavisor 같은 것들입니다.</p>
         <p>PostgreSQL은 <strong>Connection 하나마다 Backend 프로세스를 하나씩</strong> 만듭니다. 그 프로세스는 아무 일도
         안 하고 있어도 메모리를 씁니다. 그래서 앱 Instance를 늘릴수록 DB 쪽이 먼저 한계에 부딪힙니다.</p>
 
@@ -88,7 +87,7 @@
 그런데 실제로 지금 쿼리를 실행 중인 건 50개
 나머지 1,950개는 그냥 열려만 있다</pre>
 
-        <p>Connection Pooler는 이 2,000개를 받아서 <strong>실제로 일이 있는 것만</strong> 뒤쪽 Connection 50개에 얹습니다.
+        <p>Connection Pooler는 이 2,000개를 받아서 실제로 일이 있는 것만 뒤쪽 Connection 50개에 얹습니다.
         열려만 있는 Connection의 비용을 없애 주는 것입니다.</p>
         <h2 id="구별">Connection Pool과 다른 것입니다<a class="anchor" href="#구별" aria-label="이 절로 가는 링크">#</a></h2>
         <p>이름이 비슷해서 자주 헷갈립니다.</p>
@@ -121,7 +120,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c5d680fa02"></script>
+  <script src="../assets/content.js?v=503645dd2e"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

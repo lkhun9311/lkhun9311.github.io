@@ -70,17 +70,16 @@
         <nav class="article-toc" aria-label="Contents">
           <p class="toc-label">Contents</p>
           <ul>
-            <li><a href="#왜">Why reuse them</a></li>
+            <li><a href="#왜">Overview</a></li>
             <li><a href="#상한">On blocking JDBC this is the concurrency limit</a></li>
             <li><a href="#불변식">One invariant</a></li>
           </ul>
         </nav>
       <article class="article-body">
 
-        <p class="term-oneline"><strong>The list an app holds so that database connections are reused instead of opened each time</strong>. In Spring Boot the default is HikariCP.</p>
+        <h2 id="왜">Overview<a class="anchor" href="#왜" aria-label="Link to this section">#</a></h2>
 
-
-        <h2 id="왜">Why reuse them<a class="anchor" href="#왜" aria-label="Link to this section">#</a></h2>
+<p class="term-oneline"><strong>The list an app holds so that database connections are reused instead of opened each time</strong>. In Spring Boot the default is HikariCP.</p>
         <p>Opening a database connection is expensive: a TCP connection, authentication and session setup, every time. Do it per
         request and connecting costs more than querying. So a few are opened up front and then <strong>lent out and taken back.</strong></p>
         <h2 id="상한">On blocking JDBC this is the concurrency limit<a class="anchor" href="#상한" aria-label="Link to this section">#</a></h2>
@@ -109,7 +108,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c5d680fa02"></script>
+  <script src="../assets/content.js?v=503645dd2e"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

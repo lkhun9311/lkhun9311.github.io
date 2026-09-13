@@ -70,7 +70,7 @@
         <nav class="article-toc" aria-label="Contents">
           <p class="toc-label">Contents</p>
           <ul>
-            <li><a href="#무엇">Bins, not segments</a></li>
+            <li><a href="#무엇">Overview</a></li>
             <li><a href="#시간">Wait inside the lock and parallel becomes a queue</a></li>
             <li><a href="#고치기">Safe and fast are different claims</a></li>
             <li><a href="#쓰인-곳">Where it is used on this site</a></li>
@@ -78,16 +78,16 @@
         </nav>
       <article class="article-body">
 
+        <h2 id="무엇">Overview<a class="anchor" href="#무엇" aria-label="Link to this section">#</a></h2>
+
         <p><strong>A bin lock is how ConcurrentHashMap locks one bucket, the one the key falls into,
         rather than the whole map.</strong> The mapping function of <code>computeIfAbsent</code> runs inside
         that lock.</p>
 
-        <h2 id="무엇">Bins, not segments<a class="anchor" href="#무엇" aria-label="Link to this section">#</a></h2>
-
         <p>Plenty of writing still calls this a segment lock. Segments are Java 7 vocabulary. Since Java 8,
         ConcurrentHashMap has dropped them and <strong>locks per bin.</strong></p>
 
-        <p>What changed is the <strong>scope</strong> of the lock. That something is locked at all did not
+        <p>What changed is the scope of the lock. That something is locked at all did not
         change. A narrower scope is not permission to do slow work inside it.</p>
 
                 <figure class="diagram">
@@ -149,7 +149,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c5d680fa02"></script>
+  <script src="../assets/content.js?v=503645dd2e"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>
