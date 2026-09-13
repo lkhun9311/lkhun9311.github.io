@@ -61,7 +61,7 @@
      `python3 tools/build-notes-nav.py` 가 파일에서 구워 넣고,
      `--check` 가 어긋남을 잡는다. */
   var NOTES_NAV = {
-    "admission-control": {ko:{t:"Admission Control",s:[["자리","개요",0],["세기","거절 0건이라는 리포트를 믿지 않습니다",0],["약속","무엇을 지키는 장치인지 먼저 적습니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Admission Control",s:[["자리","Overview",0],["세기","A report of zero rejections is not evidence",0],["약속","Write down what it protects, before turning it on",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Admission Control",s:[["자리","概要",0],["세기","拒否 0 件というレポートは証拠になりません",0],["약속","何を守る仕掛けなのかを先に書きます",0],["쓰인-곳","このサイトで使われている記事",0]]}},
+    "admission-control": {ko:{t:"Admission Control",s:[["자리","개요",0],["세기","거절 0건이라는 Report를 믿지 않습니다",0],["약속","무엇을 지키는 장치인지 먼저 적습니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Admission Control",s:[["자리","Overview",0],["세기","A report of zero rejections is not evidence",0],["약속","Write down what it protects, before turning it on",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Admission Control",s:[["자리","概要",0],["세기","拒否 0 件というレポートは証拠になりません",0],["약속","何を守る仕掛けなのかを先に書きます",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "apdex": {ko:{t:"Apdex",s:[["계산","개요",0],["읽는법","무엇을 말해 주나요?",0],["함정","T를 안 적으면 비교가 안 됩니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Apdex",s:[["계산","Overview",0],["읽는법","What it tells you",0],["함정","Without T there is nothing to compare",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Apdex",s:[["계산","概要",0],["읽는법","何を教えてくれるのか",0],["함정","T を書かなければ比べられません",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "arm": {ko:{t:"Arm",s:[["어원","개요",0],["단일변수","한 변수만 바꿉니다",0],["패치","코드 비교는 패치로 관리합니다",0]]}, en:{t:"Arm",s:[["어원","Overview",0],["단일변수","Change one variable",0],["패치","Keep a code difference in a patch",0]]}, ja:{t:"Arm",s:[["어원","概要",0],["단일변수","変数は一つだけ変える",0],["패치","コードの差はパッチで管理する",0]]}},
     "bin-lock": {ko:{t:"Bin Lock",s:[["무엇","개요",0],["시간","잠긴 자리에서 기다리면 병렬이 줄서기가 됩니다",0],["고치기","안전한 것과 빠른 것은 다릅니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Bin Lock",s:[["무엇","Overview",0],["시간","Wait inside the lock and parallel becomes a queue",0],["고치기","Safe and fast are different claims",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Bin Lock",s:[["무엇","概要",0],["시간","ロックの中で待てば並列が行列になります",0],["고치기","安全なことと速いことは別です",0],["쓰인-곳","このサイトで使われている記事",0]]}},
@@ -75,7 +75,7 @@
     "min-n": {ko:{t:"min-n",s:[["무엇","개요",0],["한계","한 장면 안에서만 참입니다",0],["축","축이 늘면 다시 뚫립니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"min-n",s:[["무엇","Overview",0],["한계","It is true within one frame",0],["축","Add an axis and it breaks again",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"min-n",s:[["무엇","概要",0],["한계","一つの場面の中でだけ真です",0],["축","軸が増えればまた破れます",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "mutation-testing": {ko:{t:"Mutation Testing",s:[["왜","개요",0],["방법","어떻게 하나",0],["경로","경로마다 따로 걸어야 합니다",0]]}, en:{t:"Mutation Testing",s:[["왜","Overview",0],["방법","How to do it",0],["경로","Do it one path at a time",0]]}, ja:{t:"Mutation Testing",s:[["왜","概要",0],["방법","どうやるか",0],["경로","経路ごとに別々にかける",0]]}},
     "percentile": {ko:{t:"Percentile",s:[["percentile","개요",1],["percentile-average","왜 평균을 안 쓰나",1],["percentile-calc","계산 방식이 두 가지입니다",1],["percentile-where","어디를 봐야 하나",1]]}, en:{t:"Percentile",s:[["percentile","Overview",1],["percentile-average","Why not the average",1],["percentile-calc","There are two ways to compute it",1],["percentile-where","Which one to read",1]]}, ja:{t:"Percentile",s:[["percentile","概要",1],["percentile-average","なぜ平均を使わないのか",1],["percentile-calc","計算方式が二つある",1],["percentile-where","どれを見るか",1]]}},
-    "quorum": {ko:{t:"Quorum",s:[["증언","개요",0],["고립","고립된 쪽이 혼자 판단하면 두 쪽이 같은 볼륨을 잡습니다",0],["두-질문","「장애인가」와 「지금 복구해도 되는가」는 다른 질문입니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Quorum",s:[["증언","Overview",0],["고립","An isolated side deciding alone puts two sides on one volume",0],["두-질문","“Is it failed” and “is it safe to recover now” are different questions",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Quorum",s:[["증언","概要",0],["고립","孤立した側が一人で判断すると二つがボリュームを掴みます",0],["두-질문","「障害か」と「今復旧してよいか」は別の問いです",0],["쓰인-곳","このサイトで使われている記事",0]]}},
+    "quorum": {ko:{t:"Quorum",s:[["증언","개요",0],["고립","고립된 쪽이 혼자 판단하면 두 쪽이 같은 Volume을 잡습니다",0],["두-질문","「장애인가」와 「지금 복구해도 되는가」는 다른 질문입니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Quorum",s:[["증언","Overview",0],["고립","An isolated side deciding alone puts two sides on one volume",0],["두-질문","“Is it failed” and “is it safe to recover now” are different questions",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Quorum",s:[["증언","概要",0],["고립","孤立した側が一人で判断すると二つがボリュームを掴みます",0],["두-질문","「障害か」と「今復旧してよいか」は別の問いです",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "soft-delete": {ko:{t:"Soft Delete",s:[["무엇","개요",0],["표시","표시 값이 행마다 다를 수 있습니다",0],["지우기","지우는 자리는 본 테이블이 아닙니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Soft Delete",s:[["무엇","Overview",0],["표시","The marker is not always zero and one",0],["지우기","The main table is not where you delete",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Soft Delete",s:[["무엇","概要",0],["표시","マークの値は行ごとに違うことがあります",0],["지우기","消す場所は本テーブルではありません",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "sse": {ko:{t:"SSE",s:[["무엇","개요",0],["첫값","연결이 열린 것과 값이 온 것은 다릅니다",0],["느린소비자","느린 한 명이 전부를 막습니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"SSE",s:[["무엇","Overview",0],["첫값","An open connection is not an arrived value",0],["느린소비자","One slow consumer blocks the rest",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"SSE",s:[["무엇","概要",0],["첫값","接続が開いたことと値が来たことは違います",0],["느린소비자","遅い一人が全体を塞ぎます",0],["쓰인-곳","このサイトで使われている記事",0]]}},
     "stub": {ko:{t:"Stub",s:[["왜","개요",0],["신원","Stub이 그 값으로 답하는지 신원으로 확인합니다",0],["한계","Stub이 상한인지 앱이 상한인지 갈라 둡니다",0],["쓰인-곳","이 사이트에서 쓰인 곳",0]]}, en:{t:"Stub",s:[["왜","Overview",0],["신원","Check by identity that the stub answers with that value",0],["한계","Separate a ceiling in the stub from a ceiling in the app",0],["쓰인-곳","Where it is used on this site",0]]}, ja:{t:"Stub",s:[["왜","概要",0],["신원","その値で答えているかを素性で確かめます",0],["한계","上限が Stub 側か アプリ側かを分けます",0],["쓰인-곳","このサイトで使われている記事",0]]}},
@@ -93,7 +93,7 @@
       items: [
         { date: "2026-09-13", dateLabel: "Sep 13, 2026",
           text: "Published \u201cLogging Out When Validation Fails Evicts Only the Busiest Users\u201d in three languages. The browser drives the polling, so the check is stopped at exactly the moments that are risky.",
-          text_ko: "‘세션 검증이 실패할 때 로그아웃하면 가장 열심히 쓰는 사용자만 쫓겨납니다’를 세 언어로 냈습니다. 폴링을 브라우저가 돌리므로 정작 위험한 순간에는 그 검사가 멈춰 있습니다.",
+          text_ko: "‘세션 검증이 실패할 때 로그아웃하면 가장 열심히 쓰는 사용자만 쫓겨납니다’를 세 언어로 냈습니다. Polling을 브라우저가 돌리므로 정작 위험한 순간에는 그 검사가 멈춰 있습니다.",
           text_ja: "「セッション検証が失敗したときにログアウトさせると、最も熱心に使う人だけが追い出されます」を三言語で公開しました。ポーリングを回すのはブラウザなので、危険な瞬間にこそその検査は止まっています。" },
         { date: "2026-09-07", dateLabel: "Sep 7, 2026",
           text: "Korean, English and Japanese are now written, not machine-translated: the menus, the section pages and every card carry authored text.",
@@ -195,7 +195,7 @@
           source: "company", sourceLabel: "cards.company",
           date: "2026-09-13", dateLabel: "Sep 13, 2026",
           desc: "An upstream identity portal returned 500 while pushing a session-expired notice, and users were thrown out in silence. The prescription that followed, log out when validation fails, would have evicted only the users still working: the browser drives the polling, so it stops exactly when the risk is real.",
-          desc_ko: "상위 인증 포털이 500을 내면서 세션 만료를 밀어 보냈고 사용자가 조용히 튕겼습니다. 뒤이어 나온 처방 「검증이 안 되면 로그아웃」은 계속 쓰고 있는 사용자만 쫓아냅니다. 폴링을 브라우저가 돌리므로 위험이 진짜인 순간에 오히려 멈추기 때문입니다.",
+          desc_ko: "상위 인증 포털이 500을 내면서 세션 만료를 밀어 보냈고 사용자가 조용히 튕겼습니다. 뒤이어 나온 처방 「검증이 안 되면 로그아웃」은 계속 쓰고 있는 사용자만 쫓아냅니다. Polling을 브라우저가 돌리므로 위험이 진짜인 순간에 오히려 멈추기 때문입니다.",
           desc_ja: "上位の認証ポータルが 500 を返しながらセッション満了を押し出し、ユーザーが静かに弾き出されました。続いて出た処方「検証できなければログアウト」は、使い続けている人だけを追い出します。ポーリングを回すのはブラウザなので、危険が本物になる瞬間にこそ止まるからです。",
           tags: ["IaaS Backend", "Backend", "Reliability", "Method"]
         },
@@ -288,7 +288,7 @@
           url: "writing/it-deleted-the-tenant.html",
           source: "side", sourceLabel: "Personal project",
           title_ko: "GPU 입장 제어가 p99를 지킨 게 아니라 요청 1,788건을 버렸습니다",
-          desc_ko: "GPU 한 장 위의 4-arm 실험. 거절을 0건 했다는 Arm이 완료 수는 프리미엄 요청 수와 정확히 같았습니다. 리포트의 판정이 전부 비율이라 유료 반복 4회 동안 아무도 그것을 보지 못했습니다.",
+          desc_ko: "GPU 한 장 위의 4-arm 실험. 거절을 0건 했다는 Arm이 완료 수는 프리미엄 요청 수와 정확히 같았습니다. Report의 판정이 전부 비율이라 유료 반복 4회 동안 아무도 그것을 보지 못했습니다.",
           title_ja: "GPU 入場制御は p99 を守らず、リクエスト 1,788 件を捨てていました",
           desc_ja: "GPU 1 枚の上での 4-arm 実験。拒否 0 件だという Arm の完了数が、プレミアムの要求数とぴったり同じだった。レポートの判定がすべて比だったため、4 回の有料実行の間それは見えなかった。",
           date: "2026-09", dateLabel: "Sep 2026",
@@ -479,8 +479,8 @@
           title: "A Volume List: Ten-Minute Timeout → 23 ms",
           url: "writing/slow-screens-1-volume-list.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "볼륨 목록 P99가 10min → 23ms로 줄었습니다",
-          desc_ko: "관리 볼륨 목록이 6번에 5번 Timeout이 났습니다. 고친 뒤 구성을 6가지로 나눠 같은 부하로 따로 쟀더니, 초를 가장 많이 줄인 것은 Cache 하나였고 병렬화는 중앙값과 꼬리를 반대 방향으로 움직였습니다. 연작 ‘느린 화면’ ①.",
+          title_ko: "Volume 목록 P99가 10min → 23ms로 줄었습니다",
+          desc_ko: "관리 Volume 목록이 6번에 5번 Timeout이 났습니다. 고친 뒤 구성을 6가지로 나눠 같은 부하로 따로 쟀더니, 초를 가장 많이 줄인 것은 Cache 하나였고 병렬화는 중앙값과 꼬리를 반대 방향으로 움직였습니다. 연작 ‘느린 화면’ ①.",
           title_ja: "ボリューム一覧の P99 が 10 分の Timeout → 23ms になりました",
           desc_ja: "管理ボリューム一覧が 6 回に 5 回 Timeout しました。直したあと構成を 6 通りに分けて同じ負荷で測ると、秒を最も減らしたのは Cache 1 つで、並列化は中央値と裾を逆方向に動かしました。連載「遅い画面」①。",
           date: "2026-09", dateLabel: "Sep 2026",
@@ -491,7 +491,7 @@
           title: "Going Parallel Made the Volume List p99 1.85 Times Worse",
           url: "writing/parallelism-made-the-tail-worse.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "볼륨 목록을 병렬로 바꾸자 P99가 1.85배 나빠졌습니다",
+          title_ko: "Volume 목록을 병렬로 바꾸자 P99가 1.85배 나빠졌습니다",
           desc_ko: "Cache 설정을 고정한 채 순차를 병렬로 바꾸니 P99가 42.6s에서 79.0s로 나빠졌습니다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다. 여섯 구성을 같은 조건으로 재고 나서야 보였습니다. 연작 ‘느린 화면’ ⑤.",
           title_ja: "ボリューム一覧を並列にしたら P99 が 1.85 倍悪化しました",
           desc_ja: "キャッシュ設定を固定したまま逐次を並列に変えると、p99 が 42.6 秒から 79.0 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンがロックされる。6 構成を同条件で測って初めて見えたこと。連載「遅い画面」⑤。",
@@ -535,7 +535,7 @@
     },
 
     notes: {
-      /* 왼쪽 필터의 묶음. 용어 노트(#Harness 처럼 말 자체가 태그인 것)와 분류를 갈라 놓는다 —
+      /* 왼쪽 필터의 묶음. 용어 노트(#Harness처럼 말 자체가 태그인 것)와 분류를 갈라 놓는다 —
          한 줄에 섞여 있으면 "무엇으로 고르는 목록인지"를 매번 다시 읽어야 한다. */
       tagGroups: {
         "Term": ["Harness", "Percentile", "SSE", "Apdex", "Fencing", "min-n", "Swap", "Soft Delete", "Bin Lock", "Cache Stampede", "Timeout", "Grace Period", "Admission Control", "Stub", "Quorum", "TTL", "Warm-up", "Arm", "Connection Pool", "Connection Pooler",
@@ -938,7 +938,7 @@
     }
 
     // 아무것도 걸러내지 못하는 레일은 숨긴다. 태그가 없거나(항목에 tags가 없음), 있어도 모든
-    // 태그가 전체 건수와 같으면(News의 #2026 처럼 연도 하나뿐) 눌러도 목록이 그대로다 —
+    // 태그가 전체 건수와 같으면(News의 #2026처럼 연도 하나뿐) 눌러도 목록이 그대로다 —
     // 고를 것이 없는 필터는 자리만 차지하고 "여기서 뭘 고르지"를 매번 다시 묻게 만든다.
     var narrows = tagList.some(function (t) { return countOf(t) < sec.items.length; });
     if (tagRowEl && !narrows) {
@@ -960,7 +960,7 @@
         var shown = sec.facetGroups
           ? Object.keys(groups).filter(function (n) { return sec.facetGroups.indexOf(n) !== -1; })
           : Object.keys(groups);
-        /* 숨긴 묶음의 태그가 아래 Other 로 새지 않게 미리 자리를 잡아 둔다. */
+        /* 숨긴 묶음의 태그가 아래 Other로 새지 않게 미리 자리를 잡아 둔다. */
         Object.keys(groups).forEach(function (n) {
           groups[n].forEach(function (t) { placed[t] = 1; });
         });

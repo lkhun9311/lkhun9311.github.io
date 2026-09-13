@@ -97,7 +97,7 @@
         장애로 판정돼 복구가 대량으로 실행됐습니다.</p>
 
         <p>여기서 복구란 Nova Evacuate, 다른 노드에서 같은 VM을 다시 띄우는 것입니다. 원본이
-        살아 있는 채 복제본이 같은 볼륨에 붙으면 두 쪽이 동시에 씁니다.
+        살아 있는 채 복제본이 같은 Volume에 붙으면 두 쪽이 동시에 씁니다.
         <strong>자동 복구가 장애보다 비싼 경우</strong>가 이것입니다.</p>
 
         <p>감지는 실패하지 않았습니다. 컴퓨트는 ‘나 살아 있다’를 계속 보내고 있었습니다.
@@ -126,21 +126,21 @@
           <caption class="sr-only">스위치 장애 시 네트워크별 상태.</caption>
           <thead><tr><th scope="col">네트워크</th><th scope="col">용도</th><th scope="col">장애 시 상태</th></tr></thead>
           <tbody>
-            <tr><td>MGMT</td><td>컨트롤러 ↔ 컴퓨트 관리 통신</td><td><strong>정상</strong></td></tr>
+            <tr><td>MGMT</td><td>Controller ↔ 컴퓨트 관리 통신</td><td><strong>정상</strong></td></tr>
             <tr><td>DATA</td><td>VM 데이터 트래픽</td><td>차단</td></tr>
-            <tr><td>Controller</td><td>컨트롤러 ↔ 컨트롤러 통신</td><td>차단</td></tr>
+            <tr><td>Controller</td><td>Controller ↔ Controller 통신</td><td>차단</td></tr>
             <tr><td>BMC</td><td>펜싱(IPMI)</td><td>부재</td></tr>
           </tbody>
         </table>
         </div>
         </div>
 
-        <p>컨트롤러끼리의 통신이 끊기면 쿼럼이 무너집니다. 그러면 일부 컨트롤러가 혼자서 컴퓨트가
+        <p>Controller끼리의 통신이 끊기면 쿼럼이 무너집니다. 그러면 일부 Controller가 혼자서 컴퓨트가
         죽었다고 판단합니다. 그런데 같은 시각 MGMT는 살아 있어서 컴퓨트의 에이전트 하트비트가 정상으로
         도착하고 있었습니다.</p>
 
         <p>즉 시스템 안에 두 개의 서로 다른 진술이 동시에 있었습니다. 컴퓨트는 "나 살아 있다"고 말하고 있었고
-        고립된 컨트롤러는 "쟤 죽었다"고 판단했습니다. 기존 로직은 뒤쪽을 채택했습니다.</p>
+        고립된 Controller는 "쟤 죽었다"고 판단했습니다. 기존 로직은 뒤쪽을 채택했습니다.</p>
 
         <p>이것을 감지 실패라고 부르면 처방이 틀립니다. 감지는 실패하지 않았습니다. 하트비트는 잘 도착했습니다.
         실패한 것은 누구의 말을 믿을지를 정해두지 않은 것입니다.</p>
@@ -148,7 +148,7 @@
         <figure class="diagram">
           <svg viewBox="0 0 720 200" role="img" aria-labelledby="sw-t sw-d" class="figure-svg">
             <title id="sw-t">스위치 장애가 대량 복구로 이어진 경로</title>
-            <desc id="sw-d">왼쪽부터 상자가 넷, 회색 화살표로 이어집니다. 첫째는 스위치 장애, 둘째는 컨트롤러끼리의 통신 차단, 셋째는 혼자 남은 컨트롤러의 판단, 넷째는 대량 Evacuate입니다. 아래에 분홍색으로 컴퓨트는 계속 살아 있었다고 적혀 있습니다.</desc>
+            <desc id="sw-d">왼쪽부터 상자가 넷, 회색 화살표로 이어집니다. 첫째는 스위치 장애, 둘째는 Controller끼리의 통신 차단, 셋째는 혼자 남은 Controller의 판단, 넷째는 대량 Evacuate입니다. 아래에 분홍색으로 컴퓨트는 계속 살아 있었다고 적혀 있습니다.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
               <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">스위치 장애</text>
@@ -159,12 +159,12 @@
               <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">합의 불가</text>
               <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#sw-a)"/>
               <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
-              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">고립된 컨트롤러</text>
+              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">고립된 Controller</text>
               <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">컴퓨트가 죽었다고 판단</text>
               <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#sw-a)"/>
               <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
               <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">대량 Evacuate</text>
-              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">같은 볼륨에 두 쪽</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">같은 Volume에 두 쪽</text>
               <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">MGMT는 정상 · 하트비트는 계속 도착</text>
             </g>
             <defs>
@@ -173,7 +173,7 @@
               </marker>
             </defs>
           </svg>
-          <figcaption>끊긴 것은 <strong>컨트롤러끼리의 통신</strong>이고 컴퓨트와의 관리 통신은 살아 있었습니다. 즉 시스템 안에 ‘나 살아 있다’와 ‘쟤 죽었다’가 동시에 있었고 기존 로직은 뒤쪽을 채택했습니다.</figcaption>
+          <figcaption>끊긴 것은 <strong>Controller끼리의 통신</strong>이고 컴퓨트와의 관리 통신은 살아 있었습니다. 즉 시스템 안에 ‘나 살아 있다’와 ‘쟤 죽었다’가 동시에 있었고 기존 로직은 뒤쪽을 채택했습니다.</figcaption>
         </figure>
 
         <h2 id="신호에-자격을-매긴다">감지를 정교하게 만드는 대신, 신호에 자격을 매겼습니다<a class="anchor" href="#신호에-자격을-매긴다" aria-label="이 절로 가는 링크">#</a></h2>
@@ -188,15 +188,15 @@
           <thead><tr><th scope="col">신호</th><th scope="col">신뢰도</th><th scope="col">이 신호가 증언할 수 있는 것</th></tr></thead>
           <tbody>
             <tr><td>에이전트 하트비트</td><td><strong>최상</strong></td><td>컴퓨트 노드의 실제 상태</td></tr>
-            <tr><td>컨트롤러 쿼럼</td><td>상</td><td>컨트롤러 클러스터의 합의 가능 여부</td></tr>
-            <tr><td>네트워크 하트비트</td><td>중</td><td>컨트롤러 ↔ 컴퓨트 사이의 연결</td></tr>
-            <tr><td>외부 도달성 프로브</td><td>하</td><td>컨트롤러가 고립됐는지</td></tr>
+            <tr><td>Controller 쿼럼</td><td>상</td><td>Controller 클러스터의 합의 가능 여부</td></tr>
+            <tr><td>네트워크 하트비트</td><td>중</td><td>Controller ↔ 컴퓨트 사이의 연결</td></tr>
+            <tr><td>외부 도달성 프로브</td><td>하</td><td>Controller가 고립됐는지</td></tr>
           </tbody>
         </table>
         </div>
         </div>
 
-        <p>마지막 줄이 이 설계의 전부입니다. 외부 도달성 프로브는 컨트롤러에서 외부로 나가는 방향의 도달성만 봅니다.
+        <p>마지막 줄이 이 설계의 전부입니다. 외부 도달성 프로브는 Controller에서 외부로 나가는 방향의 도달성만 봅니다.
         컴퓨트를 직접 검증하지 않습니다. 그것으로 컴퓨트의 생사를 판정하면 관측자의 고립을 대상의
         장애로 읽게 됩니다. 사고가 정확히 그것이었습니다.</p>
 
@@ -206,7 +206,7 @@
         <figure class="diagram">
           <svg viewBox="0 0 720 314" role="img" aria-labelledby="sg-t sg-d" class="figure-svg">
             <title id="sg-t">신호 네 종류를 신뢰도 순으로 세운 사다리</title>
-            <desc id="sg-d">왼쪽에 세로축이 있고 위가 높은 신뢰도, 아래가 낮은 신뢰도입니다. 축 오른쪽에 상자가 넷 위에서 아래로 놓여 있습니다. 에이전트 하트비트, 컨트롤러 쿼럼, 네트워크 하트비트, 외부 도달성 프로브 순서입니다. 상자마다 오른쪽으로 화살표가 나가 그 신호가 증언할 수 있는 것이 적혀 있습니다.</desc>
+            <desc id="sg-d">왼쪽에 세로축이 있고 위가 높은 신뢰도, 아래가 낮은 신뢰도입니다. 축 오른쪽에 상자가 넷 위에서 아래로 놓여 있습니다. 에이전트 하트비트, Controller 쿼럼, 네트워크 하트비트, 외부 도달성 프로브 순서입니다. 상자마다 오른쪽으로 화살표가 나가 그 신호가 증언할 수 있는 것이 적혀 있습니다.</desc>
             <g font-family="Inter, sans-serif">
               <path d="M40 34 V 280" fill="none" stroke="#c9c9c9" stroke-width="1.4"/>
               <text x="40" y="26" font-size="11" fill="#8a8a8a" text-anchor="middle">높음</text>
@@ -216,17 +216,17 @@
               <path d="M318 68 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#sg-a)"/>
               <text x="384" y="73" font-size="11.5" fill="#4a4a4a">컴퓨트 노드의 실제 상태</text>
               <rect x="64" y="104" width="248" height="40" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
-              <text x="188" y="129" font-size="11.5" fill="#4f5bd5" text-anchor="middle">컨트롤러 쿼럼</text>
+              <text x="188" y="129" font-size="11.5" fill="#4f5bd5" text-anchor="middle">Controller 쿼럼</text>
               <path d="M318 124 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#sg-a)"/>
-              <text x="384" y="129" font-size="11.5" fill="#4a4a4a">컨트롤러 클러스터의 합의 가능 여부</text>
+              <text x="384" y="129" font-size="11.5" fill="#4a4a4a">Controller 클러스터의 합의 가능 여부</text>
               <rect x="64" y="160" width="248" height="40" rx="9" fill="none" stroke="#d62976" stroke-width="1.6"/>
               <text x="188" y="185" font-size="11.5" fill="#d62976" text-anchor="middle">네트워크 하트비트</text>
               <path d="M318 180 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#sg-a)"/>
-              <text x="384" y="185" font-size="11.5" fill="#4a4a4a">컨트롤러와 컴퓨트 사이의 연결</text>
+              <text x="384" y="185" font-size="11.5" fill="#4a4a4a">Controller와 컴퓨트 사이의 연결</text>
               <rect x="64" y="216" width="248" height="40" rx="9" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
               <text x="188" y="241" font-size="11.5" fill="#8a8a8a" text-anchor="middle">외부 도달성 프로브</text>
               <path d="M318 236 H 372" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#sg-a)"/>
-              <text x="384" y="241" font-size="11.5" fill="#4a4a4a">컨트롤러 자신의 고립 여부</text>
+              <text x="384" y="241" font-size="11.5" fill="#4a4a4a">Controller 자신의 고립 여부</text>
             </g>
             <defs>
               <marker id="sg-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
@@ -234,7 +234,7 @@
               </marker>
             </defs>
           </svg>
-          <figcaption>마지막 줄이 이 설계의 전부입니다. 외부 도달성 프로브는 <strong>컨트롤러에서 밖으로 나가는 방향</strong>만 봅니다. 그것으로 컴퓨트의 생사를 판정하면 관측자의 고립을 대상의 장애로 읽게 됩니다.</figcaption>
+          <figcaption>마지막 줄이 이 설계의 전부입니다. 외부 도달성 프로브는 <strong>Controller에서 밖으로 나가는 방향</strong>만 봅니다. 그것으로 컴퓨트의 생사를 판정하면 관측자의 고립을 대상의 장애로 읽게 됩니다.</figcaption>
         </figure>
 
         <h2 id="두-개의-질문">"장애인가"와 "지금 해도 되는가"는 다른 질문입니다<a class="anchor" href="#두-개의-질문" aria-label="이 절로 가는 링크">#</a></h2>
@@ -246,7 +246,7 @@
 
 <pre data-lang="text"><code>[Phase 1 — 장애 감지]
 1. 쿼럼 확인
-   컨트롤러 쿼럼 상실 → 장애 판단을 신뢰할 수 없음 → HOLD
+   Controller 쿼럼 상실 → 장애 판단을 신뢰할 수 없음 → HOLD
 
 2. 에이전트 하트비트 확인
    TTL 정상(30초 이내) → 컴퓨트 정상 → HOLD
@@ -256,7 +256,7 @@
    → 판단을 신뢰할 수 없으면 HOLD (운영자 알림)
 
 [Phase 2 — 실행 가능성]
-1. 스토리지 도달 불가  → HOLD  (옮겨도 VM이 볼륨에 못 붙는다)
+1. 스토리지 도달 불가  → HOLD  (옮겨도 VM이 Volume에 못 붙는다)
 2. 메시지 큐 비정상    → HOLD  (명령이 전달되지 않는다)
 3. Nova API 비정상     → HOLD  (호출 자체가 안 된다)
 4. 전부 정상           → 펜싱 수행</code></pre>
@@ -270,7 +270,7 @@
         <figure class="diagram">
           <svg viewBox="0 0 720 216" role="img" aria-labelledby="tq-t tq-d" class="figure-svg">
             <title id="tq-t">한 판정에 섞여 있던 두 질문을 갈라 놓은 그림</title>
-            <desc id="tq-d">상자가 둘 나란히 있습니다. 왼쪽은 장애인가라는 질문이고 아래에 근거가 될 수 있는 신호가 적혀 있습니다. 오른쪽은 지금 복구해도 되는가라는 질문이고 아래에 펜싱과 쿼럼과 볼륨 상태가 적혀 있습니다. 맨 아래에 분홍색으로 한 판정에 섞으면 서로를 오염시킨다고 적혀 있습니다.</desc>
+            <desc id="tq-d">상자가 둘 나란히 있습니다. 왼쪽은 장애인가라는 질문이고 아래에 근거가 될 수 있는 신호가 적혀 있습니다. 오른쪽은 지금 복구해도 되는가라는 질문이고 아래에 펜싱과 쿼럼과 Volume 상태가 적혀 있습니다. 맨 아래에 분홍색으로 한 판정에 섞으면 서로를 오염시킨다고 적혀 있습니다.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
               <text x="204" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">장애인가</text>
@@ -280,8 +280,8 @@
               <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
               <text x="556" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">지금 복구해도 되는가</text>
               <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">펜싱이 가능한가</text>
-              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">컨트롤러가 쿼럼 안에 있는가</text>
-              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">볼륨을 한쪽만 잡고 있는가</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">Controller가 쿼럼 안에 있는가</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">Volume을 한쪽만 잡고 있는가</text>
               <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">한 판정에 섞으면 서로를 오염</text>
             </g>
           </svg>
@@ -300,13 +300,13 @@
           <thead><tr><th scope="col">시나리오</th><th scope="col">쿼럼</th><th scope="col">하트비트</th><th scope="col">외부 프로브</th><th scope="col">스토리지</th><th scope="col">Phase 1 판정</th><th scope="col">조치</th></tr></thead>
           <tbody>
             <tr><td><strong>컴퓨트 실제 crash</strong></td><td>✓</td><td>✗</td><td>✓</td><td>✓</td><td>장애 확정</td><td><strong>펜싱 후 복구</strong></td></tr>
-            <tr><td>컨트롤러 네트워크 단절</td><td>✗</td><td>✓</td><td>✓</td><td>✓</td><td>판단 불가</td><td>HOLD</td></tr>
+            <tr><td>Controller 네트워크 단절</td><td>✗</td><td>✓</td><td>✓</td><td>✓</td><td>판단 불가</td><td>HOLD</td></tr>
             <tr><td>DATA 네트워크 단절</td><td>✗</td><td>✓</td><td>✗</td><td>✓</td><td>분단 의심</td><td>HOLD</td></tr>
             <tr><td>MGMT 네트워크 단절</td><td>✗</td><td>✗</td><td>✓</td><td>✓</td><td>판단 불가</td><td>HOLD</td></tr>
             <tr><td>스토리지 경로 장애</td><td>✓</td><td>✓</td><td>✓</td><td>✗</td><td>컴퓨트 정상</td><td>HOLD (Phase 2 실패)</td></tr>
             <tr><td>외부 도달성만 상실</td><td>✓</td><td>✓</td><td>✗</td><td>✓</td><td>컴퓨트 정상</td><td>HOLD</td></tr>
             <tr><td>하트비트 초과 + 프로브 실패</td><td>✓</td><td>✗</td><td>✗</td><td>✓</td><td>분단 의심</td><td>HOLD → 추가 판단</td></tr>
-            <tr><td>컨트롤러 단절 + 하트비트 수신</td><td>✗</td><td>✓</td><td>✓</td><td>✓</td><td>판단 불가</td><td>HOLD (단독 판단 금지)</td></tr>
+            <tr><td>Controller 단절 + 하트비트 수신</td><td>✗</td><td>✓</td><td>✓</td><td>✓</td><td>판단 불가</td><td>HOLD (단독 판단 금지)</td></tr>
           </tbody>
         </table>
         </div>
@@ -315,7 +315,7 @@
         <p>맨 아랫줄이 사고 당시의 상황입니다. 그리고 이제 그 줄의 조치는 HOLD입니다.</p>
 
         <p>여덟 중 일곱이 HOLD라는 결과는 비대칭적인 비용에서 나옵니다. 복구를 안 하면 서비스가
-        내려간 채로 남고 사람이 개입할 시간이 생깁니다. 복구를 잘못 하면 원본과 복제본이 같은 볼륨에 동시에 쓰고
+        내려간 채로 남고 사람이 개입할 시간이 생깁니다. 복구를 잘못 하면 원본과 복제본이 같은 Volume에 동시에 쓰고
         그건 되돌릴 수 없습니다. 두 실수의 값이 다르면 판정선도 가운데 있으면 안 됩니다.</p>
 
         <p>여기서 가장 자주 나오는 반문. <em>"일곱을 보류하면 진짜 장애 때 복구가 늦지 않나?"</em> 늦습니다.
@@ -471,7 +471,7 @@ Compute-02 → VM-A 복구 완료      → /dev/vdb에 쓴다   (신규 attach)<
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=7afc28f09a"></script>
+  <script src="../assets/content.js?v=c03cb004ee"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

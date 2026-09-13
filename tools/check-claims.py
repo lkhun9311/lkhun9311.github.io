@@ -35,7 +35,7 @@ BANNED = [
 REQUIRED = [
     ("한쪽을 고쳐도 화면은 그만큼 빨라지지 않습니다", "monitoring-two-gates-one-screen.ko.html"),
     ("의존성 트리를 펼치거나 재 봐야 나옵니다", "the-ceiling-was-not-in-the-code.ko.html"),
-    ("리포트가 거절 0건이라고 적은 Arm", "it-deleted-the-tenant.ko.html"),
+    ("Report가 거절 0건이라고 적은 Arm", "it-deleted-the-tenant.ko.html"),
 ]
 
 
