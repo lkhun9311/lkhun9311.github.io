@@ -91,6 +91,10 @@
        2월에 멈춘 세 줄이 9월의 발행과 정정을 하나도 보여 주지 못했다. */
     news: {
       items: [
+        { date: "2026-09-13", dateLabel: "Sep 13, 2026",
+          text: "Published \u201cLogging Out When Validation Fails Evicts Only the Busiest Users\u201d in three languages. The browser drives the polling, so the check is stopped at exactly the moments that are risky.",
+          text_ko: "‘세션 검증이 실패할 때 로그아웃하면 가장 열심히 쓰는 사용자만 쫓겨납니다’를 세 언어로 냈습니다. 폴링을 브라우저가 돌리므로 정작 위험한 순간에는 그 검사가 멈춰 있습니다.",
+          text_ja: "「セッション検証が失敗したときにログアウトさせると、最も熱心に使う人だけが追い出されます」を三言語で公開しました。ポーリングを回すのはブラウザなので、危険な瞬間にこそその検査は止まっています。" },
         { date: "2026-09-07", dateLabel: "Sep 7, 2026",
           text: "Korean, English and Japanese are now written, not machine-translated: the menus, the section pages and every card carry authored text.",
           text_ko: "한국어 · 영어 · 일본어를 기계번역이 아니라 손으로 씁니다. 메뉴와 목록 페이지, 카드 문구까지 사람이 쓴 문장으로 바뀌었습니다.",
@@ -183,6 +187,18 @@
                 "Security", "Privacy", "Cost", "Operations", "Migration"]
       },
       items: [
+        {
+          title: "Logging Out When Validation Fails Evicts Only the Busiest Users",
+          title_ko: "세션 검증이 실패할 때 로그아웃하면 가장 열심히 쓰는 사용자만 쫓겨납니다",
+          title_ja: "セッション検証が失敗したときにログアウトさせると、最も熱心に使う人だけが追い出されます",
+          url: "writing/validation-failed-is-not-invalid.html",
+          source: "company", sourceLabel: "cards.company",
+          date: "2026-09-13", dateLabel: "Sep 13, 2026",
+          desc: "An upstream identity portal returned 500 while pushing a session-expired notice, and users were thrown out in silence. The prescription that followed, log out when validation fails, would have evicted only the users still working: the browser drives the polling, so it stops exactly when the risk is real.",
+          desc_ko: "상위 인증 포털이 500을 내면서 세션 만료를 밀어 보냈고 사용자가 조용히 튕겼습니다. 뒤이어 나온 처방 「검증이 안 되면 로그아웃」은 계속 쓰고 있는 사용자만 쫓아냅니다. 폴링을 브라우저가 돌리므로 위험이 진짜인 순간에 오히려 멈추기 때문입니다.",
+          desc_ja: "上位の認証ポータルが 500 を返しながらセッション満了を押し出し、ユーザーが静かに弾き出されました。続いて出た処方「検証できなければログアウト」は、使い続けている人だけを追い出します。ポーリングを回すのはブラウザなので、危険が本物になる瞬間にこそ止まるからです。",
+          tags: ["IaaS Backend", "Backend", "Reliability", "Method"]
+        },
         {
           title: "The Run History Tab Had a Path That Left No History",
           url: "writing/the-history-tab-that-had-a-hole.html",
