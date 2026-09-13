@@ -3436,3 +3436,17 @@ html[lang="ja"] .article-toc {
 }
 
 @media (prefers-reduced-motion: reduce) { .facet { transition: none; } }
+
+
+/* ---- 인쇄: CV 한 장 ---------------------------------------------------------------------- */
+/* 「Download CV」가 부르는 화면이다. 첫 화면 전체를 그대로 인쇄하면 News·Projects·Writing 이
+   같이 딸려 나와 이력서가 아니라 사이트 인쇄물이 된다. CV 절만 남기고 나머지는 지운다. */
+@media print {
+  body { background: #fff; color: #000; }
+  body::before { display: none; }
+  .topbar, footer, .download-wrap, #about, #news, #projects, #writing, #notes { display: none !important; }
+  #cv { padding: 0; }
+  #cv a { color: #000; text-decoration: none; }
+  .container { max-width: none; padding: 0; }
+  .cv-card { break-inside: avoid; box-shadow: none; border-color: #ddd; }
+}

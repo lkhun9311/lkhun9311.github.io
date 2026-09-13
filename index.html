@@ -31,7 +31,7 @@
   >
   <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
 
-  <link rel="stylesheet" href="./assets/styles.css?v=746f99ac07" />
+  <link rel="stylesheet" href="./assets/styles.css?v=cef8b49cf1" />
 </head>
 
 <body>
@@ -240,6 +240,17 @@
             <div class="cert-line notranslate nvidia"><span class="cert-prov">NVIDIA</span> NCA-AIIO</div>
           </div>
         </div>
+
+        <div class="download-wrap">
+          <button type="button" class="text-border-link download notranslate" id="cvPrint">
+            <svg class="download-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 3v11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="m7 10 5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M5 20h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span>Download CV</span>
+          </button>
+        </div>
       </section>
     </main>
 
@@ -278,6 +289,13 @@
     setCount(document.getElementById("countProjects"), "projects");
     setCount(document.getElementById("countWriting"), "writing");
     setCount(document.getElementById("countNotes"), "notes");
+
+    /* 「Download CV」는 파일을 내려받지 않고 **이 쪽의 CV 절만 인쇄**한다.
+       내려받을 PDF 가 아직 없어서 예전에는 `href="#"` 이었고, 그건 눌러도 아무 일이 안 나는
+       죽은 링크였다(2026-09-13 에 걷어냈다). 인쇄는 지금 있는 내용으로 실제로 동작한다 —
+       파일이 생기면 이 버튼을 `<a href="...">` 로 바꾸면 된다. */
+    var cvBtn = document.getElementById("cvPrint");
+    if (cvBtn) cvBtn.addEventListener("click", function () { window.print(); });
   </script>
 
   <script src="assets/lang.js?v=905b81f32a"></script>
