@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GPU 1枚を分けると、共有エンジンが届かない遅延目標に届きます | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/the-ladder-that-could-not-be-climbed.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/the-ladder-that-could-not-be-climbed.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/the-ladder-that-could-not-be-climbed.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/the-ladder-that-could-not-be-climbed.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="GPU 1枚を分けると、共有エンジンが届かない遅延目標に届きます" />
+  <meta property="og:description" content="A10G 1枚を2テナントで分け合うとき、テナントごとにエンジンを与えると 1.16 と 2.31 req/s で 139 ms の目標を満たします。エンジンを1つ共有する構成は、測ったどの負荷でも満たしません。それを知る前に、答えがすでに決まっていた梯子にお金を使いました。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/the-ladder-that-could-not-be-climbed.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="GPU 1枚を分けると、共有エンジンが届かない遅延目標に届きます" />
+  <meta name="twitter:description" content="A10G 1枚を2テナントで分け合うとき、テナントごとにエンジンを与えると 1.16 と 2.31 req/s で 139 ms の目標を満たします。エンジンを1つ共有する構成は、測ったどの負荷でも満たしません。それを知る前に、答えがすでに決まっていた梯子にお金を使いました。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="A10G 1枚を2テナントで分け合うとき、テナントごとにエンジンを与えると 1.16 と 2.31 req/s で 139 ms の目標を満たします。エンジンを1つ共有する構成は、測ったどの負荷でも満たしません。それを知る前に、答えがすでに決まっていた梯子にお金を使いました。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"the-ladder-that-could-not-be-climbed.html","ko":"the-ladder-that-could-not-be-climbed.ko.html","ja":"the-ladder-that-could-not-be-climbed.ja.html"}'>
+          <option value="ja" selected>日本語</option>
+          <option value="en">English</option>
+          <option value="ko">한국어</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ戻る</a>
+        <div class="article-meta"><span class="source-tag side notranslate">個人プロジェクト</span><a class="project-tag notranslate" href="../writing/index.html?tag=GPUaaS%20Control%20Plane">#GPUaaS コントロールプレーン</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>GPU 1枚を分けると、共有エンジンが届かない遅延目標に届きます<br><span class="h1-sub">それを知る前に、答えがすでに決まっていた梯子にお金を使いました。</span></h1>
+        <p class="article-date">2026年9月</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="the-ladder-that-could-not-be-climbed"></aside>
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#読者">この記事の想定読者</a></li>
+            <li><a href="#内容">どんな内容ですか</a></li>
+            <li><a href="#構成">どんな構成ですか</a></li>
+            <li><a href="#思い込み">固定した仕事量で容量が測れると思っていました</a></li>
+            <li><a href="#結論">結論から申し上げます</a></li>
+            <li><a href="#梯子">登れない場所に梯子を置きました</a></li>
+            <li><a href="#採点不能">判定は正しく、ランナーが終了コードを読み違えました</a></li>
+            <li><a href="#なぜ">負荷を下げても共有構成が届かない理由</a></li>
+            <li><a href="#p99">p99 が隠していたもの</a></li>
+            <li><a href="#代償">ただではありません</a></li>
+            <li><a href="#主張しないこと">この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
+          </ul>
+        </nav>
+      <article class="article-body">
+
+        <h2 id="読者">この記事の想定読者</h2>
+        <ul>
+          <li>GPU 1枚を複数テナントで分け合う構成を検討している方</li>
+          <li>性能実験を設計するとき、何を買えば答えが出るのか毎回迷う方</li>
+          <li>測定ツールを自分で作って使っている方</li>
+        </ul>
+
+        <h2 id="内容">どんな内容ですか</h2>
+        <p>GPU 1枚を2テナントで分け合うとき、<strong>エンジンを1つだけ置いて共有する構成</strong>と
+        <strong>テナントごとにエンジンを1つずつ与える構成</strong>の、どちらが遅延目標をより高い負荷まで
+        守るのかを測った話です。</p>
+        <p>ただしこの記事の半分は、<strong>私が設計を誤って、答えがすでに決まっている実験を買った</strong>
+        という話です。基準も判定規則も停止規則もすべて正しかったのに、梯子を登れない場所に置きました。
+        そしてそれは、カードを借りる前に分かることでした。</p>
+        <p>⚠️ <strong>先に留保をひとつ。</strong>以下の結果は<strong>4つの到着率で測った合否</strong>であって、
+        持続可能な最大到着率の証明ではありません。どちらの構成についても最大値は特定できていません。
+        残りの留保は「この記事が主張しないこと」にまとめました。</p>
+
+        <h2 id="構成">どんな構成ですか</h2>
+        <p>小さな言語モデル(Qwen2.5-3B)を GPU 1枚(NVIDIA A10G)で配信しながら、<strong>2種類のお客さん</strong>
+        を同時に受けます。<strong>プレミアムテナント</strong>は短いプロンプトを頻繁に送り、最初のトークンが
+        早く出る必要があります。<strong>競合テナント</strong>は4万文字の長いプロンプトをときどき送り、
+        1件が GPU を長く占有します。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 210" role="img" aria-labelledby="lad1-t lad1-d" class="figure-svg">
+            <title id="lad1-t">比較した2つの構成</title>
+            <desc id="lad1-d">左は共有構成です。プレミアムと競合の2テナントが矢印で1つのエンジンに集まり、そのエンジンが GPU 1枚を使います。キューが1つなので、長いプロンプトの後ろに短い要求が並びます。右は分割構成です。プレミアムはエンジンAへ、競合はエンジンBへそれぞれ向かい、2つのエンジンが同じ GPU 1枚を時間で交代して使います。キューは2つです。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="160" y="18" font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="600">共有構成</text>
+              <rect x="10" y="40" width="96" height="40" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="58" y="64" font-size="11" fill="#4f5bd5" text-anchor="middle">プレミアム</text>
+              <rect x="10" y="104" width="96" height="40" rx="8" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="58" y="128" font-size="11" fill="#d62976" text-anchor="middle">競合</text>
+              <path d="M110 60 H 150 V 88" fill="none" stroke="#c9c9c9" stroke-width="1.6"/>
+              <path d="M110 124 H 150 V 96" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#lad-a)"/>
+              <rect x="156" y="72" width="92" height="40" rx="8" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="202" y="96" font-size="11" fill="#4a4a4a" text-anchor="middle">エンジン1つ</text>
+              <path d="M252 92 H 282" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#lad-a)"/>
+              <rect x="288" y="72" width="56" height="40" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="316" y="96" font-size="11" fill="#4a4a4a" text-anchor="middle">GPU</text>
+              <text x="176" y="176" font-size="11" fill="#8a8a8a" text-anchor="middle">キューが1つです</text>
+              <text x="176" y="194" font-size="11" fill="#8a8a8a" text-anchor="middle">長いプロンプトの後ろに短い要求が並びます</text>
+              <line x1="372" y1="30" x2="372" y2="200" stroke="#e5e5e5" stroke-width="1"/>
+              <text x="556" y="18" font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="600">分割構成</text>
+              <rect x="400" y="40" width="96" height="40" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="448" y="64" font-size="11" fill="#4f5bd5" text-anchor="middle">プレミアム</text>
+              <rect x="400" y="104" width="96" height="40" rx="8" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="448" y="128" font-size="11" fill="#d62976" text-anchor="middle">競合</text>
+              <path d="M500 60 H 530" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#lad-a)"/>
+              <path d="M500 124 H 530" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#lad-a)"/>
+              <rect x="536" y="40" width="86" height="40" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="579" y="64" font-size="11" fill="#4f5bd5" text-anchor="middle">エンジンA</text>
+              <rect x="536" y="104" width="86" height="40" rx="8" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="579" y="128" font-size="11" fill="#d62976" text-anchor="middle">エンジンB</text>
+              <path d="M626 60 H 650 V 88" fill="none" stroke="#c9c9c9" stroke-width="1.6"/>
+              <path d="M626 124 H 650 V 96" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#lad-a)"/>
+              <rect x="656" y="72" width="56" height="40" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="684" y="96" font-size="11" fill="#4a4a4a" text-anchor="middle">GPU</text>
+              <text x="556" y="176" font-size="11" fill="#8a8a8a" text-anchor="middle">キューが2つです</text>
+              <text x="556" y="194" font-size="11" fill="#8a8a8a" text-anchor="middle">代わりにカードを時間で交代して使います</text>
+            </g>
+            <defs>
+              <marker id="lad-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>分割構成は時間分割(time-slicing)です。カードを物理的に半分に割るのではなく、2つのエンジンがカード全体を交代で使います。メモリは隔離されません。</figcaption>
+        </figure>
+
+        <p>基準は1つに決めておきました。<strong>プレミアムの最初のトークンまでの時間(TTFT)の p99 が
+        139.0 ms 以下</strong>であること。この値は競合テナントがいないときの基準線(69.5 ms)のちょうど2倍で、
+        <strong>実験を始める前に</strong>決めて文書に書いておきました。</p>
+
+        <h2 id="思い込み">固定した仕事量で容量が測れると思っていました</h2>
+        <p>先の実験では、2つの構成に<strong>まったく同じ要求トレース</strong>を与えて回しました。3本の腕すべてが
+        要求を1件も失わずに終えました。それでスループットを比べたところ 589.3 / 586.9 / 584.0 tok/s となり、
+        「分割の容量コストは 0.9%」と書くところでした。</p>
+        <p><strong>そう書けません。</strong>3本が同じ仕事量をすべて終えたなら、分子は定数です。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="lad2-t lad2-d" class="figure-svg">
+            <title id="lad2-t">固定仕事量の実験が測れないもの</title>
+            <desc id="lad2-d">長さの等しい横棒が3本、上下に並んでいます。提供した仕事、共有構成がした仕事、分割構成がした仕事がいずれも 297,920 トークンで同じです。下に説明があります。余裕が10パーセントでも300パーセントでもこの図は同じで、動くのは分母である経過時間だけであり、そのうち3.31秒は競合テナントのエンジンが後から終わった時間です。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="0" y="34" font-size="11.5" fill="#4a4a4a">提供した仕事</text>
+              <rect x="150" y="22" width="420" height="18" rx="4" fill="#e9e9e9"/>
+              <text x="582" y="35" font-size="11" fill="#8a8a8a">297,920 トークン</text>
+              <text x="0" y="74" font-size="11.5" fill="#4a4a4a">共有がした仕事</text>
+              <rect x="150" y="62" width="420" height="18" rx="4" fill="#cfd3f3"/>
+              <text x="582" y="75" font-size="11" fill="#8a8a8a">297,920 トークン</text>
+              <text x="0" y="114" font-size="11.5" fill="#4a4a4a">分割がした仕事</text>
+              <rect x="150" y="102" width="420" height="18" rx="4" fill="#f3cfe0"/>
+              <text x="582" y="115" font-size="11" fill="#8a8a8a">297,920 トークン</text>
+              <text x="150" y="156" font-size="11.5" fill="#d62976">余裕が10%でも300%でも、この図は同じです</text>
+              <text x="150" y="178" font-size="11" fill="#8a8a8a">動くのは分母(経過時間)だけで、その3.31秒は競合テナントのエンジンが後から終わった時間です</text>
+            </g>
+          </svg>
+          <figcaption>容量を測るには負荷を変えながら回すしかありません。そこで梯子を作りました。</figcaption>
+        </figure>
+
+        <h2 id="結論">結論から申し上げます</h2>
+        <p>梯子を先の実験の負荷の<strong>下</strong>に置き直して回すと、こうなりました。</p>
+        <table>
+          <caption class="sr-only">4つのプレミアム到着率における両構成のプレミアム TTFT p99 と 139.0 ms 目標の達成可否。</caption>
+          <thead><tr><th scope="col">プレミアム負荷</th><th scope="col">共有構成 p99</th><th scope="col">分割構成 p99</th><th scope="col">目標 139.0 ms</th></tr></thead>
+          <tbody>
+            <tr><td>1.16 req/s</td><td>1,282.5 ms</td><td><strong>123.8 ms</strong></td><td>分割のみ達成</td></tr>
+            <tr><td>2.31 req/s</td><td>1,694.7 ms</td><td><strong>130.4 ms</strong></td><td>分割のみ達成</td></tr>
+            <tr><td>4.61 req/s</td><td>2,303.3 ms</td><td>143.2 ms</td><td>どちらも未達</td></tr>
+            <tr><td>9.22 req/s</td><td>1,896.0 ms</td><td>1,013.2 ms</td><td>どちらも未達</td></tr>
+          </tbody>
+        </table>
+        <p><strong>共有構成はプレミアム負荷を 1.16 req/s まで下げても目標に届きません。</strong>競合テナントは
+        すべてのセルで139件を送り139件すべてを完了し、目標に近かった2段は別のカードでもう一度買って
+        確かめました。2つのセルはそれぞれ 2.1 ms、0.3 ms 動きました。</p>
+
+        <h2 id="梯子">登れない場所に梯子を置きました</h2>
+        <p>梯子はこう動きます。低い負荷から始めて一段ずつ登り、<strong>両方の構成が目標を外す最初の段で
+        止まります。</strong>その直前の段が、各構成が耐えた最大負荷です。</p>
+        <p>私は底の段を <strong>9.22 req/s</strong> に置きました。先の実験が回っていた負荷です。ところが
+        <strong>先の実験はまさにその負荷で、共有 1,892 ms、分割 1,007 ms を測っていました。</strong>
+        基準は 139 ms です。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 210" role="img" aria-labelledby="lad3-t lad3-d" class="figure-svg">
+            <title id="lad3-t">梯子を置いた場所</title>
+            <desc id="lad3-d">横軸は負荷です。下のほうに 139 ms の目標線が灰色の破線で引かれ、目標を満たす領域はその線の下、左側にあります。ピンクの点で示された私の梯子の底の段は 9.22 req/s で、目標線よりはるかに上、共有 1,892 ms と分割 1,007 ms の位置にあります。矢印は梯子がそこからさらに上へ登る設計だったことを示します。目標線の下の帯には、条件を満たす負荷はすべてそこにあると書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <line x1="60" y1="150" x2="700" y2="150" stroke="#c9c9c9" stroke-width="1.4" stroke-dasharray="4 3"/>
+              <text x="62" y="144" font-size="11" fill="#8a8a8a">目標 139 ms</text>
+              <line x1="60" y1="186" x2="700" y2="186" stroke="#c9c9c9" stroke-width="1.4"/>
+              <text x="700" y="204" font-size="11" fill="#8a8a8a" text-anchor="end">負荷 →</text>
+              <circle cx="470" cy="60" r="5" fill="#d62976"/>
+              <text x="484" y="52" font-size="11.5" fill="#d62976">私の梯子の底の段 · 9.22 req/s</text>
+              <text x="484" y="70" font-size="11" fill="#4a4a4a">共有 1,892 ms · 分割 1,007 ms</text>
+              <text x="484" y="88" font-size="11" fill="#8a8a8a">すでに目標の7倍を超えています</text>
+              <path d="M470 50 V 26" fill="none" stroke="#d62976" stroke-width="1.6" marker-end="url(#lad-b)"/>
+              <text x="470" y="18" font-size="11" fill="#d62976" text-anchor="middle">梯子はここから上へ登ります</text>
+              <rect x="60" y="152" width="330" height="32" fill="#fbeaf2"/>
+              <text x="225" y="172" font-size="11.5" fill="#d62976" text-anchor="middle">条件を満たす負荷はすべてこの下、底の段より左にあります</text>
+            </g>
+            <defs>
+              <marker id="lad-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>上へ登る梯子は「底の段以上に条件を満たす動作点はない」以外の答えを出せませんでした。そして実際にその答えが出ました。</figcaption>
+        </figure>
+
+        <p>私はこの数字を事前登録文書の第2段落に自分の手で引用しておきながら、見落としました。基準も判定も
+        停止規則もすべて正しかったのです。誤っていたのは<strong>探索の向き</strong>であり、探索の向きは設計の
+        一部です。すでに持っていた数字を確かめ直すのに、およそ 0.35 ドルを使いました。</p>
+
+        <h2 id="採点不能">判定は正しく、ランナーが終了コードを読み違えました</h2>
+        <p>より痛いのはこちらです。判定は1段目で<strong>まったく正しく</strong>「両構成とも目標を外したので
+        ここで止まれ」を終了コード10で返しました。ところが実行スクリプトがそれを<strong>0として
+        読みました。</strong></p>
+<pre data-lang="bash"><code># 誤ったコード
+if "$BIN" ladder-verdict ... ; then
+  ...
+  continue
+fi
+verdict_code=$?          # if 文の終了状態です。コマンドの10ではありません
+</code></pre>
+        <p>bash では <code>if</code> 文の直後の <code>$?</code> は<strong>条件コマンドの状態ではなく
+        <code>if</code> 文自体の状態</strong>です。条件が失敗し <code>else</code> がなければ
+        <code>if</code> 文は<strong>0</strong>を返します。そのため正しい停止が「採点できない段」として
+        報告され、お金を払ったセッションがそこで終わりました。</p>
+<pre data-lang="bash"><code># 直したコード — 状態をコマンドの隣で捕まえます
+verdict_code=0
+"$BIN" ladder-verdict ... || verdict_code=$?
+if [ "$verdict_code" -eq 0 ]; then ...
+</code></pre>
+        <p><strong>リハーサルではこれを捕まえられませんでした。</strong>GPU なしで回るリハーサルは
+        ダミーのエンジンがミリ秒で答えるため目標を超えることがなく、<strong>停止の分岐が一度も
+        実行されません。</strong>私は判定コマンドの終了コード10をテストで固定していましたが、
+        <strong>それを読むスクリプト側は固定していませんでした。</strong></p>
+        <p>今は判定コマンドだけを横取りする薄い代替スクリプトを挟んで、実際の実行スクリプトをその分岐へ
+        追い込むリハーサルがあります。そして直す前に、<strong>欠陥を復活させて赤くなることから
+        確かめました。</strong></p>
+
+        <h2 id="なぜ">負荷を下げても共有構成が届かない理由</h2>
+        <p>尾を作っているのが<strong>プレミアムがプレミアムの後ろに並ぶこと</strong>ではないからです。
+        4.61 req/s の共有構成で 139 ms を超えたプレミアム要求は651件でしたが、そのうち
+        <strong>649件(99.7%)</strong>が<strong>競合テナントの要求がまだ自分の最初のトークンを待っている
+        最中に</strong>送られたものでした。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 180" role="img" aria-labelledby="lad4-t lad4-d" class="figure-svg">
+            <title id="lad4-t">プレミアム要求が遅れる瞬間</title>
+            <desc id="lad4-d">横が時間です。上に競合テナントの長いプロンプトが幅広のピンクの帯で描かれています。下にプレミアム要求が4本の矢印で示され、ピンクの帯と重なる3本は遅れ、帯が終わった後の1本は遅れません。右下に、651件のうち649件がこの重なりの区間で送られたと書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="0" y="40" font-size="11.5" fill="#d62976">競合</text>
+              <rect x="120" y="26" width="300" height="24" rx="5" fill="#f7dbe8"/>
+              <text x="270" y="43" font-size="11" fill="#d62976" text-anchor="middle">長いプロンプトを読んでいる最中</text>
+              <text x="0" y="102" font-size="11.5" fill="#4f5bd5">プレミアム</text>
+              <path d="M170 92 V 62" fill="none" stroke="#4f5bd5" stroke-width="1.6" marker-end="url(#lad-c)"/>
+              <path d="M260 92 V 62" fill="none" stroke="#4f5bd5" stroke-width="1.6" marker-end="url(#lad-c)"/>
+              <path d="M350 92 V 62" fill="none" stroke="#4f5bd5" stroke-width="1.6" marker-end="url(#lad-c)"/>
+              <path d="M520 92 V 62" fill="none" stroke="#8a8a8a" stroke-width="1.6" marker-end="url(#lad-d)"/>
+              <text x="260" y="124" font-size="11.5" fill="#d62976" text-anchor="middle">この3本が遅れます</text>
+              <text x="520" y="124" font-size="11.5" fill="#8a8a8a" text-anchor="middle">これは遅れません</text>
+              <line x1="0" y1="92" x2="700" y2="92" stroke="#e5e5e5" stroke-width="1"/>
+              <text x="700" y="110" font-size="11" fill="#8a8a8a" text-anchor="end">時間 →</text>
+              <text x="360" y="162" font-size="11.5" fill="#4a4a4a" text-anchor="middle">139 ms を超えた651件のうち649件(99.7%)がこの重なりで送られました</text>
+            </g>
+            <defs>
+              <marker id="lad-c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
+              </marker>
+              <marker id="lad-d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>競合の要求はプレミアムの到着率と無関係に139件あります。他のお客さんが作る列は、自分のお客さんを減らしても消せません。</figcaption>
+        </figure>
+
+        <h2 id="p99">p99 が隠していたもの</h2>
+        <p>基準が p99 なので、「未達」がどれほど大きな未達なのかが見えません。すでに買ったデータを数え直し
+        ました。</p>
+        <table>
+          <caption class="sr-only">分割構成におけるプレミアム到着率別の p99 と 139 ms を超えた要求数。</caption>
+          <thead><tr><th scope="col">プレミアム負荷</th><th scope="col">分割 p99</th><th scope="col">139 ms を超えた要求</th></tr></thead>
+          <tbody>
+            <tr><td>1.16 req/s</td><td>123.8 ms</td><td><strong>1件</strong> / 585 (0.17%)</td></tr>
+            <tr><td>2.31 req/s</td><td>130.4 ms</td><td><strong>5件</strong> / 1,164 (0.43%)</td></tr>
+            <tr><td>4.61 req/s</td><td>143.2 ms</td><td><strong>40件</strong> / 2,327 (1.72%)</td></tr>
+            <tr><td>9.22 req/s</td><td>1,013.2 ms</td><td><strong>823件</strong> / 4,655 (17.68%)</td></tr>
+          </tbody>
+        </table>
+        <p><strong>4.61 の「未達」は40件です。</strong>そしてこの比率は4点すべてで単調に増えます。p99 は観測値
+        1つなので動きえますが、<strong>数千件のうち何件かという数は、分布が動かない限りあまり動きません。</strong>
+        本当の崖は 4.61 と 9.22 の間(1.7% → 17.7%)にあり、そこは測っていません。</p>
+
+        <h2 id="代償">ただではありません</h2>
+        <p>分割構成は競合テナントの要求を1件も失いません。代わりに<strong>待たせます。</strong></p>
+        <table>
+          <caption class="sr-only">2.31 req/s における両構成の完了時間の比較。</caption>
+          <thead><tr><th scope="col">2.31 req/s にて</th><th scope="col">共有</th><th scope="col">分割</th></tr></thead>
+          <tbody>
+            <tr><td>プレミアム完了の中央値</td><td>1.089 s</td><td>1.987 s</td></tr>
+            <tr><td>競合テナント完了の中央値</td><td>1.316 s</td><td>4.654 s</td></tr>
+            <tr><td>競合テナント完了の p99</td><td>4.050 s</td><td>16.344 s</td></tr>
+          </tbody>
+        </table>
+        <p>プレミアムは<strong>中央値を差し出して尾を買います。</strong>そしてその代金はおおむね競合テナントが
+        払います。この構成を有効にするプラットフォームはそれを選んでいるのであり、料金を受け取る相手に
+        説明する義務があります。</p>
+
+        <h2 id="主張しないこと">この記事が主張しないこと</h2>
+        <ul>
+          <li><strong>持続可能な最大到着率。</strong>どちらの構成についても最大値は特定できていません。上の表は
+          4つの到着率で測った合否であり、その間や上が異なる振る舞いをしないことの証明ではありません。</li>
+          <li><strong>505秒より短い窓についての保証。</strong>2.31 req/s で達成した実行も、最後の101秒だけを
+          取り出すと p99 が 141.7 ms で目標を超えます。</li>
+          <li><strong>競合テナントの到着パターンを変えたときの結果。</strong>段ごとに競合要求の件数は139件で
+          固定しましたが、到着の時刻表は固定できていません。段をまたぐ比較には到着率の変化とスケジュールの
+          変化が混ざっています。</li>
+          <li><strong>バッチ上限ではなくトポロジが原因であること。</strong>分割するとエンジンあたりの同時処理
+          上限も64から32へ一緒に下がります。両者を切り分ける実験はしていません。</li>
+          <li><strong>139 ms が商業的に意味のある値であること。</strong>基準線の2倍というだけで、顧客要件では
+          ありません。</li>
+          <li><strong>別のカード、別のモデル、MIG について。</strong>A10G 1枚、モデル1つ、プロンプトの
+          組み合わせ1つです。</li>
+        </ul>
+
+        <h2 id="おわりに">おわりに</h2>
+        <ul>
+          <li><strong>固定した仕事量をすべて終えた実験は容量を測れません。</strong>分子が定数なので、余裕が
+          どれだけあっても同じ数字が出ます。</li>
+          <li><strong>探索の向きは設計の一部です。</strong>基準も判定も停止規則もすべて正しくても、答えが
+          ありえない場所から始めれば答えは出ません。そしてそれは借りる前に分かることでした。</li>
+          <li><strong>ガードを固定することと、そのガードを読むコードを固定することは別の仕事です。</strong>
+          終了コード10はテストで縛られていましたが、それを <code>if</code> の後の <code>$?</code> で読むと
+          いう事実は縛られていませんでした。</li>
+          <li><strong>結果は出ました。</strong>この競合負荷のもとで分割構成は 2.31 req/s まで 139 ms を守り、
+          共有構成は測ったどの負荷でも守れません。代わりに競合テナントの尾が4倍になります。</li>
+        </ul>
+        <p>測定ツールをご自身で作って使っているなら、<strong>わざと壊して赤くなるかを先に確かめること</strong>を
+        おすすめします。このプロジェクトで最も高くついた欠陥はすべて、<strong>存在していて、書かれた場所では
+        正しく、肝心の場所で参照されないガード</strong>でした。</p>
+        <p>お読みいただきありがとうございました。</p>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=c03cb004ee"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

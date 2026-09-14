@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Splitting One Card Meets a Latency Target the Shared Engine Never Does | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/the-ladder-that-could-not-be-climbed.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/the-ladder-that-could-not-be-climbed.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/the-ladder-that-could-not-be-climbed.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/the-ladder-that-could-not-be-climbed.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="Splitting One Card Meets a Latency Target the Shared Engine Never Does" />
+  <meta property="og:description" content="Two tenants on one A10G. Giving each its own engine meets a 139 ms premium tail target at 1.16 and 2.31 requests per second, where one shared engine misses it at every rate measured. Before finding that out, I paid for a ladder whose answer was already decided." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/the-ladder-that-could-not-be-climbed.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Splitting One Card Meets a Latency Target the Shared Engine Never Does" />
+  <meta name="twitter:description" content="Two tenants on one A10G. Giving each its own engine meets a 139 ms premium tail target at 1.16 and 2.31 requests per second, where one shared engine misses it at every rate measured. Before finding that out, I paid for a ladder whose answer was already decided." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="Two tenants on one A10G. Giving each its own engine meets a 139 ms premium tail target at 1.16 and 2.31 requests per second, where one shared engine misses it at every rate measured. Before finding that out, I paid for a ladder whose answer was already decided." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"the-ladder-that-could-not-be-climbed.html","ko":"the-ladder-that-could-not-be-climbed.ko.html","ja":"the-ladder-that-could-not-be-climbed.ja.html"}'>
+          <option value="en" selected>English</option>
+          <option value="ko">한국어</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>All posts</a>
+        <div class="article-meta"><span class="source-tag side notranslate">Personal project</span><a class="project-tag notranslate" href="../writing/index.html?tag=GPUaaS%20Control%20Plane">#GPUaaS Control Plane</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>Splitting One Card Meets a Latency Target the Shared Engine Never Does<br><span class="h1-sub">Before finding that out, I paid for a ladder whose answer was already decided.</span></h1>
+        <p class="article-date">Sep 2026</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="the-ladder-that-could-not-be-climbed"></aside>
+        <nav class="article-toc" aria-label="Contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#audience">Who this is for</a></li>
+            <li><a href="#what">What this is about</a></li>
+            <li><a href="#service">The setup</a></li>
+            <li><a href="#assumed">I assumed a fixed workload could measure capacity</a></li>
+            <li><a href="#result">The result, up front</a></li>
+            <li><a href="#ladder">I put the ladder where it could not be climbed</a></li>
+            <li><a href="#unscorable">The verdict was right and the runner misread its exit code</a></li>
+            <li><a href="#why">Why lowering the load does not rescue the shared engine</a></li>
+            <li><a href="#p99">What the p99 was hiding</a></li>
+            <li><a href="#cost">It is not free</a></li>
+            <li><a href="#limits">What this does not claim</a></li>
+            <li><a href="#closing">Closing</a></li>
+          </ul>
+        </nav>
+      <article class="article-body">
+
+        <h2 id="audience">Who this is for</h2>
+        <ul>
+          <li>Anyone weighing up letting several tenants share one GPU</li>
+          <li>Anyone who designs performance experiments and is never sure what to buy to get an answer</li>
+          <li>Anyone who builds their own measurement tools</li>
+        </ul>
+
+        <h2 id="what">What this is about</h2>
+        <p>Two tenants share one GPU. I measured which arrangement holds a latency target to a higher offered
+        load: <strong>one engine serving both</strong>, or <strong>an engine each</strong>.</p>
+        <p>Half of this post is about my own mistake. The criterion, the readings and the stopping rule were
+        all correct, and I still <strong>paid for an experiment whose answer was already decided</strong>,
+        because I put the ladder somewhere it could not be climbed. That was knowable before renting
+        anything.</p>
+        <p>⚠️ <strong>One caveat first.</strong> What follows are <strong>pass and fail results at four
+        sampled arrival rates</strong>, not a proof of a maximum sustainable rate. Neither arrangement's
+        maximum was located. The rest of the caveats are gathered under "What this does not claim".</p>
+
+        <h2 id="service">The setup</h2>
+        <p>A small language model (Qwen2.5-3B) served from one NVIDIA A10G, taking <strong>two kinds of
+        customer</strong> at once. The <strong>premium tenant</strong> sends short prompts often and needs
+        its first token quickly. The <strong>contending tenant</strong> sends a 40,000-character prompt now
+        and then, and each one holds the GPU for a long time.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 210" role="img" aria-labelledby="lad1-t lad1-d" class="figure-svg">
+            <title id="lad1-t">The two arrangements compared</title>
+            <desc id="lad1-d">On the left is the shared arrangement. Arrows take both the premium and the contending tenant into a single engine, and that engine uses the one GPU. There is one queue, so a short request waits behind a long prompt. On the right is the split arrangement. Premium goes to engine A and the contender to engine B, and the two engines take turns on the same GPU. There are two queues.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="160" y="18" font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="600">Shared</text>
+              <rect x="10" y="40" width="96" height="40" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="58" y="64" font-size="11" fill="#4f5bd5" text-anchor="middle">premium</text>
+              <rect x="10" y="104" width="96" height="40" rx="8" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="58" y="128" font-size="11" fill="#d62976" text-anchor="middle">contender</text>
+              <path d="M110 60 H 150 V 88" fill="none" stroke="#c9c9c9" stroke-width="1.6"/>
+              <path d="M110 124 H 150 V 96" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#lad-a)"/>
+              <rect x="156" y="72" width="92" height="40" rx="8" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="202" y="96" font-size="11" fill="#4a4a4a" text-anchor="middle">one engine</text>
+              <path d="M252 92 H 282" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#lad-a)"/>
+              <rect x="288" y="72" width="56" height="40" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="316" y="96" font-size="11" fill="#4a4a4a" text-anchor="middle">GPU</text>
+              <text x="176" y="176" font-size="11" fill="#8a8a8a" text-anchor="middle">One queue.</text>
+              <text x="176" y="194" font-size="11" fill="#8a8a8a" text-anchor="middle">A short request waits behind a long prompt.</text>
+              <line x1="372" y1="30" x2="372" y2="200" stroke="#e5e5e5" stroke-width="1"/>
+              <text x="556" y="18" font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="600">Split</text>
+              <rect x="400" y="40" width="96" height="40" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="448" y="64" font-size="11" fill="#4f5bd5" text-anchor="middle">premium</text>
+              <rect x="400" y="104" width="96" height="40" rx="8" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="448" y="128" font-size="11" fill="#d62976" text-anchor="middle">contender</text>
+              <path d="M500 60 H 530" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#lad-a)"/>
+              <path d="M500 124 H 530" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#lad-a)"/>
+              <rect x="536" y="40" width="86" height="40" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="579" y="64" font-size="11" fill="#4f5bd5" text-anchor="middle">engine A</text>
+              <rect x="536" y="104" width="86" height="40" rx="8" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="579" y="128" font-size="11" fill="#d62976" text-anchor="middle">engine B</text>
+              <path d="M626 60 H 650 V 88" fill="none" stroke="#c9c9c9" stroke-width="1.6"/>
+              <path d="M626 124 H 650 V 96" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#lad-a)"/>
+              <rect x="656" y="72" width="56" height="40" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="684" y="96" font-size="11" fill="#4a4a4a" text-anchor="middle">GPU</text>
+              <text x="556" y="176" font-size="11" fill="#8a8a8a" text-anchor="middle">Two queues.</text>
+              <text x="556" y="194" font-size="11" fill="#8a8a8a" text-anchor="middle">The card is taken in turns instead.</text>
+            </g>
+            <defs>
+              <marker id="lad-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>The split is time-slicing. It does not cut the card in half: the two engines alternate on the whole card, and memory is not isolated.</figcaption>
+        </figure>
+
+        <p>The criterion was fixed to one number. The <strong>premium time-to-first-token p99 at or under
+        139.0 ms</strong>. That is exactly twice the isolated baseline of 69.5 ms measured with no contender,
+        and it was written down <strong>before the experiment started</strong>.</p>
+
+        <h2 id="assumed">I assumed a fixed workload could measure capacity</h2>
+        <p>An earlier run gave both arrangements <strong>exactly the same request trace</strong>. All three
+        arms finished every request, losing none. Comparing throughput gave 589.3 / 586.9 / 584.0 tok/s, and
+        I nearly wrote "separation costs 0.9% of capacity".</p>
+        <p><strong>It cannot.</strong> If all three arms completed the same fixed work, the numerator is a
+        constant.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="lad2-t lad2-d" class="figure-svg">
+            <title id="lad2-t">What a fixed-workload experiment cannot measure</title>
+            <desc id="lad2-d">Three horizontal bars of identical length, stacked. Work offered, work done by the shared arrangement, and work done by the split arrangement are all 297,920 tokens. Below them a note says the picture is the same whether 10 percent or 300 percent of headroom remains, that only the elapsed-time denominator moves, and that 3.31 seconds of it is the contender's engine finishing later.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="0" y="34" font-size="11.5" fill="#4a4a4a">offered</text>
+              <rect x="150" y="22" width="420" height="18" rx="4" fill="#e9e9e9"/>
+              <text x="582" y="35" font-size="11" fill="#8a8a8a">297,920 tokens</text>
+              <text x="0" y="74" font-size="11.5" fill="#4a4a4a">shared did</text>
+              <rect x="150" y="62" width="420" height="18" rx="4" fill="#cfd3f3"/>
+              <text x="582" y="75" font-size="11" fill="#8a8a8a">297,920 tokens</text>
+              <text x="0" y="114" font-size="11.5" fill="#4a4a4a">split did</text>
+              <rect x="150" y="102" width="420" height="18" rx="4" fill="#f3cfe0"/>
+              <text x="582" y="115" font-size="11" fill="#8a8a8a">297,920 tokens</text>
+              <text x="150" y="156" font-size="11.5" fill="#d62976">10% of headroom or 300%, this picture is the same</text>
+              <text x="150" y="178" font-size="11" fill="#8a8a8a">Only the denominator moves, and 3.31 s of it is the contender's engine finishing later</text>
+            </g>
+          </svg>
+          <figcaption>Measuring capacity means varying the offered load. So I built a ladder.</figcaption>
+        </figure>
+
+        <h2 id="result">The result, up front</h2>
+        <p>Put the ladder <strong>below</strong> the load the earlier run used, and this is what comes out.</p>
+        <table>
+          <caption class="sr-only">Premium TTFT p99 for both arrangements at four offered premium rates, against the 139.0 ms target.</caption>
+          <thead><tr><th scope="col">offered premium</th><th scope="col">shared p99</th><th scope="col">split p99</th><th scope="col">139.0 ms target</th></tr></thead>
+          <tbody>
+            <tr><td>1.16 req/s</td><td>1,282.5 ms</td><td><strong>123.8 ms</strong></td><td>split only</td></tr>
+            <tr><td>2.31 req/s</td><td>1,694.7 ms</td><td><strong>130.4 ms</strong></td><td>split only</td></tr>
+            <tr><td>4.61 req/s</td><td>2,303.3 ms</td><td>143.2 ms</td><td>neither</td></tr>
+            <tr><td>9.22 req/s</td><td>1,896.0 ms</td><td>1,013.2 ms</td><td>neither</td></tr>
+          </tbody>
+        </table>
+        <p><strong>The shared engine misses the target even with premium lowered to 1.16 req/s.</strong> The
+        contender offered and completed 139 of 139 requests in every cell, and the two rungs that landed near
+        the target were bought a second time on a different card. They moved 2.1 ms and 0.3 ms.</p>
+
+        <h2 id="ladder">I put the ladder where it could not be climbed</h2>
+        <p>A ladder works like this. Start at a low load, climb a rung at a time, and <strong>stop at the
+        first rung where both arrangements miss the target</strong>. The rung below it is what each one
+        sustained.</p>
+        <p>I put the bottom rung at <strong>9.22 req/s</strong>, the load the earlier run used. And
+        <strong>that earlier run had measured 1,892 ms and 1,007 ms at exactly that load.</strong> The target
+        is 139 ms.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 210" role="img" aria-labelledby="lad3-t lad3-d" class="figure-svg">
+            <title id="lad3-t">Where the ladder was placed</title>
+            <desc id="lad3-d">The horizontal axis is offered load. A dashed grey line marks the 139 ms target near the bottom, and the region satisfying it lies below and to the left of that line. A pink dot marks the bottom rung of my ladder at 9.22 requests per second, far above the target line, at 1,892 ms shared and 1,007 ms split. An arrow shows the ladder was designed to climb upward from there. A shaded band below the target line is labelled as the region where every qualifying load actually lies.</desc>
+            <g font-family="Inter, sans-serif">
+              <line x1="60" y1="150" x2="700" y2="150" stroke="#c9c9c9" stroke-width="1.4" stroke-dasharray="4 3"/>
+              <text x="62" y="144" font-size="11" fill="#8a8a8a">139 ms target</text>
+              <line x1="60" y1="186" x2="700" y2="186" stroke="#c9c9c9" stroke-width="1.4"/>
+              <text x="700" y="204" font-size="11" fill="#8a8a8a" text-anchor="end">offered load →</text>
+              <circle cx="470" cy="60" r="5" fill="#d62976"/>
+              <text x="484" y="52" font-size="11.5" fill="#d62976">my ladder's bottom rung · 9.22 req/s</text>
+              <text x="484" y="70" font-size="11" fill="#4a4a4a">shared 1,892 ms · split 1,007 ms</text>
+              <text x="484" y="88" font-size="11" fill="#8a8a8a">already seven times over the target</text>
+              <path d="M470 50 V 26" fill="none" stroke="#d62976" stroke-width="1.6" marker-end="url(#lad-b)"/>
+              <text x="470" y="18" font-size="11" fill="#d62976" text-anchor="middle">the ladder climbs from here</text>
+              <rect x="60" y="152" width="330" height="32" fill="#fbeaf2"/>
+              <text x="225" y="172" font-size="11.5" fill="#d62976" text-anchor="middle">every qualifying load is down here, left of the bottom rung</text>
+            </g>
+            <defs>
+              <marker id="lad-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>A ladder climbing from there could return nothing but "no qualified operating point at or above the bottom rung". That is exactly what it returned.</figcaption>
+        </figure>
+
+        <p>I had quoted those numbers in the second paragraph of my own pre-registration and still did not see
+        it. The criterion, the readings and the stopping rule were all correct. What was wrong was the
+        <strong>search direction</strong>, and a search direction is part of a design. Re-confirming a number
+        I already had cost about $0.35.</p>
+
+        <h2 id="unscorable">The verdict was right and the runner misread its exit code</h2>
+        <p>This part hurts more. At the first rung the verdict command said, entirely correctly, "both
+        arrangements missed the target, stop here" — and exited 10. The runner read that as
+        <strong>0</strong>.</p>
+<pre data-lang="bash"><code># wrong
+if "$BIN" ladder-verdict ... ; then
+  ...
+  continue
+fi
+verdict_code=$?          # this is the IF STATEMENT's status, not the command's
+</code></pre>
+        <p>In bash, <code>$?</code> after an <code>if</code> is the status of <strong>the if statement</strong>,
+        not of the condition. When the condition fails and there is no <code>else</code>, an <code>if</code>
+        returns <strong>0</strong>. So a correct stop was reported as a rung that could not be scored, and a
+        paid session ended there.</p>
+<pre data-lang="bash"><code># right — capture the status beside the command
+verdict_code=0
+"$BIN" ladder-verdict ... || verdict_code=$?
+if [ "$verdict_code" -eq 0 ]; then ...
+</code></pre>
+        <p><strong>No rehearsal could have caught it.</strong> The GPU-free rehearsal answers in milliseconds
+        with a stub engine, so it never breaches the target, so <strong>the stopping branch never
+        executes</strong>. I had pinned the verdict command's exit code 10 in a test. I had not pinned
+        <strong>the script's reading of it</strong>.</p>
+        <p>There is now a rehearsal that wedges a thin shim in front of the verdict command and drives the
+        real runner down that branch. And before fixing it, I restored the defect and watched the test go
+        red.</p>
+
+        <h2 id="why">Why lowering the load does not rescue the shared engine</h2>
+        <p>Because the tail is not made of <strong>premium queueing behind premium</strong>. At 4.61 req/s
+        under the shared engine, 651 premium requests went over 139 ms — and
+        <strong>649 of them (99.7%)</strong> were sent while a contending request was
+        <strong>still waiting for its own first token</strong>.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 180" role="img" aria-labelledby="lad4-t lad4-d" class="figure-svg">
+            <title id="lad4-t">When a premium request runs late</title>
+            <desc id="lad4-d">Time runs left to right. A wide pink bar at the top is the contender reading its long prompt. Below it four arrows mark premium requests: the three that overlap the pink bar are late, and the one after it ends is not. A note says 649 of the 651 requests over 139 milliseconds were sent inside that overlap.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="0" y="40" font-size="11.5" fill="#d62976">contender</text>
+              <rect x="120" y="26" width="300" height="24" rx="5" fill="#f7dbe8"/>
+              <text x="270" y="43" font-size="11" fill="#d62976" text-anchor="middle">reading a long prompt</text>
+              <text x="0" y="102" font-size="11.5" fill="#4f5bd5">premium</text>
+              <path d="M170 92 V 62" fill="none" stroke="#4f5bd5" stroke-width="1.6" marker-end="url(#lad-c)"/>
+              <path d="M260 92 V 62" fill="none" stroke="#4f5bd5" stroke-width="1.6" marker-end="url(#lad-c)"/>
+              <path d="M350 92 V 62" fill="none" stroke="#4f5bd5" stroke-width="1.6" marker-end="url(#lad-c)"/>
+              <path d="M520 92 V 62" fill="none" stroke="#8a8a8a" stroke-width="1.6" marker-end="url(#lad-d)"/>
+              <text x="260" y="124" font-size="11.5" fill="#d62976" text-anchor="middle">these three are late</text>
+              <text x="520" y="124" font-size="11.5" fill="#8a8a8a" text-anchor="middle">this one is not</text>
+              <line x1="0" y1="92" x2="700" y2="92" stroke="#e5e5e5" stroke-width="1"/>
+              <text x="700" y="110" font-size="11" fill="#8a8a8a" text-anchor="end">time →</text>
+              <text x="360" y="162" font-size="11.5" fill="#4a4a4a" text-anchor="middle">649 of the 651 requests over 139 ms were sent inside this overlap</text>
+            </g>
+            <defs>
+              <marker id="lad-c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
+              </marker>
+              <marker id="lad-d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>There are 139 contending requests whatever the premium rate is. A queue another customer creates cannot be removed by sending fewer of your own.</figcaption>
+        </figure>
+
+        <h2 id="p99">What the p99 was hiding</h2>
+        <p>Because the criterion is a p99, it does not show how large a miss is. Counting the evidence I had
+        already bought:</p>
+        <table>
+          <caption class="sr-only">Split arrangement p99 and the number of premium requests over 139 ms, by offered rate.</caption>
+          <thead><tr><th scope="col">offered premium</th><th scope="col">split p99</th><th scope="col">requests over 139 ms</th></tr></thead>
+          <tbody>
+            <tr><td>1.16 req/s</td><td>123.8 ms</td><td><strong>1</strong> of 585 (0.17%)</td></tr>
+            <tr><td>2.31 req/s</td><td>130.4 ms</td><td><strong>5</strong> of 1,164 (0.43%)</td></tr>
+            <tr><td>4.61 req/s</td><td>143.2 ms</td><td><strong>40</strong> of 2,327 (1.72%)</td></tr>
+            <tr><td>9.22 req/s</td><td>1,013.2 ms</td><td><strong>823</strong> of 4,655 (17.68%)</td></tr>
+          </tbody>
+        </table>
+        <p><strong>The miss at 4.61 is forty requests.</strong> That fraction rises monotonically across all
+        four points, and unlike a p99 — which is one observation and can move — <strong>a count over
+        thousands of requests cannot move much unless the distribution does.</strong> The actual cliff is
+        between 4.61 and 9.22, from 1.7% to 17.7%, and I did not measure there.</p>
+
+        <h2 id="cost">It is not free</h2>
+        <p>The split loses none of the contender's work. It makes it <strong>wait</strong>.</p>
+        <table>
+          <caption class="sr-only">Completion times under both arrangements at 2.31 requests per second.</caption>
+          <thead><tr><th scope="col">at 2.31 req/s</th><th scope="col">shared</th><th scope="col">split</th></tr></thead>
+          <tbody>
+            <tr><td>premium completion median</td><td>1.089 s</td><td>1.987 s</td></tr>
+            <tr><td>contender completion median</td><td>1.316 s</td><td>4.654 s</td></tr>
+            <tr><td>contender completion p99</td><td>4.050 s</td><td>16.344 s</td></tr>
+          </tbody>
+        </table>
+        <p>Premium <strong>trades its median for its tail</strong>, and the contender pays most of the bill. A
+        platform that turns this on is choosing that, and owes the tenant it charges an account of it.</p>
+
+        <h2 id="limits">What this does not claim</h2>
+        <ul>
+          <li><strong>A maximum sustainable rate for either arrangement.</strong> Neither was located. The
+          table is pass and fail at four sampled loads, not a proof that nothing between or above them
+          qualifies.</li>
+          <li><strong>Anything about windows shorter than 505 seconds.</strong> The run that passes at
+          2.31 req/s has a p99 of 141.7 ms over its own final 101 seconds.</li>
+          <li><strong>Anything about a different contender arrival pattern.</strong> The contender's
+          <em>count</em> is held at 139 per rung; its <em>schedule</em> is not, so comparisons across rungs
+          mix a rate change with a different contention schedule.</li>
+          <li><strong>That the topology rather than the batch cap moved the result.</strong> Splitting also
+          halves the per-engine sequence cap, from 64 to 32, and no arm separates the two.</li>
+          <li><strong>That 139 ms means anything commercially.</strong> It is twice a baseline, not a
+          customer requirement.</li>
+          <li><strong>Anything about another card, another model, or MIG.</strong> One A10G, one model, one
+          prompt mix.</li>
+        </ul>
+
+        <h2 id="closing">Closing</h2>
+        <ul>
+          <li><strong>An experiment whose fixed workload is completed in full cannot measure capacity.</strong>
+          The numerator is a constant, so any amount of headroom produces the same number.</li>
+          <li><strong>The search direction is part of the design.</strong> With the criterion, the readings
+          and the stopping rule all correct, starting where the answer cannot be does not produce one. And
+          that was knowable before renting.</li>
+          <li><strong>Pinning a guard and pinning the code that reads it are different jobs.</strong> Exit
+          code 10 was held by a test. That the runner read it with <code>$?</code> after an <code>if</code>
+          was not.</li>
+          <li><strong>There is a result.</strong> Under this contending load the split holds 139 ms up to
+          2.31 req/s and the shared engine holds it at no rate measured — at the price of quadrupling the
+          contender's tail.</li>
+        </ul>
+        <p>If you build your own measurement tools, <strong>break them on purpose and check that something
+        goes red</strong>. Every expensive defect in this project had the same shape: <strong>a guard that
+        exists, is correct where it is written, and is not consulted where it matters.</strong></p>
+        <p>Thank you for reading.</p>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=c03cb004ee"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
