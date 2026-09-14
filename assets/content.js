@@ -525,6 +525,8 @@
           title: "A Stopped Kubelet Quarantined the Node in 46 Seconds",
           url: "writing/gpu-node-readiness.html",
           source: "side", sourceLabel: "Personal project",
+          title_ko: "kubelet을 멈췄더니 46초 만에 노드가 격리됐습니다",
+          desc_ko: "GPU 노드의 「Ready」가 무엇에 대한 주장이어야 하는지를 CRD로 명시했습니다. 관측을 먼저 집행을 나중에 두 단계로 만들었고, cordon·유예 기간·결함 신호 트리거·자동 drain 네 가지는 미룬 것이 아니라 거절했습니다. kind 워커의 kubelet을 멈추자 Ready → Quarantine → Ready가 0초·46초·48초에 나왔고, 그 46초가 컨트롤러가 아니라는 것은 측정이 아니라 설계에서 읽은 것이라고 적었습니다.",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "Node readiness as an explicit CRD phase rather than an operational assumption. Observation first, then one taint, and four things declined on purpose. English only.",
           tags: ["GPUaaS Control Plane", "Kubernetes", "GPU", "Observability"]
