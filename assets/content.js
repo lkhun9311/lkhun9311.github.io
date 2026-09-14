@@ -515,6 +515,8 @@
           title: "Reclaim Admitted the Owner in 120 ms. The Device Came 10 Seconds Later.",
           url: "writing/gpu-quota-control-plane.html",
           source: "side", sourceLabel: "Personal project",
+          title_ko: "회수 정책은 소유자를 120 ms 만에 입장시켰고, 장치는 10초 뒤에 왔습니다",
+          desc_ko: "테넌트 예산을 한 번 선언하고 일의 종류마다 다른 엔진이 집행합니다. Kueue의 회수 손잡이를 같은 원장에서 양방향으로 쟀더니, 끄면 낭비 0에 소유자 10.1초 대기, 켜면 120 ms 입장에 39.3 GPU-초 폐기였습니다. 그 두 번째 숫자에 대한 첫 발표가 「왜」를 틀렸고, 적대적 리뷰가 만든 대조 실험이 그것을 고쳤습니다. 숫자는 살아남고 메커니즘은 죽었습니다.",
           date: "2026-09", dateLabel: "Sep 2026",
           desc: "A tenant GPU budget declared once and enforced where the work is admitted. Kueue reclaim measured both ways on one ledger: 0 wasted GPU-seconds against 39.3, and what the admission figure turned out not to mean. English only.",
           tags: ["GPUaaS Control Plane", "Kubernetes", "GPU", "Design"]
