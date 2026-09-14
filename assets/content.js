@@ -260,6 +260,18 @@
           tags: ["Social Polling Platform", "Postgres", "Backend", "Method"]
         },
         {
+          title: "Splitting One Card Meets a Latency Target the Shared Engine Never Does",
+          url: "writing/the-ladder-that-could-not-be-climbed.html",
+          source: "side", sourceLabel: "Personal project",
+          title_ko: "GPU 한 장을 쪼개면 통짜가 못 맞추는 지연 목표를 맞춥니다",
+          desc_ko: "GPU 한 장을 두 테넌트가 나눠 쓸 때, 엔진을 따로 주면 통짜 구성이 어떤 부하에서도 맞추지 못하는 139 ms 목표를 1.16과 2.31 req/s에서 맞춥니다. 그걸 알아내기 전에, 답이 이미 정해져 있던 사다리에 돈을 썼습니다. 기준도 판정도 정지 규칙도 옳았고 틀린 것은 검색 방향이었습니다. 한국어와 일본어로도 읽을 수 있습니다.",
+          title_ja: "GPU 1 枚を分けると、共有エンジンが届かない遅延目標に届きます",
+          desc_ja: "A10G 1 枚を 2 テナントで分け合うとき、テナントごとにエンジンを与えると 1.16 と 2.31 req/s で 139 ms の目標を満たします。共有構成は測ったどの負荷でも満たしません。それを知る前に、答えがすでに決まっていた梯子にお金を使いました。誤っていたのは基準でも判定でもなく探索の向きでした。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "Two tenants on one A10G. An engine each meets a 139 ms premium tail target at 1.16 and 2.31 requests per second, where one shared engine misses it at every rate measured. Before finding that out I paid for a ladder whose answer was already decided: the criterion and the readings were right, the search direction was not. Also in Korean and Japanese.",
+          tags: ["GPUaaS Control Plane", "GPU", "Performance", "Method"]
+        },
+        {
           title: "Four GPU Quota Defences Broke the Same Way",
           url: "writing/every-guarantee-ends-at-a-writable-field.html",
           source: "side", sourceLabel: "Personal project",
