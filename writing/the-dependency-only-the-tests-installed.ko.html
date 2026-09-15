@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>테스트에서 늘 초록이던 Operator가 EKS에서 6번 죽었습니다 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/the-dependency-only-the-tests-installed.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/the-dependency-only-the-tests-installed.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/the-dependency-only-the-tests-installed.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/the-dependency-only-the-tests-installed.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="테스트에서 늘 초록이던 Operator가 EKS에서 6번 죽었습니다" />
+  <meta property="og:description" content="Kueue CRD를 테스트 환경 셋은 각자 설치했고 GitOps 배포 경로만 설치하지 않았습니다. 그래서 Operator의 시작 실패 분기는 테스트에서 한 번도 실행되지 않았습니다. 손으로 CRD를 넣어 원인은 확인했고 GitOps로 고친 경로는 확인하지 않았습니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/the-dependency-only-the-tests-installed.ko.html" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="테스트에서 늘 초록이던 Operator가 EKS에서 6번 죽었습니다" />
+  <meta name="twitter:description" content="Kueue CRD를 테스트 환경 셋은 각자 설치했고 GitOps 배포 경로만 설치하지 않았습니다. 그래서 Operator의 시작 실패 분기는 테스트에서 한 번도 실행되지 않았습니다. 손으로 CRD를 넣어 원인은 확인했고 GitOps로 고친 경로는 확인하지 않았습니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="Kueue CRD를 테스트 환경 셋은 각자 설치했고 GitOps 배포 경로만 설치하지 않았습니다. 그래서 Operator의 시작 실패 분기는 테스트에서 한 번도 실행되지 않았습니다. 손으로 CRD를 넣어 원인은 확인했고 GitOps로 고친 경로는 확인하지 않았습니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"the-dependency-only-the-tests-installed.html","ko":"the-dependency-only-the-tests-installed.ko.html","ja":"the-dependency-only-the-tests-installed.ja.html"}'>
+          <option value="ko" selected>한국어</option>
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
+        <div class="article-meta"><span class="source-tag side notranslate">개인 프로젝트</span><a class="project-tag notranslate" href="../writing/index.html?tag=GPUaaS%20Control%20Plane">#GPUaaS Control Plane</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>테스트에서 늘 초록이던 Operator가 EKS에서 6번 죽었습니다<br><span class="h1-sub">Kueue CRD를 테스트 환경 셋은 설치했고 GitOps 배포만 설치하지 않았습니다.</span></h1>
+        <p class="article-date">2026년 9월</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="the-dependency-only-the-tests-installed"></aside>
+        <nav class="article-toc" aria-label="목차">
+          <p class="toc-label">목차</p>
+          <ul>
+            <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+            <li><a href="#무슨-내용인가요">무슨 내용인가요?</a></li>
+            <li><a href="#어떤-서비스인가요">어떤 서비스인가요?</a></li>
+            <li><a href="#처음엔">처음엔 준비가 끝난 줄 알았습니다</a></li>
+            <li><a href="#결론부터">결론부터 말씀드리자면</a></li>
+            <li><a href="#세-환경">세 환경이 CRD를 넣어 준 탓에 테스트에서는 이 실패가 날 수 없었습니다</a></li>
+            <li><a href="#손으로-살렸습니다">손으로 넣어 살렸고 세션 게이트가 그 상태를 통과했습니다</a></li>
+            <li><a href="#fixture">테스트 Fixture를 배포 원본으로 삼았다가 되돌렸습니다</a></li>
+            <li><a href="#prune">prune이 켜져 있으면 CRD 파일 하나를 옮기는 순간 데이터가 같이 지워집니다</a></li>
+            <li><a href="#원인과-수정">원인은 확인했고 수정은 확인하지 않았습니다</a></li>
+            <li><a href="#지우는-쪽">지우는 쪽을 골랐습니다</a></li>
+            <li><a href="#주장하지-않는-것">이 글이 주장하지 않는 것</a></li>
+            <li><a href="#마치며">마치며</a></li>
+          </ul>
+        </nav>
+      <article class="article-body">
+
+        <h2 id="예상-독자">이 글의 예상 독자</h2>
+        <ul>
+          <li>Kubernetes Operator를 만들고 envtest·kind·e2e로 테스트하고 계신 분</li>
+          <li>Argo CD 같은 GitOps 도구로 CRD를 배포하고 계신 분</li>
+          <li>비싼 실행을 앞두고 무엇을 먼저 세워 봐야 할지 정하려는 분</li>
+        </ul>
+
+        <h2 id="무슨-내용인가요">무슨 내용인가요?</h2>
+        <p>첫 유료 GPU 세션을 앞둔 밤이었습니다. 앞선 이틀 동안 비용 통제와 측정 유효성 결함 30여 건을 고쳤고
+        하나하나 결함을 주입해서 확인했습니다. Operator 이미지는 ECR에 올렸고 Runbook도 썼습니다. 준비는 끝났다고
+        생각했습니다.</p>
+        <p>그 밤에 GPU는 한 장도 켜지 않은 채 EKS 클러스터를 세우고 플랫폼을 올려 봤습니다. 테스트에서 늘 초록이던
+        Operator가 EKS에서는 시작하자마자 죽었습니다. 이 글은 그 원인이 왜 테스트에서는 한 번도 나올 수 없었는지에
+        관한 이야기입니다.</p>
+        <p>먼저 유보 하나. 이 글이 확인한 것은 <strong>원인이지 수정이 아닙니다.</strong> 빠진 CRD를 손으로 넣어 Operator가
+        살아나는 것까지 봤고 같은 일을 GitOps가 스스로 해내는 경로는 그날 한 번도 돌지 않았습니다. 나머지 유보는
+        「이 글이 주장하지 않는 것」에 모아 두었습니다.</p>
+
+        <h2 id="어떤-서비스인가요">어떤 서비스인가요?</h2>
+        <p>개인 프로젝트로 만들고 있는 GPUaaS 플랫폼의 Control Plane입니다. 사용자가 <code>MLTrainingJob</code>을 만들면
+        Operator가 그것을 Kueue(Kubernetes에서 작업을 줄 세우고 쿼터에 맞춰 입장시키는 스케줄러)에 넘깁니다.
+        스케줄러에게 일을 넘기는 것이 이 Operator의 본업입니다.</p>
+        <p>배포는 두 단으로 나뉩니다. Terraform이 EKS와 주변 자원을 만들고 그 위에서 Argo CD가 root Application 하나로
+        나머지를 전부 올립니다(app-of-apps).</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 230" role="img" aria-labelledby="dep1-t dep1-d" class="figure-svg">
+            <title id="dep1-t">배포 경로</title>
+            <desc id="dep1-d">왼쪽은 Terraform입니다. EKS와 VPC와 NAT 같은 자원 96개를 만들고 GPU Node Group 3개를 desiredSize 0으로 둡니다. 화살표가 오른쪽 Argo CD로 이어집니다. Argo CD의 root Application 아래에 cert-manager, 플랫폼 CRD, 게이트웨이, Operator 네 자식이 있습니다. Operator 옆에는 시작할 때 Kueue Workload 인덱스를 만든다고 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="130" y="20" font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="600">Terraform</text>
+              <rect x="10" y="34" width="240" height="84" rx="8" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="130" y="62" font-size="12" fill="#4a4a4a" text-anchor="middle">EKS · VPC · NAT …</text>
+              <text x="130" y="84" font-size="12" fill="#8a8a8a" text-anchor="middle">자원 96개</text>
+              <rect x="10" y="134" width="240" height="56" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="130" y="158" font-size="12" fill="#4f5bd5" text-anchor="middle">GPU Node Group 3개</text>
+              <text x="130" y="178" font-size="12" fill="#4f5bd5" text-anchor="middle">desiredSize = 0</text>
+              <path d="M256 110 H 300" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#dep-a)"/>
+              <text x="410" y="20" font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="600">Argo CD</text>
+              <rect x="306" y="34" width="190" height="36" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="401" y="57" font-size="12" fill="#4a4a4a" text-anchor="middle">root Application</text>
+              <path d="M330 70 V 206" fill="none" stroke="#c9c9c9" stroke-width="1.4"/>
+              <path d="M330 94 H 350" fill="none" stroke="#c9c9c9" stroke-width="1.4"/>
+              <text x="356" y="98" font-size="12" fill="#4a4a4a">cert-manager</text>
+              <path d="M330 130 H 350" fill="none" stroke="#c9c9c9" stroke-width="1.4"/>
+              <text x="356" y="134" font-size="12" fill="#4a4a4a">플랫폼 CRD</text>
+              <path d="M330 166 H 350" fill="none" stroke="#c9c9c9" stroke-width="1.4"/>
+              <text x="356" y="170" font-size="12" fill="#4a4a4a">게이트웨이</text>
+              <path d="M330 206 H 350" fill="none" stroke="#c9c9c9" stroke-width="1.4"/>
+              <rect x="352" y="190" width="100" height="32" rx="8" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="402" y="211" font-size="12" fill="#d62976" text-anchor="middle">Operator</text>
+              <path d="M458 206 H 488" fill="none" stroke="#d62976" stroke-width="1.4" stroke-dasharray="4 3"/>
+              <text x="494" y="202" font-size="12" fill="#d62976">시작 시 Kueue Workload</text>
+              <text x="494" y="220" font-size="12" fill="#d62976">인덱스 생성</text>
+            </g>
+            <defs>
+              <marker id="dep-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>GPU Node Group은 셋 다 0대로 두어서 이 밤에 GPU 과금은 없었습니다.</figcaption>
+        </figure>
+
+        <h2 id="처음엔">처음엔 준비가 끝난 줄 알았습니다</h2>
+        <p>사람이 지켜보지 않는 채로 유료 세션을 돌려도 되는지 codex에게 물었습니다. codex는 반대했고 근거는 셋이었습니다.</p>
+        <p>첫째, 실행이 무인 워크플로가 아니었습니다. 세션 스크립트는 엔진을 띄운 뒤 Port Forward를 잡고 기다립니다.
+        측정은 별도 셸에서 사람이 돌려야 했고 끝나면 세션도 사람이 종료해야 했습니다.</p>
+        <p>둘째, 자동 복구가 없었습니다. Spot이 중단되거나 Port Forward가 끊기면 측정이 죽는데 다시 시작하지 않습니다.
+        그동안 세션 셸은 계속 기다리므로 아무 일도 안 하면서 TTL까지 과금됩니다.</p>
+        <p>셋째, 6.2시간이라는 계획이 안전한 창이 아니었습니다. 372분은 예상 처리 속도에서 나온 값인데 카드가 느리면
+        스크립트가 기한을 최대 420분까지 늘립니다. 반대편 경계는 클러스터를 통째로 지우는 야간 정리 워크플로
+        <code>destroy.yml</code>입니다. cron의 예정 시각은 03:00 UTC(정오 KST)인데 정시 보장이 없어서 이 저장소에는 실제 발화가
+        03:53부터 14:57 UTC까지 흔들린 기록이 있습니다. 양쪽이 다 움직이는데 저는 한쪽만 계산했습니다.</p>
+        <p>그리고 가장 무거운 지적이 따라왔습니다. <strong>가장 큰 위험은 비용이 아니라 처음 해 보는 구간에서 생긴 운영 실패가
+        사람 없이 복구되지 않아 세션 전체가 무효가 되는 것</strong>이라는 지적이었습니다. 가장 싼 완화책은 그날 밤 클러스터와
+        Argo CD까지만 세워 보고 지우는 것이었습니다.</p>
+        <p>여기서 ‘처음’의 범위를 정확히 해 둡니다. 클러스터 자체는 처음이 아니었습니다. 8월 31일에 CI로
+        <code>terraform apply</code>를 돌려 자원 96개를 만들고 지운 기록이 있습니다. 처음인 것은 그 위에 플랫폼을 올리는 일,
+        즉 Argo CD 부트스트랩과 root Application 적용과 Operator 기동이었습니다. 그 구간은 kind에서만 돌려 봤습니다.
+        처음 기록할 때는 저도 ‘첫 실클러스터’라고 적었다가 검토에서 같은 디렉터리의 기록을 지적받고 고쳤습니다.</p>
+
+        <h2 id="결론부터">결론부터 말씀드리자면</h2>
+        <p>클러스터는 자원 96개로 올라왔고 root Application을 적용하자 자식 Application들이 생겼습니다. cert-manager는
+        Healthy가 됐습니다. ECR의 Operator 이미지는 다이제스트로 34MB를 1.7초에 당겨 왔고 Webhook 인증서도 발급됐습니다.</p>
+        <p>그리고 Operator가 6번 죽었습니다.</p>
+<pre data-lang="text"><code>Failed to create controller {"controller": "mltrainingjob",
+  "error": "index workloads by job ref: no matches for kind \"Workload\"
+            in version \"kueue.x-k8s.io/v1beta1\""}
+</code></pre>
+        <p>Kueue CRD가 클러스터에 없었습니다. Operator를 테스트하던 환경 셋은 각자 이 CRD를 넣어 주고 있었고
+        <strong>GitOps 배포 경로만 아무도 넣지 않았습니다.</strong> CRD 네 개를 손으로 넣고 Pod를 지우자 Operator가 Available이
+        됐습니다.</p>
+
+        <h2 id="세-환경">세 환경이 CRD를 넣어 준 탓에 테스트에서는 이 실패가 날 수 없었습니다</h2>
+        <p>Kueue CRD를 어디서 얻는지 환경별로 적으면 이렇습니다.</p>
+        <table>
+          <caption class="sr-only">환경별로 Kueue CRD를 얻는 방법.</caption>
+          <thead><tr><th scope="col">환경</th><th scope="col">Kueue CRD를 어떻게 얻나</th></tr></thead>
+          <tbody>
+            <tr><td><code>test/e2e</code></td><td>Manager 배포 전에 <code>installKueueCRDs()</code></td></tr>
+            <tr><td>admission 테스트 스위트</td><td>envtest의 <code>CRDDirectoryPaths</code>로 같은 파일</td></tr>
+            <tr><td>kind 경로</td><td>손으로 <code>apply</code></td></tr>
+            <tr><td>GitOps / EKS</td><td>아무도 안 함</td></tr>
+          </tbody>
+        </table>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="dep2-t dep2-d" class="figure-svg">
+            <title id="dep2-t">네 환경 가운데 하나만 비어 있습니다</title>
+            <desc id="dep2-d">네 줄짜리 표 모양 그림입니다. 열은 Kueue CRD와 Operator 시작입니다. test/e2e, admission 스위트, kind 경로 세 줄은 CRD가 설치돼 있어 채운 동그라미이고 Operator 시작은 체크 표시입니다. kind 경로는 손으로 설치했다고 적혀 있습니다. 마지막 GitOps / EKS 줄만 CRD가 없어 빈 동그라미이고 Operator 시작은 가위표이며 CrashLoopBackOff라고 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="330" y="22" font-size="12" fill="#8a8a8a" text-anchor="middle" font-weight="600">Kueue CRD</text>
+              <text x="520" y="22" font-size="12" fill="#8a8a8a" text-anchor="middle" font-weight="600">Operator 시작</text>
+              <line x1="10" y1="34" x2="710" y2="34" stroke="#e5e5e5" stroke-width="1"/>
+              <text x="20" y="64" font-size="12" fill="#4a4a4a">test/e2e</text>
+              <circle cx="300" cy="60" r="7" fill="#4f5bd5"/>
+              <text x="316" y="64" font-size="12" fill="#4f5bd5">설치</text>
+              <text x="520" y="65" font-size="15" fill="#4f5bd5" text-anchor="middle">✔</text>
+              <text x="20" y="104" font-size="12" fill="#4a4a4a">admission 스위트</text>
+              <circle cx="300" cy="100" r="7" fill="#4f5bd5"/>
+              <text x="316" y="104" font-size="12" fill="#4f5bd5">설치</text>
+              <text x="520" y="105" font-size="15" fill="#4f5bd5" text-anchor="middle">✔</text>
+              <text x="20" y="144" font-size="12" fill="#4a4a4a">kind 경로</text>
+              <circle cx="300" cy="140" r="7" fill="#4f5bd5"/>
+              <text x="316" y="144" font-size="12" fill="#4f5bd5">설치(손)</text>
+              <text x="520" y="145" font-size="15" fill="#4f5bd5" text-anchor="middle">✔</text>
+              <rect x="10" y="160" width="700" height="34" rx="6" fill="#fbeaf2"/>
+              <text x="20" y="182" font-size="12" fill="#d62976" font-weight="600">GitOps / EKS</text>
+              <circle cx="300" cy="178" r="7" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="316" y="182" font-size="12" fill="#d62976">없음</text>
+              <text x="520" y="183" font-size="15" fill="#d62976" text-anchor="middle">✘</text>
+              <text x="540" y="182" font-size="12" fill="#d62976">CrashLoopBackOff</text>
+            </g>
+          </svg>
+          <figcaption>세 환경이 같은 CRD를 넣어 주는 동안 Operator의 시작 실패 분기는 테스트에서 한 번도 실행되지 않았습니다.</figcaption>
+        </figure>
+
+        <p>Operator는 시작할 때 <code>kueue.x-k8s.io/v1beta1</code> Workload에 필드 인덱스를 만듭니다. CRD가 없으면 그것은 하드
+        실패입니다. 저는 이 동작이 맞다고 봅니다. 스케줄러에게 일을 넘기는 것이 본업인 Operator가 스케줄러를 조용히
+        건너뛰는 것보다는 시작을 거부하는 편이 낫습니다.</p>
+        <p>문제는 그 하드 실패가 테스트에서는 일어날 수 없었다는 점입니다. 세 환경이 모두 CRD를 넣어 주니까요.
+        Operator는 테스트에서 늘 초록이었고 실제 배포 경로를 처음 만난 순간 죽었습니다.</p>
+        <p>같은 모양이 cert-manager에도 있었습니다. 하드 의존이고 필요로 하는 파일에 그렇게 적혀 있는데 아무도 설치하지
+        않았습니다. 다른 점은 cert-manager는 주석을 읽어서 찾았고 Kueue CRD는 세워 봐야 나왔다는 것입니다.
+        세 환경이 CRD를 설치한다는 사실은 각 파일에 적혀 있었지만 <strong>GitOps만 설치하지 않는다는 사실은 어느 파일에도
+        적혀 있지 않았습니다.</strong> 없는 것은 파일을 읽어서는 보이지 않습니다.</p>
+
+        <h2 id="손으로-살렸습니다">손으로 넣어 살렸고 세션 게이트가 그 상태를 통과했습니다</h2>
+        <p>살아 있는 클러스터에 CRD 네 개를 넣고 Pod를 지웠습니다.</p>
+<pre data-lang="bash"><code>$ kubectl apply --server-side -f test/crd/kueue
+$ kubectl delete pod -l control-plane=controller-manager
+→ controller-manager   1/1   AVAILABLE 1
+</code></pre>
+        <p><code>--server-side</code>를 쓴 이유가 있습니다. Workload CRD가 <code>last-applied-configuration</code> 주석 한도(262,144바이트)를
+        넘기 때문입니다. 클라이언트 쪽 적용으로 하면 넷 중 셋이 들어가고 하나가 거부됩니다. 그 결과는 크기 제한이라기보다
+        부분 설치처럼 읽힙니다.</p>
+        <p>그다음 세션 스크립트의 Operator 게이트를 실제 클러스터에 대고 돌려서 통과하는 것까지 봤습니다. 이 게이트는
+        전날 <strong>이름만 확인하던 것에서 Available Replica를 요구하는 것으로</strong> 고친 것입니다. 그 고침이 없었다면
+        CrashLoopBackOff 상태의 Operator를 통과시키고 카드를 켰을 것입니다.</p>
+
+        <h2 id="fixture">테스트 Fixture를 배포 원본으로 삼았다가 되돌렸습니다</h2>
+        <p>처음에는 새 Application이 <code>test/crd/kueue</code>를 가리키게 했습니다. 복사본을 만들지 않으려는 판단이었는데 검토에서
+        뒤집혔습니다. 복사본 사이의 Drift를 피한 대신 <strong>테스트 Fixture가 프로덕션의 desired state가</strong> 됐기 때문입니다.
+        Fixture를 정리하는 일이 곧 프로덕션 변경이 되는 구조입니다. Drift의 종류를 바꾼 것이지 없앤 것이 아니었습니다.</p>
+        <p>그래서 정의를 <code>config/kueue-crds/</code>로 옮기고 테스트 세 곳이 그쪽을 읽게 했습니다. 복사본은 여전히 하나뿐이고
+        이제 그 하나를 출하하는 쪽이 소유합니다.</p>
+
+        <h2 id="prune">prune이 켜져 있으면 CRD 파일 하나를 옮기는 순간 데이터가 같이 지워집니다</h2>
+        <p>더 나쁜 것이 있었습니다. 그 Application에 <code>prune: true</code>와 cascade Finalizer가 켜져 있었습니다.</p>
+        <p>CRD를 지우는 것은 스키마만 지우는 일이 아닙니다. 그 CRD에 속한 Instance가 전부 삭제 대상이 됩니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 210" role="img" aria-labelledby="dep3-t dep3-d" class="figure-svg">
+            <title id="dep3-t">파일 하나에서 Instance 삭제까지</title>
+            <desc id="dep3-d">왼쪽에 계기 네 가지가 세로로 있습니다. 파일 이름 변경, 경로가 그 파일을 렌더하지 않음, root에서 자식을 뺌, root를 지움. 네 줄이 하나로 모여 Application이 CRD를 prune하는 상자로 가고 이어서 CRD 삭제, Instance 삭제로 화살표가 이어집니다. Instance 삭제 아래에 Workload, LocalQueue, ClusterQueue, ResourceFlavor가 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="10" y="40" font-size="12" fill="#4a4a4a">파일 이름 변경</text>
+              <text x="10" y="80" font-size="12" fill="#4a4a4a">경로가 그 파일을 렌더하지 않음</text>
+              <text x="10" y="120" font-size="12" fill="#4a4a4a">root에서 자식을 뺌</text>
+              <text x="10" y="160" font-size="12" fill="#4a4a4a">root를 지움</text>
+              <path d="M200 36 H 222 V 156 M200 76 H 222 M200 116 H 222 M200 156 H 222" fill="none" stroke="#c9c9c9" stroke-width="1.6"/>
+              <path d="M222 96 H 244" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#dep-b)"/>
+              <rect x="250" y="76" width="150" height="40" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="325" y="94" font-size="12" fill="#4a4a4a" text-anchor="middle">Application이</text>
+              <text x="325" y="109" font-size="12" fill="#4a4a4a" text-anchor="middle">CRD를 prune</text>
+              <path d="M404 96 H 430" fill="none" stroke="#d62976" stroke-width="1.6" marker-end="url(#dep-c)"/>
+              <rect x="436" y="76" width="96" height="40" rx="8" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="484" y="101" font-size="12" fill="#d62976" text-anchor="middle">CRD 삭제</text>
+              <path d="M536 96 H 562" fill="none" stroke="#d62976" stroke-width="1.6" marker-end="url(#dep-c)"/>
+              <rect x="568" y="76" width="142" height="40" rx="8" fill="#fbeaf2" stroke="#d62976" stroke-width="1.6"/>
+              <text x="639" y="101" font-size="12" fill="#d62976" text-anchor="middle" font-weight="600">Instance 삭제</text>
+              <text x="710" y="144" font-size="12" fill="#8a8a8a" text-anchor="end">Workload · LocalQueue</text>
+              <text x="710" y="164" font-size="12" fill="#8a8a8a" text-anchor="end">ClusterQueue · ResourceFlavor</text>
+            </g>
+            <defs>
+              <marker id="dep-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+              <marker id="dep-c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>Instance에 Finalizer가 남아 있으면 삭제와 CRD 종료가 늦어질 수는 있습니다. 즉시 지워진다는 보장은 없지만 방향은 이쪽입니다.</figcaption>
+        </figure>
+
+        <p>플랫폼 자체 CRD를 올리는 Application도 처음부터 같은 설정이었습니다. 둘 다 <code>prune</code>을 껐습니다.
+        <code>selfHeal</code>은 남겼습니다. 사람이 손으로 지운 정의를 되살리는 것은 안전한 방향이고 <code>selfHeal</code>은 파일이 옮겨졌다고
+        정의를 지우지는 않기 때문입니다.</p>
+
+        <h2 id="원인과-수정">원인은 확인했고 수정은 확인하지 않았습니다</h2>
+        <p>그날 한 일을 순서대로 놓으면 경계가 보입니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="dep4-t dep4-d" class="figure-svg">
+            <title id="dep4-t">그날 실행된 것과 실행되지 않은 것</title>
+            <desc id="dep4-d">위 줄은 실행된 순서입니다. 1 CRD를 손으로 적용, 2 Pod 삭제, 3 Available 확인이 화살표로 이어집니다. 그 아래 줄은 4 Application을 코드에 추가, 5 클러스터 삭제입니다. 4에서 점선이 아래로 갈라져 Application이 스스로 CRD를 만들고 Operator보다 먼저 Healthy가 되는 경로로 이어지고 그 경로에는 실행 안 됨이라고 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="10" y="20" width="180" height="36" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="100" y="43" font-size="12" fill="#4f5bd5" text-anchor="middle">① CRD를 손으로 적용</text>
+              <path d="M194 38 H 234" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#dep-d)"/>
+              <rect x="240" y="20" width="140" height="36" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="310" y="43" font-size="12" fill="#4f5bd5" text-anchor="middle">② Pod 삭제</text>
+              <path d="M384 38 H 424" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#dep-d)"/>
+              <rect x="430" y="20" width="160" height="36" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="510" y="43" font-size="12" fill="#4f5bd5" text-anchor="middle">③ Available 확인</text>
+              <rect x="10" y="84" width="220" height="36" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="120" y="107" font-size="12" fill="#4a4a4a" text-anchor="middle">④ Application을 코드에 추가</text>
+              <path d="M234 102 H 274" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#dep-d)"/>
+              <rect x="280" y="84" width="150" height="36" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="355" y="107" font-size="12" fill="#4a4a4a" text-anchor="middle">⑤ 클러스터 삭제</text>
+              <path d="M60 120 V 164 H 90" fill="none" stroke="#d62976" stroke-width="1.6" stroke-dasharray="4 3"/>
+              <rect x="94" y="146" width="520" height="36" rx="8" fill="#fbeaf2" stroke="#d62976" stroke-width="1.4" stroke-dasharray="4 3"/>
+              <text x="354" y="169" font-size="12" fill="#d62976" text-anchor="middle">Application이 CRD를 먼저 만들고 Operator보다 먼저 Healthy · 실행 안 됨</text>
+            </g>
+            <defs>
+              <marker id="dep-d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>①~③은 가설을 확인한 것입니다. ④는 수정인데 ④가 실제 클러스터에서 도는 모습은 ⑤ 전에 한 번도 보지 못했습니다.</figcaption>
+        </figure>
+
+        <p>게다가 Argo CD의 모든 Application은 <code>targetRevision: main</code>을 봅니다. 수정은 <code>dev</code> 브랜치에 있었습니다.
+        그대로 새 클러스터를 세우면 <code>main</code>의 <code>config/argocd</code>에는 그 Application이 없으므로 <strong>같은 CrashLoopBackOff가
+        다시 납니다.</strong> 그래서 <code>main</code> 승격은 선택이 아니라 수정의 일부였습니다.</p>
+        <p>가설을 확인한 것과 수정을 확인한 것은 다릅니다. 저는 앞의 것을 하고 뒤의 것을 했다고 적을 뻔했습니다.</p>
+        <p>승격은 같은 밤에 했습니다. 수정 커밋 셋을 담은 <code>dev</code>가 PR #63으로 9월 2일 02:26(KST)에 <code>main</code>으로 들어갔습니다.
+        <code>main</code>의 <code>kueue-crds</code> Application은 <code>config/kueue-crds</code>를 가리키고 sync-wave가 <code>-2</code>라서 sync-wave <code>0</code>인
+        Operator보다 먼저 동기화되도록 적혀 있습니다. 적혀 있다는 것까지이고 새 클러스터에서 그 순서대로 돈 모습은 아닙니다.</p>
+
+        <h2 id="지우는-쪽">지우는 쪽을 골랐습니다</h2>
+        <p>GPU Node Group이 셋 다 0대인 것을 확인하고 클러스터를 지웠습니다. 자원 96개가 전부 삭제됐고 EKS·EC2·NAT·EIP·
+        EBS·VPC·예약이 전부 0이 됐습니다.</p>
+        <p>비용 콘솔은 그 시점에 0달러를 보여 줬지만 그것은 집계 지연입니다. 클러스터가 떠 있던 시간이 약 40분이고 시간당
+        0.263달러이니 대략 <strong>0.18달러</strong>이고 여기에 이미지를 당긴 NAT 데이터 요금이 조금 붙습니다. GPU는 한 번도 켜지 않았으므로
+        그쪽은 정말 0입니다.</p>
+        <p>밤새 두는 선택지도 있었습니다. 그러면 아침에 20분을 아낍니다. 하지만 시간당 0.263달러가 계속 나가고 더 나쁘게는
+        야간 정리 워크플로와 다음 세션이 겹칩니다. 6.2시간짜리 세션을 예정 시각(03:00 UTC, 정오 KST) 4시간 전에 시작하면
+        중간에 클러스터가 통째로 사라집니다. 세션 스크립트는 예정 시각까지 2시간이 안 남았으면 거절하지만 4시간은 통과시킵니다.
+        다시 만드는 데는 20분과 0.09달러가 듭니다.</p>
+
+        <h2 id="주장하지-않는-것">이 글이 주장하지 않는 것</h2>
+        <ul>
+          <li><strong>GitOps로 수정이 동작한다는 것.</strong> CRD를 손으로 넣어 살린 것까지만 봤습니다. Application이 스스로 CRD를
+          올리는 경로와 <code>main</code> 승격 뒤의 새 클러스터는 이 글의 근거 안에서 한 번도 실행되지 않았습니다. 그 뒤로 EKS에
+          클러스터를 세운 기록은 있지만 Kueue CRD가 어떤 경로로 들어갔는지 적은 곳은 없습니다.</li>
+          <li><strong>‘6번’을 무엇으로 셌는지.</strong> 컨테이너 재시작 횟수인지 일지에 방법이 적혀 있지 않습니다. 같은 날 일지는
+          ‘여섯 번’이라고만 쓰고 그 밤의 <code>kubectl</code> 출력이나 재시작 수 기록은 남아 있지 않습니다.</li>
+          <li>GPU 쪽 경로. GPU 노드가 실제로 올라오는 것, NVIDIA 드라이버가 붙는 것, Device Plugin이 <code>nvidia.com/gpu</code>를
+          광고하는 것, DCGM이 지표를 내는 것, 16GB짜리 엔진 이미지와 가중치가 NAT를 통해 내려오는 것은 그날 하나도
+          타지 않았습니다.</li>
+          <li>반복. 클러스터 생성, Argo CD 부트스트랩, root 적용은 각각 한 번씩 돌았습니다.</li>
+          <li>정확한 비용. 0.18달러는 떠 있던 시간과 시간당 단가로 계산한 값이고 NAT 데이터 요금은 넣지 않았습니다.
+          청구서와 대조하지 않았습니다.</li>
+          <li>Finalizer가 있을 때의 삭제 시점. prune이 Instance를 지운다는 방향만 적었고 실제로 지워 보지는 않았습니다.</li>
+          <li>파일을 읽어서 결함을 찾는 방법이 쓸모없다는 것. 앞선 이틀의 30여 건은 전부 읽어서 찾았고 실제로 유료 세션을
+          망칠 것들이었습니다. 이번 결함이 그 방법으로 안 나왔다는 것뿐입니다.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="마치며">마치며</h2>
+        <ul>
+          <li><strong>테스트 환경이 대신 설치해 주는 의존성은 테스트가 확인하지 않습니다.</strong> 세 환경이 Kueue CRD를 넣어 주는 동안
+          Operator의 시작 실패 분기는 한 번도 실행되지 않았습니다.</li>
+          <li><strong>있는 것은 읽히고 없는 것은 읽히지 않습니다.</strong> 세 환경의 설치 코드는 파일에 있었고 GitOps에 설치가 없다는
+          사실은 어느 파일에도 없었습니다. 그래서 세워 봐야 나왔습니다.</li>
+          <li>CRD를 GitOps로 올릴 때는 <code>prune</code>부터 봅니다. 파일 이름 하나가 바뀌면 정의와 함께 Instance가 삭제 대상이
+          됩니다.</li>
+          <li>원인을 확인한 것과 수정을 확인한 것은 다릅니다. 손으로 고친 클러스터가 살아난 것은 가설의 확인입니다.
+          배포 경로가 같은 일을 해내는지는 따로 돌려 봐야 합니다.</li>
+        </ul>
+        <p>Operator를 테스트하고 계신다면 테스트 환경이 대신 설치해 주는 것의 목록과 실제 배포 매니페스트를 한 번
+        나란히 놓아 보시길 권합니다. 없는 것은 파일 하나를 읽어서는 보이지 않습니다.</p>
+        <p>읽어 주셔서 감사합니다.</p>
+
+              </div>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=5f3b0c0ef8"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>An Operator Green in Every Test Crashed Six Times on EKS | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/the-dependency-only-the-tests-installed.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/the-dependency-only-the-tests-installed.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/the-dependency-only-the-tests-installed.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/the-dependency-only-the-tests-installed.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="An Operator Green in Every Test Crashed Six Times on EKS" />
+  <meta property="og:description" content="Three test environments each installed the Kueue CRDs and the GitOps deployment path was the only one that did not, so the operator's start-up failure branch never ran in a test. Installing the CRDs by hand confirmed the cause. The GitOps fix was not confirmed." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/the-dependency-only-the-tests-installed.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="An Operator Green in Every Test Crashed Six Times on EKS" />
+  <meta name="twitter:description" content="Three test environments each installed the Kueue CRDs and the GitOps deployment path was the only one that did not, so the operator's start-up failure branch never ran in a test. Installing the CRDs by hand confirmed the cause. The GitOps fix was not confirmed." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="Three test environments each installed the Kueue CRDs and the GitOps deployment path was the only one that did not, so the operator's start-up failure branch never ran in a test. Installing the CRDs by hand confirmed the cause. The GitOps fix was not confirmed." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"the-dependency-only-the-tests-installed.html","ko":"the-dependency-only-the-tests-installed.ko.html","ja":"the-dependency-only-the-tests-installed.ja.html"}'>
+          <option value="en" selected>English</option>
+          <option value="ko">한국어</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>All posts</a>
+        <div class="article-meta"><span class="source-tag side notranslate">Personal project</span><a class="project-tag notranslate" href="../writing/index.html?tag=GPUaaS%20Control%20Plane">#GPUaaS Control Plane</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>An Operator Green in Every Test Crashed Six Times on EKS<br><span class="h1-sub">Three test environments installed the Kueue CRDs and the GitOps deployment was the only one that did not.</span></h1>
+        <p class="article-date">Sep 2026</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="the-dependency-only-the-tests-installed"></aside>
+        <nav class="article-toc" aria-label="Contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-this-is">What this is about</a></li>
+            <li><a href="#service">The setup</a></li>
+            <li><a href="#assumed">I thought the preparation was done</a></li>
+            <li><a href="#result">The result, up front</a></li>
+            <li><a href="#three-environments">Three environments installed the CRDs, so no test could hit this failure</a></li>
+            <li><a href="#by-hand">A manual install revived it and the session gate passed that state</a></li>
+            <li><a href="#fixture">I made a test fixture the deployment source, then reversed it</a></li>
+            <li><a href="#prune">With prune on, moving one CRD file deletes the data with it</a></li>
+            <li><a href="#cause-not-fix">The cause was confirmed and the fix was not</a></li>
+            <li><a href="#tear-down">I chose to tear it down</a></li>
+            <li><a href="#limits">What this does not claim</a></li>
+            <li><a href="#closing">Closing</a></li>
+          </ul>
+        </nav>
+      <article class="article-body">
+
+        <h2 id="who-this-is-for">Who this is for</h2>
+        <ul>
+          <li>Anyone building a Kubernetes operator and testing it with envtest, kind or e2e</li>
+          <li>Anyone deploying CRDs with a GitOps tool such as Argo CD</li>
+          <li>Anyone deciding what to stand up first before an expensive run</li>
+        </ul>
+
+        <h2 id="what-this-is">What this is about</h2>
+        <p>It was the night before my first paid GPU session. Over the previous two days I had fixed some thirty cost-control and
+        measurement-validity defects and confirmed each one by injecting it. The operator image was in ECR and the runbook
+        was written. I thought the preparation was done.</p>
+        <p>That night, without turning on a single GPU, I stood up an EKS cluster and brought the platform up on it. The operator
+        that was always green in tests died on EKS as soon as it started. This post is about why that cause could never have
+        appeared in a test.</p>
+        <p>One caveat first. What this post confirmed is <strong>the cause, not the fix.</strong> I saw the operator come back after
+        installing the missing CRDs by hand, and the path where GitOps does the same thing by itself never ran that night. The
+        rest of the caveats are gathered under "What this does not claim".</p>
+
+        <h2 id="service">The setup</h2>
+        <p>This is the control plane of a GPUaaS platform I am building as a personal project. When a user creates an
+        <code>MLTrainingJob</code>, the operator hands it to Kueue (a Kubernetes scheduler that queues work and admits it against
+        quotas). Handing work to the scheduler is this operator's core job.</p>
+        <p>Deployment has two layers. Terraform creates EKS and the resources around it, and on top of that Argo CD brings up
+        everything else from a single root Application (app-of-apps).</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 230" role="img" aria-labelledby="dep1-t dep1-d" class="figure-svg">
+            <title id="dep1-t">The deployment path</title>
+            <desc id="dep1-d">On the left is Terraform. It creates 96 resources such as EKS, VPC and NAT, and three GPU node groups with desiredSize 0. An arrow leads to Argo CD on the right. Under Argo CD's root Application are four children: cert-manager, the platform CRDs, the gateway and the operator. Beside the operator a note says it builds a Kueue Workload index at start-up.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="130" y="20" font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="600">Terraform</text>
+              <rect x="10" y="34" width="240" height="84" rx="8" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="130" y="62" font-size="12" fill="#4a4a4a" text-anchor="middle">EKS · VPC · NAT …</text>
+              <text x="130" y="84" font-size="12" fill="#8a8a8a" text-anchor="middle">96 resources</text>
+              <rect x="10" y="134" width="240" height="56" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="130" y="158" font-size="12" fill="#4f5bd5" text-anchor="middle">3 GPU node groups</text>
+              <text x="130" y="178" font-size="12" fill="#4f5bd5" text-anchor="middle">desiredSize = 0</text>
+              <path d="M256 110 H 300" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#dep-a)"/>
+              <text x="410" y="20" font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="600">Argo CD</text>
+              <rect x="306" y="34" width="190" height="36" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="401" y="57" font-size="12" fill="#4a4a4a" text-anchor="middle">root Application</text>
+              <path d="M330 70 V 206" fill="none" stroke="#c9c9c9" stroke-width="1.4"/>
+              <path d="M330 94 H 350" fill="none" stroke="#c9c9c9" stroke-width="1.4"/>
+              <text x="356" y="98" font-size="12" fill="#4a4a4a">cert-manager</text>
+              <path d="M330 130 H 350" fill="none" stroke="#c9c9c9" stroke-width="1.4"/>
+              <text x="356" y="134" font-size="12" fill="#4a4a4a">platform CRDs</text>
+              <path d="M330 166 H 350" fill="none" stroke="#c9c9c9" stroke-width="1.4"/>
+              <text x="356" y="170" font-size="12" fill="#4a4a4a">gateway</text>
+              <path d="M330 206 H 350" fill="none" stroke="#c9c9c9" stroke-width="1.4"/>
+              <rect x="352" y="190" width="100" height="32" rx="8" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="402" y="211" font-size="12" fill="#d62976" text-anchor="middle">operator</text>
+              <path d="M458 206 H 488" fill="none" stroke="#d62976" stroke-width="1.4" stroke-dasharray="4 3"/>
+              <text x="494" y="202" font-size="12" fill="#d62976">builds a Kueue Workload</text>
+              <text x="494" y="220" font-size="12" fill="#d62976">index at start-up</text>
+            </g>
+            <defs>
+              <marker id="dep-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>All three GPU node groups were left at zero, so there was no GPU charge that night.</figcaption>
+        </figure>
+
+        <h2 id="assumed">I thought the preparation was done</h2>
+        <p>I asked codex whether the paid session could run with nobody watching. It said no, for three reasons.</p>
+        <p>First, the run was not an unattended workflow. The session script starts the engine, holds a port-forward and waits.
+        The measurement had to be started by a person in a separate shell, and a person had to end the session afterwards.</p>
+        <p>Second, there was no automatic recovery. If the spot instance is interrupted or the port-forward drops, the
+        measurement dies and does not restart. Meanwhile the session shell keeps waiting, billing up to its TTL while doing
+        nothing.</p>
+        <p>Third, the 6.2-hour plan was not a safe window. The 372 minutes came from the expected processing rate, and if the card
+        is slow the script extends the deadline up to 420 minutes. The boundary on the other side is the nightly cleanup
+        workflow <code>destroy.yml</code>, which deletes the whole cluster. Its cron is scheduled for 03:00 UTC (noon KST), but
+        there is no on-time guarantee, and this repository has a record of actual firings drifting from 03:53 to 14:57 UTC. Both
+        ends move, and I had computed only one.</p>
+        <p>Then came the heaviest point. <strong>The biggest risk was not cost but an operational failure in a stage I had never run,
+        one that would not recover without a person and would void the whole session.</strong> The cheapest mitigation was to stand
+        up just the cluster and Argo CD that night and tear them down.</p>
+        <p>The scope of "never run" needs to be exact. The cluster itself was not new. On 31 August CI had run
+        <code>terraform apply</code>, created 96 resources and destroyed them. What was new was putting the platform on top: the
+        Argo CD bootstrap, applying the root Application and starting the operator. That stage had only run on kind. When I first
+        wrote it down I also called it "the first real cluster", and corrected it after a review pointed to the record in the
+        same directory.</p>
+
+        <h2 id="result">The result, up front</h2>
+        <p>The cluster came up with 96 resources, and applying the root Application created the child Applications. cert-manager
+        went Healthy. The operator image in ECR was pulled by digest, 34 MB in 1.7 seconds, and the webhook certificate was
+        issued.</p>
+        <p>And the operator died six times.</p>
+<pre data-lang="text"><code>Failed to create controller {"controller": "mltrainingjob",
+  "error": "index workloads by job ref: no matches for kind \"Workload\"
+            in version \"kueue.x-k8s.io/v1beta1\""}
+</code></pre>
+        <p>The Kueue CRDs were not in the cluster. The three environments that tested the operator each installed these CRDs, and
+        <strong>the GitOps deployment path was the one place nobody installed them.</strong> After I installed the four CRDs by hand
+        and deleted the Pod, the operator became Available.</p>
+
+        <h2 id="three-environments">Three environments installed the CRDs, so no test could hit this failure</h2>
+        <p>Here is where each environment gets the Kueue CRDs.</p>
+        <table>
+          <caption class="sr-only">How each environment obtains the Kueue CRDs.</caption>
+          <thead><tr><th scope="col">environment</th><th scope="col">how it gets the Kueue CRDs</th></tr></thead>
+          <tbody>
+            <tr><td><code>test/e2e</code></td><td><code>installKueueCRDs()</code> before deploying the manager</td></tr>
+            <tr><td>admission test suite</td><td>the same files through envtest's <code>CRDDirectoryPaths</code></td></tr>
+            <tr><td>kind path</td><td><code>apply</code> by hand</td></tr>
+            <tr><td>GitOps / EKS</td><td>nobody</td></tr>
+          </tbody>
+        </table>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="dep2-t dep2-d" class="figure-svg">
+            <title id="dep2-t">Only one of the four environments is empty</title>
+            <desc id="dep2-d">A four-row grid. The columns are the Kueue CRDs and operator start-up. The rows test/e2e, admission suite and kind path have the CRDs installed, shown as filled circles, and a check mark for start-up. The kind path is marked as installed by hand. Only the last row, GitOps / EKS, has no CRDs, shown as an empty circle, with a cross for start-up and the label CrashLoopBackOff.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="330" y="22" font-size="12" fill="#8a8a8a" text-anchor="middle" font-weight="600">Kueue CRDs</text>
+              <text x="520" y="22" font-size="12" fill="#8a8a8a" text-anchor="middle" font-weight="600">operator start-up</text>
+              <line x1="10" y1="34" x2="710" y2="34" stroke="#e5e5e5" stroke-width="1"/>
+              <text x="20" y="64" font-size="12" fill="#4a4a4a">test/e2e</text>
+              <circle cx="300" cy="60" r="7" fill="#4f5bd5"/>
+              <text x="316" y="64" font-size="12" fill="#4f5bd5">installed</text>
+              <text x="520" y="65" font-size="15" fill="#4f5bd5" text-anchor="middle">✔</text>
+              <text x="20" y="104" font-size="12" fill="#4a4a4a">admission suite</text>
+              <circle cx="300" cy="100" r="7" fill="#4f5bd5"/>
+              <text x="316" y="104" font-size="12" fill="#4f5bd5">installed</text>
+              <text x="520" y="105" font-size="15" fill="#4f5bd5" text-anchor="middle">✔</text>
+              <text x="20" y="144" font-size="12" fill="#4a4a4a">kind path</text>
+              <circle cx="300" cy="140" r="7" fill="#4f5bd5"/>
+              <text x="316" y="144" font-size="12" fill="#4f5bd5">installed (by hand)</text>
+              <text x="520" y="145" font-size="15" fill="#4f5bd5" text-anchor="middle">✔</text>
+              <rect x="10" y="160" width="700" height="34" rx="6" fill="#fbeaf2"/>
+              <text x="20" y="182" font-size="12" fill="#d62976" font-weight="600">GitOps / EKS</text>
+              <circle cx="300" cy="178" r="7" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="316" y="182" font-size="12" fill="#d62976">none</text>
+              <text x="520" y="183" font-size="15" fill="#d62976" text-anchor="middle">✘</text>
+              <text x="540" y="182" font-size="12" fill="#d62976">CrashLoopBackOff</text>
+            </g>
+          </svg>
+          <figcaption>While three environments installed the same CRDs, the operator's start-up failure branch never ran in a test.</figcaption>
+        </figure>
+
+        <p>At start-up the operator builds a field index on the <code>kueue.x-k8s.io/v1beta1</code> Workload. Without the CRD that is a
+        hard failure. I think that behaviour is right. For an operator whose core job is handing work to a scheduler, refusing to
+        start is better than silently skipping the scheduler.</p>
+        <p>The problem is that this hard failure could not happen in a test, because all three environments installed the CRDs.
+        The operator was always green in tests and died the first time it met the real deployment path.</p>
+        <p>cert-manager had the same shape. It is a hard dependency, the file that needs it says so, and nobody installed it. The
+        difference is that cert-manager was found by reading a comment and the Kueue CRDs only showed up by standing things up.
+        That three environments install the CRDs was written in each of their files, but <strong>that GitOps alone does not install
+        them was written in no file.</strong> Something that is absent cannot be seen by reading files.</p>
+
+        <h2 id="by-hand">A manual install revived it and the session gate passed that state</h2>
+        <p>On the live cluster I installed the four CRDs and deleted the Pod.</p>
+<pre data-lang="bash"><code>$ kubectl apply --server-side -f test/crd/kueue
+$ kubectl delete pod -l control-plane=controller-manager
+→ controller-manager   1/1   AVAILABLE 1
+</code></pre>
+        <p>There is a reason for <code>--server-side</code>. The Workload CRD exceeds the size limit of the
+        <code>last-applied-configuration</code> annotation (262,144 bytes). With a client-side apply, three of the four go in and
+        one is rejected, and that result reads less like a size limit than like a partial install.</p>
+        <p>Then I ran the session script's operator gate against the real cluster and watched it pass. The day before, that gate
+        had been changed <strong>from checking only the name to requiring an Available replica.</strong> Without that change it would
+        have passed an operator in CrashLoopBackOff and turned the card on.</p>
+
+        <h2 id="fixture">I made a test fixture the deployment source, then reversed it</h2>
+        <p>At first I pointed the new Application at <code>test/crd/kueue</code>. The idea was to avoid making a copy, and a review
+        overturned it. Avoiding drift between copies came at the price of <strong>a test fixture becoming production's desired
+        state</strong>. Tidying the fixture would itself be a production change. I had changed the kind of drift, not removed
+        it.</p>
+        <p>So I moved the definitions to <code>config/kueue-crds/</code> and made the three test locations read from there. There is
+        still only one copy, and now the side that ships it owns it.</p>
+
+        <h2 id="prune">With prune on, moving one CRD file deletes the data with it</h2>
+        <p>There was something worse. That Application had <code>prune: true</code> and a cascade finalizer enabled.</p>
+        <p>Deleting a CRD does not delete only a schema. Every instance belonging to that CRD becomes a deletion target.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 210" role="img" aria-labelledby="dep3-t dep3-d" class="figure-svg">
+            <title id="dep3-t">From one file to deleted instances</title>
+            <desc id="dep3-d">Four triggers are stacked on the left: renaming the file, a path that no longer renders the file, removing the child from root, and deleting root. The four lines merge into a box where the Application prunes the CRD, then arrows lead to CRD deleted and instances deleted. Under instances deleted are Workload, LocalQueue, ClusterQueue and ResourceFlavor.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="10" y="40" font-size="12" fill="#4a4a4a">file renamed</text>
+              <text x="10" y="80" font-size="12" fill="#4a4a4a">path no longer renders it</text>
+              <text x="10" y="120" font-size="12" fill="#4a4a4a">child removed from root</text>
+              <text x="10" y="160" font-size="12" fill="#4a4a4a">root deleted</text>
+              <path d="M200 36 H 222 V 156 M200 76 H 222 M200 116 H 222 M200 156 H 222" fill="none" stroke="#c9c9c9" stroke-width="1.6"/>
+              <path d="M222 96 H 244" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#dep-b)"/>
+              <rect x="250" y="76" width="150" height="40" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="325" y="94" font-size="12" fill="#4a4a4a" text-anchor="middle">Application</text>
+              <text x="325" y="109" font-size="12" fill="#4a4a4a" text-anchor="middle">prunes the CRD</text>
+              <path d="M404 96 H 430" fill="none" stroke="#d62976" stroke-width="1.6" marker-end="url(#dep-c)"/>
+              <rect x="436" y="76" width="96" height="40" rx="8" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="484" y="101" font-size="12" fill="#d62976" text-anchor="middle">CRD deleted</text>
+              <path d="M536 96 H 562" fill="none" stroke="#d62976" stroke-width="1.6" marker-end="url(#dep-c)"/>
+              <rect x="568" y="76" width="142" height="40" rx="8" fill="#fbeaf2" stroke="#d62976" stroke-width="1.6"/>
+              <text x="639" y="101" font-size="12" fill="#d62976" text-anchor="middle" font-weight="600">instances deleted</text>
+              <text x="710" y="144" font-size="12" fill="#8a8a8a" text-anchor="end">Workload · LocalQueue</text>
+              <text x="710" y="164" font-size="12" fill="#8a8a8a" text-anchor="end">ClusterQueue · ResourceFlavor</text>
+            </g>
+            <defs>
+              <marker id="dep-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+              <marker id="dep-c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>If instances still carry finalizers, the deletion and the CRD's termination can be delayed. Nothing guarantees it happens at once, but this is the direction it goes.</figcaption>
+        </figure>
+
+        <p>The Application that installs the platform's own CRDs had had the same settings from the start. I turned
+        <code>prune</code> off on both. I kept <code>selfHeal</code>: restoring a definition someone deleted by hand is the safe
+        direction, and <code>selfHeal</code> does not delete a definition because a file moved.</p>
+
+        <h2 id="cause-not-fix">The cause was confirmed and the fix was not</h2>
+        <p>Laying out that night's steps in order shows the boundary.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="dep4-t dep4-d" class="figure-svg">
+            <title id="dep4-t">What ran that night and what did not</title>
+            <desc id="dep4-d">The top row is what ran, in order: 1 apply the CRDs by hand, 2 delete the Pod, 3 confirm Available. The row below is 4 add the Application to the code, 5 delete the cluster. A dashed line branches down from 4 to the path where the Application creates the CRDs itself and goes Healthy before the operator, and that path is marked as never run.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="10" y="20" width="180" height="36" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="100" y="43" font-size="12" fill="#4f5bd5" text-anchor="middle">① CRDs applied by hand</text>
+              <path d="M194 38 H 234" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#dep-d)"/>
+              <rect x="240" y="20" width="140" height="36" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="310" y="43" font-size="12" fill="#4f5bd5" text-anchor="middle">② Pod deleted</text>
+              <path d="M384 38 H 424" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#dep-d)"/>
+              <rect x="430" y="20" width="160" height="36" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="510" y="43" font-size="12" fill="#4f5bd5" text-anchor="middle">③ Available confirmed</text>
+              <rect x="10" y="84" width="220" height="36" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="120" y="107" font-size="12" fill="#4a4a4a" text-anchor="middle">④ Application added to code</text>
+              <path d="M234 102 H 274" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#dep-d)"/>
+              <rect x="280" y="84" width="150" height="36" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="355" y="107" font-size="12" fill="#4a4a4a" text-anchor="middle">⑤ cluster deleted</text>
+              <path d="M60 120 V 164 H 90" fill="none" stroke="#d62976" stroke-width="1.6" stroke-dasharray="4 3"/>
+              <rect x="94" y="146" width="520" height="36" rx="8" fill="#fbeaf2" stroke="#d62976" stroke-width="1.4" stroke-dasharray="4 3"/>
+              <text x="354" y="169" font-size="12" fill="#d62976" text-anchor="middle">Application creates the CRDs, Healthy before the operator · never run</text>
+            </g>
+            <defs>
+              <marker id="dep-d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>Steps ① to ③ confirmed the hypothesis. Step ④ is the fix, and I never saw ④ run on a real cluster before ⑤.</figcaption>
+        </figure>
+
+        <p>On top of that, every Argo CD Application watches <code>targetRevision: main</code>. The fix was on the <code>dev</code>
+        branch. Standing up a new cluster as things were, <code>config/argocd</code> on <code>main</code> would not contain that
+        Application, so <strong>the same CrashLoopBackOff would happen again.</strong> Promoting to <code>main</code> was therefore
+        not optional but part of the fix.</p>
+        <p>Confirming a hypothesis and confirming a fix are different things. I had done the first and nearly wrote that I had
+        done the second.</p>
+        <p>The promotion happened the same night. <code>dev</code>, holding the three fix commits, went into <code>main</code> through
+        PR #63 at 02:26 KST on 2 September. On <code>main</code> the <code>kueue-crds</code> Application points at
+        <code>config/kueue-crds</code> with sync-wave <code>-2</code>, so it is written to sync before the operator at sync-wave
+        <code>0</code>. That is as far as "written" goes; it is not a sighting of that order running on a new cluster.</p>
+
+        <h2 id="tear-down">I chose to tear it down</h2>
+        <p>I confirmed all three GPU node groups were at zero and deleted the cluster. All 96 resources were deleted, and EKS, EC2,
+        NAT, EIP, EBS, VPC and reservations all went to zero.</p>
+        <p>The cost console showed $0 at that point, but that is aggregation lag. The cluster was up for about 40 minutes at
+        $0.263 an hour, so roughly <strong>$0.18</strong>, plus a little NAT data charge for pulling images. No GPU was ever turned
+        on, so that side really is zero.</p>
+        <p>Leaving it up overnight was an option. It would have saved 20 minutes in the morning. But $0.263 an hour keeps running,
+        and worse, the nightly cleanup workflow would overlap the next session. Start a 6.2-hour session four hours before the
+        scheduled time (03:00 UTC, noon KST) and the cluster disappears in the middle. The session script refuses to start when
+        fewer than two hours remain before the scheduled time, but lets four hours through. Rebuilding costs 20 minutes and
+        $0.09.</p>
+
+        <h2 id="limits">What this does not claim</h2>
+        <ul>
+          <li><strong>That the fix works through GitOps.</strong> I only saw the manual install revive it. The path where the
+          Application installs the CRDs by itself, and a new cluster after the promotion to <code>main</code>, never ran within
+          this post's evidence. There are later records of clusters stood up on EKS, but none says by which path the Kueue CRDs
+          got in.</li>
+          <li><strong>How "six times" was counted.</strong> The journal does not say whether it is the container restart count. The
+          journals from that day only say "six times", and no <code>kubectl</code> output or restart count from that night
+          survives.</li>
+          <li>The GPU side. GPU nodes actually coming up, the NVIDIA driver attaching, the device plugin advertising
+          <code>nvidia.com/gpu</code>, DCGM emitting metrics, and a 16 GB engine image and weights coming down through NAT: none of
+          it ran that night.</li>
+          <li>Repetition. Cluster creation, the Argo CD bootstrap and the root apply each ran once.</li>
+          <li>An exact cost. $0.18 is computed from uptime and the hourly rate and leaves out the NAT data charge. It was not
+          checked against the bill.</li>
+          <li>When deletion happens with finalizers present. I only described the direction in which prune deletes instances and
+          did not actually delete any.</li>
+          <li>That finding defects by reading files is useless. The thirty or so from the previous two days were all found by
+          reading, and they really would have ruined the paid session. This defect just did not come out that way.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="closing">Closing</h2>
+        <ul>
+          <li><strong>A dependency the test environment installs for you is a dependency the tests do not check.</strong> While three
+          environments installed the Kueue CRDs, the operator's start-up failure branch never ran.</li>
+          <li><strong>What is present can be read, and what is absent cannot.</strong> The install code of the three environments was in
+          files, and the absence of an install in GitOps was in no file. So it only surfaced by standing things up.</li>
+          <li>When GitOps ships CRDs, look at <code>prune</code> first. One renamed file makes the definitions and their
+          instances deletion targets.</li>
+          <li>Confirming a cause and confirming a fix are different. A cluster repaired by hand coming back confirms a
+          hypothesis. Whether the deployment path does the same has to be run separately.</li>
+        </ul>
+        <p>If you test an operator, try laying the list of things your test environments install for you next to your real
+        deployment manifests. Something absent cannot be seen by reading one file.</p>
+        <p>Thank you for reading.</p>
+
+              </div>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=5f3b0c0ef8"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
