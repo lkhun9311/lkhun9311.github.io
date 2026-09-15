@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Go Benchmark Harness Opened 884 TCP Connections for 884 Rejections | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/every-rejection-opened-a-new-connection.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/every-rejection-opened-a-new-connection.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/every-rejection-opened-a-new-connection.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/every-rejection-opened-a-new-connection.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="A Go Benchmark Harness Opened 884 TCP Connections for 884 Rejections" />
+  <meta property="og:description" content="Non-200 response bodies were closed unread, so the pooled mode real runs use opened one connection per request. Draining them brought it to 22. The 431 → 6 figure that showed the pool working had been measured on a trace with zero rejections." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/every-rejection-opened-a-new-connection.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="A Go Benchmark Harness Opened 884 TCP Connections for 884 Rejections" />
+  <meta name="twitter:description" content="Non-200 response bodies were closed unread, so the pooled mode real runs use opened one connection per request. Draining them brought it to 22. The 431 → 6 figure that showed the pool working had been measured on a trace with zero rejections." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="Non-200 response bodies were closed unread, so the pooled mode real runs use opened one connection per request. Draining them brought it to 22. The 431 → 6 figure that showed the pool working had been measured on a trace with zero rejections." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"every-rejection-opened-a-new-connection.html","ko":"every-rejection-opened-a-new-connection.ko.html","ja":"every-rejection-opened-a-new-connection.ja.html"}'>
+          <option value="en" selected>English</option>
+          <option value="ko">한국어</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>All posts</a>
+        <div class="article-meta"><span class="source-tag side notranslate">Personal project</span><a class="project-tag notranslate" href="../writing/index.html?tag=GPUaaS%20Control%20Plane">#GPUaaS Control Plane</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>A Go Benchmark Harness Opened 884 TCP Connections for 884 Rejections<br><span class="h1-sub">It closed 429 responses without reading their bodies, so no connection was ever reused.</span></h1>
+        <p class="article-date">Sep 2026</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="every-rejection-opened-a-new-connection"></aside>
+        <nav class="article-toc" aria-label="Contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-this-is">What this is about</a></li>
+            <li><a href="#service">The setup</a></li>
+            <li><a href="#assumed">I thought the connection pool was already verified</a></li>
+            <li><a href="#result">The result, up front</a></li>
+            <li><a href="#body">A body closed unread does not return its connection to the pool</a></li>
+            <li><a href="#main-path">Rejection is not the exception but this harness's busiest path</a></li>
+            <li><a href="#drain-only">Why <code>drain-only</code> exists</a></li>
+            <li><a href="#comment">I wrote the evidence's scope into the comment</a></li>
+            <li><a href="#same-shape">Four defects found that day had the same shape</a></li>
+            <li><a href="#limits">What this does not claim</a></li>
+            <li><a href="#closing">Closing</a></li>
+          </ul>
+        </nav>
+      <article class="article-body">
+
+        <h2 id="who-this-is-for">Who this is for</h2>
+        <ul>
+          <li>Anyone building a load generator or benchmark harness on Go's <code>net/http</code> client</li>
+          <li>Anyone measuring a system that returns many rejections such as 429 (rate limiting, admission control)</li>
+          <li>Anyone who writes measured values into code comments or documents as evidence</li>
+        </ul>
+
+        <h2 id="what-this-is">What this is about</h2>
+        <p>On 15 August 2026 I pushed a branch, the push hook ran codex and Claude reviews, and ten findings came back. Two of them
+        were defects in the measuring instrument itself. This post is about one of those.</p>
+        <p>The finding was short: the benchmark harness's <code>Send</code> returned without reading the body of a non-200 response.
+        A comment in the same file cited a measurement, <code>431 → 6</code>, as evidence that the connection pool worked. I opened
+        that evidence, and the trace it had measured contained not a single rejection.</p>
+        <p>One caveat first. What this post measured is <strong>the number of TCP connections the server accepted</strong>. How much the
+        new handshakes inflated the latency the harness reports was not measured. The rest of the caveats are gathered under
+        "What this does not claim".</p>
+
+        <h2 id="service">The setup</h2>
+        <p>The GPUaaS platform I am building as a personal project has a gateway that takes LLM requests, and inside it an admission
+        guard. The guard reads the request body, picks a backend, and stands in front of the proxy to vLLM. The guard
+        <strong>protects capacity by rejecting.</strong> A request the guard declines comes back as a 429.</p>
+        <p>The benchmark harness replays one request trace identically against the guard switched off, a fixed cap that ignores
+        load, and a guard that watches KV cache pressure, and compares the premium requests' TTFT p99.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="rej1-t rej1-d" class="figure-svg">
+            <title id="rej1-t">The harness and the admission guard</title>
+            <desc id="rej1-d">On the left is the benchmark harness: a Go http.Client replaying the trace, with a connection pool inside it. A TCP connection arrow goes to the admission guard in the gateway in the middle. Requests the guard admits are proxied to vLLM on the right for inference. Rejected requests become a 429 response and return to the harness along the lower arrow.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="110" y="20" font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="600">benchmark harness</text>
+              <rect x="10" y="32" width="200" height="120" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="110" y="58" font-size="12" fill="#8a8a8a" text-anchor="middle">trace replay</text>
+              <text x="110" y="84" font-size="12" fill="#4f5bd5" text-anchor="middle">Go http.Client</text>
+              <rect x="40" y="100" width="140" height="36" rx="6" fill="#e7e9f9"/>
+              <text x="110" y="123" font-size="12" fill="#4f5bd5" text-anchor="middle">connection pool</text>
+              <path d="M214 70 H 316" fill="none" stroke="#4f5bd5" stroke-width="1.6" marker-end="url(#rej-a)"/>
+              <text x="265" y="62" font-size="12" fill="#4f5bd5" text-anchor="middle">TCP connection</text>
+              <text x="410" y="20" font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="600">gateway</text>
+              <rect x="322" y="32" width="176" height="120" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="410" y="58" font-size="12" fill="#4a4a4a" text-anchor="middle">admission guard</text>
+              <text x="410" y="84" font-size="12" fill="#4a4a4a" text-anchor="middle">admit</text>
+              <text x="410" y="132" font-size="12" fill="#d62976" text-anchor="middle">reject</text>
+              <path d="M502 80 H 582" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#rej-b)"/>
+              <text x="542" y="72" font-size="12" fill="#8a8a8a" text-anchor="middle">proxy</text>
+              <text x="648" y="20" font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="600">vLLM</text>
+              <rect x="588" y="56" width="120" height="48" rx="8" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="648" y="85" font-size="12" fill="#4a4a4a" text-anchor="middle">inference</text>
+              <path d="M380 128 V 176 H 110 V 158" fill="none" stroke="#d62976" stroke-width="1.6" marker-end="url(#rej-c)"/>
+              <text x="245" y="192" font-size="12" fill="#d62976" text-anchor="middle">429</text>
+            </g>
+            <defs>
+              <marker id="rej-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
+              </marker>
+              <marker id="rej-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+              <marker id="rej-c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>The latency the harness measures includes the time spent opening a new connection.</figcaption>
+        </figure>
+
+        <p>The connection counts in this post were taken with <code>ConnState</code> on the server the harness connects to, not at
+        the guard.</p>
+
+        <h2 id="assumed">I thought the connection pool was already verified</h2>
+        <p>The comment in the same file as <code>Send</code> stated the pool's effect as a number: counting accepted connections with
+        <code>ConnState</code> on the server side gave 431 before the pool and 6 after. It was measured on 8 August on kind, with the
+        harness connected directly to a stub server without the gateway, replaying an 884-request trace in <code>legacy</code> and
+        <code>pooled</code> (<code>hack/m5b-gateway-path-evidence.log</code>). The tests were passing too. There was a number, a method
+        and green tests, so I read it as verified.</p>
+        <p>When I opened the record behind that number, <strong>every arm had zero 429s</strong>. <code>done == total</code>: every request
+        sent was completed. <code>431 → 6</code> was measured on a trace with no rejections at all, and it had never covered the path
+        the review pointed at.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 150" role="img" aria-labelledby="rej2-t rej2-d" class="figure-svg">
+            <title id="rej2-t">The path the evidence covered and the path it did not</title>
+            <desc id="rej2-d">A two-by-two grid. The columns are the 200 response path and the 429 response path. The first row is the trace that measured 431 → 6: its 200 path cell is completely filled and its 429 path cell is zero. The second row is the defect the review found: its 200 path cell is empty and its 429 path cell is filled.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="360" y="22" font-size="12" fill="#8a8a8a" text-anchor="middle" font-weight="600">200 response path</text>
+              <text x="590" y="22" font-size="12" fill="#8a8a8a" text-anchor="middle" font-weight="600">429 response path</text>
+              <text x="10" y="64" font-size="12" fill="#4a4a4a">trace behind 431 → 6</text>
+              <rect x="250" y="44" width="220" height="30" rx="5" fill="#cfd3f3"/>
+              <text x="360" y="64" font-size="12" fill="#4f5bd5" text-anchor="middle">all of it</text>
+              <rect x="480" y="44" width="220" height="30" rx="5" fill="none" stroke="#e5e5e5" stroke-width="1.2"/>
+              <text x="590" y="64" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
+              <text x="10" y="114" font-size="12" fill="#4a4a4a">defect the review found</text>
+              <rect x="250" y="94" width="220" height="30" rx="5" fill="none" stroke="#e5e5e5" stroke-width="1.2"/>
+              <rect x="480" y="94" width="220" height="30" rx="5" fill="#f3cfe0"/>
+              <text x="590" y="114" font-size="12" fill="#d62976" text-anchor="middle" font-weight="600">here</text>
+            </g>
+          </svg>
+          <figcaption>The evidence measured only the 200 path and the defect was on the 429 path. The two cells never overlapped.</figcaption>
+        </figure>
+
+        <h2 id="result">The result, up front</h2>
+        <p>With the same method (counting <code>ConnState</code> on the server side), I measured again on a trace where all 884 requests
+        are rejected, at concurrency 20. The request count matches the <code>431 → 6</code> trace, but the commit message records them
+        as different traces.</p>
+        <table>
+          <caption class="sr-only">Connections accepted by the server per mode on a trace where all 884 requests are rejected, before and after the fix.</caption>
+          <thead><tr><th scope="col">mode</th><th scope="col">before fix</th><th scope="col">after fix</th></tr></thead>
+          <tbody>
+            <tr><td><code>legacy</code></td><td>884</td><td>884</td></tr>
+            <tr><td><code>drain-only</code></td><td>884</td><td>357</td></tr>
+            <tr><td><code>pooled</code> (the mode real runs use)</td><td>884</td><td><strong>22</strong></td></tr>
+          </tbody>
+        </table>
+        <p>The <code>pooled</code> mode real runs use was opening <strong>one connection per request</strong>. With the pool on, it could
+        not be told apart from <code>legacy</code>. It was even higher than the "before" value of 431 on the rejection-free trace.
+        After changing the code to read and drain the body of non-200 responses, it became 22, a fortyfold difference from before
+        the fix.</p>
+        <p>The measurement conditions go alongside.</p>
+        <table>
+          <caption class="sr-only">Conditions of the rejection-trace measurement.</caption>
+          <thead><tr><th scope="col">item</th><th scope="col">value</th></tr></thead>
+          <tbody>
+            <tr><td>trace</td><td>884 requests, all rejected</td></tr>
+            <tr><td>concurrency</td><td>20</td></tr>
+            <tr><td>counted</td><td>connections accepted by the server (<code>ConnState</code>)</td></tr>
+            <tr><td>repetitions</td><td>the record gives no repetition count</td></tr>
+          </tbody>
+        </table>
+        <p>That all 884 were rejections comes from the fix commit <code>d450877</code>: its message, and the code comment the same
+        commit added, describe this trace as "an 884-rejection trace".</p>
+        <p>The mode names predate this fix. The three modes were created on 8 August in commit <code>651140c</code>, and the log that
+        measured <code>431 → 6</code> already ran under those three names. Before the fix, the only place that drained a body was
+        <code>readStream</code>, which reads 200 responses, and non-200 responses were returned undrained. So on a rejection-only
+        trace <code>drain-only</code> had no response to drain either and came out at the same 884 as <code>legacy</code>.</p>
+
+        <h2 id="body">A body closed unread does not return its connection to the pool</h2>
+        <p>If <code>Close()</code> is called before a response body has been read to the end, Go's HTTP transport cannot reuse that
+        connection. The next request then starts again from the TCP handshake.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 170" role="img" aria-labelledby="rej3-t rej3-d" class="figure-svg">
+            <title id="rej3-t">A 200 response and an unread 429 response</title>
+            <desc id="rej3-d">The top row is a 200 response: request, body read to the end, Close, returned to the pool, the next request reuses it. The bottom row is a 429 response before the fix: request, body not read, Close, discarded, and from discarded an arrow drops to a box saying the next request starts again from the TCP handshake.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="10" y="44" font-size="12" fill="#4f5bd5" font-weight="600">200 response</text>
+              <rect x="110" y="26" width="60" height="28" rx="6" fill="none" stroke="#4f5bd5" stroke-width="1.4"/>
+              <text x="140" y="45" font-size="12" fill="#4f5bd5" text-anchor="middle">request</text>
+              <path d="M172 40 H 188" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rej-b)"/>
+              <rect x="192" y="26" width="150" height="28" rx="6" fill="none" stroke="#4f5bd5" stroke-width="1.4"/>
+              <text x="267" y="45" font-size="12" fill="#4f5bd5" text-anchor="middle">body read to the end</text>
+              <path d="M344 40 H 360" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rej-b)"/>
+              <rect x="364" y="26" width="60" height="28" rx="6" fill="none" stroke="#4f5bd5" stroke-width="1.4"/>
+              <text x="394" y="45" font-size="12" fill="#4f5bd5" text-anchor="middle">Close</text>
+              <path d="M426 40 H 442" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rej-b)"/>
+              <rect x="446" y="26" width="110" height="28" rx="6" fill="#e7e9f9"/>
+              <text x="501" y="45" font-size="12" fill="#4f5bd5" text-anchor="middle">back to pool</text>
+              <path d="M558 40 H 574" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rej-b)"/>
+              <text x="580" y="45" font-size="12" fill="#4f5bd5">next request reuses it</text>
+              <text x="10" y="100" font-size="12" fill="#d62976" font-weight="600">429 response</text>
+              <text x="10" y="118" font-size="12" fill="#8a8a8a">(before fix)</text>
+              <rect x="110" y="82" width="60" height="28" rx="6" fill="none" stroke="#d62976" stroke-width="1.4"/>
+              <text x="140" y="101" font-size="12" fill="#d62976" text-anchor="middle">request</text>
+              <path d="M172 96 H 188" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rej-b)"/>
+              <rect x="192" y="82" width="150" height="28" rx="6" fill="none" stroke="#d62976" stroke-width="1.4"/>
+              <text x="267" y="101" font-size="12" fill="#d62976" text-anchor="middle">body not read</text>
+              <path d="M344 96 H 360" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rej-b)"/>
+              <rect x="364" y="82" width="60" height="28" rx="6" fill="none" stroke="#d62976" stroke-width="1.4"/>
+              <text x="394" y="101" font-size="12" fill="#d62976" text-anchor="middle">Close</text>
+              <path d="M426 96 H 442" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rej-b)"/>
+              <rect x="446" y="82" width="110" height="28" rx="6" fill="#fbeaf2"/>
+              <text x="501" y="101" font-size="12" fill="#d62976" text-anchor="middle">discarded</text>
+              <path d="M501 112 V 140 H 520" fill="none" stroke="#d62976" stroke-width="1.4" marker-end="url(#rej-c)"/>
+              <text x="526" y="145" font-size="12" fill="#d62976">next: TCP handshake again</text>
+            </g>
+            <defs>
+              <marker id="rej-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+              <marker id="rej-c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>The fix makes non-200 responses also read and drain the body to the end before closing.</figcaption>
+        </figure>
+
+        <p>These are the parts of <code>Send</code> that handle non-200 responses, before and after the fix. Both are the code from that
+        day's commits, with the comments removed from the "after" side. In both, <code>resp.Body.Close()</code> is already deferred
+        earlier in the function.</p>
+<pre data-lang="go"><code>// before: d450877^
+if resp.StatusCode != http.StatusOK {
+	kind := "http"
+	if resp.StatusCode == http.StatusTooManyRequests {
+		kind = "rejected"
+	}
+	return SendResult{HTTPStatus: resp.StatusCode, ErrorKind: kind}
+}
+</code></pre>
+<pre data-lang="go"><code>// after: d450877
+if resp.StatusCode != http.StatusOK {
+	if h.drain {
+		drainForReuse(resp.Body)
+	}
+	kind := "http"
+	if resp.StatusCode == http.StatusTooManyRequests {
+		kind = "rejected"
+	}
+	return SendResult{HTTPStatus: resp.StatusCode, ErrorKind: kind}
+}
+</code></pre>
+        <p><code>drainForReuse</code> reads and discards up to 8 KB of the body. If it does not reach the end within that, only that one
+        connection gives up on reuse.</p>
+        <p>The problem is that this handshake cost arises <strong>on the instrument's side, not the side being measured</strong>, and it
+        lands inside the latency the harness reports. Even the latency of a request the guard rejected carries the time the instrument
+        spent opening a new connection.</p>
+
+        <h2 id="main-path">Rejection is not the exception but this harness's busiest path</h2>
+        <p>In this harness a 429 is not an exceptional case. The admission guard protects capacity by rejecting, and <strong>a run that
+        actually exercises the guard sends most of its requests down this path.</strong></p>
+        <p>So the more a run's guard rejects, the more requests this defect touches. Conversely, the evidence that showed the pool
+        working came from a trace in which the guard never rejected anything.</p>
+
+        <h2 id="drain-only">Why <code>drain-only</code> exists</h2>
+        <p>In the table <code>drain-only</code> is 357. This mode exists to separate the body-draining fix from the pool settings, so
+        each one's effect on the connection count can be seen. Writing only "884 → 22" as one lump leaves no record of which side
+        removed how much.</p>
+        <p>The three modes are defined in <code>SenderConnForMode</code> in <code>internal/bench/httpsender.go</code>. <code>legacy</code>
+        sets no transport of its own, so it uses Go's defaults (two idle connections per host), and does not drain bodies.
+        <code>drain-only</code> turns on body draining on the same default transport. <code>pooled</code> derives the per-host idle
+        connection cap from the trace (arrival rate × request timeout, no more than the trace length and no less than 2), removes the
+        overall idle cap, and turns on body draining.</p>
+        <p>So <code>drain-only</code> and <code>pooled</code> drain bodies the same way and differ only in the idle connection cap. The
+        record does not say what <code>pooled</code>'s cap was on this trace or how many times it was measured, so I do not attribute
+        the gap between 357 and 22 to the cap item by item.</p>
+
+        <h2 id="comment">I wrote the evidence's scope into the comment</h2>
+        <p>Correcting the number alone lets the same thing happen again, because someone may quote <code>431 → 6</code> next time. So I
+        put this sentence into the comment on <code>drainForReuse</code> (commit <code>d450877</code>).</p>
+        <blockquote><p><code>Read that trace's scope before quoting those numbers: every arm in it recorded ZERO rejections, so they describe the all-200 path only.</code></p></blockquote>
+        <p><code>431 → 6</code> was evidence I had written. I did not re-measure that number itself this time. The problem was reading it
+        <strong>as evidence for a different path</strong>.</p>
+        <p><code>431 → 6</code> also appears outside the code comment. The evidence document <code>hack/m5b-gateway-path.md</code>, committed
+        on 8 August, says "431 connections down to 6, a factor of 72". The 15 August fix did not touch that document and it has not
+        changed since, so the only places that state the scope are the code comment and the commit message. The published site
+        (<code>lkhun9311.github.io</code>) does not carry this number.</p>
+
+        <h2 id="same-shape">Four defects found that day had the same shape</h2>
+        <p>Lay the four defects found that day side by side and they reduce to one sentence: <strong>the evidence did not cover the path
+        it was meant to measure.</strong></p>
+        <table>
+          <caption class="sr-only">The four defects found the same day, with what each piece of evidence covered and did not cover.</caption>
+          <thead><tr><th scope="col">defect</th><th scope="col">what the evidence covered</th><th scope="col">what it did not</th></tr></thead>
+          <tbody>
+            <tr><td><code>watchstream</code> had no caller</td><td>component unit tests</td><td>production wiring</td></tr>
+            <tr><td><code>decodeRunRecord</code> ignored trailing data</td><td>unknown fields and schema</td><td>bytes after the document</td></tr>
+            <tr><td><code>reportRun</code> printed a rejected result to stdout</td><td>exit code</td><td>stdout already captured</td></tr>
+            <tr><td>HTTP send did not read non-200 responses</td><td>200 trace 431 → 6</td><td>429 path (884 → 884)</td></tr>
+          </tbody>
+        </table>
+        <p>All four defects had tests, and the tests were passing. What was missing was not a test but <strong>the habit of checking
+        that the scope a test covers matches the scope it claims</strong>.</p>
+        <p>A short note on the third row. Even when the read-back rejected the record, <code>reportRun</code> printed the whole result and
+        ledger to stdout and then wrote "do not quote the above" to stderr. It was asking the reader to unsee what a shell redirect
+        had already captured. I changed it so that, instead of printing and then disowning, a failed validation sends everything to
+        stderr. On a run that failed validation, stdout became 929 bytes with 0 event lines and stderr 2,696 bytes with 13 event
+        lines.</p>
+        <p>The first row came from earlier work the same day. <code>watchstream.go</code> had code and tests that take a baseline List
+        and continue a watch from its resourceVersion, but nothing in production code called that function
+        (<code>startWatchStream</code>). What actually ran was <code>collector.watch</code>, which starts a watch from "now" with no
+        baseline List.</p>
+
+        <h2 id="limits">What this does not claim</h2>
+        <ul>
+          <li><strong>How much latency was inflated.</strong> That the handshake lands inside the reported latency is a prediction from
+          how the mechanism works, and latency before and after the fix was not measured side by side.</li>
+          <li><strong>A repetition count.</strong> The message of commit <code>d450877</code> holds a single set of before and after values
+          per mode, and neither the code comment from the same commit nor the two journals give a repetition count. The raw log of
+          that run is not in the repository and no session record survives.</li>
+          <li>That latency numbers already reported are wrong. This post's evidence does not say which of the numbers produced while
+          this defect existed came from rejection-heavy runs.</li>
+          <li>That 22 is the right value. It is a count under one condition, concurrency 20. Other concurrency levels and other
+          rejection ratios were not measured.</li>
+          <li>Raw data from the rejection-trace run. That all 884 were rejections, and the six values in the table, come from the commit
+          message and the code comment. The raw log of that run, the trace file and the configuration of the server that returned the
+          rejections are not in the repository.</li>
+          <li>That this is independent of the Go version. The transport's reuse conditions were not checked per Go version.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="closing">Closing</h2>
+        <ul>
+          <li><strong>A trace with only 200 responses cannot measure connection reuse on the rejection path.</strong> <code>431 → 6</code> was
+          measured on a trace with zero rejections.</li>
+          <li><strong>A Go client reuses a connection only if it reads a non-200 response body to the end before closing.</strong> Unread,
+          the <code>pooled</code> mode opened 884 connections for 884 requests. After the fix to read them, it opened 22.</li>
+          <li>For an instrument that measures an admission guard, rejection is the main path. The more a run's guard rejects, the
+          more requests the instrument's defect touches.</li>
+          <li>When you write a number down as evidence, write the scope of the trace that measured it next to it.</li>
+        </ul>
+        <p>If you have written evidence numbers into a measurement tool, open them once and check whether the input that produced
+        them contained the path you are measuring now. Passing tests and a correct number can still never have looked at the same
+        path.</p>
+        <p>Thank you for reading.</p>
+
+              </div>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=5f3b0c0ef8"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
