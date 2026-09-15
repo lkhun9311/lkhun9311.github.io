@@ -115,7 +115,7 @@
 
         <h2 id="어떤-서비스인가요">어떤 서비스인가요?</h2>
         <p>작은 언어 모델(Qwen2.5-3B)을 GPU 한 장(NVIDIA A10G)에서 서빙하면서 두 종류의 손님을
-        동시에 받는 상황입니다. 프리미엄 테넌트는 짧은 프롬프트를 자주 보내고 첫 토큰이 빨리
+        동시에 받는 상황입니다. 프리미엄 테넌트는 짧은 프롬프트를 자주 보내고 첫 Token이 빨리
         나와야 합니다. 경쟁 테넌트는 4만 자짜리 긴 프롬프트를 가끔 보내는데 한 건이 GPU를
         오래 붙잡습니다.</p>
 
@@ -166,7 +166,7 @@
           <figcaption>분할 구성은 시간 분할(time-slicing)입니다. 카드를 물리적으로 반씩 나누는 것이 아니라 두 엔진이 카드 전체를 번갈아 씁니다. 메모리가 격리되지는 않습니다.</figcaption>
         </figure>
 
-        <p>기준은 하나로 정해 두었습니다. <strong>프리미엄의 첫 토큰까지 걸린 시간(TTFT)의 p99가 139.0 ms
+        <p>기준은 하나로 정해 두었습니다. <strong>프리미엄의 첫 Token까지 걸린 시간(TTFT)의 p99가 139.0 ms
         이하</strong>일 것. 이 값은 경쟁 테넌트가 없을 때의 기준선(69.5 ms)의 정확히 두 배이고
         <strong>실험을 시작하기 전에</strong> 정해서 문서에 적어 두었습니다.</p>
 
@@ -179,7 +179,7 @@
         <figure class="diagram">
           <svg viewBox="0 0 720 200" role="img" aria-labelledby="lad2-t lad2-d" class="figure-svg">
             <title id="lad2-t">고정 작업량 실험이 잴 수 없는 것</title>
-            <desc id="lad2-d">가로 막대 셋이 위아래로 놓여 있고 길이가 모두 같습니다. 제공한 일, 통짜가 한 일, 분할이 한 일이 모두 297,920 토큰으로 동일합니다. 아래에 설명이 있습니다. 여유가 10퍼센트 남았든 300퍼센트 남았든 이 그림은 똑같고 움직이는 것은 분모인 경과 시간뿐이며 그중 3.31초는 경쟁 테넌트의 엔진이 나중에 끝난 시간입니다.</desc>
+            <desc id="lad2-d">가로 막대 셋이 위아래로 놓여 있고 길이가 모두 같습니다. 제공한 일, 통짜가 한 일, 분할이 한 일이 모두 297,920 Token으로 동일합니다. 아래에 설명이 있습니다. 여유가 10퍼센트 남았든 300퍼센트 남았든 이 그림은 똑같고 움직이는 것은 분모인 경과 시간뿐이며 그중 3.31초는 경쟁 테넌트의 엔진이 나중에 끝난 시간입니다.</desc>
             <g font-family="Inter, sans-serif">
               <text x="0" y="34" font-size="11.5" fill="#4a4a4a">제공한 일</text>
               <rect x="150" y="22" width="420" height="18" rx="4" fill="#e9e9e9"/>
@@ -265,7 +265,7 @@ verdict_code=$?          # if 문의 종료 상태입니다. 명령의 10이 아
         <p>bash에서 <code>if</code> 문 다음의 <code>$?</code>는 조건 명령의 상태가 아니라
         <code>if</code> 문 자체의 상태입니다. 조건이 실패하고 <code>else</code>가 없으면
         <code>if</code> 문은 0을 돌려줍니다. 그래서 올바른 정지가 「채점할 수 없는 단」으로
-        보고되고 값을 치른 세션이 거기서 끝났습니다.</p>
+        보고되고 값을 치른 Session이 거기서 끝났습니다.</p>
 <pre data-lang="bash"><code># 고친 코드 — 상태를 명령 옆에서 잡습니다
 verdict_code=0
 "$BIN" ladder-verdict ... || verdict_code=$?
@@ -281,7 +281,7 @@ if [ "$verdict_code" -eq 0 ]; then ...
         <h2 id="왜-안-되나">왜 부하를 줄여도 통짜는 안 되나</h2>
         <p>꼬리를 만드는 것이 <strong>프리미엄이 프리미엄 뒤에 서는 것</strong>이 아니기 때문입니다.
         4.61 req/s 통짜 구성에서 139 ms를 넘은 프리미엄 요청은 651건이었는데 그중 <strong>649건(99.7%)</strong>이
-        경쟁 테넌트의 요청이 아직 자기 첫 토큰을 기다리는 중에 보내진 요청이었습니다.</p>
+        경쟁 테넌트의 요청이 아직 자기 첫 Token을 기다리는 중에 보내진 요청이었습니다.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 180" role="img" aria-labelledby="lad4-t lad4-d" class="figure-svg">
@@ -391,7 +391,7 @@ if [ "$verdict_code" -eq 0 ]; then ...
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=d7cabca9c3"></script>
+  <script src="../assets/content.js?v=a2fe78cfd4"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

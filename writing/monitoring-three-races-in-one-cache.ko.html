@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="모니터링 화면에 Cache를 넣자 세 종류의 경합이 생겼습니다 | Kwanghun Lee" />
-  <meta property="og:description" content="대시보드의 첫 데이터가 6.8s였던 이유는 접속이 곧 계산이었기 때문입니다. 요청 경로에서 계산을 떼어 내 10ms가 됐는데 그 과정에서 갱신이 취소되는 것·같은 값을 전체에 여러 번 뿌리는 것·Timeout 하나가 남의 쿼리를 끊는 것, 경합 셋이 나왔습니다." />
+  <meta property="og:description" content="대시보드의 첫 데이터가 6.8s였던 이유는 접속이 곧 계산이었기 때문입니다. 요청 경로에서 계산을 떼어 내 10ms가 됐는데 그 과정에서 갱신이 취소되는 것·같은 값을 전체에 여러 번 뿌리는 것·Timeout 하나가 남의 Query를 끊는 것, 경합 셋이 나왔습니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -27,9 +27,9 @@
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="모니터링 화면에 Cache를 넣자 세 종류의 경합이 생겼습니다 | Kwanghun Lee" />
-  <meta name="twitter:description" content="대시보드의 첫 데이터가 6.8s였던 이유는 접속이 곧 계산이었기 때문입니다. 요청 경로에서 계산을 떼어 내 10ms가 됐는데 그 과정에서 갱신이 취소되는 것·같은 값을 전체에 여러 번 뿌리는 것·Timeout 하나가 남의 쿼리를 끊는 것, 경합 셋이 나왔습니다." />
+  <meta name="twitter:description" content="대시보드의 첫 데이터가 6.8s였던 이유는 접속이 곧 계산이었기 때문입니다. 요청 경로에서 계산을 떼어 내 10ms가 됐는데 그 과정에서 갱신이 취소되는 것·같은 값을 전체에 여러 번 뿌리는 것·Timeout 하나가 남의 Query를 끊는 것, 경합 셋이 나왔습니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="대시보드의 첫 데이터가 6.8s였던 이유는 접속이 곧 계산이었기 때문입니다. 요청 경로에서 계산을 떼어 내 10ms가 됐는데 그 과정에서 갱신이 취소되는 것·같은 값을 전체에 여러 번 뿌리는 것·Timeout 하나가 남의 쿼리를 끊는 것, 경합 셋이 나왔습니다." />
+  <meta name="description" content="대시보드의 첫 데이터가 6.8s였던 이유는 접속이 곧 계산이었기 때문입니다. 요청 경로에서 계산을 떼어 내 10ms가 됐는데 그 과정에서 갱신이 취소되는 것·같은 값을 전체에 여러 번 뿌리는 것·Timeout 하나가 남의 Query를 끊는 것, 경합 셋이 나왔습니다." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -98,20 +98,20 @@
         <p>사내 Cloud 관리 Console의 Backend를 만들고 있습니다.
         <a href="monitoring-the-screen-i-said-not-to-fix.ko.html">①편</a>에서 대시보드의 첫 데이터를
         6.8s에서 23ms로 줄인 과정을 적었는데 방법은 한 줄로 요약됩니다.
-        접속할 때 계산하지 말고 미리 만들어 둔 스냅샷을 주는 것입니다.</p>
+        접속할 때 계산하지 말고 미리 만들어 둔 Snapshot을 주는 것입니다.</p>
 
         <p>그 한 줄을 코드로 옮기는 검토에서 경합이 <strong>셋</strong> 나왔습니다. 셋 다 해피패스에서는
         보이지 않습니다. 한 사람이 한 번 접속해서 값을 받아 보면 아무것도 드러나지 않고 문제는 갱신과 접속과 주기 작업이 같은 자리에서 만날 때만 생깁니다.</p>
 
         <p>이 편은 그 셋을 하나씩 봅니다. 갱신이 취소되는 것, 같은 값을 전체에 여러 번 뿌리는 것,
-        그리고 Timeout 하나가 남의 쿼리를 끊는 것입니다.</p>
+        그리고 Timeout 하나가 남의 Query를 끊는 것입니다.</p>
 
         <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul class="callout">
           <li>‘미리 계산해 두고 주면 된다’는 구조를 넣으려는 분</li>
           <li>부팅 워밍업과 주기 작업과 요청 트리거가 같은 자리를 갱신하는 코드를 가진 분</li>
-          <li>SSE나 WebSocket으로 여러 세션에 같은 값을 뿌리는 분</li>
+          <li>SSE나 WebSocket으로 여러 Session에 같은 값을 뿌리는 분</li>
         </ul>
 
         <h2 id="접속이-곧-계산">접속이 곧 계산이었습니다<a class="anchor" href="#접속이-곧-계산" aria-label="이 절로 가는 링크">#</a></h2>
@@ -180,21 +180,21 @@
 
         <h2 id="계산을-떼어">요청 경로에서 계산을 떼어 냈습니다<a class="anchor" href="#계산을-떼어" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>대시보드 값은 <strong>사용자마다 다르지 않습니다.</strong> 모든 세션에 같은 값이 나갑니다.
+        <p>대시보드 값은 <strong>사용자마다 다르지 않습니다.</strong> 모든 Session에 같은 값이 나갑니다.
         그러면 접속마다 같은 계산을 되풀이할 이유가 없습니다.</p>
 
 <pre data-lang="text"><code>주기 작업 또는 부팅 워밍업
     → 제한 시간 안에서 메트릭 수집
     → 화면에 필요한 payload 완성
-    → 완성된 스냅샷을 참조 하나로 교체
-    → 현재 세션에 방송
+    → 완성된 Snapshot을 참조 하나로 교체
+    → 현재 Session에 방송
 
 새 접속
-    → 마지막 완성 스냅샷을 그 세션에만 즉시 전송
+    → 마지막 완성 Snapshot을 그 Session에만 즉시 전송
     → 값이 없거나 오래됐으면 백그라운드 갱신 요청</code></pre>
 
         <p>참조 하나를 통째로 교체하는 것이 요점입니다. 값을 읽는 쪽은 <strong>절반만 갱신된 값</strong>을 보지 않습니다.
-        갱신이 실패하면 이전 스냅샷을 지우지 않습니다. 다만 그것이 장애를 감추면 안 되므로
+        갱신이 실패하면 이전 Snapshot을 지우지 않습니다. 다만 그것이 장애를 감추면 안 되므로
         계산 시각과 저하 상태를 값과 같이 실어 보냅니다.</p>
 
         <h2 id="경합-셋">그런데 경합이 셋 있었습니다<a class="anchor" href="#경합-셋" aria-label="이 절로 가는 링크">#</a></h2>
@@ -207,7 +207,7 @@
             <title id="rc-t">한 자리를 두고 다투는 세 갱신 경로</title>
             <desc id="rc-d">왼쪽에 부팅 워밍업, 15s 주기 작업, 새 접속 세 갈래가 세로로 있고
             화살표가 모두 가운데의 갱신 자리로 모입니다. 갱신 자리에는 이미 갱신 중이면 취소된다고 적혀 있습니다.
-            오른쪽에는 스냅샷과 방송이 있고 취소된 쪽은 결과를 게시하지 못해 다음 주기까지 기다린다는 표시가
+            오른쪽에는 Snapshot과 방송이 있고 취소된 쪽은 결과를 게시하지 못해 다음 주기까지 기다린다는 표시가
             점선으로 그려져 있습니다.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="8" y="20" width="150" height="38" rx="6" fill="none" stroke="#8a8a8a" stroke-width="1.5"/>
@@ -261,14 +261,14 @@
 
         <p>둘째, 같은 값을 전체에 여러 번 뿌립니다.
         오래된 Cache를 가진 상태에서 접속 N개가 동시에 들어오면 각자가 기존 값을
-        전체 세션에 다시 보낼 수 있었습니다. 접속에는 그 세션에만 즉시 답하고
+        전체 Session에 다시 보낼 수 있었습니다. 접속에는 그 Session에만 즉시 답하고
         새 계산 결과의 전체 방송은 갱신 승자 한 번만 하도록 갈랐습니다.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 210" role="img" aria-labelledby="sp-t sp-d" class="figure-svg">
             <title id="sp-t">즉시 응답과 전체 방송을 갈라 놓은 뒤의 흐름</title>
-            <desc id="sp-d">위쪽 갈래에서는 접속 세 개가 각각 자기 세션에만 마지막 값을 받습니다.
-            아래쪽 갈래에서는 갱신에 이긴 하나만 새 값을 만들어 전체 세션에 한 번 방송합니다.
+            <desc id="sp-d">위쪽 갈래에서는 접속 세 개가 각각 자기 Session에만 마지막 값을 받습니다.
+            아래쪽 갈래에서는 갱신에 이긴 하나만 새 값을 만들어 전체 Session에 한 번 방송합니다.
             위쪽 화살표는 짧고 각자에게 향하며 아래쪽 화살표는 하나에서 전체로 향합니다.</desc>
             <g font-family="Inter, sans-serif">
               <text x="14" y="32" font-size="11.5" fill="#8a8a8a">즉시 응답</text>
@@ -281,9 +281,9 @@
               <path d="M188 34 H 250" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#sp-ar)"/>
               <path d="M188 74 H 250" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#sp-ar)"/>
               <path d="M188 114 H 250" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#sp-ar)"/>
-              <text x="258" y="38" font-size="11.5" fill="#4a4a4a">자기 세션에만</text>
-              <text x="258" y="78" font-size="11.5" fill="#4a4a4a">자기 세션에만</text>
-              <text x="258" y="118" font-size="11.5" fill="#4a4a4a">자기 세션에만</text>
+              <text x="258" y="38" font-size="11.5" fill="#4a4a4a">자기 Session에만</text>
+              <text x="258" y="78" font-size="11.5" fill="#4a4a4a">자기 Session에만</text>
+              <text x="258" y="118" font-size="11.5" fill="#4a4a4a">자기 Session에만</text>
 
               <path d="M14 150 H 700" fill="none" stroke="#e0e0e0" stroke-width="1"/>
               <text x="14" y="178" font-size="11.5" fill="#d62976" font-weight="700">전체 방송</text>
@@ -305,9 +305,9 @@
           갈라 놓기 전에는 접속 수만큼 같은 값이 전체에 나갔습니다.</figcaption>
         </figure>
 
-        <p>셋째, Timeout 하나가 남의 쿼리를 끊습니다.
+        <p>셋째, Timeout 하나가 남의 Query를 끊습니다.
         메트릭 클라이언트에 전체 요청 시간 상한을 걸면 같은 클라이언트를 쓰는
-        장기 리포팅 쿼리까지 끊깁니다. 전역 총시간 대신 연결과 읽기 단계의 상한만 두고
+        장기 리포팅 Query까지 끊깁니다. 전역 총시간 대신 연결과 읽기 단계의 상한만 두고
         기능별로 클라이언트 정책을 갈랐습니다.</p>
 
         <blockquote><p>셋 다 측정으로 찾은 것이 아닙니다. 구현 검토에서 코드를 읽다 나왔습니다.
@@ -362,7 +362,7 @@
           <li>경합 셋이 실제로 일어났다고 말하지 않습니다. 코드를 읽고 판단해서 고쳤고
           재현해서 본 것이 아닙니다.</li>
           <li>모니터링 화면 전체가 빨라졌다는 말이 아닙니다. 이 편은 대시보드의 SSE 경로 하나입니다.</li>
-          <li><strong>10ms가 상수가 아닙니다.</strong> 메모리에서 스냅샷을 읽어 직렬화하는 비용이고
+          <li><strong>10ms가 상수가 아닙니다.</strong> 메모리에서 Snapshot을 읽어 직렬화하는 비용이고
           데이터 규모를 따라갑니다.</li>
         </ul>
 
@@ -381,7 +381,7 @@
           <p>‘미리 만들어 두고 준다’는 한 줄이지만 누가 만들고 누가 게시하는지를 정하지 않으면
           한 줄이 아닙니다.</p>
 
-          <p>다음 편은 물리 노드입니다. 같은 패턴을 옮기려다
+          <p>다음 편은 물리 Node입니다. 같은 패턴을 옮기려다
           <strong>‘빈 목록을 정상 0대로 발행해도 되는가’</strong>를 만났습니다. 읽어 주셔서 감사합니다.</p>
         </div>
 
@@ -396,7 +396,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=d7cabca9c3"></script>
+  <script src="../assets/content.js?v=a2fe78cfd4"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

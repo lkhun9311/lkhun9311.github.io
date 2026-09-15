@@ -13,14 +13,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
   <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
-  <meta name="description" content="행을 없애지 않고 삭제 표시만 바꾸는 방식. 조회에서는 사라지고 테이블에는 남습니다." />
+  <meta name="description" content="행을 없애지 않고 삭제 표시만 바꾸는 방식. 조회에서는 사라지고 Table에는 남습니다." />
   <meta property="og:type" content="article" />
   <meta property="og:locale" content="ko_KR" />
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="Soft Delete" />
-  <meta property="og:description" content="행을 없애지 않고 삭제 표시만 바꾸는 방식. 조회에서는 사라지고 테이블에는 남습니다." />
+  <meta property="og:description" content="행을 없애지 않고 삭제 표시만 바꾸는 방식. 조회에서는 사라지고 Table에는 남습니다." />
   <meta property="og:locale" content="ko_KR" />
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -72,7 +72,7 @@
           <ul>
             <li><a href="#무엇">개요</a></li>
             <li><a href="#표시">표시 값이 행마다 다를 수 있습니다</a></li>
-            <li><a href="#지우기">지우는 자리는 본 테이블이 아닙니다</a></li>
+            <li><a href="#지우기">지우는 자리는 본 Table이 아닙니다</a></li>
             <li><a href="#쓰인-곳">이 사이트에서 쓰인 곳</a></li>
           </ul>
         </nav>
@@ -81,17 +81,17 @@
         <h2 id="무엇">개요<a class="anchor" href="#무엇" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p><strong>Soft Delete는 행을 없애지 않고 삭제 표시만 바꾸는 방식입니다.</strong>
-        조회는 그 표시를 걸러서 읽으므로 화면에서는 사라진 것처럼 보이고 테이블에는 그대로 남습니다.</p>
+        조회는 그 표시를 걸러서 읽으므로 화면에서는 사라진 것처럼 보이고 Table에는 그대로 남습니다.</p>
 
         <p>되살릴 수 있고 이력이 남는다는 것이 이 방식의 값어치입니다. 대신 지불하는 것은
-        <strong>테이블이 줄지 않는다</strong>는 사실입니다. 화면이 20행을 원해도 테이블은 1,041행을 담고 있을 수 있습니다.</p>
+        <strong>Table이 줄지 않는다</strong>는 사실입니다. 화면이 20행을 원해도 Table은 1,041행을 담고 있을 수 있습니다.</p>
 
-        <p>딸린 테이블도 같이 자랍니다. 본 Table 하나만 보고 「그만큼이겠지」 하면 실제로 쌓인 양을 놓칩니다.</p>
+        <p>딸린 Table도 같이 자랍니다. 본 Table 하나만 보고 「그만큼이겠지」 하면 실제로 쌓인 양을 놓칩니다.</p>
 
                 <figure class="diagram">
           <svg viewBox="0 0 720 200" role="img" aria-labelledby="sd-t sd-d" class="figure-svg">
             <title id="sd-t">삭제 표시된 행이 거치는 네 자리</title>
-            <desc id="sd-d">왼쪽부터 상자가 넷, 회색 화살표로 이어집니다. 첫째는 살아 있는 행으로 deleted가 0입니다. 둘째는 Soft Delete로 본 테이블에 그대로 남고 삭제 후 30일까지입니다. 셋째는 Archive로 Shadow 테이블로 옮겨져 삭제 후 90일까지입니다. 넷째는 Purge로 아무 데도 남지 않습니다. 아래에 분홍색으로 본 테이블이 작아지는 시점은 Archive 라고 적혀 있습니다.</desc>
+            <desc id="sd-d">왼쪽부터 상자가 넷, 회색 화살표로 이어집니다. 첫째는 살아 있는 행으로 deleted가 0입니다. 둘째는 Soft Delete로 본 Table에 그대로 남고 삭제 후 30일까지입니다. 셋째는 Archive로 Shadow Table로 옮겨져 삭제 후 90일까지입니다. 넷째는 Purge로 아무 데도 남지 않습니다. 아래에 분홍색으로 본 Table이 작아지는 시점은 Archive 라고 적혀 있습니다.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
               <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">살아 있는 행</text>
@@ -108,7 +108,7 @@
               <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
               <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">Purge</text>
               <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">남지 않음</text>
-              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">본 테이블이 작아지는 시점은 Archive</text>
+              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">본 Table이 작아지는 시점은 Archive</text>
             </g>
             <defs>
               <marker id="sd-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
@@ -116,7 +116,7 @@
               </marker>
             </defs>
           </svg>
-          <figcaption>Soft Delete는 지우는 단계가 아니라 미루는 단계입니다. 실제로 본 테이블이 작아지는 곳은 세 번째 칸입니다.</figcaption>
+          <figcaption>Soft Delete는 지우는 단계가 아니라 미루는 단계입니다. 실제로 본 Table이 작아지는 곳은 세 번째 칸입니다.</figcaption>
         </figure>
 
         <h2 id="표시">표시 값이 행마다 다를 수 있습니다<a class="anchor" href="#표시" aria-label="이 절로 가는 링크">#</a></h2>
@@ -128,12 +128,12 @@
         삭제 표시 1,021 개가 있으면 묶음은 1,022 개, 행은 1,041 개입니다.
         <strong>1,022를 행 수로 읽으면 19 행이 통째로 사라진 셈</strong>이 됩니다. 스키마를 안 보고 쓴 질의는 자기가 무엇을 셌는지 말해 주지 않습니다.</p>
 
-        <h2 id="지우기">지우는 자리는 본 테이블이 아닙니다<a class="anchor" href="#지우기" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="지우기">지우는 자리는 본 Table이 아닙니다<a class="anchor" href="#지우기" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>급할 때 본 테이블에 <code>DELETE</code>를 넣고 싶어집니다. 그 길에는 외래키 검사를 끄는 순간이 따라오는데
-        검사를 끈 세션에서는 참조 위반이 그냥 통과하고 <strong>다시 켜도 이미 생긴 불일치를 되짚어 주지 않습니다.</strong></p>
+        <p>급할 때 본 Table에 <code>DELETE</code>를 넣고 싶어집니다. 그 길에는 외래키 검사를 끄는 순간이 따라오는데
+        검사를 끈 Session에서는 참조 위반이 그냥 통과하고 <strong>다시 켜도 이미 생긴 불일치를 되짚어 주지 않습니다.</strong></p>
 
-        <p>제대로 된 길은 옆으로 옮기는 것입니다. 같은 모양이고 조회 경로에서 빠져 있는 Shadow 테이블로 Archive 하고
+        <p>제대로 된 길은 옆으로 옮기는 것입니다. 같은 모양이고 조회 경로에서 빠져 있는 Shadow Table로 Archive 하고
         기간이 지나면 Purge 합니다. 한 번 지우는 것은 오늘까지만 막아 주고 <strong>Soft Delete는 내일도 쌓입니다.</strong></p>
 
         <h2 id="쓰인-곳">이 사이트에서 쓰인 곳<a class="anchor" href="#쓰인-곳" aria-label="이 절로 가는 링크">#</a></h2>
@@ -152,7 +152,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=d7cabca9c3"></script>
+  <script src="../assets/content.js?v=a2fe78cfd4"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

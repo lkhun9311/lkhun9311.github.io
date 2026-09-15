@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="모니터링 화면 초기 로드가 프로젝트 수만큼 Keystone에 인증했습니다 | Kwanghun Lee" />
-  <meta property="og:description" content="시계열 그래프를 그리는 화면이라 쿼리를 의심했는데 아니었습니다. 초기 로드가 프로젝트마다 Client를 새로 만들고 있었고 우리가 쓰던 팩터리는 Client를 줄 때마다 Keystone에 인증합니다. 다만 이 글에는 전후를 잰 숫자가 없습니다. 왜 없는지가 글의 절반입니다." />
+  <meta property="og:description" content="시계열 그래프를 그리는 화면이라 Query를 의심했는데 아니었습니다. 초기 로드가 프로젝트마다 Client를 새로 만들고 있었고 우리가 쓰던 팩터리는 Client를 줄 때마다 Keystone에 인증합니다. 다만 이 글에는 전후를 잰 숫자가 없습니다. 왜 없는지가 글의 절반입니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -27,9 +27,9 @@
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="모니터링 화면 초기 로드가 프로젝트 수만큼 Keystone에 인증했습니다 | Kwanghun Lee" />
-  <meta name="twitter:description" content="시계열 그래프를 그리는 화면이라 쿼리를 의심했는데 아니었습니다. 초기 로드가 프로젝트마다 Client를 새로 만들고 있었고 우리가 쓰던 팩터리는 Client를 줄 때마다 Keystone에 인증합니다. 다만 이 글에는 전후를 잰 숫자가 없습니다. 왜 없는지가 글의 절반입니다." />
+  <meta name="twitter:description" content="시계열 그래프를 그리는 화면이라 Query를 의심했는데 아니었습니다. 초기 로드가 프로젝트마다 Client를 새로 만들고 있었고 우리가 쓰던 팩터리는 Client를 줄 때마다 Keystone에 인증합니다. 다만 이 글에는 전후를 잰 숫자가 없습니다. 왜 없는지가 글의 절반입니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="시계열 그래프를 그리는 화면이라 쿼리를 의심했는데 아니었습니다. 초기 로드가 프로젝트마다 Client를 새로 만들고 있었고 우리가 쓰던 팩터리는 Client를 줄 때마다 Keystone에 인증합니다. 다만 이 글에는 전후를 잰 숫자가 없습니다. 왜 없는지가 글의 절반입니다." />
+  <meta name="description" content="시계열 그래프를 그리는 화면이라 Query를 의심했는데 아니었습니다. 초기 로드가 프로젝트마다 Client를 새로 만들고 있었고 우리가 쓰던 팩터리는 Client를 줄 때마다 Keystone에 인증합니다. 다만 이 글에는 전후를 잰 숫자가 없습니다. 왜 없는지가 글의 절반입니다." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -83,7 +83,7 @@
           <ul>
             <li><a href="#예상-독자">이 글의 예상 독자</a></li>
             <li><a href="#어떤-화면">어떤 화면인가요?</a></li>
-            <li><a href="#쿼리부터">쿼리부터 열고 싶어집니다</a></li>
+            <li><a href="#쿼리부터">Query부터 열고 싶어집니다</a></li>
             <li><a href="#원인">원인: Client를 만드는 것이 곧 인증입니다</a></li>
             <li><a href="#죽은-cache">그리고 Cache는 읽히지 않고 있었습니다</a></li>
             <li><a href="#수정">수정: 인증을 반복문 밖으로 꺼냈습니다</a></li>
@@ -97,7 +97,7 @@
         <article class="article-body">
 
         <p>사내 Cloud 관리 Console의 Backend를 만들고 있습니다. 모니터링 화면이 느리다는 보고를
-        받았습니다. 시계열 그래프를 그리는 화면이라 느린 곳은 쿼리일 것 같았습니다.</p>
+        받았습니다. 시계열 그래프를 그리는 화면이라 느린 곳은 Query일 것 같았습니다.</p>
 
         <p>아니었습니다. 초기 로드가 프로젝트 하나마다 Client를 새로 만들고 있었고 우리가 쓰던
         <code>serviceClient()</code>는 부를 때마다 Keystone에 인증합니다. 프로젝트가 N개면 인증도 N번,
@@ -113,7 +113,7 @@
         <ul class="callout">
           <li>클라우드 SDK로 <code>getClient()</code> 같은 편의 함수를 만들어 쓰시는 분</li>
           <li>반복문 안에서 Client를 얻는 코드를 보신 적이 있는 분</li>
-          <li>화면이 느릴 때 먼저 쿼리부터 여시는 분</li>
+          <li>화면이 느릴 때 먼저 Query부터 여시는 분</li>
         </ul>
 
         <h2 id="어떤-화면">어떤 화면인가요?<a class="anchor" href="#어떤-화면" aria-label="이 절로 가는 링크">#</a></h2>
@@ -173,9 +173,9 @@
           <figcaption>초기 REST 로드와 15s 주기 전송의 호출 구조입니다.</figcaption>
         </figure>
 
-        <h2 id="쿼리부터">쿼리부터 열고 싶어집니다<a class="anchor" href="#쿼리부터" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="쿼리부터">Query부터 열고 싶어집니다<a class="anchor" href="#쿼리부터" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>‘시계열 그래프가 느리다’는 말을 들으면 손이 먼저 가는 곳이 있습니다. 쿼리입니다.
+        <p>‘시계열 그래프가 느리다’는 말을 들으면 손이 먼저 가는 곳이 있습니다. Query입니다.
         조회식을 다듬고 결과를 Cache하고 그러고 나서 부하 도구로 사용자를 늘려 확인하는 것.
         <strong>순서가 자연스러운데, 여기서는 느린 구간이 그쪽이 아니었습니다.</strong></p>
 
@@ -184,7 +184,7 @@
         지목된 곳은 여기가 아니었습니다.</p>
 
         <blockquote><p>실행 시간이 긴 함수가 곧 사용자가 기다리는 구간은 아닙니다.
-        쿼리는 눈에 잘 띄어서 먼저 표적이 됩니다.</p></blockquote>
+        Query는 눈에 잘 띄어서 먼저 표적이 됩니다.</p></blockquote>
 
         <h2 id="원인">원인: Client를 만드는 것이 곧 인증입니다<a class="anchor" href="#원인" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -201,11 +201,11 @@
         그 함수가 무엇을 하는지가 이름에 안 적혀 있습니다.</p>
 
         <blockquote><p>이 Factory에서는 Client를 얻는 일이 곧 인증하는 일입니다.
-        <code>serviceClient()</code>는 설정 파일의 계정으로 Keystone에 붙어 토큰을 받고 그렇게 인증된
+        <code>serviceClient()</code>는 설정 파일의 계정으로 Keystone에 붙어 Token을 받고 그렇게 인증된
         Client를 돌려줍니다.</p></blockquote>
 
         <p>SDK 일반이 그렇다는 이야기가 아닙니다. 같은 라이브러리에도 이미 받아 둔
-        토큰으로 Client를 만드는 길이 따로 있습니다. 인증하는 것은 우리 쪽 팩터리의 구현이고
+        Token으로 Client를 만드는 길이 따로 있습니다. 인증하는 것은 우리 쪽 팩터리의 구현이고
         그 사실이 함수 이름에 드러나 있지 않았다는 것이 이 글의 이야기입니다.</p>
 
         <p>그리고 <strong>이건 사내 문서 2건에서 확인한 것</strong>입니다.
@@ -308,7 +308,7 @@ for (String projectId : projects) {
         <p>정확히 하겠습니다. <strong>인증이 없어진 것이 아니라 요청 1건당 N회가 1회가 된 것</strong>입니다.
         Client는 이 메서드 안에서 만들어지므로 다음 요청은 다시 한 번 인증합니다.</p>
 
-        <p>그리고 <strong>‘1회’에도 조건이 붙습니다.</strong> 반복문이 도는 동안 토큰이 만료되면
+        <p>그리고 <strong>‘1회’에도 조건이 붙습니다.</strong> 반복문이 도는 동안 Token이 만료되면
         그다음 호출은 거부됩니다. 그때 라이브러리가 스스로 다시 인증하고 재시도할지는
         쓰는 버전과 커넥터에 달렸고 이 글은 확인하지 않았습니다.
         Token 유효 기간이 이 반복문이 도는 시간보다 훨씬 길어서 문제가 드러나지 않았을 뿐입니다.</p>
@@ -462,7 +462,7 @@ for (String projectId : projects) {
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=d7cabca9c3"></script>
+  <script src="../assets/content.js?v=a2fe78cfd4"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

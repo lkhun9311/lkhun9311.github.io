@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="이력 탭을 만들고 보니 이력이 안 남는 경로가 있었습니다" />
-  <meta property="og:description" content="Snapshot 스케줄러의 실행 이력을 화면에 붙였는데 대상이 사라져 정지한 실행은 이력이 한 줄도 남지 않았습니다. 그리고 조회 실패를 대상 없음으로 읽어 일시 오류가 영구 정지가 됐습니다." />
+  <meta property="og:description" content="Snapshot Scheduler의 실행 이력을 화면에 붙였는데 대상이 사라져 정지한 실행은 이력이 한 줄도 남지 않았습니다. 그리고 조회 실패를 대상 없음으로 읽어 일시 오류가 영구 정지가 됐습니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -27,9 +27,9 @@
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="이력 탭을 만들고 보니 이력이 안 남는 경로가 있었습니다" />
-  <meta name="twitter:description" content="Snapshot 스케줄러의 실행 이력을 화면에 붙였는데 대상이 사라져 정지한 실행은 이력이 한 줄도 남지 않았습니다. 그리고 조회 실패를 대상 없음으로 읽어 일시 오류가 영구 정지가 됐습니다." />
+  <meta name="twitter:description" content="Snapshot Scheduler의 실행 이력을 화면에 붙였는데 대상이 사라져 정지한 실행은 이력이 한 줄도 남지 않았습니다. 그리고 조회 실패를 대상 없음으로 읽어 일시 오류가 영구 정지가 됐습니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="Snapshot 스케줄러의 실행 이력을 화면에 붙였는데 대상이 사라져 정지한 실행은 이력이 한 줄도 남지 않았습니다. 그리고 조회 실패를 대상 없음으로 읽어 일시 오류가 영구 정지가 됐습니다." />
+  <meta name="description" content="Snapshot Scheduler의 실행 이력을 화면에 붙였는데 대상이 사라져 정지한 실행은 이력이 한 줄도 남지 않았습니다. 그리고 조회 실패를 대상 없음으로 읽어 일시 오류가 영구 정지가 됐습니다." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -92,7 +92,7 @@
         </nav>
       <article class="article-body">
 
-        <p>앞 글에서 Snapshot 스케줄러의 실패가 화면에 도달하지 못하던 것을 고쳤습니다. 그때 실패
+        <p>앞 글에서 Snapshot Scheduler의 실패가 화면에 도달하지 못하던 것을 고쳤습니다. 그때 실패
         사유와 시각은 <a href="a-schedule-that-failed-in-silence.ko.html">일부러 스케줄 행에 넣지
         않고</a> 다음으로 미뤘습니다. 한 행에 마지막 실패만 남기면 그 전에 무슨 일이 있었는지는
         여전히 로그에만 있기 때문입니다.</p>
@@ -114,7 +114,7 @@
                 <figure class="diagram">
           <svg viewBox="0 0 720 200" role="img" aria-labelledby="hole-t hole-d" class="figure-svg">
             <title id="hole-t">이력이 한 줄도 안 남는 경로</title>
-            <desc id="hole-d">왼쪽부터 상자가 넷, 회색 화살표로 이어집니다. 첫째는 실행 시작, 둘째는 대상 확인 실패, 셋째는 Scheduler 정지하고 돌아가기, 넷째는 실행하지 않은 것으로 보여 이력이 안 남습니다. 아래에 분홍색으로 대상이 지워져 스케줄러가 멈춘 것을 화면에서 알 수 없다고 적혀 있습니다.</desc>
+            <desc id="hole-d">왼쪽부터 상자가 넷, 회색 화살표로 이어집니다. 첫째는 실행 시작, 둘째는 대상 확인 실패, 셋째는 Scheduler 정지하고 돌아가기, 넷째는 실행하지 않은 것으로 보여 이력이 안 남습니다. 아래에 분홍색으로 대상이 지워져 Scheduler가 멈춘 것을 화면에서 알 수 없다고 적혀 있습니다.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
               <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">실행 시작</text>
@@ -177,11 +177,11 @@
 
         <h2 id="이력이-안-남는-경로">이력을 보이려고 만든 화면에 구멍이 있었습니다<a class="anchor" href="#이력이-안-남는-경로" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>배치는 실행을 시작하면서 먼저 대상이 있는지 봅니다. 없으면 스케줄러를 정지하고 돌아갑니다.
+        <p>배치는 실행을 시작하면서 먼저 대상이 있는지 봅니다. 없으면 Scheduler를 정지하고 돌아갑니다.
         그 위에서 이력을 쓰는 코드는 <strong>실행이 돌았을 때만</strong> 불립니다. 그래서 이 경로는
         실행하지 않은 것으로 보이고 이력이 한 줄도 안 남습니다.</p>
 
-        <p>대상이 지워져서 스케줄러가 저절로 멈추는 것은 정상 동작입니다. 문제는 그것을 화면에서
+        <p>대상이 지워져서 Scheduler가 저절로 멈추는 것은 정상 동작입니다. 문제는 그것을 화면에서
         알 수 없다는 것입니다. 스케줄은 멈춰 있고 왜 멈췄는지는 어디에도 없습니다.</p>
 
         <p>이 결함은 기능의 목적에 정면으로 반합니다. 이력 탭은 로그에만 있던 것을 화면으로
@@ -314,7 +314,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=d7cabca9c3"></script>
+  <script src="../assets/content.js?v=a2fe78cfd4"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
