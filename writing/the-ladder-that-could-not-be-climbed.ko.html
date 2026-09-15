@@ -103,26 +103,26 @@
         </ul>
 
         <h2 id="무슨-내용인가요">무슨 내용인가요?</h2>
-        <p>GPU 한 장을 두 테넌트가 나눠 쓸 때, <strong>엔진을 하나만 두고 같이 쓰는 것</strong>과
-        <strong>테넌트마다 엔진을 하나씩 주는 것</strong> 중 어느 쪽이 지연시간 목표를 더 높은 부하까지
+        <p>GPU 한 장을 두 테넌트가 나눠 쓸 때, 엔진을 하나만 두고 같이 쓰는 것과
+        테넌트마다 엔진을 하나씩 주는 것 중 어느 쪽이 지연시간 목표를 더 높은 부하까지
         지키는지 측정한 이야기입니다.</p>
         <p>그런데 이 글의 절반은 <strong>제가 설계를 잘못해서 답이 이미 정해져 있는 실험을 샀다</strong>는
-        이야기입니다. 기준도 판정 규칙도 정지 규칙도 전부 옳았는데, 사다리를 올라갈 수 없는 자리에
+        이야기입니다. 기준도 판정 규칙도 정지 규칙도 전부 옳았는데 사다리를 올라갈 수 없는 자리에
         놓았습니다. 그리고 그건 카드를 빌리기 전에 알 수 있었습니다.</p>
-        <p>⚠️ <strong>먼저 유보 하나.</strong> 아래 결과는 <strong>네 개의 도착률에서 잰 통과·미달</strong>이지,
+        <p>먼저 유보 하나. 아래 결과는 <strong>네 개의 도착률에서 잰 통과·미달</strong>이지,
         지속 가능한 최대 도착률의 증명이 아닙니다. 두 토폴로지 어느 쪽의 최대치도 찾지 못했습니다. 나머지
         유보는 「이 글이 주장하지 않는 것」에 모아 두었습니다.</p>
 
         <h2 id="어떤-서비스인가요">어떤 서비스인가요?</h2>
-        <p>작은 언어 모델(Qwen2.5-3B)을 GPU 한 장(NVIDIA A10G)에서 서빙하면서 <strong>두 종류의 손님</strong>을
-        동시에 받는 상황입니다. <strong>프리미엄 테넌트</strong>는 짧은 프롬프트를 자주 보내고 첫 토큰이 빨리
-        나와야 합니다. <strong>경쟁 테넌트</strong>는 4만 자짜리 긴 프롬프트를 가끔 보내는데, 한 건이 GPU를
+        <p>작은 언어 모델(Qwen2.5-3B)을 GPU 한 장(NVIDIA A10G)에서 서빙하면서 두 종류의 손님을
+        동시에 받는 상황입니다. 프리미엄 테넌트는 짧은 프롬프트를 자주 보내고 첫 토큰이 빨리
+        나와야 합니다. 경쟁 테넌트는 4만 자짜리 긴 프롬프트를 가끔 보내는데 한 건이 GPU를
         오래 붙잡습니다.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 210" role="img" aria-labelledby="lad1-t lad1-d" class="figure-svg">
             <title id="lad1-t">비교한 두 구성</title>
-            <desc id="lad1-d">왼쪽은 통짜 구성입니다. 프리미엄과 경쟁 두 테넌트가 화살표로 하나의 엔진에 모이고, 그 엔진이 GPU 한 장을 씁니다. 큐가 하나여서 긴 프롬프트 뒤에 짧은 요청이 섭니다. 오른쪽은 분할 구성입니다. 프리미엄은 엔진 A로, 경쟁은 엔진 B로 각각 가고 두 엔진이 같은 GPU 한 장을 시간으로 번갈아 씁니다. 큐가 둘입니다.</desc>
+            <desc id="lad1-d">왼쪽은 통짜 구성입니다. 프리미엄과 경쟁 두 테넌트가 화살표로 하나의 엔진에 모이고 그 엔진이 GPU 한 장을 씁니다. 큐가 하나여서 긴 프롬프트 뒤에 짧은 요청이 섭니다. 오른쪽은 분할 구성입니다. 프리미엄은 엔진 A로, 경쟁은 엔진 B로 각각 가고 두 엔진이 같은 GPU 한 장을 시간으로 번갈아 씁니다. 큐가 둘입니다.</desc>
             <g font-family="Inter, sans-serif">
               <text x="160" y="18" font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="600">통짜 구성</text>
               <rect x="10" y="40" width="96" height="40" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
@@ -136,8 +136,8 @@
               <path d="M252 92 H 282" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#lad-a)"/>
               <rect x="288" y="72" width="56" height="40" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
               <text x="316" y="96" font-size="11" fill="#4a4a4a" text-anchor="middle">GPU</text>
-              <text x="176" y="176" font-size="11" fill="#8a8a8a" text-anchor="middle">큐가 하나입니다</text>
-              <text x="176" y="194" font-size="11" fill="#8a8a8a" text-anchor="middle">긴 프롬프트 뒤에 짧은 요청이 섭니다</text>
+              <text x="176" y="176" font-size="11" fill="#8a8a8a" text-anchor="middle">큐 하나</text>
+              <text x="176" y="194" font-size="11" fill="#8a8a8a" text-anchor="middle">긴 프롬프트 뒤에 선 짧은 요청</text>
               <line x1="372" y1="30" x2="372" y2="200" stroke="#e5e5e5" stroke-width="1"/>
               <text x="556" y="18" font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="600">분할 구성</text>
               <rect x="400" y="40" width="96" height="40" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
@@ -154,8 +154,8 @@
               <path d="M626 124 H 650 V 96" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#lad-a)"/>
               <rect x="656" y="72" width="56" height="40" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
               <text x="684" y="96" font-size="11" fill="#4a4a4a" text-anchor="middle">GPU</text>
-              <text x="556" y="176" font-size="11" fill="#8a8a8a" text-anchor="middle">큐가 둘입니다</text>
-              <text x="556" y="194" font-size="11" fill="#8a8a8a" text-anchor="middle">대신 카드를 시간으로 번갈아 씁니다</text>
+              <text x="556" y="176" font-size="11" fill="#8a8a8a" text-anchor="middle">큐 둘</text>
+              <text x="556" y="194" font-size="11" fill="#8a8a8a" text-anchor="middle">대신 카드를 시간으로 번갈아 씀</text>
             </g>
             <defs>
               <marker id="lad-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
@@ -167,19 +167,19 @@
         </figure>
 
         <p>기준은 하나로 정해 두었습니다. <strong>프리미엄의 첫 토큰까지 걸린 시간(TTFT)의 p99가 139.0 ms
-        이하</strong>일 것. 이 값은 경쟁 테넌트가 없을 때의 기준선(69.5 ms)의 정확히 두 배이고,
+        이하</strong>일 것. 이 값은 경쟁 테넌트가 없을 때의 기준선(69.5 ms)의 정확히 두 배이고
         <strong>실험을 시작하기 전에</strong> 정해서 문서에 적어 두었습니다.</p>
 
         <h2 id="처음엔">처음엔 고정된 작업량으로 용량을 잴 수 있는 줄 알았습니다</h2>
         <p>앞선 실험에서 두 구성에 <strong>완전히 같은 요청 트레이스</strong>를 주고 돌렸습니다. 세 팔 모두
         요청을 하나도 잃지 않고 전부 끝냈습니다. 그래서 처리량을 비교했더니 589.3 / 586.9 / 584.0 tok/s가
-        나왔고, 「분할의 용량 비용은 0.9%」라고 쓸 뻔했습니다.</p>
+        나왔고 「분할의 용량 비용은 0.9%」라고 쓸 뻔했습니다.</p>
         <p><strong>그럴 수 없습니다.</strong> 세 팔이 같은 작업량을 전부 끝냈다면 분자가 상수입니다.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 200" role="img" aria-labelledby="lad2-t lad2-d" class="figure-svg">
             <title id="lad2-t">고정 작업량 실험이 잴 수 없는 것</title>
-            <desc id="lad2-d">가로 막대 셋이 위아래로 놓여 있고 길이가 모두 같습니다. 제공한 일, 통짜가 한 일, 분할이 한 일이 모두 297,920 토큰으로 동일합니다. 아래에 설명이 있습니다. 여유가 10퍼센트 남았든 300퍼센트 남았든 이 그림은 똑같고, 움직이는 것은 분모인 경과 시간뿐이며 그중 3.31초는 경쟁 테넌트의 엔진이 나중에 끝난 시간입니다.</desc>
+            <desc id="lad2-d">가로 막대 셋이 위아래로 놓여 있고 길이가 모두 같습니다. 제공한 일, 통짜가 한 일, 분할이 한 일이 모두 297,920 토큰으로 동일합니다. 아래에 설명이 있습니다. 여유가 10퍼센트 남았든 300퍼센트 남았든 이 그림은 똑같고 움직이는 것은 분모인 경과 시간뿐이며 그중 3.31초는 경쟁 테넌트의 엔진이 나중에 끝난 시간입니다.</desc>
             <g font-family="Inter, sans-serif">
               <text x="0" y="34" font-size="11.5" fill="#4a4a4a">제공한 일</text>
               <rect x="150" y="22" width="420" height="18" rx="4" fill="#e9e9e9"/>
@@ -190,40 +190,40 @@
               <text x="0" y="114" font-size="11.5" fill="#4a4a4a">분할이 한 일</text>
               <rect x="150" y="102" width="420" height="18" rx="4" fill="#f3cfe0"/>
               <text x="582" y="115" font-size="11" fill="#8a8a8a">297,920 토큰</text>
-              <text x="150" y="156" font-size="11.5" fill="#d62976">여유가 10%든 300%든 이 그림은 똑같습니다</text>
-              <text x="150" y="178" font-size="11" fill="#8a8a8a">움직이는 것은 분모(경과 시간)뿐이고, 그중 3.31초는 경쟁 테넌트의 엔진이 나중에 끝난 시간입니다</text>
+              <text x="150" y="156" font-size="11.5" fill="#d62976">여유가 10%든 300%든 같은 그림</text>
+              <text x="150" y="178" font-size="11" fill="#8a8a8a">움직이는 것은 분모(경과 시간)뿐, 그중 3.31초는 경쟁 엔진이 나중에 끝난 시간</text>
             </g>
           </svg>
           <figcaption>용량을 재려면 부하를 바꿔 가며 돌려야 합니다. 그래서 사다리를 만들었습니다.</figcaption>
         </figure>
 
         <h2 id="결론부터">결론부터 말씀드리자면</h2>
-        <p>사다리를 앞선 실험의 부하 <strong>아래</strong>에 다시 놓고 돌렸더니 이렇게 나왔습니다.</p>
+        <p>사다리를 앞선 실험의 부하 아래에 다시 놓고 돌렸더니 이렇게 나왔습니다.</p>
         <table>
           <caption class="sr-only">프리미엄 도착률 네 곳에서 두 구성의 프리미엄 TTFT p99와 139.0 ms 목표 충족 여부.</caption>
           <thead><tr><th scope="col">프리미엄 부하</th><th scope="col">통짜 구성 p99</th><th scope="col">분할 구성 p99</th><th scope="col">목표 139.0 ms</th></tr></thead>
           <tbody>
             <tr><td>1.16 req/s</td><td>1,282.5 ms</td><td><strong>123.8 ms</strong></td><td>분할만 통과</td></tr>
-            <tr><td>2.31 req/s</td><td>1,694.7 ms</td><td><strong>130.4 ms</strong></td><td>분할만 통과</td></tr>
+            <tr><td>2.31 req/s</td><td>1,694.7 ms</td><td>130.4 ms</td><td>분할만 통과</td></tr>
             <tr><td>4.61 req/s</td><td>2,303.3 ms</td><td>143.2 ms</td><td>둘 다 미달</td></tr>
             <tr><td>9.22 req/s</td><td>1,896.0 ms</td><td>1,013.2 ms</td><td>둘 다 미달</td></tr>
           </tbody>
         </table>
         <p><strong>통짜 구성은 프리미엄 부하를 1.16 req/s까지 낮춰도 목표를 맞추지 못합니다.</strong> 경쟁
-        테넌트는 모든 셀에서 139건을 보내 139건을 전부 완료했고, 목표에 가까웠던 두 단은 다른 카드에서 한 번
+        테넌트는 모든 셀에서 139건을 보내 139건을 전부 완료했고 목표에 가까웠던 두 단은 다른 카드에서 한 번
         더 사서 확인했습니다. 두 셀이 각각 2.1 ms, 0.3 ms 움직였습니다.</p>
 
         <h2 id="사다리">사다리를 올라갈 수 없는 자리에 놓았습니다</h2>
-        <p>사다리는 이렇게 동작합니다. 낮은 부하부터 시작해 한 단씩 올라가고, <strong>두 구성이 모두 목표를
+        <p>사다리는 이렇게 동작합니다. 낮은 부하부터 시작해 한 단씩 올라가고 <strong>두 구성이 모두 목표를
         놓치는 첫 단에서 멈춥니다.</strong> 그 직전 단이 각 구성이 버틴 최대 부하입니다.</p>
-        <p>저는 바닥 단을 <strong>9.22 req/s</strong>에 놓았습니다. 앞선 실험이 돌던 부하입니다. 그런데
-        <strong>앞선 실험이 바로 그 부하에서 통짜 1,892 ms, 분할 1,007 ms를 쟀습니다.</strong> 기준은
+        <p>저는 바닥 단을 9.22 req/s에 놓았습니다. 앞선 실험이 돌던 부하입니다. 그런데
+        앞선 실험이 바로 그 부하에서 통짜 1,892 ms, 분할 1,007 ms를 쟀습니다. 기준은
         139 ms입니다.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 210" role="img" aria-labelledby="lad3-t lad3-d" class="figure-svg">
             <title id="lad3-t">사다리를 놓은 자리</title>
-            <desc id="lad3-d">가로축이 부하입니다. 아래쪽에 139 ms 목표선이 회색으로 그어져 있고, 목표를 만족하는 구간은 그 선 아래 왼쪽입니다. 별표로 표시된 제 사다리의 바닥 단은 9.22 req/s이며 목표선보다 한참 위, 통짜 1,892 ms와 분할 1,007 ms 자리에 있습니다. 화살표는 사다리가 거기서 더 위로 올라가도록 설계됐음을 보여 줍니다. 찾아야 할 구간은 목표선 아래, 바닥 단보다 왼쪽에 있다고 분홍색으로 적혀 있습니다.</desc>
+            <desc id="lad3-d">가로축이 부하입니다. 아래쪽에 139 ms 목표선이 회색으로 그어져 있고 목표를 만족하는 구간은 그 선 아래 왼쪽입니다. 별표로 표시된 제 사다리의 바닥 단은 9.22 req/s이며 목표선보다 한참 위, 통짜 1,892 ms와 분할 1,007 ms 자리에 있습니다. 화살표는 사다리가 거기서 더 위로 올라가도록 설계됐음을 보여 줍니다. 찾아야 할 구간은 목표선 아래, 바닥 단보다 왼쪽에 있다고 분홍색으로 적혀 있습니다.</desc>
             <g font-family="Inter, sans-serif">
               <line x1="60" y1="150" x2="700" y2="150" stroke="#c9c9c9" stroke-width="1.4" stroke-dasharray="4 3"/>
               <text x="62" y="144" font-size="11" fill="#8a8a8a">목표 139 ms</text>
@@ -232,11 +232,11 @@
               <circle cx="470" cy="60" r="5" fill="#d62976"/>
               <text x="484" y="52" font-size="11.5" fill="#d62976">제 사다리의 바닥 단 · 9.22 req/s</text>
               <text x="484" y="70" font-size="11" fill="#4a4a4a">통짜 1,892 ms · 분할 1,007 ms</text>
-              <text x="484" y="88" font-size="11" fill="#8a8a8a">목표를 이미 일곱 배 넘겼습니다</text>
+              <text x="484" y="88" font-size="11" fill="#8a8a8a">이미 목표의 일곱 배</text>
               <path d="M470 50 V 26" fill="none" stroke="#d62976" stroke-width="1.6" marker-end="url(#lad-b)"/>
-              <text x="470" y="18" font-size="11" fill="#d62976" text-anchor="middle">사다리는 여기서 위로 올라갑니다</text>
+              <text x="470" y="18" font-size="11" fill="#d62976" text-anchor="middle">사다리는 여기서 위로</text>
               <rect x="60" y="152" width="330" height="32" fill="#fbeaf2"/>
-              <text x="225" y="172" font-size="11.5" fill="#d62976" text-anchor="middle">목표를 만족하는 부하는 전부 이 아래, 바닥 단보다 왼쪽에 있습니다</text>
+              <text x="225" y="172" font-size="11.5" fill="#d62976" text-anchor="middle">목표를 만족하는 부하는 전부 이 아래, 바닥 단보다 왼쪽</text>
             </g>
             <defs>
               <marker id="lad-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
@@ -248,13 +248,13 @@
         </figure>
 
         <p>저는 이 숫자를 사전등록 문서 둘째 문단에 제 손으로 인용해 놓고도 못 봤습니다. 기준도, 판정도, 정지
-        규칙도 전부 옳았습니다. 틀린 것은 <strong>검색 방향</strong>이었고, 검색 방향은 설계의 일부입니다.
+        규칙도 전부 옳았습니다. 틀린 것은 <strong>검색 방향</strong>이었고 검색 방향은 설계의 일부입니다.
         이미 가진 숫자를 다시 확인하는 데 약 0.35달러를 썼습니다.</p>
 
         <h2 id="채점-불가">판정기는 옳았고 러너가 종료 코드를 잘못 읽었습니다</h2>
-        <p>더 아픈 쪽은 이겁니다. 판정기는 1단에서 <strong>정확히 옳게</strong> 「두 구성 모두 목표를 놓쳤으니
-        여기서 멈춰라」를 종료 코드 10으로 냈습니다. 그런데 실행 스크립트가 그걸 <strong>0으로
-        읽었습니다.</strong></p>
+        <p>더 아픈 쪽은 이겁니다. 판정기는 1단에서 정확히 옳게 「두 구성 모두 목표를 놓쳤으니
+        여기서 멈춰라」를 종료 코드 10으로 냈습니다. 그런데 실행 스크립트가 그걸 0으로
+        읽었습니다.</p>
 <pre data-lang="bash"><code># 틀린 코드
 if "$BIN" ladder-verdict ... ; then
   ...
@@ -262,31 +262,31 @@ if "$BIN" ladder-verdict ... ; then
 fi
 verdict_code=$?          # if 문의 종료 상태입니다. 명령의 10이 아닙니다.
 </code></pre>
-        <p>bash에서 <code>if</code> 문 다음의 <code>$?</code>는 <strong>조건 명령의 상태가 아니라
-        <code>if</code> 문 자체의 상태</strong>입니다. 조건이 실패하고 <code>else</code>가 없으면
-        <code>if</code> 문은 <strong>0</strong>을 돌려줍니다. 그래서 올바른 정지가 「채점할 수 없는 단」으로
-        보고되고, 값을 치른 세션이 거기서 끝났습니다.</p>
+        <p>bash에서 <code>if</code> 문 다음의 <code>$?</code>는 조건 명령의 상태가 아니라
+        <code>if</code> 문 자체의 상태입니다. 조건이 실패하고 <code>else</code>가 없으면
+        <code>if</code> 문은 0을 돌려줍니다. 그래서 올바른 정지가 「채점할 수 없는 단」으로
+        보고되고 값을 치른 세션이 거기서 끝났습니다.</p>
 <pre data-lang="bash"><code># 고친 코드 — 상태를 명령 옆에서 잡습니다
 verdict_code=0
 "$BIN" ladder-verdict ... || verdict_code=$?
 if [ "$verdict_code" -eq 0 ]; then ...
 </code></pre>
         <p><strong>리허설은 이걸 잡을 수 없었습니다.</strong> GPU 없이 도는 리허설은 가짜 엔진이 밀리초로
-        답하기 때문에 목표를 넘길 일이 없고, 그래서 <strong>정지 분기가 한 번도 실행되지 않습니다.</strong>
-        저는 판정 명령의 종료 코드 10은 테스트로 고정해 두었는데, 그 코드를 <strong>읽는 스크립트 쪽은
-        고정하지 않았습니다.</strong></p>
+        답하기 때문에 목표를 넘길 일이 없고 그래서 <strong>정지 분기가 한 번도 실행되지 않습니다.</strong>
+        저는 판정 명령의 종료 코드 10은 테스트로 고정해 두었는데 그 코드를 읽는 스크립트 쪽은
+        고정하지 않았습니다.</p>
         <p>지금은 판정 명령만 가로채는 얇은 대역 스크립트를 끼워 실제 실행 스크립트를 그 분기로 몰아넣는
-        리허설이 있습니다. 그리고 고치기 전에 <strong>결함을 되살려 빨간불부터 확인</strong>했습니다.</p>
+        리허설이 있습니다. 그리고 고치기 전에 결함을 되살려 빨간불부터 확인했습니다.</p>
 
         <h2 id="왜-안-되나">왜 부하를 줄여도 통짜는 안 되나</h2>
         <p>꼬리를 만드는 것이 <strong>프리미엄이 프리미엄 뒤에 서는 것</strong>이 아니기 때문입니다.
-        4.61 req/s 통짜 구성에서 139 ms를 넘은 프리미엄 요청은 651건이었는데, 그중 <strong>649건(99.7%)</strong>이
-        <strong>경쟁 테넌트의 요청이 아직 자기 첫 토큰을 기다리는 중에</strong> 보내진 요청이었습니다.</p>
+        4.61 req/s 통짜 구성에서 139 ms를 넘은 프리미엄 요청은 651건이었는데 그중 <strong>649건(99.7%)</strong>이
+        경쟁 테넌트의 요청이 아직 자기 첫 토큰을 기다리는 중에 보내진 요청이었습니다.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 180" role="img" aria-labelledby="lad4-t lad4-d" class="figure-svg">
             <title id="lad4-t">프리미엄 요청이 늦는 순간</title>
-            <desc id="lad4-d">가로가 시간입니다. 위쪽에 경쟁 테넌트의 긴 프롬프트가 넓은 분홍 막대로 그려져 있습니다. 아래쪽에 프리미엄 요청 네 개가 화살표로 표시되어 있는데, 분홍 막대와 겹치는 세 개는 늦고 막대가 끝난 뒤의 한 개는 늦지 않습니다. 오른쪽 아래에 651건 중 649건이 이 겹침 구간에서 보내졌다고 적혀 있습니다.</desc>
+            <desc id="lad4-d">가로가 시간입니다. 위쪽에 경쟁 테넌트의 긴 프롬프트가 넓은 분홍 막대로 그려져 있습니다. 아래쪽에 프리미엄 요청 네 개가 화살표로 표시되어 있는데 분홍 막대와 겹치는 세 개는 늦고 막대가 끝난 뒤의 한 개는 늦지 않습니다. 오른쪽 아래에 651건 중 649건이 이 겹침 구간에서 보내졌다고 적혀 있습니다.</desc>
             <g font-family="Inter, sans-serif">
               <text x="0" y="40" font-size="11.5" fill="#d62976">경쟁</text>
               <rect x="120" y="26" width="300" height="24" rx="5" fill="#f7dbe8"/>
@@ -296,11 +296,11 @@ if [ "$verdict_code" -eq 0 ]; then ...
               <path d="M260 92 V 62" fill="none" stroke="#4f5bd5" stroke-width="1.6" marker-end="url(#lad-c)"/>
               <path d="M350 92 V 62" fill="none" stroke="#4f5bd5" stroke-width="1.6" marker-end="url(#lad-c)"/>
               <path d="M520 92 V 62" fill="none" stroke="#8a8a8a" stroke-width="1.6" marker-end="url(#lad-d)"/>
-              <text x="260" y="124" font-size="11.5" fill="#d62976" text-anchor="middle">이 셋이 늦습니다</text>
-              <text x="520" y="124" font-size="11.5" fill="#8a8a8a" text-anchor="middle">이건 안 늦습니다</text>
+              <text x="260" y="124" font-size="11.5" fill="#d62976" text-anchor="middle">이 셋이 늦음</text>
+              <text x="520" y="124" font-size="11.5" fill="#8a8a8a" text-anchor="middle">이건 안 늦음</text>
               <line x1="0" y1="92" x2="700" y2="92" stroke="#e5e5e5" stroke-width="1"/>
               <text x="700" y="110" font-size="11" fill="#8a8a8a" text-anchor="end">시간 →</text>
-              <text x="360" y="162" font-size="11.5" fill="#4a4a4a" text-anchor="middle">139 ms를 넘은 651건 중 649건(99.7%)이 이 겹침 구간에서 보내졌습니다</text>
+              <text x="360" y="162" font-size="11.5" fill="#4a4a4a" text-anchor="middle">139 ms를 넘은 651건 중 649건(99.7%)이 이 겹침 구간에서 발신</text>
             </g>
             <defs>
               <marker id="lad-c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
@@ -321,15 +321,15 @@ if [ "$verdict_code" -eq 0 ]; then ...
           <caption class="sr-only">분할 구성에서 프리미엄 도착률별 p99와 139 ms를 넘은 요청 수.</caption>
           <thead><tr><th scope="col">프리미엄 부하</th><th scope="col">분할 p99</th><th scope="col">139 ms를 넘은 요청</th></tr></thead>
           <tbody>
-            <tr><td>1.16 req/s</td><td>123.8 ms</td><td><strong>1건</strong> / 585 (0.17%)</td></tr>
-            <tr><td>2.31 req/s</td><td>130.4 ms</td><td><strong>5건</strong> / 1,164 (0.43%)</td></tr>
-            <tr><td>4.61 req/s</td><td>143.2 ms</td><td><strong>40건</strong> / 2,327 (1.72%)</td></tr>
-            <tr><td>9.22 req/s</td><td>1,013.2 ms</td><td><strong>823건</strong> / 4,655 (17.68%)</td></tr>
+            <tr><td>1.16 req/s</td><td>123.8 ms</td><td>1건 / 585 (0.17%)</td></tr>
+            <tr><td>2.31 req/s</td><td>130.4 ms</td><td>5건 / 1,164 (0.43%)</td></tr>
+            <tr><td>4.61 req/s</td><td>143.2 ms</td><td>40건 / 2,327 (1.72%)</td></tr>
+            <tr><td>9.22 req/s</td><td>1,013.2 ms</td><td>823건 / 4,655 (17.68%)</td></tr>
           </tbody>
         </table>
         <p><strong>4.61의 「미달」은 40건입니다.</strong> 그리고 이 비율은 네 점 모두 단조롭게 늘어납니다.
-        p99은 관측값 하나라 흔들릴 수 있지만, <strong>수천 건 중 몇 건인지는 분포가 움직이지 않으면 잘 안
-        움직입니다.</strong> 진짜 절벽은 4.61과 9.22 사이(1.7% → 17.7%)에 있고, 거기는 재지 않았습니다.</p>
+        p99은 관측값 하나라 흔들릴 수 있지만 <strong>수천 건 중 몇 건인지는 분포가 움직이지 않으면 잘 안
+        움직입니다.</strong> 진짜 절벽은 4.61과 9.22 사이(1.7% → 17.7%)에 있고 거기는 재지 않았습니다.</p>
 
         <h2 id="공짜가-아닙니다">공짜가 아닙니다</h2>
         <p>분할 구성은 경쟁 테넌트의 요청을 하나도 잃지 않습니다. 대신 <strong>기다리게 합니다.</strong></p>
@@ -343,40 +343,43 @@ if [ "$verdict_code" -eq 0 ]; then ...
           </tbody>
         </table>
         <p>프리미엄은 <strong>중앙값을 내주고 꼬리를 삽니다.</strong> 그리고 그 값은 대체로 경쟁 테넌트가
-        치릅니다. 이 구성을 켜는 플랫폼은 그걸 고르는 것이고, 요금을 받는 쪽에 말해야 합니다.</p>
+        치릅니다. 이 구성을 켜는 플랫폼은 그걸 고르는 것이고 요금을 받는 쪽에 말해야 합니다.</p>
 
         <h2 id="주장하지-않는-것">이 글이 주장하지 않는 것</h2>
         <ul>
           <li><strong>지속 가능한 최대 도착률.</strong> 두 구성 어느 쪽의 최대치도 찾지 못했습니다. 위 표는
-          네 개의 도착률에서 잰 통과·미달이고, 그 사이나 위가 다르게 행동하지 않는다는 증명이 아닙니다.</li>
+          네 개의 도착률에서 잰 통과·미달이고 그 사이나 위가 다르게 행동하지 않는다는 증명이 아닙니다.</li>
           <li><strong>505초보다 짧은 창에 대한 보장.</strong> 2.31 req/s에서 통과한 실행도 마지막 101초만 떼어
           보면 p99이 141.7 ms로 목표를 넘습니다.</li>
-          <li><strong>경쟁 테넌트의 도착 패턴을 바꿨을 때의 결과.</strong> 단마다 경쟁 요청의 개수는 139건으로
+          <li>경쟁 테넌트의 도착 패턴을 바꿨을 때의 결과. 단마다 경쟁 요청의 개수는 139건으로
           고정했지만 도착 시각표는 고정하지 못했습니다. 단을 가로지르는 비교는 도착률 변화와 스케줄 변화가
           섞여 있습니다.</li>
-          <li><strong>배치 상한이 아니라 토폴로지가 원인이라는 것.</strong> 분할하면 엔진당 동시 처리 상한도
+          <li>배치 상한이 아니라 토폴로지가 원인이라는 것. 분할하면 엔진당 동시 처리 상한도
           64에서 32로 함께 줄어듭니다. 둘을 분리하는 실험은 하지 않았습니다.</li>
-          <li><strong>139 ms가 상업적으로 의미 있는 값이라는 것.</strong> 기준선의 두 배일 뿐, 고객
+          <li>139 ms가 상업적으로 의미 있는 값이라는 것. 기준선의 두 배일 뿐, 고객
           요구사항이 아닙니다.</li>
-          <li><strong>다른 카드, 다른 모델, MIG.</strong> A10G 한 장, 모델 하나, 프롬프트 조합 하나입니다.</li>
+          <li>다른 카드, 다른 모델, MIG. A10G 한 장, 모델 하나, 프롬프트 조합 하나입니다.</li>
         </ul>
 
+        <div class="wrapup">
         <h2 id="마치며">마치며</h2>
         <ul>
           <li><strong>고정된 작업량을 전부 끝낸 실험은 용량을 재지 못합니다.</strong> 분자가 상수라서 여유가
           얼마든 같은 숫자가 나옵니다.</li>
           <li><strong>검색 방향은 설계의 일부입니다.</strong> 기준과 판정과 정지 규칙이 전부 옳아도, 답이 있을
           수 없는 자리에서 시작하면 답이 안 나옵니다. 그리고 그건 빌리기 전에 알 수 있었습니다.</li>
-          <li><strong>가드를 고정하는 것과 그 가드를 읽는 코드를 고정하는 것은 다른 일입니다.</strong> 종료
-          코드 10은 테스트로 묶여 있었고, 그걸 <code>if</code> 뒤의 <code>$?</code>로 읽는다는 사실은 묶여 있지
+          <li>가드를 고정하는 것과 그 가드를 읽는 코드를 고정하는 것은 다른 일입니다. 종료
+          코드 10은 테스트로 묶여 있었고 그걸 <code>if</code> 뒤의 <code>$?</code>로 읽는다는 사실은 묶여 있지
           않았습니다.</li>
-          <li><strong>결과는 나왔습니다.</strong> 이 경쟁 부하에서 분할 구성은 2.31 req/s까지 139 ms를 지키고,
+          <li>결과는 나왔습니다. 이 경쟁 부하에서 분할 구성은 2.31 req/s까지 139 ms를 지키고
           통짜 구성은 잰 어떤 부하에서도 지키지 못합니다. 대신 경쟁 테넌트의 꼬리가 네 배가 됩니다.</li>
         </ul>
-        <p>측정 도구를 직접 만들어 쓰신다면 <strong>일부러 망가뜨려서 빨간불이 나는지부터 확인해 보시길</strong>
-        권합니다. 이 프로젝트에서 가장 비쌌던 결함은 전부 <strong>있고, 쓰인 자리에서는 옳고, 정작 필요한
-        자리에서 조회되지 않는 가드</strong>였습니다.</p>
+        <p>측정 도구를 직접 만들어 쓰신다면 일부러 망가뜨려서 빨간불이 나는지부터 확인해 보시길
+        권합니다. 이 프로젝트에서 가장 비쌌던 결함은 전부 있고 쓰인 자리에서는 옳고 정작 필요한
+        자리에서 조회되지 않는 가드였습니다.</p>
         <p>읽어 주셔서 감사합니다.</p>
+
+              </div>
 
       </article>
     </main>
@@ -388,7 +391,7 @@ if [ "$verdict_code" -eq 0 ]; then ...
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c03cb004ee"></script>
+  <script src="../assets/content.js?v=c8da970e8b"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
