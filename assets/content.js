@@ -260,6 +260,30 @@
           tags: ["Social Polling Platform", "Postgres", "Backend", "Method"]
         },
         {
+          title: "A Go Benchmark Harness Opened 884 TCP Connections for 884 Rejections",
+          url: "writing/every-rejection-opened-a-new-connection.html",
+          source: "side", sourceLabel: "Personal project",
+          title_ko: "Go 벤치 Harness가 거부 응답 884건에 TCP Connection 884개를 열었습니다",
+          desc_ko: "429 응답의 Body를 읽지 않고 닫아서 실제 런이 쓰는 pooled 모드가 요청 하나에 Connection 하나를 열고 있었습니다. 읽어 비우게 고치자 22개가 됐습니다. Pool의 효과를 보여 준 431 → 6은 거부가 0건인 트레이스에서 잰 숫자였습니다. 한국어와 일본어로도 읽을 수 있습니다.",
+          title_ja: "Go ベンチ Harness が拒否応答884件に TCP Connection を884本開きました",
+          desc_ja: "429 応答の Body を読まずに閉じていたため、実際のランが使う pooled モードが要求1件ごとに Connection を1本開いていました。読み切るように直すと22本になりました。Pool の効果を示した 431 → 6 は、拒否が0件のトレースで測った数字でした。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "The harness closed 429 responses without reading their bodies, so the pooled mode real runs use opened one connection per request. Draining them brought it to 22. The 431 → 6 figure that showed the pool working had been measured on a trace with zero rejections. Also in Korean and Japanese.",
+          tags: ["GPUaaS Control Plane", "Performance", "Method"]
+        },
+        {
+          title: "An Operator Green in Every Test Crashed Six Times on EKS",
+          url: "writing/the-dependency-only-the-tests-installed.html",
+          source: "side", sourceLabel: "Personal project",
+          title_ko: "테스트에서 늘 초록이던 Operator가 EKS에서 6번 죽었습니다",
+          desc_ko: "Kueue CRD를 테스트 환경 셋은 각자 설치했고 GitOps 배포 경로만 설치하지 않았습니다. 그래서 Operator의 시작 실패 분기는 테스트에서 한 번도 실행되지 않았습니다. 손으로 CRD를 넣어 원인은 확인했고 GitOps로 고친 경로는 확인하지 않았습니다. 한국어와 일본어로도 읽을 수 있습니다.",
+          title_ja: "テストでは常に緑だった Operator が EKS で6回落ちました",
+          desc_ja: "Kueue CRD をテスト環境の3つはそれぞれ入れていて、GitOps のデプロイ経路だけが入れていませんでした。そのため Operator の起動失敗の分岐はテストで一度も実行されませんでした。CRD を手で入れて原因は確かめましたが、GitOps で直した経路は確かめていません。",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "Three test environments each installed the Kueue CRDs and the GitOps deployment path was the only one that did not, so the operator's start-up failure branch never ran in a test. Installing the CRDs by hand confirmed the cause; the GitOps fix was not confirmed. Also in Korean and Japanese.",
+          tags: ["GPUaaS Control Plane", "Kubernetes", "Reliability", "Method"]
+        },
+        {
           title: "Splitting One Card Meets a Latency Target the Shared Engine Never Does",
           url: "writing/the-ladder-that-could-not-be-climbed.html",
           source: "side", sourceLabel: "Personal project",
