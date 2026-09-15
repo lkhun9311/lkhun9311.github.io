@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Go ベンチ Harness が拒否応答884件に TCP Connection を884本開きました | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/every-rejection-opened-a-new-connection.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/every-rejection-opened-a-new-connection.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/every-rejection-opened-a-new-connection.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/every-rejection-opened-a-new-connection.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="Go ベンチ Harness が拒否応答884件に TCP Connection を884本開きました" />
+  <meta property="og:description" content="200 以外の応答の Body を読まずに閉じていたため、実際のランが使う pooled モードが要求1件ごとに Connection を1本開いていました。読み切るように直すと22本になりました。Pool の効果を示した 431 → 6 は、拒否が0件のトレースで測った数字でした。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/every-rejection-opened-a-new-connection.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Go ベンチ Harness が拒否応答884件に TCP Connection を884本開きました" />
+  <meta name="twitter:description" content="200 以外の応答の Body を読まずに閉じていたため、実際のランが使う pooled モードが要求1件ごとに Connection を1本開いていました。読み切るように直すと22本になりました。Pool の効果を示した 431 → 6 は、拒否が0件のトレースで測った数字でした。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="200 以外の応答の Body を読まずに閉じていたため、実際のランが使う pooled モードが要求1件ごとに Connection を1本開いていました。読み切るように直すと22本になりました。Pool の効果を示した 431 → 6 は、拒否が0件のトレースで測った数字でした。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"every-rejection-opened-a-new-connection.html","ko":"every-rejection-opened-a-new-connection.ko.html","ja":"every-rejection-opened-a-new-connection.ja.html"}'>
+          <option value="ja" selected>日本語</option>
+          <option value="en">English</option>
+          <option value="ko">한국어</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ戻る</a>
+        <div class="article-meta"><span class="source-tag side notranslate">個人プロジェクト</span><a class="project-tag notranslate" href="../writing/index.html?tag=GPUaaS%20Control%20Plane">#GPUaaS コントロールプレーン</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>Go ベンチ Harness が拒否応答884件に TCP Connection を884本開きました<br><span class="h1-sub">429 応答の Body を読まずに閉じたため、Connection を一度も再利用できませんでした。</span></h1>
+        <p class="article-date">2026年9月</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="every-rejection-opened-a-new-connection"></aside>
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#想定読者">この記事の想定読者</a></li>
+            <li><a href="#内容">どんな内容ですか</a></li>
+            <li><a href="#構成">どんな構成ですか</a></li>
+            <li><a href="#思い込み">最初は Connection Pool がすでに検証済みだと思っていました</a></li>
+            <li><a href="#結論">結論から申し上げます</a></li>
+            <li><a href="#body">Body を読まずに閉じると Connection は Pool に戻りません</a></li>
+            <li><a href="#本経路">拒否は例外ではなく、この Harness が最も多く通る経路です</a></li>
+            <li><a href="#drain-only"><code>drain-only</code> が別にある理由</a></li>
+            <li><a href="#コメント">コメントに証拠の範囲を書きました</a></li>
+            <li><a href="#同じ形">同じ日に出た欠陥4件が同じ形でした</a></li>
+            <li><a href="#主張しないこと">この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
+          </ul>
+        </nav>
+      <article class="article-body">
+
+        <h2 id="想定読者">この記事の想定読者</h2>
+        <ul>
+          <li>Go の <code>net/http</code> クライアントで負荷生成器やベンチ Harness を作っている方</li>
+          <li>429 のような拒否応答が多く出るシステム(Rate Limit、入場制御)を測っている方</li>
+          <li>コードコメントや文書に測定値を根拠として書いている方</li>
+        </ul>
+
+        <h2 id="内容">どんな内容ですか</h2>
+        <p>2026年8月15日にブランチを上げると、プッシュフックが codex と Claude のレビューを回し、指摘が10件出ました。そのうち2件が
+        測定ツールそのものの欠陥でした。この記事はそのうちの1つを扱います。</p>
+        <p>指摘は短いものでした。ベンチ Harness の <code>Send</code> が、200 以外の応答の Body を読まずに返しているというものです。
+        同じファイルのコメントには、Connection Pool に効果がある根拠として <code>431 → 6</code> という測定値が書かれていました。
+        私はその根拠を開いてみましたが、根拠が測ったトレースには拒否応答が1件もありませんでした。</p>
+        <p>先に留保をひとつ置きます。この記事が測ったのは<strong>サーバーが受け付けた TCP Connection の本数</strong>です。新たに生じた
+        Handshake が Harness の報告する遅延をどれだけ膨らませたかは測っていません。残りの留保は「この記事が主張しないこと」に
+        まとめました。</p>
+
+        <h2 id="構成">どんな構成ですか</h2>
+        <p>個人プロジェクトとして作っている GPUaaS プラットフォームには LLM の要求を受ける Gateway があり、その中に入場ガードが
+        あります。ガードは要求の Body を読んで送り先の Backend を決め、vLLM へプロキシする手前に立ちます。ガードは
+        <strong>拒否することで容量を守ります。</strong>ガードが受け付けないと決めた要求は 429 で返ります。</p>
+        <p>ベンチ Harness は1つの要求トレースを、ガードを切った設定、負荷を見ない固定上限、KV Cache の圧力を見るガードに
+        まったく同じように再生し、Premium 要求の TTFT p99 を比べます。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="rej1-t rej1-d" class="figure-svg">
+            <title id="rej1-t">Harness と入場ガード</title>
+            <desc id="rej1-d">左はベンチ Harness です。トレースを再生する Go http.Client と、その中の Connection Pool があります。TCP Connection の矢印が中央の Gateway の入場ガードへ向かいます。ガードを通った要求は右の vLLM へプロキシされて推論されます。拒否された要求は 429 応答になり、下側の矢印で Harness へ戻ります。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="110" y="20" font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="600">ベンチ Harness</text>
+              <rect x="10" y="32" width="200" height="120" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="110" y="58" font-size="12" fill="#8a8a8a" text-anchor="middle">トレース再生</text>
+              <text x="110" y="84" font-size="12" fill="#4f5bd5" text-anchor="middle">Go http.Client</text>
+              <rect x="40" y="100" width="140" height="36" rx="6" fill="#e7e9f9"/>
+              <text x="110" y="123" font-size="12" fill="#4f5bd5" text-anchor="middle">Connection Pool</text>
+              <path d="M214 70 H 316" fill="none" stroke="#4f5bd5" stroke-width="1.6" marker-end="url(#rej-a)"/>
+              <text x="265" y="62" font-size="12" fill="#4f5bd5" text-anchor="middle">TCP Connection</text>
+              <text x="410" y="20" font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="600">Gateway</text>
+              <rect x="322" y="32" width="176" height="120" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="410" y="58" font-size="12" fill="#4a4a4a" text-anchor="middle">入場ガード</text>
+              <text x="410" y="84" font-size="12" fill="#4a4a4a" text-anchor="middle">通過</text>
+              <text x="410" y="132" font-size="12" fill="#d62976" text-anchor="middle">拒否</text>
+              <path d="M502 80 H 582" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#rej-b)"/>
+              <text x="542" y="72" font-size="12" fill="#8a8a8a" text-anchor="middle">プロキシ</text>
+              <text x="648" y="20" font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="600">vLLM</text>
+              <rect x="588" y="56" width="120" height="48" rx="8" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="648" y="85" font-size="12" fill="#4a4a4a" text-anchor="middle">推論</text>
+              <path d="M380 128 V 176 H 110 V 158" fill="none" stroke="#d62976" stroke-width="1.6" marker-end="url(#rej-c)"/>
+              <text x="245" y="192" font-size="12" fill="#d62976" text-anchor="middle">429</text>
+            </g>
+            <defs>
+              <marker id="rej-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#4f5bd5"/>
+              </marker>
+              <marker id="rej-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+              <marker id="rej-c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>Harness が測る遅延には、Connection を新しく開く時間も含まれます。</figcaption>
+        </figure>
+
+        <p>この記事の Connection 数は、ガードではなく Harness がつながったサーバー側で <code>ConnState</code> を使って数えました。</p>
+
+        <h2 id="思い込み">最初は Connection Pool がすでに検証済みだと思っていました</h2>
+        <p><code>Send</code> と同じファイルのコメントは、Pool の効果を数字で語っていました。サーバー側で <code>ConnState</code> を使って
+        受け付けた Connection を数えると、Pool を入れる前が431本、入れた後が6本だったという記録です。8月8日に kind で Harness を
+        Gateway なしで Stub サーバーに直接つなぎ、要求884件のトレースを <code>legacy</code> と <code>pooled</code> で再生して測った値です
+        (<code>hack/m5b-gateway-path-evidence.log</code>)。テストも通っていました。数字があり、方法があり、テストが緑なので、
+        検証済みだと読みました。</p>
+        <p>その数字を出した記録を開いてみると、<strong>すべての Arm で 429 が0件</strong>でした。<code>done == total</code>、つまり送った要求が
+        すべて完了していました。<code>431 → 6</code> は拒否が一度もないトレースで測った値で、レビューが指摘した経路を覆ったことは
+        ありませんでした。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 150" role="img" aria-labelledby="rej2-t rej2-d" class="figure-svg">
+            <title id="rej2-t">根拠が覆った経路と覆わなかった経路</title>
+            <desc id="rej2-d">2行2列の格子です。列は 200 応答の経路と 429 応答の経路です。1行目は 431 → 6 を測ったトレースで、200 応答の経路の欄がすべて埋まり、429 応答の経路の欄は0件です。2行目はレビューが指摘した欠陥で、200 応答の経路の欄は空で、429 応答の経路の欄が埋まっています。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="360" y="22" font-size="12" fill="#8a8a8a" text-anchor="middle" font-weight="600">200 応答の経路</text>
+              <text x="590" y="22" font-size="12" fill="#8a8a8a" text-anchor="middle" font-weight="600">429 応答の経路</text>
+              <text x="10" y="64" font-size="12" fill="#4a4a4a">431 → 6 を測ったトレース</text>
+              <rect x="250" y="44" width="220" height="30" rx="5" fill="#cfd3f3"/>
+              <text x="360" y="64" font-size="12" fill="#4f5bd5" text-anchor="middle">すべて</text>
+              <rect x="480" y="44" width="220" height="30" rx="5" fill="none" stroke="#e5e5e5" stroke-width="1.2"/>
+              <text x="590" y="64" font-size="12" fill="#8a8a8a" text-anchor="middle">0件</text>
+              <text x="10" y="114" font-size="12" fill="#4a4a4a">レビューが指摘した欠陥</text>
+              <rect x="250" y="94" width="220" height="30" rx="5" fill="none" stroke="#e5e5e5" stroke-width="1.2"/>
+              <rect x="480" y="94" width="220" height="30" rx="5" fill="#f3cfe0"/>
+              <text x="590" y="114" font-size="12" fill="#d62976" text-anchor="middle" font-weight="600">ここ</text>
+            </g>
+          </svg>
+          <figcaption>根拠は 200 の経路だけを測り、欠陥は 429 の経路にありました。2つの欄は一度も重なっていません。</figcaption>
+        </figure>
+
+        <h2 id="結論">結論から申し上げます</h2>
+        <p>同じ方法(サーバー側の <code>ConnState</code> による計数)で、要求884件がすべて拒否されるトレースを同時実行数20で測り直しました。
+        要求数は <code>431 → 6</code> のトレースと同じですが、コミットメッセージは2つを別のトレースとして記しています。</p>
+        <table>
+          <caption class="sr-only">要求884件がすべて拒否されるトレースで、モードごとにサーバーが受け付けた Connection 数の修正前と修正後。</caption>
+          <thead><tr><th scope="col">モード</th><th scope="col">修正前</th><th scope="col">修正後</th></tr></thead>
+          <tbody>
+            <tr><td><code>legacy</code></td><td>884</td><td>884</td></tr>
+            <tr><td><code>drain-only</code></td><td>884</td><td>357</td></tr>
+            <tr><td><code>pooled</code>(実際のランが使うモード)</td><td>884</td><td><strong>22</strong></td></tr>
+          </tbody>
+        </table>
+        <p>実際のランが使う <code>pooled</code> モードが、<strong>要求1件ごとに Connection を1本</strong>開いていました。Pool を有効にしていても
+        <code>legacy</code> と区別がつきませんでした。拒否のないトレースの「直す前」の値431よりも多かったのです。200 以外の応答の
+        Body を読み切るように直すと22本になりました。直す前との差は40倍です。</p>
+        <p>測定条件もあわせて書きます。</p>
+        <table>
+          <caption class="sr-only">拒否トレースの測定条件。</caption>
+          <thead><tr><th scope="col">項目</th><th scope="col">値</th></tr></thead>
+          <tbody>
+            <tr><td>トレース</td><td>要求884件、すべて拒否応答</td></tr>
+            <tr><td>同時実行数</td><td>20</td></tr>
+            <tr><td>数えたもの</td><td>サーバーが受け付けた Connection 数(<code>ConnState</code>)</td></tr>
+            <tr><td>繰り返し</td><td>記録に繰り返し回数がありません</td></tr>
+          </tbody>
+        </table>
+        <p>884件がすべて拒否応答だったことは、修正コミット <code>d450877</code> のメッセージと、同じコミットが入れたコードコメントが
+        このトレースを「an 884-rejection trace」と書いていることから取りました。</p>
+        <p>モード名はこの修正より前からありました。3つのモードは8月8日のコミット <code>651140c</code> で生まれ、<code>431 → 6</code> を
+        測ったログもすでに3つの名前で回っていました。修正前のコードで Body を読み切る場所は 200 応答を読む <code>readStream</code>
+        だけで、200 以外の応答は読み切らずに返していました。そのため拒否だけが出るトレースでは <code>drain-only</code> も読み切る応答が
+        なく、<code>legacy</code> と同じ884になりました。</p>
+
+        <h2 id="body">Body を読まずに閉じると Connection は Pool に戻りません</h2>
+        <p>Go の HTTP Transport は、応答の Body を最後まで読まないまま <code>Close()</code> が呼ばれると、その Connection を再利用
+        できません。すると次の要求は TCP Handshake からやり直します。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 170" role="img" aria-labelledby="rej3-t rej3-d" class="figure-svg">
+            <title id="rej3-t">200 応答と読まれなかった 429 応答</title>
+            <desc id="rej3-d">上の行は 200 応答です。要求、Body を最後まで読む、Close、Pool に戻る、次の要求がそのまま使う、が矢印でつながっています。下の行は修正前の 429 応答です。要求、Body を読まない、Close、捨てられる、とつながり、捨てられるから、次の要求は TCP Handshake からやり直すという欄へ矢印が下りています。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="10" y="44" font-size="12" fill="#4f5bd5" font-weight="600">200 応答</text>
+              <rect x="110" y="26" width="60" height="28" rx="6" fill="none" stroke="#4f5bd5" stroke-width="1.4"/>
+              <text x="140" y="45" font-size="12" fill="#4f5bd5" text-anchor="middle">要求</text>
+              <path d="M172 40 H 188" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rej-b)"/>
+              <rect x="192" y="26" width="150" height="28" rx="6" fill="none" stroke="#4f5bd5" stroke-width="1.4"/>
+              <text x="267" y="45" font-size="12" fill="#4f5bd5" text-anchor="middle">Body を最後まで読む</text>
+              <path d="M344 40 H 360" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rej-b)"/>
+              <rect x="364" y="26" width="60" height="28" rx="6" fill="none" stroke="#4f5bd5" stroke-width="1.4"/>
+              <text x="394" y="45" font-size="12" fill="#4f5bd5" text-anchor="middle">Close</text>
+              <path d="M426 40 H 442" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rej-b)"/>
+              <rect x="446" y="26" width="110" height="28" rx="6" fill="#e7e9f9"/>
+              <text x="501" y="45" font-size="12" fill="#4f5bd5" text-anchor="middle">Pool に戻る</text>
+              <path d="M558 40 H 574" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rej-b)"/>
+              <text x="580" y="45" font-size="12" fill="#4f5bd5">次の要求が再利用</text>
+              <text x="10" y="100" font-size="12" fill="#d62976" font-weight="600">429 応答</text>
+              <text x="10" y="118" font-size="12" fill="#8a8a8a">(修正前)</text>
+              <rect x="110" y="82" width="60" height="28" rx="6" fill="none" stroke="#d62976" stroke-width="1.4"/>
+              <text x="140" y="101" font-size="12" fill="#d62976" text-anchor="middle">要求</text>
+              <path d="M172 96 H 188" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rej-b)"/>
+              <rect x="192" y="82" width="150" height="28" rx="6" fill="none" stroke="#d62976" stroke-width="1.4"/>
+              <text x="267" y="101" font-size="12" fill="#d62976" text-anchor="middle">Body を読まない</text>
+              <path d="M344 96 H 360" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rej-b)"/>
+              <rect x="364" y="82" width="60" height="28" rx="6" fill="none" stroke="#d62976" stroke-width="1.4"/>
+              <text x="394" y="101" font-size="12" fill="#d62976" text-anchor="middle">Close</text>
+              <path d="M426 96 H 442" fill="none" stroke="#c9c9c9" stroke-width="1.4" marker-end="url(#rej-b)"/>
+              <rect x="446" y="82" width="110" height="28" rx="6" fill="#fbeaf2"/>
+              <text x="501" y="101" font-size="12" fill="#d62976" text-anchor="middle">破棄</text>
+              <path d="M501 112 V 140 H 520" fill="none" stroke="#d62976" stroke-width="1.4" marker-end="url(#rej-c)"/>
+              <text x="526" y="145" font-size="12" fill="#d62976">次の要求は TCP Handshake から</text>
+            </g>
+            <defs>
+              <marker id="rej-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+              <marker id="rej-c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#d62976"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>修正は、200 以外の応答でも Body を最後まで読み切ってから閉じるようにしたものです。</figcaption>
+        </figure>
+
+        <p>修正前後の <code>Send</code> で 200 以外の応答を扱う部分です。どちらもその日のコミットのコードで、修正後のほうはコメントを
+        除きました。<code>resp.Body.Close()</code> はどちらのコードでもこの手前で <code>defer</code> されています。</p>
+<pre data-lang="go"><code>// before: d450877^
+if resp.StatusCode != http.StatusOK {
+	kind := "http"
+	if resp.StatusCode == http.StatusTooManyRequests {
+		kind = "rejected"
+	}
+	return SendResult{HTTPStatus: resp.StatusCode, ErrorKind: kind}
+}
+</code></pre>
+<pre data-lang="go"><code>// after: d450877
+if resp.StatusCode != http.StatusOK {
+	if h.drain {
+		drainForReuse(resp.Body)
+	}
+	kind := "http"
+	if resp.StatusCode == http.StatusTooManyRequests {
+		kind = "rejected"
+	}
+	return SendResult{HTTPStatus: resp.StatusCode, ErrorKind: kind}
+}
+</code></pre>
+        <p><code>drainForReuse</code> は Body を最大 8KB まで読んで捨てます。その範囲で終わりに届かなければ、その Connection 1本だけが
+        再利用をあきらめます。</p>
+        <p>問題は、この Handshake のコストが<strong>測定対象ではなく測定ツールの側で</strong>生じることです。そしてそのコストは Harness が
+        報告する遅延の中に入ります。ガードが拒否した要求の遅延にも、ツールが Connection を新しく開く時間が混ざります。</p>
+
+        <h2 id="本経路">拒否は例外ではなく、この Harness が最も多く通る経路です</h2>
+        <p>この Harness にとって 429 は例外的な状況ではありません。入場ガードは拒否することで容量を守り、<strong>ガードを実際に働かせる
+        ランはほとんどがこの経路を通ります。</strong></p>
+        <p>そのためこの欠陥は、ガードが多く拒否するランほど多くの要求にかかります。反対に、Pool の効果を示した根拠は、ガードが
+        一度も拒否しなかったトレースから出ていました。</p>
+
+        <h2 id="drain-only"><code>drain-only</code> が別にある理由</h2>
+        <p>表で <code>drain-only</code> は357本です。このモードは、Body を読み切る修正と Pool の設定を切り離し、それぞれが Connection 数を
+        どれだけ減らすかを見るために置いたものです。ひとまとめに「884 → 22」とだけ書くと、どちらがどれだけ減らしたかが
+        残りません。</p>
+        <p>3つのモードの定義は <code>internal/bench/httpsender.go</code> の <code>SenderConnForMode</code> にあります。<code>legacy</code> は
+        Transport を別に持たず Go の既定値(Host あたりのアイドル Connection 2本)を使い、Body を読み切りません。<code>drain-only</code> は
+        同じ既定の Transport で Body の読み切りだけを有効にします。<code>pooled</code> は Host あたりのアイドル Connection の上限を
+        トレースから導き(到着率 × 要求の Timeout、トレースの長さを超えず2を下回らない)、全体のアイドル上限をなくしたうえで
+        Body の読み切りを有効にします。</p>
+        <p>そのため <code>drain-only</code> と <code>pooled</code> は Body の読み切りが同じで、アイドル Connection の上限だけが違います。この
+        トレースで <code>pooled</code> の上限がいくつだったか、何回測ったかは記録にないので、357と22の差を上限の1つ1つに割り振る
+        ことはしません。</p>
+
+        <h2 id="コメント">コメントに証拠の範囲を書きました</h2>
+        <p>数字を直すだけでは同じことが繰り返されます。次に誰かが <code>431 → 6</code> をまた引用するかもしれないからです。そこで
+        <code>drainForReuse</code> のコメントにこの文を入れました(コミット <code>d450877</code>)。</p>
+        <blockquote><p><code>Read that trace's scope before quoting those numbers: every arm in it recorded ZERO rejections, so they describe the all-200 path only.</code></p></blockquote>
+        <p>(「この数字を引用する前に、そのトレースの範囲を読め。その中のすべての Arm が拒否0件だったので、この数字はすべてが 200 の経路についてしか語らない。」)</p>
+        <p><code>431 → 6</code> は私が書いた証拠でした。今回その数字自体を測り直してはいません。問題はその数字を<strong>別の経路の
+        根拠として</strong>読んだことにありました。</p>
+        <p><code>431 → 6</code> はコードコメントの外にも載っています。8月8日にコミットした証拠文書 <code>hack/m5b-gateway-path.md</code> が
+        「431 connections down to 6, a factor of 72」と書いています。8月15日の修正はこの文書に触れておらず、その後も変わって
+        いないので、範囲を書いた場所はコードコメントとコミットメッセージだけです。公開した記事(<code>lkhun9311.github.io</code>)
+        にはこの数字はありません。</p>
+
+        <h2 id="同じ形">同じ日に出た欠陥4件が同じ形でした</h2>
+        <p>その日に見つけた欠陥4件を並べると、1文にまとまります。<strong>証拠が、測ろうとした経路を覆っていませんでした。</strong></p>
+        <table>
+          <caption class="sr-only">同じ日に見つけた欠陥4件と、それぞれの証拠が覆った範囲と覆わなかった範囲。</caption>
+          <thead><tr><th scope="col">欠陥</th><th scope="col">証拠が覆ったもの</th><th scope="col">覆わなかったもの</th></tr></thead>
+          <tbody>
+            <tr><td><code>watchstream</code> の呼び出し元がない</td><td>コンポーネント単体テスト</td><td>本番の配線</td></tr>
+            <tr><td><code>decodeRunRecord</code> が後ろに付いたデータを無視</td><td>未知のフィールドとスキーマ</td><td>文書の後ろのバイト</td></tr>
+            <tr><td><code>reportRun</code> が拒否した結果を stdout に出力</td><td>終了コード</td><td>すでにキャプチャされた stdout</td></tr>
+            <tr><td>HTTP 送信が 200 以外の応答を読まない</td><td>200 トレースの 431 → 6</td><td>429 の経路(884 → 884)</td></tr>
+          </tbody>
+        </table>
+        <p>4件の欠陥にはどれもテストがあり、通っていました。欠けていたのはテストではなく、<strong>テストが覆う範囲と主張する範囲が
+        同じかを確かめる習慣</strong>でした。</p>
+        <p>3行目も短く書いておきます。<code>reportRun</code> は読み戻しがレコードを拒否しても、結果と台帳をすべて stdout に出力したあとで
+        stderr に「上のものは引用するな」と書いていました。シェルのリダイレクトがすでに持っていったものを、読み手に見なかった
+        ことにしてくれと求めていたわけです。出力してから取り消すのではなく、検証に失敗したらすべてを stderr に送るように変えました。
+        検証に失敗した実行で、stdout は929バイトでイベント0行、stderr は2,696バイトでイベント13行になりました。</p>
+        <p>1行目は同じ日の先の作業で出た欠陥です。<code>watchstream.go</code> には基準の List を受け取り、その resourceVersion から watch を
+        続けるコードとテストがありましたが、本番コードにその関数(<code>startWatchStream</code>)を呼ぶ場所がありませんでした。実際に
+        動いていたのは、基準の List なしに「今」から watch をかける <code>collector.watch</code> でした。</p>
+
+        <h2 id="主張しないこと">この記事が主張しないこと</h2>
+        <ul>
+          <li><strong>遅延がどれだけ膨らんだかは測っていません。</strong>Handshake が報告された遅延に入るというのは動作原理からの予測で、
+          修正前後の遅延を並べて測ってはいません。</li>
+          <li><strong>繰り返し回数は分かりません。</strong>コミット <code>d450877</code> のメッセージにはモードごとの修正前・後の値が1組だけあり、
+          同じコミットのコードコメントと日誌2つにも繰り返し回数はありません。そのランの生ログはリポジトリになく、セッションの記録も
+          残っていません。</li>
+          <li>すでに報告した遅延の数字が誤っているとは言えません。この欠陥があった間に出した数字のうち、どれが拒否の多いランだったかは
+          この記事の根拠からは分かりません。</li>
+          <li>22本が適切な値だとは言えません。同時実行数20という1つの条件で数えた本数です。別の同時実行数や別の拒否率では測って
+          いません。</li>
+          <li>拒否トレースのランの生データはありません。884件がすべて拒否だったことと表の6つの値は、コミットメッセージとコード
+          コメントから取りました。そのランの生ログ、トレースファイル、拒否を返したサーバーの設定はリポジトリにありません。</li>
+          <li>Go のバージョンに依存しないとは言えません。Transport の再利用条件を Go のバージョンごとに確かめてはいません。</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="おわりに">おわりに</h2>
+        <ul>
+          <li><strong>200 応答しかないトレースでは、拒否経路の Connection 再利用は測れません。</strong><code>431 → 6</code> は拒否が0件の
+          トレースで測った数字でした。</li>
+          <li><strong>Go のクライアントは、200 以外の応答の Body も最後まで読んで閉じてはじめて Connection を再利用します。</strong>読まな
+          かったとき、<code>pooled</code> モードは要求884件に Connection を884本開きました。読むように直した後は22本になりました。</li>
+          <li>入場ガードを測るツールにとって、拒否は本来の経路です。ガードが多く拒否するランほど、ツールの欠陥がより多くの要求に
+          かかります。</li>
+          <li>数字を根拠として書くときは、その数字を測ったトレースの範囲を横に一緒に書きます。</li>
+        </ul>
+        <p>測定ツールに根拠の数字を書いているなら、その数字を測った入力に今測ろうとしている経路が入っていたかを一度開いて
+        確かめることをおすすめします。通るテストと合っている数字があっても、2つが同じ経路を見たことはないかもしれません。</p>
+        <p>お読みいただきありがとうございました。</p>
+
+              </div>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=5f3b0c0ef8"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
