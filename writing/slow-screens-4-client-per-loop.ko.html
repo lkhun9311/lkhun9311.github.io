@@ -270,7 +270,7 @@
                 <rect x="378" y="128" width="66" height="24" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
                 <text x="411" y="144" fill="#18121d">조회</text>
               </g>
-              <text x="460" y="146" font-size="12" fill="#4f5bd5" font-weight="700">인증 1회 · 토큰 재사용</text>
+              <text x="460" y="146" font-size="12" fill="#4f5bd5" font-weight="700">인증 1회 · Token 재사용</text>
             </svg>
           </div>
           <figcaption>프로젝트 4개일 때를 그린 것입니다. 분홍색 칸이 인증 왕복입니다.
@@ -297,7 +297,7 @@ final var client = ClientUtil.serviceClient(
               .withReadTimeout(...));
 
 for (String projectId : projects) {
-    var quota = client.compute().quotaSets().getDetail(projectId);   // 토큰 재사용
+    var quota = client.compute().quotaSets().getDetail(projectId);   // Token 재사용
     var net   = client.networking().quotas().detail(projectId);
     ...
 }</code></pre>
@@ -311,12 +311,12 @@ for (String projectId : projects) {
         <p>그리고 <strong>‘1회’에도 조건이 붙습니다.</strong> 반복문이 도는 동안 토큰이 만료되면
         그다음 호출은 거부됩니다. 그때 라이브러리가 스스로 다시 인증하고 재시도할지는
         쓰는 버전과 커넥터에 달렸고 이 글은 확인하지 않았습니다.
-        토큰 유효 기간이 이 반복문이 도는 시간보다 훨씬 길어서 문제가 드러나지 않았을 뿐입니다.</p>
+        Token 유효 기간이 이 반복문이 도는 시간보다 훨씬 길어서 문제가 드러나지 않았을 뿐입니다.</p>
 
         <p>요청 사이에 Client를 들고 있으면 인증을 더 줄일 수 있습니다.
         다만 그쪽이 더 어렵습니다. 이 계열 Client는 현재 session을 Thread에 매어 두는
         구조라, 하나를 여러 요청 Thread가 나눠 쓰면 session이 섞이거나 비는 일이 생길 수 있습니다.
-        토큰 만료도 그때부터는 직접 다뤄야 합니다. 이 수정은 거기까지 가지 않았습니다.</p>
+        Token 만료도 그때부터는 직접 다뤄야 합니다. 이 수정은 거기까지 가지 않았습니다.</p>
 
         <p>Timeout을 이 Client에만 건 것도 일부러입니다. 전역 설정에 걸면
         정상적으로 오래 걸리는 다른 호출까지 끊깁니다. 느린 화면을 고치려다 멀쩡한 기능을
@@ -462,7 +462,7 @@ for (String projectId : projects) {
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c8da970e8b"></script>
+  <script src="../assets/content.js?v=d7cabca9c3"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

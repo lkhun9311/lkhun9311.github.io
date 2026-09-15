@@ -118,10 +118,10 @@
         <h2 id="80퍼센트는-조기-경보가-아니다">80%는 조기 경보가 아닙니다<a class="anchor" href="#80퍼센트는-조기-경보가-아니다" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>월 예산 상한은 30달러로 뒀습니다. 기본값으로 붙는 알림 임계는 예산의 80%입니다. 그런데 이 프로젝트의 지출은
-        <strong>세 시간짜리 버스트로 도착합니다.</strong> 유료 GPU 세션 하나가 시작되고 끝나는 데 한나절이면
+        <strong>세 시간짜리 버스트로 도착합니다.</strong> 유료 GPU Session 하나가 시작되고 끝나는 데 한나절이면
         충분하고 월 단위 임계는 그 세션이 이미 끝난 뒤에야 무언가를 말합니다.</p>
 
-        <p>그래서 조기 경보를 <strong>10%</strong>에 뒀습니다. 30달러 예산에서 3달러, 대략 유료 세션 한 번의 값입니다.
+        <p>그래서 조기 경보를 <strong>10%</strong>에 뒀습니다. 30달러 예산에서 3달러, 대략 유료 Session 한 번의 값입니다.
         그러면 그 달의 첫 세션이 얼마를 썼는지 보고하고 다음 세션은 아직 재고할 수 있습니다.</p>
 
         <p>임계값을 고르는 기준은 "몇 퍼센트가 적당한가"가 아니라 "이 임계가 울렸을 때 아직 바꿀 수 있는
@@ -163,7 +163,7 @@
 
         <h2 id="추정에서-통째로-빠진-항목">추정에서 통째로 빠져 있던 항목<a class="anchor" href="#추정에서-통째로-빠진-항목" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>2026-09-03, 세 번째 유료 세션 뒤에 그 알람이 울렸습니다.</p>
+        <p>2026-09-03, 세 번째 유료 Session 뒤에 그 알람이 울렸습니다.</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
@@ -183,8 +183,8 @@
         세고 있었지만 바이트가 NAT를 지나가는 비용은 추정에 아예 없었습니다.</p>
 
         <p>이게 왜 안 보였는지는 명확합니다. 제 추정은 제가 켠 것의 목록이었습니다. GPU Instance,
-        EKS 컨트롤 플레인, NAT 게이트웨이. 시간당 단가가 있는 것들입니다. 그런데 NAT는 시간당 요금과
-        처리한 바이트당 요금을 따로 받습니다. 컨테이너 이미지를 당길 때마다 그 항목이 자랍니다.
+        EKS 컨트롤 플레인, NAT Gateway. 시간당 단가가 있는 것들입니다. 그런데 NAT는 시간당 요금과
+        처리한 바이트당 요금을 따로 받습니다. Container 이미지를 당길 때마다 그 항목이 자랍니다.
         켠 것을 세는 목록은, 켠 것이 무엇을 하는지는 세지 않습니다.</p>
 
         <figure class="diagram">
@@ -226,13 +226,13 @@
 
         <p>NAT 항목이 보이자 다음 실험의 모양이 바뀌었습니다.</p>
 
-        <p>2026-09-04의 질문은 vLLM 스케줄러 설정에 관한 것이었습니다. 게이트웨이도 쿠버네티스도 필요 없고
+        <p>2026-09-04의 질문은 vLLM Scheduler 설정에 관한 것이었습니다. 게이트웨이도 쿠버네티스도 필요 없고
         Instance 한 대면 됩니다. 그러면 비용의 대부분은 이 한 줄에서 정해집니다.</p>
 
         <blockquote><p>기본 서브넷의 Instance는 공인 IP로 인터넷 게이트웨이를 통해 통신하며
         인바운드 전송은 무료입니다.</p></blockquote>
 
-        <p>그때까지 유료 실행에서는 컨테이너 이미지와 모델 가중치를 내려받았습니다. 콜드 노드 한 대 기준 <strong>약 15.6GB</strong>를 GB당 <strong>$0.059</strong>인 NAT로 내려받고 있었습니다. (첫 세 세션의 NAT 데이터 처리 청구는 합계
+        <p>그때까지 유료 실행에서는 Container 이미지와 모델 가중치를 내려받았습니다. 콜드 Node 한 대 기준 <strong>약 15.6GB</strong>를 GB당 <strong>$0.059</strong>인 NAT로 내려받고 있었습니다. (첫 세 세션의 NAT 데이터 처리 청구는 합계
         약 92GB · $5.43입니다. 세션당 15.6GB 세 번으로는 그 총량이 설명되지 않고 나는 그 차이를
         대조하지 않았습니다.) 퍼블릭 서브넷의 Instance 한 대로 옮기자 그 항목이
         사라졌고 그날 실험은 약 $0.40로 끝났습니다.</p>
@@ -243,15 +243,15 @@
         <figure class="diagram">
           <svg viewBox="0 0 720 216" role="img" aria-labelledby="ng-t ng-d" class="figure-svg">
             <title id="ng-t">같은 바이트가 어느 경로로 나가느냐로 요금이 갈리는 그림</title>
-            <desc id="ng-d">상자가 둘 나란히 있습니다. 왼쪽은 NAT 게이트웨이 경로이고 아래에 처리 요금과 데이터 요금이 적혀 있습니다. 오른쪽은 인터넷 게이트웨이 경로이고 아래에 인바운드 무료와 Instance 한 대라고 적혀 있습니다. 맨 아래에 분홍색으로 같은 15.6GB라고 적혀 있습니다.</desc>
+            <desc id="ng-d">상자가 둘 나란히 있습니다. 왼쪽은 NAT Gateway 경로이고 아래에 처리 요금과 데이터 요금이 적혀 있습니다. 오른쪽은 인터넷 Gateway 경로이고 아래에 인바운드 무료와 Instance 한 대라고 적혀 있습니다. 맨 아래에 분홍색으로 같은 15.6GB라고 적혀 있습니다.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
-              <text x="204" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">NAT 게이트웨이 경로</text>
+              <text x="204" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">NAT Gateway 경로</text>
               <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">시간당 요금 + 처리 바이트 요금</text>
               <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">게이트웨이와 쿠버네티스가 전제</text>
               <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">추정에서 통째로 빠져 있던 항목</text>
               <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
-              <text x="556" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">인터넷 게이트웨이 경로</text>
+              <text x="556" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">인터넷 Gateway 경로</text>
               <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">인바운드 전송 무료</text>
               <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">공인 IP를 가진 Instance 한 대</text>
               <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">같은 실험이 그대로 돌아감</text>
@@ -263,7 +263,7 @@
 
         <h2 id="일부러-실패한-리허설">일부러 실패한 리허설, 20min 5센트<a class="anchor" href="#일부러-실패한-리허설" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>첫 유료 GPU 세션 전에 GPU를 켜지 않는 리허설을 돌렸습니다. 클러스터를 apply 하고 곧바로
+        <p>첫 유료 GPU Session 전에 GPU를 켜지 않는 리허설을 돌렸습니다. 클러스터를 apply 하고 곧바로
         destroy 하는 것입니다. 목적은 성능이 아니라 절차가 끝까지 가는지입니다.</p>
 
         <p>apply가 실패했습니다. 원인은 전날 내가 붙인 서비스 제어 정책이었습니다.</p>
@@ -413,7 +413,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c8da970e8b"></script>
+  <script src="../assets/content.js?v=d7cabca9c3"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

@@ -122,13 +122,13 @@
 
         <h2 id="어떤-화면">어떤 화면인가요?<a class="anchor" href="#어떤-화면" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>통합 모니터링에는 화면이 3개 있습니다. <strong>대시보드 · 물리 노드 · 가상자원.</strong>
+        <p>통합 모니터링에는 화면이 3개 있습니다. <strong>대시보드 · 물리 Node · 가상자원.</strong>
         셋 다 구조 정보는 REST로 받고 실시간 값은 SSE로 받습니다.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 250" role="img" aria-labelledby="mon-t mon-d" class="figure-svg">
             <title id="mon-t">모니터링 화면 3개가 같은 원천에서 값을 읽는 구조</title>
-            <desc id="mon-d">왼쪽에 대시보드·물리 노드·가상자원 세 화면이 세로로 있습니다.
+            <desc id="mon-d">왼쪽에 대시보드·물리 Node·가상자원 세 화면이 세로로 있습니다.
             가운데에 API 서버가 있고 화살표가 두 갈래입니다. 위쪽은 REST로 구조 정보를 받는 길이고
             아래쪽은 SSE로 실시간 값을 받는 길입니다. 오른쪽에는 인프라 API와 시계열 저장소가 있고
             세 화면이 같은 두 원천을 각각 따로 읽는다고 적혀 있습니다.</desc>
@@ -136,7 +136,7 @@
               <rect x="8" y="24" width="140" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
               <text x="78" y="49" font-size="13" fill="#18121d" text-anchor="middle">대시보드</text>
               <rect x="8" y="82" width="140" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
-              <text x="78" y="107" font-size="13" fill="#18121d" text-anchor="middle">물리 노드</text>
+              <text x="78" y="107" font-size="13" fill="#18121d" text-anchor="middle">물리 Node</text>
               <rect x="8" y="140" width="140" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
               <text x="78" y="165" font-size="13" fill="#18121d" text-anchor="middle">가상자원</text>
 
@@ -205,7 +205,7 @@
 <pre data-lang="text"><code>1. REST로 구조 정보를 받는다              약 20ms
 2. EventSource가 연결된다
 3. connection 이벤트를 받는다
-4. 첫 data 이벤트를 받는다                ← 여기까지 6.8초
+4. 첫 data 이벤트를 받는다                ← 여기까지 6.8s
 5. 프런트엔드가 로딩 레이어를 해제한다</code></pre>
 
         <p>일반 HTTP 샘플러는 <strong>1~3까지만 보고 성공으로 끝냅니다.</strong>
@@ -259,7 +259,7 @@
           <thead><tr><th>화면</th><th>전 중앙값</th><th>후 중앙값</th><th>전 p99</th><th>후 p99</th></tr></thead>
           <tbody>
             <tr><td>대시보드</td><td>약 6,776ms</td><td><strong>약 23ms</strong></td><td>약 8,607ms</td><td>약 55ms</td></tr>
-            <tr><td>물리 노드</td><td>약 3,938ms</td><td><strong>약 23ms</strong></td><td>약 5,130ms</td><td>약 43ms</td></tr>
+            <tr><td>물리 Node</td><td>약 3,938ms</td><td><strong>약 23ms</strong></td><td>약 5,130ms</td><td>약 43ms</td></tr>
             <tr><td>가상자원</td><td>약 1,436ms</td><td>약 23ms</td><td>약 1,742ms</td><td>약 37ms</td></tr>
           </tbody>
         </table>
@@ -277,8 +277,8 @@
         <figure class="diagram">
           <svg viewBox="0 0 720 210" role="img" aria-labelledby="ss-t ss-d" class="figure-svg">
             <title id="ss-t">요청 경로에서 계산을 떼어 낸 뒤의 구조</title>
-            <desc id="ss-d">위쪽에 15s마다 도는 Worker가 있고 화살표가 가운데의 스냅샷 상자로 향합니다.
-            아래쪽에 새 연결이 있고 화살표가 같은 스냅샷 상자에서 나와 바로 응답으로 이어집니다.
+            <desc id="ss-d">위쪽에 15s마다 도는 Worker가 있고 화살표가 가운데의 Snapshot 상자로 향합니다.
+            아래쪽에 새 연결이 있고 화살표가 같은 Snapshot 상자에서 나와 바로 응답으로 이어집니다.
             Worker에서 스냅샷으로 가는 길에는 갱신 실패 시 이전 값을 유지한다고 적혀 있고
             새 연결이 바깥으로 나가는 화살표는 없습니다.</desc>
             <g font-family="Inter, sans-serif">
@@ -288,7 +288,7 @@
               <text x="241" y="32" font-size="11" fill="#8a8a8a" text-anchor="middle">완성본만 교체</text>
 
               <rect x="288" y="76" width="164" height="56" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="370" y="100" font-size="13" fill="#18121d" text-anchor="middle" font-weight="700">스냅샷</text>
+              <text x="370" y="100" font-size="13" fill="#18121d" text-anchor="middle" font-weight="700">Snapshot</text>
               <text x="370" y="120" font-size="11.5" fill="#d62976" text-anchor="middle">마지막 완성 값</text>
 
               <rect x="14" y="146" width="180" height="44" rx="6" fill="none" stroke="#3b3344" stroke-width="1.6"/>
@@ -326,7 +326,7 @@
         <ul>
           <li><strong>②편 대시보드.</strong> 사용자가 기다린 경계를 어떻게 찾았고
           계측기를 어떻게 만들었는지. 6,776ms에서 10ms까지.</li>
-          <li>③편 물리 노드. 같은 패턴을 옮기려다 만난 질문 하나.
+          <li>③편 물리 Node. 같은 패턴을 옮기려다 만난 질문 하나.
           <strong>메트릭이 빈 목록으로 왔을 때 그것을 정상 0대로 발행해도 되는가.</strong></li>
           <li>④편 가상자원. 병목이 REST와 SSE 둘이라
           한쪽만 고치면 화면은 그대로였습니다.</li>
@@ -382,7 +382,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c8da970e8b"></script>
+  <script src="../assets/content.js?v=d7cabca9c3"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

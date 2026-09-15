@@ -177,7 +177,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
 
         <p>그러면 이런 일이 벌어집니다. 같은 그룹에 속한 Volume이 M 개면 Executor에 제출된 M 개의 Thread가
         같은 키로 <code>computeIfAbsent</code>에 들어옵니다. 하나가 외부 호출을 하는 동안 나머지
-        M−1 개는 그 버킷 앞에 줄을 섭니다. 순차 코드에서는 한 줄로 서서 기다리던 것이
+        M−1 개는 그 Bucket 앞에 줄을 섭니다. 순차 코드에서는 한 줄로 서서 기다리던 것이
         병렬 코드에서도 한 줄로 서고 Thread Pool 자리는 그동안 묶여 있습니다. 얻은 것은 없고
         컨텍스트 스위칭과 Pool 고갈만 늘었습니다.</p>
 
@@ -186,7 +186,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
             <svg viewBox="0 0 720 312" role="img" aria-labelledby="cia-t cia-d" xmlns="http://www.w3.org/2000/svg">
               <title id="cia-t">computeIfAbsent 안의 외부 호출이 버킷을 잠그는 구조</title>
               <desc id="cia-d">같은 그룹 ID를 키로 쓰는 작업 넷이 Executor Thread 넷으로 병렬 제출됩니다. 네 Thread는 같은 키이므로
-              같은 버킷 하나로 모입니다. T1이 그 버킷을 잡은 채 매핑 함수 안에서 외부 API를 호출하고 네트워크 왕복이 끝날
+              같은 Bucket 하나로 모입니다. T1이 그 버킷을 잡은 채 매핑 함수 안에서 외부 API를 호출하고 네트워크 왕복이 끝날
               때까지 버킷은 잠겨 있습니다. T2·T3·T4는 그 앞에서 줄을 서며 그동안 Thread Pool 자리를 계속 점유합니다. 다른 키가 속한
               버킷은 잠기지 않으므로 그쪽 작업은 진행할 수 있습니다. 매핑 함수는 한 번만 실행되고 값이 게시되면 대기가 풀립니다.
               즉 호출 횟수가 늘어나는 것이 아니라, 순차 코드에 있던 줄서기가 그대로 남은 채 Pool 점유와 컨텍스트 스위칭만
@@ -230,7 +230,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
                 <text x="306" y="275">다른 키 · 진행 가능</text>
               </g>
               <rect x="294" y="118" width="170" height="116" rx="6" fill="none" stroke="#d62976" stroke-width="3"/>
-              <text x="306" y="143" font-size="15" fill="#18121d" font-weight="700">gid=A의 버킷 · 잠김</text>
+              <text x="306" y="143" font-size="15" fill="#18121d" font-weight="700">gid=A의 Bucket · 잠김</text>
               <rect x="310" y="156" width="138" height="40" rx="5" fill="none" stroke="#3b3344" stroke-width="1.5"/>
               <text x="322" y="181" font-size="14" fill="#18121d">매핑 함수 실행</text>
               <text x="316" y="224" font-size="14" fill="#7b7186">대기 T2 · T3 · T4</text>
@@ -262,7 +262,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
               </defs>
             </svg>
           </div>
-          <figcaption>같은 키의 요청은 버킷 하나에 모입니다. 실선이 호출 중인 T1, 점선이 대기 중인 T2·T3·T4입니다. 매핑 함수 안의 외부 호출이 그 버킷을 왕복 시간만큼 잡고 있고 나머지 Thread는 Pool 자리를 쥔 채 기다립니다. 다른 키의 버킷은 잠기지 않습니다. 매핑 함수는 <strong>한 번만</strong> 실행되고 값이 게시되면 대기가 풀립니다. 즉 늘어난 것은 호출 횟수가 아니라 Pool 점유와 컨텍스트 스위칭이고 줄서기는 그대로 남습니다.</figcaption>
+          <figcaption>같은 키의 요청은 Bucket 하나에 모입니다. 실선이 호출 중인 T1, 점선이 대기 중인 T2·T3·T4입니다. 매핑 함수 안의 외부 호출이 그 버킷을 왕복 시간만큼 잡고 있고 나머지 Thread는 Pool 자리를 쥔 채 기다립니다. 다른 키의 버킷은 잠기지 않습니다. 매핑 함수는 <strong>한 번만</strong> 실행되고 값이 게시되면 대기가 풀립니다. 즉 늘어난 것은 호출 횟수가 아니라 Pool 점유와 컨텍스트 스위칭이고 줄서기는 그대로 남습니다.</figcaption>
         </figure>
 
         <p>그래서 ③은 ②보다 나쁩니다. ②는 5s Cache 덕분에 외부 호출 횟수 자체가 적었고 ③은 Cache가 없어
@@ -270,7 +270,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
 
         <blockquote><p>용어 하나. 이 구조를 "세그먼트 Lock"이라고 부르는 문서를 자주 봅니다.
         세그먼트는 <strong>Java 7 시절 용어</strong>입니다. Java 8 이후 <code>ConcurrentHashMap</code>은 세그먼트를
-        없애고 버킷(Bin) 단위로 잠급니다. 잠김의 범위가 더 좁아졌을 뿐, <em>매핑 함수가 도는 동안
+        없애고 Bucket(Bin) 단위로 잠급니다. 잠김의 범위가 더 좁아졌을 뿐, <em>매핑 함수가 도는 동안
         그 자리가 잠긴다</em>는 사실은 그대로입니다. Lock 범위가 좁아진 것이 Lock 안에서 I/O를 해도 된다는
         뜻은 아닙니다.</p></blockquote>
 
@@ -335,8 +335,8 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
 
         <figure class="diagram">
           <svg viewBox="0 0 720 216" role="img" aria-labelledby="bk-t bk-d" class="figure-svg">
-            <title id="bk-t">순차와 병렬이 같은 버킷 앞에서 어떻게 다른지 갈라 놓은 그림</title>
-            <desc id="bk-d">상자가 둘 나란히 있습니다. 왼쪽은 순차 실행으로 한 번에 하나가 외부 API를 부른다고 적혀 있습니다. 오른쪽은 병렬 실행으로 네 Thread가 같은 버킷 앞에 줄을 선다고 적혀 있습니다. 맨 아래에 분홍색으로 줄서기는 그대로 남고 Pool 점유만 늘었다고 적혀 있습니다.</desc>
+            <title id="bk-t">순차와 병렬이 같은 Bucket 앞에서 어떻게 다른지 갈라 놓은 그림</title>
+            <desc id="bk-d">상자가 둘 나란히 있습니다. 왼쪽은 순차 실행으로 한 번에 하나가 외부 API를 부른다고 적혀 있습니다. 오른쪽은 병렬 실행으로 네 Thread가 같은 Bucket 앞에 줄을 선다고 적혀 있습니다. 맨 아래에 분홍색으로 줄서기는 그대로 남고 Pool 점유만 늘었다고 적혀 있습니다.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
               <text x="204" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">순차 실행</text>
@@ -345,7 +345,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
               <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">Thread Pool 자리 1개</text>
               <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
               <text x="556" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">병렬 실행</text>
-              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">같은 키 → 같은 버킷 하나</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">같은 키 → 같은 Bucket 하나</text>
               <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">네 Thread가 그 앞에 줄</text>
               <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">Thread Pool 자리 4개 점유</text>
               <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">줄서기는 그대로 · Pool 점유만 증가</text>
@@ -396,8 +396,8 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
           <tbody>
             <tr><td>Volume (관리)</td><td>83.3% → 0%</td><td>10min Timeout → 23ms</td><td>0.06 → 12.82</td><td>0.0 → 1.000</td></tr>
             <tr><td>Volume (프로젝트)</td><td>0% → 0%</td><td>6min → 345ms</td><td>0.38 → 12.89</td><td>0.0 → 0.996</td></tr>
-            <tr><td>스냅샷 (관리)</td><td>0% → 0%</td><td>7min → 14ms</td><td>0.32 → 12.86</td><td>0.006 → 1.000</td></tr>
-            <tr><td>스냅샷 (프로젝트)</td><td>0% → 0%</td><td>8min 30s → 97ms</td><td>0.19 → 12.85</td><td>0.000 → 0.998</td></tr>
+            <tr><td>Snapshot (관리)</td><td>0% → 0%</td><td>7min → 14ms</td><td>0.32 → 12.86</td><td>0.006 → 1.000</td></tr>
+            <tr><td>Snapshot (프로젝트)</td><td>0% → 0%</td><td>8min 30s → 97ms</td><td>0.19 → 12.85</td><td>0.000 → 0.998</td></tr>
           </tbody>
         </table>
         </div>
@@ -458,7 +458,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
           <li><strong>조치를 한꺼번에 넣으면 ‘빨라졌다’ 하나만 남습니다.</strong> 무엇이 얼마나 기여했는지는
           구성을 갈라서 각각 재야 나옵니다.</li>
           <li><strong>Lock을 쥔 채 네트워크 왕복을 하면 병렬화는 대기자만 늘립니다.</strong> Thread를 늘려도
-          같은 버킷 앞의 줄이 길어질 뿐입니다.</li>
+          같은 Bucket 앞의 줄이 길어질 뿐입니다.</li>
           <li>‘값이 없다’와 ‘아직 안 물어봤다’를 자료구조가 구분하지 못하면 Cache가 빈 결과를
           정답으로 굳혀 버립니다.</li>
           <li>표가 코드를 가리킵니다. Cache를 고정한 채 병렬이 더 나빴다는 것은 병목이
@@ -485,7 +485,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c8da970e8b"></script>
+  <script src="../assets/content.js?v=d7cabca9c3"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
