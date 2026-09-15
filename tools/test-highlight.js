@@ -180,7 +180,7 @@ declared.forEach(function (lang) {
   ran++;
   var sample = { java: "class A {}", kotlin: "val a = 1", yaml: "a: 1", shell: "$ ls",
                  bash: "$ ls", sql: "select 1", tsx: "const a = 1", python: "def f(): pass",
-                 json: '{"a": 1}' }[lang];
+                 json: '{"a": 1}', go: "func f() {}" }[lang];
   if (!sample) { failed++; console.error("FAIL  " + lang + " 표본이 이 테스트에 없다"); return; }
   if (H.render(lang, sample).indexOf('<span class="tok-') === -1) {
     failed++;
@@ -203,6 +203,11 @@ contains("bash is highlighted with the shell rules",
 check("bash keeps its own label", H.label("bash", "ko"), "Bash");
 lacks("java comment markers inside a string stay in the string",
   H.render("java", 'String s = "a // b";'), '<span class="tok-comment">');
+
+lacks("go keeps a keyword inside a string plain",
+  H.render("go", 'kind := "return"'), '<span class="tok-keyword">return</span>');
+contains("go highlights a keyword", H.render("go", "if x {"), '<span class="tok-keyword">if</span>');
+check("go keeps its own label", H.label("go", "ja"), "Go");
 
 /* ---- termination ----------------------------------------------------------------------------- */
 
