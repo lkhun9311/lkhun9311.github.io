@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="빈 목록이 노드가 0대인지 조회가 실패한 것인지 구분하지 못했습니다 | Kwanghun Lee" />
-  <meta property="og:description" content="물리 노드 화면에 같은 serve-stale 패턴을 옮기다가 ‘빈 결과를 0대로 발행해도 되는가’에서 멈췄습니다. 빈 결과를 다섯 갈래로 갈라 둘만 새 값으로 발행하고 나머지는 마지막 정상값을 유지하도록 했습니다. 첫 데이터 중앙값이 3,938ms → 23ms로 줄었습니다." />
+  <meta property="og:description" content="물리 Node 화면에 같은 serve-stale 패턴을 옮기다가 ‘빈 결과를 0대로 발행해도 되는가’에서 멈췄습니다. 빈 결과를 다섯 갈래로 갈라 둘만 새 값으로 발행하고 나머지는 마지막 정상값을 유지하도록 했습니다. 첫 데이터 중앙값이 3,938ms → 23ms로 줄었습니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -27,9 +27,9 @@
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="빈 목록이 노드가 0대인지 조회가 실패한 것인지 구분하지 못했습니다 | Kwanghun Lee" />
-  <meta name="twitter:description" content="물리 노드 화면에 같은 serve-stale 패턴을 옮기다가 ‘빈 결과를 0대로 발행해도 되는가’에서 멈췄습니다. 빈 결과를 다섯 갈래로 갈라 둘만 새 값으로 발행하고 나머지는 마지막 정상값을 유지하도록 했습니다. 첫 데이터 중앙값이 3,938ms → 23ms로 줄었습니다." />
+  <meta name="twitter:description" content="물리 Node 화면에 같은 serve-stale 패턴을 옮기다가 ‘빈 결과를 0대로 발행해도 되는가’에서 멈췄습니다. 빈 결과를 다섯 갈래로 갈라 둘만 새 값으로 발행하고 나머지는 마지막 정상값을 유지하도록 했습니다. 첫 데이터 중앙값이 3,938ms → 23ms로 줄었습니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="물리 노드 화면에 같은 serve-stale 패턴을 옮기다가 ‘빈 결과를 0대로 발행해도 되는가’에서 멈췄습니다. 빈 결과를 다섯 갈래로 갈라 둘만 새 값으로 발행하고 나머지는 마지막 정상값을 유지하도록 했습니다. 첫 데이터 중앙값이 3,938ms → 23ms로 줄었습니다." />
+  <meta name="description" content="물리 Node 화면에 같은 serve-stale 패턴을 옮기다가 ‘빈 결과를 0대로 발행해도 되는가’에서 멈췄습니다. 빈 결과를 다섯 갈래로 갈라 둘만 새 값으로 발행하고 나머지는 마지막 정상값을 유지하도록 했습니다. 첫 데이터 중앙값이 3,938ms → 23ms로 줄었습니다." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -96,10 +96,10 @@
 
         <p>사내 Cloud 관리 Console의 Backend를 만들고 있습니다.
         <a href="monitoring-three-races-in-one-cache.ko.html">②편</a>에서 대시보드의 계산을 요청 경로
-        밖으로 옮겼습니다. 같은 패턴을 물리 노드 화면에 그대로 옮기면 될 것 같았습니다.</p>
+        밖으로 옮겼습니다. 같은 패턴을 물리 Node 화면에 그대로 옮기면 될 것 같았습니다.</p>
 
         <p>옮기다가 질문 하나에서 멈췄습니다. 메트릭 쿼리가 빈 목록을 돌려줬을 때, 그것을
-        ‘노드 0대’로 발행해도 되는가.</p>
+        ‘Node 0대’로 발행해도 되는가.</p>
 
         <p>안 됩니다. 진짜로 대상이 없어서 빈 것일 수도 있고 수집이 실패해서 빈 것일 수도 있습니다.
         둘을 안 가르면 장애가 난 순간에 멀쩡하던 화면을 0대로 덮습니다.</p>
@@ -126,7 +126,7 @@
 <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
         <table>
-          <caption class="sr-only">물리 노드 화면의 개선 전 첫 데이터.</caption>
+          <caption class="sr-only">물리 Node 화면의 개선 전 첫 데이터.</caption>
           <thead><tr><th>지표</th><th>개선 전</th></tr></thead>
           <tbody>
             <tr><td>중앙값</td><td>약 3,938ms</td></tr>
@@ -317,7 +317,7 @@ else:                              NO_VALID_METRICS</code></pre>
 <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
         <table>
-          <caption class="sr-only">물리 노드 첫 데이터의 개선 전후.</caption>
+          <caption class="sr-only">물리 Node 첫 데이터의 개선 전후.</caption>
           <thead><tr><th>지표</th><th>개선 전</th><th>공유 Cache 반영 후</th></tr></thead>
           <tbody>
             <tr><td>중앙값</td><td>약 3,938ms</td><td><strong>약 23ms</strong></td></tr>
@@ -336,7 +336,7 @@ else:                              NO_VALID_METRICS</code></pre>
         <h2 id="주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul>
-          <li>이 편에는 제가 처음에 못 한 것이 들어 있습니다. 물리 노드 구현에서는 이 다섯 갈래가 완전하지 않았습니다. ‘가져오기는 성공했는데 결과가 빈 경우’를 정상으로 볼 여지가 남아 있었고 그것을 <a href="monitoring-one-shared-cache.ko.html">⑤편</a>의 공유 Cache 작업에서야 공통 판정으로 끌어올렸습니다.</li>
+          <li>이 편에는 제가 처음에 못 한 것이 들어 있습니다. 물리 Node 구현에서는 이 다섯 갈래가 완전하지 않았습니다. ‘가져오기는 성공했는데 결과가 빈 경우’를 정상으로 볼 여지가 남아 있었고 그것을 <a href="monitoring-one-shared-cache.ko.html">⑤편</a>의 공유 Cache 작업에서야 공통 판정으로 끌어올렸습니다.</li>
           <li>사내 제품이라 코드와 화면을 그대로 옮기지 않았습니다. 제품명·고객사·내부 주소는 빼고 구조와 판정 규칙만 남겼습니다.</li>
 
           <li><strong>운영 통계가 아닙니다.</strong> 첫 데이터 지연을 보는 순차 Harness이고
@@ -344,7 +344,7 @@ else:                              NO_VALID_METRICS</code></pre>
           <li><strong>이 편의 기여분만 재지 않았습니다.</strong> 표의 ‘개선 후’에는 ⑤편의 공유 Cache가
           같이 들어 있습니다.</li>
           <li>이 다섯 갈래가 처음부터 완전했다고 말하지 않습니다.
-          물리 노드 구현 시점에는 ‘가져오기 성공 + 빈 결과’를 정상으로 볼 여지가 남아 있었고
+          물리 Node 구현 시점에는 ‘가져오기 성공 + 빈 결과’를 정상으로 볼 여지가 남아 있었고
           ⑤편에서야 공통 판정으로 끌어올렸습니다.</li>
           <li>last-known-good이 항상 옳다는 말이 아닙니다. 데이터의 나이를 감추면
           가용성을 높이는 대신 거짓말을 오래 하게 됩니다.</li>
@@ -380,7 +380,7 @@ else:                              NO_VALID_METRICS</code></pre>
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c8da970e8b"></script>
+  <script src="../assets/content.js?v=d7cabca9c3"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

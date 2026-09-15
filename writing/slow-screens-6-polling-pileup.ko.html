@@ -158,19 +158,19 @@
         <h2 id="원인-1">원인 ①: 안 쓸 것까지 미리 다 받아 왔습니다<a class="anchor" href="#원인-1" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>창을 여는 과정에서 받아 오는 것이 <strong>네 가지</strong>였습니다.
-        Volume 목록, Volume 스냅샷 목록, 이미지 목록, 그리고 Volume 타입 목록.
+        Volume 목록, Volume Snapshot 목록, 이미지 목록, 그리고 Volume 타입 목록.
         앞의 셋은 차례로 불렀고 Volume 타입은 따로 불렀습니다.
         한꺼번에 나란히 나간 것이 아닙니다.</p>
 
         <p>그런데 <strong>창을 여는 데 그 4가지가 다 필요하지는 않습니다.</strong>
         Volume 소스로 ‘Volume’을 고르면 Volume 목록이 필요하고 ‘이미지’를 고르면 이미지 목록이 필요합니다.
-        고르기 전에는 Volume·스냅샷·이미지 목록 중 어느 것도 필요하지 않습니다.</p>
+        고르기 전에는 Volume·Snapshot·이미지 목록 중 어느 것도 필요하지 않습니다.</p>
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
             <svg viewBox="0 0 720 200" role="img" aria-labelledby="of-t of-d" xmlns="http://www.w3.org/2000/svg">
               <title id="of-t">버튼을 눌렀을 때 나가는 요청, 수정 전과 후</title>
-              <desc id="of-d">위 카드가 수정 전입니다. 버튼을 누르는 순간 Volume·스냅샷·Volume 타입·이미지
+              <desc id="of-d">위 카드가 수정 전입니다. 버튼을 누르는 순간 Volume·Snapshot·Volume 타입·이미지
               네 목록을 한꺼번에 받아 옵니다. 아래 카드가 수정 후로, 버튼을 누를 때는 아무것도 받지 않고
               창이 열린 뒤 사용자가 소스를 고른 그때 그 한 가지만 받아 옵니다.</desc>
 
@@ -184,7 +184,7 @@
                 <rect x="252" y="34" width="106" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="1.5"/>
                 <text x="305" y="47">Volume 목록</text>
                 <rect x="366" y="34" width="106" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="1.5"/>
-                <text x="419" y="47">스냅샷 목록</text>
+                <text x="419" y="47">Snapshot 목록</text>
                 <rect x="252" y="56" width="106" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="1.5"/>
                 <text x="305" y="69">Volume 타입 목록</text>
                 <rect x="366" y="56" width="106" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="1.5"/>
@@ -311,14 +311,14 @@ usePolling({
         취소하지는 않습니다. 그리고 <code>openDialogs</code>가 클릭 직후에 참이 되는지, 데이터를 다 받은
         뒤에 참이 되는지는 부르는 쪽 코드만으로는 알 수 없습니다.</p>
 
-        <p>둘. 미리 받지 않고 고를 때 받습니다. Volume 소스에서 ‘스냅샷’을 고르면
-        그때 스냅샷 목록만 받아 옵니다. 이미 받아 둔 것은 다시 받지 않습니다.</p>
+        <p>둘. 미리 받지 않고 고를 때 받습니다. Volume 소스에서 ‘Snapshot’을 고르면
+        그때 Snapshot 목록만 받아 옵니다. 이미 받아 둔 것은 다시 받지 않습니다.</p>
 
 <pre data-lang="tsx"><code>const loadSourceData = async (sourceValue: string) =&gt; {
   if (sourceValue === 'volume' &amp;&amp; volumeSelectItems.length === 0) {
     // 「Volume」을 고른 그때, Volume 목록만
   } else if (sourceValue === 'snapshot' &amp;&amp; snapshotSelectItems.length === 0) {
-    // 「스냅샷」을 고른 그때, 스냅샷 목록만
+    // 「Snapshot」을 고른 그때, Snapshot 목록만
   }
   ...
 };</code></pre>
@@ -332,7 +332,7 @@ usePolling({
         <p>고치다 보니 하나가 더 눈에 띄었습니다. <strong>소스 종류의 선택지 자체를 API 응답으로
         만들고</strong> 있었습니다. 그래서 그 호출이 실패하면 <strong>고를 것이 아무것도 안 보였습니다.</strong></p>
 
-        <p>선택지는 Volume·스냅샷·이미지·빈 Volume 넷으로 정해져 있습니다. 서버에 물어볼 것이 아닙니다.
+        <p>선택지는 Volume·Snapshot·이미지·빈 Volume 넷으로 정해져 있습니다. 서버에 물어볼 것이 아닙니다.
         고정된 배열로 바꿨습니다.</p>
 
         <blockquote><p>바뀌지 않는 값을 서버에서 받아 오면 그 호출이 실패했을 때 화면도 같이
@@ -432,7 +432,7 @@ usePolling({
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c8da970e8b"></script>
+  <script src="../assets/content.js?v=d7cabca9c3"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

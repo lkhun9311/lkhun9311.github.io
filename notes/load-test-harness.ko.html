@@ -85,7 +85,7 @@
         말이 아무 데로나 가지 못하게 붙들어 방향을 정해 주는 장치입니다. 소프트웨어에서도 뜻이 같습니다.         시스템에 힘(부하)을 걸되, 그 힘이 매번 같은 방식으로 걸리도록 붙들어 두는 것입니다.</p>
 
         <p>그래서 "부하 도구"와 "Harness"는 다릅니다. JMeter·k6·Gatling은 부하기이고
-        Harness는 그 부하기를 포함해 <em>의존성 확인 → 대상 기동 → 토큰 발급 → 부하 실행 → 결과 수집 → 요약</em>까지를
+        Harness는 그 부하기를 포함해 <em>의존성 확인 → 대상 기동 → Token 발급 → 부하 실행 → 결과 수집 → 요약</em>까지를
         한 번의 명령으로 재현 가능하게 묶은 것입니다.</p>
         <h2 id="조건">무엇이 Harness를 Harness로 만드나<a class="anchor" href="#조건" aria-label="이 절로 가는 링크">#</a></h2>
         <p>세 가지가 있어야 합니다. 하나라도 없으면 "한 번 돌려 본 것"이지 Harness가 아닙니다.</p>
@@ -104,10 +104,10 @@
         다음으로 넘어갑니다.</p>
 
         <pre data-lang="text">① 의존성 확인      docker · java · python3 · JMeter가 있나
-② 전용 DB 기동     개발 DB와 다른 포트·컨테이너 (부하 데이터가 섞이면 되돌릴 수 없다)
+② 전용 DB 기동     개발 DB와 다른 포트·Container (부하 데이터가 섞이면 되돌릴 수 없다)
 ③ 외부 stub 기동    지연을 앱 밖에서 만든다 + stub이 "우리 것"인지 신원 확인
 ④ 대상 앱 기동     설정을 인자로 주입 (pool 크기·레이트리밋·HTTP 클라이언트)
-⑤ 토큰·시드 준비    로그인 → 읽기 대상 글 1건 생성
+⑤ Token·시드 준비    로그인 → 읽기 대상 글 1건 생성
 ⑥ 부하 실행        쓰기·읽기를 별도 thread 그룹으로
 ⑦ 수집·요약        워밍업 구간을 버리고 p50/p95/p99·오류율·처리량</pre>
 
@@ -135,7 +135,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c8da970e8b"></script>
+  <script src="../assets/content.js?v=d7cabca9c3"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

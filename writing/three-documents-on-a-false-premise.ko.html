@@ -94,7 +94,7 @@
       <article class="article-body">
 
         <p>2026년 7월, 고객 현장에서 돌고 있는 OpenStack 기반 프라이빗 클라우드 포털을
-        <strong>2,255 커밋 위 버전</strong>으로 올리는 일을 준비했습니다. 인증 체계가 바뀌면서 전 사용자
+        <strong>2,255 Commit 위 버전</strong>으로 올리는 일을 준비했습니다. 인증 체계가 바뀌면서 전 사용자
         비밀번호가 초기화되고 스키마 두 개가 하나로 합쳐집니다. 두 변경 모두 구버전과 신버전이 같은 DB를 동시에 쓸 수 없게 만들어 무중단이 불가능했고
         운영 DB라 롤백 경로가 필수였습니다.</p>
 
@@ -162,9 +162,9 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
           <caption class="sr-only">구버전 Baseline에 존재하는 마커 테이블과 그 의미.</caption>
           <thead><tr><th scope="col">마커</th><th scope="col">Baseline</th><th scope="col">의미</th></tr></thead>
           <tbody>
-            <tr><td>설정 테이블</td><td>있음</td><td>—</td></tr>
+            <tr><td>설정 Table</td><td>있음</td><td>—</td></tr>
             <tr><td>차단 목록</td><td>있음</td><td>10월 패치가 Baseline에 포함돼 있다</td></tr>
-            <tr><td>스케줄러 테이블</td><td><strong>없음</strong></td><td>7월 배치 패치가 미적용</td></tr>
+            <tr><td>Scheduler Table</td><td><strong>없음</strong></td><td>7월 배치 패치가 미적용</td></tr>
             <tr><td>배치 잡 정보</td><td>없음</td><td>신규 패치 하나가 이걸 참조한다. 선행 없이는 실패</td></tr>
           </tbody>
         </table>
@@ -234,7 +234,7 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
               </marker>
             </defs>
           </svg>
-          <figcaption>Baseline이 날짜로 잘려 있다면 ‘그 뒤 것을 날짜순으로’가 안전합니다. <strong>골라 담은 것</strong>이면 같은 규칙이 안전이 아니라 위험을 만듭니다. 스케줄러 테이블이 없는 것이 그 증거였습니다.</figcaption>
+          <figcaption>Baseline이 날짜로 잘려 있다면 ‘그 뒤 것을 날짜순으로’가 안전합니다. <strong>골라 담은 것</strong>이면 같은 규칙이 안전이 아니라 위험을 만듭니다. Scheduler 테이블이 없는 것이 그 증거였습니다.</figcaption>
         </figure>
 
         <h2 id="일부러-부정확하게">일부러 부정확하게 만든 부분<a class="anchor" href="#일부러-부정확하게" aria-label="이 절로 가는 링크">#</a></h2>
@@ -289,7 +289,7 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
           <thead><tr><th scope="col">지표</th><th scope="col">값</th></tr></thead>
           <tbody>
             <tr><td>테스트 데이터 이관</td><td><strong>3/3 통과</strong></td></tr>
-            <tr><td>데이터 이관 실패</td><td><strong>0건</strong> (두 스키마 합계 92개 테이블)</td></tr>
+            <tr><td>데이터 이관 실패</td><td><strong>0건</strong> (두 스키마 합계 92개 Table)</td></tr>
             <tr><td>버전</td><td>목표 버전으로 갱신됨</td></tr>
           </tbody>
         </table>
@@ -298,7 +298,7 @@ find . -type f -exec md5sum {} \;         # 양쪽 모든 파일 md5 일치</cod
 
         <h2 id="재현할-수-없는-영역">재현할 수 없는 영역을 숨기지 않았습니다<a class="anchor" href="#재현할-수-없는-영역" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>로컬에는 OpenStack과 그 인증 CLI가 없습니다. 그래서 인증 개편과 얽힌 부분. 계정·역할 테이블 생성,
+        <p>로컬에는 OpenStack과 그 인증 CLI가 없습니다. 그래서 인증 개편과 얽힌 부분. 계정·역할 Table 생성,
         사용자 식별자를 UUID에서 이름으로 바꾸는 변환, 서비스 계정 점검은 <strong>재현할 수 없었습니다.</strong></p>
 
         <p>여기서 선택지가 둘입니다. 그 단계를 스크립트에서 빼고 "전 구간 성공"이라고 쓰거나, 남겨 두고 못 했다고
@@ -344,7 +344,7 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
           <tbody>
             <tr><td>존재하지 않는 패치 파일을 적용하라고 지시 (롤백돼서 타깃 릴리스에 없다)</td><td>파일을 못 찾아 그 자리에서 멈춘다</td></tr>
             <tr><td>잔존 행을 지우는 단계가 없음</td><td>같은 기동 실패를 현장에서 다시 겪는다</td></tr>
-            <tr><td>롤백 시 컨테이너 재생성 명령이 없음</td><td>롤백이 절반만 된다</td></tr>
+            <tr><td>롤백 시 Container 재생성 명령이 없음</td><td>롤백이 절반만 된다</td></tr>
           </tbody>
         </table>
         </div>
@@ -359,7 +359,7 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
             <desc id="rp2-d">왼쪽부터 상자가 넷, 회색 화살표로 이어집니다. 첫째는 격리 컨테이너에 옛 버전을 세움, 둘째는 상위 버전으로 이관, 셋째는 기동 실패 한 건, 넷째는 확인 필요 항목이 같이 풀림입니다. 아래에 분홍색으로 문서만 읽어서는 안 나온 것이라고 적혀 있습니다.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
-              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">격리 컨테이너</text>
+              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">격리 Container</text>
               <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">옛 버전 재현</text>
               <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#rp2-a)"/>
               <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
@@ -397,7 +397,7 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
         같은 실제 자원은 이 포털이 아니라 OpenStack이 소유하고 포털은 그것을 API로 다시 동기화하므로
         애초에 걱정 대상이 아니었습니다.</p>
 
-        <p>남은 반론은 "그래도 이관이 어렵지 않나"였습니다. 그건 실측으로 답했습니다. 보존해야 할 테이블 전부에 대해
+        <p>남은 반론은 "그래도 이관이 어렵지 않나"였습니다. 그건 실측으로 답했습니다. 보존해야 할 Table 전부에 대해
         <code>information_schema</code>로 구버전과 신버전의 컬럼을 비교했습니다.</p>
 
         <div class="table-scroll">
@@ -405,7 +405,7 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
 <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
         <table>
           <caption class="sr-only">보존 대상 테이블의 버전 간 컬럼 변화 실측 결과.</caption>
-          <thead><tr><th scope="col">묶음</th><th scope="col">테이블 수</th><th scope="col">컬럼 추가·삭제</th></tr></thead>
+          <thead><tr><th scope="col">묶음</th><th scope="col">Table 수</th><th scope="col">컬럼 추가·삭제</th></tr></thead>
           <tbody>
             <tr><td>과금·미터링</td><td>40</td><td><strong>0</strong></td></tr>
             <tr><td>감사·작업 이력</td><td>8</td><td><strong>0</strong></td></tr>
@@ -421,14 +421,14 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
 
         <p>"이관이 어렵다"는 막연한 우려가 숫자 하나로 해소됐습니다. 그리고 방향이 정해졌습니다.         신규 설치가 아니라 마이그레이션.</p>
 
-        <p>이 절에서 실제로 한 일은 기술적으로 대단하지 않습니다. <code>information_schema</code> 쿼리 몇 줄입니다.
+        <p>이 절에서 실제로 한 일은 기술적으로 대단하지 않습니다. <code>information_schema</code> Query 몇 줄입니다.
         요점은 의견이 갈렸을 때 세어서 답할 수 있는 대상이 무엇인지 알아본 것입니다. "이관이
         어렵다"는 세기 어렵지만 "컬럼이 몇 개 바뀌었나"는 셀 수 있습니다.</p>
 
         <h2 id="이-글이-주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#이-글이-주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul>
-          <li>제품명·버전 번호·고객사·티켓 번호는 쓰지 않았습니다. 수치의 출처도 섞여 있습니다. 이관 결과(3/3, FAIL 0)는 격리 컨테이너 재현이고 커밋 수·릴리스본 대조·48개 테이블 컬럼 비교는 저장소와 스키마 실사이며 기동 실패는 로컬 트러블슈팅입니다.</li>
+          <li>제품명·버전 번호·고객사·티켓 번호는 쓰지 않았습니다. 수치의 출처도 섞여 있습니다. 이관 결과(3/3, FAIL 0)는 격리 Container 재현이고 Commit 수·릴리스본 대조·48개 Table 컬럼 비교는 저장소와 스키마 실사이며 기동 실패는 로컬 트러블슈팅입니다.</li>
 
           <li>현장 마이그레이션을 완료했다는 주장이 아닙니다. 제가 한 것은 격리 환경에서 재현
           가능한 구간을 검증하고 현장 절차와 설치 런북을 준비한 것까지입니다. "전 구간"이 아니다:           인증 개편 구간은 아래처럼 재현되지 않았습니다.</li>
@@ -477,7 +477,7 @@ BlocklistCache → RequestUrlServiceImpl → ConfigureServiceImpl.list → confi
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c8da970e8b"></script>
+  <script src="../assets/content.js?v=d7cabca9c3"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

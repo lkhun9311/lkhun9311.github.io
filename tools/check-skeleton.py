@@ -23,7 +23,7 @@ WANT = {
            ("what-this-is-about", "what-is-in-here", "what-this-is", "which-screen"),
            ("wrapping-up", "closing", "Closing")),
     "ja": (("想定読者",),
-           ("この記事の内容", "どんな内容", "どの画面", "何の話"),
+           ("この記事の内容", "どんな内容", "どの画面", "何の話", "内容"),
            ("おわりに",)),
 }
 

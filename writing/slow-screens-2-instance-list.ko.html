@@ -369,7 +369,7 @@ SET FOREIGN_KEY_CHECKS = 1;</code></pre>
           <li>외래키 검사를 껐습니다. 이건 ‘순서를 조심하면 되는 일’이 아닙니다.
           검사를 끈 세션에서는 모든 참조 위반이 그냥 통과하고
           다시 켜도 이미 생긴 불일치를 되짚어 검사해 주지 않습니다.
-          빠뜨린 자식 테이블, 그 사이에 들어온 다른 쓰기, 중간에 끊긴 실행이 전부
+          빠뜨린 자식 Table, 그 사이에 들어온 다른 쓰기, 중간에 끊긴 실행이 전부
           참조가 끊긴 행을 남길 수 있고 그 사실은 한참 뒤에 드러납니다.</li>
           <li>백업을 먼저 뜨지 않았습니다. ‘되살릴 필요가 없다’는 판단은 되돌릴 수 있을 때 해야
           안전한 판단입니다.</li>
@@ -395,8 +395,8 @@ SET FOREIGN_KEY_CHECKS = 1;</code></pre>
           <caption class="sr-only">삭제된 행의 보존 단계와 기간.</caption>
           <thead><tr><th>단계</th><th>어디에 있나</th><th>얼마나</th><th>무엇을 위해</th></tr></thead>
           <tbody>
-            <tr><td>Soft Delete</td><td>본 테이블</td><td>삭제 후 30일</td><td>최근 이력 조회</td></tr>
-            <tr><td>Archive</td><td>Shadow 테이블</td><td>삭제 후 30~90일</td><td>이력 보관</td></tr>
+            <tr><td>Soft Delete</td><td>본 Table</td><td>삭제 후 30일</td><td>최근 이력 조회</td></tr>
+            <tr><td>Archive</td><td>Shadow Table</td><td>삭제 후 30~90일</td><td>이력 보관</td></tr>
             <tr><td>Purge</td><td>남지 않음</td><td>삭제 후 90일부터</td><td>저장 공간 확보</td></tr>
           </tbody>
         </table>
@@ -420,7 +420,7 @@ nova-manage db purge \
   --before "$(date -d '90 days ago' '+%Y-%m-%d')"</code></pre>
 
         <p>제안서에는 <code>purge</code>에 <code>--all</code>이 붙어 있었습니다. 그건
-        ‘모든 Shadow 테이블’이라는 뜻이 아니라 남은 것을 전부 지우라는 뜻이라
+        ‘모든 Shadow Table’이라는 뜻이 아니라 남은 것을 전부 지우라는 뜻이라
         <code>--before</code>와 같이 쓰면 의도가 서로 부딪힙니다. 뺐습니다.</p>
 
         <p>그리고 사람이 기억해서 하는 일로 두지 말자고 적었습니다. 부하가 낮은 새벽에
@@ -558,7 +558,7 @@ sys     0m0.048s</code></pre>
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c8da970e8b"></script>
+  <script src="../assets/content.js?v=d7cabca9c3"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

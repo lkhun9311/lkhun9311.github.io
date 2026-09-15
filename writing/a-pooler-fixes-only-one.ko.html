@@ -149,7 +149,7 @@
               <text x="295" y="77" font-size="13" fill="#3b3344" text-anchor="middle">Kotlin · Spring Boot</text>
               <text x="295" y="96" font-size="13" fill="#7b7186" text-anchor="middle">Connection Pool</text>
               <path d="M388 72 H 494" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#ar)"/>
-              <text x="441" y="62" font-size="13" fill="#7b7186" text-anchor="middle">쿼리</text>
+              <text x="441" y="62" font-size="13" fill="#7b7186" text-anchor="middle">Query</text>
               <rect x="502" y="44" width="206" height="56" rx="6" fill="none" stroke="#3b3344" stroke-width="1.5"/>
               <text x="605" y="70" font-size="14" fill="#18121d" text-anchor="middle">PostgreSQL</text>
               <text x="605" y="89" font-size="13" fill="#7b7186" text-anchor="middle">관리형 · Connection 상한 있음</text>
@@ -238,7 +238,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
     val user = activeUserGuard.requireActive(userId)                 // DB
     val postWithAuthor = postQueryRepository.findActiveById(postId)  // DB
     // ...
-    moderationGate.screenComment(body)   // ← 외부 HTTP 호출. read timeout 10초
+    moderationGate.screenComment(body)   // ← 외부 HTTP 호출. read timeout 10s
     // ...
     val comment = commentRepository.insert(...)                      // DB
 }</code></pre>
@@ -266,7 +266,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
               <rect x="92" y="54" width="86" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
               <text x="135" y="72" font-size="13" fill="#18121d" text-anchor="middle">SELECT</text>
               <rect x="182" y="54" width="328" height="26" rx="4" fill="none" stroke="#d62976" stroke-width="2" stroke-dasharray="5 4"/>
-              <text x="346" y="72" font-size="13" fill="#d62976" font-weight="700" text-anchor="middle">외부 HTTP 호출 · 쿼리 0건 · 최대 10s</text>
+              <text x="346" y="72" font-size="13" fill="#d62976" font-weight="700" text-anchor="middle">외부 HTTP 호출 · Query 0건 · 최대 10s</text>
               <rect x="514" y="54" width="80" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
               <text x="554" y="72" font-size="13" fill="#18121d" text-anchor="middle">INSERT</text>
               <rect x="598" y="54" width="112" height="26" rx="4" fill="none" stroke="#3b3344" stroke-width="1.5"/>
@@ -415,9 +415,9 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
                 <rect x="309" y="84" width="194" height="24" rx="4"/>
               </g>
               <g font-size="13" fill="#3b3344">
-                <text x="116" y="71">BEGIN · 쿼리 · COMMIT</text>
-                <text x="526" y="71">BEGIN · 쿼리 · COMMIT</text>
-                <text x="321" y="101">BEGIN · 쿼리 · COMMIT</text>
+                <text x="116" y="71">BEGIN · Query · COMMIT</text>
+                <text x="526" y="71">BEGIN · Query · COMMIT</text>
+                <text x="321" y="101">BEGIN · Query · COMMIT</text>
               </g>
               <g fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="4 3">
                 <path d="M201 78 V 118"/><path d="M406 108 V 118"/><path d="M611 78 V 118"/>
@@ -430,7 +430,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
               <rect x="104" y="216" width="604" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="114" y="233" font-size="13" fill="#18121d">BEGIN</text>
               <rect x="172" y="219" width="420" height="18" rx="3" fill="none" stroke="#d62976" stroke-width="1.5" stroke-dasharray="4 3"/>
-              <text x="184" y="233" font-size="13" fill="#d62976" font-weight="700">외부 HTTP 호출 · 쿼리 0건</text>
+              <text x="184" y="233" font-size="13" fill="#d62976" font-weight="700">외부 HTTP 호출 · Query 0건</text>
               <text x="604" y="233" font-size="13" fill="#18121d">COMMIT</text>
 
               <rect x="104" y="246" width="604" height="24" rx="4" fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4"/>
@@ -446,8 +446,8 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
 
         <p>그래서 이렇게 됩니다.</p>
 
-<pre data-lang="text"><code>transaction이 10초 열려 있음
-  → backend connection도 10초 묶임
+<pre data-lang="text"><code>transaction이 10s 열려 있음
+  → backend connection도 10s 묶임
   → 앱 connection 1개당 DB connection 1개
   → connection pooler가 줄여 주는 게 없음</code></pre>
 
@@ -551,7 +551,7 @@ spring:
 
 <pre data-lang="yaml"><code>hikari:
   maximum-pool-size: ${DB_POOL_MAX:20}
-  connection-timeout: ${DB_POOL_TIMEOUT_MS:5000}   # 30초 기본값은 너무 깁니다. 빨리 실패해야 나머지가 삽니다
+  connection-timeout: ${DB_POOL_TIMEOUT_MS:5000}   # 30s 기본값은 너무 깁니다. 빨리 실패해야 나머지가 삽니다
   max-lifetime: ${DB_POOL_MAX_LIFETIME_MS:1200000}</code></pre>
 
         <p>다만 Pool을 키운 것은 수리가 아니라 완화입니다. 그리고 키우는 데에도 상한이
@@ -573,8 +573,8 @@ spring:
         핀이 걸리면 그 Connection은 Transaction이 끝나도 그 클라이언트에 계속 묶여 있게 됩니다.</p>
 
         <ul class="callout">
-          <li>세션 스코프 Advisory Lock (<code>pg_advisory_lock</code>)</li>
-          <li>임시 테이블</li>
+          <li>Session 스코프 Advisory Lock (<code>pg_advisory_lock</code>)</li>
+          <li>임시 Table</li>
           <li><code>SET</code> · <code>set search_path</code></li>
           <li>서버 프리페어드 스테이트먼트 (Pooler와 버전에 따라 다릅니다)</li>
         </ul>
@@ -592,7 +592,7 @@ VoteRepository.kt        pg_advisory_xact_lock(...)</code></pre>
         얹힙니다.</p>
 
         <p>이 셋이 <code>xact</code> 스코프인 것이 의도였는지 우연이었는지는 기록으로 가릴 수 없습니다.
-        확실한 것은 세션 스코프 Lock을 한 군데만 썼어도 그 경로가 Connection Pooler를 무력화했을
+        확실한 것은 Session 스코프 Lock을 한 군데만 썼어도 그 경로가 Connection Pooler를 무력화했을
         것이고 그 사실은 도입한 뒤에야 알게 됐으리라는 겁니다.</p>
 
         <p>도구를 도입하기 전에, 그 도구가 이 코드에서 실제로 동작하는지 먼저 확인하는 절차.
@@ -868,7 +868,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
           쓰기 8 · Pool 10에서는 p95가 5ms 대 8ms였습니다.</li>
           <li>“최대 10s”는 설정값입니다. 외부 호출에 걸어 둔 Read Timeout이고 요청마다
           실제로 그만큼 점유했다고 측정한 값이 아닙니다.</li>
-          <li>Pooler 호환 점검은 애플리케이션 소스 검색까지입니다. Driver와 ORM이 만드는 세션 상태, 초기화 SQL, 런타임 설정은 이 검색에 안 잡히고 실제 Pin이 나는지도 재지 않았습니다. 「그 문자열이 소스에 없다」까지만 확인한 것입니다.</li>
+          <li>Pooler 호환 점검은 애플리케이션 소스 검색까지입니다. Driver와 ORM이 만드는 Session 상태, 초기화 SQL, 런타임 설정은 이 검색에 안 잡히고 실제 Pin이 나는지도 재지 않았습니다. 「그 문자열이 소스에 없다」까지만 확인한 것입니다.</li>
           <li>장애가 난 적은 없습니다. 출시 전 구조 점검에서 나온 것이고 이 경로가 실제로
           고갈되는 것을 관측한 기록은 없습니다.</li>
           <li>Connection Pooler가 쓸모없다는 이야기가 아닙니다. 원인 ① 쪽 고갈에는 정확히 맞는
@@ -912,7 +912,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c8da970e8b"></script>
+  <script src="../assets/content.js?v=d7cabca9c3"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

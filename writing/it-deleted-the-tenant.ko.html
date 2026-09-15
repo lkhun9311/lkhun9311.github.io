@@ -128,7 +128,7 @@
               <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">프리미엄 · 시끄러운 이웃</text>
               <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#sh-a)"/>
               <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
-              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">게이트웨이</text>
+              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">Gateway</text>
               <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">입장 제어</text>
               <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#sh-a)"/>
               <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
@@ -162,7 +162,7 @@
           <tbody>
             <tr><td>R1</td><td>프리미엄 단독, 같은 도착 스케줄</td><td>경쟁자가 없으면 얼마나 빠른가</td></tr>
             <tr><td>off</td><td>두 테넌트, 입장 제어 없음</td><td>경쟁의 비용은 얼마인가</td></tr>
-            <tr><td><strong>static-cap</strong></td><td>압력을 안 보는 토큰 버킷. kv-aware와 같은 양을 통과시키도록 맞출 의도였다</td><td>이 가드가 레이트리밋이 못 하는 일을 하는가</td></tr>
+            <tr><td><strong>static-cap</strong></td><td>압력을 안 보는 Token Bucket. kv-aware와 같은 양을 통과시키도록 맞출 의도였다</td><td>이 가드가 레이트리밋이 못 하는 일을 하는가</td></tr>
             <tr><td>kv-aware</td><td>KV Cache인지 가드</td><td>테스트 대상</td></tr>
           </tbody>
         </table>
@@ -238,8 +238,8 @@
         지킨 것이 아니라 꼬리를 만드는 쪽을 없앤 것입니다.</p>
 
         <p>그리고 왜 전부 지웠는지는 정책이 아니라 설정 오류였습니다. 두 가지가 겹쳤습니다.
-        하나, 러너가 트레이스의 요청률(초당 1.568건)을 초당 토큰 단위의
-        플래그에 넣었습니다. 둘, 버스트 플래그를 아예 넘기지 않아 게이트웨이 기본값
+        하나, 러너가 트레이스의 요청률(초당 1.568건)을 초당 Token 단위의
+        플래그에 넣었습니다. 둘, 버스트 플래그를 아예 넘기지 않아 Gateway 기본값
         8,192 토큰이 그대로 쓰였는데 트레이스의 시끄러운 프롬프트는 하나하나가
         약 10,000 토큰으로 추정됩니다. 버킷보다 큰 요청은 어떤 버킷에도 담길 수
         없으므로 게이트웨이는 네 번의 반복 모두에서 그것들을 전부 413으로 거절했습니다.</p>
@@ -374,7 +374,7 @@
         두 요인의 상호작용을 판독표가 담지 못했기 때문입니다. 사전 등록은 결과를 사후에 맞추지 못하게 하지만
         등록한 판독표 자체가 결과를 담지 못하는 경우까지 막아 주지는 않습니다.</p>
 
-        <p>비용을 적어 두면 이렇습니다. 유료 세션 세 번에 GPU·클러스터 시간 대략 10달러가 들었고
+        <p>비용을 적어 두면 이렇습니다. 유료 Session 세 번에 GPU·클러스터 시간 대략 10달러가 들었고
         앞의 두 번은 유효한 측정을 내지 못했습니다. 그 뒤의 모든 것. 메커니즘, 재채점, 내 설명 두 개가
         반증된 것은 이미 산 증거 안에서 나왔습니다. 그리고 층을 찾아낸 실험은 40센트였습니다. 질문을
         요청 두 개로 답할 수 있을 만큼 좁혔기 때문입니다.</p>
@@ -450,7 +450,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c8da970e8b"></script>
+  <script src="../assets/content.js?v=d7cabca9c3"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
