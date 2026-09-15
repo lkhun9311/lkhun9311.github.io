@@ -79,8 +79,8 @@
         <nav class="article-toc" aria-label="Contents">
           <p class="toc-label">Contents</p>
           <ul>
-            <li><a href="#audience">Who this is for</a></li>
-            <li><a href="#what">What this is about</a></li>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-this-is">What this is about</a></li>
             <li><a href="#service">The setup</a></li>
             <li><a href="#assumed">I assumed a fixed workload could measure capacity</a></li>
             <li><a href="#result">The result, up front</a></li>
@@ -95,28 +95,28 @@
         </nav>
       <article class="article-body">
 
-        <h2 id="audience">Who this is for</h2>
+        <h2 id="who-this-is-for">Who this is for</h2>
         <ul>
           <li>Anyone weighing up letting several tenants share one GPU</li>
           <li>Anyone who designs performance experiments and is never sure what to buy to get an answer</li>
           <li>Anyone who builds their own measurement tools</li>
         </ul>
 
-        <h2 id="what">What this is about</h2>
+        <h2 id="what-this-is">What this is about</h2>
         <p>Two tenants share one GPU. I measured which arrangement holds a latency target to a higher offered
-        load: <strong>one engine serving both</strong>, or <strong>an engine each</strong>.</p>
+        load: one engine serving both, or an engine each.</p>
         <p>Half of this post is about my own mistake. The criterion, the readings and the stopping rule were
         all correct, and I still <strong>paid for an experiment whose answer was already decided</strong>,
         because I put the ladder somewhere it could not be climbed. That was knowable before renting
         anything.</p>
-        <p>⚠️ <strong>One caveat first.</strong> What follows are <strong>pass and fail results at four
+        <p>One caveat first. What follows are <strong>pass and fail results at four
         sampled arrival rates</strong>, not a proof of a maximum sustainable rate. Neither arrangement's
         maximum was located. The rest of the caveats are gathered under "What this does not claim".</p>
 
         <h2 id="service">The setup</h2>
-        <p>A small language model (Qwen2.5-3B) served from one NVIDIA A10G, taking <strong>two kinds of
-        customer</strong> at once. The <strong>premium tenant</strong> sends short prompts often and needs
-        its first token quickly. The <strong>contending tenant</strong> sends a 40,000-character prompt now
+        <p>A small language model (Qwen2.5-3B) served from one NVIDIA A10G, taking two kinds of
+        customer at once. The premium tenant sends short prompts often and needs
+        its first token quickly. The contending tenant sends a 40,000-character prompt now
         and then, and each one holds the GPU for a long time.</p>
 
         <figure class="diagram">
@@ -136,8 +136,8 @@
               <path d="M252 92 H 282" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#lad-a)"/>
               <rect x="288" y="72" width="56" height="40" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
               <text x="316" y="96" font-size="11" fill="#4a4a4a" text-anchor="middle">GPU</text>
-              <text x="176" y="176" font-size="11" fill="#8a8a8a" text-anchor="middle">One queue.</text>
-              <text x="176" y="194" font-size="11" fill="#8a8a8a" text-anchor="middle">A short request waits behind a long prompt.</text>
+              <text x="176" y="176" font-size="11" fill="#8a8a8a" text-anchor="middle">one queue</text>
+              <text x="176" y="194" font-size="11" fill="#8a8a8a" text-anchor="middle">a short request waits behind a long prompt</text>
               <line x1="372" y1="30" x2="372" y2="200" stroke="#e5e5e5" stroke-width="1"/>
               <text x="556" y="18" font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="600">Split</text>
               <rect x="400" y="40" width="96" height="40" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
@@ -154,8 +154,8 @@
               <path d="M626 124 H 650 V 96" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#lad-a)"/>
               <rect x="656" y="72" width="56" height="40" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
               <text x="684" y="96" font-size="11" fill="#4a4a4a" text-anchor="middle">GPU</text>
-              <text x="556" y="176" font-size="11" fill="#8a8a8a" text-anchor="middle">Two queues.</text>
-              <text x="556" y="194" font-size="11" fill="#8a8a8a" text-anchor="middle">The card is taken in turns instead.</text>
+              <text x="556" y="176" font-size="11" fill="#8a8a8a" text-anchor="middle">two queues</text>
+              <text x="556" y="194" font-size="11" fill="#8a8a8a" text-anchor="middle">the card is taken in turns instead</text>
             </g>
             <defs>
               <marker id="lad-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
@@ -199,13 +199,13 @@
         </figure>
 
         <h2 id="result">The result, up front</h2>
-        <p>Put the ladder <strong>below</strong> the load the earlier run used, and this is what comes out.</p>
+        <p>Put the ladder below the load the earlier run used, and this is what comes out.</p>
         <table>
           <caption class="sr-only">Premium TTFT p99 for both arrangements at four offered premium rates, against the 139.0 ms target.</caption>
           <thead><tr><th scope="col">offered premium</th><th scope="col">shared p99</th><th scope="col">split p99</th><th scope="col">139.0 ms target</th></tr></thead>
           <tbody>
             <tr><td>1.16 req/s</td><td>1,282.5 ms</td><td><strong>123.8 ms</strong></td><td>split only</td></tr>
-            <tr><td>2.31 req/s</td><td>1,694.7 ms</td><td><strong>130.4 ms</strong></td><td>split only</td></tr>
+            <tr><td>2.31 req/s</td><td>1,694.7 ms</td><td>130.4 ms</td><td>split only</td></tr>
             <tr><td>4.61 req/s</td><td>2,303.3 ms</td><td>143.2 ms</td><td>neither</td></tr>
             <tr><td>9.22 req/s</td><td>1,896.0 ms</td><td>1,013.2 ms</td><td>neither</td></tr>
           </tbody>
@@ -218,8 +218,8 @@
         <p>A ladder works like this. Start at a low load, climb a rung at a time, and <strong>stop at the
         first rung where both arrangements miss the target</strong>. The rung below it is what each one
         sustained.</p>
-        <p>I put the bottom rung at <strong>9.22 req/s</strong>, the load the earlier run used. And
-        <strong>that earlier run had measured 1,892 ms and 1,007 ms at exactly that load.</strong> The target
+        <p>I put the bottom rung at 9.22 req/s, the load the earlier run used. And
+        that earlier run had measured 1,892 ms and 1,007 ms at exactly that load. The target
         is 139 ms.</p>
 
         <figure class="diagram">
@@ -255,9 +255,8 @@
         I already had cost about $0.35.</p>
 
         <h2 id="unscorable">The verdict was right and the runner misread its exit code</h2>
-        <p>This part hurts more. At the first rung the verdict command said, entirely correctly, "both
-        arrangements missed the target, stop here" — and exited 10. The runner read that as
-        <strong>0</strong>.</p>
+        <p>This part hurts more. At the first rung the verdict command said, entirely correctly, "both arrangements missed the target, stop here", and exited 10. The runner read that as
+        0.</p>
 <pre data-lang="bash"><code># wrong
 if "$BIN" ladder-verdict ... ; then
   ...
@@ -265,16 +264,16 @@ if "$BIN" ladder-verdict ... ; then
 fi
 verdict_code=$?          # this is the IF STATEMENT's status, not the command's
 </code></pre>
-        <p>In bash, <code>$?</code> after an <code>if</code> is the status of <strong>the if statement</strong>,
+        <p>In bash, <code>$?</code> after an <code>if</code> is the status of the if statement,
         not of the condition. When the condition fails and there is no <code>else</code>, an <code>if</code>
-        returns <strong>0</strong>. So a correct stop was reported as a rung that could not be scored, and a
+        returns 0. So a correct stop was reported as a rung that could not be scored, and a
         paid session ended there.</p>
 <pre data-lang="bash"><code># right — capture the status beside the command
 verdict_code=0
 "$BIN" ladder-verdict ... || verdict_code=$?
 if [ "$verdict_code" -eq 0 ]; then ...
 </code></pre>
-        <p><strong>No rehearsal could have caught it.</strong> The GPU-free rehearsal answers in milliseconds
+        <p>No rehearsal could have caught it. The GPU-free rehearsal answers in milliseconds
         with a stub engine, so it never breaches the target, so <strong>the stopping branch never
         executes</strong>. I had pinned the verdict command's exit code 10 in a test. I had not pinned
         <strong>the script's reading of it</strong>.</p>
@@ -284,9 +283,8 @@ if [ "$verdict_code" -eq 0 ]; then ...
 
         <h2 id="why">Why lowering the load does not rescue the shared engine</h2>
         <p>Because the tail is not made of <strong>premium queueing behind premium</strong>. At 4.61 req/s
-        under the shared engine, 651 premium requests went over 139 ms — and
-        <strong>649 of them (99.7%)</strong> were sent while a contending request was
-        <strong>still waiting for its own first token</strong>.</p>
+        under the shared engine, 651 premium requests went over 139 ms, and <strong>649 of them (99.7%)</strong> were sent while a contending request was
+        still waiting for its own first token.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 180" role="img" aria-labelledby="lad4-t lad4-d" class="figure-svg">
@@ -326,15 +324,14 @@ if [ "$verdict_code" -eq 0 ]; then ...
           <caption class="sr-only">Split arrangement p99 and the number of premium requests over 139 ms, by offered rate.</caption>
           <thead><tr><th scope="col">offered premium</th><th scope="col">split p99</th><th scope="col">requests over 139 ms</th></tr></thead>
           <tbody>
-            <tr><td>1.16 req/s</td><td>123.8 ms</td><td><strong>1</strong> of 585 (0.17%)</td></tr>
-            <tr><td>2.31 req/s</td><td>130.4 ms</td><td><strong>5</strong> of 1,164 (0.43%)</td></tr>
-            <tr><td>4.61 req/s</td><td>143.2 ms</td><td><strong>40</strong> of 2,327 (1.72%)</td></tr>
-            <tr><td>9.22 req/s</td><td>1,013.2 ms</td><td><strong>823</strong> of 4,655 (17.68%)</td></tr>
+            <tr><td>1.16 req/s</td><td>123.8 ms</td><td>1 of 585 (0.17%)</td></tr>
+            <tr><td>2.31 req/s</td><td>130.4 ms</td><td>5 of 1,164 (0.43%)</td></tr>
+            <tr><td>4.61 req/s</td><td>143.2 ms</td><td>40 of 2,327 (1.72%)</td></tr>
+            <tr><td>9.22 req/s</td><td>1,013.2 ms</td><td>823 of 4,655 (17.68%)</td></tr>
           </tbody>
         </table>
         <p><strong>The miss at 4.61 is forty requests.</strong> That fraction rises monotonically across all
-        four points, and unlike a p99 — which is one observation and can move — <strong>a count over
-        thousands of requests cannot move much unless the distribution does.</strong> The actual cliff is
+        four points, and unlike a p99, which is one observation and can move, <strong>a count over thousands of requests cannot move much unless the distribution does.</strong> The actual cliff is
         between 4.61 and 9.22, from 1.7% to 17.7%, and I did not measure there.</p>
 
         <h2 id="cost">It is not free</h2>
@@ -358,17 +355,18 @@ if [ "$verdict_code" -eq 0 ]; then ...
           qualifies.</li>
           <li><strong>Anything about windows shorter than 505 seconds.</strong> The run that passes at
           2.31 req/s has a p99 of 141.7 ms over its own final 101 seconds.</li>
-          <li><strong>Anything about a different contender arrival pattern.</strong> The contender's
+          <li>Anything about a different contender arrival pattern. The contender's
           <em>count</em> is held at 139 per rung; its <em>schedule</em> is not, so comparisons across rungs
           mix a rate change with a different contention schedule.</li>
-          <li><strong>That the topology rather than the batch cap moved the result.</strong> Splitting also
+          <li>That the topology rather than the batch cap moved the result. Splitting also
           halves the per-engine sequence cap, from 64 to 32, and no arm separates the two.</li>
-          <li><strong>That 139 ms means anything commercially.</strong> It is twice a baseline, not a
+          <li>That 139 ms means anything commercially. It is twice a baseline, not a
           customer requirement.</li>
-          <li><strong>Anything about another card, another model, or MIG.</strong> One A10G, one model, one
+          <li>Anything about another card, another model, or MIG. One A10G, one model, one
           prompt mix.</li>
         </ul>
 
+        <div class="wrapup">
         <h2 id="closing">Closing</h2>
         <ul>
           <li><strong>An experiment whose fixed workload is completed in full cannot measure capacity.</strong>
@@ -376,17 +374,19 @@ if [ "$verdict_code" -eq 0 ]; then ...
           <li><strong>The search direction is part of the design.</strong> With the criterion, the readings
           and the stopping rule all correct, starting where the answer cannot be does not produce one. And
           that was knowable before renting.</li>
-          <li><strong>Pinning a guard and pinning the code that reads it are different jobs.</strong> Exit
+          <li>Pinning a guard and pinning the code that reads it are different jobs. Exit
           code 10 was held by a test. That the runner read it with <code>$?</code> after an <code>if</code>
           was not.</li>
-          <li><strong>There is a result.</strong> Under this contending load the split holds 139 ms up to
-          2.31 req/s and the shared engine holds it at no rate measured — at the price of quadrupling the
+          <li>There is a result. Under this contending load the split holds 139 ms up to
+          2.31 req/s and the shared engine holds it at no rate measured, at the price of quadrupling the
           contender's tail.</li>
         </ul>
-        <p>If you build your own measurement tools, <strong>break them on purpose and check that something
-        goes red</strong>. Every expensive defect in this project had the same shape: <strong>a guard that
-        exists, is correct where it is written, and is not consulted where it matters.</strong></p>
+        <p>If you build your own measurement tools, break them on purpose and check that something
+        goes red. Every expensive defect in this project had the same shape: a guard that
+        exists, is correct where it is written, and is not consulted where it matters.</p>
         <p>Thank you for reading.</p>
+
+              </div>
 
       </article>
     </main>
@@ -398,7 +398,7 @@ if [ "$verdict_code" -eq 0 ]; then ...
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c03cb004ee"></script>
+  <script src="../assets/content.js?v=c8da970e8b"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

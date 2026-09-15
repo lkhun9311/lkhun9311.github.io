@@ -79,7 +79,7 @@
         <nav class="article-toc" aria-label="目次">
           <p class="toc-label">目次</p>
           <ul>
-            <li><a href="#読者">この記事の想定読者</a></li>
+            <li><a href="#想定読者">この記事の想定読者</a></li>
             <li><a href="#内容">どんな内容ですか</a></li>
             <li><a href="#構成">どんな構成ですか</a></li>
             <li><a href="#思い込み">固定した仕事量で容量が測れると思っていました</a></li>
@@ -95,7 +95,7 @@
         </nav>
       <article class="article-body">
 
-        <h2 id="読者">この記事の想定読者</h2>
+        <h2 id="想定読者">この記事の想定読者</h2>
         <ul>
           <li>GPU 1枚を複数テナントで分け合う構成を検討している方</li>
           <li>性能実験を設計するとき、何を買えば答えが出るのか毎回迷う方</li>
@@ -103,20 +103,20 @@
         </ul>
 
         <h2 id="内容">どんな内容ですか</h2>
-        <p>GPU 1枚を2テナントで分け合うとき、<strong>エンジンを1つだけ置いて共有する構成</strong>と
-        <strong>テナントごとにエンジンを1つずつ与える構成</strong>の、どちらが遅延目標をより高い負荷まで
+        <p>GPU 1枚を2テナントで分け合うとき、エンジンを1つだけ置いて共有する構成と
+        テナントごとにエンジンを1つずつ与える構成の、どちらが遅延目標をより高い負荷まで
         守るのかを測った話です。</p>
         <p>ただしこの記事の半分は、<strong>私が設計を誤って、答えがすでに決まっている実験を買った</strong>
         という話です。基準も判定規則も停止規則もすべて正しかったのに、梯子を登れない場所に置きました。
         そしてそれは、カードを借りる前に分かることでした。</p>
-        <p>⚠️ <strong>先に留保をひとつ。</strong>以下の結果は<strong>4つの到着率で測った合否</strong>であって、
+        <p>先に留保をひとつ置きます。以下の結果は<strong>4つの到着率で測った合否</strong>であって、
         持続可能な最大到着率の証明ではありません。どちらの構成についても最大値は特定できていません。
         残りの留保は「この記事が主張しないこと」にまとめました。</p>
 
         <h2 id="構成">どんな構成ですか</h2>
-        <p>小さな言語モデル(Qwen2.5-3B)を GPU 1枚(NVIDIA A10G)で配信しながら、<strong>2種類のお客さん</strong>
-        を同時に受けます。<strong>プレミアムテナント</strong>は短いプロンプトを頻繁に送り、最初のトークンが
-        早く出る必要があります。<strong>競合テナント</strong>は4万文字の長いプロンプトをときどき送り、
+        <p>小さな言語モデル(Qwen2.5-3B)を GPU 1枚(NVIDIA A10G)で配信しながら、2種類のお客さん
+        を同時に受けます。プレミアムテナントは短いプロンプトを頻繁に送り、最初のトークンが
+        早く出る必要があります。競合テナントは4万文字の長いプロンプトをときどき送り、
         1件が GPU を長く占有します。</p>
 
         <figure class="diagram">
@@ -136,8 +136,8 @@
               <path d="M252 92 H 282" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#lad-a)"/>
               <rect x="288" y="72" width="56" height="40" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
               <text x="316" y="96" font-size="11" fill="#4a4a4a" text-anchor="middle">GPU</text>
-              <text x="176" y="176" font-size="11" fill="#8a8a8a" text-anchor="middle">キューが1つです</text>
-              <text x="176" y="194" font-size="11" fill="#8a8a8a" text-anchor="middle">長いプロンプトの後ろに短い要求が並びます</text>
+              <text x="176" y="176" font-size="11" fill="#8a8a8a" text-anchor="middle">キューが1つ</text>
+              <text x="176" y="194" font-size="11" fill="#8a8a8a" text-anchor="middle">長いプロンプトの後ろに並ぶ短い要求</text>
               <line x1="372" y1="30" x2="372" y2="200" stroke="#e5e5e5" stroke-width="1"/>
               <text x="556" y="18" font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="600">分割構成</text>
               <rect x="400" y="40" width="96" height="40" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
@@ -154,8 +154,8 @@
               <path d="M626 124 H 650 V 96" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#lad-a)"/>
               <rect x="656" y="72" width="56" height="40" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
               <text x="684" y="96" font-size="11" fill="#4a4a4a" text-anchor="middle">GPU</text>
-              <text x="556" y="176" font-size="11" fill="#8a8a8a" text-anchor="middle">キューが2つです</text>
-              <text x="556" y="194" font-size="11" fill="#8a8a8a" text-anchor="middle">代わりにカードを時間で交代して使います</text>
+              <text x="556" y="176" font-size="11" fill="#8a8a8a" text-anchor="middle">キューが2つ</text>
+              <text x="556" y="194" font-size="11" fill="#8a8a8a" text-anchor="middle">代わりにカードを時間で交代</text>
             </g>
             <defs>
               <marker id="lad-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
@@ -167,7 +167,7 @@
         </figure>
 
         <p>基準は1つに決めておきました。<strong>プレミアムの最初のトークンまでの時間(TTFT)の p99 が
-        139.0 ms 以下</strong>であること。この値は競合テナントがいないときの基準線(69.5 ms)のちょうど2倍で、
+        139.0 ms 以下</strong>であることです。この値は競合テナントがいないときの基準線(69.5 ms)のちょうど2倍で、
         <strong>実験を始める前に</strong>決めて文書に書いておきました。</p>
 
         <h2 id="思い込み">固定した仕事量で容量が測れると思っていました</h2>
@@ -190,21 +190,21 @@
               <text x="0" y="114" font-size="11.5" fill="#4a4a4a">分割がした仕事</text>
               <rect x="150" y="102" width="420" height="18" rx="4" fill="#f3cfe0"/>
               <text x="582" y="115" font-size="11" fill="#8a8a8a">297,920 トークン</text>
-              <text x="150" y="156" font-size="11.5" fill="#d62976">余裕が10%でも300%でも、この図は同じです</text>
-              <text x="150" y="178" font-size="11" fill="#8a8a8a">動くのは分母(経過時間)だけで、その3.31秒は競合テナントのエンジンが後から終わった時間です</text>
+              <text x="150" y="156" font-size="11.5" fill="#d62976">余裕が10%でも300%でも同じ図</text>
+              <text x="150" y="178" font-size="11" fill="#8a8a8a">動くのは分母(経過時間)だけ、うち3.31秒は競合エンジンが後から終わった時間</text>
             </g>
           </svg>
           <figcaption>容量を測るには負荷を変えながら回すしかありません。そこで梯子を作りました。</figcaption>
         </figure>
 
         <h2 id="結論">結論から申し上げます</h2>
-        <p>梯子を先の実験の負荷の<strong>下</strong>に置き直して回すと、こうなりました。</p>
+        <p>梯子を先の実験の負荷の下に置き直して回すと、こうなりました。</p>
         <table>
           <caption class="sr-only">4つのプレミアム到着率における両構成のプレミアム TTFT p99 と 139.0 ms 目標の達成可否。</caption>
           <thead><tr><th scope="col">プレミアム負荷</th><th scope="col">共有構成 p99</th><th scope="col">分割構成 p99</th><th scope="col">目標 139.0 ms</th></tr></thead>
           <tbody>
             <tr><td>1.16 req/s</td><td>1,282.5 ms</td><td><strong>123.8 ms</strong></td><td>分割のみ達成</td></tr>
-            <tr><td>2.31 req/s</td><td>1,694.7 ms</td><td><strong>130.4 ms</strong></td><td>分割のみ達成</td></tr>
+            <tr><td>2.31 req/s</td><td>1,694.7 ms</td><td>130.4 ms</td><td>分割のみ達成</td></tr>
             <tr><td>4.61 req/s</td><td>2,303.3 ms</td><td>143.2 ms</td><td>どちらも未達</td></tr>
             <tr><td>9.22 req/s</td><td>1,896.0 ms</td><td>1,013.2 ms</td><td>どちらも未達</td></tr>
           </tbody>
@@ -216,8 +216,8 @@
         <h2 id="梯子">登れない場所に梯子を置きました</h2>
         <p>梯子はこう動きます。低い負荷から始めて一段ずつ登り、<strong>両方の構成が目標を外す最初の段で
         止まります。</strong>その直前の段が、各構成が耐えた最大負荷です。</p>
-        <p>私は底の段を <strong>9.22 req/s</strong> に置きました。先の実験が回っていた負荷です。ところが
-        <strong>先の実験はまさにその負荷で、共有 1,892 ms、分割 1,007 ms を測っていました。</strong>
+        <p>私は底の段を 9.22 req/s に置きました。先の実験が回っていた負荷です。ところが
+        先の実験はまさにその負荷で、共有 1,892 ms、分割 1,007 ms を測っていました。
         基準は 139 ms です。</p>
 
         <figure class="diagram">
@@ -232,11 +232,11 @@
               <circle cx="470" cy="60" r="5" fill="#d62976"/>
               <text x="484" y="52" font-size="11.5" fill="#d62976">私の梯子の底の段 · 9.22 req/s</text>
               <text x="484" y="70" font-size="11" fill="#4a4a4a">共有 1,892 ms · 分割 1,007 ms</text>
-              <text x="484" y="88" font-size="11" fill="#8a8a8a">すでに目標の7倍を超えています</text>
+              <text x="484" y="88" font-size="11" fill="#8a8a8a">すでに目標の7倍超</text>
               <path d="M470 50 V 26" fill="none" stroke="#d62976" stroke-width="1.6" marker-end="url(#lad-b)"/>
-              <text x="470" y="18" font-size="11" fill="#d62976" text-anchor="middle">梯子はここから上へ登ります</text>
+              <text x="470" y="18" font-size="11" fill="#d62976" text-anchor="middle">梯子はここから上へ</text>
               <rect x="60" y="152" width="330" height="32" fill="#fbeaf2"/>
-              <text x="225" y="172" font-size="11.5" fill="#d62976" text-anchor="middle">条件を満たす負荷はすべてこの下、底の段より左にあります</text>
+              <text x="225" y="172" font-size="11.5" fill="#d62976" text-anchor="middle">条件を満たす負荷はすべてこの下、底の段より左</text>
             </g>
             <defs>
               <marker id="lad-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
@@ -252,9 +252,9 @@
         一部です。すでに持っていた数字を確かめ直すのに、およそ 0.35 ドルを使いました。</p>
 
         <h2 id="採点不能">判定は正しく、ランナーが終了コードを読み違えました</h2>
-        <p>より痛いのはこちらです。判定は1段目で<strong>まったく正しく</strong>「両構成とも目標を外したので
-        ここで止まれ」を終了コード10で返しました。ところが実行スクリプトがそれを<strong>0として
-        読みました。</strong></p>
+        <p>より痛いのはこちらです。判定は1段目でまったく正しく「両構成とも目標を外したので
+        ここで止まれ」を終了コード10で返しました。ところが実行スクリプトがそれを0として
+        読みました。</p>
 <pre data-lang="bash"><code># 誤ったコード
 if "$BIN" ladder-verdict ... ; then
   ...
@@ -262,9 +262,9 @@ if "$BIN" ladder-verdict ... ; then
 fi
 verdict_code=$?          # if 文の終了状態です。コマンドの10ではありません
 </code></pre>
-        <p>bash では <code>if</code> 文の直後の <code>$?</code> は<strong>条件コマンドの状態ではなく
-        <code>if</code> 文自体の状態</strong>です。条件が失敗し <code>else</code> がなければ
-        <code>if</code> 文は<strong>0</strong>を返します。そのため正しい停止が「採点できない段」として
+        <p>bash では <code>if</code> 文の直後の <code>$?</code> は条件コマンドの状態ではなく
+        <code>if</code> 文自体の状態です。条件が失敗し <code>else</code> がなければ
+        <code>if</code> 文は0を返します。そのため正しい停止が「採点できない段」として
         報告され、お金を払ったセッションがそこで終わりました。</p>
 <pre data-lang="bash"><code># 直したコード — 状態をコマンドの隣で捕まえます
 verdict_code=0
@@ -274,16 +274,16 @@ if [ "$verdict_code" -eq 0 ]; then ...
         <p><strong>リハーサルではこれを捕まえられませんでした。</strong>GPU なしで回るリハーサルは
         ダミーのエンジンがミリ秒で答えるため目標を超えることがなく、<strong>停止の分岐が一度も
         実行されません。</strong>私は判定コマンドの終了コード10をテストで固定していましたが、
-        <strong>それを読むスクリプト側は固定していませんでした。</strong></p>
+        それを読むスクリプト側は固定していませんでした。</p>
         <p>今は判定コマンドだけを横取りする薄い代替スクリプトを挟んで、実際の実行スクリプトをその分岐へ
-        追い込むリハーサルがあります。そして直す前に、<strong>欠陥を復活させて赤くなることから
-        確かめました。</strong></p>
+        追い込むリハーサルがあります。そして直す前に、欠陥を復活させて赤くなることから
+        確かめました。</p>
 
         <h2 id="なぜ">負荷を下げても共有構成が届かない理由</h2>
         <p>尾を作っているのが<strong>プレミアムがプレミアムの後ろに並ぶこと</strong>ではないからです。
         4.61 req/s の共有構成で 139 ms を超えたプレミアム要求は651件でしたが、そのうち
-        <strong>649件(99.7%)</strong>が<strong>競合テナントの要求がまだ自分の最初のトークンを待っている
-        最中に</strong>送られたものでした。</p>
+        <strong>649件(99.7%)</strong>が競合テナントの要求がまだ自分の最初のトークンを待っている
+        最中に送られたものでした。</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 180" role="img" aria-labelledby="lad4-t lad4-d" class="figure-svg">
@@ -298,7 +298,7 @@ if [ "$verdict_code" -eq 0 ]; then ...
               <path d="M260 92 V 62" fill="none" stroke="#4f5bd5" stroke-width="1.6" marker-end="url(#lad-c)"/>
               <path d="M350 92 V 62" fill="none" stroke="#4f5bd5" stroke-width="1.6" marker-end="url(#lad-c)"/>
               <path d="M520 92 V 62" fill="none" stroke="#8a8a8a" stroke-width="1.6" marker-end="url(#lad-d)"/>
-              <text x="260" y="124" font-size="11.5" fill="#d62976" text-anchor="middle">この3本が遅れます</text>
+              <text x="260" y="124" font-size="11.5" fill="#d62976" text-anchor="middle">この3本が遅い</text>
               <text x="520" y="124" font-size="11.5" fill="#8a8a8a" text-anchor="middle">これは遅れません</text>
               <line x1="0" y1="92" x2="700" y2="92" stroke="#e5e5e5" stroke-width="1"/>
               <text x="700" y="110" font-size="11" fill="#8a8a8a" text-anchor="end">時間 →</text>
@@ -323,10 +323,10 @@ if [ "$verdict_code" -eq 0 ]; then ...
           <caption class="sr-only">分割構成におけるプレミアム到着率別の p99 と 139 ms を超えた要求数。</caption>
           <thead><tr><th scope="col">プレミアム負荷</th><th scope="col">分割 p99</th><th scope="col">139 ms を超えた要求</th></tr></thead>
           <tbody>
-            <tr><td>1.16 req/s</td><td>123.8 ms</td><td><strong>1件</strong> / 585 (0.17%)</td></tr>
-            <tr><td>2.31 req/s</td><td>130.4 ms</td><td><strong>5件</strong> / 1,164 (0.43%)</td></tr>
-            <tr><td>4.61 req/s</td><td>143.2 ms</td><td><strong>40件</strong> / 2,327 (1.72%)</td></tr>
-            <tr><td>9.22 req/s</td><td>1,013.2 ms</td><td><strong>823件</strong> / 4,655 (17.68%)</td></tr>
+            <tr><td>1.16 req/s</td><td>123.8 ms</td><td>1件 / 585 (0.17%)</td></tr>
+            <tr><td>2.31 req/s</td><td>130.4 ms</td><td>5件 / 1,164 (0.43%)</td></tr>
+            <tr><td>4.61 req/s</td><td>143.2 ms</td><td>40件 / 2,327 (1.72%)</td></tr>
+            <tr><td>9.22 req/s</td><td>1,013.2 ms</td><td>823件 / 4,655 (17.68%)</td></tr>
           </tbody>
         </table>
         <p><strong>4.61 の「未達」は40件です。</strong>そしてこの比率は4点すべてで単調に増えます。p99 は観測値
@@ -350,37 +350,40 @@ if [ "$verdict_code" -eq 0 ]; then ...
 
         <h2 id="主張しないこと">この記事が主張しないこと</h2>
         <ul>
-          <li><strong>持続可能な最大到着率。</strong>どちらの構成についても最大値は特定できていません。上の表は
+          <li><strong>持続可能な最大到着率は示していません。</strong>上の表は
           4つの到着率で測った合否であり、その間や上が異なる振る舞いをしないことの証明ではありません。</li>
-          <li><strong>505秒より短い窓についての保証。</strong>2.31 req/s で達成した実行も、最後の101秒だけを
+          <li><strong>505秒より短い窓については何も保証しません。</strong>2.31 req/s で達成した実行も、最後の101秒だけを
           取り出すと p99 が 141.7 ms で目標を超えます。</li>
-          <li><strong>競合テナントの到着パターンを変えたときの結果。</strong>段ごとに競合要求の件数は139件で
+          <li>競合テナントの到着パターンを変えたときの結果は分かりません。段ごとに競合要求の件数は139件で
           固定しましたが、到着の時刻表は固定できていません。段をまたぐ比較には到着率の変化とスケジュールの
           変化が混ざっています。</li>
-          <li><strong>バッチ上限ではなくトポロジが原因であること。</strong>分割するとエンジンあたりの同時処理
+          <li>原因がバッチ上限ではなくトポロジだとは言えません。分割するとエンジンあたりの同時処理
           上限も64から32へ一緒に下がります。両者を切り分ける実験はしていません。</li>
-          <li><strong>139 ms が商業的に意味のある値であること。</strong>基準線の2倍というだけで、顧客要件では
+          <li>139 ms が商業的に意味のある値だとは言えません。基準線の2倍というだけで、顧客要件では
           ありません。</li>
-          <li><strong>別のカード、別のモデル、MIG について。</strong>A10G 1枚、モデル1つ、プロンプトの
+          <li>別のカード、別のモデル、MIG については何も分かりません。A10G 1枚、モデル1つ、プロンプトの
           組み合わせ1つです。</li>
         </ul>
 
+        <div class="wrapup">
         <h2 id="おわりに">おわりに</h2>
         <ul>
           <li><strong>固定した仕事量をすべて終えた実験は容量を測れません。</strong>分子が定数なので、余裕が
           どれだけあっても同じ数字が出ます。</li>
           <li><strong>探索の向きは設計の一部です。</strong>基準も判定も停止規則もすべて正しくても、答えが
           ありえない場所から始めれば答えは出ません。そしてそれは借りる前に分かることでした。</li>
-          <li><strong>ガードを固定することと、そのガードを読むコードを固定することは別の仕事です。</strong>
+          <li>ガードを固定することと、そのガードを読むコードを固定することは別の仕事です。
           終了コード10はテストで縛られていましたが、それを <code>if</code> の後の <code>$?</code> で読むと
           いう事実は縛られていませんでした。</li>
-          <li><strong>結果は出ました。</strong>この競合負荷のもとで分割構成は 2.31 req/s まで 139 ms を守り、
+          <li>結果は出ました。この競合負荷のもとで分割構成は 2.31 req/s まで 139 ms を守り、
           共有構成は測ったどの負荷でも守れません。代わりに競合テナントの尾が4倍になります。</li>
         </ul>
-        <p>測定ツールをご自身で作って使っているなら、<strong>わざと壊して赤くなるかを先に確かめること</strong>を
-        おすすめします。このプロジェクトで最も高くついた欠陥はすべて、<strong>存在していて、書かれた場所では
-        正しく、肝心の場所で参照されないガード</strong>でした。</p>
+        <p>測定ツールをご自身で作って使っているなら、わざと壊して赤くなるかを先に確かめることを
+        おすすめします。このプロジェクトで最も高くついた欠陥はすべて、存在していて、書かれた場所では
+        正しく、肝心の場所で参照されないガードでした。</p>
         <p>お読みいただきありがとうございました。</p>
+
+              </div>
 
       </article>
     </main>
@@ -392,7 +395,7 @@ if [ "$verdict_code" -eq 0 ]; then ...
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=c03cb004ee"></script>
+  <script src="../assets/content.js?v=c8da970e8b"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
