@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="Instance 목록 조회가 54s → 1s로 줄었습니다 | Kwanghun Lee" />
-  <meta property="og:description" content="Instance는 20개인데 목록 조회가 Timeout이 났습니다. CLI로 같은 목록을 불러도 54s여서, 느린 구간이 우리 Backend 아래에 있다는 것까지는 알았습니다. Swap이 8.0GiB 전부 차 있었고 instances 테이블에는 삭제 표시만 된 행이 1,021개 남아 있었습니다." />
+  <meta property="og:description" content="Instance는 20개인데 목록 조회가 Timeout이 났습니다. CLI로 같은 목록을 불러도 54s여서, 느린 구간이 우리 Backend 아래에 있다는 것까지는 알았습니다. Swap이 8.0GiB 전부 차 있었고 instances Table에는 삭제 표시만 된 행이 1,021개 남아 있었습니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -27,9 +27,9 @@
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Instance 목록 조회가 54s → 1s로 줄었습니다 | Kwanghun Lee" />
-  <meta name="twitter:description" content="Instance는 20개인데 목록 조회가 Timeout이 났습니다. CLI로 같은 목록을 불러도 54s여서, 느린 구간이 우리 Backend 아래에 있다는 것까지는 알았습니다. Swap이 8.0GiB 전부 차 있었고 instances 테이블에는 삭제 표시만 된 행이 1,021개 남아 있었습니다." />
+  <meta name="twitter:description" content="Instance는 20개인데 목록 조회가 Timeout이 났습니다. CLI로 같은 목록을 불러도 54s여서, 느린 구간이 우리 Backend 아래에 있다는 것까지는 알았습니다. Swap이 8.0GiB 전부 차 있었고 instances Table에는 삭제 표시만 된 행이 1,021개 남아 있었습니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="Instance는 20개인데 목록 조회가 Timeout이 났습니다. CLI로 같은 목록을 불러도 54s여서, 느린 구간이 우리 Backend 아래에 있다는 것까지는 알았습니다. Swap이 8.0GiB 전부 차 있었고 instances 테이블에는 삭제 표시만 된 행이 1,021개 남아 있었습니다." />
+  <meta name="description" content="Instance는 20개인데 목록 조회가 Timeout이 났습니다. CLI로 같은 목록을 불러도 54s여서, 느린 구간이 우리 Backend 아래에 있다는 것까지는 알았습니다. Swap이 8.0GiB 전부 차 있었고 instances Table에는 삭제 표시만 된 행이 1,021개 남아 있었습니다." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -103,7 +103,7 @@
         <p>스무 개를 못 그릴 코드가 아닙니다. 그래서 코드를 열기 전에 CLI로 같은 목록을 불러 봤고 거기서도 54s가 걸렸습니다. 우리 Backend를 거치지 않아도 54s라면 느린 구간은 그 아래에 있습니다.</p>
 
         <p>아래를 들여다보니 비정상이 둘 같이 보였습니다. Swap이 8.0GiB를 전부 쓰고 있었고
-        instances 테이블에는 삭제 표시만 된 행이 1,021개 남아 있었습니다. 둘을 정리하자
+        instances Table에는 삭제 표시만 된 행이 1,021개 남아 있었습니다. 둘을 정리하자
         같은 CLI 조회가 <strong>1.0s</strong>가 됐습니다.</p>
 
         <p>그리고 제가 그때 쓴 명령은 운영에서 쓰면 안 되는 것이었습니다. 한 달 뒤에 같은 문제를 두고
@@ -121,7 +121,7 @@
 
         <p>프로젝트 안의 <strong>Instance 목록</strong>을 보는 화면입니다. 목록을 부르면 관리 Console의
         Backend가 OpenStack의 Compute API에 물어보고 그쪽은 다시 자기 DB(MariaDB)의
-        <code>instances</code> 테이블을 읽습니다.</p>
+        <code>instances</code> Table을 읽습니다.</p>
 
         <figure class="diagram">
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
@@ -257,7 +257,7 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
 
         <h2 id="원인-2">원인 ②: 삭제 표시만 된 행 1,021개<a class="anchor" href="#원인-2" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>다음은 테이블입니다. Nova는 Instance를 지울 때 행을 없애지 않습니다.
+        <p>다음은 Table입니다. Nova는 Instance를 지울 때 행을 없애지 않습니다.
         <code>deleted</code> 컬럼만 바꿉니다. Soft Delete입니다.</p>
 
 <pre data-lang="sql"><code>SELECT deleted, COUNT(*) FROM instances GROUP BY deleted;</code></pre>
@@ -281,24 +281,24 @@ Swap:          8.0Gi  8.0Gi  2.0Mi</code></pre>
           <thead><tr><th>숫자</th><th>무엇을 센 것인가</th><th>계산</th></tr></thead>
           <tbody>
             <tr><td><strong>1,022</strong></td><td><code>GROUP BY</code>가 돌려준 묶음</td><td><code>deleted = 0</code> 1묶음 + 삭제된 행 1,021묶음</td></tr>
-            <tr><td><strong>1,041</strong></td><td><code>instances</code> 테이블의 행</td><td>살아 있는 20행 + 삭제 표시 1,021행</td></tr>
+            <tr><td><strong>1,041</strong></td><td><code>instances</code> Table의 행</td><td>살아 있는 20행 + 삭제 표시 1,021행</td></tr>
           </tbody>
         </table>
         </div>
         </div>
         <p class="table-note">Nova의 <code>instances</code> 행은 Soft Delete 될 때 <code>deleted</code>에
-        그 행의 id가 들어갑니다(다른 서비스·다른 테이블까지 그렇다는 이야기는 아닙니다).
+        그 행의 id가 들어갑니다(다른 서비스·다른 Table까지 그렇다는 이야기는 아닙니다).
         그래서 삭제된 행은 저마다 다른 값을 갖고 묶음이 행 수만큼 생깁니다.
         갈무리에서도 <code>deleted = 0</code>만 <code>COUNT(*) = 20</code>이고 나머지는 전부 1입니다.
         요약표에 적힌 1,041이 행 수이고 이쪽이 맞습니다.</p>
 
-        <p>즉 화면이 원한 것은 20행인데 테이블에는 1,041행이 들어 있었습니다. 그리고
+        <p>즉 화면이 원한 것은 20행인데 Table에는 1,041행이 들어 있었습니다. 그리고
         <code>instances</code>만이 아니라 <code>instance_actions_events</code>·<code>instance_faults</code>·
-        <code>instance_system_metadata</code>처럼 딸린 테이블에도 같은 것이 쌓여 있었습니다.</p>
+        <code>instance_system_metadata</code>처럼 딸린 Table에도 같은 것이 쌓여 있었습니다.</p>
 
         <p>실행 계획은 남아 있지 않습니다. 사내 문서는 이것을 ‘풀 스캔’이라고 적었는데
         <code>EXPLAIN</code>을 떠 둔 기록이 없어 정말 전부를 훑었는지는 확인하지 못했습니다.
-        확인한 것은 테이블이 20행이 아니라 1,041행을 담고 있었다는 것까지입니다.</p>
+        확인한 것은 Table이 20행이 아니라 1,041행을 담고 있었다는 것까지입니다.</p>
 
         <h2 id="수정">수정: 되돌릴 수 없는 명령을 썼습니다<a class="anchor" href="#수정" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -335,7 +335,7 @@ Swap:          8.0Gi     0B  8.0Gi</code></pre>
         <code>swapon -a</code>로 8.0GiB짜리 Swap은 다시 켜 두었습니다.
         다시 찰지 아닐지는 그 뒤로 재지 않았습니다.</p>
 
-        <p>다음은 테이블입니다.</p>
+        <p>다음은 Table입니다.</p>
 
 <pre data-lang="sql"><code>SET FOREIGN_KEY_CHECKS = 0;
 
@@ -343,7 +343,7 @@ DELETE FROM instance_actions_events    WHERE deleted != 0;
 DELETE FROM instance_actions           WHERE deleted != 0;
 DELETE FROM instance_faults            WHERE deleted != 0;
 DELETE FROM instance_system_metadata   WHERE deleted != 0;
--- … 딸린 테이블을 차례로
+-- … 딸린 Table을 차례로
 DELETE FROM instances                  WHERE deleted != 0;
 
 SET FOREIGN_KEY_CHECKS = 1;</code></pre>
@@ -367,7 +367,7 @@ SET FOREIGN_KEY_CHECKS = 1;</code></pre>
 
         <ul>
           <li>외래키 검사를 껐습니다. 이건 ‘순서를 조심하면 되는 일’이 아닙니다.
-          검사를 끈 세션에서는 모든 참조 위반이 그냥 통과하고
+          검사를 끈 Session에서는 모든 참조 위반이 그냥 통과하고
           다시 켜도 이미 생긴 불일치를 되짚어 검사해 주지 않습니다.
           빠뜨린 자식 Table, 그 사이에 들어온 다른 쓰기, 중간에 끊긴 실행이 전부
           참조가 끊긴 행을 남길 수 있고 그 사실은 한참 뒤에 드러납니다.</li>
@@ -384,9 +384,9 @@ SET FOREIGN_KEY_CHECKS = 1;</code></pre>
         삭제 표시된 행이 쌓이면 성능에 영향을 준다는 것과, 주기적으로 보관하고 제거하라는 것이
         이미 적혀 있었습니다. 제가 손으로 지운 것은 그 문서를 안 읽고 한 일이었습니다.</p>
 
-        <p>문서가 말하는 방법은 본 테이블에서 곧장 지우지 말고 옆으로 옮기라는 것입니다.
-        옮겨 두는 자리를 Shadow 테이블이라고 부릅니다. 이름이 <code>shadow_</code>로 시작하는
-        같은 모양의 테이블이고 조회 경로에서 빠져 있습니다.</p>
+        <p>문서가 말하는 방법은 본 Table에서 곧장 지우지 말고 옆으로 옮기라는 것입니다.
+        옮겨 두는 자리를 Shadow Table이라고 부릅니다. 이름이 <code>shadow_</code>로 시작하는
+        같은 모양의 Table이고 조회 경로에서 빠져 있습니다.</p>
 
         <div class="table-scroll">
 <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
@@ -402,14 +402,14 @@ SET FOREIGN_KEY_CHECKS = 1;</code></pre>
         </table>
         </div>
         </div>
-        <p class="table-note">본 테이블에서 바로 지우지 않고 한 단계를 거칩니다.
-        본 테이블은 Archive 시점에 이미 작아집니다. 기간은 전부 행이 삭제된 날을
+        <p class="table-note">본 Table에서 바로 지우지 않고 한 단계를 거칩니다.
+        본 Table은 Archive 시점에 이미 작아집니다. 기간은 전부 행이 삭제된 날을
         기준으로 셉니다. 30일에 Archive 하고 90일에 Purge 하면 Shadow에 머무는 것은 60일입니다.
-        그리고 Shadow 테이블은 Nova가 보장하는 복구 수단이 아닙니다.
-        조회 경로에서 빼 두는 이력 보관용이고 모든 테이블에 Shadow가 있는 것도 아닙니다.
+        그리고 Shadow Table은 Nova가 보장하는 복구 수단이 아닙니다.
+        조회 경로에서 빼 두는 이력 보관용이고 모든 Table에 Shadow가 있는 것도 아닙니다.
         ‘지우기 전에 90일 되돌릴 수 있다’로 읽으면 안 됩니다.</p>
 
-<pre data-lang="bash"><code># 1) 30일 지난 것을 shadow 테이블로 옮긴다. 본 테이블이 여기서 작아진다
+<pre data-lang="bash"><code># 1) 30일 지난 것을 shadow Table로 옮긴다. 본 Table이 여기서 작아진다
 nova-manage db archive_deleted_rows \
   --max_rows 10000 --verbose --all-cells \
   --before "$(date -d '30 days ago' '+%Y-%m-%d')"
@@ -435,7 +435,7 @@ nova-manage db purge \
           <li><code>--sleep</code>은 <code>--until-complete</code>와 같이 있을 때만 뜻이 있습니다.
           한 번 돌고 끝나는 지금 형태에서는 5s를 쉴 자리가 없습니다.</li>
           <li>Purge를 거는 cron이 없었습니다. Archive만 돌면 Shadow는 계속 쌓입니다.
-          본 테이블은 작아지고 디스크는 안 줄어듭니다.</li>
+          본 Table은 작아지고 디스크는 안 줄어듭니다.</li>
         </ul>
 
         <p>고치면 이렇게 됩니다.</p>
@@ -453,7 +453,7 @@ nova-manage db purge \
   &gt;&gt; /var/log/nova/db-purge.log 2&gt;&amp;1</code></pre>
 
         <p>그리고 <strong>하루에 5,000행으로 충분한지</strong>가 따로 남습니다.
-        하루에 지워지는 양이 그보다 많으면 본 테이블은 계속 자랍니다.
+        하루에 지워지는 양이 그보다 많으면 본 Table은 계속 자랍니다.
         치우는 속도가 쌓이는 속도보다 빨라야 합니다.</p>
 
         <p>실행 전에는 백업을 뜹니다. 이번에 제가 건너뛴 것입니다.</p>
@@ -519,7 +519,7 @@ sys     0m0.048s</code></pre>
           <li>뒷부분은 제안이지 결과가 아닙니다. Archive · Purge · cron은 제가
           문서로 낸 제안이고 그것이 실제로 걸려서 돌았다는 기록은 제게 없습니다.
           이 글에 측정치가 붙어 있는 것은 앞부분(급하게 고친 쪽)뿐입니다.</li>
-          <li>OpenStack만의 이야기는 아닐 수 있습니다. 삭제한 행을 본 테이블에 남기는
+          <li>OpenStack만의 이야기는 아닐 수 있습니다. 삭제한 행을 본 Table에 남기는
           시스템이면 Schema와 질의 계획에 따라 비슷한 일이 생길 수 있습니다.
           다만 이 글이 확인한 것은 이 한 대의 장비입니다.</li>
         </ul>
@@ -530,7 +530,7 @@ sys     0m0.048s</code></pre>
         <ul>
           <li><strong>같은 질문을 다른 경로로 한 번 던지면 찾을 곳이 줄어듭니다.</strong>
           CLI가 54s였다는 것 하나로, 먼저 볼 곳이 Backend 아래로 옮겨졌습니다.</li>
-          <li><strong>지운 데이터도 본 테이블에는 남아 있습니다.</strong> Soft Delete는 지운 것처럼
+          <li><strong>지운 데이터도 본 Table에는 남아 있습니다.</strong> Soft Delete는 지운 것처럼
           보이지 지워진 것이 아닙니다. 질의가 그 행들을 실제로 몇 개나 읽는지는 Schema와 질의 계획에
           달렸고 그건 따로 봐야 합니다.</li>
           <li>Swap이 가득 차 있으면 그 위의 판단을 믿기 어려워집니다. 질의는 그대로인데
@@ -558,7 +558,7 @@ sys     0m0.048s</code></pre>
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=d7cabca9c3"></script>
+  <script src="../assets/content.js?v=a2fe78cfd4"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

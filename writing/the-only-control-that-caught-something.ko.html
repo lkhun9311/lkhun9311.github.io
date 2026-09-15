@@ -119,10 +119,10 @@
 
         <p>월 예산 상한은 30달러로 뒀습니다. 기본값으로 붙는 알림 임계는 예산의 80%입니다. 그런데 이 프로젝트의 지출은
         <strong>세 시간짜리 버스트로 도착합니다.</strong> 유료 GPU Session 하나가 시작되고 끝나는 데 한나절이면
-        충분하고 월 단위 임계는 그 세션이 이미 끝난 뒤에야 무언가를 말합니다.</p>
+        충분하고 월 단위 임계는 그 Session이 이미 끝난 뒤에야 무언가를 말합니다.</p>
 
         <p>그래서 조기 경보를 <strong>10%</strong>에 뒀습니다. 30달러 예산에서 3달러, 대략 유료 Session 한 번의 값입니다.
-        그러면 그 달의 첫 세션이 얼마를 썼는지 보고하고 다음 세션은 아직 재고할 수 있습니다.</p>
+        그러면 그 달의 첫 Session이 얼마를 썼는지 보고하고 다음 Session은 아직 재고할 수 있습니다.</p>
 
         <p>임계값을 고르는 기준은 "몇 퍼센트가 적당한가"가 아니라 "이 임계가 울렸을 때 아직 바꿀 수 있는
         결정이 남아 있는가"입니다. 80%는 이 지출 모양에서 그 조건을 만족하지 못합니다.</p>
@@ -179,7 +179,7 @@
         </div>
         </div>
 
-        <p>차액을 추적하니 <strong>NAT 게이트웨이의 데이터 처리 요금</strong>이었습니다. Instance 시간과 EKS 요금은
+        <p>차액을 추적하니 <strong>NAT Gateway의 데이터 처리 요금</strong>이었습니다. Instance 시간과 EKS 요금은
         세고 있었지만 바이트가 NAT를 지나가는 비용은 추정에 아예 없었습니다.</p>
 
         <p>이게 왜 안 보였는지는 명확합니다. 제 추정은 제가 켠 것의 목록이었습니다. GPU Instance,
@@ -226,14 +226,14 @@
 
         <p>NAT 항목이 보이자 다음 실험의 모양이 바뀌었습니다.</p>
 
-        <p>2026-09-04의 질문은 vLLM Scheduler 설정에 관한 것이었습니다. 게이트웨이도 쿠버네티스도 필요 없고
+        <p>2026-09-04의 질문은 vLLM Scheduler 설정에 관한 것이었습니다. Gateway도 쿠버네티스도 필요 없고
         Instance 한 대면 됩니다. 그러면 비용의 대부분은 이 한 줄에서 정해집니다.</p>
 
-        <blockquote><p>기본 서브넷의 Instance는 공인 IP로 인터넷 게이트웨이를 통해 통신하며
+        <blockquote><p>기본 서브넷의 Instance는 공인 IP로 인터넷 Gateway를 통해 통신하며
         인바운드 전송은 무료입니다.</p></blockquote>
 
-        <p>그때까지 유료 실행에서는 Container 이미지와 모델 가중치를 내려받았습니다. 콜드 Node 한 대 기준 <strong>약 15.6GB</strong>를 GB당 <strong>$0.059</strong>인 NAT로 내려받고 있었습니다. (첫 세 세션의 NAT 데이터 처리 청구는 합계
-        약 92GB · $5.43입니다. 세션당 15.6GB 세 번으로는 그 총량이 설명되지 않고 나는 그 차이를
+        <p>그때까지 유료 실행에서는 Container 이미지와 모델 가중치를 내려받았습니다. 콜드 Node 한 대 기준 <strong>약 15.6GB</strong>를 GB당 <strong>$0.059</strong>인 NAT로 내려받고 있었습니다. (첫 세 Session의 NAT 데이터 처리 청구는 합계
+        약 92GB · $5.43입니다. Session당 15.6GB 세 번으로는 그 총량이 설명되지 않고 나는 그 차이를
         대조하지 않았습니다.) 퍼블릭 서브넷의 Instance 한 대로 옮기자 그 항목이
         사라졌고 그날 실험은 약 $0.40로 끝났습니다.</p>
 
@@ -248,7 +248,7 @@
               <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
               <text x="204" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">NAT Gateway 경로</text>
               <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">시간당 요금 + 처리 바이트 요금</text>
-              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">게이트웨이와 쿠버네티스가 전제</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">Gateway와 쿠버네티스가 전제</text>
               <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">추정에서 통째로 빠져 있던 항목</text>
               <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
               <text x="556" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">인터넷 Gateway 경로</text>
@@ -284,11 +284,11 @@
         <p>하나. IAM의 부정 조건 연산자는 키가 없으면 참입니다. <code>StringNotLike</code>는
         "이 값이 목록과 다르면"이 아니라, 키가 아예 없어도 참이 됩니다.</p>
 
-        <p>둘. EKS 관리형 노드그룹은 Instance 타입을 노드그룹에 두고 시작 템플릿에는 넣지 않습니다.
+        <p>둘. EKS 관리형 Node Group은 Instance 타입을 Node Group에 두고 시작 템플릿에는 넣지 않습니다.
         그래서 <code>ec2:InstanceType</code> 키가 부재했습니다.</p>
 
         <p>두 가지가 겹쳐서, 이 문장은 Instance 패밀리를 제한한 것이 아니라 서비스를 통째로 차단했습니다.
-        허용 목록에 <code>g5.*</code>를 적어 뒀는데도 g5 노드그룹을 만들 수 없었습니다.</p>
+        허용 목록에 <code>g5.*</code>를 적어 뒀는데도 g5 Node Group을 만들 수 없었습니다.</p>
 
         <p>이걸 리허설에서 만난 값은 이렇습니다.</p>
 
@@ -309,12 +309,12 @@
         <p>두 번 합쳐 과금 약 40min, 약 $0.18. 1차만 보면 20min에 약 $0.05입니다. (두 값 모두
         과금 시간 × 시간당 단가로 계산한 것이고 청구서 항목과 대조한 값은 아닙니다.)</p>
 
-        <p>이 정책 결함을 유료 GPU 세션에서 처음 만났다면 카드가 켜진 채로 디버깅했을 것입니다.
+        <p>이 정책 결함을 유료 GPU Session에서 처음 만났다면 카드가 켜진 채로 디버깅했을 것입니다.
         리허설의 값은 성공했다는 데 있지 않고 실패를 싼 자리에서 만났다는 데 있습니다.</p>
 
         <h2 id="울리는지-확인하지-않은-경보">울리는지 확인하지 않은 경보<a class="anchor" href="#울리는지-확인하지-않은-경보" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>같은 주에 GPU 노드를 정해진 시간 뒤에 0으로 내리는 예약을 만들었습니다. 만들고 나서 "이제 백스톱이
+        <p>같은 주에 GPU Node를 정해진 시간 뒤에 0으로 내리는 예약을 만들었습니다. 만들고 나서 "이제 백스톱이
         생겼다"고 적었습니다.</p>
 
         <p>다음 날 그 문장의 근거를 되짚어 보니, <strong>근거가 없었습니다.</strong> 내가 확인한 것은 예약이
@@ -328,7 +328,7 @@
         <p>빠져나갈 구멍은 실패의 위치에 있었습니다. 내가 알고 싶은 것은 호출이 나가는가지 호출이
         성공하는가가 아닙니다. 그렇다면 대상이 존재하지 않아도 됩니다.</p>
 
-        <p>존재하지 않는 클러스터와 노드그룹 이름을 넣고 2min 뒤로 예약을 걸었습니다. 재시도 0회, 완료 후 자동 삭제.</p>
+        <p>존재하지 않는 클러스터와 Node Group 이름을 넣고 2min 뒤로 예약을 걸었습니다. 재시도 0회, 완료 후 자동 삭제.</p>
 
         <p>첫 번째 증거는 예약이 사라진 것입니다. 자동 삭제는 호출이 실행된 뒤에만 일어납니다.
         발화하지 않은 예약은 그대로 남습니다.</p>
@@ -344,7 +344,7 @@
         <strong>비용은 0달러였습니다.</strong></p>
 
         <p>확인된 범위를 정확히 적어 두면 이렇습니다. 예약이 시각에 맞춰 역할을 위임해 그 모양의 호출을
-        낸다까지입니다. 실제 노드그룹이 그 호출로 0으로 내려간다는 것은 이 실험이 보인 것이 아닙니다.</p>
+        낸다까지입니다. 실제 Node Group이 그 호출로 0으로 내려간다는 것은 이 실험이 보인 것이 아닙니다.</p>
 
         <h2 id="들어가는-길이-하나뿐">들어가는 길이 루트 하나뿐이었습니다<a class="anchor" href="#들어가는-길이-하나뿐" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -372,7 +372,7 @@
 
           <li>TTL이 실제 비용 사고를 막았다는 주장이 아닙니다. 확인된 것은 예약이 시각에 맞춰
           호출을 낸다는 것까지이고 대상은 일부러 존재하지 않는 이름이었습니다. 그리고 그 통제의 범위는
-          <strong>노드그룹을 0으로 내리는 것</strong>이지 계정 전체의 지출을 막는 것이 아닙니다.</li>
+          <strong>Node Group을 0으로 내리는 것</strong>이지 계정 전체의 지출을 막는 것이 아닙니다.</li>
           <li><strong>$0.05·$0.18은 청구서 항목이 아닙니다.</strong> 과금 시간에 시간당 단가를 곱한 계산값입니다.
           $14.56과 $0.40은 청구·집계에서 나온 값이지만 이 글은 그 둘을 청구 원장과 따로 대조하지는
           않았습니다.</li>
@@ -413,7 +413,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=d7cabca9c3"></script>
+  <script src="../assets/content.js?v=a2fe78cfd4"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

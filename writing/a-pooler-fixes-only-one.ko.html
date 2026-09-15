@@ -136,7 +136,7 @@
           <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
             <svg viewBox="0 0 720 226" role="img" aria-labelledby="svc-t svc-d" xmlns="http://www.w3.org/2000/svg">
               <title id="svc-t">서비스 구조와 문제가 있던 지점</title>
-              <desc id="svc-d">모바일 앱이 API 서버로 글·댓글·투표 요청을 보내고 API 서버는 Connection Pool을 통해 관리형 PostgreSQL에 쿼리를 보냅니다.
+              <desc id="svc-d">모바일 앱이 API 서버로 글·댓글·투표 요청을 보내고 API 서버는 Connection Pool을 통해 관리형 PostgreSQL에 Query를 보냅니다.
               그런데 글과 댓글을 쓸 때마다 API 서버가 외부 Moderation API를 한 번씩 호출합니다. 이 호출에는 Read Timeout이 10s로
               설정돼 있고 문제는 이 호출이 데이터베이스 Transaction 안에서 일어나고 있었다는 점입니다.</desc>
 
@@ -219,7 +219,7 @@ read-timeout: ${APP_HTTP_READ_TIMEOUT:10s}</code></pre>
         <h2 id="원인-a">첫째 원인은 Connection 개수입니다<a class="anchor" href="#원인-a" aria-label="이 절로 가는 링크">#</a></h2>
 
 <pre data-lang="text"><code>앱 instance 100대 × pool 크기 20 = connection 2,000개
-그런데 실제로 지금 쿼리를 실행 중인 건 50개
+그런데 실제로 지금 Query를 실행 중인 건 50개
 나머지 1,950개는 그냥 열려만 있습니다</code></pre>
 
         <p>PostgreSQL은 Connection 하나마다 Backend 프로세스를 하나씩 만들고 그 Connection이 아무 일도 안 하고 있어도
@@ -244,7 +244,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
 }</code></pre>
 
         <p><code>@Transactional</code>이 메서드 전체에 걸려 있으니 이 메서드가 도는 동안 Connection 하나가
-        계속 점유됩니다. 그런데 그 구간 한가운데에 <strong>쿼리를 하나도 실행하지 않으면서 최대 10s를
+        계속 점유됩니다. 그런데 그 구간 한가운데에 <strong>Query를 하나도 실행하지 않으면서 최대 10s를
         기다리는 외부 호출</strong>이 들어 있습니다.</p>
 
         <figure class="diagram">
@@ -253,7 +253,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
               <title id="hold-t">수정 전과 수정 후의 DB Connection 점유 구간</title>
               <desc id="hold-d">카드 두 장이 같은 요청을 각각 그린 것입니다. 카드마다 위 줄(테두리 상자)은 요청이 하는 일이고
               아래 띠는 그동안 DB Connection을 붙잡고 있는 구간입니다. 위 카드가 수정 전으로, BEGIN·SELECT·외부 HTTP 호출·
-              INSERT·COMMIT 전체에 걸쳐 띠가 끊기지 않고 이어집니다. 외부 호출 구간에서는 쿼리를 하나도 실행하지 않는데도
+              INSERT·COMMIT 전체에 걸쳐 띠가 끊기지 않고 이어집니다. 외부 호출 구간에서는 Query를 하나도 실행하지 않는데도
               Connection을 쥐고 있습니다. 아래 카드가 수정 후로, 띠가 양 끝 두 토막으로 나뉩니다. 검증 읽기에서 한 번,
               쓰기 Transaction에서 한 번만 Connection을 쓰고 그 사이 외부 호출 구간에서는 Connection을 반납한 상태입니다.
               가로 폭은 시간에 비례하지 않습니다.</desc>
@@ -378,7 +378,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         Transaction이 열려 있는 동안에는 그 Backend Connection이 그 클라이언트에
         묶입니다(Pin).</p></blockquote>
 
-        <p>당연한 이야기이기도 합니다. Transaction은 상태이고 열려 있는 중간에 다른 세션에 빌려주면 격리가
+        <p>당연한 이야기이기도 합니다. Transaction은 상태이고 열려 있는 중간에 다른 Session에 빌려주면 격리가
         깨지니까요.</p>
 
         <figure class="diagram">
@@ -388,7 +388,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
               <desc id="pool-d">위쪽은 짧은 Transaction입니다. 클라이언트 두 개가 BEGIN과 COMMIT 사이에만 Backend Connection을 쓰고 곧
               놓으므로 Connection Pooler는 그 사이사이에 두 클라이언트를 Backend Connection 하나에 번갈아 얹습니다. 묶이는 비율은 2대 1입니다.
               아래쪽은 Transaction 안에서 외부 HTTP 호출을 기다리는 경우입니다. Transaction이 열려 있는 동안 Backend Connection은 그
-              클라이언트에 묶이고 그 시간 대부분은 쿼리를 하나도 실행하지 않습니다. 다른 클라이언트는 그동안 기다리기만
+              클라이언트에 묶이고 그 시간 대부분은 Query를 하나도 실행하지 않습니다. 다른 클라이언트는 그동안 기다리기만
               하므로 묶이는 비율이 1대 1이 되어 Connection Pooler가 만들어 낼 이득이 거의 없습니다.</desc>
 
               <rect x="0" y="6" width="720" height="152" rx="10" fill="rgba(79,91,213,0.06)"/>
@@ -509,7 +509,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
         <p>여기서 <em>“Transaction을 쪼개면 경합이 늘어나지 않나요?”</em>라는 질문이 나올 수 있는데
         <strong>경합 창은 넓어지지 않았습니다.</strong> 수정 전에도 Moderation 호출이 읽기와 쓰기
         <em>사이</em>에 있었고 그 경로는 게시글 행에 Lock을 걸지 않고 있었기 때문입니다
-        (<code>for update</code>가 없었습니다). Transaction 안에 있다고 해서 다른 세션의 변경을 막아 주지는
+        (<code>for update</code>가 없었습니다). Transaction 안에 있다고 해서 다른 Session의 변경을 막아 주지는
         않습니다. 읽기에서 쓰기까지의 거리는 동일합니다.</p>
 
         <p>같은 작업을 쓰기 경로 세 곳(글 · 댓글 · 투표 첨부)에 했습니다. 그중 하나는 상태가 더
@@ -518,7 +518,7 @@ fun create(userId: UUID, postId: UUID, request: CreateCommentRequest): CommentRe
 
         <p>글과 댓글 두 경로를 먼저 고치고 투표 첨부는 검열에 넣는 입력이 <em>잠근 행에서</em> 나오는 탓에
         Staleness(값이 낡았는지) 재확인이 필요해서 한 번 미뤘다가 같은 날 뒤에 고쳤습니다.
-        기록에는 ‘의도적 미착수’로 남겨 두었고 그날 후속 세션에서 처리했습니다.</p>
+        기록에는 ‘의도적 미착수’로 남겨 두었고 그날 후속 Session에서 처리했습니다.</p>
 
         <p>결론을 한 줄로 적으면 이렇습니다.
         코드 수정은 Connection Pooler의 대안이 아니라 전제조건이었습니다.
@@ -912,7 +912,7 @@ ModerationOutsideTransactionTest > creating a post also screens outside a transa
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=d7cabca9c3"></script>
+  <script src="../assets/content.js?v=a2fe78cfd4"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

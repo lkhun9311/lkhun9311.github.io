@@ -94,7 +94,7 @@
         작업은 큐가 입장시키고 추론 요청은 경계에서 입장시킵니다. 둘을 같은 자리에서 세면 같은 카드를 두 번
         세게 됩니다.</p>
         <p>그래서 테넌트의 예산은 <code>GPUQuotaPolicy</code>에 한 번 선언하고 그 종류의 일을
-        맡은 엔진이 집행합니다. 학습은 Kueue가, 추론은 게이트웨이의 Token Bucket(요청을 일정 속도로만 통과시키는
+        맡은 엔진이 집행합니다. 학습은 Kueue가, 추론은 Gateway의 Token Bucket(요청을 일정 속도로만 통과시키는
         제한 장치)이 맡습니다.</p>
         <p>Kueue의 <code>reclaimWithinCohort</code> 손잡이를 같은 원장에서 양방향으로 쟀습니다.
         회수를 끄면 버린 것은 0이고 소유자는 10.1초를 기다렸습니다. 켜면 소유자가 약 120 ms 만에 입장하고
@@ -110,7 +110,7 @@
 <figure class="diagram">
           <svg viewBox="0 0 720 200" role="img" aria-labelledby="ql-t ql-d" class="figure-svg">
             <title id="ql-t">GPU 예산이 집행되는 자리, 선언에서 서빙 경계까지</title>
-            <desc id="ql-d">상자 넷이 왼쪽에서 오른쪽으로 회색 화살표로 이어집니다. GPUQuotaPolicy 객체, 그것이 동기화되는 Kueue ClusterQueue, 학습 작업의 입장, 그리고 추론 앞에 놓인 Gateway Token 버킷입니다. 아래에 분홍색으로 학습과 추론은 세는 곳이 다르다고 적혀 있습니다.</desc>
+            <desc id="ql-d">상자 넷이 왼쪽에서 오른쪽으로 회색 화살표로 이어집니다. GPUQuotaPolicy 객체, 그것이 동기화되는 Kueue ClusterQueue, 학습 작업의 입장, 그리고 추론 앞에 놓인 Gateway Token Bucket입니다. 아래에 분홍색으로 학습과 추론은 세는 곳이 다르다고 적혀 있습니다.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
               <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">GPUQuotaPolicy</text>
@@ -135,7 +135,7 @@
               </marker>
             </defs>
           </svg>
-          <figcaption>예산은 한 번 선언하고 그 종류의 일을 맡은 엔진이 집행합니다. <strong>학습용 GPU의 입장은 Kueue가 맡고 게이트웨이는 추론 요청을 제한합니다.</strong> 둘을 하나의 네임스페이스 <code>ResourceQuota</code>에 넣으면 같은 GPU를 두 번 세게 됩니다.</figcaption>
+          <figcaption>예산은 한 번 선언하고 그 종류의 일을 맡은 엔진이 집행합니다. <strong>학습용 GPU의 입장은 Kueue가 맡고 Gateway는 추론 요청을 제한합니다.</strong> 둘을 하나의 네임스페이스 <code>ResourceQuota</code>에 넣으면 같은 GPU를 두 번 세게 됩니다.</figcaption>
         </figure>
         <h2 id="예산은-어디에서">예산은 어디에서 집행되나</h2>
         <p><code>GPUQuotaPolicy</code>는 클러스터 범위(cluster-scoped) 객체입니다. 여러 테넌트에 걸친 쿼터는
@@ -147,7 +147,7 @@
         Kueue가 소유하고 있기 때문입니다. 같은 GPU 수를 <code>ResourceQuota</code>에도 적으면 두
         권위가 카드 하나를 세게 되고 먼저 거절한 쪽이 이기는데 그 이유는 아무도 추적할 수 없습니다.
         그래서 정책은 Kueue의 <code>ClusterQueue</code>와 <code>ResourceFlavor</code>로 동기화됩니다.</p>
-        <p>추론은 경로도 다르고 고장 나는 방식도 다릅니다. 게이트웨이에서 API 키별로 Token 버킷으로
+        <p>추론은 경로도 다르고 고장 나는 방식도 다릅니다. Gateway에서 API 키별로 Token Bucket으로
         제한합니다. <strong>다만 그 제한 장치는 만들어 단위 테스트까지 했을 뿐 한 번도 배포된 적이
         없습니다.</strong> 아키텍처 설명에서는 이것을 소리 내어 말해 두는 편이 낫습니다.</p>
 
@@ -218,7 +218,7 @@
         <h2 id="하드웨어에서">같은 질문을 하드웨어에서</h2>
         <p>러너 자신의 게이트를 통과한 kind 실행 12건에는 <code>device: NOT OBSERVED</code> 배너가 붙어
         있었습니다. 그 안의 모든 GPU-초는 사용이 아니라 예약의 초라는 뜻입니다. 이후 A10G
-        네 장을 빌린 유료 세션에서 <code>-require-device</code>를 통과한 8건을 더 돌렸습니다.</p>
+        네 장을 빌린 유료 Session에서 <code>-require-device</code>를 통과한 8건을 더 돌렸습니다.</p>
         <p>소유자 대기가 그쪽에서 28.8s, kind에서 29.0초로 갈렸으니 결과는 자기 계측기를 넘어
         살아남았습니다. 뒤이은 연구가 예약과 사용을 직접 갈랐습니다. 두 묶음의 실행이 51.084와
         50.802 GPU-초를 예약했고 바닥의 20분의 1 안에서 같습니다. 카드가 실제로 한 일은 48.115와
@@ -227,9 +227,9 @@
 
         <h2 id="주장하지-않는-것">이 글이 주장하지 않는 것</h2>
         <ul>
-          <li>아래 숫자는 가짜 디바이스 플러그인을 쓴 kind 클러스터의 실행에서 나왔고 이후 유료 세션에서
+          <li>아래 숫자는 가짜 디바이스 플러그인을 쓴 kind 클러스터의 실행에서 나왔고 이후 유료 Session에서
           A10G 네 장으로 옮겨 확인했습니다. 시뮬레이션된 자원에서 나온 값은 그렇다고 적었습니다.</li>
-          <li><strong>쿼터 동기화는 스케줄러가 아닙니다.</strong> 입장은 Kueue가 시킵니다. 이 프로젝트는 그
+          <li><strong>쿼터 동기화는 Scheduler가 아닙니다.</strong> 입장은 Kueue가 시킵니다. 이 프로젝트는 그
           위에 <code>MLTrainingJob</code> 추상과 status 번역을 얹을 뿐입니다.</li>
           <li>Gateway 제한 장치는 배포된 적이 없습니다. 만들어 단위 테스트까지 했습니다.
           그것을 요청 경로에 그려 놓은 아키텍처 그림은 시스템이 아니라 설계를 설명하는 그림입니다.</li>
@@ -270,7 +270,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=d7cabca9c3"></script>
+  <script src="../assets/content.js?v=a2fe78cfd4"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=479ec9ecda"></script>

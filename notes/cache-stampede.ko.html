@@ -93,7 +93,7 @@
                 <figure class="diagram">
           <svg viewBox="0 0 720 216" role="img" aria-labelledby="cs-t cs-d" class="figure-svg">
             <title id="cs-t">직접 짠 검사와 키마다 하나인 Loader</title>
-            <desc id="cs-d">왼쪽 상자는 직접 짠 Cache입니다. 비었는지 보는 검사를 N 개가 동시에 통과하고 외부 호출이 N 번 나가며 결과가 0건이면 아무것도 저장되지 않습니다. 오른쪽 상자는 로더를 쓰는 Cache입니다. 키마다 로더가 한 번 돌고 나머지는 그 결과를 기다리며 빈 결과도 값으로 저장됩니다. 아래에 분홍색으로 다음 요청을 막는 것은 「없음」을 담는 쪽이라고 적혀 있습니다.</desc>
+            <desc id="cs-d">왼쪽 상자는 직접 짠 Cache입니다. 비었는지 보는 검사를 N 개가 동시에 통과하고 외부 호출이 N 번 나가며 결과가 0건이면 아무것도 저장되지 않습니다. 오른쪽 상자는 Loader를 쓰는 Cache입니다. 키마다 Loader가 한 번 돌고 나머지는 그 결과를 기다리며 빈 결과도 값으로 저장됩니다. 아래에 분홍색으로 다음 요청을 막는 것은 「없음」을 담는 쪽이라고 적혀 있습니다.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
               <text x="204" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">직접 짠 검사</text>
@@ -122,12 +122,12 @@
 
         <h2 id="막기">막는 자리는 Lock이 아니라 자료구조입니다<a class="anchor" href="#막기" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>Caffeine의 LoadingCache는 Cache 미스에서 키마다 로더를 정확히 한 번 실행하고 나머지 호출자는
-        그 결과를 기다립니다. 로더가 빈 리스트를 돌려주면 <strong>그 빈 리스트를 값으로 저장합니다.</strong>
+        <p>Caffeine의 LoadingCache는 Cache 미스에서 키마다 Loader를 정확히 한 번 실행하고 나머지 호출자는
+        그 결과를 기다립니다. Loader가 빈 리스트를 돌려주면 <strong>그 빈 리스트를 값으로 저장합니다.</strong>
         위의 두 결함이 한꺼번에 사라지는 이유입니다.</p>
 
         <p><code>computeIfAbsent</code> 로도 한 번만 부르게 만들 수 있지만 그쪽은 값을 따로 치릅니다.
-        기다리는 Thread가 맵의 버킷을 붙든 채 서 있습니다. <a href="bin-lock.ko.html">Bin Lock</a>에 적어 두었습니다.</p>
+        기다리는 Thread가 맵의 Bucket을 붙든 채 서 있습니다. <a href="bin-lock.ko.html">Bin Lock</a>에 적어 두었습니다.</p>
 
         <h2 id="쓰인-곳">이 사이트에서 쓰인 곳<a class="anchor" href="#쓰인-곳" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -146,7 +146,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=d7cabca9c3"></script>
+  <script src="../assets/content.js?v=a2fe78cfd4"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>
