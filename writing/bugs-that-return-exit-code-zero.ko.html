@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>결함 10건, 실패한 테스트 0건 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/bugs-that-return-exit-code-zero.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/bugs-that-return-exit-code-zero.ko.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/bugs-that-return-exit-code-zero.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="결함 10건, 실패한 테스트 0건" />
+  <meta property="og:description" content="멀티테넌트 GPU 스케줄링용 쿠버네티스 오퍼레이터와 게이트웨이를 일주일 검증하며 결함 10건을 찾았습니다. 어느 것도 빨간불을 켜지 않았습니다. 아홉은 옳아 보이는 결과를 읽다가, 하나는 산출물이 스스로 모순되면서 드러났습니다. 공통 원인은 하나입니다 — 테스트가 계약이 아니라 지금의 동작에 단언하고 있었습니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/bugs-that-return-exit-code-zero.ko.html" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="결함 10건, 실패한 테스트 0건" />
+  <meta name="twitter:description" content="멀티테넌트 GPU 스케줄링용 쿠버네티스 오퍼레이터와 게이트웨이를 일주일 검증하며 결함 10건을 찾았습니다. 어느 것도 빨간불을 켜지 않았습니다. 아홉은 옳아 보이는 결과를 읽다가, 하나는 산출물이 스스로 모순되면서 드러났습니다. 공통 원인은 하나입니다 — 테스트가 계약이 아니라 지금의 동작에 단언하고 있었습니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="멀티테넌트 GPU 스케줄링용 쿠버네티스 오퍼레이터와 게이트웨이를 일주일 검증하며 결함 10건을 찾았습니다. 어느 것도 빨간불을 켜지 않았습니다. 아홉은 옳아 보이는 결과를 읽다가, 하나는 산출물이 스스로 모순되면서 드러났습니다. 공통 원인은 하나입니다 — 테스트가 계약이 아니라 지금의 동작에 단언하고 있었습니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"bugs-that-return-exit-code-zero.html","ko":"bugs-that-return-exit-code-zero.ko.html"}'>
+          <option value="en" selected>English</option>
+          <option value="ko">한국어</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
+        <div class="article-meta"><span class="source-tag side notranslate">개인 프로젝트</span><a class="project-tag notranslate" href="../writing/index.html?tag=GPUaaS%20Control%20Plane">#GPUaaS Control Plane</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>결함 10건, 실패한 테스트 0건<br><span class="h1-sub">열 건 중 어느 것도 테스트를 실패시키거나 프로세스를 죽이거나 0이 아닌 종료 코드를 내지 않았습니다.</span></h1>
+        <p class="article-date">Aug 2026</p>
+        </section>
+      <aside class="article-aside" data-aside="writing" data-slug="bugs-that-return-exit-code-zero"></aside>
+        <nav class="article-toc" aria-label="목차">
+          <p class="toc-label">목차</p>
+          <ul>
+            <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+            <li><a href="#열-건">열 건</a></li>
+            <li><a href="#쓰는-말">아래에서 쓰는 말</a></li>
+            <li><a href="#사례1-우연이었던-합의">사례 1. 우연이었던 합의</a></li>
+            <li><a href="#사례2-지울-수-없는-객체">사례 2. 객체를 지울 수 없게 만들 수 있었던 웹훅</a></li>
+            <li><a href="#사례3-볼-수-없었던-비용">사례 3. 테스트 스위트가 볼 수 없었던 비용</a></li>
+            <li><a href="#도구가-잡은-한-건">도구가 잡은 한 건</a></li>
+            <li><a href="#관측">관측, 그리고 프로메테우스를 붙였더니 나온 것</a></li>
+            <li><a href="#재현하기">재현하기</a></li>
+            <li><a href="#확립하는-것과-아닌-것">이 글이 확립하는 것과, 하지 않는 것</a></li>
+            <li><a href="#마치며">마치며</a></li>
+          </ul>
+        </nav>
+        <article class="article-body">
+
+        <p>멀티테넌트 GPU 스케줄링용 쿠버네티스 오퍼레이터와 게이트웨이를 일주일 동안 검증하면서 결함
+        10건을 찾았습니다.</p>
+
+        <p><strong>어느 것도 테스트를 실패시키거나, 프로세스를 죽이거나, 0이 아닌 종료 코드를 내지
+        않았습니다.</strong> 아홉은 옳아 보이는 결과를 읽다가 나왔고 하나는 산출물이
+        스스로 모순되면서 드러났습니다.</p>
+
+        <p>열 건 뒤의 무늬는 하나입니다. 스위트가 계약이 약속한 것이 아니라 코드가
+        지금 하는 것에 단언하고 있었고 그래서 우연히 맞은 합의가 멀쩡해 보였습니다.
+        아래 각 건은 무엇이 깨졌는지, 어떻게 찾았는지, 지금 무엇이 그것을 붙들고 있는지를 적습니다.</p>
+
+        <h2 id="예상-독자">이 글의 예상 독자</h2>
+
+        <ul class="callout">
+          <li>직접 만든 쿠버네티스 컨트롤러나 웹훅을 검증하시는 분</li>
+          <li>스위트가 초록인데 그게 무엇을 배제한 것인지 확신이 안 서시는 분</li>
+          <li>실제 하드웨어에 돈을 쓰기 전에 무엇을 확인해야 하는지 정해야 하는 분</li>
+        </ul>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="ez-t ez-d" class="figure-svg">
+            <title id="ez-t">결함이 아무것도 빨갛게 하지 않고 실행 끝까지 가는 이유</title>
+            <desc id="ez-d">상자 넷이 왼쪽에서 오른쪽으로 회색 화살표로 이어집니다. 결함, 예외가 발생하지 않음, 종료 코드 0, 그리고 완료로 보고된 초록 스위트입니다. 아래에 분홍색으로, 이 사슬의 무엇도 거짓말하지 않는다고 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">결함</text>
+              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">틀린 숫자, 빠진 플래그</text>
+              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#ez-a)"/>
+              <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="265" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">예외 없음</text>
+              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">코드 경로 완주</text>
+              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#ez-a)"/>
+              <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="455" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">종료 코드 0</text>
+              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">러너 만족</text>
+              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#ez-a)"/>
+              <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="645" y="52" font-size="11.5" fill="#4a4a4a" text-anchor="middle">초록 스위트</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">완료로 보고됨</text>
+              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">사슬 어디에도 거짓 없음</text>
+            </g>
+            <defs>
+              <marker id="ez-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>여기 모든 단계가 제대로 동작하고 있습니다. 테스트 스위트는 자기가 담고 있는 단언에 대해 보고하는데 이 열 건 중 어느 것에도 겨눠진 단언이 없었습니다. <strong>종료 코드 0은 시스템이 아니라 테스트에 대한 진술입니다.</strong></figcaption>
+        </figure><h2 id="열-건">열 건</h2>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">나머지는 옆으로 밀어서 보세요</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="옆으로 스크롤되는 표: 나머지는 옆으로 밀어서 보세요">
+        <table>
+          <caption class="sr-only">결함 10건과, 각각이 깨뜨린 불변식과, 어떻게 보였는지와, 어떻게 찾았는지와, 지금 걸린 가드.</caption>
+          <thead><tr><th scope="col">결함</th><th scope="col">깨뜨린 불변식</th><th scope="col">어떻게 보였나</th><th scope="col">어떻게 찾았나</th><th scope="col">지금 걸린 가드</th></tr></thead>
+          <tbody>
+            <tr><td>버려진 작업 카운터가 완료된 행까지 더했다</td><td>낭비란 끝내 인정받지 못한 작업이다</td><td>초록 스위트, 게이트 통과</td><td>숫자를 직접 더해 봤다</td><td>완료된 행이 들어간 픽스처</td></tr>
+            <tr><td>확장성을 잴 수 없었다. 테스트 클라이언트가 Cache를 비켜 갔다</td><td>테스트는 운영이 쓰는 경로를 지나간다</td><td>모든 테스트 통과</td><td>왜 한 번도 측정된 적이 없는지 물었다</td><td>자기 Cache를 가진 벤치마크</td></tr>
+            <tr><td>Kustomize 오버레이가 존재할 수 없는 Service를 가리켰다</td><td>렌더된 매니페스트끼리 이름이 맞물린다</td><td>빌드 성공, YAML 유효</td><td>이름과 이름을 맞춰 봤다</td><td><code>check-webhook-overlay.sh</code></td></tr>
+            <tr><td>카오스 Harness의 단위가 10<sup>6</sup> 만큼 틀렸다</td><td>지연시간은 자기가 말하는 단위로 적힌다</td><td>읽고 나면 터무니없는 값</td><td>숫자를 읽었다</td><td>내부는 ns, 표시할 때 환산</td></tr>
+            <tr><td>보고된 「반응 시간」이 API 왕복 한 번이었다</td><td>자기 분해능보다 작은 값을 보고하지 않는다</td><td>인용하기 좋은 30.6ms</td><td>표본 수를 세었다</td><td>분해능을 재서 함께 기록</td></tr>
+            <tr><td>카오스 실행이 클러스터를 망가진 채로 두었다</td><td>실험은 자기가 깨뜨린 것을 되돌린다</td><td>다음 실행이 통과했을 것이다</td><td>끝난 뒤 노드 용량을 확인했다</td><td>복구가 용량을 기다리고 게이트가 거부</td></tr>
+            <tr><td><code>.gitignore</code>가 문서 하나를 삼켰다</td><td>커밋에는 당신이 넣은 것이 들어 있다</td><td><code>git status</code> 깨끗</td><td><code>git show HEAD:&lt;path&gt;</code></td><td>경로를 허용 목록에</td></tr>
+            <tr><td>오버레이가 <code>args</code>를 통째로 바꿔 metrics 플래그를 지웠다</td><td>패치는 더하는 것이지 바꿔치우는 것이 아니다</td><td>롤아웃 정상, 검증 6/6</td><td>프로메테우스가 접속하지 못했다</td><td>오버레이 검사가 두 플래그를 모두 단언</td></tr>
+            <tr><td>누적 카운터를 한 번의 실행과 비교했다</td><td>증가분은 증가분과 비교한다</td><td>완벽한 9 = 9</td><td>실행을 반복했다</td><td>기록에 전후 증가분을 함께</td></tr>
+            <tr><td>웹훅이 삭제 중인 객체를 좌초시킬 수 있었다</td><td>삭제는 절대 막지 않는다</td><td><code>kubectl delete</code> 성공</td><td>외부 코드 리뷰</td><td>삭제가 시작되면 통과시킴</td></tr>
+                    </tbody>
+        </table>
+        </div>
+        </div><p>이 중 셋은 자세히 볼 값어치가 있습니다. 우연이었던 관측 합의, 객체를 지울 수
+        없게 만들 수 있었던 웹훅, 그리고 그것을 덮고 있던 테스트가 잴 수 없었던
+        비용입니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 248" role="img" aria-labelledby="fm-t fm-d" class="figure-svg">
+            <title id="fm-t">결함 10건을 어떻게 찾았나</title>
+            <desc id="fm-d">가로 막대 셋입니다. 가장 긴 것은 결과를 읽다가 찾은 9건입니다. 다음은 외부 코드 리뷰가 찾은 1건입니다. 마지막은 테스트 스위트가 찾은 0건입니다. 아래에 분홍색으로, 그동안 스위트는 계속 초록이었다고 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="176" y="70" font-size="11.5" fill="#d62976" text-anchor="end">결과를 읽다가</text>
+              <rect x="190" y="50" width="430" height="28" rx="5" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="630" y="70" font-size="11.5" fill="#4a4a4a">10건 중 9건</text>
+              <text x="176" y="122" font-size="11.5" fill="#4f5bd5" text-anchor="end">외부 코드 리뷰</text>
+              <rect x="190" y="102" width="47" height="28" rx="5" fill="none" stroke="#4f5bd5" stroke-width="1.8"/>
+              <text x="247" y="122" font-size="11.5" fill="#4a4a4a">10건 중 1건</text>
+              <text x="176" y="174" font-size="11.5" fill="#8a8a8a" text-anchor="end">테스트 스위트</text>
+              <rect x="190" y="154" width="18" height="28" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.8"/>
+              <text x="218" y="174" font-size="11.5" fill="#4a4a4a">10건 중 0건</text>
+              <text x="360" y="230" font-size="11.5" fill="#d62976" text-anchor="middle">그동안 스위트는 계속 초록</text>
+            </g>
+          </svg>
+          <figcaption>리뷰가 찾은 하나는 <strong>리뷰어를 두어야 한다는 것 자체의 논거</strong>입니다. 나머지 아홉은 새로 무언가를 돌려서가 아니라, 숫자를 더해 보고 왜 이것이 한 번도 측정되지 않았는지 물어보고 이름과 이름을 맞춰 보다가 나왔습니다.</figcaption>
+        </figure><h2 id="쓰는-말">아래에서 쓰는 말</h2>
+
+        <ul>
+          <li><strong>오퍼레이터.</strong> 학습 입장, 서빙 배포, 노드 건강, 테넌트 쿼터. 이 네 가지 커스텀 리소스를 조정하는 컨트롤러입니다.</li>
+          <li><strong>Workload.</strong> 작업 하나의 쿼터 청구를 나타내는 Kueue 객체입니다. Kueue가 만들고
+          오퍼레이터는 그것을 읽어 입장 상태를 보고합니다.</li>
+          <li>카오스 실행. 정상 상태 게이트가 붙은 스크립트 결함 주입입니다. 전제 조건이
+          성립하지 않으면 중단합니다.</li>
+          <li>Mutation. 규칙을 일부러 깨뜨려 테스트가 실패하는지 확인하는 것입니다.
+          아무것도 깨뜨릴 수 없는 가드는 검증된 가드가 아닙니다.</li>
+        </ul>
+
+        <h2 id="사례1-우연이었던-합의">사례 1. 우연이었던 합의</h2>
+
+        <p><strong>불변식.</strong> 클라이언트가 무엇을 겪었든 게이트웨이 자신의 카운터가 그것을 보여 줍니다.
+        당직자는 클라이언트가 아니라 카운터를 봅니다. 사용자가 느낀 장애를 겪고도 지표가 깨끗한
+        게이트웨이는 장애보다 더 나쁜 문제입니다.</p>
+
+        <p><strong>실험.</strong> 모델 Backend 뒤의 Pod을 지웁니다. 그동안 클라이언트가 보는 것을 표집합니다.
+        게이트웨이의 프로메테우스 카운터와 비교합니다. 둘이 어긋나면 Harness가 그 실행을 실패시킵니다.</p>
+
+        <p>찍힌 것.</p>
+
+<pre data-lang="text"><code>first error   49.1ms after the delete
+recovered   3079.8ms after the delete
+gateway 5xx: 9      client failures: 9</code></pre>
+        <p>저는 이 9와 9를 헤드라인 결과로 보고했습니다. 우연이었습니다.</p>
+
+        <p>결함. <code>gpuaas_gateway_requests_total</code>은 누적값입니다. Harness는 그것을
+        실행이 끝난 뒤 한 번만 읽어, 그 절대값을 한 번의 실행에서 나온 클라이언트 실패 수와
+        비교했습니다. 한 번 맞았을 뿐입니다. 제가 이걸 알아챈 것은 타당성 표에 「이 실험은 n=1」이라고 적어
+        두었다가 그 구멍을 메우러 돌아갔기 때문입니다.</p>
+
+<pre data-lang="text"><code>run 1:  counter = 15
+run 2:  counter = 23
+run 3:  counter = 31      while every run saw 9 failures</code></pre>
+        <p>그 비교는 애초에 비교였던 적이 없습니다.</p>
+
+        <p>수리. 카운터를 실행 전후로 기록해 증가분을 비교합니다. 따로,
+        curl 코드 <code>000</code>인 클라이언트 실패, 즉 HTTP 응답이 아예 도착하지 않은 경우는 제외합니다.
+        프록시에 닿지도 않은 요청을 프록시가 세라고 요구하는 것은 불가능한 기준이고 남아 있던 차이는 전부
+        그 제외로 설명됩니다.</p>
+
+        <p>고친 뒤의 증거. 세 번의 실행에서 증가분이 정확히 일치합니다.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">나머지는 옆으로 밀어서 보세요</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="옆으로 스크롤되는 표: 나머지는 옆으로 밀어서 보세요">
+        <table>
+          <caption class="sr-only">Backend 삭제 실험을 고친 뒤 세 번 돌린 결과. 클라이언트가 본 것과 게이트웨이 카운터 증가분을 나란히 놓았습니다.</caption>
+          <thead><tr><th scope="col">실행</th><th scope="col">첫 오류</th><th scope="col">회복</th><th scope="col">클라이언트 실패</th><th scope="col">응답 없음</th><th scope="col">게이트웨이 5xx 증가분</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>49.5ms</td><td>1295.3ms</td><td>2</td><td>1</td><td>1</td></tr>
+            <tr><td>2</td><td>48.6ms</td><td>1295.5ms</td><td>2</td><td>1</td><td>1</td></tr>
+            <tr><td>3</td><td>49.4ms</td><td>1294.6ms</td><td>2</td><td>1</td><td>1</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div><p>그 회복 숫자가 아닌 것. 그 창에는 쿠버네티스의 엔드포인트 전파가 들어 있고 그건
+        이 플랫폼이 통제하지 않습니다. 게이트웨이는 Service로 프록시하므로 kube-proxy가 새 Pod을
+        아는 바로 그때 알게 되고 여기서 둘을 갈라낼 수 없습니다. 여섯 번의 실행에서 회복은 1.29초와
+        3.08초 사이에서 움직였고 왜 그런지는 확립하지 못했습니다. 제가 지지하는 숫자는
+        지연시간이 아니라 합의입니다.</p>
+
+        <p>가드. 기록은 이제 누적값 옆에 <code>requests5xxDelta</code>를 함께 싣고 게이트웨이가
+        설명하지 못하는 클라이언트 실패가 있으면 Harness가 그 실행을 거부합니다.</p>
+
+        <p>옮겨 쓸 수 있는 교훈. 한 번의 실행으로는 두 관측자 사이의 합의를 시험할 수
+        없습니다. n=1에서 우연과 정확은 같은 그림입니다.</p>
+
+        <h2 id="사례2-지울-수-없는-객체">사례 2. 객체를 지울 수 없게 만들 수 있었던 웹훅</h2>
+
+        <p><strong>불변식.</strong> 어드미션 제어는 삭제가 끝나는 것을 절대 막아서는 안 됩니다.</p>
+
+        <p><strong>배경.</strong> CRD 스키마는 컨트롤러가 처리할 수 없는 값도 받아들입니다.
+        <code>+required</code>는 필드가 있다는 뜻이지 채워져 있다는 뜻이
+        아니라서 <code>image: ""</code>가 통과합니다. 더 나쁜 것은, Job이 생긴 뒤에 image를 고치면
+        apiserver가 그것을 저장하고 오류 없이 끝나는 재조정을 지나고도, 아무것도 바뀌지
+        않는다는 것입니다. 조용한 무동작은 거절보다 나쁘므로 검증 웹훅을 넣었습니다.</p>
+
+        <p>제가 맞게 한 것. 검증기는 <code>DELETE</code>를 가로채지 않고 주석에 이유가 적혀 있습니다. 삭제를 거절할 수 있는 웹훅은 아무도 지울 수 없는 객체를 만들 수 있습니다.</p>
+
+        <p>제가 틀린 것. 가드가 엉뚱한 동사에 걸려 있었습니다. finalizer는
+        평범한 <code>UPDATE</code>로 떨어집니다. 검증기가 spec을 거절하는 객체는, 규칙이 생기기 전에 만들어진 빈 image 같은 것은, 자기 삭제를 끝낼 업데이트를 영원히 마칠 수 없습니다.</p>
+
+        <p>실패는 조용합니다. <code>kubectl delete</code>는 성공합니다. 타임스탬프만 찍기 때문입니다. 그 객체는
+        <code>Terminating</code>에 앉아 있고 어디에도 오류가 없다가, 누군가 그것이 사라지지 않았다는 것을
+        알아챌 때까지 그대로입니다. 이건 외부 코드 리뷰가 찾았습니다. 제가 아니라.</p>
+
+<pre data-lang="text"><code>admission webhook "vmltrainingjob.kb.io" denied the request:
+  spec.image: Required value: a training image is required</code></pre>
+        <p>수리와 그 가드. <code>DeletionTimestamp</code>가 찍힌 뒤에는 업데이트를 통과시킵니다.
+        검증기에 직접 거는 것 하나, 진짜 apiserver를 통과하는 것 하나. 이 두 스펙이 그것을 고정하고 살아 있는
+        객체에는 같은 spec이 여전히 거절된다는 대조도 함께 둡니다. 우회를 없애면 둘 다 빨개집니다.</p>
+
+        <p>옮겨 쓸 수 있는 교훈. 저는 위험을 옳게 추론하고 엉뚱한 동작을
+        지켰습니다. 위험을 추론하는 것과 그 위험에 닿는 모든 경로를 덮는 것은 다른 일입니다.</p>
+
+        <h2 id="사례3-볼-수-없었던-비용">사례 3. 테스트 스위트가 볼 수 없었던 비용</h2>
+
+        <p><strong>불변식.</strong> 테스트는 운영이 쓰는 경로를 지나갑니다.</p>
+
+        <p><strong>왜 아무것도 측정되지 않았나.</strong> 컨트롤러의 확장성은 한 번도 벤치마크된 적이 없었습니다.
+        하나 쓰기 전에 왜 없는지를 먼저 물었고 그 답이 원인이었습니다. 테스트 스위트는
+        재조정기를 읽기 통과(read-through) 클라이언트로 만들고 운영은 매니저의
+        Cache 된 클라이언트를 건넵니다. <code>List</code>가 인덱스를 보는지 저장소를 걷는지,
+        그리고 그것이 객체 수에 따라 어떻게 자라는지는 Cache만의 성질입니다. 읽기 통과
+        클라이언트 앞에서는 그 질문이 존재하지 않습니다. 비용이 측정되지 않은 게 아니라 측정될 수
+        없었던 것입니다.</p>
+
+        <p>벤치마크가 찾은 것. 모든 학습 작업이 들어올 때 지나는 경로의 조회가 같은
+        네임스페이스를 쓰는 큐 객체 수에 대해 O(N)이었습니다. <code>MaxConcurrentReconciles</code>
+        가 기본값 1일 때, 네임스페이스 크기에 비례하는 항목당 비용은 큐를 O(N²)로 비웁니다.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">나머지는 옆으로 밀어서 보세요</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="옆으로 스크롤되는 표: 나머지는 옆으로 밀어서 보세요">
+        <table>
+          <caption class="sr-only">필드 인덱스 전후의 조회 비용을 세 가지 네임스페이스 크기에서 잰 것.</caption>
+          <thead><tr><th scope="col">네임스페이스 안 객체 수</th><th scope="col">고치기 전</th><th scope="col">고친 뒤</th></tr></thead>
+          <tbody>
+            <tr><td>100</td><td>116,602 ns/op</td><td>1,292 ns/op</td></tr>
+            <tr><td>500</td><td>485,338 ns/op</td><td>1,423 ns/op</td></tr>
+            <tr><td>2,000</td><td>1,644,429 ns/op</td><td>1,094 ns/op</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div><p>대조가 진단을 바꿨습니다. 코드를 읽고 저는 폴백 분기가 문제라고 결론지었습니다.
+        벤치마크에는 그 폴백에 닿지 않는 두 번째 경우가 들어 있었는데 그것도 선형으로
+        자랐습니다. 즉 레이블 셀렉터가 아무것도 좁히지 않고 있었습니다. controller-runtime Cache는
+        필드를 인덱싱하지 레이블을 인덱싱하지 않고 레이블 셀렉터는 저장소를 걸어서 적용합니다. 폴백을
+        지웠다면 조회는 O(N) 그대로인 채 고쳤다고 보고했을 것입니다.</p>
+
+        <p>수리. 큐 객체가 지닐 수 있는 두 주장, 곧 job-uid 레이블과 소유자 참조를 하나의 필드 인덱스에 넣어, 레이블 전체 순회 + 네임스페이스 전체 나열을 인덱스된 List 한 번으로
+        바꿉니다.</p>
+
+        <p>왜 배수가 더 약한 증거인가. 1503배 빨라졌다는 말은 무언가 빨라졌다는
+        것만 말하고 그건 Cache가 따뜻해져도 할 수 있는 말입니다. 따뜻한 Cache로는 설명할 수 없는 것
+        은 이것입니다. 고치기 전에는 미스가 히트의 약 20배였고 고친 뒤에는 미스가 더 쌉니다.
+        순회는 어느 쪽이든 저장소 전체를 걷기 때문에 미스가 히트보다 쌀 수 없습니다. 인덱스는 그럴 수 있습니다.
+        미스는 복사할 것이 없고 히트는 맞은 객체 하나를 깊은 복사하기 때문입니다. 그 역전이
+        증명입니다.</p>
+
+        <p>옮겨 쓸 수 있는 교훈. 성능 수리의 증거는 배수가 아니라 모양의 변화
+        여야 합니다.</p>
+
+        <p>한계. envtest에서 조회만 떼어 재었습니다. 동시 재조정 부하에서는 재지
+        않았고 O(N²) 주장이 실제로 드러나는 곳은 거기입니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="as-t as-d" class="figure-svg">
+            <title id="as-t">단언이 확인한 것과, 계약이 약속한 것</title>
+            <desc id="as-d">상자 둘이 나란히 있습니다. 왼쪽은 스위트가 단언한 것으로, 지금 코드가 내는 값, 빌드가 성공한다는 것, 롤아웃이 깨끗하다는 것입니다. 오른쪽은 계약이 약속한 것으로, 낭비란 인정받지 못한 일이고 지연시간은 자기가 말하는 단위로 적히며 패치는 바꿔치우는 것이 아니라 더하는 것입니다. 아래에 분홍색으로, 우연히 맞은 합의는 설계로 맞은 합의와 똑같이 읽힌다고 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#8a8a8a" text-anchor="middle" font-weight="700">스위트가 단언한 것</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">지금 코드가 내는 값</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">빌드 성공</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">롤아웃 6/6</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">계약이 약속한 것</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">낭비 = 인정받지 못한 일</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">지연시간은 말하는 단위로</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">패치는 더하기, 바꿔치기 아님</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">우연한 합의도 설계된 합의와 같은 모양</text>
+            </g>
+          </svg>
+          <figcaption>왼쪽 열에 단언하면 스위트는 <strong>코드가 자기 자신과 일치한다</strong>는 것만 확인해 줍니다. 열 건 전부가 두 열 사이의 틈에 살고 있었고 거기가 바로 초록 실행이 아무 정보도 나르지 않는 자리입니다.</figcaption>
+        </figure><h2 id="도구가-잡은-한-건">도구가 잡은 한 건</h2>
+
+        <p>열 건 중 아홉은 사람이 답을 읽어야 했습니다. 하나는 산출물이 스스로 모순되면서
+        잡혔고 그 차이는 따로 떼어 볼 값어치가 있습니다.</p>
+
+        <p>카오스 Harness는 지연시간을 보고하면서 자기가 측정한 표집 간격도 함께 기록했습니다.
+        주입 경로의 타이밍 로직을 고치고 회복 경로는 고치지 않았더니, 다음 기록이 이렇게 나왔습니다.</p>
+
+<pre data-lang="text"><code>"harnessResolutionMs": 95.9,
+"readyToUntaint": 37.9</code></pre>
+        <p>자기를 만들어 낸 분해능보다 작은 측정값입니다. 아무것도 실패하지 않았습니다. 문서가
+        독자가 볼 수 있는 자리에서 스스로 모순되었을 뿐이고 그게 가능했던 것은
+        판정 기준이 측정값 옆에 앉아 있었기 때문입니다.</p>
+
+        <p>형제 실험에는 같은 결함이 반대 방향으로 있었습니다. 표집 간격이 손으로 쓴 상수 100 ms였고 그래서
+        5.3초 동안 표본 셋을 보여 주는 기록이 숫자 100 옆에 아무 긴장 없이 앉아 있었습니다.
+        실패하는 요청은 Timeout 만큼 막히므로 간격은 상황이 나빠지는 바로 그때 넓어집니다.</p>
+
+        <blockquote><p>계측기를 매 실행마다 재서 그 숫자를 산출물에 넣으십시오. 상수는 자기 옆의 데이터와
+        모순될 수 없습니다.</p></blockquote>
+
+        <p><a href="https://github.com/lkhun9311/gpu-platform-control-plane/blob/main/hack/chaos-fr004-degraded-node.md" target="_blank" rel="noopener noreferrer">노드 이상 실험과 거기서 나온 계측기 결함 세 건</a></p>
+
+        <h2 id="관측">관측, 그리고 프로메테우스를 붙였더니 나온 것</h2>
+
+        <p>오퍼레이터와 게이트웨이는 지표 17개를 내보냅니다. 한 번도 수집된 적이 없었습니다.
+        프로메테우스를 붙여 보니 오퍼레이터는 그중 하나도 내주고 있지 않았습니다.</p>
+
+        <p>제가 쓴 Kustomize 오버레이가 매니저의 <code>args</code>를 전략적 병합으로 패치하고
+        있었습니다. <code>containers[].args</code>는 병합 키가 없는 평범한 문자열 목록이라 전략적 병합은 그것을
+        통째로 바꿔치웁니다. 그래서 패치가 <code>--metrics-bind-address</code>를
+        지웠습니다. Kustomize는 빌드됐고 apply는 성공했고 Deployment는 롤아웃됐고 웹훅은 동작했고 라이브
+        웹훅 검증은 6/6을 통과했습니다. 그중 어느 것도 지표 포트를 건드리지 않습니다.</p>
+
+        <figure>
+          <img src="../assets/writing/gpu-platform-dashboard.png" alt="오퍼레이터 재조정률, 노드 격리 전환, 게이트웨이 요청률을 보여 주는 Grafana 대시보드. 09:50에 업스트림 오류가 치솟는다" />
+          <figcaption>Backend 삭제 실험 동안의 오퍼레이터와 게이트웨이 지표입니다. 09:50의 뾰족한 봉우리가
+          서빙 Pod이 삭제되는 순간입니다. 업스트림 오류가 오르고 p99가 터지고 트래픽은 예비 Backend가
+          받아 냅니다. 그 p99 값 자체는 히스토그램 최상단 버킷 인공물이라 인용할 수 없습니다.</figcaption>
+        </figure><p>첫 렌더에서 패널 둘이 틀렸습니다. 오류 스탯이 <strong>2.26</strong>을 찍었는데
+        <code>increase()</code>가 수집 경계를 가로질러 외삽하기 때문에 이산 사건을 그것으로 세면 소수가
+        나옵니다. 참일 수 없는 값이 표시되면 그 페이지의 다른 모든 숫자가 무너집니다. 실패한
+        작업 스탯은 답이 0인 자리에 <strong>No data</strong>를 찍었고 그 둘은 다른 사실이며 그중 하나만
+        좋은 소식입니다.</p>
+
+        <p>존재하지 않는 지표를 조회하는 패널은 빈 그래프를 그리는데 건강하고 조용한 구간도 빈
+        그래프로 보입니다. 그래서 패널을 두 가지로 확인합니다. 모든 식이 PromQL로 파싱되어야 하고
+        식이 부르는 모든 지표가 Go 소스에 존재해야 합니다. 이름 변경을 잡는 것은 두 번째뿐입니다.</p>
+
+        <h3>발동할 수 없었던 알림 규칙</h3>
+
+        <p>같은 질문이 알림에도 적용되는데 거기서는 한 걸음이 아니라 세 걸음이 필요했습니다.</p>
+
+        <p><code>promtool check rules</code>가 규칙 넷 모두에 SUCCESS를 돌려줬고 저는 그것을
+        알림 증거로 기록했습니다. promtool이 검증하는 것은 식입니다. PromQL이 파싱되고
+        함수가 풀리고 기간이 올바른 형태인지. 데이터를 조회하지는 않습니다. 그래서
+        프로메테우스에게 각 규칙이 부르는 지표에 시계열이 몇 개 있는지 물었습니다. 둘은 하나도
+        없었습니다.</p>
+
+        <p>둘 다 Go 소스에 등록돼 있으니 코드가 보기에는 존재합니다. 둘 다 KV 인식 어드미션 가드만 쓰는
+        <code>Vec</code>이고 이 게이트웨이는 <code>--admission-mode=off</code>로 돕니다. 관측된
+        자식이 없는 프로메테우스 <code>Vec</code>은 아무것도 내보내지 않습니다. 시계열이 없는 것이지
+        0이 아닙니다. 그래서 <code>metric == 0</code>은 아무것과도 맞지 않았고 두 규칙은 쓰인 날부터
+        영구히 잠들어 있었습니다.</p>
+
+        <p>가드를 꺼 둔 상태에서는 그것도 나름 맞는 동작입니다. 그 밑의 결함은 더 좁습니다.
+        <code>GatewayAdmissionGuardBypassed</code>는 가드가 조용히 열린 채 실패하는 것을
+        잡으려고 있는데 그것이 읽는 시계열은 가드 자신이 발행합니다. 그러니 이 규칙이 볼 수
+        없는 단 하나의 실패는 가드가 아예 돌지 않는 경우입니다. 시작되지 않은 수집 루프,
+        비어서 돌아온 Backend 목록, 고루틴의 panic. 그 각각에서 시계열은 사라지고 규칙은 조용해지고
+        그 조용함은 건강처럼 보입니다.</p>
+
+        <p>수리. 가드가 동작하는지에 의존하지 않는 게이지를 둡니다.
+        <code>admission_mode_active</code>는 게이트웨이가 실제로 결정한 모드로 프로세스 시작 때 한 번
+        세워지므로 어떤 요청이나 수집보다 먼저 존재합니다. 그래야 없는 경우를 표현할 수
+        있습니다.</p>
+
+<pre data-lang="text"><code>(gpuaas_gateway_admission_mode_active{mode="kv-aware"} == 1)
+  unless on() gpuaas_gateway_backend_telemetry_fresh</code></pre>
+        <p><code>unless on()</code>은 신선도 시계열이 하나라도 존재하는 순간 왼쪽을 버리므로 새 규칙은
+        완전한 침묵에 대해서만 말하고 오래됨은 원래 규칙에 맡깁니다.</p>
+
+        <p>그러고 나서 규칙 하나를 실제로 발동시켰습니다. 파싱되고 데이터가 있는 규칙도
+        아직 호출을 울린 적은 없기 때문입니다. Backend를 없애고 초당 2.5 요청을 유지하자
+        <code>GatewayUpstreamErrorsReachingClients</code>가 06:31:51에 <code>pending</code>으로,
+        06:36:35과 06:36:55 사이에 <code>firing</code>으로 들어갔습니다. 선언된 <code>for: 5m</code>에 대해
+        상태를 20초마다 훑으므로 5분 04초 ± 20초가 이 Harness가 낼 수 있는 정밀도입니다.
+        <code>pending</code>에서 멈췄다면 보이는 것보다 적게 증명했을 것입니다. <code>pending</code>은
+        식이 한 번 맞았다는 뜻이고 깜빡이는 조건은 호출을 한 번도 울리지 않은 채 거기
+        영원히 앉아 있을 수 있습니다.</p>
+
+        <p>규칙 검사기는 이제 프로메테우스 주소를 받아 참조된 지표 중 시계열이 없는 것을
+        보고합니다. 실패시키지 않고 보고만 합니다. 기능이 꺼져 있어서 지표가 정당하게 없는 것이 여기서는
+        정상이고 그걸로 빨간 빌드를 내면 독자가 이 검사를 건너뛰는 법을 배우기 때문입니다.</p>
+
+        <h2 id="재현하기">재현하기</h2>
+
+        <p>전부 노트북에서 돕니다. 클라우드 계정도, GPU도 필요 없습니다.</p>
+
+        <pre data-lang="bash"><code># operator, webhook and cert-manager on a kind cluster
+kubectl apply -k config/webhook-enabled
+./hack/verify-webhook-live.sh          # expect 6/6
+
+# scalability, before and after the field index
+go test ./internal/controller/ -run '^$' -bench BenchmarkGetWorkloadForJob -benchtime 30x
+
+# the two chaos experiments
+OUT=./ex/fr004.json ./hack/chaos-fr004-degraded-node.sh
+OUT=./ex/fr002.json ./hack/chaos-fr002-serving-pod-killed.sh
+
+# static checks that exist because of defects above
+./hack/check-webhook-overlay.sh
+./hack/check-dashboard.sh</code></pre><p>각 카오스 스크립트는 정상 상태가 성립하지 않으면 중단하므로 시작된 실행은 전제 조건이
+        확인된 실행입니다. 그것들이 쓰는 기록에는 모든 지연시간 옆에 Harness 분해능이
+        함께 실려 있습니다.</p>
+
+        <h2 id="확립하는-것과-아닌-것">이 글이 확립하는 것과, 하지 않는 것</h2>
+
+        <p>전부 로컬 3노드 kind 클러스터에서 시뮬레이션된 <code>nvidia.com/gpu</code> 자원과
+        vLLM 대신 Stub Backend를 상대로 돕니다. 여기 어떤 GPU도 진짜가 아니고 운영 트래픽이 닿은 적도
+        없습니다. 이 실험들이 재는 것은 컨트롤 플레인의 동작이지 장치의 동작이 아닙니다.</p>
+
+        <div class="table-scroll">
+<p class="table-scroll-hint">나머지는 옆으로 밀어서 보세요</p>
+<div class="table-scroll-viewport" tabindex="0" role="region" aria-label="옆으로 스크롤되는 표: 나머지는 옆으로 밀어서 보세요">
+        <table>
+          <caption class="sr-only">이 글의 어느 주장이 측정된 것이고 어느 것이 아닌지.</caption>
+          <thead><tr><th scope="col">주장</th><th scope="col">상태</th></tr></thead>
+          <tbody>
+            <tr><td>클라이언트가 본 것과 게이트웨이 카운터의 합의, 증가분 비교, 3회</td><td>측정됨</td></tr>
+            <tr><td>조회가 O(N)에서 O(1)로, N이 20배 변해도 기울기가 평평</td><td>envtest에서 조회만 떼어 측정</td></tr>
+            <tr><td>노드 이상 감지 3회에서 34.6~36.9초</td><td>측정됐지만 쿠버네티스의 숫자이지 이 플랫폼의 숫자가 아님</td></tr>
+            <tr><td>망가진 노드에 대한 컨트롤러의 반응</td><td><strong>측정되지 않음</strong>, Harness 분해능 아래라 상한만</td></tr>
+            <tr><td>게이트웨이 p99</td><td><strong>인용 불가</strong>, 히스토그램 최상단 버킷 인공물</td></tr>
+            <tr><td>동시 reconcile에서의 큐 배출</td><td>측정되지 않음</td></tr>
+            <tr><td>알림 규칙 하나가 <code>firing</code>에 도달</td><td>측정됨, 선언된 <code>for: 5m</code>에 대해 5분 04초 ± 20초</td></tr>
+            <tr><td>나머지 규칙 넷</td><td>측정되지 않음. 그중 둘은 이 구성에서 발동할 수 없고 규칙에 그 이유가 이제 적혀 있음</td></tr>
+            <tr><td>알림 해제, 그리고 프로메테우스 너머의 라우팅</td><td>측정되지 않음, 여기엔 Alertmanager가 없음</td></tr>
+            <tr><td>실제 GPU 동작에 관한 모든 것</td><td>없음</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div><p>열 건 중 하나는 외부 코드 리뷰에서 나왔고 그것 자체가 리뷰어를 두어야 한다는
+        논거입니다. 남은 구멍에는 순서가 있습니다. 동시 재조정에서의 큐 동작이 먼저, 그다음 프로메테우스
+        너머의 알림 라우팅, 그다음 진짜 하드웨어입니다.</p>
+
+        <p><a href="../projects/gpuaas-control-plane.html">프로젝트 개요</a> ·
+        <a href="https://github.com/lkhun9311/gpu-platform-control-plane" target="_blank" rel="noopener noreferrer">소스</a> ·
+        엔지니어링 일지 <span class="repo-private notranslate" translate="no">Private</span>
+        (<code>gpu-platform-control-plane/docs/engineering-journal</code>),
+        끝난 뒤가 아니라 일이 벌어지는 동안 썼습니다.</p>
+
+        <div class="wrapup">
+        <h2 id="마치며">마치며</h2>
+
+        <ul>
+          <li><strong>초록 스위트는 당신이 생각해 낸 것만 배제합니다. 그 밖의 것은 아무것도 배제하지
+          않습니다.</strong> 결함 열 건이 그 아래 앉아 있었고 어느 것도 스위트를 빨갛게 하지 않았습니다.</li>
+          <li><strong>지금의 동작이 아니라 계약에 단언하십시오.</strong> 우연히 맞은 합의는 설계로 맞은 합의와
+          똑같이 읽힙니다.</li>
+          <li>삭제를 거절할 수 있는 웹훅은 객체를 좌초시킬 수 있는 웹훅입니다. 가드 자신의
+          실패 양상도 시험 계획에 들어가야 합니다.</li>
+          <li>스위트가 볼 수 없는 비용도 비용입니다. 빨간 것이 없다는 말은 잰 것이 없다는
+          말이기도 합니다.</li>
+        </ul>
+
+        <p>종료 코드 0은 시스템이 아니라 테스트에 대한 진술입니다. 남은 구멍은 순서대로입니다.
+        동시 재조정에서의 큐 동작, 프로메테우스 너머의 알림 라우팅, 그리고 진짜 하드웨어.</p>
+
+        <p>읽어 주셔서 감사합니다.</p>
+        </div>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=c8da970e8b"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=479ec9ecda"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -515,10 +515,10 @@
           title: "Reclaim Admitted the Owner in 120 ms. The Device Came 10 Seconds Later.",
           url: "writing/gpu-quota-control-plane.html",
           source: "side", sourceLabel: "Personal project",
-          title_ko: "회수 정책은 소유자를 120 ms 만에 입장시켰고, 장치는 10초 뒤에 왔습니다",
-          desc_ko: "테넌트 예산을 한 번 선언하고 일의 종류마다 다른 엔진이 집행합니다. Kueue의 회수 손잡이를 같은 원장에서 양방향으로 쟀더니, 끄면 낭비 0에 소유자 10.1초 대기, 켜면 120 ms 입장에 39.3 GPU-초 폐기였습니다. 그 두 번째 숫자에 대한 첫 발표가 「왜」를 틀렸고, 적대적 리뷰가 만든 대조 실험이 그것을 고쳤습니다. 숫자는 살아남고 메커니즘은 죽었습니다.",
+          title_ko: "회수 정책은 소유자를 120 ms 만에 입장시켰고 장치는 10초 뒤에 왔습니다",
+          desc_ko: "테넌트 예산을 한 번 선언하고 일의 종류마다 다른 엔진이 집행합니다. Kueue의 회수 손잡이를 같은 원장에서 양방향으로 쟀더니, 끄면 낭비 0에 소유자 10.1초 대기, 켜면 120 ms 입장에 39.3 GPU-초 폐기였습니다. 그 두 번째 숫자에 대한 첫 발표가 「왜」를 틀렸고 적대적 리뷰가 만든 대조 실험이 그것을 고쳤습니다. 숫자는 살아남고 메커니즘은 죽었습니다.",
           date: "2026-09", dateLabel: "Sep 2026",
-          desc: "A tenant GPU budget declared once and enforced where the work is admitted. Kueue reclaim measured both ways on one ledger: 0 wasted GPU-seconds against 39.3, and what the admission figure turned out not to mean. English only.",
+          desc: "A tenant GPU budget declared once and enforced where the work is admitted. Kueue reclaim measured both ways on one ledger: 0 wasted GPU-seconds against 39.3, and what the admission figure turned out not to mean.",
           tags: ["GPUaaS Control Plane", "Kubernetes", "GPU", "Design"]
         },
         {
@@ -526,9 +526,9 @@
           url: "writing/gpu-node-readiness.html",
           source: "side", sourceLabel: "Personal project",
           title_ko: "kubelet을 멈췄더니 46초 만에 노드가 격리됐습니다",
-          desc_ko: "GPU 노드의 「Ready」가 무엇에 대한 주장이어야 하는지를 CRD로 명시했습니다. 관측을 먼저 집행을 나중에 두 단계로 만들었고, cordon·유예 기간·결함 신호 트리거·자동 drain 네 가지는 미룬 것이 아니라 거절했습니다. kind 워커의 kubelet을 멈추자 Ready → Quarantine → Ready가 0초·46초·48초에 나왔고, 그 46초가 컨트롤러가 아니라는 것은 측정이 아니라 설계에서 읽은 것이라고 적었습니다.",
+          desc_ko: "GPU 노드의 「Ready」가 무엇에 대한 주장이어야 하는지를 CRD로 명시했습니다. 관측을 먼저 집행을 나중에 두 단계로 만들었고 cordon·유예 기간·결함 신호 트리거·자동 drain 네 가지는 미룬 것이 아니라 거절했습니다. kind 워커의 kubelet을 멈추자 Ready → Quarantine → Ready가 0초·46초·48초에 나왔고 그 46초가 컨트롤러가 아니라는 것은 측정이 아니라 설계에서 읽은 것이라고 적었습니다.",
           date: "2026-09", dateLabel: "Sep 2026",
-          desc: "Node readiness as an explicit CRD phase rather than an operational assumption. Observation first, then one taint, and four things declined on purpose. English only.",
+          desc: "Node readiness as an explicit CRD phase rather than an operational assumption. Observation first, then one taint, and four things declined on purpose.",
           tags: ["GPUaaS Control Plane", "Kubernetes", "GPU", "Observability"]
         },
         {
@@ -543,6 +543,8 @@
           title: "Ten Bugs, Zero Failed Tests",
           url: "writing/bugs-that-return-exit-code-zero.html",
           source: "side", sourceLabel: "Personal project",
+          title_ko: "결함 10건, 실패한 테스트 0건",
+          desc_ko: "멀티테넌트 GPU 스케줄링용 쿠버네티스 오퍼레이터와 게이트웨이를 일주일 검증하며 결함 10건을 찾았고 어느 것도 테스트를 실패시키거나 0이 아닌 종료 코드를 내지 않았습니다. 아홉은 옳아 보이는 결과를 읽다가, 하나는 산출물이 스스로 모순되면서 나왔습니다. 우연이었던 관측 합의, 객체를 지울 수 없게 만들 수 있었던 웹훅, 그리고 테스트 스위트가 볼 수 없었던 O(N) 비용을 자세히 봅니다.",
           date: "2026-08", dateLabel: "Aug 2026",
           desc: "Control-plane verification on a Kubernetes GPU operator. What each defect broke, how it was found, and the guard that now holds it.",
           tags: ["GPUaaS Control Plane", "Kubernetes", "Observability", "GPU"]
