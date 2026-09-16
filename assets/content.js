@@ -126,6 +126,16 @@
       },
       items: [
         {
+          title: "Turning the Snapshot Scheduler into a Traceable Operational System",
+          title_ko: "스냅샷 스케줄러를 추적 가능한 운영 시스템으로 바꾸기",
+          url: "writing/snapshot-scheduler-observability.ko.html",
+          source: "company", sourceLabel: "Company work",
+          date: "2026-09-16", dateLabel: "Sep 16, 2026",
+          desc: "An overview of a Korean series about turning opaque scheduled jobs into traceable operations by defining result semantics, preserving execution evidence, and choosing authoritative resource identity.",
+          desc_ko: "스냅샷 실행 이력 시리즈 개요. 보이지 않던 자동 실행을 결과·사유·대상·실행 당시 설정으로 추적할 수 있게 만든 설계 범위와 핵심 트레이드오프를 정리했습니다.",
+          tags: ["IaaS Backend", "Backend", "Observability", "Operations"]
+        },
+        {
           label: "Commercial Project",
           title: "Social Polling Platform: Anonymous Voting and Published Aggregates",
           title_ko: "소셜 투표 플랫폼: 익명 투표와 공개되는 집계",

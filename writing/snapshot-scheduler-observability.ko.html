@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>스냅샷 스케줄러를 추적 가능한 운영 시스템으로 바꾸기 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/snapshot-scheduler-observability.ko.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/snapshot-scheduler-observability.ko.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="스냅샷 스케줄러를 추적 가능한 운영 시스템으로 바꾸기" />
+  <meta property="og:description" content="실행 여부조차 로그를 뒤져야 하던 Scheduler에 결과·사유·대상·실행 당시 설정을 남겼습니다. 무엇을 어디까지 관측할지 정한 설계와 트레이드오프를 정리합니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/snapshot-scheduler-observability.ko.html" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="스냅샷 스케줄러를 추적 가능한 운영 시스템으로 바꾸기" />
+  <meta name="twitter:description" content="이력 탭 하나를 위해 결과 모델, 증거 보존, 자원 식별 경계를 다시 설계한 이유와 결과를 설명합니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="이력 탭 하나를 위해 결과 모델, 증거 보존, 자원 식별 경계를 다시 설계한 이유와 결과를 설명합니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar"><div class="topbar-inner notranslate"><a class="site-name" href="../index.html#about">Kwanghun</a><nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+    <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang" data-authored='{"ko":"snapshot-scheduler-observability.ko.html"}'>
+      <option value="ko" selected>한국어</option><option value="en">English</option><option value="ja">日本語</option><option value="zh-CN">简体中文</option><option value="zh-TW">繁體中文</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ru">Русский</option><option value="vi">Tiếng Việt</option><option value="id">Bahasa Indonesia</option><option value="hi">हिन्दी</option><option value="ar">العربية</option>
+    </select><div id="google_translate_element" aria-hidden="true"></div><a href="../index.html#about">About</a><a href="../index.html#news">News</a><a href="../index.html#projects">Projects</a><a href="../index.html#writing" class="active">Writing</a><a href="../index.html#notes">Notes</a><a href="../index.html#cv">CV</a>
+  </nav></div></div>
+  <div class="container reading"><main>
+    <div class="hero-top"><a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a><div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div></div>
+    <section class="page-hero"><h1>스냅샷 스케줄러를 추적 가능한 운영 시스템으로 바꾸기<br><span class="h1-sub">이력 탭 하나를 위해 결과 모델, 증거 보존, 자원 식별의 경계를 다시 설계했습니다.</span></h1><p class="article-date">2026년 9월</p></section>
+    <aside class="article-aside" data-aside="writing" data-slug="snapshot-scheduler-observability"></aside>
+    <nav class="article-toc" aria-label="목차"><p class="toc-label">목차</p><ul>
+      <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+      <li><a href="#도입-이유">실행했다는 사실부터 증명할 수 없었습니다</a></li>
+      <li><a href="#설계-범위">운영자가 답해야 할 질문에서 범위를 정했습니다</a></li>
+      <li><a href="#설계">실행·증거·표현의 경계를 분리했습니다</a></li>
+      <li><a href="#트레이드오프">정확성과 호환성 사이에서 선택했습니다</a></li>
+      <li><a href="#개선">무엇이 좋아졌고 무엇은 남겼나</a></li>
+      <li><a href="#시리즈">이 시리즈에서 다루는 것</a></li>
+      <li><a href="#마치며">마치며</a></li>
+    </ul></nav>
+    <article class="article-body">
+      <p>Snapshot Scheduler는 정해진 시각에 백업을 만드는 운영 기능입니다. 하지만 기존 화면은
+      Scheduler가 등록되고 활성화됐다는 현재 상태만 보여 줬습니다. 어젯밤 실제로 실행됐는지, 무엇을 몇 건
+      만들었는지, 실패했다면 생성·보관 정리·로컬 저장 중 어디서 멈췄는지는 로그와 DB를 함께 봐야 했습니다.</p>
+
+      <p>그래서 목표를 「이력 탭 추가」가 아니라 <strong>실행을 운영자가 추적 가능한 사건으로 만드는 것</strong>으로
+      잡았습니다. <a href="https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/implement-observability.html">AWS
+      Well-Architected 운영 우수성의 관측성</a>에 빗대면 상태를 수집하는 데서 끝나지 않고 그 결과로
+      시스템의 건강도를 이해하고 다음 판단을 내릴 수 있게 하는 일입니다.</p>
+
+      <p>이 글은 시리즈의 개요입니다. 큰 설계 결정과 운영 효과를 먼저 설명하고 개별 실패와 구현상의
+      판단은 마지막의 하위 글로 연결합니다.</p>
+
+      <figure class="diagram">
+        <svg viewBox="0 0 720 246" role="img" aria-labelledby="before-t before-d" class="figure-svg">
+          <title id="before-t">실행 이력 도입 전과 후의 운영 흐름</title>
+          <desc id="before-d">도입 전에는 화면의 시작 상태에서 로그와 데이터베이스, OpenStack을 수동 대조했습니다. 도입 후에는 실행 이력에서 결과와 사유, 대상, 시간을 확인하고 필요한 경우에만 상세 로그로 내려갑니다.</desc>
+          <defs><marker id="before-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#bbb"/></marker></defs>
+          <g font-family="Inter, sans-serif">
+            <text x="24" y="40" font-size="12" fill="#d62976" font-weight="700">도입 전</text>
+            <rect x="116" y="18" width="162" height="50" rx="9" fill="none" stroke="#d62976"/><text x="197" y="48" text-anchor="middle" font-size="11">화면 · STARTED</text><path d="M282 43H326" stroke="#bbb" marker-end="url(#before-a)"/>
+            <rect x="332" y="18" width="188" height="50" rx="9" fill="none" stroke="#777"/><text x="426" y="40" text-anchor="middle" font-size="10.8">로그 · DB · OpenStack</text><text x="426" y="56" text-anchor="middle" font-size="10" fill="#777">운영자가 수동 대조</text><path d="M524 43H568" stroke="#bbb" marker-end="url(#before-a)"/>
+            <rect x="574" y="18" width="124" height="50" rx="9" fill="none" stroke="#777"/><text x="636" y="48" text-anchor="middle" font-size="11">결과 추정</text>
+            <text x="24" y="149" font-size="12" fill="#4f5bd5" font-weight="700">도입 후</text>
+            <rect x="116" y="126" width="162" height="50" rx="9" fill="#f4f5ff" stroke="#4f5bd5"/><text x="197" y="156" text-anchor="middle" font-size="11">실행 이력 한 행</text><path d="M282 151H326" stroke="#bbb" marker-end="url(#before-a)"/>
+            <rect x="332" y="126" width="188" height="50" rx="9" fill="none" stroke="#4f5bd5"/><text x="426" y="147" text-anchor="middle" font-size="10.8">결과 · 사유 · 대상 · 시간</text><text x="426" y="164" text-anchor="middle" font-size="10" fill="#777">목록에서 즉시 판단</text><path d="M524 151H568" stroke="#bbb" marker-end="url(#before-a)"/>
+            <rect x="574" y="126" width="124" height="50" rx="9" fill="none" stroke="#4f5bd5"/><text x="636" y="147" text-anchor="middle" font-size="10.8">필요할 때만</text><text x="636" y="164" text-anchor="middle" font-size="10" fill="#777">상세 로그</text>
+            <text x="360" y="222" text-anchor="middle" font-size="11.5" fill="#444">결과 추정 → 실행 조회 · 설명</text>
+          </g>
+        </svg>
+        <figcaption>이력은 로그를 대체하지 않습니다. 로그로 내려가기 전의 운영 판단 계층을 만듭니다.</figcaption>
+      </figure>
+
+      <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
+      <ul class="callout">
+        <li>자동화 작업의 결과를 운영자가 추적할 수 있게 설계하시는 분</li>
+        <li>배치 이력의 상태·사유·성공 카운트 의미를 정해야 하는 분</li>
+        <li>변경되거나 삭제되는 설정과 과거 실행 증거의 수명을 분리하려는 분</li>
+      </ul>
+
+      <h2 id="도입-이유">실행했다는 사실부터 증명할 수 없었습니다<a class="anchor" href="#도입-이유" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>문제는 실패 메시지 하나가 없다는 데 그치지 않았습니다. 성공해도 완료 시각과 생성 건수가 없었고
+      중간에 대상이 사라진 경로는 이력 자체가 남지 않았습니다. Scheduler를 삭제하면 현재 설정을 기준으로
+      과거를 설명할 수도 없었습니다. 운영 질문은 실행 단위인데 데이터는 현재 설정과 흩어진 로그에 나뉘어 있었습니다.</p>
+
+      <h2 id="설계-범위">운영자가 답해야 할 질문에서 범위를 정했습니다<a class="anchor" href="#설계-범위" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>먼저 화면 필드가 아니라 운영 질문을 정의했습니다. 「언제 실행됐는가, 무엇을 대상으로 했는가,
+      새 백업은 몇 건 완성됐는가, 전체 작업은 건강했는가, 왜 실패했는가, 당시 설정은 무엇이었는가」입니다.
+      이 질문에 답하는 값을 한 실행의 계약으로 두고 Batch, API, 화면을 같은 의미로 맞췄습니다.</p>
+
+      <div class="table-scroll"><div class="table-scroll-hint">가로로 넘겨 표 전체를 볼 수 있습니다.</div><div class="table-scroll-viewport">
+        <table><thead><tr><th>운영 질문</th><th>남긴 값</th><th>의도한 판단</th></tr></thead><tbody>
+          <tr><td>실제로 끝났는가</td><td>시작·완료 시각, 소요 시간</td><td>미실행과 장기 실행 구분</td></tr>
+          <tr><td>백업은 완성됐는가</td><td>성공 수 / 생성 시도 수</td><td>백업 세트의 완성도 확인</td></tr>
+          <tr><td>전체 실행은 건강한가</td><td>SUCCESS · PARTIAL · FAILED</td><td>생성 뒤 정리와 저장까지 판단</td></tr>
+          <tr><td>왜 실패했는가</td><td>사유 코드와 대상별 설명</td><td>다음 조사 지점 선택</td></tr>
+          <tr><td>무슨 설정으로 실행했는가</td><td>프로젝트와 설정 Snapshot</td><td>변경·삭제 뒤에도 당시 상태 재구성</td></tr>
+        </tbody></table>
+      </div></div>
+
+      <p>반대로 전체 분산 추적, 장기 통계, 알림 자동화까지 한 번에 넣지는 않았습니다. 이번 이력은 운영자가
+      실행의 건강도를 판단하는 요약 원장입니다. 요청 단위의 깊은 원인 분석은 기존 로그가 맡고 추세 분석과
+      알림은 이 원장이 안정된 다음 확장할 영역으로 남겼습니다.</p>
+
+      <h2 id="설계">실행·증거·표현의 경계를 분리했습니다<a class="anchor" href="#설계" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>구현의 중심은 테이블보다 경계였습니다. Batch는 모든 종료 경로를 모아 실행 결과를 한 번 확정하고
+      History는 변경 가능한 Scheduler와 다른 수명으로 그 증거를 보존합니다. API와 화면은 저장된 의미를
+      다시 추론하지 않고 필터·페이징·표현에 집중합니다.</p>
+
+      <figure class="diagram">
+        <svg viewBox="0 0 720 240" role="img" aria-labelledby="boundary-t boundary-d" class="figure-svg">
+          <title id="boundary-t">실행 이력의 네 설계 경계</title>
+          <desc id="boundary-d">Scheduler Batch가 생성과 후처리를 수행하고 종료 시 RunStats로 결과를 확정합니다. History 원장은 실행 당시 증거를 보존하고 API와 실행 이력 탭이 이를 조회합니다.</desc>
+          <defs><marker id="boundary-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#bbb"/></marker></defs>
+          <g font-family="Inter, sans-serif">
+            <rect x="18" y="74" width="152" height="82" rx="11" fill="none" stroke="#777"/><text x="94" y="106" text-anchor="middle" font-size="11.5" font-weight="700">Scheduler Batch</text><text x="94" y="129" text-anchor="middle" font-size="10.5" fill="#777">생성 · 정리 · 저장</text>
+            <path d="M174 115H204" stroke="#bbb" marker-end="url(#boundary-a)"/>
+            <rect x="210" y="74" width="152" height="82" rx="11" fill="#f4f5ff" stroke="#4f5bd5"/><text x="286" y="106" text-anchor="middle" font-size="11.5" font-weight="700">결과 확정</text><text x="286" y="129" text-anchor="middle" font-size="10.5" fill="#777">RunStats · reason</text>
+            <path d="M366 115H396" stroke="#bbb" marker-end="url(#boundary-a)"/>
+            <rect x="402" y="74" width="152" height="82" rx="11" fill="none" stroke="#4f5bd5"/><text x="478" y="106" text-anchor="middle" font-size="11.5" font-weight="700">History 원장</text><text x="478" y="129" text-anchor="middle" font-size="10.5" fill="#777">결과 · 설정 Snapshot</text>
+            <path d="M558 115H588" stroke="#bbb" marker-end="url(#boundary-a)"/>
+            <rect x="594" y="74" width="108" height="82" rx="11" fill="none" stroke="#4f5bd5"/><text x="648" y="106" text-anchor="middle" font-size="11.5" font-weight="700">이력 탭</text><text x="648" y="129" text-anchor="middle" font-size="10.5" fill="#777">조회 · 판단</text>
+            <text x="286" y="47" text-anchor="middle" font-size="10.8" fill="#4f5bd5">언제 성공으로 셀 것인가</text>
+            <text x="478" y="190" text-anchor="middle" font-size="10.8" fill="#4f5bd5">무엇을 얼마나 오래 보존할 것인가</text>
+            <text x="648" y="211" text-anchor="middle" font-size="10.8" fill="#777">어떻게 읽게 할 것인가</text>
+          </g>
+        </svg>
+        <figcaption>실행 로직, 영속 증거, 사용자 표현이 같은 상태를 각자 다시 계산하지 않게 했습니다.</figcaption>
+      </figure>
+
+      <h2 id="트레이드오프">정확성과 호환성 사이에서 선택했습니다<a class="anchor" href="#트레이드오프" aria-label="이 절로 가는 링크">#</a></h2>
+      <div class="table-scroll"><div class="table-scroll-hint">가로로 넘겨 표 전체를 볼 수 있습니다.</div><div class="table-scroll-viewport">
+        <table><thead><tr><th>선택</th><th>얻은 것</th><th>지불한 것</th></tr></thead><tbody>
+          <tr><td>API 접수가 아닌 자원 완료 뒤 성공 확정</td><td>실제 백업 완성과 같은 숫자</td><td>대기 시간과 Timeout 처리</td></tr>
+          <tr><td>생성 카운트와 전체 결과 분리</td><td>2/2와 후처리 실패를 함께 표현</td><td>Enum 하나만 보는 것보다 UI가 복합적</td></tr>
+          <tr><td>Scheduler FK 없이 실행 설정 복제</td><td>삭제 뒤에도 실행 증거 보존</td><td>JSON 스키마와 보존 정책 관리</td></tr>
+          <tr><td>Nova의 Root Device를 우선</td><td>bootable 반례에서도 정확한 자원 식별</td><td>microversion·권한·호환 폴백 필요</td></tr>
+          <tr><td>한 실행을 한 행으로 요약</td><td>목록 조회와 운영 판단이 단순</td><td>대상별 상세 분석은 로그에 의존</td></tr>
+        </tbody></table>
+      </div></div>
+
+      <h2 id="개선">무엇이 좋아졌고 무엇은 남겼나<a class="anchor" href="#개선" aria-label="이 절로 가는 링크">#</a></h2>
+      <ul class="callout">
+        <li>실행 여부와 완료 시각을 추정하지 않고 이력으로 확인할 수 있습니다.</li>
+        <li>백업 생성 실패와 retention·로컬 저장 실패를 구분해 대응 우선순위를 정할 수 있습니다.</li>
+        <li>Scheduler가 바뀌거나 삭제돼도 실행 당시 대상과 설정을 근거로 장애를 설명할 수 있습니다.</li>
+        <li>Root와 Mount를 정확히 구분해 이름 충돌과 잘못된 보관 정리의 위험을 낮췄습니다.</li>
+      </ul>
+      <p>이 개선은 곧바로 완전한 Observability를 뜻하지 않습니다. 아직 알림, 장기 지표, 보존 기간 정책은
+      별도 과제입니다. 다만 이제 운영 사건이 구조화된 이력으로 축적되므로 실패 유형을 집계하고 다음 개선의
+      우선순위를 정할 기반이 생겼습니다. 보이지 않던 실행을 개선 가능한 피드백으로 바꾼 것이 가장 큰 결과입니다.</p>
+
+      <figure class="diagram">
+        <svg viewBox="0 0 720 224" role="img" aria-labelledby="loop-t loop-d" class="figure-svg">
+          <title id="loop-t">실행 이력이 만드는 운영 개선 루프</title>
+          <desc id="loop-d">구조화된 실행 이력을 원인별로 모아 반복 실패를 찾고 개선 우선순위를 정한 뒤 다음 실행 결과로 효과를 확인하는 순환 구조입니다.</desc>
+          <defs><marker id="loop-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#bbb"/></marker></defs>
+          <g font-family="Inter, sans-serif">
+            <rect x="24" y="72" width="140" height="64" rx="10" fill="#f4f5ff" stroke="#4f5bd5"/><text x="94" y="99" text-anchor="middle" font-size="11" font-weight="700">실행 이력</text><text x="94" y="119" text-anchor="middle" font-size="10" fill="#777">결과 · 사유</text>
+            <path d="M168 104H206" stroke="#bbb" marker-end="url(#loop-a)"/>
+            <rect x="212" y="72" width="140" height="64" rx="10" fill="none" stroke="#4f5bd5"/><text x="282" y="99" text-anchor="middle" font-size="11" font-weight="700">패턴 발견</text><text x="282" y="119" text-anchor="middle" font-size="10" fill="#777">반복 실패 집계</text>
+            <path d="M356 104H394" stroke="#bbb" marker-end="url(#loop-a)"/>
+            <rect x="400" y="72" width="140" height="64" rx="10" fill="none" stroke="#4f5bd5"/><text x="470" y="99" text-anchor="middle" font-size="11" font-weight="700">개선 선택</text><text x="470" y="119" text-anchor="middle" font-size="10" fill="#777">우선순위 결정</text>
+            <path d="M544 104H582" stroke="#bbb" marker-end="url(#loop-a)"/>
+            <rect x="588" y="72" width="108" height="64" rx="10" fill="none" stroke="#4f5bd5"/><text x="642" y="99" text-anchor="middle" font-size="11" font-weight="700">효과 확인</text><text x="642" y="119" text-anchor="middle" font-size="10" fill="#777">다음 실행</text>
+            <path d="M642 140V180H94V140" fill="none" stroke="#bbb" marker-end="url(#loop-a)"/>
+            <text x="368" y="204" text-anchor="middle" font-size="10.8" fill="#777">운영 사건 → 학습 → 검증</text>
+          </g>
+        </svg>
+        <figcaption>기록이 구조화돼야 개별 장애 대응이 반복 가능한 개선 과정으로 이어집니다.</figcaption>
+      </figure>
+
+      <h2 id="시리즈">이 시리즈에서 다루는 것<a class="anchor" href="#시리즈" aria-label="이 절로 가는 링크">#</a></h2>
+      <ol>
+        <li><a href="a-schedule-that-failed-in-silence.ko.html">실패했는데 STARTED였던 Scheduler</a>: 실행 상태가 화면까지 오지 않던 출발점</li>
+        <li><a href="the-history-tab-that-had-a-hole.ko.html">이력 탭에 이력이 남지 않던 경로</a>: 모든 종료 경로가 기록돼야 한다는 계약</li>
+        <li><a href="snapshot-history-result-model.ko.html">성공 2/2인데 일부 작업 실패인 이유</a>: 백업 완성도와 실행 건전성의 분리</li>
+        <li><a href="snapshot-history-outlives-schedule.ko.html">스케줄을 지워도 이력을 지우지 않은 이유</a>: 현재 상태와 실행 증거의 수명 분리</li>
+        <li><a href="snapshot-root-volume-identity.ko.html">둘 다 bootable일 때 Root를 찾는 법</a>: 권위 신호와 호환성 폴백</li>
+      </ol>
+
+      <div class="wrapup">
+        <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>실행 이력은 과거를 쌓는 부가 화면이 아닙니다. 자동화가 무엇을 했고 그 결과를 어디까지 믿을 수
+        있는지 설명하는 운영 인터페이스입니다.</p>
+        <p>그래서 시작점은 테이블 컬럼이 아니라 운영 질문이어야 했습니다. 그 질문을 기준으로 성공의 경계,
+        이력의 수명, 자원 식별의 권위를 정하자 Batch와 API, 화면의 역할도 함께 정리됐습니다.</p>
+        <p>읽어 주셔서 감사합니다.</p>
+      </div>
+    </article>
+  </main>
+  <footer class="notranslate">
+    <div class="footer-links">
+      <a href="mailto:honeys29311@gmail.com">Email</a>
+      <a href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+    </div>
+    <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+  </footer>
+  </div>
+  <script>window.CONTENT_BASE = "../";</script><script src="../assets/i18n.js?v=e0fa0917be"></script><script src="../assets/content.js?v=eb6bfd9c98"></script><script src="../assets/lang.js?v=905b81f32a"></script><script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script><script defer src="../assets/highlight.js?v=d4af83b541"></script><script defer src="../assets/article.js?v=6f23973a30"></script><script>(function(){var el=document.querySelector(".article-aside");if(el&&window.renderArticleAside){renderArticleAside(el,el.dataset.aside,el.dataset.slug);}})();</script>
+</body>
+</html>
