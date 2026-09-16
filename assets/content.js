@@ -188,6 +188,36 @@
       },
       items: [
         {
+          title: "Which Volume Is Root When Both Are Bootable?",
+          title_ko: "bootable인 Volume이 둘이면 어느 것이 Root인가",
+          url: "writing/snapshot-root-volume-identity.ko.html",
+          source: "company", sourceLabel: "Company work",
+          date: "2026-09-16", dateLabel: "Sep 16, 2026",
+          desc: "The third article in a Korean series on Snapshot Scheduler run history follows root-volume identity through Nova microversions and an SDK's ThreadLocal session context.",
+          desc_ko: "실행 이력 설계 시리즈 3편. 둘 다 bootable인 Volume 가운데 실제 Root를 찾기 위해 Nova root_device_name과 microversion, OpenStack4j의 ThreadLocal session 순서까지 따라갔습니다.",
+          tags: ["IaaS Backend", "Backend", "Reliability", "Method"]
+        },
+        {
+          title: "Run History Should Outlive Its Schedule",
+          title_ko: "스케줄을 지워도 실행 이력은 지우지 않았습니다",
+          url: "writing/snapshot-history-outlives-schedule.ko.html",
+          source: "company", sourceLabel: "Company work",
+          date: "2026-09-16", dateLabel: "Sep 16, 2026",
+          desc: "The second article in a Korean series separates mutable schedule state from execution evidence with an append-only row, a frozen JSON snapshot, and ownership fallback after deletion.",
+          desc_ko: "실행 이력 설계 시리즈 2편. 삭제되는 현재 상태와 보존할 실행 증거를 분리하기 위해 FK와 세 삭제 경로를 걷어내고 실행 시점 설정을 JSON으로 남겼습니다.",
+          tags: ["IaaS Backend", "Backend", "Observability", "Reliability"]
+        },
+        {
+          title: "Why Is a 2/2 Run Only Partially Successful?",
+          title_ko: "성공 2/2인데 왜 일부 작업 실패인가",
+          url: "writing/snapshot-history-result-model.ko.html",
+          source: "company", sourceLabel: "Company work",
+          date: "2026-09-16", dateLabel: "Sep 16, 2026",
+          desc: "The first article in a Korean series models snapshot creation counts separately from retention and local-save outcomes so that 2/2 and PARTIAL can both be true without contradiction.",
+          desc_ko: "실행 이력 설계 시리즈 1편. Snapshot 생성 카운트와 보관 정리·로컬 저장 결과를 분리해 2/2와 일부 작업 실패가 모순 없이 함께 참이 되게 했습니다.",
+          tags: ["IaaS Backend", "Backend", "Observability", "Reliability"]
+        },
+        {
           title: "Logging Out When Validation Fails Evicts Only the Busiest Users",
           title_ko: "Session 검증이 실패할 때 로그아웃하면 가장 열심히 쓰는 사용자만 쫓겨납니다",
           title_ja: "セッション検証が失敗したときにログアウトさせると、最も熱心に使う人だけが追い出されます",

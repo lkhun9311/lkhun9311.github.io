@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>성공 2/2인데 왜 일부 작업 실패인가 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/snapshot-history-result-model.ko.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/snapshot-history-result-model.ko.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="성공 2/2인데 왜 일부 작업 실패인가" />
+  <meta property="og:description" content="Snapshot 생성 2건은 모두 성공했는데 보관 정리가 실패했습니다. 생성 카운트와 실행 결과를 분리해 모순 없이 표현한 설계와 코드를 설명합니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/snapshot-history-result-model.ko.html" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="성공 2/2인데 왜 일부 작업 실패인가" />
+  <meta name="twitter:description" content="Snapshot 생성 카운트와 보관 정리·로컬 저장 결과를 서로 다른 축으로 모델링한 이유를 실제 코드로 설명합니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="Snapshot 생성 카운트와 보관 정리·로컬 저장 결과를 서로 다른 축으로 모델링한 이유를 실제 코드로 설명합니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"ko":"snapshot-history-result-model.ko.html"}'>
+          <option value="ko" selected>한국어</option><option value="en">English</option><option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option><option value="zh-TW">繁體中文</option><option value="es">Español</option>
+          <option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option>
+          <option value="ru">Русский</option><option value="vi">Tiếng Việt</option><option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option><option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a><a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a><a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a><a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
+        <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>성공 2/2인데 왜 일부 작업 실패인가<br><span class="h1-sub">Snapshot 생성과 후처리를 한 숫자로 세면 실행 결과가 거짓말합니다.</span></h1>
+        <p class="article-date">2026년 9월</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="snapshot-history-result-model"></aside>
+      <nav class="article-toc" aria-label="목차">
+        <p class="toc-label">목차</p>
+        <ul>
+          <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+          <li><a href="#한-실행의-대상">한 실행에는 같은 종류의 일이 들어 있지 않습니다</a></li>
+          <li><a href="#분모의-계약">분모를 Snapshot 생성 시도로 고정했습니다</a></li>
+          <li><a href="#결과-파생">결과는 카운트와 후처리 상태에서 파생합니다</a></li>
+          <li><a href="#성공-확정선">외부 API 접수를 성공으로 세지 않았습니다</a></li>
+          <li><a href="#화면-표현">색 하나에 모든 의미를 맡기지 않았습니다</a></li>
+          <li><a href="#트레이드오프">선택한 트레이드오프</a></li>
+          <li><a href="#마치며">마치며</a></li>
+        </ul>
+      </nav>
+      <article class="article-body">
+        <p>볼륨 부팅 Instance에 Root Volume 하나와 Mount Volume 하나가 붙어 있었습니다. Scheduler가
+        둘의 Snapshot을 모두 만들었고 화면의 카운트는 <strong>2/2</strong>였습니다. 그런데 결과 칩은
+        성공이 아니라 「일부 작업 실패」였습니다.</p>
+
+        <p>처음 보면 모순입니다. 실제로 실패한 것은 새 Snapshot이 아니라 보관 개수를 맞추려고 지우던
+        이전 Snapshot이었습니다. 새 백업은 온전하지만 실행 전체는 끝까지 온전하지 않았습니다. 어느 한쪽만
+        결과로 삼으면 다른 쪽을 숨기게 됩니다.</p>
+
+        <p>이 글은 <a href="the-history-tab-that-had-a-hole.ko.html">이력이 없던 실행 경로를 메운 뒤</a>,
+        한 실행의 생성·정리·로컬 저장을 어떤 상태 모델로 화면에 올렸는지 다룹니다. 설명은 실제 배치의
+        <code>RunStats</code>, <code>recordRunHistory</code>와 React 결과 셀을 다시 대조해 썼습니다.</p>
+
+        <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
+        <ul class="callout">
+          <li>여러 대상과 후처리가 섞인 배치의 실행 결과를 설계하시는 분</li>
+          <li>부분 성공을 Boolean이나 단일 상태값으로 표현하다 한계를 만난 분</li>
+          <li>화면의 성공 카운트와 운영 상태가 왜 다른지 설명해야 하는 분</li>
+        </ul>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 238" role="img" aria-labelledby="axes-t axes-d" class="figure-svg">
+            <title id="axes-t">한 실행을 이루는 세 축</title>
+            <desc id="axes-d">생성 대상, 보관 정리, 로컬 저장을 서로 다른 세 상자로 보여 줍니다. 아래에는 생성 성공 수와 실행 전체 결과가 서로 다른 질문이라는 구분이 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="28" y="50" width="206" height="116" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="131" y="40" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">생성 대상</text>
+              <text x="131" y="88" font-size="11.5" fill="#4a4a4a" text-anchor="middle">Root · Mount · Image</text>
+              <text x="131" y="120" font-size="18" fill="#4f5bd5" text-anchor="middle" font-weight="700">2 / 2</text>
+              <text x="131" y="146" font-size="11" fill="#777" text-anchor="middle">성공 / 시도</text>
+              <rect x="257" y="50" width="206" height="116" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="360" y="40" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">보관 정리</text>
+              <text x="360" y="96" font-size="12" fill="#4a4a4a" text-anchor="middle">이전 Snapshot 삭제</text>
+              <text x="360" y="130" font-size="13" fill="#d62976" text-anchor="middle" font-weight="700">실패 1건</text>
+              <rect x="486" y="50" width="206" height="116" rx="12" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="589" y="40" font-size="12" fill="#777" text-anchor="middle" font-weight="700">로컬 저장</text>
+              <text x="589" y="96" font-size="12" fill="#4a4a4a" text-anchor="middle">선택 기능</text>
+              <text x="589" y="130" font-size="13" fill="#777" text-anchor="middle" font-weight="700">미사용</text>
+              <text x="180" y="210" font-size="11.5" fill="#4f5bd5" text-anchor="middle">카운트: 새 백업의 완성도</text>
+              <text x="540" y="210" font-size="11.5" fill="#d62976" text-anchor="middle">결과: 실행 전체의 건전성</text>
+            </g>
+          </svg>
+          <figcaption>2/2는 새 Snapshot 두 건이 확정됐다는 뜻입니다. 정리까지 성공했다는 뜻은 아닙니다.</figcaption>
+        </figure>
+
+        <h2 id="한-실행의-대상">한 실행에는 같은 종류의 일이 들어 있지 않습니다<a class="anchor" href="#한-실행의-대상" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>스케줄 유형은 하나지만 생성 대상은 하나가 아닐 수 있습니다. 코드의 최상위 분기는 이름이 아니라
+        Volume 부착 여부와 부팅 형태를 따라갑니다. 이미지 부팅 Instance에 데이터 Volume이 붙으면 Instance
+        Image와 Mount Volume Snapshot을 함께 만들고 Volume 부팅이면 Image 없이 Root와 Mount Volume을 만듭니다.</p>
+
+        <div class="table-scroll">
+          <div class="table-scroll-hint">가로로 넘겨 표 전체를 볼 수 있습니다.</div>
+          <div class="table-scroll-viewport">
+            <table>
+              <thead><tr><th>실행 유형</th><th>생성 대상</th><th>정상 카운트</th><th>생성 뒤 작업</th></tr></thead>
+              <tbody>
+                <tr><td>Image 부팅, Volume 없음</td><td>Instance Image</td><td>1/1</td><td>보관 정리, 선택적 로컬 저장</td></tr>
+                <tr><td>Image 부팅, Mount 1개</td><td>Instance Image + Mount Snapshot</td><td>2/2</td><td>대상별 보관 정리와 저장</td></tr>
+                <tr><td>Volume 부팅, Mount 없음</td><td>Root Volume Snapshot</td><td>1/1</td><td>Root 보관 묶음 정리</td></tr>
+                <tr><td>Volume 부팅, Mount 1개</td><td>Root + Mount Snapshot</td><td>2/2</td><td>서로 다른 보관 묶음 정리</td></tr>
+                <tr><td>단독 Volume</td><td>Volume Snapshot</td><td>1/1</td><td>보관 정리, 선택적 로컬 저장</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <p>여기에 준비 단계가 더 있습니다. 전용 사용자와 역할, 프로젝트, 스케줄 설정을 확인하다 실패하면
+        생성 API를 한 번도 부르지 않습니다. 이때 <code>0/1</code>을 보여 주면 존재하지 않은 시도를 만든
+        셈입니다. 그래서 대상 시도 전 실패의 카운트는 <code>null</code>로 두고 화면에서 배지를 숨겼습니다.</p>
+
+        <h2 id="분모의-계약">분모를 Snapshot 생성 시도로 고정했습니다<a class="anchor" href="#분모의-계약" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>분모에 생성·정리·저장을 모두 넣으면 기능 설정에 따라 숫자의 뜻이 바뀝니다. 로컬 저장을 켠 순간
+        2/2였던 실행이 4/4가 되고 오래된 Snapshot이 없으면 정리 시도 자체가 사라집니다. 같은 열의 숫자를
+        실행마다 다른 단위로 읽어야 합니다.</p>
+
+        <p>그래서 <code>succeeded_count / total_count</code>는 오직 이번 실행의 Snapshot 생성 대상만 셉니다.
+        정리와 로컬 저장은 이름 목록과 실패 목록으로 따로 모읍니다. 카운트는 백업 세트가 얼마나 완성됐는지,
+        최종 결과는 실행 전체가 얼마나 건강했는지 답합니다.</p>
+
+        <h2 id="결과-파생">결과는 카운트와 후처리 상태에서 파생합니다<a class="anchor" href="#결과-파생" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>저장할 결과는 <code>SUCCESS</code>, <code>PARTIAL</code>, <code>FAILED</code> 셋입니다. 하지만 코드가
+        이 값을 직접 여기저기 쓰게 두지 않았습니다. 종료 지점에서 생성 집계, 전파된 예외, 후처리 실패를 모아
+        결과를 한 번 계산합니다.</p>
+
+        <pre data-lang="java"><code>if (failure == null) {
+    result = secondaryFailure ? PARTIAL : SUCCESS;
+} else if (total == 0) {
+    result = FAILED;              // 준비 단계 중단
+} else {
+    if (failed == 0) failed = 1; // 집계 전 예외의 모순 보정
+    result = succeeded &gt; 0 ? PARTIAL : FAILED;
+}</code></pre>
+
+        <p>성공 하나를 센 뒤 다음 대상에서 예외가 나면 그대로는 「1/1 일부 작업 실패」가 됩니다. 그래서
+        집계되지 않은 실패도 분모에 반영해 화면의 숫자와 문장이 충돌하지 않게 했습니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 260" role="img" aria-labelledby="derive-t derive-d" class="figure-svg">
+            <title id="derive-t">종료 시점 결과 파생 흐름</title>
+            <desc id="derive-d">예외 유무, 생성 대상 수, 성공 수와 후처리 실패를 차례로 판단해 성공, 일부 작업 실패, 실패로 나누는 흐름입니다.</desc>
+            <defs><marker id="derive-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#bbb"/></marker></defs>
+            <g font-family="Inter, sans-serif">
+              <rect x="264" y="18" width="192" height="48" rx="10" fill="none" stroke="#777" stroke-width="1.5"/>
+              <text x="360" y="47" font-size="12" text-anchor="middle" fill="#444">종료 예외</text>
+              <path d="M310 68 L176 112" stroke="#bbb" marker-end="url(#derive-a)"/><path d="M410 68 L544 112" stroke="#bbb" marker-end="url(#derive-a)"/>
+              <text x="228" y="86" font-size="10.5" fill="#777">없음</text><text x="482" y="86" font-size="10.5" fill="#777">있음</text>
+              <rect x="58" y="116" width="236" height="54" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.5"/>
+              <text x="176" y="148" font-size="11.5" text-anchor="middle" fill="#444">후처리 실패</text>
+              <rect x="426" y="116" width="236" height="54" rx="10" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="544" y="148" font-size="11.5" text-anchor="middle" fill="#444">성공 대상 수</text>
+              <path d="M118 172 L84 214" stroke="#bbb" marker-end="url(#derive-a)"/><path d="M234 172 L286 214" stroke="#bbb" marker-end="url(#derive-a)"/>
+              <path d="M486 172 L440 214" stroke="#bbb" marker-end="url(#derive-a)"/><path d="M602 172 L636 214" stroke="#bbb" marker-end="url(#derive-a)"/>
+              <text x="83" y="244" font-size="12" fill="#2f8f55" text-anchor="middle" font-weight="700">SUCCESS</text>
+              <text x="286" y="244" font-size="12" fill="#d07919" text-anchor="middle" font-weight="700">PARTIAL</text>
+              <text x="438" y="244" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">FAILED · 0</text>
+              <text x="637" y="244" font-size="12" fill="#d07919" text-anchor="middle" font-weight="700">PARTIAL · 1+</text>
+            </g>
+          </svg>
+          <figcaption>결과 Enum은 세 개지만 결과를 정하는 입력은 하나가 아닙니다.</figcaption>
+        </figure>
+
+        <h2 id="성공-확정선">외부 API 접수를 성공으로 세지 않았습니다<a class="anchor" href="#성공-확정선" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>OpenStack 생성 API가 ID를 돌려준 것은 작업 접수입니다. Volume Snapshot은 나중에
+        <code>available</code> 또는 <code>error</code>로 바뀌고 Instance Image도 <code>active</code>를 기다려야
+        합니다. ID를 받자마자 성공을 올리면 시간 초과와 오류 상태가 이미 성공으로 집계됩니다.</p>
+
+        <p>실제 코드는 유효한 ID, 완료 상태, 내부 원장 저장을 모두 지난 뒤에만
+        <code>recordRunSuccess</code>를 부릅니다. 그 전 실패는 <code>TIMEOUT</code>,
+        <code>SNAPSHOT_ERROR_STATE</code>, <code>API_RESPONSE_INVALID</code>처럼 실패 지점에서 구조화합니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 220" role="img" aria-labelledby="commit-t commit-d" class="figure-svg">
+            <title id="commit-t">Snapshot 성공 확정선</title>
+            <desc id="commit-d">생성 API 접수, 완료 상태 대기, 내부 원장 저장을 통과한 뒤에 성공 카운트를 올립니다. 보관 정리와 로컬 저장은 그 뒤의 별도 단계입니다.</desc>
+            <defs><marker id="commit-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#bbb"/></marker></defs>
+            <g font-family="Inter, sans-serif">
+              <rect x="16" y="70" width="140" height="68" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="86" y="110" font-size="11" text-anchor="middle" fill="#444">API 접수 · ID</text>
+              <path d="M160 104 H196" stroke="#bbb" marker-end="url(#commit-a)"/>
+              <rect x="202" y="70" width="140" height="68" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="272" y="98" font-size="11" text-anchor="middle" fill="#444">완료 상태</text><text x="272" y="120" font-size="10.5" text-anchor="middle" fill="#777">available · active</text>
+              <path d="M346 104 H382" stroke="#bbb" marker-end="url(#commit-a)"/>
+              <rect x="388" y="70" width="140" height="68" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="458" y="110" font-size="11" text-anchor="middle" fill="#444">내부 원장 저장</text>
+              <path d="M532 104 H568" stroke="#4f5bd5" stroke-width="2" marker-end="url(#commit-a)"/>
+              <rect x="574" y="70" width="130" height="68" rx="10" fill="#f4f5ff" stroke="#4f5bd5" stroke-width="1.8"/><text x="639" y="98" font-size="11" text-anchor="middle" fill="#4f5bd5" font-weight="700">성공 확정선</text><text x="639" y="120" font-size="10.5" text-anchor="middle" fill="#4f5bd5">카운트 +1</text>
+              <text x="360" y="184" font-size="11.5" text-anchor="middle" fill="#d62976">정리 · 로컬 저장은 확정선 뒤의 독립 결과</text>
+            </g>
+          </svg>
+          <figcaption>비동기 API의 응답과 자원의 완성을 같은 사건으로 취급하지 않았습니다.</figcaption>
+        </figure>
+
+        <h2 id="화면-표현">색 하나에 모든 의미를 맡기지 않았습니다<a class="anchor" href="#화면-표현" aria-label="이 절로 가는 링크">#</a></h2>
+        <p><code>PARTIAL</code>에는 두 상황이 들어옵니다. 생성 일부가 빠진 <code>1/2</code>와 생성은 모두
+        끝났지만 정리 또는 로컬 저장이 실패한 <code>2/2</code>입니다. DB Enum을 둘로 나누면 의미는 또렷하지만
+        기존 행 마이그레이션, API, 번역, 화면과 테스트까지 바뀝니다.</p>
+
+        <p>이번 범위에서는 Enum을 유지하고 <code>reason_code</code>로 시각적 심각도를 나눴습니다. 백업 누락이
+        있는 일부 실패는 주황, <code>RETENTION_PRUNE_FAILED</code>와 <code>LOCAL_SAVE_FAILED</code>처럼 백업
+        자체가 온전한 경우는 파랑입니다. 원인 열과 설명 배열은 무엇이 실패했는지 그대로 남깁니다.</p>
+
+        <h2 id="트레이드오프">선택한 트레이드오프<a class="anchor" href="#트레이드오프" aria-label="이 절로 가는 링크">#</a></h2>
+        <ul class="callout">
+          <li>고정한 것: 카운트는 언제나 새 Snapshot 생성 성공 수와 시도 수만 뜻합니다.</li>
+          <li>분리한 것: 백업 완성도와 실행 전체 건전성은 서로 다른 값으로 보여 줍니다.</li>
+          <li>감수한 것: <code>PARTIAL</code>만으로는 부족하므로 사유 코드와 카운트를 함께 읽어야 합니다.</li>
+        </ul>
+
+        <div class="wrapup">
+          <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
+          <p>성공 2/2와 일부 작업 실패는 모순이 아닙니다. 앞 숫자는 새 백업의 완성도를, 뒤 문장은 생성부터
+          정리와 저장까지 실행 전체의 건전성을 말합니다. 둘을 같은 축에 올려놓을 때만 모순이 됩니다.</p>
+          <p>배치 이력의 숫자를 설계할 때 먼저 정해야 할 것은 값이 아니라 분모의 계약입니다. 그 계약을
+          고정하면 상태값, 사유, 색과 설명의 책임도 따라 정리됩니다.</p>
+          <p>다음 글에서는 <a href="snapshot-history-outlives-schedule.ko.html">Scheduler를 삭제한 뒤에도
+          이력을 남기기 위해 현재 상태와 실행 시점 증거를 분리한 과정</a>을 이어서 다룹니다.</p>
+          <p>읽어 주셔서 감사합니다.</p>
+        </div>
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=b062d77d4f"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>(function(){var el=document.querySelector(".article-aside");if(el&&window.renderArticleAside){renderArticleAside(el,el.dataset.aside,el.dataset.slug);}})();</script>
+</body>
+</html>
