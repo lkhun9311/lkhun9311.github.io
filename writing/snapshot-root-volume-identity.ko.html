@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bootable인 Volume이 둘이면 어느 것이 Root인가 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet"><link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet"><link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/snapshot-root-volume-identity.ko.html" /><link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/snapshot-root-volume-identity.ko.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" /><meta property="og:site_name" content="Kwanghun Lee" /><meta property="og:title" content="bootable인 Volume이 둘이면 어느 것이 Root인가" />
+  <meta property="og:description" content="Cinder의 bootable은 이 Instance의 Root라는 뜻이 아니었습니다. Nova root_device_name과 OpenStack4j ThreadLocal session까지 따라가 Root와 Mount를 구분했습니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" /><meta property="og:url" content="https://lkhun9311.github.io/writing/snapshot-root-volume-identity.ko.html" /><meta property="og:locale" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content="bootable인 Volume이 둘이면 어느 것이 Root인가" /><meta name="twitter:description" content="Root Volume 판별 신호와 API session 전환 순서를 실제 Scheduler 코드로 설명합니다." /><meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta name="description" content="Root Volume 판별 신호와 API session 전환 순서를 실제 Scheduler 코드로 설명합니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar"><div class="topbar-inner notranslate"><a class="site-name" href="../index.html#about">Kwanghun</a><nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+    <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang" data-authored='{"ko":"snapshot-root-volume-identity.ko.html"}'>
+      <option value="ko" selected>한국어</option><option value="en">English</option><option value="ja">日本語</option><option value="zh-CN">简体中文</option><option value="zh-TW">繁體中文</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ru">Русский</option><option value="vi">Tiếng Việt</option><option value="id">Bahasa Indonesia</option><option value="hi">हिन्दी</option><option value="ar">العربية</option>
+    </select><div id="google_translate_element" aria-hidden="true"></div><a href="../index.html#about">About</a><a href="../index.html#news">News</a><a href="../index.html#projects">Projects</a><a href="../index.html#writing" class="active">Writing</a><a href="../index.html#notes">Notes</a><a href="../index.html#cv">CV</a>
+  </nav></div></div>
+  <div class="container reading"><main>
+    <div class="hero-top"><a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a><div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div></div>
+    <section class="page-hero"><h1>bootable인 Volume이 둘이면 어느 것이 Root인가<br><span class="h1-sub">Nova의 root_device_name과 API session 순서까지 따라가야 구분할 수 있었습니다.</span></h1><p class="article-date">2026년 9월</p></section>
+    <aside class="article-aside" data-aside="writing" data-slug="snapshot-root-volume-identity"></aside>
+    <nav class="article-toc" aria-label="목차"><p class="toc-label">목차</p><ul>
+      <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+      <li><a href="#충돌">두 Volume을 모두 Root로 분류했습니다</a></li>
+      <li><a href="#신호의-의미">bootable은 Root의 식별자가 아닙니다</a></li>
+      <li><a href="#권위-신호">권위 신호는 root_device_name이었습니다</a></li>
+      <li><a href="#세션-함정">Client 변수는 session을 격리하지 않았습니다</a></li>
+      <li><a href="#판별-순서">권위 신호 우선, 휴리스틱 폴백으로 정리했습니다</a></li>
+      <li><a href="#트레이드오프">트레이드오프와 남은 위험</a></li>
+      <li><a href="#마치며">마치며</a></li>
+    </ul></nav>
+    <article class="article-body">
+      <p>Volume으로 부팅한 Instance에 데이터 Volume 하나를 더 붙였습니다. 둘 다 Cinder에서
+      <code>bootable=true</code>였습니다. 기존 Scheduler는 둘을 모두 Root Volume으로 판정했습니다.</p>
+
+      <p>분류 하나가 틀린 것으로 끝나지 않았습니다. Root Snapshot 이름에는 Mount Device가 없었습니다.
+      같은 분에 두 Volume을 처리하면 이름이 충돌할 수 있고 둘 다 Root 보관 묶음으로 들어가 서로의 오래된
+      Snapshot을 정리할 수 있었습니다. 잘못된 식별이 이름, 원장, retention 경계를 함께 오염시켰습니다.</p>
+
+      <p>이 글은 <a href="snapshot-history-result-model.ko.html">실행 결과 모델</a>과
+      <a href="snapshot-history-outlives-schedule.ko.html">삭제 뒤에도 남는 이력</a>에 이은 세 번째 글입니다.
+      해결에는 단순 조건문보다 더 많은 확인이 필요했습니다. Nova가 제공하는 권위 신호의 microversion과
+      권한을 맞추고 OpenStack4j에서 Client 객체가 있어도 실제 호출 session은 ThreadLocal current를
+      따라간다는 점까지 고려해야 했습니다.</p>
+
+      <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
+      <ul class="callout">
+        <li>Cloud API의 여러 속성 가운데 자원 identity를 판별할 신호를 고르시는 분</li>
+        <li>SDK의 전역 또는 ThreadLocal context 때문에 Client가 예상과 다르게 동작한 경험이 있는 분</li>
+        <li>호환성 폴백과 Fail-closed 사이의 설계 판단을 실제 사례로 보고 싶은 분</li>
+      </ul>
+
+      <h2 id="충돌">두 Volume을 모두 Root로 분류했습니다<a class="anchor" href="#충돌" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>기존 판별은 Volume의 <code>bootable</code>을 먼저 봤습니다. 일반적으로 Root Volume은 bootable이므로
+      자연스러운 조건처럼 보입니다. 하지만 Image에서 만들어져 bootable 속성을 유지한 데이터 Volume을
+      Mount하면 Root가 아닌데도 true입니다.</p>
+
+      <figure class="diagram">
+        <svg viewBox="0 0 720 244" role="img" aria-labelledby="amb-t amb-d" class="figure-svg">
+          <title id="amb-t">bootable Volume 둘이 붙은 Instance</title>
+          <desc id="amb-d">Instance에 vda와 vdb 두 Volume이 붙어 있고 둘 다 bootable입니다. 실제 Root는 Nova root_device_name과 같은 vda 하나뿐입니다.</desc>
+          <g font-family="Inter, sans-serif">
+            <rect x="248" y="18" width="224" height="62" rx="12" fill="#f4f5ff" stroke="#4f5bd5" stroke-width="1.6"/><text x="360" y="46" text-anchor="middle" font-size="12" fill="#4f5bd5" font-weight="700">Instance</text><text x="360" y="66" text-anchor="middle" font-size="10.5" fill="#777">root_device_name = /dev/vda</text>
+            <path d="M310 82 L204 126" stroke="#bbb" stroke-width="1.5"/><path d="M410 82 L516 126" stroke="#bbb" stroke-width="1.5"/>
+            <rect x="72" y="126" width="264" height="78" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/><text x="204" y="154" text-anchor="middle" font-size="12" fill="#444">Volume A · /dev/vda</text><text x="204" y="179" text-anchor="middle" font-size="11" fill="#777">bootable=true · 실제 Root</text>
+            <rect x="384" y="126" width="264" height="78" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/><text x="516" y="154" text-anchor="middle" font-size="12" fill="#444">Volume B · /dev/vdb</text><text x="516" y="179" text-anchor="middle" font-size="11" fill="#777">bootable=true · 실제 Mount</text>
+            <text x="360" y="230" text-anchor="middle" font-size="11.5" fill="#d62976">bootable만 보면 둘을 구분할 수 없음</text>
+          </g>
+        </svg>
+        <figcaption>부팅 가능한 Volume과 이 Instance가 지금 부팅한 Volume은 다른 집합입니다.</figcaption>
+      </figure>
+
+      <p>오분류 뒤 두 자원의 이름은 같은 <code>ROOT_VOLUME_&lt;schedule&gt;_snapshot_&lt;minute&gt;</code> 형태가
+      됐습니다. Mount 경로라면 이름에 <code>dev_vdb</code>가 들어가야 합니다. 이름 충돌은 단순 표시 문제가
+      아니라 내부 원장 저장 실패와 관리 밖 Snapshot 누적으로 이어질 수 있습니다.</p>
+
+      <h2 id="신호의-의미">bootable은 Root의 식별자가 아닙니다<a class="anchor" href="#신호의-의미" aria-label="이 절로 가는 링크">#</a></h2>
+      <p><code>bootable</code>은 그 Volume으로 부팅할 수 있다는 속성입니다. 어느 Instance의 어느 Device로
+      연결돼 현재 Root 역할을 하는지는 말하지 않습니다. 판별 질문이 「부팅 가능한가」에서 「이 Instance의
+      Root인가」로 바뀌면 필요한 데이터의 소유자도 Cinder Volume에서 Nova Server attachment로 바뀝니다.</p>
+
+      <div class="table-scroll"><div class="table-scroll-hint">가로로 넘겨 표 전체를 볼 수 있습니다.</div><div class="table-scroll-viewport">
+        <table><thead><tr><th>신호</th><th>말해 주는 것</th><th>말해 주지 않는 것</th><th>판별 역할</th></tr></thead><tbody>
+          <tr><td>Cinder bootable</td><td>이 Volume의 부팅 가능성</td><td>현재 Instance의 Root 여부</td><td>호환성 폴백</td></tr>
+          <tr><td>Device 이름 목록</td><td>관례상 Root일 가능성</td><td>환경별 실제 Attachment</td><td>마지막 휴리스틱</td></tr>
+          <tr><td>Nova root_device_name</td><td>Instance의 Root Device</td><td>Volume 자체의 상태</td><td>권위 신호</td></tr>
+          <tr><td>Server image.id</td><td>Image 부팅 여부</td><td>Root attachment identity</td><td>부팅 형태 분기</td></tr>
+        </tbody></table>
+      </div></div>
+
+      <h2 id="권위-신호">권위 신호는 root_device_name이었습니다<a class="anchor" href="#권위-신호" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>Nova Server 응답의 <code>OS-EXT-SRV-ATTR:root_device_name</code>은 예를 들어
+      <code>/dev/vda</code>를 줍니다. Attachment의 Device와 같으면 Root, 다르면 Mount입니다. 다만 이 속성은
+      Nova API microversion 2.3 이상과 관리자 정책이 필요했습니다. Snapshot 전용 member 계정으로는 보이지
+      않을 수 있었습니다.</p>
+
+      <p>그래서 서비스 관리자 Client에 요청 헤더를 붙여 Server를 한 번 조회합니다. SDK model에도 해당 JSON
+      필드와 getter를 additive하게 추가했습니다. 응답이 없거나 환경이 지원하지 않으면 null을 반환해 기존
+      휴리스틱으로 내려갑니다.</p>
+
+      <pre data-lang="java"><code>OSClient.OSClientV3 admin = serviceClient()
+    .headers(Map.of("X-OpenStack-Nova-API-Version", "2.3"));
+Server server = admin.compute().servers().get(instanceId);
+String rootDevice = server != null ? server.getRootDeviceName() : null;
+
+if (rootDevice != null &amp;&amp; device != null) {
+    return device.equals(rootDevice);
+}</code></pre>
+
+      <h2 id="세션-함정">Client 변수는 session을 격리하지 않았습니다<a class="anchor" href="#세션-함정" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>여기서 예상 밖의 문제가 하나 더 있었습니다. 코드만 보면 <code>admin</code> 변수에 microversion 헤더를
+      붙였으니 그 객체의 Nova 요청에만 적용될 것 같습니다. 하지만 사용 중인 OpenStack4j 경로는 session을
+      ThreadLocal current에 둡니다. 새 Client를 만들 때 current가 교체되고 service proxy는 호출 시점의
+      current에서 token과 header를 가져옵니다.</p>
+
+      <p>관리자 조회 뒤 예전에 만들어 둔 member Client 변수로 Cinder를 호출해도 current가 관리자 session이면
+      요청은 관리자 token과 Nova header context를 물고 갈 수 있습니다. 변수의 타입과 실제 전송 context가
+      일치한다는 보장이 없었습니다.</p>
+
+      <figure class="diagram">
+        <svg viewBox="0 0 720 248" role="img" aria-labelledby="sess-t sess-d" class="figure-svg">
+          <title id="sess-t">OpenStack Client 생성 순서와 ThreadLocal current</title>
+          <desc id="sess-d">잘못된 순서는 member 생성 뒤 admin 조회로 current가 admin에 남습니다. 고친 순서는 admin 조회 뒤 member를 새로 만들어 Cinder loop 전에 current를 member로 되돌립니다.</desc>
+          <defs><marker id="sess-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#bbb"/></marker></defs>
+          <g font-family="Inter, sans-serif">
+            <text x="30" y="55" font-size="12" fill="#d62976" font-weight="700">잘못된 순서</text>
+            <rect x="150" y="28" width="138" height="52" rx="9" fill="none" stroke="#777"/><text x="219" y="60" text-anchor="middle" font-size="10.8">member 생성</text><path d="M292 54H338" stroke="#bbb" marker-end="url(#sess-a)"/>
+            <rect x="344" y="28" width="138" height="52" rx="9" fill="none" stroke="#d62976"/><text x="413" y="51" text-anchor="middle" font-size="10.8">admin + 2.3</text><text x="413" y="69" text-anchor="middle" font-size="10" fill="#777">current 교체</text><path d="M486 54H532" stroke="#bbb" marker-end="url(#sess-a)"/>
+            <rect x="538" y="28" width="154" height="52" rx="9" fill="none" stroke="#d62976"/><text x="615" y="51" text-anchor="middle" font-size="10.8">Cinder loop</text><text x="615" y="69" text-anchor="middle" font-size="10" fill="#d62976">admin context</text>
+            <text x="30" y="161" font-size="12" fill="#4f5bd5" font-weight="700">고친 순서</text>
+            <rect x="150" y="134" width="138" height="52" rx="9" fill="none" stroke="#777"/><text x="219" y="157" text-anchor="middle" font-size="10.8">admin + 2.3</text><text x="219" y="175" text-anchor="middle" font-size="10" fill="#777">Root 조회</text><path d="M292 160H338" stroke="#bbb" marker-end="url(#sess-a)"/>
+            <rect x="344" y="134" width="138" height="52" rx="9" fill="#f4f5ff" stroke="#4f5bd5"/><text x="413" y="157" text-anchor="middle" font-size="10.8">member 재생성</text><text x="413" y="175" text-anchor="middle" font-size="10" fill="#4f5bd5">current 복원</text><path d="M486 160H532" stroke="#bbb" marker-end="url(#sess-a)"/>
+            <rect x="538" y="134" width="154" height="52" rx="9" fill="none" stroke="#4f5bd5"/><text x="615" y="157" text-anchor="middle" font-size="10.8">Cinder loop</text><text x="615" y="175" text-anchor="middle" font-size="10" fill="#4f5bd5">member context</text>
+            <text x="360" y="226" text-anchor="middle" font-size="11.5" fill="#777">객체 변수보다 호출 시점 current가 요청 context를 결정</text>
+          </g>
+        </svg>
+        <figcaption>조회 코드를 어디에 놓는지가 다음 API 호출의 권한과 헤더를 바꿨습니다.</figcaption>
+      </figure>
+
+      <p>수정은 Root Device 조회를 먼저 하고 그 다음 대상 프로젝트의 member Client를 새로 만드는 순서로
+      배치했습니다. 이미지 부팅이나 무 Volume 경로에서는 조회 결과를 쓰지 않지만 session 복원 순서를
+      단순하게 유지하려고 같은 순서를 택했습니다. 불필요한 Nova 한 번과 context 안전성 사이의 선택입니다.</p>
+
+      <h2 id="판별-순서">권위 신호 우선, 휴리스틱 폴백으로 정리했습니다<a class="anchor" href="#판별-순서" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>최종 판별은 <code>root_device_name</code>이 있으면 Device 일치만 봅니다. 이때 다른 Volume이
+      bootable이어도 Mount입니다. 권위 신호가 없을 때만 <code>bootable</code>, 마지막으로 알려진 Root Device
+      이름 목록을 봅니다.</p>
+
+      <pre data-lang="java"><code>boolean isRootVolume(String device, String rootDevice, Volume volume) {
+    if (rootDevice != null &amp;&amp; !rootDevice.isBlank() &amp;&amp; device != null) {
+        return device.equals(rootDevice);       // authoritative
+    }
+    if (volume != null) {
+        try { return volume.bootable(); }       // compatibility fallback
+        catch (Exception ignored) { }
+    }
+    return device != null &amp;&amp; ROOT_DEVICE_LIST.contains(device);
+}</code></pre>
+
+      <figure class="diagram">
+        <svg viewBox="0 0 720 258" role="img" aria-labelledby="dec-t dec-d" class="figure-svg">
+          <title id="dec-t">Root Volume 판별 우선순위</title>
+          <desc id="dec-d">root_device_name이 있으면 Device 일치 여부로 끝냅니다. 없으면 bootable을 보고 그것도 읽지 못하면 Device 관례 목록으로 내려갑니다.</desc>
+          <defs><marker id="dec-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#bbb"/></marker></defs>
+          <g font-family="Inter, sans-serif">
+            <rect x="258" y="16" width="204" height="48" rx="10" fill="#f4f5ff" stroke="#4f5bd5" stroke-width="1.5"/><text x="360" y="46" text-anchor="middle" font-size="11.5" fill="#444">root_device_name</text>
+            <path d="M310 66L182 112" stroke="#bbb" marker-end="url(#dec-a)"/><path d="M410 66L538 112" stroke="#bbb" marker-end="url(#dec-a)"/>
+            <text x="240" y="89" font-size="10.5" fill="#777">있음</text><text x="470" y="89" font-size="10.5" fill="#777">없음</text>
+            <rect x="54" y="116" width="256" height="54" rx="10" fill="none" stroke="#4f5bd5"/><text x="182" y="149" text-anchor="middle" font-size="11">Device와 정확히 비교</text>
+            <rect x="410" y="116" width="256" height="54" rx="10" fill="none" stroke="#777"/><text x="538" y="149" text-anchor="middle" font-size="11">Cinder bootable</text>
+            <path d="M538 172V204" stroke="#bbb" marker-end="url(#dec-a)"/><rect x="410" y="208" width="256" height="38" rx="9" fill="none" stroke="#8a8a8a"/><text x="538" y="232" text-anchor="middle" font-size="10.8">Device 관례 목록</text>
+          </g>
+        </svg>
+        <figcaption>권위 신호가 있을 때 휴리스틱을 함께 섞으면 다시 모호해집니다.</figcaption>
+      </figure>
+
+      <p>단위 테스트와 실제 OpenStack 검증에는 Root와 Mount가 모두 bootable인 반례를 사용했습니다.
+      수정 뒤에는 <code>/dev/vda</code>만 Root, <code>/dev/vdb</code>는 Mount로 분류됐고 실행 이력도
+      <code>SUCCESS 2/2</code>로 두 종류를 구분해 남겼습니다.</p>
+
+      <h2 id="트레이드오프">트레이드오프와 남은 위험<a class="anchor" href="#트레이드오프" aria-label="이 절로 가는 링크">#</a></h2>
+      <ul class="callout">
+        <li>정확성: 가능성을 뜻하는 bootable보다 실제 Attachment를 뜻하는 root_device_name을 우선했습니다.</li>
+        <li>호환성: microversion을 지원하지 않는 환경을 위해 휴리스틱 폴백은 남겼습니다.</li>
+        <li>개선 과제: 호출 순서에 기대는 ThreadLocal Session 대신 Token과 Header가 Client에 귀속되는 경계가 필요합니다.</li>
+      </ul>
+
+      <div class="wrapup">
+        <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>속성 이름이 그럴듯하다고 identity 신호가 되는 것은 아닙니다. <code>bootable</code>은 가능성을,
+        <code>root_device_name</code>은 이 Instance의 실제 attachment를 말했습니다.</p>
+        <p>그리고 정확한 필드를 찾은 뒤에도 끝이 아니었습니다. 그 값을 읽기 위해 바꾼 API microversion과
+        권한 context가 다음 호출에 어떻게 전파되는지까지 봐야 했습니다. 분산 시스템의 판별 오류는 종종
+        조건문보다 조건문에 데이터를 가져오는 경계에서 시작합니다.</p>
+        <p>읽어 주셔서 감사합니다.</p>
+      </div>
+    </article>
+  </main>
+  <footer class="notranslate"><div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div><div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div></footer>
+  </div>
+  <script>window.CONTENT_BASE = "../";</script><script src="../assets/i18n.js?v=e0fa0917be"></script><script src="../assets/content.js?v=b062d77d4f"></script><script src="../assets/lang.js?v=905b81f32a"></script><script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script><script defer src="../assets/highlight.js?v=d4af83b541"></script><script defer src="../assets/article.js?v=6f23973a30"></script><script>(function(){var el=document.querySelector(".article-aside");if(el&&window.renderArticleAside){renderArticleAside(el,el.dataset.aside,el.dataset.slug);}})();</script>
+</body>
+</html>
