@@ -188,15 +188,15 @@
       },
       items: [
         {
-          title: "The 40 GiB I Thought Was Moving Was Actually 1.8 GiB",
-          title_ko: "40 GiB가 흐르는 줄 알았는데 실측은 1.8 GiB였습니다",
-          title_ja: "40 GiB が流れていると思ったら、実測は 1.8 GiB でした",
-          url: "writing/the-40-gib-that-did-not-move.ko.html",
+          title: "I Thought 40 GiB Was Moving. The Real Data Was 1.8 GiB.",
+          title_ko: "40 GiB가 흐르는 줄 알았는데, 실제 데이터는 1.8 GiB뿐이었습니다",
+          title_ja: "40 GiB が流れると思っていたら、実データは 1.8 GiB でした",
+          url: "writing/the-40-gib-that-did-not-move.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-18", dateLabel: "Sep 18, 2026",
-          desc: "A snapshot was said to take three hours, so I wrote the explanation first, then measured two real snapshots before trusting it. Transfer scaled with the real data, not the provisioned 40 GiB, the run finished in minutes, and the three-hour failure did not reproduce. A record of disproving my own first model with a packet counter. In Korean.",
-          desc_ko: "느린 스냅샷의 원인을 문서로 먼저 적었다가, 확정 전에 실제 스냅샷 두 건을 재 봤습니다. 전송량은 프로비저닝 40 GiB가 아니라 실데이터 규모를 따라갔고 실행은 몇 분에 끝났으며 '세 시간'은 재현되지 않았습니다. 첫 모델을 실측으로 반증한 기록입니다.",
-          desc_ja: "遅いスナップショットの原因を先に文書化しましたが、確定前に実際のスナップショットを2件計測しました。転送量はプロビジョニングの 40 GiB ではなく実データ規模に沿い、実行は数分で終わり、「3時間」は再現しませんでした。最初のモデルを実測で反証した記録です。韓国語。",
+          desc: "A snapshot was said to take three hours, so I wrote the cause down first — then measured two real snapshots and watched the 40 GiB model fall apart: the bytes tracked the real ~1.8 GiB and it finished in minutes. Instead of guessing why 'three hours' was real, I filled a disk on purpose and timed snapshots at 1.8, 5.7, and 11 GiB — 11 GiB alone took 30 minutes. Also in Korean and Japanese.",
+          desc_ko: "느린 스냅샷의 원인을 문서로 먼저 적었다가, 실제 스냅샷 두 건을 재보며 40 GiB 모델을 지웠습니다. 바이트는 실데이터(약 1.8 GiB)를 따라갔고 실행은 몇 분에 끝났습니다. '세 시간'을 추측으로 메우는 대신 디스크를 직접 채워 1.8·5.7·11 GiB에서 스냅샷을 쟀고, 11 GiB만으로 30분이 걸렸습니다. 영어·일본어로도 볼 수 있습니다.",
+          desc_ja: "遅いスナップショットの原因を先に書きましたが、実際のスナップショット2件を測って 40 GiB モデルを消しました。バイトは実データ（約 1.8 GiB）に沿い、実行は数分で終わりました。「3時間」を推測で埋める代わりにディスクを直接埋めて 1.8・5.7・11 GiB でスナップショットを測り、11 GiB だけで 30 分かかりました。韓国語・英語でも読めます。",
           tags: ["IaaS Backend", "Method", "Performance", "Reliability"]
         },
         {
