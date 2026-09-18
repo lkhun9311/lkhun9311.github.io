@@ -80,7 +80,6 @@
           <p class="toc-label">目次</p>
           <ul>
             <li><a href="#想定読者">この記事の想定読者</a></li>
-            <li><a href="#内容">どんな内容ですか</a></li>
             <li><a href="#構成">どんな構成ですか</a></li>
             <li><a href="#思い込み">最初は準備が終わったと思っていました</a></li>
             <li><a href="#結論">結論から申し上げます</a></li>
@@ -96,23 +95,24 @@
         </nav>
       <article class="article-body">
 
+        <p>初めての有料 GPU セッションを控えた夜でした。その前の2日間でコスト統制と測定の妥当性にかかわる欠陥を30件あまり直し、
+        1つずつ欠陥を注入して確かめました。Operator のイメージは ECR に上げ、Runbook も書きました。準備は終わったと
+        思っていました。</p>
+
+        <p>その夜、GPU を1枚も点けないまま EKS クラスタを立ててプラットフォームを載せてみました。テストでは常に緑だった
+        Operator が、EKS では起動した途端に落ちました。この記事は、その原因がなぜテストでは一度も現れえなかったのかという
+        話です。</p>
+
+        <p>先に留保をひとつ置きます。この記事が確かめたのは<strong>原因であって修正ではありません。</strong>足りない CRD を手で入れて
+        Operator が生き返るところまでは見ましたが、同じことを GitOps が自分でこなす経路はその夜一度も動いていません。
+        残りの留保は「この記事が主張しないこと」にまとめました。</p>
+
         <h2 id="想定読者">この記事の想定読者</h2>
         <ul>
           <li>Kubernetes Operator を作り、envtest・kind・e2e でテストしている方</li>
           <li>Argo CD のような GitOps ツールで CRD をデプロイしている方</li>
           <li>高くつく実行を前に、何を先に立ててみるべきか決めようとしている方</li>
         </ul>
-
-        <h2 id="内容">どんな内容ですか</h2>
-        <p>初めての有料 GPU セッションを控えた夜でした。その前の2日間でコスト統制と測定の妥当性にかかわる欠陥を30件あまり直し、
-        1つずつ欠陥を注入して確かめました。Operator のイメージは ECR に上げ、Runbook も書きました。準備は終わったと
-        思っていました。</p>
-        <p>その夜、GPU を1枚も点けないまま EKS クラスタを立ててプラットフォームを載せてみました。テストでは常に緑だった
-        Operator が、EKS では起動した途端に落ちました。この記事は、その原因がなぜテストでは一度も現れえなかったのかという
-        話です。</p>
-        <p>先に留保をひとつ置きます。この記事が確かめたのは<strong>原因であって修正ではありません。</strong>足りない CRD を手で入れて
-        Operator が生き返るところまでは見ましたが、同じことを GitOps が自分でこなす経路はその夜一度も動いていません。
-        残りの留保は「この記事が主張しないこと」にまとめました。</p>
 
         <h2 id="構成">どんな構成ですか</h2>
         <p>個人プロジェクトとして作っている GPUaaS プラットフォームのコントロールプレーンです。ユーザーが
@@ -413,7 +413,7 @@ $ kubectl delete pod -l control-plane=controller-manager
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=b14f1dbb62"></script>
+  <script src="../assets/content.js?v=24b6b547f7"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=d4af83b541"></script>

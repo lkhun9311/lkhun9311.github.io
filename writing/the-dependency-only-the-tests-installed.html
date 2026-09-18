@@ -80,7 +80,6 @@
           <p class="toc-label">Contents</p>
           <ul>
             <li><a href="#who-this-is-for">Who this is for</a></li>
-            <li><a href="#what-this-is">What this is about</a></li>
             <li><a href="#service">The setup</a></li>
             <li><a href="#assumed">I thought the preparation was done</a></li>
             <li><a href="#result">The result, up front</a></li>
@@ -96,23 +95,24 @@
         </nav>
       <article class="article-body">
 
+        <p>It was the night before my first paid GPU session. Over the previous two days I had fixed some thirty cost-control and
+        measurement-validity defects and confirmed each one by injecting it. The operator image was in ECR and the runbook
+        was written. I thought the preparation was done.</p>
+
+        <p>That night, without turning on a single GPU, I stood up an EKS cluster and brought the platform up on it. The operator
+        that was always green in tests died on EKS as soon as it started. This post is about why that cause could never have
+        appeared in a test.</p>
+
+        <p>One caveat first. What this post confirmed is <strong>the cause, not the fix.</strong> I saw the operator come back after
+        installing the missing CRDs by hand, and the path where GitOps does the same thing by itself never ran that night. The
+        rest of the caveats are gathered under "What this does not claim".</p>
+
         <h2 id="who-this-is-for">Who this is for</h2>
         <ul>
           <li>Anyone building a Kubernetes operator and testing it with envtest, kind or e2e</li>
           <li>Anyone deploying CRDs with a GitOps tool such as Argo CD</li>
           <li>Anyone deciding what to stand up first before an expensive run</li>
         </ul>
-
-        <h2 id="what-this-is">What this is about</h2>
-        <p>It was the night before my first paid GPU session. Over the previous two days I had fixed some thirty cost-control and
-        measurement-validity defects and confirmed each one by injecting it. The operator image was in ECR and the runbook
-        was written. I thought the preparation was done.</p>
-        <p>That night, without turning on a single GPU, I stood up an EKS cluster and brought the platform up on it. The operator
-        that was always green in tests died on EKS as soon as it started. This post is about why that cause could never have
-        appeared in a test.</p>
-        <p>One caveat first. What this post confirmed is <strong>the cause, not the fix.</strong> I saw the operator come back after
-        installing the missing CRDs by hand, and the path where GitOps does the same thing by itself never ran that night. The
-        rest of the caveats are gathered under "What this does not claim".</p>
 
         <h2 id="service">The setup</h2>
         <p>This is the control plane of a GPUaaS platform I am building as a personal project. When a user creates an
@@ -418,7 +418,7 @@ $ kubectl delete pod -l control-plane=controller-manager
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=b14f1dbb62"></script>
+  <script src="../assets/content.js?v=24b6b547f7"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=d4af83b541"></script>
