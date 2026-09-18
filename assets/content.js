@@ -188,6 +188,18 @@
       },
       items: [
         {
+          title: "A Teardown Destroyed 96 Resources and Two of Its Seven Lines Never Asked",
+          title_ko: "AWS 자원 96개를 지운 Teardown이 「잔여 없음」을 찍었는데 두 줄은 조회하지 않았습니다",
+          title_ja: "AWS リソース96個を消した Teardown が「残存なし」と出しましたが、2行は照会していません",
+          url: "writing/two-lines-that-asked-nothing.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-09-18", dateLabel: "Sep 18, 2026",
+          desc: "An EKS cluster was stood up and torn down once to find out whether the teardown removes what it created. It did, and the seven-line list that confirmed it had two lines that never ran a query: the load balancer and interface lookups sit behind a check for the VPC value, so once it was empty both printed the value they started with.",
+          desc_ko: "Teardown이 만든 것을 실제로 지우는지 확인하려고 EKS 클러스터를 한 번 세웠다가 지웠습니다. 지우는 것은 됐고 그것을 확인한 일곱 줄 가운데 두 줄은 질의를 실행한 적이 없었습니다. Load Balancer와 Network Interface 조회는 VPC 값이 있어야 돌기 때문에 그 값이 비면 빈 초기값이 그대로 찍혔습니다.",
+          desc_ja: "Teardown が作ったものを本当に消すのかを確かめるため、EKS クラスタを一度立てて消しました。消すことはできましたが、それを確認した七行のうち2行は照会を実行していませんでした。Load Balancer と Network Interface の照会は VPC の値がないと回らないので、値が空になった後は初期値がそのまま出ていました。",
+          tags: ["GPUaaS Control Plane", "Operations", "Cost", "Method"]
+        },
+        {
           title: "When a Live Host Is Judged Dead, Recovery Becomes the Incident",
           title_ko: "살아 있는 서버를 죽었다고 판정하면, 복구가 사고가 됩니다",
           title_ja: "生きているサーバーを死んだと判定すると、復旧が事故になります",
