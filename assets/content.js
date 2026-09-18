@@ -126,16 +126,6 @@
       },
       items: [
         {
-          title: "Turning the Snapshot Scheduler into a Traceable Operational System",
-          title_ko: "스냅샷 스케줄러를 추적 가능한 운영 시스템으로 바꾸기",
-          url: "writing/snapshot-scheduler-observability.ko.html",
-          source: "company", sourceLabel: "Company work",
-          date: "2026-09-16", dateLabel: "Sep 16, 2026",
-          desc: "An overview of a Korean series about turning opaque scheduled jobs into traceable operations by defining result semantics, preserving execution evidence, and choosing authoritative resource identity.",
-          desc_ko: "스냅샷 실행 이력 시리즈 개요. 보이지 않던 자동 실행을 결과·사유·대상·실행 당시 설정으로 추적할 수 있게 만든 설계 범위와 핵심 트레이드오프를 정리했습니다.",
-          tags: ["IaaS Backend", "Backend", "Observability", "Operations"]
-        },
-        {
           label: "Commercial Project",
           title: "Social Polling Platform: Anonymous Voting and Published Aggregates",
           title_ko: "소셜 투표 플랫폼: 익명 투표와 공개되는 집계",
@@ -198,13 +188,23 @@
       },
       items: [
         {
+          title: "Did the Snapshot Scheduler Run? Making Invisible Automation Trustworthy",
+          title_ko: "스냅샷 스케줄러는 실행됐는가: 보이지 않던 자동화를 신뢰하게 만들기",
+          url: "writing/snapshot-scheduler-observability.ko.html",
+          source: "company", sourceLabel: "Company work",
+          date: "2026-09-16", dateLabel: "Sep 16, 2026",
+          desc: "A Korean series overview about designing and implementing run history after quota failures looked like scheduler defects, then extending OpenStack4j to identify root volumes correctly.",
+          desc_ko: "Snapshot 생성 여부를 확인할 수 없어 할당량 부족도 Scheduler 장애로 오인됐습니다. 실행 이력을 직접 설계·구현해 동작을 추적하고 고객 신뢰를 높인 과정과 OpenStack4j 확장까지 정리했습니다.",
+          tags: ["IaaS Backend", "Backend", "Observability", "Operations"]
+        },
+        {
           title: "Which Volume Is Root When Both Are Bootable?",
-          title_ko: "bootable인 Volume이 둘이면 어느 것이 Root인가",
+          title_ko: "둘 다 bootable인 Volume 중 실제 Root를 어떻게 찾았나",
           url: "writing/snapshot-root-volume-identity.ko.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-16", dateLabel: "Sep 16, 2026",
           desc: "The third article in a Korean series on Snapshot Scheduler run history follows root-volume identity through Nova microversions and an SDK's ThreadLocal session context.",
-          desc_ko: "실행 이력 설계 시리즈 3편. 둘 다 bootable인 Volume 가운데 실제 Root를 찾기 위해 Nova root_device_name과 microversion, OpenStack4j의 ThreadLocal session 순서까지 따라갔습니다.",
+          desc_ko: "실행 이력 설계 상세 3편. OpenStack4j에 Nova root_device_name을 직접 확장하고 microversion과 ThreadLocal session 경계까지 바로잡아 Root 오분류를 해결했습니다.",
           tags: ["IaaS Backend", "Backend", "Reliability", "Method"]
         },
         {
@@ -214,7 +214,7 @@
           source: "company", sourceLabel: "Company work",
           date: "2026-09-16", dateLabel: "Sep 16, 2026",
           desc: "The second article in a Korean series separates mutable schedule state from execution evidence with an append-only row, a frozen JSON snapshot, and ownership fallback after deletion.",
-          desc_ko: "실행 이력 설계 시리즈 2편. 삭제되는 현재 상태와 보존할 실행 증거를 분리하기 위해 FK와 세 삭제 경로를 걷어내고 실행 시점 설정을 JSON으로 남겼습니다.",
+          desc_ko: "실행 이력 설계 상세 2편. 삭제되는 현재 상태와 보존할 실행 증거를 분리하기 위해 FK와 세 삭제 경로를 걷어내고 실행 시점 설정을 JSON으로 남겼습니다.",
           tags: ["IaaS Backend", "Backend", "Observability", "Reliability"]
         },
         {
@@ -224,7 +224,7 @@
           source: "company", sourceLabel: "Company work",
           date: "2026-09-16", dateLabel: "Sep 16, 2026",
           desc: "The first article in a Korean series models snapshot creation counts separately from retention and local-save outcomes so that 2/2 and PARTIAL can both be true without contradiction.",
-          desc_ko: "실행 이력 설계 시리즈 1편. Snapshot 생성 카운트와 보관 정리·로컬 저장 결과를 분리해 2/2와 일부 작업 실패가 모순 없이 함께 참이 되게 했습니다.",
+          desc_ko: "실행 이력 설계 상세 1편. Snapshot 생성 카운트와 보관 정리·로컬 저장 결과를 분리해 2/2와 일부 작업 실패가 모순 없이 함께 참이 되게 했습니다.",
           tags: ["IaaS Backend", "Backend", "Observability", "Reliability"]
         },
         {
@@ -243,8 +243,8 @@
           title: "The Run History Tab Had a Path That Left No History",
           url: "writing/the-history-tab-that-had-a-hole.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "이력 탭을 만들고 보니 이력이 안 남는 경로가 있었습니다",
-          desc_ko: "Snapshot Scheduler의 실행 이력을 화면에 붙였는데 대상이 사라져 정지한 실행은 이력이 한 줄도 남지 않았습니다. 조회 실패를 대상 없음으로 읽어 일시 오류가 영구 정지가 되고 있었습니다.",
+          title_ko: "실행 이력은 모든 종료 경로에 남아야 합니다",
+          desc_ko: "대상이 사라져 중단된 실행까지 기록해야 미실행과 실패를 구분할 수 있었습니다. 모든 종료 경로가 한 줄의 증거를 남기게 만든 과정입니다.",
           title_ja: "履歴タブを作ってみたら履歴が残らない経路がありました",
           desc_ja: "スナップショットスケジューラの実行履歴を画面に付けたのに、対象が消えて停止した実行は履歴が一行も残りませんでした。照会の失敗を対象無しと読み、一時的な障害が永久停止になっていました。",
           date: "2026-09", dateLabel: "Sep 2026",
@@ -255,8 +255,8 @@
           title: "A Snapshot Schedule Failed Every Run and the Screen Said STARTED",
           url: "writing/a-schedule-that-failed-in-silence.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "Snapshot Scheduler가 매번 실패했는데 화면은 STARTED였습니다",
-          desc_ko: "프로젝트 Snapshot 쿼터가 차면 Scheduler가 매 실행 실패하는데 화면은 STARTED였습니다. FAILED라는 상태값은 이미 있었고 그 값을 쓰는 코드가 없었습니다. 그리고 쿼터가 찬 그 순간에 코드가 이전 백업을 먼저 지우고 있었습니다.",
+          title_ko: "스냅샷이 생성되지 않았는데 화면은 STARTED였습니다",
+          desc_ko: "할당량 부족으로 Snapshot 생성이 거절됐지만 실패가 화면에 전달되지 않아 Scheduler 장애로 오인됐습니다. 실패 경로와 이전 백업을 먼저 지우던 보관 순서를 바로잡았습니다.",
           title_ja: "スナップショットスケジューラが毎回失敗しても画面は STARTED でした",
           desc_ja: "プロジェクトのスナップショットクォータが満杯だとスケジューラが毎回失敗するのに画面は STARTED でした。FAILED という状態値はすでにあり、それを書くコードがありませんでした。そしてその瞬間にコードは前のバックアップを先に消していました。",
           date: "2026-09", dateLabel: "Sep 2026",

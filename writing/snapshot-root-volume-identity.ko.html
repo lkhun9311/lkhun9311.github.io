@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>bootable인 Volume이 둘이면 어느 것이 Root인가 | Kwanghun Lee</title>
+  <title>둘 다 bootable인 Volume 중 실제 Root를 어떻게 찾았나 | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet"><link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet"><link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
   <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/snapshot-root-volume-identity.ko.html" /><link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/snapshot-root-volume-identity.ko.html" />
   <!-- og:start -->
-  <meta property="og:type" content="article" /><meta property="og:site_name" content="Kwanghun Lee" /><meta property="og:title" content="bootable인 Volume이 둘이면 어느 것이 Root인가" />
-  <meta property="og:description" content="Cinder의 bootable은 이 Instance의 Root라는 뜻이 아니었습니다. Nova root_device_name과 OpenStack4j ThreadLocal session까지 따라가 Root와 Mount를 구분했습니다." />
+  <meta property="og:type" content="article" /><meta property="og:site_name" content="Kwanghun Lee" /><meta property="og:title" content="둘 다 bootable인 Volume 중 실제 Root를 어떻게 찾았나" />
+  <meta property="og:description" content="Root Volume을 잘못 판별하는 문제를 해결하기 위해 OpenStack4j에 Nova root_device_name을 직접 확장하고 ThreadLocal session 경계까지 바로잡았습니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" /><meta property="og:url" content="https://lkhun9311.github.io/writing/snapshot-root-volume-identity.ko.html" /><meta property="og:locale" content="ko_KR" />
-  <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content="bootable인 Volume이 둘이면 어느 것이 Root인가" /><meta name="twitter:description" content="Root Volume 판별 신호와 API session 전환 순서를 실제 Scheduler 코드로 설명합니다." /><meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta name="description" content="Root Volume 판별 신호와 API session 전환 순서를 실제 Scheduler 코드로 설명합니다." />
+  <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content="둘 다 bootable인 Volume 중 실제 Root를 어떻게 찾았나" /><meta name="twitter:description" content="OpenStack4j를 확장해 Root Volume을 정확히 식별하고 API session 경계까지 바로잡은 과정입니다." /><meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta name="description" content="OpenStack4j를 확장해 Root Volume을 정확히 식별하고 API session 경계까지 바로잡은 과정입니다." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -23,13 +23,13 @@
   </nav></div></div>
   <div class="container reading"><main>
     <div class="hero-top"><a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a><div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div></div>
-    <section class="page-hero"><h1>bootable인 Volume이 둘이면 어느 것이 Root인가<br><span class="h1-sub">Nova의 root_device_name과 API session 순서까지 따라가야 구분할 수 있었습니다.</span></h1><p class="article-date">2026년 9월</p></section>
+    <section class="page-hero"><h1>둘 다 bootable인 Volume 중 실제 Root를 어떻게 찾았나<br><span class="h1-sub">OpenStack4j에 root_device_name을 직접 확장하고 API session 경계까지 바로잡았습니다.</span></h1><p class="article-date">2026년 9월</p></section>
     <aside class="article-aside" data-aside="writing" data-slug="snapshot-root-volume-identity"></aside>
     <nav class="article-toc" aria-label="목차"><p class="toc-label">목차</p><ul>
       <li><a href="#예상-독자">이 글의 예상 독자</a></li>
       <li><a href="#충돌">두 Volume을 모두 Root로 분류했습니다</a></li>
       <li><a href="#신호의-의미">bootable은 Root의 식별자가 아닙니다</a></li>
-      <li><a href="#권위-신호">권위 신호는 root_device_name이었습니다</a></li>
+      <li><a href="#권위-신호">OpenStack4j에 root_device_name을 직접 확장했습니다</a></li>
       <li><a href="#세션-함정">Client 변수는 session을 격리하지 않았습니다</a></li>
       <li><a href="#판별-순서">권위 신호 우선, 휴리스틱 폴백으로 정리했습니다</a></li>
       <li><a href="#트레이드오프">트레이드오프와 남은 위험</a></li>
@@ -48,9 +48,9 @@
 
       <p>이 글은 <a href="snapshot-history-result-model.ko.html">실행 결과 모델</a>과
       <a href="snapshot-history-outlives-schedule.ko.html">삭제 뒤에도 남는 이력</a>에 이은 세 번째 글입니다.
-      해결에는 단순 조건문보다 더 많은 확인이 필요했습니다. Nova가 제공하는 권위 신호의 microversion과
-      권한을 맞추고 OpenStack4j에서 Client 객체가 있어도 실제 호출 session은 ThreadLocal current를
-      따라간다는 점까지 고려해야 했습니다.</p>
+      이를 해결하기 위해 저는 Nova가 제공하는 권위 신호의 microversion과 권한을 확인하고 프로젝트에
+      포함된 OpenStack4j model을 직접 확장했습니다. Client 객체가 있어도 실제 호출 session은 ThreadLocal
+      current를 따라간다는 점까지 추적해 API 호출 순서도 함께 고쳤습니다.</p>
 
       <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
       <ul class="callout">
@@ -97,24 +97,39 @@
         </tbody></table>
       </div></div>
 
-      <h2 id="권위-신호">권위 신호는 root_device_name이었습니다<a class="anchor" href="#권위-신호" aria-label="이 절로 가는 링크">#</a></h2>
+      <h2 id="권위-신호">OpenStack4j에 root_device_name을 직접 확장했습니다<a class="anchor" href="#권위-신호" aria-label="이 절로 가는 링크">#</a></h2>
       <p>Nova Server 응답의 <code>OS-EXT-SRV-ATTR:root_device_name</code>은 예를 들어
       <code>/dev/vda</code>를 줍니다. Attachment의 Device와 같으면 Root, 다르면 Mount입니다. 다만 이 속성은
       Nova API microversion 2.3 이상과 관리자 정책이 필요했습니다. Snapshot 전용 member 계정으로는 보이지
       않을 수 있었습니다.</p>
 
-      <p>그래서 서비스 관리자 Client에 요청 헤더를 붙여 Server를 한 번 조회합니다. SDK model에도 해당 JSON
-      필드와 getter를 additive하게 추가했습니다. 응답이 없거나 환경이 지원하지 않으면 null을 반환해 기존
-      휴리스틱으로 내려갑니다.</p>
+      <p>사용 중인 OpenStack4j의 <code>Server</code> model에는 이 필드가 없었습니다. 외부 라이브러리가
+      값을 버리면 Scheduler에서 아무리 판별 로직을 작성해도 사용할 수 없습니다. 저는 프로젝트에 포함된
+      <code>server/openstack4j</code> module의 인터페이스와 구현을 함께 수정했습니다.</p>
+
+      <pre data-lang="java"><code>// org.openstack4j.model.compute.Server
+default String getRootDeviceName() {
+    return null;
+}
+
+// org.openstack4j.openstack.compute.domain.NovaServer
+@JsonProperty("OS-EXT-SRV-ATTR:root_device_name")
+private String rootDeviceName;
+
+@Override
+public String getRootDeviceName() {
+    return rootDeviceName;
+}</code></pre>
+
+      <p>인터페이스에는 default getter를 추가해 기존 구현과 테스트 목 객체가 한꺼번에 깨지지 않게 했고
+      <code>NovaServer</code>에는 실제 JSON field mapping을 추가했습니다. 그 다음 서비스 관리자 Client에
+      <code>X-OpenStack-Nova-API-Version: 2.3</code> header를 붙여 Server를 조회했습니다. 지원하지 않는
+      환경이나 권한 부족에서는 null을 반환하고 기존 휴리스틱으로 내려가도록 호환성 경계도 남겼습니다.</p>
 
       <pre data-lang="java"><code>OSClient.OSClientV3 admin = serviceClient()
     .headers(Map.of("X-OpenStack-Nova-API-Version", "2.3"));
 Server server = admin.compute().servers().get(instanceId);
-String rootDevice = server != null ? server.getRootDeviceName() : null;
-
-if (rootDevice != null &amp;&amp; device != null) {
-    return device.equals(rootDevice);
-}</code></pre>
+String rootDevice = server != null ? server.getRootDeviceName() : null;</code></pre>
 
       <h2 id="세션-함정">Client 변수는 session을 격리하지 않았습니다<a class="anchor" href="#세션-함정" aria-label="이 절로 가는 링크">#</a></h2>
       <p>여기서 예상 밖의 문제가 하나 더 있었습니다. 코드만 보면 <code>admin</code> 변수에 microversion 헤더를
@@ -191,6 +206,7 @@ if (rootDevice != null &amp;&amp; device != null) {
       <ul class="callout">
         <li>정확성: 가능성을 뜻하는 bootable보다 실제 Attachment를 뜻하는 root_device_name을 우선했습니다.</li>
         <li>호환성: microversion을 지원하지 않는 환경을 위해 휴리스틱 폴백은 남겼습니다.</li>
+        <li>호환성 구현: OpenStack4j interface에는 default getter를 추가해 기존 구현과 테스트의 파급을 줄였습니다.</li>
         <li>개선 과제: 호출 순서에 기대는 ThreadLocal Session 대신 Token과 Header가 Client에 귀속되는 경계가 필요합니다.</li>
       </ul>
 
@@ -207,6 +223,6 @@ if (rootDevice != null &amp;&amp; device != null) {
   </main>
   <footer class="notranslate"><div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div><div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div></footer>
   </div>
-  <script>window.CONTENT_BASE = "../";</script><script src="../assets/i18n.js?v=e0fa0917be"></script><script src="../assets/content.js?v=eb6bfd9c98"></script><script src="../assets/lang.js?v=905b81f32a"></script><script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script><script defer src="../assets/highlight.js?v=d4af83b541"></script><script defer src="../assets/article.js?v=6f23973a30"></script><script>(function(){var el=document.querySelector(".article-aside");if(el&&window.renderArticleAside){renderArticleAside(el,el.dataset.aside,el.dataset.slug);}})();</script>
+  <script>window.CONTENT_BASE = "../";</script><script src="../assets/i18n.js?v=e0fa0917be"></script><script src="../assets/content.js?v=8f8cf45e12"></script><script src="../assets/lang.js?v=905b81f32a"></script><script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script><script defer src="../assets/highlight.js?v=d4af83b541"></script><script defer src="../assets/article.js?v=6f23973a30"></script><script>(function(){var el=document.querySelector(".article-aside");if(el&&window.renderArticleAside){renderArticleAside(el,el.dataset.aside,el.dataset.slug);}})();</script>
 </body>
 </html>
