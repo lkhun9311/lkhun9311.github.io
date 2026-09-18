@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AWS リソース96個を消した Teardown が「残存なし」と出しましたが、2行は照会していません | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/two-lines-that-asked-nothing.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/two-lines-that-asked-nothing.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/two-lines-that-asked-nothing.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/two-lines-that-asked-nothing.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="AWS リソース96個を消した Teardown が「残存なし」と出しましたが、2行は照会していません" />
+  <meta property="og:description" content="VPC が既に無いと Load Balancer と Network Interface の照会は実行されず、初期値の空文字がそのまま出力されます。照会して無いことと、尋ねていないことが同じ文字で出ます。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/two-lines-that-asked-nothing.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="AWS リソース96個を消した Teardown が「残存なし」と出しましたが、2行は照会していません" />
+  <meta name="twitter:description" content="VPC が既に無いと Load Balancer と Network Interface の照会は実行されず、初期値の空文字がそのまま出力されます。照会して無いことと、尋ねていないことが同じ文字で出ます。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="VPC が既に無いと Load Balancer と Network Interface の照会は実行されず、初期値の空文字がそのまま出力されます。照会して無いことと、尋ねていないことが同じ文字で出ます。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"two-lines-that-asked-nothing.html","ko":"two-lines-that-asked-nothing.ko.html","ja":"two-lines-that-asked-nothing.ja.html"}'>
+          <option value="ja" selected>日本語</option>
+          <option value="en">English</option>
+          <option value="ko">한국어</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ戻る</a>
+        <div class="article-meta"><span class="source-tag side notranslate">個人プロジェクト</span><a class="project-tag notranslate" href="../writing/index.html?tag=GPUaaS%20Control%20Plane">#GPUaaS コントロールプレーン</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>AWS リソース96個を消した Teardown が「残存なし」と出しましたが、2行は照会していません<br><span class="h1-sub">VPC が既に無いと Load Balancer と Network Interface の照会は実行されず、初期値の空文字がそのまま出力されます。</span></h1>
+        <p class="article-date">2026年9月</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="two-lines-that-asked-nothing"></aside>
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#想定読者">この記事の想定読者</a></li>
+            <li><a href="#どんなサービス">どんなサービスですか</a></li>
+            <li><a href="#最初は">最初は片付けの経路が検証済みだと思っていました</a></li>
+            <li><a href="#結論から">結論から申し上げます</a></li>
+            <li><a href="#七行">七行すべてが「なし」で出ました</a></li>
+            <li><a href="#二行">後ろの2行は照会したことがありません</a></li>
+            <li><a href="#同じ日の朝">同じファイルのもう半分をその朝に直していました</a></li>
+            <li><a href="#原因を名指しした警告">分からない原因を名指しした警告</a></li>
+            <li><a href="#検査が見ないもの">この検査がそもそも見ないもの</a></li>
+            <li><a href="#主張しないこと">この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
+          </ul>
+        </nav>
+      <article class="article-body">
+
+        <p>個人プロジェクトとして、GPU を複数人で分け合うための Kubernetes Control Plane を作っています。
+        AWS アカウントひとつに EKS クラスタを丸ごと立てて消す Terraform ルートがあり、毎晩それを消す
+        GitHub Actions のワークフローが回っています。</p>
+
+        <p>そのワークフローはこれまで毎回成功していました。<strong>消すものが無かったからです。</strong>
+        成功した片付けと、やることが無かった片付けが、同じ緑色で積み上がっていました。</p>
+
+        <p>そこで一日かけて実際に立てて消しました。リソースが96個できて、消すのに13分35秒かかりました。
+        記録しておいたリソース ID をひとつずつ照会して消えたことを確かめたあと、ワークフローが最後に出す
+        一覧を読み返して、2行のところで止まりました。七行のうち<strong>2行は AWS に尋ねたことが無いのに、
+        残りの五行とまったく同じ文字で「なし」と出ていました。</strong></p>
+
+        <h2 id="想定読者">この記事の想定読者<a class="anchor" href="#想定読者" aria-label="この節へのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>Terraform でクラスタを丸ごと立てて消す経路を作っている方</li>
+          <li>片付けの最後に出る「残存なし」を根拠にしている方</li>
+          <li>検査が通ったのか、実行されなかったのかを見分けようとしたことがある方</li>
+        </ul>
+
+        <h2 id="どんなサービス">どんなサービスですか<a class="anchor" href="#どんなサービス" aria-label="この節へのリンク">#</a></h2>
+
+        <p>研究室ひとつぶんくらいの GPU を複数人で分け合うための Control Plane です。クラスタは常時
+        立てておきません。必要なときに Terraform で立て、使い終わったら消します。立てると VPC とサブネット
+        8個、EKS クラスタ、ノードグループ4つ、NAT と EIP まで<strong>リソース96個</strong>が一度にできます。</p>
+
+        <p>消す側はワークフローが担当します。Argo CD のアプリケーションを先に消し、Terraform でクラスタを
+        消し、最後に残ったものがあるかアカウントに尋ねます。その最後の段階がこの記事の主役です。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="tl1-t tl1-d" class="figure-svg">
+            <title id="tl1-t">一周を作る四つの段階</title>
+            <desc id="tl1-d">左から箱が四つ並び、灰色の矢印でつながっています。一つ目は計画の段階で、追加96個、変更と削除はゼロです。二つ目は適用の段階で、96個ができます。三つ目は生きている間の観測で、EC2 は1台だけ、GPU インスタンスはゼロです。四つ目は破棄の段階で、96個が13分35秒で消えます。下にピンク色で、破棄後の確認は ID で別に行ったと書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">計画</text>
+              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">96 追加 · 0 変更</text>
+              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#tl1-a)"/>
+              <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="265" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">適用</text>
+              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">96 added</text>
+              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#tl1-a)"/>
+              <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="455" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">観測</text>
+              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">EC2 1台 · GPU 0台</text>
+              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#tl1-a)"/>
+              <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="645" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">破棄</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">96 destroyed · 13分35秒</text>
+              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">破棄後の確認は ID で別に</text>
+            </g>
+            <defs>
+              <marker id="tl1-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>立てて、観測して、消すまでが一周です。消したあとの確認はワークフローの出力とは別に、リソース ID をひとつずつ照会して行いました。</figcaption>
+        </figure>
+
+        <h2 id="最初は">最初は片付けの経路が検証済みだと思っていました<a class="anchor" href="#最初は" aria-label="この節へのリンク">#</a></h2>
+
+        <p>片付けのワークフローは数か月ずっと毎晩回っていて、失敗したことがありませんでした。実行記録だけ見ると
+        <strong>検証の済んだ経路</strong>に読めます。</p>
+
+        <p>ところがその期間、このアカウントにはクラスタがありませんでした。ワークフローは毎回「消すものが無い」
+        ことを確かめて成功で終わっていたのです。消すコードが実際に消したことは一度もありませんでした。
+        だから立てました。</p>
+
+        <h2 id="結論から">結論から申し上げます<a class="anchor" href="#結論から" aria-label="この節へのリンク">#</a></h2>
+
+        <p>消すこと自体はできました。Terraform は96個を消したと報告しました。その集計とは別に、私が先に
+        記録しておいたリソース ID を照会しました。EKS は <code>ResourceNotFoundException</code>、EIP と VPC と
+        EBS と ENI 5個はすべて <code>NotFound</code>、EC2 は <code>terminated</code>、NAT は
+        <code>deleted</code> でした。状態ファイルは106,851バイトから1,361バイトに縮みました。<strong>96個を
+        ひとつずつ照会し直したわけではありません。</strong></p>
+
+        <h2 id="七行">七行すべてが「なし」で出ました<a class="anchor" href="#七行" aria-label="この節へのリンク">#</a></h2>
+
+        <p>破棄が終わると、ワークフローはアカウントに何が残っているかを照会して一覧を出します。
+        今回の実行の出力です。</p>
+
+<pre data-lang="text"><code>VPC:               &lt;none&gt;
+EC2 instances:     &lt;none&gt;
+EBS volumes:       &lt;none&gt;
+NAT gateways:      &lt;none&gt;
+Unassociated EIPs: &lt;none&gt;
+Load balancers:    &lt;none&gt;
+Network ifaces:    &lt;none&gt;
+no residue
+</code></pre>
+
+        <p>七行が並んで「なし」です。これを見ると<strong>七つすべてを尋ねて、すべて無かった</strong>と読んで
+        しまいます。私もそう読みました。</p>
+
+        <h2 id="二行">後ろの2行は照会したことがありません<a class="anchor" href="#二行" aria-label="この節へのリンク">#</a></h2>
+
+        <p>この検査は Load Balancer と Network Interface を、先に見つけた VPC ID を基準に照会するように
+        書かれています。コードはこうなっています。</p>
+
+<pre data-lang="bash"><code>LB=""
+ENI=""
+if [ -n "$VPC" ]; then
+  LB=$(q elb aws elbv2 describe-load-balancers ...)
+  ENI=$(q eni aws ec2 describe-network-interfaces ...)
+fi
+</code></pre>
+
+        <p>VPC が既に消えていれば <code>$VPC</code> は空文字で、二つの照会は実行されません。
+        <code>LB</code> と <code>ENI</code> は先頭で入れた初期値のまま残り、出力の関数は空の値を
+        <code>&lt;none&gt;</code> として出します。<strong>「AWS に尋ねたら無かった」と「尋ねていない」が
+        一文字も違わずに出ます。</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 220" role="img" aria-labelledby="tl2-t tl2-d" class="figure-svg">
+            <title id="tl2-t">VPC の有無で分かれる二つの経路と同じ出力</title>
+            <desc id="tl2-d">左に VPC 照会の箱があり、そこから矢印が二つに分かれます。上の経路は VPC の値がある場合で、Load Balancer と Network Interface を実際に照会し、結果が0件で返ってきた場合です。下の経路は VPC の値が無い場合で、照会を飛ばして初期値の空文字をそのまま使います。二つの経路は右の同じ出力の箱に合流し、出力はどちらも none です。下にピンク色で、出力の文字はどちらも同じと書かれています。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="0" y="72" width="150" height="72" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="75" y="62" font-size="11.5" fill="#8a8a8a" text-anchor="middle">VPC 照会</text>
+              <text x="75" y="114" font-size="11" fill="#4a4a4a" text-anchor="middle">タグ基準</text>
+              <path d="M154 100 H 190 V 56 H 220" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#tl2-a)"/>
+              <path d="M154 116 H 190 V 162 H 220" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#tl2-a)"/>
+              <rect x="226" y="24" width="228" height="64" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="340" y="48" font-size="11.5" fill="#4f5bd5" text-anchor="middle">VPC 値あり · 照会を実行</text>
+              <text x="340" y="70" font-size="11" fill="#4a4a4a" text-anchor="middle">照会成功 · 結果0件</text>
+              <rect x="226" y="130" width="228" height="64" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="340" y="154" font-size="11.5" fill="#d62976" text-anchor="middle">VPC 値なし · 照会を省略</text>
+              <text x="340" y="176" font-size="11" fill="#4a4a4a" text-anchor="middle">初期値のまま</text>
+              <path d="M458 56 H 494 V 100 H 524" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#tl2-a)"/>
+              <path d="M458 162 H 494 V 116 H 524" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#tl2-a)"/>
+              <rect x="530" y="72" width="190" height="72" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="625" y="62" font-size="11.5" fill="#4a4a4a" text-anchor="middle">出力</text>
+              <text x="625" y="114" font-size="11" fill="#4a4a4a" text-anchor="middle">&lt;none&gt;</text>
+              <text x="360" y="212" font-size="11.5" fill="#d62976" text-anchor="middle">出力の文字はどちらも同じ</text>
+            </g>
+            <defs>
+              <marker id="tl2-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>照会して無いことと、照会していないことが、同じ場所に同じ文字で出ます。読む側には区別する手がかりがありません。</figcaption>
+        </figure>
+
+        <p>記録しておいた ENI の ID 5個が消えたことは、私が別にひとつずつ照会して確かめました。それはその
+        5個についての確認であって、ENI が一つも残っていないという確認ではありません。Load Balancer は今回の
+        構成では最初から作っていません。どちらもあの出力が教えてくれたわけではありません。</p>
+
+        <h2 id="同じ日の朝">同じファイルのもう半分をその朝に直していました<a class="anchor" href="#同じ日の朝" aria-label="この節へのリンク">#</a></h2>
+
+        <p>同じ日の朝、私はこの検査のもう半分を直していました。照会を <code>set +e</code> の下で回して結果の
+        文字列だけを受け取っていたので、<strong>認証情報が期限切れでも空文字が返り、それが「なし」として
+        読まれていた</strong>箇所です。</p>
+
+        <p>直し方は、照会ごとに終了コードを見て、失敗したものを別に記録しておき、最後にその一覧が空でなければ
+        ジョブを失敗させることです。</p>
+
+<pre data-lang="bash"><code>if [ -n "$FAILED" ]; then
+  echo "::error::residue verification did not complete: these queries failed:$FAILED"
+  echo "This is NOT a report of no residue -- nothing above says whether anything is still billing."
+  exit 1
+fi
+</code></pre>
+
+        <p>ひとつの検査の中に、同じ欠陥が二つの形であったわけです。朝に直したのは<strong>失敗した照会が
+        「なし」に読まれること</strong>で、夕方に見つけたのは実行されなかった照会が「なし」に読まれることでした。
+        私は片方を直して、そのファイルは見終えたつもりでいました。</p>
+
+        <h2 id="原因を名指しした警告">分からない原因を名指しした警告<a class="anchor" href="#原因を名指しした警告" aria-label="この節へのリンク">#</a></h2>
+
+        <p>破棄の途中で、Argo CD を順番に消す段階が二つ飛ばされました。ログはこう言っていました。</p>
+
+<pre data-lang="text"><code>##[warning]Kubernetes API is not reachable from this runner.
+          The cluster endpoint is private and this runner is outside the VPC.
+</code></pre>
+
+        <p><strong>この実行に関して、その説明は誤りです。</strong>エンドポイントの公開側は開いていました。
+        ただ許可した範囲が私のアドレスひとつだけで、そこに GitHub ホストのランナーが入っていなかっただけです。</p>
+
+        <p>コードを見ると、接続確認は <code>kubectl get --raw /readyz</code> のあらゆる異常終了をひとつの失敗に
+        変えて、エラーの中身を捨てます。それでは範囲拒否と認証失敗と DNS 失敗と準備未完了を区別できません。
+        区別できないのに原因をひとつ名指しすると、読む人を違う方向へ送ります。症状だけを述べ、あり得る原因を
+        並べるように直しました。</p>
+
+        <h2 id="検査が見ないもの">この検査がそもそも見ないもの<a class="anchor" href="#検査が見ないもの" aria-label="この節へのリンク">#</a></h2>
+
+        <p>その2行を直したとしても、この検査が答えられる範囲は狭いままです。ひとつのリージョンだけを見て、
+        EC2 と EBS と NAT はタグで探し、VPC は名前タグで探します。EIP は<strong>関連付けられていないものだけ</strong>を
+        数えます。</p>
+
+        <p>関連付けられたまま残った EIP は、この検査では見つけられません。今回の EIP は生きている間 NAT に
+        関連付けられていました。消えたことは私が割り当て ID を照会して確かめたもので、ワークフローが
+        確かめたものではありません。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="tl3-t tl3-d" class="figure-svg">
+            <title id="tl3-t">残存検査が見る範囲と見ない範囲</title>
+            <desc id="tl3-d">左の箱は検査が見るものです。ひとつのリージョンの中でタグを基準に VPC と EC2 と EBS と NAT を探し、EIP は関連付けられていないものだけを数えます。右の箱は検査が見ないものです。EKS 自体とスナップショットと S3 と ECR と CloudWatch と Kubernetes のボリューム、そして関連付けられた EIP です。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">見るもの</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">1リージョン · タグ基準</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">VPC · EC2 · EBS · NAT</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">未関連付けの EIP のみ</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">見ないもの</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">EKS · スナップショット · S3</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">ECR · CloudWatch · PVC</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">関連付けられた EIP</text>
+            </g>
+          </svg>
+          <figcaption>検査は広く見ているように読めますが、実際の範囲はひとつのリージョンのタグ付きリソースです。今回の EIP はその外にありました。</figcaption>
+        </figure>
+
+        <h2 id="主張しないこと">この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="この節へのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>⚠️ 片付けの経路が検証されたという話ではありません。今回の一周はいちばん小さいクラスタで、
+          Load Balancer も Argo CD も GPU ノードも PVC もありませんでした。このワークフローが備えていた
+          難しい場合はひとつも試されていません。</li>
+          <li>残存検査が失敗するところは相変わらず見ていません。今回も通りましたが、成功の記録だけでは
+          照会が実際に行われたかどうかは判断できません。</li>
+          <li>費用がゼロになったという話でもありません。終わったのはこのクラスタの使用量です。状態バケットと
+          KMS キーと ECR リポジトリ2つはそのまま残っており、金額は請求データから読んでいません。</li>
+          <li>⚠️ 毎晩の cron が無人で同じことをやり切るかも確かめていません。今回の破棄は手で起動して見守った
+          ものです。</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="この節へのリンク">#</a></h2>
+
+        <ul>
+          <li><strong>「尋ねたら無かった」と「尋ねていない」は違います。</strong>同じ文字で出てしまうと、
+          読む側に見分ける方法がありません。</li>
+          <li><strong>飛ばされた照会の初期値は、結果のように見えます。</strong>条件の中でしか埋まらない変数を
+          そのまま出すと、条件が偽だったという事実が出力から消えます。</li>
+          <li>ひとつのファイルに同じ欠陥が複数の形で潜んでいることがあります。片方を直してファイルを見終えた
+          と思ったのが、今回の私の誤りでした。</li>
+          <li>区別できないものを名指ししません。原因をひとつ書いた警告は、読む人をその方向へ送ります。</li>
+        </ul>
+        </div>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=b14f1dbb62"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

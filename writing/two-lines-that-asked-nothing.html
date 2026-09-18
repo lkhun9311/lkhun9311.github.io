@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Teardown Destroyed 96 Resources and Two of Its Seven Lines Never Asked | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/two-lines-that-asked-nothing.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/two-lines-that-asked-nothing.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/two-lines-that-asked-nothing.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/two-lines-that-asked-nothing.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="A Teardown Destroyed 96 Resources and Two of Its Seven Lines Never Asked" />
+  <meta property="og:description" content="The load balancer and interface queries sit behind a check for the VPC, so once the VPC was gone both printed the empty value they started with." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/two-lines-that-asked-nothing.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="A Teardown Destroyed 96 Resources and Two of Its Seven Lines Never Asked" />
+  <meta name="twitter:description" content="The load balancer and interface queries sit behind a check for the VPC, so once the VPC was gone both printed the empty value they started with." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="The load balancer and interface queries sit behind a check for the VPC, so once the VPC was gone both printed the empty value they started with." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"two-lines-that-asked-nothing.html","ko":"two-lines-that-asked-nothing.ko.html","ja":"two-lines-that-asked-nothing.ja.html"}'>
+          <option value="en" selected>English</option>
+          <option value="ko">한국어</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>All posts</a>
+        <div class="article-meta"><span class="source-tag side notranslate">Personal project</span><a class="project-tag notranslate" href="../writing/index.html?tag=GPUaaS%20Control%20Plane">#GPUaaS Control Plane</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>A Teardown Destroyed 96 Resources and Two of Its Seven Lines Never Asked<br><span class="h1-sub">The load balancer and interface queries sit behind a check for the VPC, so once the VPC was gone both printed the empty value they started with.</span></h1>
+        <p class="article-date">Sep 2026</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="two-lines-that-asked-nothing"></aside>
+        <nav class="article-toc" aria-label="Contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#what-this-runs-on">What the system is</a></li>
+            <li><a href="#what-i-assumed">I thought the teardown path was already proven</a></li>
+            <li><a href="#the-short-version">The short version</a></li>
+            <li><a href="#seven-lines">Seven lines all printed none</a></li>
+            <li><a href="#two-that-never-ran">The last two were never queries</a></li>
+            <li><a href="#the-same-file-that-morning">I had fixed the other half of the same file that morning</a></li>
+            <li><a href="#a-warning-that-named-a-cause">A warning that named a cause it could not know</a></li>
+            <li><a href="#what-the-check-never-looks-at">What the check never looks at</a></li>
+            <li><a href="#what-this-does-not-claim">What this article does not claim</a></li>
+            <li><a href="#wrapping-up">Closing</a></li>
+          </ul>
+        </nav>
+      <article class="article-body">
+
+        <p>As a personal project I build a Kubernetes control plane that lets several people share a small
+        pool of GPUs. One AWS account holds a Terraform root that stands an entire EKS cluster up and takes it
+        down again, and a GitHub Actions workflow tears it down every night.</p>
+
+        <p>That workflow had succeeded every single time. <strong>There was nothing to remove.</strong>
+        A successful teardown and a teardown with no work to do had been piling up in the same shade of green.</p>
+
+        <p>So I spent a day actually standing it up and taking it down. Ninety-six resources appeared, and the
+        destroy took thirteen minutes and thirty-five seconds. After querying the resource IDs I had recorded,
+        one at a time, to confirm they were gone, I went back and reread the list the workflow prints at the
+        end, and stopped on two lines. Of the seven, <strong>two had never asked AWS anything, and they
+        reported absence in exactly the same words as the other five.</strong></p>
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>You build a path that stands a whole cluster up with Terraform and tears it down again</li>
+          <li>You treat the "no residue" line at the end of a cleanup job as evidence</li>
+          <li>You have tried to tell a check that passed from a check that never ran</li>
+        </ul>
+
+        <h2 id="what-this-runs-on">What the system is<a class="anchor" href="#what-this-runs-on" aria-label="Link to this section">#</a></h2>
+
+        <p>It is a control plane for about one lab's worth of GPUs. The cluster does not stay up. Terraform
+        builds it when it is needed and destroys it afterwards. Standing it up creates a VPC and eight subnets,
+        an EKS cluster, four node groups, a NAT gateway and an elastic IP, <strong>ninety-six resources</strong>
+        in one apply.</p>
+
+        <p>Taking it down is the workflow's job. It deletes the Argo CD applications first, destroys the
+        cluster state with Terraform, and finally asks the account whether anything survived. That last step is
+        what this article is about.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="tl1-t tl1-d" class="figure-svg">
+            <title id="tl1-t">The four stages of one cycle</title>
+            <desc id="tl1-d">Four boxes from left to right joined by grey arrows. The first is the plan stage with ninety-six to add and nothing to change or destroy. The second is the apply stage where ninety-six resources are created. The third is observation while the cluster is alive, with one EC2 machine and no GPU instance. The fourth is the destroy stage where ninety-six are removed in thirteen minutes and thirty-five seconds. Below in pink it says the check after the destroy was done separately by ID.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="0" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="75" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">Plan</text>
+              <text x="75" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">96 add · 0 change</text>
+              <path d="M154 100 H 184" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#tl1-a)"/>
+              <rect x="190" y="62" width="150" height="76" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="265" y="52" font-size="11.5" fill="#4f5bd5" text-anchor="middle">Apply</text>
+              <text x="265" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">96 added</text>
+              <path d="M344 100 H 374" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#tl1-a)"/>
+              <rect x="380" y="62" width="150" height="76" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="455" y="52" font-size="11.5" fill="#8a8a8a" text-anchor="middle">Observed</text>
+              <text x="455" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">1 EC2 · 0 GPU</text>
+              <path d="M534 100 H 564" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#tl1-a)"/>
+              <rect x="570" y="62" width="150" height="76" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="645" y="52" font-size="11.5" fill="#d62976" text-anchor="middle">Destroy</text>
+              <text x="645" y="106" font-size="11" fill="#4a4a4a" text-anchor="middle">96 destroyed · 13m 35s</text>
+              <text x="360" y="174" font-size="11.5" fill="#d62976" text-anchor="middle">Post-destroy check done by ID</text>
+            </g>
+            <defs>
+              <marker id="tl1-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>Standing up, observing and destroying is one cycle. The confirmation afterwards was done outside the workflow, by querying each resource ID.</figcaption>
+        </figure>
+
+        <h2 id="what-i-assumed">I thought the teardown path was already proven<a class="anchor" href="#what-i-assumed" aria-label="Link to this section">#</a></h2>
+
+        <p>The teardown workflow had been running nightly for months without a failure. Read as a list of runs,
+        that looks like <strong>a proven path</strong>.</p>
+
+        <p>For all of those months the account had no cluster in it. Every run had confirmed that there was
+        nothing to remove and then exited successfully. The code that removes things had never removed
+        anything. So I built one.</p>
+
+        <h2 id="the-short-version">The short version<a class="anchor" href="#the-short-version" aria-label="Link to this section">#</a></h2>
+
+        <p>The removal worked. Terraform reported ninety-six resources destroyed. Separately from that count,
+        I queried the resource IDs I had recorded beforehand. EKS returned
+        <code>ResourceNotFoundException</code>, the elastic IP and the VPC and the volume and all five
+        interfaces returned <code>NotFound</code>, the machine was <code>terminated</code> and the NAT gateway
+        was <code>deleted</code>. The state object shrank from 106,851 bytes to 1,361. <strong>I did not
+        re-query all ninety-six one by one.</strong></p>
+
+        <h2 id="seven-lines">Seven lines all printed none<a class="anchor" href="#seven-lines" aria-label="Link to this section">#</a></h2>
+
+        <p>Once the destroy finishes, the workflow queries the account for what is left and prints an
+        inventory. This is what this run printed.</p>
+
+<pre data-lang="text"><code>VPC:               &lt;none&gt;
+EC2 instances:     &lt;none&gt;
+EBS volumes:       &lt;none&gt;
+NAT gateways:      &lt;none&gt;
+Unassociated EIPs: &lt;none&gt;
+Load balancers:    &lt;none&gt;
+Network ifaces:    &lt;none&gt;
+no residue
+</code></pre>
+
+        <p>Seven lines, all of them none. Reading that, you conclude <strong>seven things were asked about and
+        seven things were absent.</strong> That is how I read it too.</p>
+
+        <h2 id="two-that-never-ran">The last two were never queries<a class="anchor" href="#two-that-never-ran" aria-label="Link to this section">#</a></h2>
+
+        <p>This check is written to look up load balancers and network interfaces using the VPC ID it found
+        earlier. The code says so.</p>
+
+<pre data-lang="bash"><code>LB=""
+ENI=""
+if [ -n "$VPC" ]; then
+  LB=$(q elb aws elbv2 describe-load-balancers ...)
+  ENI=$(q eni aws ec2 describe-network-interfaces ...)
+fi
+</code></pre>
+
+        <p>If the VPC is already gone, <code>$VPC</code> is an empty string and neither query runs.
+        <code>LB</code> and <code>ENI</code> keep the empty value assigned at the top, and the print helper
+        renders an empty value as <code>&lt;none&gt;</code>. <strong>"I asked AWS and there was nothing" and
+        "I did not ask" come out identical, character for character.</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 220" role="img" aria-labelledby="tl2-t tl2-d" class="figure-svg">
+            <title id="tl2-t">Two paths that produce the same output</title>
+            <desc id="tl2-d">On the left a box for the VPC lookup, from which an arrow splits in two. The upper path is the case where the VPC value is set, the queries actually run and they come back with zero results. The lower path is the case where the VPC value is empty, the queries are skipped and the empty initial value is kept. Both paths join the same output box on the right, and in both cases the output is none. Below in pink it says the printed text is identical on both paths.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="0" y="72" width="150" height="72" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="75" y="62" font-size="11.5" fill="#8a8a8a" text-anchor="middle">VPC lookup</text>
+              <text x="75" y="114" font-size="11" fill="#4a4a4a" text-anchor="middle">by tag</text>
+              <path d="M154 100 H 190 V 56 H 220" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#tl2-a)"/>
+              <path d="M154 116 H 190 V 162 H 220" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#tl2-a)"/>
+              <rect x="226" y="24" width="228" height="64" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="340" y="48" font-size="11.5" fill="#4f5bd5" text-anchor="middle">VPC value set · queries run</text>
+              <text x="340" y="70" font-size="11" fill="#4a4a4a" text-anchor="middle">query ok · 0 results</text>
+              <rect x="226" y="130" width="228" height="64" rx="10" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="340" y="154" font-size="11.5" fill="#d62976" text-anchor="middle">VPC value empty · queries skipped</text>
+              <text x="340" y="176" font-size="11" fill="#4a4a4a" text-anchor="middle">initial value kept</text>
+              <path d="M458 56 H 494 V 100 H 524" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#tl2-a)"/>
+              <path d="M458 162 H 494 V 116 H 524" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#tl2-a)"/>
+              <rect x="530" y="72" width="190" height="72" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="625" y="62" font-size="11.5" fill="#4a4a4a" text-anchor="middle">Printed</text>
+              <text x="625" y="114" font-size="11" fill="#4a4a4a" text-anchor="middle">&lt;none&gt;</text>
+              <text x="360" y="212" font-size="11.5" fill="#d62976" text-anchor="middle">Same text on both paths</text>
+            </g>
+            <defs>
+              <marker id="tl2-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>Asked and absent, and never asked, arrive at the same place in the same words. The reader has no way to separate them.</figcaption>
+        </figure>
+
+        <p>The five interface IDs I had recorded were confirmed gone because I queried them myself, one by
+        one. That confirms those five, not that no interface remained. As for load balancers, this cycle never
+        created one. Neither fact came from the output above.</p>
+
+        <h2 id="the-same-file-that-morning">I had fixed the other half of the same file that morning<a class="anchor" href="#the-same-file-that-morning" aria-label="Link to this section">#</a></h2>
+
+        <p>Earlier the same day I had fixed the other half of this check. The queries ran under
+        <code>set +e</code> and only their captured output was read, so <strong>an expired credential returned
+        an empty string and that empty string read as absence.</strong></p>
+
+        <p>The fix records the exit status of each query, appends the failures to a list, and fails the job at
+        the end if that list is not empty.</p>
+
+<pre data-lang="bash"><code>if [ -n "$FAILED" ]; then
+  echo "::error::residue verification did not complete: these queries failed:$FAILED"
+  echo "This is NOT a report of no residue -- nothing above says whether anything is still billing."
+  exit 1
+fi
+</code></pre>
+
+        <p>So one check held the same defect in two shapes. The morning fix was about <strong>a failed query
+        reading as absence</strong>, and what I found in the evening was a skipped query reading as absence.
+        I had fixed one of them and believed I had read the file.</p>
+
+        <h2 id="a-warning-that-named-a-cause">A warning that named a cause it could not know<a class="anchor" href="#a-warning-that-named-a-cause" aria-label="Link to this section">#</a></h2>
+
+        <p>During the destroy, the two steps that delete Argo CD in order were skipped. The log said this.</p>
+
+<pre data-lang="text"><code>##[warning]Kubernetes API is not reachable from this runner.
+          The cluster endpoint is private and this runner is outside the VPC.
+</code></pre>
+
+        <p><strong>That explanation is wrong for this run.</strong> The public half of the endpoint was open.
+        It was open to exactly one address, mine, which does not include a GitHub-hosted runner.</p>
+
+        <p>In the code, the probe turns every non-zero exit of <code>kubectl get --raw /readyz</code> into a
+        single failure and discards the error. That cannot separate a CIDR refusal from an authentication
+        failure, a DNS failure or an API that is not ready yet. Naming one of them sends the reader after the
+        wrong thing. It now reports the symptom and lists the possible causes.</p>
+
+        <h2 id="what-the-check-never-looks-at">What the check never looks at<a class="anchor" href="#what-the-check-never-looks-at" aria-label="Link to this section">#</a></h2>
+
+        <p>Even with those two lines fixed, the question this check can answer is narrow. It reads one region,
+        finds machines and volumes and NAT gateways by tag, finds the VPC by name tag, and counts
+        <strong>only elastic IPs that are unassociated.</strong></p>
+
+        <p>An elastic IP left behind while it is still associated is not something this check can find. On
+        this cycle the elastic IP was associated with the NAT gateway while the cluster was alive, and its
+        removal was confirmed by the query I ran against its allocation ID rather than by the workflow.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 216" role="img" aria-labelledby="tl3-t tl3-d" class="figure-svg">
+            <title id="tl3-t">What the residue check covers and what it does not</title>
+            <desc id="tl3-d">The left box is what the check looks at: one region, resources found by tag, the VPC and machines and volumes and NAT gateways, and only elastic IPs that are unassociated. The right box is what it does not look at: EKS itself, snapshots, S3, ECR, CloudWatch, Kubernetes volumes, and any elastic IP that is associated.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="204" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">Covered</text>
+              <text x="204" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">one region · by tag</text>
+              <text x="204" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">VPC · EC2 · EBS · NAT</text>
+              <text x="204" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">unassociated EIP only</text>
+              <rect x="392" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="556" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">Not covered</text>
+              <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">EKS · snapshots · S3</text>
+              <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">ECR · CloudWatch · PVC</text>
+              <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">associated EIP</text>
+            </g>
+          </svg>
+          <figcaption>The check reads as though it sweeps the account, and its real scope is tagged resources in one region. This cycle's elastic IP was outside it.</figcaption>
+        </figure>
+
+        <h2 id="what-this-does-not-claim">What this article does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>⚠️ This does not say the teardown path is validated. This cycle used the smallest cluster the
+          root can build, with no load balancer, no Argo CD, no GPU node and no PVC, so none of the hard cases
+          this workflow was written for were exercised.</li>
+          <li>I have still never seen the residue check fail. It passed again here, and a record of successes
+          alone cannot tell me whether the queries actually ran.</li>
+          <li>This does not say the bill went to zero. What ended is this cluster's usage. The state bucket,
+          the KMS key and two ECR repositories are still there, and no amount was read from billing data.</li>
+          <li>⚠️ Nor does it say the nightly cron does the same job unattended. This destroy was dispatched by
+          hand and watched.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="wrapping-up">Closing<a class="anchor" href="#wrapping-up" aria-label="Link to this section">#</a></h2>
+
+        <ul>
+          <li><strong>"I asked and there is nothing" is not "I did not ask."</strong> When both print the same
+          text, the reader has no way to tell them apart.</li>
+          <li><strong>The initial value of a skipped query looks like a result.</strong> Print a variable that
+          is only filled inside a condition and the fact that the condition was false disappears from the
+          output.</li>
+          <li>One file can hold the same defect in more than one shape. Fixing one of them and considering the
+          file read was my mistake here.</li>
+          <li>Do not name a cause you cannot distinguish. A warning that states one sends the reader in that
+          direction.</li>
+        </ul>
+        </div>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=b14f1dbb62"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
