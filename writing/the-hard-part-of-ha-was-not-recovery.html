@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>When a Live Host Is Judged Dead, Recovery Becomes the Incident | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/the-hard-part-of-ha-was-not-recovery.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/the-hard-part-of-ha-was-not-recovery.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/the-hard-part-of-ha-was-not-recovery.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/the-hard-part-of-ha-was-not-recovery.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="When a Live Host Is Judged Dead, Recovery Becomes the Incident" />
+  <meta property="og:description" content="A switch failure cut only the controllers from each other, and a healthy Compute node was judged dead — firing mass VM evacuation that risked split-brain. Instead of sharpening detection, this is the failure-response design that re-decided which signal to trust." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/the-hard-part-of-ha-was-not-recovery.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="When a Live Host Is Judged Dead, Recovery Becomes the Incident" />
+  <meta name="twitter:description" content="A healthy Compute node was judged dead, firing mass VM evacuation. Instead of sharpening detection, I re-decided which signal to trust." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="A switch failure cut only the controllers from each other, and a healthy Compute node was judged dead — firing mass VM evacuation. Instead of sharpening detection, this is the Instance HA failure-response design that re-decided which signal to trust: signal-trust ranking, Phase 1/2 separation, a default of Hold, and fencing before recovery." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"the-hard-part-of-ha-was-not-recovery.html","ko":"the-hard-part-of-ha-was-not-recovery.ko.html","ja":"the-hard-part-of-ha-was-not-recovery.ja.html"}'>
+          <option value="en" selected>English</option>
+          <option value="ko">한국어</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>List</a>
+        <div class="article-meta"><span class="source-tag company notranslate">Company work</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS Backend</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>When a Live Host Is Judged Dead, Recovery Becomes the Incident<br><span class="h1-sub">A switch failure cut only the controllers from each other, and a healthy Compute node was judged dead — firing mass VM evacuation. Instead of sharpening detection, this is the failure-response design that re-decided which signal to trust.</span></h1>
+        <p class="article-date">September 2026</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="the-hard-part-of-ha-was-not-recovery"></aside>
+        <nav class="article-toc" aria-label="Table of contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#audience">Who this is for</a></li>
+            <li><a href="#incident">The day recovery became the incident</a></li>
+            <li><a href="#cause">Why a live server looked dead</a></li>
+            <li><a href="#signal-rank">I ranked the signals, not the detection</a></li>
+            <li><a href="#hold-matrix">The default is Hold — seven of eight stop</a></li>
+            <li><a href="#fencing">Confirm the power is off before you move</a></li>
+            <li><a href="#consensus">A lock is not distributed consensus</a></li>
+            <li><a href="#rto">How long does recovery take (an estimate)</a></li>
+            <li><a href="#architecture">The complete architecture — four layers, one chain</a></li>
+            <li><a href="#not-claiming">Limits: what this post does not claim</a></li>
+            <li><a href="#closing">Closing</a></li>
+          </ul>
+        </nav>
+      <article class="article-body">
+
+        <p>Instance HA is the feature that, when a Compute host dies, evacuates the VMs on it to a
+        healthy host and brings them back up. Automatic recovery. But the moment this feature is most
+        dangerous is <strong>when it judges a host dead that isn't</strong>. Then the system forcibly
+        moves VMs that are running fine and, with bad luck, corrupts data. Recovery becomes the incident.</p>
+
+        <p>This post walks through the <strong>failure-response design</strong> I wrote — after that
+        incident actually happened — to keep it from recurring, in the order of situation, cause, and
+        resolution. It ends with the complete architecture laid out as a table and a diagram.</p>
+
+        <p>First, the scope. This post is a write-up from the perspective of the <strong>target
+        architecture</strong> I designed. After living through the incident, it draws the finished form
+        against the question "what should the structure be" — where detect → judge → fence → recover
+        form one safe chain. <strong>Implementation was carried on by the team</strong>, and exactly when
+        each piece lands in the product is not this post's focus. The recovery time (RTO) below is a
+        step-by-step estimate, not a measurement. Customer names, server addresses, hostnames, and
+        accounts are not written here.</p>
+
+        <h2 id="audience">Who this is for<a class="anchor" href="#audience" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>Anyone designing or operating a system that auto-recovers dead nodes (Instance HA, the Masakari family)</li>
+          <li>Anyone who has seen automation make an incident worse under a network partition</li>
+          <li>Anyone who has to decide which signal declares "the node is dead," and how much to trust it</li>
+          <li>Anyone curious why Split-Brain and fencing must come before "fast recovery"</li>
+        </ul>
+
+        <h2 id="incident">The day recovery became the incident<a class="anchor" href="#incident" aria-label="Link to this section">#</a></h2>
+
+        <p>The event summarizes in one line. <strong>During an L2/L3 switch failure, a leader controller
+        judged a live Compute node dead and fired unnecessary Instance HA (Nova Evacuate) en masse.</strong>
+        Healthy VMs were moved to other hosts at once, and in the worst case an evacuated copy could attach
+        to the same volume while the original was still alive — corrupting the filesystem.</p>
+
+        <div class="table-scroll">
+        <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+        <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">Incident summary: situation, result, impact, latent risk.</caption>
+          <thead><tr><th>Item</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>Situation</td><td>During an L2/L3 switch failure, a leader controller misjudged a Compute node as failed</td></tr>
+            <tr><td>Result</td><td>Unnecessary Instance HA fired (= Nova Evacuate)</td></tr>
+            <tr><td>Impact</td><td>Wrong evacuations happened simultaneously, in bulk</td></tr>
+            <tr><td><strong>Latent risk</strong></td><td><strong>False-positive HA → Split-Brain → storage corruption</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">What matters here isn't "recovery was late" but "a recovery that should not
+        have run, ran." A failure in this direction is far harder to undo.</p>
+
+        <h2 id="cause">Why a live server looked dead<a class="anchor" href="#cause" aria-label="Link to this section">#</a></h2>
+
+        <p>The crux is this. When a switch dies, <strong>each network ends up in a different state.</strong>
+        One being cut does not mean all are cut.</p>
+
+        <div class="table-scroll">
+        <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+        <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">Per-network state during an L2/L3 switch failure.</caption>
+          <thead><tr><th>Network</th><th>Purpose</th><th>State on failure</th></tr></thead>
+          <tbody>
+            <tr><td><strong>MGMT</strong></td><td>Controller ↔ Compute management traffic</td><td><strong>alive</strong></td></tr>
+            <tr><td>DATA</td><td>VM data traffic</td><td>cut</td></tr>
+            <tr><td>Controller</td><td>Controller ↔ Controller traffic</td><td>cut</td></tr>
+            <tr><td>BMC</td><td>Fencing (power control)</td><td><strong>absent</strong> ← this was the problem</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>When controller-to-controller traffic is cut, the cluster's <strong>quorum collapses</strong>.
+        Then some controllers judge, <em>on their own</em>, that "the Compute is dead." Yet <strong>MGMT
+        was alive, so that Compute's Agent HeartBeat was being received normally.</strong> The node judged
+        dead was, in fact, calmly reporting its own health.</p>
+
+        <blockquote><p>My not being able to reach a node can mean the node is dead, or it can mean
+        <strong>the path between me and that node is cut</strong>. Those are entirely different
+        situations that look identical from the outside. The root of the incident was
+        <strong>mistaking the observer's isolation for the target's failure</strong>.</p></blockquote>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 250" role="img" aria-labelledby="ob-t ob-d" class="figure-svg">
+            <title id="ob-t">Mistaking the observer's isolation for the target's failure</title>
+            <desc id="ob-d">In the middle is a Compute node whose Agent HeartBeat is sent normally over the MGMT network. On the left, a Controller is isolated because the Controller network is cut, yet it misjudges the Compute as dead simply because it cannot reach it. Below, in pink: not being able to reach is not the target's death but possibly my own isolation.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="90" width="150" height="70" rx="10" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="115" y="80" font-size="11" fill="#d62976" text-anchor="middle" font-weight="700">Controller (isolated)</text>
+              <text x="115" y="120" font-size="11" fill="#4a4a4a" text-anchor="middle">Controller net cut</text>
+              <text x="115" y="140" font-size="11" fill="#4a4a4a" text-anchor="middle">quorum lost</text>
+              <rect x="285" y="90" width="150" height="70" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.8"/>
+              <text x="360" y="80" font-size="11" fill="#4f5bd5" text-anchor="middle" font-weight="700">Compute (healthy)</text>
+              <text x="360" y="120" font-size="11" fill="#4a4a4a" text-anchor="middle">VMs running fine</text>
+              <text x="360" y="140" font-size="11" fill="#4a4a4a" text-anchor="middle">Agent HeartBeat out</text>
+              <rect x="530" y="90" width="150" height="70" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="605" y="80" font-size="11" fill="#8a8a8a" text-anchor="middle" font-weight="700">MGMT (alive)</text>
+              <text x="605" y="120" font-size="11" fill="#4a4a4a" text-anchor="middle">HeartBeat travels here</text>
+              <text x="605" y="140" font-size="11" fill="#4a4a4a" text-anchor="middle">keeps arriving</text>
+              <path d="M435 125 H 528" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#ob-a)"/>
+              <path d="M285 125 H 192" fill="none" stroke="#d62976" stroke-width="1.4" stroke-dasharray="5 4"/>
+              <text x="238" y="116" font-size="10" fill="#d62976" text-anchor="middle">cannot reach</text>
+              <text x="360" y="210" font-size="11.5" fill="#d62976" text-anchor="middle">"cannot reach" may be my isolation, not the target's death</text>
+            </g>
+            <defs>
+              <marker id="ob-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>To the isolated controller, the Compute looked dead — but the Agent HeartBeat arriving over MGMT said that Compute was alive. Whom to believe is what split the incident.</figcaption>
+        </figure>
+
+        <h2 id="signal-rank">I ranked the signals, not the detection<a class="anchor" href="#signal-rank" aria-label="Link to this section">#</a></h2>
+
+        <p>The common prescription is "make detection more precise." But however high you push observation
+        accuracy, <strong>when the observer is isolated, nothing it sees can be trusted.</strong> So instead
+        of accuracy, I decided <strong>whose word to believe</strong> — ranking each signal by trust.</p>
+
+        <div class="table-scroll">
+        <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+        <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">The four signal-trust tiers.</caption>
+          <thead><tr><th>Signal</th><th>Trust</th><th>Role</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Agent HeartBeat</strong></td><td><strong>Highest</strong></td><td>The Compute node reports its <strong>actual state</strong> directly</td></tr>
+            <tr><td>Controller Quorum</td><td>High</td><td>The controller cluster's consensus state</td></tr>
+            <tr><td>Network HeartBeat</td><td>Medium</td><td>Controller ↔ Compute connectivity</td></tr>
+            <tr><td>EXT Network Probe</td><td><strong>Low</strong></td><td>Judges the controller's own network <strong>partition</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">The point is the bottom row. <strong>The EXT probe does not directly verify
+        Compute state.</strong> It only checks reachability from controller to the outside, so judging
+        whether Compute is up from it lands you straight in "the observer's isolation read as the target's
+        failure." That is exactly what the incident was.</p>
+
+        <p>Next, I split a conflated judgment in two. <strong>"Is it really a failure" and "is it safe to
+        act right now" are different questions</strong> — bundled together, they were contaminating each
+        other.</p>
+
+        <div class="table-scroll">
+        <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+        <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">Separating Phase 1 Failure Detection from Phase 2 Execution Readiness.</caption>
+          <thead><tr><th>Phase 1 — Failure Detection (is it really a failure)</th><th>Phase 2 — Execution Readiness (is it safe to act now)</th></tr></thead>
+          <tbody>
+            <tr><td>Check quorum — if lost, the judgment can't be trusted → Hold</td><td>Storage reachable — can the VM reach its storage</td></tr>
+            <tr><td>Agent HeartBeat TTL fresh (within 30s) → Compute alive → Hold</td><td>RabbitMQ healthy — can the recovery command be delivered</td></tr>
+            <tr><td>Only on TTL overrun, verify further (EXT probe · nova-compute · storage session)</td><td>Nova API healthy — can the API be called</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">One aim of this split was <strong>to keep a storage-path failure from being
+        misjudged as a "Compute failure"</strong> (by design). Putting storage in Phase 2 keeps it from
+        contaminating the Phase 1 failure judgment.</p>
+
+        <h2 id="hold-matrix">The default is Hold — seven of eight stop<a class="anchor" href="#hold-matrix" aria-label="Link to this section">#</a></h2>
+
+        <p>Using the two phases, I judged eight failure scenarios. The result was <strong>Fencing for one,
+        HOLD for seven</strong>. In this design, only one of eight cases was one where "actually running
+        recovery" was allowed.</p>
+
+        <div class="table-scroll">
+        <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+        <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">The eight-scenario decision matrix.</caption>
+          <thead><tr><th>Scenario</th><th>Quorum</th><th>Agent HB</th><th>EXT</th><th>Storage</th><th>Phase 1 result</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Compute actually crashed</strong></td><td>✓</td><td>✗</td><td>✓</td><td>✓</td><td>failure confirmed</td><td><strong>Phase 2 → Fencing</strong></td></tr>
+            <tr><td>Controller network down</td><td>✗</td><td>✓</td><td>✓</td><td>✓</td><td>can't judge</td><td>HOLD</td></tr>
+            <tr><td>DATA network down</td><td>✗</td><td>✓</td><td>✗</td><td>✓</td><td>partition suspected</td><td>HOLD</td></tr>
+            <tr><td>MGMT network down</td><td>✗</td><td>✗</td><td>✓</td><td>✓</td><td>can't judge</td><td>HOLD</td></tr>
+            <tr><td>Storage path down</td><td>✓</td><td>✓</td><td>✓</td><td>✗</td><td>Compute alive</td><td>HOLD (Phase 2 fails)</td></tr>
+            <tr><td>EXT only down</td><td>✓</td><td>✓</td><td>✗</td><td>✓</td><td>Compute alive</td><td>HOLD</td></tr>
+            <tr><td>HeartBeat overrun + EXT fail</td><td>✓</td><td>✗</td><td>✗</td><td>✓</td><td>partition suspected</td><td>HOLD → verify further</td></tr>
+            <tr><td>Controller cut + HB received</td><td>✗</td><td>✓</td><td>✓</td><td>✓</td><td>can't judge</td><td><strong>HOLD (no single-controller call)</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">Run recovery wrongly and data breaks; hold and a human gets time to step in.
+        <strong>An asymmetric cost set the verdict.</strong> So the default is to do nothing when you can't
+        be sure, and a HOLD comes with an operator alert.</p>
+
+        <h2 id="fencing">Confirm the power is off before you move<a class="anchor" href="#fencing" aria-label="Link to this section">#</a></h2>
+
+        <p>Even when you've judged recovery to be allowed, there's something you must do before moving:
+        <strong>confirm the original server's power is definitively off</strong>. Without this, Split-Brain
+        happens.</p>
+
+<pre data-lang="text"><code>Compute-01 → VM-A still running  → write /dev/vdb   (original attachment kept)
+Compute-02 → VM-A evacuated      → write /dev/vdb   (new attachment)
+        → concurrent write → filesystem corruption → data loss</code></pre>
+
+        <p>So I set the principle as <strong>"no fencing = no recovery."</strong> If power-off (fencing)
+        can't be confirmed, don't recover. The risk differs by storage type.</p>
+
+        <div class="table-scroll">
+        <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+        <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">Split-Brain corruption risk by storage type.</caption>
+          <thead><tr><th>Storage</th><th>Corruption risk</th></tr></thead>
+          <tbody>
+            <tr><td>iSCSI</td><td>SCSI-3 PR exists, but a collision is possible if new access happens before the original attachment is cleaned up</td></tr>
+            <tr><td><strong>LVM</strong></td><td><strong>No SCSI PR.</strong> High risk of VG/LV metadata corruption on concurrent write</td></tr>
+            <tr><td>NFS</td><td>File-lock based, so no consistency guarantee on concurrent mount/write</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>Fencing is done via IPMI power control. But there's a precondition. <strong>If the BMC (power
+        control) network sits on the same physical switch as MGMT, IPMI is cut along with it when the
+        switch dies.</strong> Then the very means to cut power is gone, and fencing is impossible. VLAN
+        separation alone isn't enough — when a switch dies wholesale, the VLANs on it vanish too. So I
+        pinned <strong>a dedicated physical switch for the BMC</strong> as a precondition. At the time of
+        the incident, the BMC network was absent.</p>
+
+        <p>The recovery procedure splits into four stages: <strong>Detect → Verify → Fence → Recover.</strong>
+        Within Fence there's a small but important order.</p>
+
+<pre data-lang="text"><code>1. ipmitool chassis power off        (via the dedicated BMC switch)
+2. wait at least 5s                  (time for power to actually drop; no immediate query)
+3. ipmitool chassis power status  →  must confirm off
+4. extra storage check               (varies by type)
+5. run Nova Evacuate</code></pre>
+
+        <p>Step 2 is the point. <strong>Query the state right after cutting power and it's not off yet.</strong>
+        Check without waiting and "not off" gets read, so a perfectly good fencing is misjudged as a
+        failure — or, going the optimistic way, you move the VMs of a server that never went down. Sending
+        the command and <em>confirming</em> its result are different things, and inserting a wait between
+        them is nearly the whole procedure.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 210" role="img" aria-labelledby="stg-t stg-d" class="figure-svg">
+            <title id="stg-t">The four recovery stages — Detect, Verify, Fence, Recover</title>
+            <desc id="stg-d">Four boxes left to right. Detect is failure judgment (Phase 1), Verify is execution-readiness check (Phase 2), Fence is confirming power-off, Recover is Nova Evacuate. Only the Fence box is highlighted in pink. Below, in pink: at each stage, if you aren't sure, you don't advance — you Hold.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="8" y="66" width="158" height="66" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="87" y="56" font-size="11" fill="#4f5bd5" text-anchor="middle" font-weight="700">Detect</text>
+              <text x="87" y="98" font-size="10.5" fill="#4a4a4a" text-anchor="middle">failure judgment (Phase 1)</text>
+              <text x="87" y="116" font-size="10.5" fill="#4a4a4a" text-anchor="middle">HeartBeat · Quorum</text>
+              <path d="M170 99 H 196" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#stg-a)"/>
+              <rect x="202" y="66" width="158" height="66" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="281" y="56" font-size="11" fill="#4f5bd5" text-anchor="middle" font-weight="700">Verify</text>
+              <text x="281" y="98" font-size="10.5" fill="#4a4a4a" text-anchor="middle">execution readiness (Phase 2)</text>
+              <text x="281" y="116" font-size="10.5" fill="#4a4a4a" text-anchor="middle">Storage · MQ · API</text>
+              <path d="M364 99 H 390" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#stg-a)"/>
+              <rect x="396" y="60" width="158" height="78" rx="10" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="475" y="52" font-size="11" fill="#d62976" text-anchor="middle" font-weight="700">Fence</text>
+              <text x="475" y="92" font-size="10.5" fill="#4a4a4a" text-anchor="middle">power-off command</text>
+              <text x="475" y="110" font-size="10.5" fill="#4a4a4a" text-anchor="middle">wait 5s, confirm off</text>
+              <path d="M558 99 H 584" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#stg-a)"/>
+              <rect x="590" y="66" width="122" height="66" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
+              <text x="651" y="56" font-size="11" fill="#4a4a4a" text-anchor="middle" font-weight="700">Recover</text>
+              <text x="651" y="102" font-size="10.5" fill="#4a4a4a" text-anchor="middle">Nova Evacuate</text>
+              <text x="360" y="176" font-size="11.5" fill="#d62976" text-anchor="middle">at each stage, unsure means don't advance — Hold</text>
+            </g>
+            <defs>
+              <marker id="stg-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>Only the Fence stage leads to an irreversible action. So the two stages before it default to "stop," not "go."</figcaption>
+        </figure>
+
+        <h2 id="consensus">A lock is not distributed consensus<a class="anchor" href="#consensus" aria-label="Link to this section">#</a></h2>
+
+        <p>How to control "who runs recovery" also had to be decided. We already had Galera in house, so
+        there was a pull to use its DB lock. I took apart three options against the same criteria.</p>
+
+        <div class="table-scroll">
+        <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+        <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">Comparison of three execution-control architectures.</caption>
+          <thead><tr><th>Axis</th><th>Galera + ShedLock</th><th>etcd + Fencing</th><th>Pacemaker + Corosync</th></tr></thead>
+          <tbody>
+            <tr><td>Consensus</td><td>DB lock</td><td><strong>Raft</strong></td><td><strong>Totem</strong></td></tr>
+            <tr><td>Split-Brain prevention</td><td>low</td><td>medium</td><td><strong>high</strong></td></tr>
+            <tr><td>Failure detection</td><td>~30s</td><td>~10s</td><td><strong>~5s</strong></td></tr>
+            <tr><td>STONITH</td><td>none</td><td>none</td><td><strong>built in</strong></td></tr>
+            <tr><td>OpenStack integration</td><td>non-standard</td><td>non-standard</td><td><strong>Masakari standard</strong></td></tr>
+            <tr><td>Verdict</td><td>stopgap</td><td>fit for production</td><td><strong>enterprise standard</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">The point is that <strong>a DB lock is not distributed consensus</strong>. A
+        lock reduces double execution, but it doesn't stop both sides from each grabbing a lock under a
+        partition. When the goal is Split-Brain prevention and you can't prevent it structurally, you don't
+        meet the goal. So I recommended <strong>Pacemaker + Corosync first</strong> (~5s detection, and
+        built-in STONITH so "no fencing = no recovery" is enforced by structure), with <strong>etcd</strong>
+        as the fallback if that's hard to adopt.</p>
+
+        <h2 id="rto">How long does recovery take (an estimate)<a class="anchor" href="#rto" aria-label="Link to this section">#</a></h2>
+
+        <p>Design a recovery system and "how long does it take" always follows. Instead of one number, I
+        broke it down by stage. To stress it again, this is a <strong>design estimate, not a
+        measurement</strong>, and it's a value that needs team agreement.</p>
+
+        <div class="table-scroll">
+        <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+        <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">Recovery time by stage and acceptability by service type.</caption>
+          <thead><tr><th>Stage</th><th>Time (estimate)</th><th>Service type</th><th>Verdict</th></tr></thead>
+          <tbody>
+            <tr><td>Failure detect (TTL 30s)</td><td>~30s</td><td>Stateless API</td><td>~100s acceptable</td></tr>
+            <tr><td>IPMI Fencing</td><td>~5–10s</td><td>DB-backed</td><td>risky — needs consistency review</td></tr>
+            <tr><td>Nova Evacuate + VM boot</td><td>~60–120s</td><td>NFV · real-time</td><td>unacceptable (needs a ~10–20s architecture)</td></tr>
+            <tr><td><strong>Total recovery time</strong></td><td><strong>~100–160s</strong></td><td>—</td><td>—</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">RTO is a value set by <strong>service needs, not technology</strong>. So
+        instead of saying I "achieved" one number, I left a per-stage breakdown, per-type acceptability,
+        and a shortening option (cut TTL to 15s) with its cost (higher risk of jitter misjudgment). Saying
+        only that it can be cut doesn't help anyone decide.</p>
+
+        <h2 id="architecture">The complete architecture — four layers, one chain<a class="anchor" href="#architecture" aria-label="Link to this section">#</a></h2>
+
+        <p>Pulling the judgments so far together, this design is <strong>four layers linked in
+        order</strong>: detect → judge/consensus → fence → recover. What matters is not the <em>list</em>
+        of components but the <strong>order</strong>. Fail to pass an earlier layer and you don't advance,
+        and the irreversible action (evacuation) sits only at the very end.</p>
+
+        <div class="table-scroll">
+        <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+        <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">The four layers of the complete architecture, with components and roles.</caption>
+          <thead><tr><th>Layer</th><th>Components</th><th>Role</th></tr></thead>
+          <tbody>
+            <tr><td>Detect</td><td>Agent HeartBeat · multiple networks · BMC state</td><td>gather "suspicion" of failure — distinct from a <strong>confirmed</strong> death</td></tr>
+            <tr><td>Judge · consensus</td><td>signal-trust tiers · Quorum · Phase 1/2</td><td>is it really a failure, and <strong>does this node hold the decision</strong></td></tr>
+            <tr><td><strong>Fencing</strong></td><td>confirm IPMI power-off (STONITH)</td><td><strong>fail-closed guarantee</strong> that the original can no longer write</td></tr>
+            <tr><td>Recover</td><td>RecoveryMethod · evacuate/live-migration · StateChecker</td><td>select targets and re-place them on a safe host</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+
+        <p>Rendered as close to code as possible (just the gist), the chain looks like this.</p>
+
+<pre data-lang="text"><code>if (!quorum())                 return HOLD;   // the observer itself can't reach consensus
+if (agentHeartbeat.isFresh())  return HOLD;   // Compute directly reports it's alive
+if (extProbe.failed())         return HOLD;   // suspect my isolation — not the target's failure
+if (!phase2.ready())           return HOLD;   // Storage · MQ · Nova API not ready
+fence(host); confirmPowerOff();               // fail-closed confirm the original can't write
+evacuate(targets);                            // only here do we finally move</code></pre>
+
+        <p class="table-note">In this chain, detection, the existing decision logic, and much of recovery already exist in code — the
+        self-health gate (an isolated observer hands recovery off), target selection by metadata keys
+        (<code>HA_Enabled</code> · <code>HA_Disabled</code>), and host selection by <code>RecoveryMethod</code>
+        are those places. The safety axis of this chain — <strong>fencing and consensus (STONITH ·
+        Pacemaker/Corosync) — is the design's target, not a claim that it is active</strong>. Without that
+        axis, however precise the rest is, it can't structurally prevent Split-Brain under a partition.
+        That's why the design places this axis in the middle of the chain.</p>
+
+        <h2 id="not-claiming">Limits: what this post does not claim<a class="anchor" href="#not-claiming" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li><strong>This post is a write-up of the target architecture.</strong> My part was the 17-page
+          failure-response design; implementation was carried on by the team. The chain above is not a
+          confirmation that "it works this way" but a blueprint of "it should work this way."</li>
+          <li><strong>Let me be clear about the residual risk.</strong> Until the safety axis, fencing, is
+          actually turned on, Split-Brain prevention under a partition is not structurally guaranteed. So
+          automatic recovery should not be treated as an unconditionally safe feature. The completion
+          conditions are: confirm fencing success · stop recovery when the BMC is unreachable · fail-closed
+          on quorum loss. And for that axis to stand, a precondition like a <strong>dedicated physical
+          switch for the BMC</strong> must be in place first.</li>
+          <li><strong>RTO ~100–160s is not a measurement.</strong> It's a per-stage estimate, and even the
+          design doc marks it "needs team agreement."</li>
+          <li>What misjudged was the <strong>existing recovery logic</strong>, and I designed the decision
+          system that followed to prevent recurrence. It was not logic I built that misjudged.</li>
+          <li>Product names, versions, customer, server addresses, hostnames, and accounts are not written.
+          Network layout and parameters are generalized only as far as explaining the decision logic
+          requires.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="closing">Closing<a class="anchor" href="#closing" aria-label="Link to this section">#</a></h2>
+
+        <p>One sentence stayed with me through this design. <strong>The quality of automatic recovery is
+        decided less by how well it recovers than by how precisely it declines to.</strong> So I didn't go
+        the route of sharpening detection; I ranked the signals, split judgment from execution, and set the
+        default to Hold. That's why a design that stops seven of eight came out.</p>
+
+        <p>I expect the rebuttal: "if you hold seven, isn't recovery late on a real failure?" It is late.
+        But a recovery run wrongly can't be undone. When Split-Brain corrupts the filesystem, it's not one
+        VM but a whole volume. An asymmetric cost set the whole tone of this design. The moment automation
+        is most dangerous is when it's most confident — this incident keeps reminding me of that.</p>
+
+        <p>Thanks for reading.</p>
+        </div>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=8f8cf45e12"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

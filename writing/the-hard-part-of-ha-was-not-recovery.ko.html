@@ -9,8 +9,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
   <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/the-hard-part-of-ha-was-not-recovery.html" />
   <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/the-hard-part-of-ha-was-not-recovery.ko.html" />
-  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/the-hard-part-of-ha-was-not-recovery.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/the-hard-part-of-ha-was-not-recovery.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/the-hard-part-of-ha-was-not-recovery.html" />
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
@@ -21,6 +23,8 @@
   <meta property="og:image:height" content="630" />
   <meta property="og:url" content="https://lkhun9311.github.io/writing/the-hard-part-of-ha-was-not-recovery.ko.html" />
   <meta property="og:locale" content="ko_KR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="살아 있는 서버를 죽었다고 판정하면, 복구가 사고가 됩니다" />
   <meta name="twitter:description" content="멀쩡한 Compute를 장애로 오판해 VM을 대량 대피시킨 사고. 감지 정확도를 올리는 대신 어느 신호를 믿을지부터 다시 정한 Instance HA 장애 대응 설계입니다." />
@@ -35,7 +39,7 @@
       <a class="site-name" href="../index.html#about">Kwanghun</a>
       <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
         <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
-                data-authored='{"ko":"the-hard-part-of-ha-was-not-recovery.ko.html"}'>
+                data-authored='{"en":"the-hard-part-of-ha-was-not-recovery.html","ko":"the-hard-part-of-ha-was-not-recovery.ko.html","ja":"the-hard-part-of-ha-was-not-recovery.ja.html"}'>
           <option value="ko" selected>한국어</option>
           <option value="en">English</option>
           <option value="ja">日本語</option>
@@ -440,10 +444,10 @@ if (!phase2.ready())           return HOLD;   // Storage · MQ · Nova API 미�
 fence(host); confirmPowerOff();               // 원본 쓰기 불능을 fail-closed 로 확인
 evacuate(targets);                            // 여기까지 와야 비로소 옮긴다</code></pre>
 
-        <p class="table-note">이 사슬에서 감지 · 판정 · 복구는 이미 코드로 동작합니다. 자기 상태 점검
+        <p class="table-note">이 사슬에서 감지, 기존 판정 로직, 복구의 상당 부분은 이미 코드에 있습니다. 자기 상태 점검
         게이트(고립된 관측자는 복구를 넘김), 메타데이터 키(<code>HA_Enabled</code> · <code>HA_Disabled</code>)
-        기반 대상 선별, <code>RecoveryMethod</code>로 호스트를 고르는 부분이 그 자리입니다. 그리고
-        <strong>Fencing과 합의(STONITH · Pacemaker/Corosync)는 이 사슬의 안전 축</strong>입니다. 이 축이
+        기반 대상 선별, <code>RecoveryMethod</code>로 호스트를 고르는 부분이 그 자리입니다. 그리고 이 사슬의
+        <strong>안전 축인 Fencing과 합의(STONITH · Pacemaker/Corosync)는 설계가 지향하는 목표</strong>입니다. 이 축이
         없으면 나머지가 아무리 정교해도 네트워크 분단에서 Split-Brain을 구조적으로 막지 못합니다. 그래서
         설계는 이 축을 사슬의 가운데에 두었습니다.</p>
 
