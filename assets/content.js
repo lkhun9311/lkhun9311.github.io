@@ -188,6 +188,18 @@
       },
       items: [
         {
+          title: "When a Live Host Is Judged Dead, Recovery Becomes the Incident",
+          title_ko: "살아 있는 서버를 죽었다고 판정하면, 복구가 사고가 됩니다",
+          title_ja: "生きているサーバーを死んだと判定すると、復旧が事故になります",
+          url: "writing/the-hard-part-of-ha-was-not-recovery.ko.html",
+          source: "company", sourceLabel: "Company work",
+          date: "2026-09-18", dateLabel: "Sep 18, 2026",
+          desc: "A switch failure cut only the controllers from each other, and a leader controller judged a healthy compute node dead — firing mass Nova Evacuate that risked split-brain and storage corruption. Instead of sharpening detection, the failure-response design I authored ranks signals by trust (the agent heartbeat outranks an external probe), splits failure-detection from execution-readiness, and defaults to Hold: seven of eight scenarios stop. Closes with a table of which design elements reached the shipped code and which remain design-only. In Korean.",
+          desc_ko: "스위치 장애로 컨트롤러끼리만 끊겼는데 Leader Controller가 살아 있는 Compute를 죽었다고 판정해 Nova Evacuate를 대량 실행했고, Split-Brain·Storage 손상까지 갈 수 있었습니다. 감지를 더 정교하게 만드는 대신, 제가 작성한 장애 대응 설계는 신호에 신뢰도 등급을 매기고(Agent HeartBeat > EXT Probe) 장애 판정과 실행 준비를 분리해 기본값을 Hold로 두었습니다. 여덟 시나리오 중 일곱이 멈춥니다. 설계 요소가 코드에 어디까지 반영됐는지 표로 정리했습니다.",
+          desc_ja: "スイッチ障害でコントローラー同士だけが切れたのに、リーダーが生きている Compute を死んだと判定して Nova Evacuate を大量実行し、スプリットブレインとストレージ破損の危険がありました。検知を精緻にする代わりに、私が作成した障害対応設計は信号に信頼度を付け（Agent HeartBeat > EXT Probe）、障害判定と実行準備を分離して既定を Hold にしました。8シナリオ中7つが停止します。設計要素がコードにどこまで反映されたかを表にまとめました。韓国語。",
+          tags: ["IaaS Backend", "Reliability", "Method", "Operations"]
+        },
+        {
           title: "I Thought 40 GiB Was Moving. The Real Data Was 1.8 GiB.",
           title_ko: "40 GiB가 흐르는 줄 알았는데, 실제 데이터는 1.8 GiB뿐이었습니다",
           title_ja: "40 GiB が流れると思っていたら、実データは 1.8 GiB でした",
