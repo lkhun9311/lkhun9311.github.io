@@ -188,6 +188,18 @@
       },
       items: [
         {
+          title: "The 40 GiB I Thought Was Moving Was Actually 1.8 GiB",
+          title_ko: "40 GiB가 흐르는 줄 알았는데 실측은 1.8 GiB였습니다",
+          title_ja: "40 GiB が流れていると思ったら、実測は 1.8 GiB でした",
+          url: "writing/the-40-gib-that-did-not-move.ko.html",
+          source: "company", sourceLabel: "Company work",
+          date: "2026-09-18", dateLabel: "Sep 18, 2026",
+          desc: "A snapshot was said to take three hours, so I wrote the explanation first, then measured two real snapshots before trusting it. Transfer scaled with the real data, not the provisioned 40 GiB, the run finished in minutes, and the three-hour failure did not reproduce. A record of disproving my own first model with a packet counter. In Korean.",
+          desc_ko: "느린 스냅샷의 원인을 문서로 먼저 적었다가, 확정 전에 실제 스냅샷 두 건을 재 봤습니다. 전송량은 프로비저닝 40 GiB가 아니라 실데이터 규모를 따라갔고 실행은 몇 분에 끝났으며 '세 시간'은 재현되지 않았습니다. 첫 모델을 실측으로 반증한 기록입니다.",
+          desc_ja: "遅いスナップショットの原因を先に文書化しましたが、確定前に実際のスナップショットを2件計測しました。転送量はプロビジョニングの 40 GiB ではなく実データ規模に沿い、実行は数分で終わり、「3時間」は再現しませんでした。最初のモデルを実測で反証した記録です。韓国語。",
+          tags: ["IaaS Backend", "Method", "Performance", "Reliability"]
+        },
+        {
           title: "Did the Snapshot Scheduler Run? Making Invisible Automation Trustworthy",
           title_ko: "스냅샷 스케줄러는 실행됐는가: 보이지 않던 자동화를 신뢰하게 만들기",
           url: "writing/snapshot-scheduler-observability.ko.html",

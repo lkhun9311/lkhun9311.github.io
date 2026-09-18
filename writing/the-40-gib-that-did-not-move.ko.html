@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>40 GiB가 흐르는 줄 알았는데 실측은 1.8 GiB였습니다 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/the-40-gib-that-did-not-move.ko.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/the-40-gib-that-did-not-move.ko.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="40 GiB가 흐르는 줄 알았는데 실측은 1.8 GiB였습니다" />
+  <meta property="og:description" content="스냅샷이 세 시간 걸린다는 첫 모델을 실측으로 반증한 기록입니다. 전송량은 프로비저닝 크기가 아니라 실데이터 규모를 따라갔고, '세 시간'의 원인은 아직 열려 있습니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/the-40-gib-that-did-not-move.ko.html" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="40 GiB가 흐르는 줄 알았는데 실측은 1.8 GiB였습니다" />
+  <meta name="twitter:description" content="느린 스냅샷의 첫 모델을 실측으로 반증한 기록입니다. 전송량은 프로비저닝이 아니라 실데이터 규모를 따라갔고, '세 시간'의 원인은 아직 열려 있습니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="느린 스냅샷의 첫 모델을 실측으로 반증한 기록입니다. 전송량은 프로비저닝이 아니라 실데이터 규모를 따라갔고, '세 시간'의 원인은 아직 열려 있습니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"ko":"the-40-gib-that-did-not-move.ko.html"}'>
+          <option value="ko" selected>한국어</option>
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
+        <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>40 GiB가 흐르는 줄 알았는데 실측은 1.8 GiB였습니다<br><span class="h1-sub">스냅샷이 세 시간 걸린다는 첫 모델을 실측으로 반증한 기록입니다. 전송량은 프로비저닝 크기가 아니라 실데이터 규모를 따라갔고, ‘세 시간’의 원인은 아직 열려 있습니다.</span></h1>
+        <p class="article-date">2026년 9월</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="the-40-gib-that-did-not-move"></aside>
+        <nav class="article-toc" aria-label="목차">
+          <p class="toc-label">목차</p>
+          <ul>
+            <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+            <li><a href="#첫-모델">첫 모델: 40 GiB가 세 시간 동안 흐른다</a></li>
+            <li><a href="#믿기-전에">믿기 전에 두 번 재 봤습니다</a></li>
+            <li><a href="#실데이터-비례">전송량은 실데이터 쪽 자릿수였습니다</a></li>
+            <li><a href="#가장-느린-링크">속도를 정한 것은 가장 느린 링크였습니다</a></li>
+            <li><a href="#세-시간">그런데 왜 세 시간이었나</a></li>
+            <li><a href="#두-겹">두 겹을 따로 고칩니다</a></li>
+            <li><a href="#주장하지-않는-것">한계: 이 글이 주장하지 않는 것</a></li>
+            <li><a href="#마치며">마치며</a></li>
+          </ul>
+        </nav>
+      <article class="article-body">
+
+        <p>OpenStack과 Ceph를 함께 쓰는 하이퍼컨버지드 팜에서 인스턴스 스냅샷이 느리다는 이야기가
+        올라왔습니다. 예약 스냅샷이 완료되지 못하고 실패로 끝난다고 했습니다. 저는 원인을 설명하는
+        문서를 먼저 썼습니다. 그 문서의 핵심 전제가 틀렸다는 걸, 실제 스냅샷을 재 보고 나서야 알았습니다.
+        이 글은 <strong>제가 세운 첫 모델을 실측으로 반증한 과정</strong>과, 그 자리에 대신 세운 모델입니다.</p>
+
+        <p>먼저 밝혀 둘 것이 있습니다. 이 글은 고객명·서버 주소·호스트명·풀 이름·계정·티켓 번호 같은
+        <strong>직접 식별자를 지웠습니다.</strong> 수치는 원인을 설명하는 데 필요한 것만 남겼습니다. 그리고
+        <strong>확정한 것과 아직 가능성으로만 남은 것을 문장마다 구분</strong>하려고 했습니다. 이 글에서 가장
+        중요한 문장은 결론이 아니라, 결론 하나가 어떻게 무너졌는가입니다.</p>
+
+        <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li>블록 스토리지 위에서 스냅샷·백업이 느리다는 신고를 받고 원인을 찾는 분</li>
+          <li>Ceph RBD 백엔드에서 이미지 포맷이 부팅·스냅샷 경로를 어떻게 가르는지 궁금한 분</li>
+          <li>설득력 있어 보이는 원인 설명을 코드나 패킷으로 검증해 본 적 없는 분</li>
+          <li>느림을 <em>‘경로’</em>와 <em>‘처리량’</em> 두 축으로 나눠 보는 습관에 관심 있는 분</li>
+        </ul>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 232" role="img" aria-labelledby="mdl-t mdl-d" class="figure-svg">
+            <title id="mdl-t">첫 모델과 실측 모델의 대비</title>
+            <desc id="mdl-d">왼쪽 분홍 상자는 첫 모델입니다. 프로비저닝된 40 GiB가 통째로 네트워크를 지나 세 시간이 걸리고 예산을 넘겨 실패한다고 적혀 있습니다. 오른쪽 파랑 상자는 실측입니다. 인스턴스의 실사용은 약 1.8 GiB이고 약 3.3에서 3.8분에 끝나 예산 안에 든다고 적혀 있습니다. 아래에 분홍색으로 40 GiB가 통째로 흐르지는 않는다고 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="316" height="120" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="198" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">첫 모델 (문서 추론)</text>
+              <text x="198" y="84" font-size="11.5" fill="#4a4a4a" text-anchor="middle">40 GiB가 통째로 전송</text>
+              <text x="198" y="110" font-size="11.5" fill="#4a4a4a" text-anchor="middle">약 세 시간</text>
+              <text x="198" y="136" font-size="11.5" fill="#4a4a4a" text-anchor="middle">예산 초과 → FAILED</text>
+              <rect x="404" y="54" width="316" height="120" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="562" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">실측 (스냅샷 2건)</text>
+              <text x="562" y="84" font-size="11.5" fill="#4a4a4a" text-anchor="middle">실사용 약 1.8 GiB 규모</text>
+              <text x="562" y="110" font-size="11.5" fill="#4a4a4a" text-anchor="middle">약 3.3~3.8분</text>
+              <text x="562" y="136" font-size="11.5" fill="#4a4a4a" text-anchor="middle">예산 안에 든다</text>
+              <text x="360" y="206" font-size="11.5" fill="#d62976" text-anchor="middle">40 GiB가 통째로 흐르지는 않는다</text>
+            </g>
+          </svg>
+          <figcaption>왼쪽은 재 보기 전의 설명, 오른쪽은 재 본 뒤의 설명입니다. 바뀐 것은 결론이 아니라 전제입니다.</figcaption>
+        </figure>
+
+        <h2 id="첫-모델">첫 모델: 40 GiB가 세 시간 동안 흐른다<a class="anchor" href="#첫-모델" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>느림은 대개 두 축으로 갈립니다. <strong>경로</strong>는 무엇이 얼마나 흐르는가이고,
+        <strong>처리량</strong>은 그것이 얼마나 빨리 흐르는가입니다. 첫 모델은 두 축을 이렇게 이었습니다.</p>
+
+        <p>경로 쪽 이야기입니다. 이 팜은 인스턴스 디스크를 Ceph 블록 스토리지에 둡니다. 그런데
+        블록 스토리지의 빠른 복제(Copy-on-Write 클론)는 <strong>베이스 이미지가 raw일 때만</strong>
+        동작합니다. 베이스가 qcow2라 클론이 깨지고, 스냅샷은 느린 표준 경로로 폴백합니다. 파일로 추출한
+        뒤 HTTP로 업로드하는 경로입니다. 여기까지는 로그로 확인된 사실입니다.</p>
+
+        <p>문제는 그다음이었습니다. 저는 <em>‘추출·업로드 과정에서 비어 있는 영역이 0으로 채워져
+        디스크 전체 크기, 즉 프로비저닝된 40 GiB가 통째로 네트워크를 지난다’</em>고 적었습니다. 그리고
+        그 40 GiB가 지나는 길목에 100Mb로 협상된 느린 NIC가 하나 있으니, 40 GiB를 그 좁은 링크로 밀면
+        몇 시간이 걸리고 스케줄러 예산을 넘겨 실패한다고 이었습니다.</p>
+
+        <p>산수를 맞춰 두겠습니다. 40 GiB만으로는 세 시간이 나오지 않습니다. 링크가 온전하면 40 GiB는
+        한 시간 남짓입니다. 세 시간을 넘기려면 링크가 경합으로 초당 3~4 MB까지 떨어진다는 <strong>또
+        하나의 가정</strong>이 필요했고, 첫 모델은 그 가정을 슬쩍 얹고 있었습니다. 재 보기 전에는 그 두
+        가정, ‘40 GiB가 흐른다’와 ‘초당 몇 MB로 떨어진다’를 둘 다 검증한 적이 없었습니다.</p>
+
+        <p>깔끔한 설명이었습니다. 로그의 폴백도, 느린 NIC도 실재했으니까요. 두 개의 진짜 사실 사이에
+        그럴듯한 다리를 놓은 셈입니다. <strong>다리 한가운데의 ‘40 GiB가 통째로 흐른다’는 재 본 적이
+        없었습니다.</strong></p>
+
+        <h2 id="믿기-전에">믿기 전에 두 번 재 봤습니다<a class="anchor" href="#믿기-전에" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>문서를 확정하기 전에, 첫 모델이 상정한 바로 그 조건의 인스턴스로 실제 스냅샷을 두 번 돌렸습니다.
+        프로비저닝은 40 GiB, 실사용은 약 1.8 GiB, 부모 이미지는 없는 인스턴스입니다. 스냅샷을 도는 동안
+        노드의 NIC 바이트 카운터와 피어별 트래픽을 함께 봤습니다.</p>
+
+        <div class="table-scroll">
+        <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+        <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+        <table>
+          <caption class="sr-only">동일 조건 인스턴스의 스냅샷 2건 실측. 첫 모델의 예측과 실측의 대비.</caption>
+          <thead><tr><th>항목</th><th>첫 모델의 예측</th><th>실측 (스냅샷 2건)</th></tr></thead>
+          <tbody>
+            <tr><td>소요 시간</td><td>약 세 시간, 예산 초과</td><td><strong>약 196초·229초 (3.3~3.8분)</strong></td></tr>
+            <tr><td>결과 이미지 데이터 크기</td><td>40 GiB에 근접</td><td><strong>약 1.8 GiB</strong> (포맷 raw, 프로비저닝 40 GiB)</td></tr>
+            <tr><td>네트워크 총 전송량</td><td>40 GiB 통째</td><td><strong>약 6.8 GB</strong> (공용 3.83 + 클러스터 3.00, 양방향 합)</td></tr>
+            <tr><td>느린 링크의 파일공유 몫</td><td>대량(추출 경로가 파일공유)</td><td><strong>약 15 MB</strong> (총 바이트 기준 미미)</td></tr>
+            <tr><td>느린 링크 트래픽</td><td>—</td><td>약 3.0 GB / 229초 (RX+TX 합, 방향별 포화율 미확정)</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">표본은 동일 조건 인스턴스의 스냅샷 2건이고, 트래픽 상세는 그중 상세 계측한
+        실행(229초) 기준입니다. 결과 이미지는 포맷이 raw이고 논리 크기는 40 GiB이지만 실제 데이터는 약
+        1.8 GiB입니다. 전송량은 노드 NIC의 바이트 델타이며 방향별로 나누지 않은 합산값이라, 처리율·포화
+        여부는 방향 분리 전에는 확정하지 못합니다. 이 조건에서 <strong>예산 초과는 재현되지
+        않았습니다.</strong></p>
+
+        <p>첫 모델의 세 예측이 한꺼번에 빗나갔습니다. 세 시간이 아니라 몇 분이었고, 40 GiB 통째가 아니라
+        실데이터의 수 배 수준이었고, 느린 링크를 메운 것은 추출용 파일 공유가 아니었습니다.</p>
+
+        <h2 id="실데이터-비례">전송량은 프로비저닝 40 GiB가 아니라 실데이터 쪽 자릿수였습니다<a class="anchor" href="#실데이터-비례" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>가장 크게 틀린 것은 <strong>‘40 GiB가 통째로 흐른다’</strong>였습니다. 실제로 네트워크를
+        지난 총량은 약 6.8 GB였습니다. 이것은 공용 NIC의 약 3.83 GB와 클러스터 NIC의 약 3.00 GB를
+        <strong>양방향까지 합한 카운터</strong>이지, 40 GiB 단일 스트림이 아닙니다. 실사용 데이터가 약
+        1.8 GiB인데 총합이 그보다 큰 것을 보면 추출·업로드·복제를 거치며 같은 데이터가 여러 번 세어졌다고
+        <em>읽히지만</em>, 어느 단계가 몇 바이트를 만들었는지는 방향별로 계측하지 못해 <strong>단계별
+        귀속은 확정하지 않았습니다.</strong> 분명한 것은 하나입니다. 비어 있는 영역이 0으로 부풀어 40 GiB가
+        되는 일은 이번 두 실행에서는 일어나지 않았습니다.</p>
+
+        <p>다만 표본이 같은 크기 두 건뿐이라, 여기서 말할 수 있는 것은 <strong>‘40 GiB 전체 전송
+        모델이 반증됐다’</strong>까지입니다. 전송량이 데이터 크기에 정확히 비례하는지는 크기가 다른
+        인스턴스로 더 재 봐야 합니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 250" role="img" aria-labelledby="pth-t pth-d" class="figure-svg">
+            <title id="pth-t">실측으로 다시 그린 스냅샷 데이터 경로</title>
+            <desc id="pth-d">위쪽에 상자가 넷, 화살표로 이어집니다. 첫째는 블록 스토리지의 실사용 약 1.8 GiB, 둘째는 로컬로 추출, 셋째는 공용 링크로 HTTP 업로드, 넷째는 사본 세 벌을 쓰는 100Mb 클러스터 링크입니다. 넷째 상자만 분홍색으로 강조돼 임계 경로 후보라고 적혀 있습니다. 아래에 분홍색으로 가장 느린 링크가 유력하나 방향별 계측이 필요하다고 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="8" y="66" width="150" height="80" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="83" y="56" font-size="11" fill="#8a8a8a" text-anchor="middle">① 블록 스토리지</text>
+              <text x="83" y="100" font-size="11" fill="#4a4a4a" text-anchor="middle">실사용 ~1.8 GiB</text>
+              <text x="83" y="120" font-size="11" fill="#4a4a4a" text-anchor="middle">읽기</text>
+              <path d="M162 106 H 190" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#pth-a)"/>
+              <rect x="196" y="66" width="150" height="80" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="271" y="56" font-size="11" fill="#8a8a8a" text-anchor="middle">② 로컬 추출</text>
+              <text x="271" y="100" font-size="11" fill="#4a4a4a" text-anchor="middle">임시 raw</text>
+              <text x="271" y="120" font-size="11" fill="#4a4a4a" text-anchor="middle">NFS 몫 미미</text>
+              <path d="M350 106 H 378" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#pth-a)"/>
+              <rect x="384" y="66" width="150" height="80" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="459" y="56" font-size="11" fill="#4f5bd5" text-anchor="middle">③ HTTP 업로드</text>
+              <text x="459" y="100" font-size="11" fill="#4a4a4a" text-anchor="middle">공용 링크 1Gb</text>
+              <text x="459" y="120" font-size="11" fill="#4a4a4a" text-anchor="middle">병목 아님</text>
+              <path d="M538 106 H 566" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#pth-a)"/>
+              <rect x="572" y="60" width="148" height="92" rx="10" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="646" y="50" font-size="11" fill="#d62976" text-anchor="middle" font-weight="700">④ Ceph 복제</text>
+              <text x="646" y="94" font-size="11" fill="#4a4a4a" text-anchor="middle">복제본 3벌</text>
+              <text x="646" y="114" font-size="11" fill="#4a4a4a" text-anchor="middle">100Mb 링크</text>
+              <text x="646" y="134" font-size="10.5" fill="#d62976" text-anchor="middle">임계 경로 후보</text>
+              <text x="360" y="196" font-size="11.5" fill="#d62976" text-anchor="middle">가장 느린 링크가 유력하나 방향별 계측이 필요하다</text>
+              <text x="360" y="220" font-size="10.5" fill="#8a8a8a" text-anchor="middle">②의 실제 바이트는 방향별로 계측하지 못해 미확정으로 둡니다</text>
+            </g>
+            <defs>
+              <marker id="pth-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>같은 데이터가 단계마다 다시 세어졌을 가능성과 부합합니다. 이번 두 실행에서 40 GiB 전체 전송은 관측되지 않았습니다.</figcaption>
+        </figure>
+
+        <p>느린 링크의 트래픽 구성도 첫 모델과 달랐습니다. 저는 추출용 파일 공유가 그 링크를 가득
+        메운다고 봤는데, 피어별로 재 보니 그 몫은 15 MB뿐이었습니다. 링크에서 관측된 것은 대부분
+        <strong>블록 스토리지 노드 사이의 트래픽</strong>이었습니다. 이 풀은 사본을 세 벌 두고 노드가
+        셋뿐이라 이 노드가 늘 그 경로에 낍니다. 그러니 복제와 관련된 트래픽으로 보이지만, 합산
+        카운터라 <strong>이 링크를 지난 사본 수와 방향, 포화 여부까지는 확정하지 못했습니다.</strong></p>
+
+        <h2 id="가장-느린-링크">속도를 정한 것은 가장 느린 링크로 보입니다<a class="anchor" href="#가장-느린-링크" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>그렇다면 무엇이 시간을 정했을까요. 저는 처음에 <em>‘총 6.8 GB를 홉 수만큼 곱해 느린 링크로
+        나눈다’</em>는 식으로 시간을 어림했는데, 약 10분이 나와 실측 4분과 맞지 않았습니다. 6.8 GB는 두
+        NIC와 양방향을 합친 카운터라 직렬로 흐른 양이 아니기 때문입니다. 이 대목의 교훈은 분명합니다.
+        <strong>합산 카운터를 직렬 전송량처럼 쓰면 안 됩니다.</strong></p>
+
+        <p>더 그럴듯한 틀은 임계 경로입니다. 여러 단계가 겹쳐 도는 작업에서 완료 시간은 보통 가장 오래
+        걸리는 의존 사슬이 정하고, 느린 링크는 그 사슬에 들어갈 유력한 후보입니다. 여기서 가장 느린 링크는
+        100Mb로 협상된 클러스터 NIC이고, 그 위에서 관측된 트래픽은 약 3.0 GB, 부하 측정 도구로 잰 링크
+        처리량은 초당 약 11.5 MB였습니다. 3.0 GB를 11.5 MB/s로 나누면 약 260초가 나옵니다.</p>
+
+        <blockquote><p>260초는 실측 196~229초와 <strong>자릿수만 같은 거친 어림</strong>입니다. 확정으로
+        올릴 수는 없습니다. 3.0 GB는 방향을 합친 값이고 11.5 MB/s는 한 방향 처리량이라, 애초에 같은 식에
+        넣을 수 있는 값이 아닙니다. 실제로 3.0 GB를 229초로 나누면 초당 13.1 MB가 되어 100Mb의 물리 상한
+        12.5 MB/s를 넘는데, 이 초과 자체가 3.0 GB를 한 방향 직렬량으로 쓸 수 없다는 증거입니다. 260초와
+        실측의 차이도 방향별 카운터와 단계별 타임라인이 없어 <em>설명하지 못합니다.</em></p></blockquote>
+
+        <p>그래도 남는 것이 있습니다. <strong>40 GiB도, 초당 3 MB도 필요 없었다</strong>는 점입니다.
+        느린 링크가 실재하고 그 위 트래픽이 실데이터 규모라는 것까지는 관측됐고, 첫 모델의 두 과장된
+        전제는 그것 없이도 무너집니다. 다만 ‘가장 느린 링크가 시간을 정한다’는 <strong>유력한 가설</strong>일
+        뿐, 방향별 바이트를 재기 전에는 임계 경로도 포화 여부도 확정이 아닙니다.</p>
+
+        <p>수치 하나도 구분해 두겠습니다. 초당 11.5 MB는 링크의 물리 상한이 아니라 부하 측정 도구로 잰
+        실효 처리량(goodput)이고, 100Mb의 물리 환산 상한은 초당 12.5 MB입니다. 둘은 다른 값입니다. 정방향
+        측정에서 재전송도 관측됐지만, 전체 세그먼트 수 대비 비율을 재지 않아 <strong>많고 적음이나 링크
+        건강 상태는 단정하지 않았습니다.</strong> 협상 속도가 100Mb로 잡혔다는 사실까지가 확정이고, 그
+        원인과 재전송률은 별도 확인 대상으로 남겼습니다.</p>
+
+        <h2 id="세-시간">그런데 왜 세 시간이었나<a class="anchor" href="#세-시간" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>여기서 정직해야 합니다. 처음 신고는 분명 스냅샷이 완료되지 못하고 실패했다는 것이었는데,
+        제 계측에서는 그 실패가 재현되지 않았습니다. <strong>이 글은 ‘세 시간’의 원인을 확정하지
+        못했습니다.</strong> 확정하지 못한 것을 확정한 것처럼 적지 않는 것이, 틀린 다리를 하나 더 놓지
+        않는 유일한 방법입니다.</p>
+
+        <p>다만 실측은 가능성 하나를 가리킵니다. 전송량이 실데이터 규모를 따라간다면, 실패했던 인스턴스가
+        이번 표본보다 훨씬 많은 데이터를 쓰고 있었을 때 같은 100Mb 링크에서 시간이 크게 늘어 예산을
+        넘겼을 수 있습니다. 다만 시간이 데이터에 <em>얼마나</em> 늘어나는지는 크기가 다른 인스턴스로 더
+        재 봐야 알 수 있고, 다른 팜이나 동시 부하 조건이었을 가능성도 남습니다. 이것을 확정하려면
+        <strong>실패했던 그 인스턴스의 실사용량과 호스트, 시각</strong>을 봐야 합니다. 그것이 이 조사의
+        다음 한 걸음입니다.</p>
+
+        <h2 id="두-겹">두 겹을 따로 고칩니다<a class="anchor" href="#두-겹" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>실측으로 정리된 그림은 <strong>독립된 두 겹</strong>입니다. 포맷과 링크는 서로 다른 문제라
+        각각 고쳐야 합니다.</p>
+
+        <ul class="callout">
+          <li><strong>포맷(qcow2 → raw).</strong> 베이스를 raw로 재등록하면 느린 표준 경로를 타지
+          않고 블록 스토리지 내부 클론 경로를 쓸 것으로 <strong>예상합니다</strong>. 아직 이 환경에서
+          배포 후 로그로 검증하지는 않았습니다. 그리고 효과는 <strong>그 raw 이미지로 새로 부팅한
+          인스턴스</strong>에만 미치고, 이미 부모 없이 복사돼 떠 있는 기존 인스턴스에는 소급되지 않습니다.
+          앞으로 만들 인스턴스를 위한 구조 개선이지, 지금 느린 인스턴스의 즉효 처방이 아닙니다.</li>
+          <li><strong>링크(100Mb → 1G).</strong> 느린 클러스터 링크를 올리면 현재 관측된 저속 링크가
+          풀릴 가능성이 큽니다. 다만 그것이 완료 시간을 얼마나 좌우했는지는 아직 미확정이고, 전환한 뒤
+          디스크·OSD·상위 네트워크에 다른 병목이 드러나지 않는지 다시 재야 합니다. 또 실데이터가 작으면
+          링크가 느려도 예산을 넘지 않으므로, 이 개선의 이득은 데이터가 큰 인스턴스에서 두드러질 것으로
+          봅니다.</li>
+          <li><strong>임시 완화.</strong> 업로드 포맷을 압축 포맷으로 바꾸면 전송량을 줄일 수도 있으나,
+          압축률·sparse 처리·변환 경로에 따라 달라져 이 환경에서는 <strong>미검증</strong>입니다. 준다
+          해도 실데이터가 작으면 절대 절감 여지도 제한적일 수 있으나, 이 환경에서는 측정하지
+          않았습니다. 재측정 후 판단할 일입니다.</li>
+        </ul>
+
+        <p>세 가지 모두 인프라나 이미지·설정 층에서 다뤄야 하는 일입니다. <strong>이번 계측에서는
+        애플리케이션이나 스케줄러 코드의 결함을 가리키는 증거를 찾지 못했습니다.</strong></p>
+
+        <h2 id="주장하지-않는-것">한계: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li>제품명·버전·고객사·티켓 번호·서버 주소·계정은 쓰지 않았습니다. 수치는 원인 설명에
+          필요한 만큼만 일반화했습니다.</li>
+          <li>표본은 동일 조건 인스턴스의 스냅샷 2건입니다. 다른 데이터 크기·다른 노드·부하 조건에서의
+          거동은 재지 않았습니다.</li>
+          <li>‘세 시간’의 원인은 확정하지 못했습니다. 이 표본에서 예산 초과는 재현되지 않았고, 큰
+          실데이터·다른 팜·동시 부하는 가능성으로만 적었습니다.</li>
+          <li>추출 구간이 만든 실제 바이트, 링크의 방향별 포화율, 파일 공유와 복제의 동시 경합 비용은
+          아직 방향별로 계측하지 못해 미확정으로 두었습니다. 인과로 단정하지 않았습니다.</li>
+          <li>raw 재등록이 스냅샷을 빠르게 만든다는 것은 <strong>새로 부팅한 인스턴스</strong>에 한한
+          이야기이고, 배포 후 로그로 다시 확인해야 할 예측입니다.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li>두 개의 진짜 사실 사이에 놓은 다리는, 그 다리 자체가 사실이 아닐 수 있습니다. 폴백도
+          느린 링크도 진짜였지만 ‘40 GiB가 흐른다’는 재 본 적이 없었습니다.</li>
+          <li>합산 카운터를 직렬 전송량처럼 쓰면 시간이 맞지 않습니다. 완료 시간은 가장 긴 의존 사슬이
+          정하는데, 느린 링크가 그 사슬인지는 방향별 바이트를 재기 전엔 확정할 수 없습니다.</li>
+          <li>실효 처리량(goodput)과 물리 상한은 다른 값입니다. 그리고 방향을 합친 카운터만으로는
+          포화 여부조차 단정할 수 없습니다.</li>
+          <li>재현되지 않은 증상은 재현되지 않았다고 적는 편이, 그럴듯한 원인을 하나 더 지어내는
+          것보다 멀리 갑니다.</li>
+        </ul>
+
+        <p>느린 스냅샷의 원인은 문서 안에서 완성될 수 있습니다. 문제는 그 완성도가 높을수록 재 보기가
+        더 싫어진다는 것입니다. 저는 확정 직전에 두 번 재 봤고, 세 예측이 한꺼번에 빗나갔습니다.
+        재 보길 잘했습니다.</p>
+
+        <p>읽어 주셔서 감사합니다.</p>
+        </div>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=8f8cf45e12"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
