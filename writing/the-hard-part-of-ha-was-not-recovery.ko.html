@@ -97,7 +97,7 @@
 
         <p>이 글은 실제로 그 사고가 났을 때, 재발을 막기 위해 제가 단독으로 작성한 <strong>장애 대응
         설계</strong>를 현황 · 원인 · 해결 순서로 정리한 것입니다. 마지막에는 그 설계가 지금 제품 코드에
-        어디까지 반영됐고 무엇이 아직 설계로만 남아 있는지를 <strong>표 하나</strong>로 두었습니다.</p>
+        어디까지 반영됐고, 무엇이 골격만 놓인 채 아직 켜지지 않았는지를 <strong>표 하나</strong>로 두었습니다.</p>
 
         <p>먼저 범위와 표기를 밝혀 둡니다. 이 글에서 <strong>제 몫은 설계</strong>이고, <strong>구현은 팀이
         이어받았습니다.</strong> 그래서 아래 내용은 「제가 만든 코드」가 아니라 「제가 제안한 판정 체계와,
@@ -425,18 +425,20 @@ Compute-02 → VM-A evacuated      → write /dev/vdb   (신규 attach)
             <tr><td>복구 대상 선별 정책 (opt-in · opt-out · 전체)</td><td><strong>반영</strong></td><td>인스턴스 메타데이터 키 <code>HA_Enabled</code> / <code>HA_Disabled</code>와 <code>NONE</code>으로 대피 대상 필터</td></tr>
             <tr><td>복구 방식 미설정 시 「임의의 파괴적 대피」 차단</td><td><strong>반영</strong></td><td><code>RecoveryMethod</code>(AUTO · RESERVED_HOST · 우선순위)로 대상 호스트 선정, 미설정이면 그 장애는 무시</td></tr>
             <tr><td>다중 신호로 장애 판정 (한 신호로 단정 안 함)</td><td><strong>부분 반영</strong></td><td>Agent가 인터페이스 상태 · 게이트웨이 Ping · IP/PORT TCP를 함께 봄. 다만 「신뢰도 4등급」 체계는 아님</td></tr>
-            <tr><td>Fencing (no fencing = no recovery, IPMI 전원 확인)</td><td><strong>미반영 (설계로만)</strong></td><td>Fencing 파라미터(<code>stonithWait</code> · <code>ipmiTimeout</code> · <code>ipmiRetryMax</code> 등)가 코드에 <strong>주석 처리된 채</strong>로만 존재</td></tr>
-            <tr><td>분산 합의 기반 실행 제어 (Pacemaker/etcd)</td><td><strong>미반영</strong></td><td>노드 간 중복 방지는 한 프로세스 안에서만. 클러스터 합의(Raft/Totem)는 도입되지 않음</td></tr>
-            <tr><td>Phase 1/2 (Failure Detection / Execution Readiness) 매트릭스</td><td><strong>미반영 (설계로만)</strong></td><td>코드에 Phase 구조 없음. 판정과 실행 준비가 아직 분리되어 있지 않음</td></tr>
+            <tr><td>Fencing (no fencing = no recovery, IPMI 전원 확인)</td><td><strong>골격만 · 비활성</strong></td><td>설계가 권고한 Pacemaker · Corosync · STONITH · IPMI 설정 클래스가 <code>HaProperties</code>에 <strong>주석 처리된 골격</strong>으로 들어가 있음(<code>stonithWait</code> · <code>ipmiTimeout=5</code> · <code>ipmiRetryMax=3</code> · <code>pacemakerNodeType</code> 등). 거부가 아니라 아직 켜지지 않은 상태</td></tr>
+            <tr><td>분산 합의 기반 실행 제어 (Pacemaker/etcd)</td><td><strong>골격만 · 비활성</strong></td><td>위 Pacemaker · Corosync 설정 골격이 같은 자리에 함께 주석으로 존재. 현재 노드 간 중복 방지는 한 프로세스 안에서만 활성</td></tr>
+            <tr><td>Phase 1/2 (Failure Detection / Execution Readiness) 매트릭스</td><td><strong>설계로만 (코드 흔적 없음)</strong></td><td>코드에 Phase 구조가 아직 없음. 판정과 실행 준비가 분리되어 있지 않음</td></tr>
             <tr><td>RTO ~100–160초</td><td>설계 산정치</td><td>실측 아님. 팀 합의가 필요한 목표치</td></tr>
           </tbody>
         </table>
         </div>
         </div>
-        <p class="table-note">가장 눈에 띄는 건 Fencing입니다. <strong>설계의 IPMI · STONITH 파라미터가
-        코드에 주석으로 남아 있습니다.</strong> 방향은 코드까지 도달했지만 아직 켜지지는 않았다는 뜻입니다.
-        「관측자가 못 믿을 상태면 멈춘다」는 원칙(기본값 Hold)은 자기 상태 점검 게이트로 반영됐고,
-        구조적 Split-Brain 방지(합의 · Fencing)는 아직 설계로 남아 있습니다.</p>
+        <p class="table-note">한 가지 오해를 짚어 둡니다. 「골격만 · 비활성」은 <strong>거부가 아니라 도입
+        대기</strong>입니다. 설계가 권고한 Pacemaker · Corosync · STONITH · IPMI 설정 클래스가 코드에 주석
+        골격으로 들어가 있고, Instance HA는 현재 별도 feature 브랜치로 <strong>3.4.0 업그레이드가 진행
+        중</strong>이라 이 방향은 켜질 준비 단계로 보는 것이 정확합니다(다만 어느 버전에서 활성화될지는 이
+        자료만으로 단정하지 않습니다). 정리하면 반영은 세 층입니다 — <strong>활성</strong>(자기 상태 게이트 ·
+        대상 선별 · 복구 방식), <strong>골격만 · 비활성</strong>(Fencing · 합의), <strong>아직 코드에 없음</strong>(Phase 1/2 매트릭스).</p>
 
         <h2 id="주장하지-않는-것">한계: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -447,8 +449,9 @@ Compute-02 → VM-A evacuated      → write /dev/vdb   (신규 attach)
           필요」로 적혀 있습니다.</li>
           <li>오판한 것은 <strong>기존 복구 로직</strong>이고, 그 뒤 재발을 막는 판정 체계를 제가 설계했습니다.
           제가 만든 로직이 오판한 것이 아닙니다.</li>
-          <li>Fencing과 분산 합의는 아직 <strong>설계로만</strong> 존재합니다. 이 글의 「해결」은 구현
-          완료가 아니라 제안된 방향이며, 실제 켜지려면 BMC 전용 물리 스위치 같은 전제가 먼저 갖춰져야 합니다.</li>
+          <li>Fencing과 분산 합의는 설정 골격이 코드에 <strong>주석으로 들어가 있으나 아직 활성화 전</strong>입니다
+          (거부가 아니라 도입 대기 — Instance HA는 3.4.0 업그레이드가 진행 중). 이 글의 「해결」은 구현 완료가
+          아니라 제안된 방향이며, 실제 켜지려면 BMC 전용 물리 스위치 같은 전제가 먼저 갖춰져야 합니다.</li>
           <li>제품명 · 버전 · 고객사 · 서버 주소 · 호스트명 · 계정은 쓰지 않았습니다. 네트워크 구성과 파라미터는
           판정 로직을 설명하는 데 필요한 만큼만 일반화했습니다.</li>
         </ul>
