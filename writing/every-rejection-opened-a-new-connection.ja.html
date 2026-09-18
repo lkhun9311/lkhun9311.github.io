@@ -80,7 +80,6 @@
           <p class="toc-label">目次</p>
           <ul>
             <li><a href="#想定読者">この記事の想定読者</a></li>
-            <li><a href="#内容">どんな内容ですか</a></li>
             <li><a href="#構成">どんな構成ですか</a></li>
             <li><a href="#思い込み">最初は Connection Pool がすでに検証済みだと思っていました</a></li>
             <li><a href="#結論">結論から申し上げます</a></li>
@@ -95,22 +94,23 @@
         </nav>
       <article class="article-body">
 
+        <p>2026年8月15日にブランチを上げると、プッシュフックが codex と Claude のレビューを回し、指摘が10件出ました。そのうち2件が
+        測定ツールそのものの欠陥でした。この記事はそのうちの1つを扱います。</p>
+
+        <p>指摘は短いものでした。ベンチ Harness の <code>Send</code> が、200 以外の応答の Body を読まずに返しているというものです。
+        同じファイルのコメントには、Connection Pool に効果がある根拠として <code>431 → 6</code> という測定値が書かれていました。
+        私はその根拠を開いてみましたが、根拠が測ったトレースには拒否応答が1件もありませんでした。</p>
+
+        <p>先に留保をひとつ置きます。この記事が測ったのは<strong>サーバーが受け付けた TCP Connection の本数</strong>です。新たに生じた
+        Handshake が Harness の報告する遅延をどれだけ膨らませたかは測っていません。残りの留保は「この記事が主張しないこと」に
+        まとめました。</p>
+
         <h2 id="想定読者">この記事の想定読者</h2>
         <ul>
           <li>Go の <code>net/http</code> クライアントで負荷生成器やベンチ Harness を作っている方</li>
           <li>429 のような拒否応答が多く出るシステム(Rate Limit、入場制御)を測っている方</li>
           <li>コードコメントや文書に測定値を根拠として書いている方</li>
         </ul>
-
-        <h2 id="内容">どんな内容ですか</h2>
-        <p>2026年8月15日にブランチを上げると、プッシュフックが codex と Claude のレビューを回し、指摘が10件出ました。そのうち2件が
-        測定ツールそのものの欠陥でした。この記事はそのうちの1つを扱います。</p>
-        <p>指摘は短いものでした。ベンチ Harness の <code>Send</code> が、200 以外の応答の Body を読まずに返しているというものです。
-        同じファイルのコメントには、Connection Pool に効果がある根拠として <code>431 → 6</code> という測定値が書かれていました。
-        私はその根拠を開いてみましたが、根拠が測ったトレースには拒否応答が1件もありませんでした。</p>
-        <p>先に留保をひとつ置きます。この記事が測ったのは<strong>サーバーが受け付けた TCP Connection の本数</strong>です。新たに生じた
-        Handshake が Harness の報告する遅延をどれだけ膨らませたかは測っていません。残りの留保は「この記事が主張しないこと」に
-        まとめました。</p>
 
         <h2 id="構成">どんな構成ですか</h2>
         <p>個人プロジェクトとして作っている GPUaaS プラットフォームには LLM の要求を受ける Gateway があり、その中に入場ガードが
@@ -401,7 +401,7 @@ if resp.StatusCode != http.StatusOK {
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=b14f1dbb62"></script>
+  <script src="../assets/content.js?v=24b6b547f7"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=d4af83b541"></script>

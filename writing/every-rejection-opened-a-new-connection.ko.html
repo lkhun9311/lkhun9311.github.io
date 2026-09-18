@@ -80,7 +80,6 @@
           <p class="toc-label">목차</p>
           <ul>
             <li><a href="#예상-독자">이 글의 예상 독자</a></li>
-            <li><a href="#무슨-내용인가요">무슨 내용인가요?</a></li>
             <li><a href="#어떤-서비스인가요">어떤 서비스인가요?</a></li>
             <li><a href="#처음엔">처음엔 Connection Pool이 이미 검증된 줄 알았습니다</a></li>
             <li><a href="#결론부터">결론부터 말씀드리자면</a></li>
@@ -95,22 +94,23 @@
         </nav>
       <article class="article-body">
 
+        <p>2026년 8월 15일에 브랜치를 올리자 푸시 훅이 codex와 Claude 리뷰를 돌렸고 지적 10건이 나왔습니다. 그중 두 건이
+        측정 도구 자체의 결함이었습니다. 이 글은 그 가운데 하나를 다룹니다.</p>
+
+        <p>지적은 짧았습니다. 벤치 Harness의 <code>Send</code>가 200이 아닌 응답의 Body를 읽지 않고 반환한다는 것이었습니다.
+        같은 파일의 주석에는 Connection Pool이 효과가 있다는 근거로 <code>431 → 6</code>이라는 측정값이 적혀 있었습니다.
+        저는 그 근거를 열어 봤고 근거가 잰 트레이스에는 거부 응답이 한 건도 없었습니다.</p>
+
+        <p>먼저 유보 하나. 이 글이 잰 것은 <strong>서버가 받아들인 TCP Connection의 개수</strong>입니다. 새로 생긴 Handshake가
+        Harness가 보고하는 지연을 얼마나 부풀렸는지는 재지 않았습니다. 나머지 유보는 「이 글이 주장하지 않는 것」에
+        모아 두었습니다.</p>
+
         <h2 id="예상-독자">이 글의 예상 독자</h2>
         <ul>
           <li>Go <code>net/http</code> 클라이언트로 부하 생성기나 벤치 Harness를 만드시는 분</li>
           <li>429 같은 거부 응답이 많이 나오는 시스템(Rate Limit, 입장 제어)을 재시는 분</li>
           <li>코드 주석이나 문서에 측정값을 근거로 적어 두시는 분</li>
         </ul>
-
-        <h2 id="무슨-내용인가요">무슨 내용인가요?</h2>
-        <p>2026년 8월 15일에 브랜치를 올리자 푸시 훅이 codex와 Claude 리뷰를 돌렸고 지적 10건이 나왔습니다. 그중 두 건이
-        측정 도구 자체의 결함이었습니다. 이 글은 그 가운데 하나를 다룹니다.</p>
-        <p>지적은 짧았습니다. 벤치 Harness의 <code>Send</code>가 200이 아닌 응답의 Body를 읽지 않고 반환한다는 것이었습니다.
-        같은 파일의 주석에는 Connection Pool이 효과가 있다는 근거로 <code>431 → 6</code>이라는 측정값이 적혀 있었습니다.
-        저는 그 근거를 열어 봤고 근거가 잰 트레이스에는 거부 응답이 한 건도 없었습니다.</p>
-        <p>먼저 유보 하나. 이 글이 잰 것은 <strong>서버가 받아들인 TCP Connection의 개수</strong>입니다. 새로 생긴 Handshake가
-        Harness가 보고하는 지연을 얼마나 부풀렸는지는 재지 않았습니다. 나머지 유보는 「이 글이 주장하지 않는 것」에
-        모아 두었습니다.</p>
 
         <h2 id="어떤-서비스인가요">어떤 서비스인가요?</h2>
         <p>개인 프로젝트로 만들고 있는 GPUaaS 플랫폼에는 LLM 요청을 받는 Gateway가 있고 그 안에 입장 가드가 있습니다.
@@ -390,7 +390,7 @@ if resp.StatusCode != http.StatusOK {
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=b14f1dbb62"></script>
+  <script src="../assets/content.js?v=24b6b547f7"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=d4af83b541"></script>

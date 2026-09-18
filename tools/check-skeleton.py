@@ -82,10 +82,18 @@ def main():
 #   1) 「무슨 내용인가요?」/「What this is about」/「どんな内容」 절 — **결론을 미리 뱉는 스포일러다.**
 #      23편에서 걷어냈다. 도입부 산문이 그 일을 하고, 유보는 「한계」 절이 받는다.
 #   2) 「범위.」/「Scope.」/「範囲.」 로 시작하는 도입 — 면책부터 읽히면 장면이 안 선다.
+#
+# ⚠️ 이 목록은 id 를 **정확히 일치**로만 본다. 그래서 같은 절이 이름만 달라지면 그대로 통과했다.
+# 2026-09-18 실측: 한국어 id(`무슨-내용인가요`)가 목록에 아예 없어 한국어판은 어떤 이름이든 통과했고,
+# 영어 `what-this-is` 와 일본어 `内容` 는 목록의 `what-this-is-about`·`どんな内容` 을 한 글자 차이로
+# 비껴가 있었다. 그 상태로 세 편 × 세 언어 9개가 남아 있었고, 새 글만 걸렸다.
+# 규약이 세 언어에 같이 적용된다면 검사도 세 언어를 같이 봐야 한다 — 그래서 넷을 더 넣고 9개를 정리했다.
 def check_openings():
     import glob as _g, os
     bad = []
-    SPOIL = ("what-is-in-here", "what-this-is-about", "どんな内容", "この記事の内容", "何の話")
+    SPOIL = ("what-is-in-here", "what-this-is-about", "what-this-is",
+             "どんな内容", "この記事の内容", "何の話", "内容",
+             "무슨-내용", "무슨-내용인가요")
     for p in sorted(_g.glob("writing/*.html")):
         if os.path.basename(p) == "index.html":
             continue
