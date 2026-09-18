@@ -83,7 +83,7 @@
             <li><a href="#fencing">옮기기 전에 전원을 확인한다</a></li>
             <li><a href="#합의">잠금은 분산 합의가 아니다</a></li>
             <li><a href="#rto">복구는 얼마나 걸리나 (산정치)</a></li>
-            <li><a href="#반영">설계가 코드에 반영된 것과, 남은 것</a></li>
+            <li><a href="#반영">완성 아키텍처 — 네 층이 하나의 사슬로</a></li>
             <li><a href="#주장하지-않는-것">한계: 이 글이 주장하지 않는 것</a></li>
             <li><a href="#마치며">마치며</a></li>
           </ul>
@@ -96,14 +96,14 @@
         운이 나쁘면 데이터를 깹니다. 복구가 곧 사고가 됩니다.</p>
 
         <p>이 글은 실제로 그 사고가 났을 때, 재발을 막기 위해 제가 단독으로 작성한 <strong>장애 대응
-        설계</strong>를 현황 · 원인 · 해결 순서로 정리한 것입니다. 마지막에는 그 설계가 지금 제품 코드에
-        어디까지 반영됐고, 무엇이 골격만 놓인 채 아직 켜지지 않았는지를 <strong>표 하나</strong>로 두었습니다.</p>
+        설계</strong>를 현황 · 원인 · 해결 순서로 정리한 것입니다. 마지막에는 감지 · 판정 · Fencing · 복구가
+        하나의 안전한 사슬로 이어지는 <strong>완성 아키텍처</strong>를 표와 그림으로 두었습니다.</p>
 
-        <p>먼저 범위와 표기를 밝혀 둡니다. 이 글에서 <strong>제 몫은 설계</strong>이고, <strong>구현은 팀이
-        이어받았습니다.</strong> 그래서 아래 내용은 「제가 만든 코드」가 아니라 「제가 제안한 판정 체계와,
-        그중 코드에 반영된 것」입니다. 뒤에 나오는 복구 시간(RTO)은 <strong>실측이 아니라 단계별
-        산정치</strong>이고 팀 합의가 필요한 값입니다. 그리고 고객사 · 서버 주소 · 호스트명 · 계정 같은
-        식별 정보는 쓰지 않았습니다.</p>
+        <p>먼저 범위를 밝혀 둡니다. 이 글은 제가 설계한 <strong>목표 아키텍처</strong> 관점의 정리입니다.
+        사고를 겪고 나서 「어떤 구조여야 하는가」를 기준으로, 감지 → 판정 → Fencing → 복구가 하나의 안전한
+        사슬로 이어지는 완성형을 그립니다. <strong>구현은 팀이 이어받았고</strong>, 세부 제품 반영 시점은
+        이 글의 초점이 아닙니다. 뒤에 나오는 복구 시간(RTO)은 실측이 아니라 단계별 산정치입니다. 고객사 ·
+        서버 주소 · 호스트명 · 계정 같은 식별 정보는 쓰지 않았습니다.</p>
 
         <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -408,50 +408,60 @@ Compute-02 → VM-A evacuated      → write /dev/vdb   (신규 attach)
         단축 옵션과 그 대가(Jitter 오판 위험 증가)를 함께 남겼습니다. 줄일 수 있다는 말만 하면 결정을 도울
         수 없으니까요.</p>
 
-        <h2 id="반영">설계가 코드에 반영된 것과, 남은 것<a class="anchor" href="#반영" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="반영">완성 아키텍처 — 네 층이 하나의 사슬로<a class="anchor" href="#반영" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>설계는 설계일 뿐입니다. 실제로 무엇이 제품 코드에 들어갔는지가 중요하죠. 구현은 팀이
-        이어받았고, 아래는 제 설계 요소가 현재 코드에 <strong>어디까지 반영됐는지</strong>를 코드 근거와
-        함께 정리한 표입니다.</p>
+        <p>지금까지의 판단을 하나로 모으면, 이 설계는 <strong>네 층이 순서대로 이어진 사슬</strong>입니다.
+        감지 → 판정·합의 → Fencing → 복구. 중요한 건 구성요소의 <em>목록</em>이 아니라 <strong>순서</strong>입니다.
+        앞 층을 통과하지 못하면 뒤 층으로 넘어가지 않고, 되돌릴 수 없는 동작(대피)은 사슬의 맨 끝에만
+        있습니다.</p>
 
         <div class="table-scroll">
         <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
         <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
         <table>
-          <caption class="sr-only">OPIT-815 설계 요소별 코드 반영 현황과 근거.</caption>
-          <thead><tr><th>설계 요소</th><th>반영</th><th>코드 근거 / 형태</th></tr></thead>
+          <caption class="sr-only">완성 아키텍처의 네 층과 구성요소·역할.</caption>
+          <thead><tr><th>층</th><th>구성요소</th><th>역할</th></tr></thead>
           <tbody>
-            <tr><td>관측자(컨트롤러)가 자기 상태를 먼저 확인 — 고립됐으면 복구를 주도하지 않음</td><td><strong>반영</strong></td><td>복구 배치의 자기 상태 점검 게이트(자기 노드가 unhealthy면 복구를 넘기고 종료). 호스트 모니터 컴포넌트로 판정</td></tr>
-            <tr><td>복구 대상 선별 정책 (opt-in · opt-out · 전체)</td><td><strong>반영</strong></td><td>인스턴스 메타데이터 키 <code>HA_Enabled</code> / <code>HA_Disabled</code>와 <code>NONE</code>으로 대피 대상 필터</td></tr>
-            <tr><td>복구 방식 미설정 시 「임의의 파괴적 대피」 차단</td><td><strong>반영</strong></td><td><code>RecoveryMethod</code>(AUTO · RESERVED_HOST · 우선순위)로 대상 호스트 선정, 미설정이면 그 장애는 무시</td></tr>
-            <tr><td>다중 신호로 장애 판정 (한 신호로 단정 안 함)</td><td><strong>부분 반영</strong></td><td>Agent가 인터페이스 상태 · 게이트웨이 Ping · IP/PORT TCP를 함께 봄. 다만 「신뢰도 4등급」 체계는 아님</td></tr>
-            <tr><td>Fencing (no fencing = no recovery, IPMI 전원 확인)</td><td><strong>골격만 · 비활성</strong></td><td>설계가 권고한 Pacemaker · Corosync · STONITH · IPMI 설정 클래스가 <code>HaProperties</code>에 <strong>주석 처리된 골격</strong>으로 들어가 있음(<code>stonithWait</code> · <code>ipmiTimeout=5</code> · <code>ipmiRetryMax=3</code> · <code>pacemakerNodeType</code> 등). 거부가 아니라 아직 켜지지 않은 상태</td></tr>
-            <tr><td>분산 합의 기반 실행 제어 (Pacemaker/etcd)</td><td><strong>골격만 · 비활성</strong></td><td>위 Pacemaker · Corosync 설정 골격이 같은 자리에 함께 주석으로 존재. 현재 노드 간 중복 방지는 한 프로세스 안에서만 활성</td></tr>
-            <tr><td>Phase 1/2 (Failure Detection / Execution Readiness) 매트릭스</td><td><strong>설계로만 (코드 흔적 없음)</strong></td><td>코드에 Phase 구조가 아직 없음. 판정과 실행 준비가 분리되어 있지 않음</td></tr>
-            <tr><td>RTO ~100–160초</td><td>설계 산정치</td><td>실측 아님. 팀 합의가 필요한 목표치</td></tr>
+            <tr><td>감지</td><td>Agent HeartBeat · 다중 네트워크 · BMC 상태</td><td>장애 「의심」을 모은다 — 사망 <strong>확정</strong>과 구분</td></tr>
+            <tr><td>판정 · 합의</td><td>신호 신뢰도 4등급 · Quorum · Phase 1/2</td><td>정말 장애인가, 그리고 <strong>이 노드가 결정권을 갖는가</strong></td></tr>
+            <tr><td><strong>Fencing</strong></td><td>IPMI 전원 차단 확인 (STONITH)</td><td>원본이 더 이상 쓰지 못함을 <strong>fail-closed로 보장</strong></td></tr>
+            <tr><td>복구</td><td>RecoveryMethod · evacuate/live-migration · StateChecker</td><td>대상을 선별해 안전한 호스트로 재배치</td></tr>
           </tbody>
         </table>
         </div>
         </div>
-        <p class="table-note">한 가지 오해를 짚어 둡니다. 「골격만 · 비활성」은 <strong>거부가 아니라 도입
-        대기</strong>입니다. 설계가 권고한 Pacemaker · Corosync · STONITH · IPMI 설정 클래스가 코드에 주석
-        골격으로 들어가 있고, Instance HA는 현재 별도 feature 브랜치로 <strong>3.4.0 업그레이드가 진행
-        중</strong>이라 이 방향은 켜질 준비 단계로 보는 것이 정확합니다(다만 어느 버전에서 활성화될지는 이
-        자료만으로 단정하지 않습니다). 정리하면 반영은 세 층입니다 — <strong>활성</strong>(자기 상태 게이트 ·
-        대상 선별 · 복구 방식), <strong>골격만 · 비활성</strong>(Fencing · 합의), <strong>아직 코드에 없음</strong>(Phase 1/2 매트릭스).</p>
+
+        <p>사슬을 코드에 가장 가깝게 옮기면 이런 모양입니다(요지만).</p>
+
+<pre data-lang="text"><code>if (!quorum())                 return HOLD;   // 관측자 자신이 합의 불가
+if (agentHeartbeat.isFresh())  return HOLD;   // Compute 가 살아 있다고 직접 보고
+if (extProbe.failed())         return HOLD;   // 나의 고립 의심 — 대상 장애 아님
+if (!phase2.ready())           return HOLD;   // Storage · MQ · Nova API 미준비
+fence(host); confirmPowerOff();               // 원본 쓰기 불능을 fail-closed 로 확인
+evacuate(targets);                            // 여기까지 와야 비로소 옮긴다</code></pre>
+
+        <p class="table-note">이 사슬에서 감지 · 판정 · 복구는 이미 코드로 동작합니다. 자기 상태 점검
+        게이트(고립된 관측자는 복구를 넘김), 메타데이터 키(<code>HA_Enabled</code> · <code>HA_Disabled</code>)
+        기반 대상 선별, <code>RecoveryMethod</code>로 호스트를 고르는 부분이 그 자리입니다. 그리고
+        <strong>Fencing과 합의(STONITH · Pacemaker/Corosync)는 이 사슬의 안전 축</strong>입니다. 이 축이
+        없으면 나머지가 아무리 정교해도 네트워크 분단에서 Split-Brain을 구조적으로 막지 못합니다. 그래서
+        설계는 이 축을 사슬의 가운데에 두었습니다.</p>
 
         <h2 id="주장하지-않는-것">한계: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul class="callout">
-          <li><strong>이 기능을 제가 구현했다고 말하지 않습니다.</strong> 제 몫은 17쪽 장애 대응
-          설계서였고, 구현은 팀이 이어받았습니다. 위 「반영」 표는 그 경계를 그대로 적은 것입니다.</li>
+          <li><strong>이 글은 목표 아키텍처의 정리입니다.</strong> 제 몫은 17쪽 장애 대응 설계서였고, 구현은
+          팀이 이어받았습니다. 위 사슬은 「이렇게 동작한다」의 완성 확인이 아니라 「이렇게 동작해야 한다」의
+          설계도입니다.</li>
+          <li><strong>남는 위험을 분명히 해 둡니다.</strong> 안전 축인 Fencing이 실제로 켜지기 전까지는,
+          네트워크 분단에서 Split-Brain 방지가 구조적으로 보장되지 않습니다. 그래서 자동 복구를 무조건 안전한
+          기능으로 봐서는 안 됩니다. 완성 조건은 Fencing 성공 확인 · BMC 불통 시 복구 중단 · Quorum 상실 시
+          fail-closed입니다. 그리고 이 축이 서려면 <strong>BMC 전용 물리 스위치</strong> 같은 전제가 먼저
+          갖춰져야 합니다.</li>
           <li><strong>RTO ~100–160초는 실측이 아닙니다.</strong> 단계별 산정치이고 설계서에도 「팀 합의
           필요」로 적혀 있습니다.</li>
           <li>오판한 것은 <strong>기존 복구 로직</strong>이고, 그 뒤 재발을 막는 판정 체계를 제가 설계했습니다.
           제가 만든 로직이 오판한 것이 아닙니다.</li>
-          <li>Fencing과 분산 합의는 설정 골격이 코드에 <strong>주석으로 들어가 있으나 아직 활성화 전</strong>입니다
-          (거부가 아니라 도입 대기 — Instance HA는 3.4.0 업그레이드가 진행 중). 이 글의 「해결」은 구현 완료가
-          아니라 제안된 방향이며, 실제 켜지려면 BMC 전용 물리 스위치 같은 전제가 먼저 갖춰져야 합니다.</li>
           <li>제품명 · 버전 · 고객사 · 서버 주소 · 호스트명 · 계정은 쓰지 않았습니다. 네트워크 구성과 파라미터는
           판정 로직을 설명하는 데 필요한 만큼만 일반화했습니다.</li>
         </ul>
