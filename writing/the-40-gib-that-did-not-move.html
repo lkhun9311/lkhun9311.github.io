@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>I Thought 40 GiB Was Moving. The Real Data Was 1.8 GiB. | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/the-40-gib-that-did-not-move.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/the-40-gib-that-did-not-move.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/the-40-gib-that-did-not-move.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/the-40-gib-that-did-not-move.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="I Thought 40 GiB Was Moving. The Real Data Was 1.8 GiB." />
+  <meta property="og:description" content="How I measured away my own first explanation for a slow snapshot, then filled a disk on purpose to watch snapshot time grow with the real data — and steepen at the top end." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/the-40-gib-that-did-not-move.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="I Thought 40 GiB Was Moving. The Real Data Was 1.8 GiB." />
+  <meta name="twitter:description" content="I measured away my own explanation for a slow snapshot, then filled a disk on purpose to watch the time grow with the real data." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="I measured away my own explanation for a slow snapshot, then filled a disk on purpose to watch snapshot time grow with the real data — and steepen at the top end." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"the-40-gib-that-did-not-move.html","ko":"the-40-gib-that-did-not-move.ko.html","ja":"the-40-gib-that-did-not-move.ja.html"}'>
+          <option value="en" selected>English</option>
+          <option value="ko">한국어</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>List</a>
+        <div class="article-meta"><span class="source-tag company notranslate">Company work</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS Backend</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>I Thought 40 GiB Was Moving. The Real Data Was 1.8 GiB.<br><span class="h1-sub">How I measured away my own first explanation for a slow snapshot, then filled a disk on purpose to watch snapshot time grow with the real data — and steepen at the top end.</span></h1>
+        <p class="article-date">September 2026</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="the-40-gib-that-did-not-move"></aside>
+        <nav class="article-toc" aria-label="Table of contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            <li><a href="#audience">Who this is for</a></li>
+            <li><a href="#first-model">The first model: 40 GiB flowing for three hours</a></li>
+            <li><a href="#before-i-believed">I measured twice before I believed it</a></li>
+            <li><a href="#real-data">The bytes were the real-data order of magnitude, not the provisioned size</a></li>
+            <li><a href="#slowest-link">The pace looked set by the slowest link</a></li>
+            <li><a href="#why-three-hours">So why three hours? I filled the disk to find out</a></li>
+            <li><a href="#two-layers">Two independent layers, fixed separately</a></li>
+            <li><a href="#not-claiming">Limits: what this post does not claim</a></li>
+            <li><a href="#closing">Closing</a></li>
+          </ul>
+        </nav>
+      <article class="article-body">
+
+        <p>On a hyper-converged farm that runs OpenStack with Ceph, a report came in that instance
+        snapshots were slow. Scheduled snapshots, it said, never finished and ended in failure. I wrote
+        an explanation of the cause first. I only found out that the core premise of that document was
+        wrong after I actually ran a snapshot and measured it. This post is <strong>the story of
+        measuring away my own first explanation</strong>, and of the picture I rebuilt in its place — by
+        filling a disk on purpose instead of papering over the gap with a guess.</p>
+
+        <p>One thing up front. This post strips out <strong>direct identifiers</strong> — customer names,
+        server addresses, hostnames, pool names, accounts, ticket numbers. I kept only the numbers needed
+        to explain the cause, and I tried to <strong>separate, sentence by sentence, what is confirmed
+        from what is still only a possibility.</strong> The most important sentence here is not the
+        conclusion; it is how one conclusion fell apart.</p>
+
+        <h2 id="audience">Who this is for<a class="anchor" href="#audience" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>Anyone chasing a "snapshots and backups are slow" report on block storage</li>
+          <li>Anyone curious how image format splits the boot and snapshot paths on a Ceph RBD backend</li>
+          <li>Anyone who has never checked a plausible-sounding root cause against code or packets</li>
+          <li>Anyone who likes splitting "slow" into two axes — <em>path</em> and <em>throughput</em></li>
+        </ul>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 232" role="img" aria-labelledby="mdl-t mdl-d" class="figure-svg">
+            <title id="mdl-t">The first model versus the measurement</title>
+            <desc id="mdl-d">A pink box on the left is the first model: the provisioned 40 GiB crosses the network whole, takes about three hours, exceeds the budget, and fails. A blue box on the right is the measurement: the instance's real usage is about 1.8 GiB, it finishes in about 3.3 to 3.8 minutes, and it stays within budget. Below, in pink: the full 40 GiB does not flow whole.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="54" width="316" height="120" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="198" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">First model (on paper)</text>
+              <text x="198" y="84" font-size="11.5" fill="#4a4a4a" text-anchor="middle">40 GiB sent whole</text>
+              <text x="198" y="110" font-size="11.5" fill="#4a4a4a" text-anchor="middle">about three hours</text>
+              <text x="198" y="136" font-size="11.5" fill="#4a4a4a" text-anchor="middle">over budget → FAILED</text>
+              <rect x="404" y="54" width="316" height="120" rx="12" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="562" y="44" font-size="12" fill="#4f5bd5" text-anchor="middle" font-weight="700">Measured (2 snapshots)</text>
+              <text x="562" y="84" font-size="11.5" fill="#4a4a4a" text-anchor="middle">real usage ~1.8 GiB</text>
+              <text x="562" y="110" font-size="11.5" fill="#4a4a4a" text-anchor="middle">about 3.3–3.8 min</text>
+              <text x="562" y="136" font-size="11.5" fill="#4a4a4a" text-anchor="middle">within budget</text>
+              <text x="360" y="206" font-size="11.5" fill="#d62976" text-anchor="middle">the full 40 GiB does not flow whole</text>
+            </g>
+          </svg>
+          <figcaption>Left is the explanation before measuring; right is after. What changed was not the conclusion but the premise.</figcaption>
+        </figure>
+
+        <h2 id="first-model">The first model: 40 GiB flowing for three hours<a class="anchor" href="#first-model" aria-label="Link to this section">#</a></h2>
+
+        <p>"Slow" usually splits into two axes. <strong>Path</strong> is what flows and how much of it;
+        <strong>throughput</strong> is how fast it flows. The first model joined the two like this.</p>
+
+        <p>First, the path. This farm keeps instance disks on Ceph block storage. But the fast copy there
+        — a copy-on-write clone — works <strong>only when the base image is raw</strong>. The base was
+        qcow2, so the clone breaks and the snapshot falls back to the slow standard path: extract to a
+        file, then upload it over HTTP. All of that is confirmed by the logs.</p>
+
+        <p>The next step was the problem. I wrote that <em>"during extract and upload, the empty regions
+        get filled with zeros, so the whole disk size — the provisioned 40 GiB — crosses the network."</em>
+        And since somewhere along that route sat a NIC negotiated down to 100 Mb, I reasoned that pushing
+        40 GiB through that narrow link would take hours and blow past the scheduler's budget.</p>
+
+        <p>Let me square the arithmetic. 40 GiB alone does not get you to three hours. Over a healthy link,
+        40 GiB is a little over an hour. To exceed three hours you need <strong>a second assumption</strong>
+        — that contention drops the link to roughly 3–4 MB/s — and the first model was quietly leaning on
+        it. Before I measured, I had verified neither assumption: not "40 GiB flows," and not "it drops to
+        a few MB/s."</p>
+
+        <p>It was a tidy explanation. The fallback was real and the slow NIC was real, so I had built a
+        plausible bridge between two true facts. <strong>The middle of that bridge — "the full 40 GiB
+        flows" — I had never measured.</strong></p>
+
+        <h2 id="before-i-believed">I measured twice before I believed it<a class="anchor" href="#before-i-believed" aria-label="Link to this section">#</a></h2>
+
+        <p>Before finalizing the document, I ran two real snapshots on exactly the kind of instance the
+        first model assumed: provisioned 40 GiB, real usage about 1.8 GiB, no parent image. While the
+        snapshot ran, I watched the node's NIC byte counters and the per-peer traffic together.</p>
+
+        <div class="table-scroll">
+        <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+        <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">Two snapshots on an identical instance: the first model's prediction versus the measurement.</caption>
+          <thead><tr><th>Item</th><th>First model's prediction</th><th>Measured (2 snapshots)</th></tr></thead>
+          <tbody>
+            <tr><td>Duration</td><td>~3 hours, over budget</td><td><strong>~196 s / 229 s (3.3–3.8 min)</strong></td></tr>
+            <tr><td>Result image data size</td><td>close to 40 GiB</td><td><strong>~1.8 GiB</strong> (format raw, provisioned 40 GiB)</td></tr>
+            <tr><td>Total network transfer</td><td>the full 40 GiB</td><td><strong>~6.8 GB</strong> (3.83 public + 3.00 cluster, both directions)</td></tr>
+            <tr><td>File-share share on the slow link</td><td>large (extract path is the file share)</td><td><strong>~15 MB</strong> (negligible by byte count)</td></tr>
+            <tr><td>Slow-link traffic</td><td>—</td><td>~3.0 GB / 229 s (RX+TX summed, per-direction saturation unconfirmed)</td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">The sample is two snapshots on an identical instance, and the traffic
+        breakdown is from the one run I instrumented in detail (229 s). The result image is format raw with
+        a logical size of 40 GiB, but the real data is about 1.8 GiB. The transfer figures are node NIC
+        byte deltas, summed across directions, so throughput and saturation cannot be pinned down before
+        the directions are separated. Under these conditions, <strong>the budget overrun did not
+        reproduce.</strong></p>
+
+        <p>All three of the first model's predictions missed at once. It was minutes, not three hours; it
+        was a few times the real data, not the full 40 GiB; and what filled the slow link was not the
+        extract's file share.</p>
+
+        <h2 id="real-data">The bytes were the real-data order of magnitude, not the provisioned size<a class="anchor" href="#real-data" aria-label="Link to this section">#</a></h2>
+
+        <p>The biggest miss was <strong>"the full 40 GiB flows."</strong> The total that actually crossed
+        the network was about 6.8 GB. That is the ~3.83 GB on the public NIC plus the ~3.00 GB on the
+        cluster NIC, <strong>summed across both directions</strong> — not a single 40 GiB stream. With
+        real data around 1.8 GiB and the total larger than that, it <em>reads as</em> the same data being
+        counted several times across extract, upload, and replication — but I could not measure how many
+        bytes each stage produced, so <strong>I am not claiming the per-stage breakdown.</strong> One
+        thing is clear: the empty regions ballooning to a full 40 GiB did not happen in these two runs.</p>
+
+        <p>That said, with only two samples of the same size, all I can claim here is that <strong>the
+        "full 40 GiB transfer" model was disproven.</strong> Whether the transfer scales exactly with data
+        size needs more runs on instances of different sizes.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 250" role="img" aria-labelledby="pth-t pth-d" class="figure-svg">
+            <title id="pth-t">The snapshot data path, redrawn from measurement</title>
+            <desc id="pth-d">Four boxes across the top, joined by arrows. First, block storage with about 1.8 GiB of real usage; second, a local extract; third, an HTTP upload over the public link; fourth, a 100 Mb cluster link that carries three replicas. Only the fourth box is highlighted in pink as the critical-path candidate. Below, in pink: the slowest link is the likely one, but per-direction measurement is needed.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="8" y="66" width="150" height="80" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="83" y="56" font-size="11" fill="#8a8a8a" text-anchor="middle">1. Block storage</text>
+              <text x="83" y="100" font-size="11" fill="#4a4a4a" text-anchor="middle">real ~1.8 GiB</text>
+              <text x="83" y="120" font-size="11" fill="#4a4a4a" text-anchor="middle">read</text>
+              <path d="M162 106 H 190" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#pth-a)"/>
+              <rect x="196" y="66" width="150" height="80" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="271" y="56" font-size="11" fill="#8a8a8a" text-anchor="middle">2. Local extract</text>
+              <text x="271" y="100" font-size="11" fill="#4a4a4a" text-anchor="middle">temp raw</text>
+              <text x="271" y="120" font-size="11" fill="#4a4a4a" text-anchor="middle">file share minor</text>
+              <path d="M350 106 H 378" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#pth-a)"/>
+              <rect x="384" y="66" width="150" height="80" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="459" y="56" font-size="11" fill="#4f5bd5" text-anchor="middle">3. HTTP upload</text>
+              <text x="459" y="100" font-size="11" fill="#4a4a4a" text-anchor="middle">public link 1 Gb</text>
+              <text x="459" y="120" font-size="11" fill="#4a4a4a" text-anchor="middle">not the bottleneck</text>
+              <path d="M538 106 H 566" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#pth-a)"/>
+              <rect x="572" y="60" width="148" height="92" rx="10" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="646" y="50" font-size="11" fill="#d62976" text-anchor="middle" font-weight="700">4. Replication</text>
+              <text x="646" y="94" font-size="11" fill="#4a4a4a" text-anchor="middle">3 replicas</text>
+              <text x="646" y="114" font-size="11" fill="#4a4a4a" text-anchor="middle">100 Mb link</text>
+              <text x="646" y="134" font-size="10.5" fill="#d62976" text-anchor="middle">critical-path candidate</text>
+              <text x="360" y="196" font-size="11.5" fill="#d62976" text-anchor="middle">the slowest link is likely, but per-direction measurement is needed</text>
+              <text x="360" y="220" font-size="10.5" fill="#8a8a8a" text-anchor="middle">stage 2's actual bytes are left unconfirmed — not measured per direction</text>
+            </g>
+            <defs>
+              <marker id="pth-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>Consistent with the same data being counted at each stage. A full 40 GiB transfer was not observed in these two runs.</figcaption>
+        </figure>
+
+        <p>The makeup of the slow link's traffic was also different from the first model. I had assumed the extract's
+        file share saturated it, but per peer that share was only 15 MB. Most of what I observed on the
+        link was <strong>traffic between the block-storage nodes.</strong> This pool keeps three replicas
+        and there are only three nodes, so this node is always on that path. So it looks like
+        replication-related traffic — but because the counter is summed, <strong>I could not pin down how
+        many replicas, in which direction, or whether the link was saturated.</strong></p>
+
+        <h2 id="slowest-link">The pace looked set by the slowest link<a class="anchor" href="#slowest-link" aria-label="Link to this section">#</a></h2>
+
+        <p>So what set the time? At first I estimated it as <em>"total 6.8 GB times the number of hops,
+        divided by the slow link"</em> — which gave about 10 minutes and did not match the measured 4.
+        6.8 GB is a counter summed across two NICs and both directions, so it is not a serial quantity.
+        The lesson here is plain: <strong>do not treat a summed counter as a serial transfer.</strong></p>
+
+        <p>A better frame is the critical path. In work where stages overlap, the finish time is usually
+        set by the longest dependency chain, and a slow link is a strong candidate to be in that chain.
+        Here the slowest link is the cluster NIC negotiated at 100 Mb; the traffic observed on it was about
+        3.0 GB, and the link throughput measured by a load tool was about 11.5 MB/s. Dividing 3.0 GB by
+        11.5 MB/s gives about 260 seconds.</p>
+
+        <blockquote><p>260 seconds is <strong>a rough estimate that only shares an order of magnitude</strong>
+        with the measured 196–229 seconds. I cannot promote it to a fact. 3.0 GB is a summed-direction
+        figure and 11.5 MB/s is a one-way throughput, so they do not belong in the same equation to begin
+        with. In fact, 3.0 GB over 229 seconds is 13.1 MB/s, above the 100 Mb physical ceiling of 12.5
+        MB/s — and that overshoot is itself proof that 3.0 GB cannot be used as a one-way serial quantity.
+        The gap between 260 seconds and the measurement I also <em>cannot explain</em>, without
+        per-direction counters and a per-stage timeline.</p></blockquote>
+
+        <p>Something still holds, though: <strong>neither 40 GiB nor 3 MB/s was needed.</strong> A real
+        slow link, carrying traffic on the order of the real data — that much was observed, and the first
+        model's two inflated premises collapse without either. Still, "the slowest link sets the time" is a
+        <strong>strong hypothesis</strong>, not a fact: until I measure per-direction bytes, neither the
+        critical path nor the saturation is settled.</p>
+
+        <p>One number deserves care. 11.5 MB/s is not the link's physical ceiling; it is the effective
+        throughput (goodput) measured by a load tool, while the 100 Mb physical equivalent is 12.5 MB/s.
+        Those are different values. Retransmits also showed up in the forward test, but I did not measure
+        their ratio against the total segment count, so <strong>I am not judging whether that is a lot or
+        the link is healthy.</strong> What is confirmed is that the negotiated speed was 100 Mb; the cause
+        of that, and the retransmit rate, I left as separate items to check.</p>
+
+        <h2 id="why-three-hours">So why three hours? I filled the disk to find out<a class="anchor" href="#why-three-hours" aria-label="Link to this section">#</a></h2>
+
+        <p>Here I have to be honest once more. The original report was that snapshots never finished and
+        failed, yet my first two measurements finished cleanly in minutes — because the instance's real
+        usage was small. On the spot I had just cleared, I could have laid down another guess:
+        <em>"probably it was a large instance."</em> To avoid that, this time I asked the question by
+        filling the data myself: <strong>as real data grows, how does snapshot time grow?</strong></p>
+
+        <p>I created a new instance, filled the disk step by step with sequential writes, and timed a
+        snapshot at each step. These are three direct measurements, not an extrapolation.</p>
+
+        <div class="table-scroll">
+        <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+        <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+        <table>
+          <caption class="sr-only">Three snapshot durations measured while filling real data directly.</caption>
+          <thead><tr><th>Real data filled</th><th>Snapshot duration</th><th>Per GiB</th></tr></thead>
+          <tbody>
+            <tr><td>1.8 GiB</td><td>~3.8 min (229 s)</td><td>~127 s</td></tr>
+            <tr><td>5.7 GiB</td><td>~11.7 min (699 s)</td><td>~123 s</td></tr>
+            <tr><td><strong>11 GiB</strong></td><td><strong>~29.7 min (1,784 s)</strong></td><td><strong>~162 s</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">All three are direct measurements (not extrapolation). The data I wrote was
+        near-incompressible random bytes, so it is actually a harsher condition than real OS data. The
+        per-GiB time rising again at 11 GiB is the signal of a possible super-linear trend.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 300" role="img" aria-labelledby="scl-t scl-d" class="figure-svg">
+            <title id="scl-t">Snapshot time measured while filling real data directly</title>
+            <desc id="scl-d">Three bars. Real usage of 1.8 GiB is about 3.8 minutes, 5.7 GiB is about 11.7 minutes, and 11 GiB is about 29.7 minutes. The 11 GiB bar on the right is highlighted in pink; per-GiB time goes 127 s, 123 s, then up to 162 s, showing a possible super-linear trend.</desc>
+            <g font-family="Inter, sans-serif">
+              <line x1="90" y1="250" x2="660" y2="250" stroke="#c9c9c9" stroke-width="1.4"/>
+              <rect x="120" y="226.25" width="96" height="23.75" rx="4" fill="#4f5bd5" opacity="0.85"/>
+              <text x="168" y="219" font-size="11.5" fill="#4a4a4a" text-anchor="middle">3.8 min</text>
+              <text x="168" y="268" font-size="11" fill="#4a4a4a" text-anchor="middle">1.8 GiB</text>
+              <text x="168" y="284" font-size="10" fill="#8a8a8a" text-anchor="middle">127 s/GiB</text>
+              <rect x="310" y="176.9" width="96" height="73.1" rx="4" fill="#4f5bd5" opacity="0.85"/>
+              <text x="358" y="170" font-size="11.5" fill="#4a4a4a" text-anchor="middle">11.7 min</text>
+              <text x="358" y="268" font-size="11" fill="#4a4a4a" text-anchor="middle">5.7 GiB</text>
+              <text x="358" y="284" font-size="10" fill="#8a8a8a" text-anchor="middle">123 s/GiB</text>
+              <rect x="500" y="64.4" width="96" height="185.6" rx="4" fill="#d62976" opacity="0.9"/>
+              <text x="548" y="57" font-size="11.5" fill="#d62976" text-anchor="middle" font-weight="700">29.7 min</text>
+              <text x="548" y="268" font-size="11" fill="#4a4a4a" text-anchor="middle">11 GiB</text>
+              <text x="548" y="284" font-size="10" fill="#d62976" text-anchor="middle">162 s/GiB</text>
+            </g>
+          </svg>
+          <figcaption>Measured three times while filling real data directly. Time grows with the data, and at 11 GiB the per-GiB cost starts to climb.</figcaption>
+        </figure>
+
+        <p>The pattern read like this. Across the first two points (1.8 → 5.7 GiB), time was roughly
+        proportional to data; at 11 GiB the per-GiB time rose, hinting at a <strong>possible super-linear
+        trend.</strong> With only three points and no repeats I cannot pin down the functional form, but
+        the fact that <strong>11 GiB is already 30 minutes</strong> stands. From there, a few times more
+        data and it could approach or exceed the scheduler's waiting budget.</p>
+
+        <p>I also picked up a clue about why it is slow. The write speed to fill the disk itself was only
+        <strong>4–8 MB/s</strong> — below even the link throughput measured by the load tool (11.5 MB/s).
+        It looks related to replication (three copies) traversing that slow link with disk sync on top, but
+        the critical path is, as noted, still a hypothesis. Either way, at that speed, filling 40–50 GiB
+        alone takes roughly 1.5–3.7 hours. One aside: this instance took <strong>6 minutes just to
+        boot</strong> — possibly related to the same slow path (the cause is still pending a raw comparison
+        and post-deployment verification).</p>
+
+        <p>So the "three hours" in the original report was <em>probably</em> not a wild number. If so, the
+        reason differs from what I first wrote. It is closer to <strong>tens of GiB of real data crossing a
+        slow write path</strong>, not 40 GiB of empty space flowing. This picture is consistent with the
+        controlled experiment, but confirming it on the actual instance means looking at its real usage,
+        host, and timestamp.</p>
+
+        <p>Let me be clear about the limit, too. I did not run the <em>literal</em> reproduction of filling
+        tens of GiB — filling that much alone takes hours. So "tens of GiB overruns the budget" is
+        <strong>supported</strong> by the trend up to 11 GiB and the measured write speed, but not nailed
+        down by a single literal measurement. And the actual failed instance's real usage, host, and
+        timestamp remain unchecked.</p>
+
+        <h2 id="two-layers">Two independent layers, fixed separately<a class="anchor" href="#two-layers" aria-label="Link to this section">#</a></h2>
+
+        <p>The picture the measurements produced is <strong>two independent layers.</strong> Format and
+        link are different problems and have to be fixed separately.</p>
+
+        <ul class="callout">
+          <li><strong>Format (qcow2 → raw).</strong> Re-registering the base as raw should, I
+          <strong>expect</strong>, avoid the slow standard path and use the storage's internal clone path
+          instead. I have not yet verified that in this environment with post-deployment logs. And the
+          effect reaches <strong>only instances newly booted from that raw image</strong>; it does not
+          apply retroactively to existing instances already copied without a parent. It is a structural
+          improvement for instances to come, not an instant fix for the slow ones now.</li>
+          <li><strong>Link (100 Mb → 1 G).</strong> Raising the slow cluster link would likely relieve the
+          slow link observed now. But how much it drove the finish time is still unconfirmed, and after the
+          change I would have to re-measure whether disk, OSD, or upstream network reveals a different
+          bottleneck. Also, when real data is small the link being slow does not overrun the budget, so the
+          gain from this shows up mainly on large-data instances.</li>
+          <li><strong>Temporary mitigation.</strong> Switching the upload format to a compressed one might
+          reduce the transfer, but it depends on compressibility, sparse handling, and the conversion path,
+          so it is <strong>unverified</strong> in this environment. Even if it helps, with small real data
+          the absolute savings may be limited — and I did not measure it here. Something to judge after
+          re-measuring.</li>
+        </ul>
+
+        <p>All three are things to handle at the infrastructure, image, or configuration layer.
+        <strong>These measurements turned up no evidence pointing to a defect in the application or
+        scheduler code.</strong></p>
+
+        <h2 id="not-claiming">Limits: what this post does not claim<a class="anchor" href="#not-claiming" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>No customer, versions, ticket numbers, server addresses, or accounts — platform names appear only
+          as far as the explanation needs. Numbers are generalized to what the explanation needs.</li>
+          <li>The core sample is two snapshots on an identical instance; behavior by data size was measured
+          separately with a three-point controlled experiment. Behavior on other nodes or under concurrent
+          load was not measured.</li>
+          <li>I <strong>did not reproduce "three hours" literally</strong> (filling tens of GiB was skipped
+          this time). It is only supported by the per-GiB rise at 11 GiB among the three filled points (a
+          possible super-linear trend) and the measured write speed; there is no single literal
+          measurement yet. The actual failed instance's real usage, host, and timestamp are also
+          unchecked.</li>
+          <li>The actual bytes produced by the extract stage, the link's per-direction saturation, and the
+          contention cost of file share versus replication are left unconfirmed — not measured per
+          direction. I am not asserting causation.</li>
+          <li>That re-registering as raw speeds up snapshots applies only to <strong>newly booted
+          instances</strong>, and it is a prediction to re-check with post-deployment logs.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="closing">Closing<a class="anchor" href="#closing" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>A bridge laid between two true facts can itself be false. The fallback was real and the slow
+          link was real, but "40 GiB flows" I had never measured.</li>
+          <li>Treat a summed counter as a serial transfer and the time will not add up. Finish time is set
+          by the longest dependency chain, and whether the slow link is that chain cannot be settled before
+          you measure per-direction bytes.</li>
+          <li>Effective throughput (goodput) and the physical ceiling are different values. And a
+          direction-summed counter alone cannot even settle whether the link was saturated.</li>
+          <li>When a symptom does not reproduce, you can build the condition yourself and ask again instead
+          of inventing one more plausible cause. Filling the data showed the user's direction was
+          consistent, and only my stated mechanism was wrong.</li>
+        </ul>
+
+        <p>The cause of a slow snapshot can be finished inside a document. The trouble is that the more
+        polished it gets, the less you want to measure it. I measured twice right before finalizing, and
+        three predictions missed at once. Then, instead of filling the gap with another guess, I poured in
+        real data — and this time the numbers pointed the way themselves. I am glad I measured.</p>
+
+        <p>Thanks for reading.</p>
+        </div>
+
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=8f8cf45e12"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

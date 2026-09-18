@@ -3,29 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>40 GiB가 흐르는 줄 알았는데 실측은 1.8 GiB였습니다 | Kwanghun Lee</title>
+  <title>40 GiB가 흐르는 줄 알았는데, 실제 데이터는 1.8 GiB뿐이었습니다 | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
   <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/the-40-gib-that-did-not-move.html" />
   <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/the-40-gib-that-did-not-move.ko.html" />
-  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/the-40-gib-that-did-not-move.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/the-40-gib-that-did-not-move.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/the-40-gib-that-did-not-move.html" />
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="40 GiB가 흐르는 줄 알았는데 실측은 1.8 GiB였습니다" />
-  <meta property="og:description" content="스냅샷이 세 시간 걸린다는 첫 모델을 실측으로 반증한 기록입니다. 전송량은 프로비저닝 크기가 아니라 실데이터 규모를 따라갔고, '세 시간'의 원인은 아직 열려 있습니다." />
+  <meta property="og:title" content="40 GiB가 흐르는 줄 알았는데, 실제 데이터는 1.8 GiB뿐이었습니다" />
+  <meta property="og:description" content="스냅샷이 세 시간 걸린다던 제 첫 설명을 실측으로 지우고, 데이터를 직접 채워 스냅샷 시간이 데이터 크기를 따라 늘고, 큰 쪽에서 단위 시간이 더 붙는 것까지 본 기록입니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:url" content="https://lkhun9311.github.io/writing/the-40-gib-that-did-not-move.ko.html" />
   <meta property="og:locale" content="ko_KR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="40 GiB가 흐르는 줄 알았는데 실측은 1.8 GiB였습니다" />
-  <meta name="twitter:description" content="느린 스냅샷의 첫 모델을 실측으로 반증한 기록입니다. 전송량은 프로비저닝이 아니라 실데이터 규모를 따라갔고, '세 시간'의 원인은 아직 열려 있습니다." />
+  <meta name="twitter:title" content="40 GiB가 흐르는 줄 알았는데, 실제 데이터는 1.8 GiB뿐이었습니다" />
+  <meta name="twitter:description" content="느린 스냅샷의 첫 설명을 실측으로 지우고, 데이터를 직접 채워 스냅샷 시간이 데이터 크기를 따라 늘고, 큰 쪽에서 단위 시간이 더 붙는 것까지 본 기록입니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="느린 스냅샷의 첫 모델을 실측으로 반증한 기록입니다. 전송량은 프로비저닝이 아니라 실데이터 규모를 따라갔고, '세 시간'의 원인은 아직 열려 있습니다." />
+  <meta name="description" content="느린 스냅샷의 첫 설명을 실측으로 지우고, 데이터를 직접 채워 스냅샷 시간이 데이터 크기를 따라 늘고, 큰 쪽에서 단위 시간이 더 붙는 것까지 본 기록입니다." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -35,7 +39,7 @@
       <a class="site-name" href="../index.html#about">Kwanghun</a>
       <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
         <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
-                data-authored='{"ko":"the-40-gib-that-did-not-move.ko.html"}'>
+                data-authored='{"en":"the-40-gib-that-did-not-move.html","ko":"the-40-gib-that-did-not-move.ko.html","ja":"the-40-gib-that-did-not-move.ja.html"}'>
           <option value="ko" selected>한국어</option>
           <option value="en">English</option>
           <option value="ja">日本語</option>
@@ -68,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div>
       </div>
       <section class="page-hero">
-        <h1>40 GiB가 흐르는 줄 알았는데 실측은 1.8 GiB였습니다<br><span class="h1-sub">스냅샷이 세 시간 걸린다는 첫 모델을 실측으로 반증한 기록입니다. 전송량은 프로비저닝 크기가 아니라 실데이터 규모를 따라갔고, ‘세 시간’의 원인은 아직 열려 있습니다.</span></h1>
+        <h1>40 GiB가 흐르는 줄 알았는데, 실제 데이터는 1.8 GiB뿐이었습니다<br><span class="h1-sub">스냅샷이 세 시간 걸린다던 제 첫 설명을 실측으로 지우고, 데이터를 직접 채워 스냅샷 시간이 데이터 크기를 따라 늘고, 큰 쪽에서 단위 시간이 더 붙는 것까지 본 기록입니다.</span></h1>
         <p class="article-date">2026년 9월</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="the-40-gib-that-did-not-move"></aside>
@@ -80,7 +84,7 @@
             <li><a href="#믿기-전에">믿기 전에 두 번 재 봤습니다</a></li>
             <li><a href="#실데이터-비례">전송량은 실데이터 쪽 자릿수였습니다</a></li>
             <li><a href="#가장-느린-링크">속도를 정한 것은 가장 느린 링크였습니다</a></li>
-            <li><a href="#세-시간">그런데 왜 세 시간이었나</a></li>
+            <li><a href="#세-시간">그런데 왜 세 시간이었나 — 직접 채워 봤습니다</a></li>
             <li><a href="#두-겹">두 겹을 따로 고칩니다</a></li>
             <li><a href="#주장하지-않는-것">한계: 이 글이 주장하지 않는 것</a></li>
             <li><a href="#마치며">마치며</a></li>
@@ -91,7 +95,8 @@
         <p>OpenStack과 Ceph를 함께 쓰는 하이퍼컨버지드 팜에서 인스턴스 스냅샷이 느리다는 이야기가
         올라왔습니다. 예약 스냅샷이 완료되지 못하고 실패로 끝난다고 했습니다. 저는 원인을 설명하는
         문서를 먼저 썼습니다. 그 문서의 핵심 전제가 틀렸다는 걸, 실제 스냅샷을 재 보고 나서야 알았습니다.
-        이 글은 <strong>제가 세운 첫 모델을 실측으로 반증한 과정</strong>과, 그 자리에 대신 세운 모델입니다.</p>
+        이 글은 <strong>제가 세운 첫 설명을 실측으로 지운 과정</strong>과, 추측으로 메우는 대신 데이터를
+        직접 채워 다시 세운 그림입니다.</p>
 
         <p>먼저 밝혀 둘 것이 있습니다. 이 글은 고객명·서버 주소·호스트명·풀 이름·계정·티켓 번호 같은
         <strong>직접 식별자를 지웠습니다.</strong> 수치는 원인을 설명하는 데 필요한 것만 남겼습니다. 그리고
@@ -269,19 +274,80 @@
         건강 상태는 단정하지 않았습니다.</strong> 협상 속도가 100Mb로 잡혔다는 사실까지가 확정이고, 그
         원인과 재전송률은 별도 확인 대상으로 남겼습니다.</p>
 
-        <h2 id="세-시간">그런데 왜 세 시간이었나<a class="anchor" href="#세-시간" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="세-시간">그런데 왜 세 시간이었나 — 직접 채워 봤습니다<a class="anchor" href="#세-시간" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>여기서 정직해야 합니다. 처음 신고는 분명 스냅샷이 완료되지 못하고 실패했다는 것이었는데,
-        제 계측에서는 그 실패가 재현되지 않았습니다. <strong>이 글은 ‘세 시간’의 원인을 확정하지
-        못했습니다.</strong> 확정하지 못한 것을 확정한 것처럼 적지 않는 것이, 틀린 다리를 하나 더 놓지
-        않는 유일한 방법입니다.</p>
+        <p>여기서 한 번 더 정직해야 합니다. 처음 신고는 스냅샷이 끝내 완료되지 못하고 실패했다는
+        것이었는데, 앞의 두 번은 몇 분 만에 멀쩡히 끝났습니다. 실사용이 작은 인스턴스였으니까요. 첫 설명을
+        지운 자리에 <em>‘아마 데이터가 큰 인스턴스였겠지’</em> 하고 또 추측을 얹을 수도 있었습니다.
+        그러지 않으려고, 이번엔 데이터를 직접 채워서 물었습니다. <strong>실데이터가 커지면 스냅샷 시간은
+        어떻게 늘어나는가.</strong></p>
 
-        <p>다만 실측은 가능성 하나를 가리킵니다. 전송량이 실데이터 규모를 따라간다면, 실패했던 인스턴스가
-        이번 표본보다 훨씬 많은 데이터를 쓰고 있었을 때 같은 100Mb 링크에서 시간이 크게 늘어 예산을
-        넘겼을 수 있습니다. 다만 시간이 데이터에 <em>얼마나</em> 늘어나는지는 크기가 다른 인스턴스로 더
-        재 봐야 알 수 있고, 다른 팜이나 동시 부하 조건이었을 가능성도 남습니다. 이것을 확정하려면
-        <strong>실패했던 그 인스턴스의 실사용량과 호스트, 시각</strong>을 봐야 합니다. 그것이 이 조사의
-        다음 한 걸음입니다.</p>
+        <p>새 인스턴스를 하나 만들고, 디스크에 순차 쓰기로 실데이터를 단계별로 채운 뒤 각 단계에서 스냅샷
+        시간을 쟀습니다. 외삽이 아니라 세 점 모두 직접 측정입니다.</p>
+
+        <div class="table-scroll">
+        <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+        <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+        <table>
+          <caption class="sr-only">실데이터를 직접 채우며 잰 스냅샷 소요 3점.</caption>
+          <thead><tr><th>채운 실데이터</th><th>스냅샷 소요</th><th>1 GiB당</th></tr></thead>
+          <tbody>
+            <tr><td>1.8 GiB</td><td>약 3.8분 (229초)</td><td>약 127초</td></tr>
+            <tr><td>5.7 GiB</td><td>약 11.7분 (699초)</td><td>약 123초</td></tr>
+            <tr><td><strong>11 GiB</strong></td><td><strong>약 29.7분 (1,784초)</strong></td><td><strong>약 162초</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+        </div>
+        <p class="table-note">세 점 모두 직접 측정입니다(외삽 아님). 채운 데이터는 압축이 거의 안 되는
+        난수라, 실제 OS 데이터보다 오히려 불리한 조건입니다. ‘1 GiB당’ 시간이 11 GiB에서 다시 커지는 것이
+        초선형 가능성의 신호입니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 300" role="img" aria-labelledby="scl-t scl-d" class="figure-svg">
+            <title id="scl-t">실데이터를 직접 채워 잰 스냅샷 시간</title>
+            <desc id="scl-d">막대 세 개입니다. 실사용 1.8 GiB는 약 3.8분, 5.7 GiB는 약 11.7분, 11 GiB는 약 29.7분입니다. 오른쪽 11 GiB 막대가 분홍색으로 강조돼 있고, 1 GiB당 시간이 127초에서 123초로 비슷하다가 11 GiB에서 162초로 늘어 초선형 가능성을 보입니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <line x1="90" y1="250" x2="660" y2="250" stroke="#c9c9c9" stroke-width="1.4"/>
+              <rect x="120" y="226.25" width="96" height="23.75" rx="4" fill="#4f5bd5" opacity="0.85"/>
+              <text x="168" y="219" font-size="11.5" fill="#4a4a4a" text-anchor="middle">3.8분</text>
+              <text x="168" y="268" font-size="11" fill="#4a4a4a" text-anchor="middle">1.8 GiB</text>
+              <text x="168" y="284" font-size="10" fill="#8a8a8a" text-anchor="middle">127 s/GiB</text>
+              <rect x="310" y="176.9" width="96" height="73.1" rx="4" fill="#4f5bd5" opacity="0.85"/>
+              <text x="358" y="170" font-size="11.5" fill="#4a4a4a" text-anchor="middle">11.7분</text>
+              <text x="358" y="268" font-size="11" fill="#4a4a4a" text-anchor="middle">5.7 GiB</text>
+              <text x="358" y="284" font-size="10" fill="#8a8a8a" text-anchor="middle">123 s/GiB</text>
+              <rect x="500" y="64.4" width="96" height="185.6" rx="4" fill="#d62976" opacity="0.9"/>
+              <text x="548" y="57" font-size="11.5" fill="#d62976" text-anchor="middle" font-weight="700">29.7분</text>
+              <text x="548" y="268" font-size="11" fill="#4a4a4a" text-anchor="middle">11 GiB</text>
+              <text x="548" y="284" font-size="10" fill="#d62976" text-anchor="middle">162 s/GiB</text>
+            </g>
+          </svg>
+          <figcaption>실데이터를 직접 채우며 세 번 쟀습니다. 시간은 데이터가 커질수록 함께 늘고, 11 GiB에서는 1 GiB당 시간까지 붙습니다.</figcaption>
+        </figure>
+
+        <p>패턴은 이렇게 읽혔습니다. 첫 두 점(1.8 → 5.7 GiB)에서는 시간이 데이터에 거의 비례했고, 11 GiB
+        점에서는 1 GiB당 시간까지 늘어 <strong>초선형 가능성</strong>이 보였습니다. 세 점뿐이고 반복 측정도
+        없어 함수 형태를 못 박을 수는 없지만, <strong>11 GiB에서 이미 30분</strong>이라는 사실은 그대로입니다.
+        여기서 데이터가 몇 배 더 커지면, 스케줄러가 기다려 주는 예산에 다가가거나 넘길 수 있습니다.</p>
+
+        <p>왜 느린지에 대한 단서도 하나 얻었습니다. 디스크를 채우는 쓰기 속도 자체가 <strong>초당 4~8
+        MB</strong>밖에 나오지 않았습니다. 부하 측정 도구로 잰 링크 처리량(초당 11.5 MB)보다도 낮습니다.
+        사본을 세 벌 만드는 복제가 그 느린 링크를 거치고 디스크 동기화가 얹히는 것과 관련돼 보이지만, 임계
+        경로는 앞서 말한 대로 아직 가설입니다. 어느 쪽이든 이 속도라면 40~50 GiB를 채우는 데만 대략
+        1.5~3.7시간이 걸립니다. 곁다리 관찰 하나. 이 인스턴스는
+        <strong>부팅에만 6분</strong>이 걸렸는데, 같은 느린 경로와 관련됐을 가능성이 있습니다(원인은 아직
+        raw 대조·배포 후 검증 전입니다).</p>
+
+        <p>그러니 처음 신고의 ‘세 시간’은 허황된 숫자가 아니었을 <em>가능성</em>이 큽니다. 다만 그렇다면
+        이유는 제가 처음 적은 것과 다릅니다. 40 GiB의 빈 공간이 흐른 게 아니라, <strong>수십 GiB의 진짜
+        데이터가 느린 쓰기 경로를 지났다</strong>는 그림에 가깝습니다. 이 그림은 통제 실험과 부합하지만,
+        실제 그 인스턴스로 확정하려면 실사용량·호스트·시각을 봐야 합니다.</p>
+
+        <p>남길 한계도 분명히 해 둡니다. 실데이터를 수십 GiB까지 채운 <em>리터럴</em> 재현은 이번에 하지
+        않았습니다. 그 크기를 채우는 데만 몇 시간이 걸리기 때문입니다. 그래서 ‘수십 GiB면 예산을 넘긴다’는
+        11 GiB까지의 측정 추세와 쓰기 속도로 <strong>뒷받침</strong>될 뿐, 단일 리터럴 측정으로 못 박은
+        것은 아닙니다. 실제로 실패한 그 인스턴스의 실사용량·호스트·시각도 아직 확인 전입니다.</p>
 
         <h2 id="두-겹">두 겹을 따로 고칩니다<a class="anchor" href="#두-겹" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -311,12 +377,14 @@
         <h2 id="주장하지-않는-것">한계: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul class="callout">
-          <li>제품명·버전·고객사·티켓 번호·서버 주소·계정은 쓰지 않았습니다. 수치는 원인 설명에
-          필요한 만큼만 일반화했습니다.</li>
-          <li>표본은 동일 조건 인스턴스의 스냅샷 2건입니다. 다른 데이터 크기·다른 노드·부하 조건에서의
-          거동은 재지 않았습니다.</li>
-          <li>‘세 시간’의 원인은 확정하지 못했습니다. 이 표본에서 예산 초과는 재현되지 않았고, 큰
-          실데이터·다른 팜·동시 부하는 가능성으로만 적었습니다.</li>
+          <li>고객사·버전·티켓 번호·서버 주소·계정 같은 식별 정보는 쓰지 않았습니다(플랫폼 이름은 설명에
+          필요한 만큼만 남겼습니다). 수치는 원인 설명에 필요한 만큼만 일반화했습니다.</li>
+          <li>핵심 표본은 동일 조건 스냅샷 2건이고, 데이터 크기별 거동은 통제 실험 3점으로 따로
+          쟀습니다. 다른 노드·동시 부하 조건에서의 거동은 재지 않았습니다.</li>
+          <li>‘세 시간’을 <strong>리터럴로 재현하지는 않았습니다</strong>(수십 GiB를 채우는 실험이라
+          이번엔 생략). 직접 채운 세 점 중 11 GiB에서 1 GiB당 시간이 늘어난 것(초선형 가능성)과 측정된
+          쓰기 속도로 뒷받침했을 뿐, 단일 리터럴 측정은 아직 없습니다. 실제 실패 인스턴스의 실사용량·호스트·시각도
+          확인 전입니다.</li>
           <li>추출 구간이 만든 실제 바이트, 링크의 방향별 포화율, 파일 공유와 복제의 동시 경합 비용은
           아직 방향별로 계측하지 못해 미확정으로 두었습니다. 인과로 단정하지 않았습니다.</li>
           <li>raw 재등록이 스냅샷을 빠르게 만든다는 것은 <strong>새로 부팅한 인스턴스</strong>에 한한
@@ -333,13 +401,15 @@
           정하는데, 느린 링크가 그 사슬인지는 방향별 바이트를 재기 전엔 확정할 수 없습니다.</li>
           <li>실효 처리량(goodput)과 물리 상한은 다른 값입니다. 그리고 방향을 합친 카운터만으로는
           포화 여부조차 단정할 수 없습니다.</li>
-          <li>재현되지 않은 증상은 재현되지 않았다고 적는 편이, 그럴듯한 원인을 하나 더 지어내는
-          것보다 멀리 갑니다.</li>
+          <li>증상이 재현되지 않을 땐, 그럴듯한 원인을 하나 더 지어내는 대신 조건을 직접 만들어 다시
+          물을 수 있습니다. 데이터를 채워 재보니 사용자가 가리킨 방향과 부합했고, 제가 적은 메커니즘은
+          틀렸습니다.</li>
         </ul>
 
         <p>느린 스냅샷의 원인은 문서 안에서 완성될 수 있습니다. 문제는 그 완성도가 높을수록 재 보기가
-        더 싫어진다는 것입니다. 저는 확정 직전에 두 번 재 봤고, 세 예측이 한꺼번에 빗나갔습니다.
-        재 보길 잘했습니다.</p>
+        더 싫어진다는 것입니다. 저는 확정 직전에 두 번 재 봤고, 세 예측이 한꺼번에 빗나갔습니다. 그리고
+        빈자리를 또 다른 추측으로 채우는 대신 데이터를 직접 부어 봤더니, 이번엔 숫자가 답의 방향을
+        가리켰습니다. 재 보길 잘했습니다.</p>
 
         <p>읽어 주셔서 감사합니다.</p>
         </div>
