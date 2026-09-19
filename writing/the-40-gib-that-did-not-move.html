@@ -79,7 +79,7 @@
         <nav class="article-toc" aria-label="Table of contents">
           <p class="toc-label">Contents</p>
           <ul>
-            <li><a href="#audience">Who this is for</a></li>
+            <li><a href="#who-this-is-for">Who this is for</a></li>
             <li><a href="#first-model">The first model: 40 GiB flowing for three hours</a></li>
             <li><a href="#before-i-believed">I measured twice before I believed it</a></li>
             <li><a href="#real-data">The bytes were the real-data order of magnitude, not the provisioned size</a></li>
@@ -105,7 +105,12 @@
         from what is still only a possibility.</strong> The most important sentence here is not the
         conclusion; it is how one conclusion fell apart.</p>
 
-        <h2 id="audience">Who this is for<a class="anchor" href="#audience" aria-label="Link to this section">#</a></h2>
+        <p>The order is this. First I show the model I wrote down, then what two
+        measurements under the same conditions did to its premise. After that I fill
+        a disk with real data and measure three more times, and I close with what is
+        still unconfirmed.</p>
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
 
         <ul class="callout">
           <li>Anyone chasing a "snapshots and backups are slow" report on block storage</li>
@@ -129,10 +134,10 @@
               <text x="562" y="84" font-size="11.5" fill="#4a4a4a" text-anchor="middle">real usage ~1.8 GiB</text>
               <text x="562" y="110" font-size="11.5" fill="#4a4a4a" text-anchor="middle">about 3.3–3.8 min</text>
               <text x="562" y="136" font-size="11.5" fill="#4a4a4a" text-anchor="middle">within budget</text>
-              <text x="360" y="206" font-size="11.5" fill="#d62976" text-anchor="middle">the full 40 GiB does not flow whole</text>
+              
             </g>
           </svg>
-          <figcaption>Left is the explanation before measuring; right is after. What changed was not the conclusion but the premise.</figcaption>
+          <figcaption>Left is the explanation before measuring; right is after. What changed was not the conclusion but the premise: the full 40 GiB does not flow whole.</figcaption>
         </figure>
 
         <h2 id="first-model">The first model: 40 GiB flowing for three hours<a class="anchor" href="#first-model" aria-label="Link to this section">#</a></h2>
@@ -230,8 +235,8 @@
               <text x="646" y="94" font-size="11" fill="#4a4a4a" text-anchor="middle">3 replicas</text>
               <text x="646" y="114" font-size="11" fill="#4a4a4a" text-anchor="middle">100 Mb link</text>
               <text x="646" y="134" font-size="10.5" fill="#d62976" text-anchor="middle">critical-path candidate</text>
-              <text x="360" y="196" font-size="11.5" fill="#d62976" text-anchor="middle">the slowest link is likely, but per-direction measurement is needed</text>
-              <text x="360" y="220" font-size="10.5" fill="#8a8a8a" text-anchor="middle">stage 2's actual bytes are left unconfirmed: not measured per direction</text>
+              
+              
             </g>
             <defs>
               <marker id="pth-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
@@ -239,7 +244,7 @@
               </marker>
             </defs>
           </svg>
-          <figcaption>Consistent with the same data being counted at each stage. A full 40 GiB transfer was not observed in these two runs.</figcaption>
+          <figcaption>Consistent with the same data being counted at each stage. A full 40 GiB transfer was not observed in these two runs. The slowest link is the likely candidate, but per-direction measurement is still missing, so stage 2's actual bytes are left unconfirmed.</figcaption>
         </figure>
 
         <p>The makeup of the slow link's traffic was also different from the first model. I had assumed the extract's
