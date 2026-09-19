@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instance HA ②: 신호마다 증언할 수 있는 범위가 다릅니다 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/instance-ha-2-what-each-signal-can-say.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/instance-ha-2-what-each-signal-can-say.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/instance-ha-2-what-each-signal-can-say.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/instance-ha-2-what-each-signal-can-say.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="Instance HA ②: 신호마다 증언할 수 있는 범위가 다릅니다" />
+  <meta property="og:description" content="관측 정확도를 올려도 관측자가 고립되면 무엇을 봐도 믿을 수 없습니다. 신호를 신뢰도 4등급으로 세우고 EXT Probe가 증언할 수 있는 범위를 좁힌 과정과 파라미터 여섯 개에 각각 근거를 붙인 방식을 정리했습니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/instance-ha-2-what-each-signal-can-say.ko.html" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Instance HA ②: 신호마다 증언할 수 있는 범위가 다릅니다" />
+  <meta name="twitter:description" content="감지 정확도 대신 신호의 자격을 정했습니다. 신뢰도 4등급과 EXT Probe 파라미터 여섯 개의 근거를 정리한 Instance HA 연작 ②편입니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="관측 정확도를 올려도 관측자가 고립되면 무엇을 봐도 믿을 수 없습니다. 신호를 신뢰도 4등급으로 세우고 EXT Probe가 증언할 수 있는 범위를 좁힌 과정과 파라미터 여섯 개에 각각 근거를 붙인 방식을 정리했습니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"instance-ha-2-what-each-signal-can-say.html","ko":"instance-ha-2-what-each-signal-can-say.ko.html","ja":"instance-ha-2-what-each-signal-can-say.ja.html"}'>
+          <option value="ko" selected>한국어</option>
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
+        <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>Instance HA ②: 신호마다 증언할 수 있는 범위가 다릅니다<br><span class="h1-sub">감지를 더 정교하게 만드는 대신 어느 신호가 무엇을 말할 자격이 있는지를 먼저 정했습니다. Instance HA 장애 대응 설계 연작의 두 번째 편입니다.</span></h1>
+        <p class="article-date">2026년 9월</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="instance-ha-2-what-each-signal-can-say"></aside>
+        <nav class="article-toc" aria-label="목차">
+          <p class="toc-label">목차</p>
+          <ul>
+            
+            
+            <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+            <li><a href="#되묻기">감지를 더 정교하게가 답이 아니었습니다</a></li>
+            <li><a href="#신호-등급">신호를 네 등급으로 세웠습니다</a></li>
+            <li><a href="#ext-probe">EXT Probe는 Compute를 보지 않습니다</a></li>
+            <li><a href="#파라미터">값 여섯 개를 정했습니다</a></li>
+            <li><a href="#근거">왜 10초이고 왜 세 번인가</a></li>
+            <li><a href="#주장하지-않는-것">한계: 이 글이 주장하지 않는 것</a></li>
+            <li><a href="#마치며">마치며</a></li>
+          </ul>
+        </nav>
+      <article>
+        <p><a href="the-hard-part-of-ha-was-not-recovery.ko.html">①편</a>에서 본 것은 Controller가 자기 고립을 Compute의 죽음으로 읽었다는 사실이었습니다. 이런 이야기를
+        들으면 대개 같은 처방이 먼저 나옵니다. 감지를 더 정교하게 만들자는 것입니다. 저도 처음에는 그쪽을
+        생각했습니다.</p>
+
+        <p>그런데 그 방향은 이 사고에 듣지 않습니다. <strong>관측자가 고립됐을 때는 무엇을 더 정밀하게 봐도
+        그 관측을 믿을 수 없기 때문</strong>입니다. 정확도를 올리는 것과 자격을 따지는 것은 다른 일입니다.</p>
+
+        <p>그래서 설계의 첫 결정은 감지기를 손보는 것이 아니라 <strong>신호마다 무엇을 말할 자격이 있는지를
+        정하는 것</strong>이 됐습니다. 이 편은 그 등급표와, 가장 낮은 등급으로 내린 EXT Probe의 파라미터
+        여섯 개에 각각 근거를 붙인 과정입니다.</p>
+
+        <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li>장애 판정에 여러 신호를 섞어 쓰는 시스템을 설계하시는 분</li>
+          <li>외부 도달성 검사로 노드의 생사를 판정하고 있는 구성을 쓰시는 분</li>
+          <li>Timeout과 재시도 횟수 같은 값을 정할 때 근거를 남기고 싶은 분</li>
+          <li>①편을 읽고 그래서 무엇을 고쳤는지가 궁금하신 분</li>
+        </ul>
+
+        <h2 id="되묻기">감지를 더 정교하게가 답이 아니었습니다<a class="anchor" href="#되묻기" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>흔한 처방은 감지 주기를 줄이거나 검사 항목을 늘리는 것입니다. 둘 다 관측의 해상도를 올립니다.
+        그런데 ①편의 사고에서 잘못된 것은 해상도가 아니라 <strong>관측자의 자기 인식</strong>이었습니다.
+        고립된 Controller는 아무리 자주 찔러 봐도 계속 닿지 않는다는 같은 답을 받습니다.</p>
+
+        <p>여기서 질문을 바꿨습니다. 무엇을 더 볼 것인가가 아니라 지금 보고 있는 것들 가운데 누가 무엇을
+        말할 수 있는가입니다. 이 질문은 답이 달라집니다. 신호마다 관측 지점이 다르고 관측 지점이 다르면
+        증언할 수 있는 대상도 다르기 때문입니다.</p>
+
+        <h2 id="신호-등급">신호를 네 등급으로 세웠습니다<a class="anchor" href="#신호-등급" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 260" role="img" aria-labelledby="sig-t sig-d" class="figure-svg">
+            <title id="sig-t">신호 네 등급과 각자가 말할 수 있는 것</title>
+            <desc id="sig-d">위에서 아래로 네 칸이 있습니다. Agent HeartBeat가 가장 높고 Controller Quorum, Network HeartBeat, EXT Probe 순입니다. 오른쪽에는 각 신호가 실제로 증언할 수 있는 대상이 적혀 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="35" width="300" height="42" rx="8" fill="none" stroke="#2e9e5b" stroke-width="2"/>
+              <text x="190" y="61" font-size="12" fill="#2e9e5b" text-anchor="middle">Agent HeartBeat · Highest</text>
+              <text x="530" y="61" font-size="11.5" fill="#4a4a4a" text-anchor="middle">Compute의 실제 상태</text>
+              <rect x="40" y="90" width="300" height="42" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.8"/>
+              <text x="190" y="116" font-size="12" fill="#4f5bd5" text-anchor="middle">Controller Quorum · High</text>
+              <text x="530" y="116" font-size="11.5" fill="#4a4a4a" text-anchor="middle">판단해도 되는 상태인가</text>
+              <rect x="40" y="145" width="300" height="42" rx="8" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="190" y="171" font-size="12" fill="#4a4a4a" text-anchor="middle">Network HeartBeat · Medium</text>
+              <text x="530" y="171" font-size="11.5" fill="#4a4a4a" text-anchor="middle">둘 사이의 연결</text>
+              <rect x="40" y="200" width="300" height="42" rx="8" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="190" y="226" font-size="12" fill="#d62976" text-anchor="middle">EXT Probe · Low</text>
+              <text x="530" y="226" font-size="11.5" fill="#d62976" text-anchor="middle">나의 고립 여부</text>
+            </g>
+          </svg>
+          <figcaption>등급은 정확도 순서가 아니라 증언 자격의 순서입니다. 맨 아래 신호는 대상이 아니라 관측자 자신을 말합니다.</figcaption>
+        </figure>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+          <table>
+            <caption class="sr-only">신호 네 등급과 각 신호의 역할.</caption>
+            <thead><tr><th>신호</th><th>등급</th><th>말할 수 있는 것</th></tr></thead>
+            <tbody><tr><td>Agent HeartBeat</td><td>Highest</td><td>Compute Node의 실제 상태</td></tr><tr><td>Controller Quorum</td><td>High</td><td>Controller cluster의 합의 상태</td></tr><tr><td>Network HeartBeat</td><td>Medium</td><td>Controller와 Compute 사이의 연결</td></tr><tr><td>EXT Probe</td><td>Low</td><td>Controller가 고립됐는지 여부</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p>순서의 근거는 관측 지점입니다. Agent HeartBeat는 Compute 위에서 돌며 그 노드 자신이 보내는
+        신호라 대상의 상태를 직접 말합니다. 반대로 EXT Probe는 Controller에서 바깥으로 나가는 검사라
+        Compute를 한 번도 건드리지 않습니다.</p>
+
+        <h2 id="ext-probe">EXT Probe는 Compute를 보지 않습니다<a class="anchor" href="#ext-probe" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>이 문장이 이 편의 핵심입니다. <strong>EXT Probe는 Controller에서 외부 주소로 나가는 도달성만
+        확인합니다.</strong> 그것으로 Compute의 가동 여부를 판정하면 ①편에서 본 오인이 그대로 재현됩니다.
+        관측자의 고립을 대상의 장애로 읽는 것입니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 250" role="img" aria-labelledby="ext-t ext-d" class="figure-svg">
+            <title id="ext-t">EXT Probe 결과가 갈라 놓는 두 갈래</title>
+            <desc id="ext-d">Agent HeartBeat가 끊긴 상태에서 EXT Probe가 성공하면 Compute 장애 의심으로, 실패하면 Network Partition 의심으로 갑니다. 파티션 의심 쪽은 복구를 실행하지 않고 보류합니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="250" y="25" width="220" height="44" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.8"/>
+              <text x="360" y="52" font-size="12" fill="#4a4a4a" text-anchor="middle">HeartBeat TTL 초과</text>
+              <line x1="360" y1="69" x2="360" y2="95" stroke="#4a4a4a" stroke-width="1.6"/>
+              <rect x="250" y="95" width="220" height="44" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.8"/>
+              <text x="360" y="122" font-size="12" fill="#4f5bd5" text-anchor="middle">EXT Probe 결과</text>
+              <line x1="290" y1="139" x2="160" y2="170" stroke="#2e9e5b" stroke-width="1.6"/>
+              <line x1="430" y1="139" x2="560" y2="170" stroke="#d62976" stroke-width="1.6"/>
+              <rect x="50" y="170" width="220" height="50" rx="8" fill="none" stroke="#2e9e5b" stroke-width="1.8"/>
+              <text x="160" y="192" font-size="11.5" fill="#2e9e5b" text-anchor="middle">성공 · Compute 장애 의심</text>
+              <text x="160" y="211" font-size="11.5" fill="#4a4a4a" text-anchor="middle">다음 단계로</text>
+              <rect x="450" y="170" width="220" height="50" rx="8" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="560" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">실패 · Partition 의심</text>
+              <text x="560" y="211" font-size="11.5" fill="#d62976" text-anchor="middle">보류</text>
+            </g>
+          </svg>
+          <figcaption>같은 「닿지 않음」이 두 갈래로 갈립니다. 오른쪽 갈래에서 멈추는 것이 이 설계가 택한 기본값입니다.</figcaption>
+        </figure>
+
+        <p>그래서 EXT Probe를 없애지 않고 <strong>역할을 바꿔 남겼습니다.</strong> 이 신호는 「저 노드가
+        죽었는가」에 답하지 않고 「내가 지금 판단해도 되는 처지인가」에 답합니다. 같은 검사를 그대로 두고
+        질문만 바꾼 셈입니다.</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+          <table>
+            <caption class="sr-only">같은 신호를 두 가지 질문에 썼을 때.</caption>
+            <thead><tr><th>질문</th><th>EXT Probe의 답</th><th>타당한가</th></tr></thead>
+            <tbody><tr><td>저 Compute가 죽었는가</td><td>닿지 않는다</td><td>타당하지 않음</td></tr><tr><td>내가 고립됐는가</td><td>닿지 않는다</td><td>타당함</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <h2 id="파라미터">값 여섯 개를 정했습니다<a class="anchor" href="#파라미터" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>역할을 정하고 나면 값이 남습니다. 얼마나 자주 찌르고 몇 번 실패해야 판단으로 올릴지입니다.
+        여섯 개를 정했고 각각에 왜 그 값인지를 붙였습니다.</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+          <table>
+            <caption class="sr-only">EXT Probe 파라미터 여섯 개와 근거.</caption>
+            <thead><tr><th>파라미터</th><th>값</th><th>근거</th></tr></thead>
+            <tbody><tr><td>probe 방향</td><td>Controller에서 외부로</td><td>Controller의 외부 도달성 확인이고 Compute 직접 검증이 아님</td></tr><tr><td>probe 간격</td><td>10초</td><td>HeartBeat 주기와 맞춤</td></tr><tr><td>연속 실패 횟수</td><td>3회</td><td>네트워크 흔들림에 의한 1~2회 실패를 오판으로 올리지 않음</td></tr><tr><td>판단 TTL</td><td>30초</td><td>간격 10초 곱하기 3회</td></tr><tr><td>EXT 주소 최소 수</td><td>3개 이상</td><td>2개 구성은 동시 장애 가능성이 남음</td></tr><tr><td>판단 threshold</td><td>3개 중 2개 실패</td><td>1개 실패는 그 서버만의 장애일 수 있음</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <h2 id="근거">왜 10초이고 왜 세 번인가<a class="anchor" href="#근거" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 220" role="img" aria-labelledby="prm-t prm-d" class="figure-svg">
+            <title id="prm-t">간격과 연속 실패 횟수가 만드는 판단 TTL</title>
+            <desc id="prm-d">10초 간격의 점 세 개가 이어져 30초의 판단 TTL을 만듭니다. 앞의 두 번은 네트워크 흔들림으로 보고 넘기며 세 번째에서 판단이 섭니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <line x1="80" y1="110" x2="640" y2="110" stroke="#8a8a8a" stroke-width="1.4"/>
+              <circle cx="200" cy="110" r="7" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="200" y="90" font-size="11.5" fill="#4f5bd5" text-anchor="middle">10s · 1회</text>
+              <circle cx="360" cy="110" r="7" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="360" y="90" font-size="11.5" fill="#4f5bd5" text-anchor="middle">20s · 2회</text>
+              <circle cx="520" cy="110" r="7" fill="#d62976" stroke="#d62976" stroke-width="2"/>
+              <text x="520" y="90" font-size="11.5" fill="#d62976" text-anchor="middle">30s · 3회</text>
+              <text x="280" y="145" font-size="11.5" fill="#8a8a8a" text-anchor="middle">여기까지는 흔들림</text>
+              <text x="520" y="145" font-size="11.5" fill="#d62976" text-anchor="middle">판단 성립</text>
+              <text x="360" y="185" font-size="11" fill="#8a8a8a" text-anchor="middle">간격 10초 × 연속 3회 = 판단 TTL 30초</text>
+            </g>
+          </svg>
+          <figcaption>TTL은 따로 고른 숫자가 아니라 간격과 횟수에서 나옵니다. 줄이려면 둘 중 하나를 줄여야 하고 그만큼 흔들림에 약해집니다.</figcaption>
+        </figure>
+
+        <p>세 값은 따로 놀지 않습니다. 간격과 횟수를 정하면 TTL은 곱셈으로 따라 나옵니다. 그래서 복구를
+        빨리 시작하고 싶으면 간격을 줄이거나 횟수를 줄여야 하고 <strong>그만큼 흔들림 한 번에 판단이
+        서는 쪽으로 기웁니다.</strong> 줄이는 방법과 그 대가를 같이 적어 둔 이유입니다.</p>
+
+        <p>주소를 세 개 이상 두고 그중 둘이 실패해야 파티션으로 보는 것도 같은 모양입니다. 하나만 보면
+        그 주소 쪽 장애와 내 고립을 구별할 수 없고 둘만 두면 둘이 함께 죽는 경우가 남습니다. 숫자 자체보다
+        무엇을 구별하려고 그 숫자를 골랐는지가 설계의 내용입니다.</p>
+
+        <h2 id="주장하지-않는-것">한계: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li>⚠️ 이 연작의 산출물은 설계서입니다. 구현은 다른 팀원이 이어받았고 값이 운영에서 어떻게
+          조정됐는지는 이 글의 범위가 아닙니다.</li>
+          <li>여섯 개 값은 제안값이지 실측으로 튜닝한 값이 아닙니다. 부하를 걸어 재 보고
+          고른 것이 아니라 구별하려는 상황에서 거꾸로 끌어낸 값입니다.</li>
+          <li>등급표는 이 제품의 신호 구성에서 나온 것입니다. Agent가 없는 환경이라면 맨 위 칸이 비므로
+          같은 표를 그대로 옮길 수 없습니다.</li>
+          <li>사내 자료라 제품명과 고객사와 주소와 계정은 쓰지 않았습니다.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>이 편의 결론은 한 줄입니다. <strong>감지의 정확도를 올리는 것과 신호의 자격을 정하는 것은 다른
+        일입니다.</strong> 고립된 관측자는 정밀하게 봐도 틀리고 자격을 정해 두면 자기가 판단할 처지가
+        아니라는 것을 스스로 알 수 있습니다.</p>
+        <p>다음 편은 이 등급을 실제 판정으로 옮기는 이야기입니다. 「정말 장애인가」와 「지금 실행해도
+        되는가」를 두 단계로 가르고 시나리오 여덟 개를 판정한 결과로 이어집니다.</p>
+        <p>읽어 주셔서 감사합니다.</p>
+        </div>
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=f97be88883"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

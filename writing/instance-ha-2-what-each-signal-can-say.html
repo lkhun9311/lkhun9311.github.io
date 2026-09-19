@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instance HA ②: Each Signal Is Entitled to Testify to Something Different | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/instance-ha-2-what-each-signal-can-say.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/instance-ha-2-what-each-signal-can-say.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/instance-ha-2-what-each-signal-can-say.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/instance-ha-2-what-each-signal-can-say.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="Instance HA ②: Each Signal Is Entitled to Testify to Something Different" />
+  <meta property="og:description" content="Raising observational accuracy does not help when the observer is isolated. This part covers grading the signals into four tiers, narrowing what the EXT probe is allowed to testify to, and attaching a reason to each of six parameters." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/instance-ha-2-what-each-signal-can-say.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Instance HA ②: Each Signal Is Entitled to Testify to Something Different" />
+  <meta name="twitter:description" content="Signal standing instead of detection accuracy. Four tiers and the reasoning behind six EXT probe parameters, in part two of the Instance HA series." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="Raising observational accuracy does not help when the observer is isolated. This part covers grading the signals into four tiers, narrowing what the EXT probe is allowed to testify to, and attaching a reason to each of six parameters." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"instance-ha-2-what-each-signal-can-say.html","ko":"instance-ha-2-what-each-signal-can-say.ko.html","ja":"instance-ha-2-what-each-signal-can-say.ja.html"}'>
+          <option value="en" selected>English</option>
+          <option value="ko">한국어</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>List</a>
+        <div class="article-meta"><span class="source-tag company notranslate">Company work</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS Backend</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>Instance HA ②: Each Signal Is Entitled to Testify to Something Different<br><span class="h1-sub">Instead of sharpening detection, we first decided which signal has standing to say what. Second part of the series on the Instance HA failure-response design.</span></h1>
+        <p class="article-date">September 2026</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="instance-ha-2-what-each-signal-can-say"></aside>
+        <nav class="article-toc" aria-label="Table of contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            
+            
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#sharper-detection">Sharper detection was not the answer</a></li>
+            <li><a href="#signal-grades">We graded the signals into four tiers</a></li>
+            <li><a href="#ext-probe">The EXT probe never looks at Compute</a></li>
+            <li><a href="#parameters">Six values, each with a reason</a></li>
+            <li><a href="#why-these-numbers">Why ten seconds and why three times</a></li>
+            <li><a href="#what-this-does-not-claim">Limits: what this post does not claim</a></li>
+            <li><a href="#closing">Closing</a></li>
+          </ul>
+        </nav>
+      <article>
+        <p>What <a href="the-hard-part-of-ha-was-not-recovery.html">part one</a> showed was a controller reading its own isolation as the compute node's death.
+        Hearing that story, most people reach for the same prescription first: make detection sharper. That
+        was my first instinct too.</p>
+
+        <p>It does not work on this incident. <strong>When the observer is isolated, no amount of extra
+        precision makes its observation trustworthy.</strong> Raising accuracy and questioning standing are
+        different jobs.</p>
+
+        <p>So the first decision in the design was not to touch the detector. It was to decide
+        <strong>what each signal has standing to say</strong>. This part is that tier list, and the six
+        parameters of the EXT probe that we pushed to the bottom tier, each with a reason attached.</p>
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>Anyone designing a system that mixes several signals into one failure judgement</li>
+          <li>Anyone whose setup decides a node is alive from an external reachability check</li>
+          <li>Anyone who wants a recorded reason behind timeout and retry values</li>
+          <li>Anyone who read part one and wants to know what changed because of it</li>
+        </ul>
+
+        <h2 id="sharper-detection">Sharper detection was not the answer<a class="anchor" href="#sharper-detection" aria-label="Link to this section">#</a></h2>
+
+        <p>The usual prescription is to shorten the probe interval or add more checks. Both raise the
+        resolution of the observation. What went wrong in part one was not resolution. It was
+        <strong>the observer's awareness of its own state</strong>. An isolated controller can poll as often
+        as it likes and keep getting the same answer back.</p>
+
+        <p>So we changed the question. Not what to observe more closely, but which of the things already
+        being observed is entitled to speak about what. That question has a different answer, because each
+        signal is collected at a different point, and where it is collected decides what it can testify to.</p>
+
+        <h2 id="signal-grades">We graded the signals into four tiers<a class="anchor" href="#signal-grades" aria-label="Link to this section">#</a></h2>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 260" role="img" aria-labelledby="sig-t sig-d" class="figure-svg">
+            <title id="sig-t">Four signal tiers and what each can speak to</title>
+            <desc id="sig-d">Four rows from top to bottom. Agent heartbeat sits highest, then controller quorum, network heartbeat and the EXT probe. The right column names what each signal can actually testify to.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="35" width="300" height="42" rx="8" fill="none" stroke="#2e9e5b" stroke-width="2"/>
+              <text x="190" y="61" font-size="12" fill="#2e9e5b" text-anchor="middle">Agent HeartBeat · Highest</text>
+              <text x="530" y="61" font-size="11.5" fill="#4a4a4a" text-anchor="middle">the Compute's own state</text>
+              <rect x="40" y="90" width="300" height="42" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.8"/>
+              <text x="190" y="116" font-size="12" fill="#4f5bd5" text-anchor="middle">Controller Quorum · High</text>
+              <text x="530" y="116" font-size="11.5" fill="#4a4a4a" text-anchor="middle">may I judge at all</text>
+              <rect x="40" y="145" width="300" height="42" rx="8" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
+              <text x="190" y="171" font-size="12" fill="#4a4a4a" text-anchor="middle">Network HeartBeat · Medium</text>
+              <text x="530" y="171" font-size="11.5" fill="#4a4a4a" text-anchor="middle">the link between us</text>
+              <rect x="40" y="200" width="300" height="42" rx="8" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="190" y="226" font-size="12" fill="#d62976" text-anchor="middle">EXT Probe · Low</text>
+              <text x="530" y="226" font-size="11.5" fill="#d62976" text-anchor="middle">whether I am isolated</text>
+            </g>
+          </svg>
+          <figcaption>The tiers rank standing rather than accuracy. The bottom signal speaks about the observer, not about the target.</figcaption>
+        </figure>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+          <table>
+            <caption class="sr-only">The four signal tiers and the role of each.</caption>
+            <thead><tr><th>Signal</th><th>Tier</th><th>What it can speak to</th></tr></thead>
+            <tbody><tr><td>Agent HeartBeat</td><td>Highest</td><td>The actual state of the Compute node</td></tr><tr><td>Controller Quorum</td><td>High</td><td>Whether the controller cluster still agrees</td></tr><tr><td>Network HeartBeat</td><td>Medium</td><td>The link between controller and compute</td></tr><tr><td>EXT Probe</td><td>Low</td><td>Whether this controller is isolated</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p>The ordering follows the collection point. The agent heartbeat runs on the compute node and is
+        emitted by the node itself, so it speaks directly about the target. The EXT probe, by contrast, goes
+        outward from the controller and never touches the compute node at all.</p>
+
+        <h2 id="ext-probe">The EXT probe never looks at Compute<a class="anchor" href="#ext-probe" aria-label="Link to this section">#</a></h2>
+
+        <p>That sentence is the core of this part. <strong>The EXT probe confirms reachability from the
+        controller to an outside address and nothing else.</strong> Judging whether a compute node is up from
+        that result reproduces exactly the mistake from part one: reading the observer's isolation as the
+        target's failure.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 250" role="img" aria-labelledby="ext-t ext-d" class="figure-svg">
+            <title id="ext-t">The two branches an EXT probe result opens</title>
+            <desc id="ext-d">With the agent heartbeat gone, a successful EXT probe leads to suspecting a compute failure while a failed one leads to suspecting a network partition. The partition branch holds instead of recovering.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="250" y="25" width="220" height="44" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.8"/>
+              <text x="360" y="52" font-size="12" fill="#4a4a4a" text-anchor="middle">HeartBeat TTL expired</text>
+              <line x1="360" y1="69" x2="360" y2="95" stroke="#4a4a4a" stroke-width="1.6"/>
+              <rect x="250" y="95" width="220" height="44" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.8"/>
+              <text x="360" y="122" font-size="12" fill="#4f5bd5" text-anchor="middle">EXT Probe result</text>
+              <line x1="290" y1="139" x2="160" y2="170" stroke="#2e9e5b" stroke-width="1.6"/>
+              <line x1="430" y1="139" x2="560" y2="170" stroke="#d62976" stroke-width="1.6"/>
+              <rect x="50" y="170" width="220" height="50" rx="8" fill="none" stroke="#2e9e5b" stroke-width="1.8"/>
+              <text x="160" y="192" font-size="11.5" fill="#2e9e5b" text-anchor="middle">reachable · suspect Compute</text>
+              <text x="160" y="211" font-size="11.5" fill="#4a4a4a" text-anchor="middle">carry on</text>
+              <rect x="450" y="170" width="220" height="50" rx="8" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="560" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">unreachable · suspect partition</text>
+              <text x="560" y="211" font-size="11.5" fill="#d62976" text-anchor="middle">hold</text>
+            </g>
+          </svg>
+          <figcaption>One "cannot reach" splits into two branches. Stopping on the right-hand branch is the default this design chose.</figcaption>
+        </figure>
+
+        <p>So we did not remove the EXT probe. We <strong>kept it and changed its job</strong>. It no longer
+        answers "is that node dead". It answers "am I in a position to judge right now". The same check stays
+        in place and only the question changes.</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+          <table>
+            <caption class="sr-only">The same signal put to two different questions.</caption>
+            <thead><tr><th>Question</th><th>What the EXT probe answers</th><th>Sound?</th></tr></thead>
+            <tbody><tr><td>Is that Compute dead</td><td>I cannot reach it</td><td>No</td></tr><tr><td>Am I isolated</td><td>I cannot reach it</td><td>Yes</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <h2 id="parameters">Six values, each with a reason<a class="anchor" href="#parameters" aria-label="Link to this section">#</a></h2>
+
+        <p>Once the role is fixed, the values remain: how often to probe and how many failures should be
+        promoted to a judgement. We set six, and wrote down why each is what it is.</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+          <table>
+            <caption class="sr-only">The six EXT probe parameters and their reasons.</caption>
+            <thead><tr><th>Parameter</th><th>Value</th><th>Reason</th></tr></thead>
+            <tbody><tr><td>probe direction</td><td>controller outward</td><td>Confirms the controller's external reachability, not the compute node</td></tr><tr><td>probe interval</td><td>10s</td><td>Kept in step with the heartbeat period</td></tr><tr><td>consecutive failures</td><td>3</td><td>Keeps one or two jitter-induced failures from becoming a judgement</td></tr><tr><td>judgement TTL</td><td>30s</td><td>Interval of 10s times three</td></tr><tr><td>minimum EXT addresses</td><td>3 or more</td><td>Two can still fail together</td></tr><tr><td>judgement threshold</td><td>2 of 3 failing</td><td>A single failure may belong to that address alone</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <h2 id="why-these-numbers">Why ten seconds and why three times<a class="anchor" href="#why-these-numbers" aria-label="Link to this section">#</a></h2>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 220" role="img" aria-labelledby="prm-t prm-d" class="figure-svg">
+            <title id="prm-t">Interval times consecutive failures makes the TTL</title>
+            <desc id="prm-d">Three points spaced ten seconds apart add up to a thirty second judgement TTL. The first two are treated as network jitter and the judgement only stands on the third.</desc>
+            <g font-family="Inter, sans-serif">
+              <line x1="80" y1="110" x2="640" y2="110" stroke="#8a8a8a" stroke-width="1.4"/>
+              <circle cx="200" cy="110" r="7" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="200" y="90" font-size="11.5" fill="#4f5bd5" text-anchor="middle">10s · 1st</text>
+              <circle cx="360" cy="110" r="7" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="360" y="90" font-size="11.5" fill="#4f5bd5" text-anchor="middle">20s · 2nd</text>
+              <circle cx="520" cy="110" r="7" fill="#d62976" stroke="#d62976" stroke-width="2"/>
+              <text x="520" y="90" font-size="11.5" fill="#d62976" text-anchor="middle">30s · 3rd</text>
+              <text x="280" y="145" font-size="11.5" fill="#8a8a8a" text-anchor="middle">still jitter</text>
+              <text x="520" y="145" font-size="11.5" fill="#d62976" text-anchor="middle">judgement stands</text>
+              <text x="360" y="185" font-size="11" fill="#8a8a8a" text-anchor="middle">interval 10s × 3 consecutive = TTL 30s</text>
+            </g>
+          </svg>
+          <figcaption>The TTL is not a separately chosen number. It falls out of the interval and the count, so shortening it costs tolerance for jitter.</figcaption>
+        </figure>
+
+        <p>The three values are not independent. Fix the interval and the count, and the TTL follows by
+        multiplication. So if you want recovery to start sooner you have to shrink one of them, and
+        <strong>that tilts the design toward letting a single hiccup stand as a judgement.</strong> That is
+        why the way to shorten it and the price of shortening it are written down together.</p>
+
+        <p>Requiring three or more addresses and two failures among them has the same shape. With one
+        address you cannot separate that address failing from your own isolation, and with two there is still
+        the case where both die together. The design is not in the numbers. It is in what each number is
+        trying to tell apart.</p>
+
+        <h2 id="what-this-does-not-claim">Limits: what this post does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>⚠️ What this series produced is a design document. Implementation was picked up by another
+          engineer, and how these values were tuned in operation is outside this post.</li>
+          <li>The six values are proposals rather than numbers tuned against measurement. They were derived
+          backwards from the situations they need to tell apart, not chosen by running load.</li>
+          <li>The tier list comes from this product's signal set. Where no agent exists the top row is empty,
+          so the table does not transfer unchanged.</li>
+          <li>This is internal material. Product names, customers, addresses and accounts are not used.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="closing">Closing<a class="anchor" href="#closing" aria-label="Link to this section">#</a></h2>
+        <p>One line carries this part. <strong>Raising detection accuracy and deciding a signal's standing
+        are different jobs.</strong> An isolated observer is wrong precisely when it looks carefully, and a
+        signal with defined standing can tell you that you are not the one who should be judging.</p>
+        <p>The next part turns these tiers into an actual verdict: splitting "is this really a failure" from
+        "is it safe to act now", and what eight scenarios came out as.</p>
+        <p>Thanks for reading.</p>
+        </div>
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=f97be88883"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
