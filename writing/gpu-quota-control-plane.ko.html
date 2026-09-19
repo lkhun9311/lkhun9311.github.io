@@ -91,7 +91,7 @@
 
         <p>GPU 예산을 선언하는 건 한 줄이면 됩니다. 어려운 건 그 선을 <em>어디서</em> 지키느냐입니다.
         객체 하나에 「이 테넌트는 GPU N장까지」라고 적어 둬도, 그 선을 실제로 넘지 못하게 막는 주체는 따로
-        있어야 합니다. 그런데 그 주체가 하나가 아닙니다. 학습 작업은 큐가 입장시키고, 추론 요청은 경계에서
+        있어야 합니다. 그런데 그 주체가 하나가 아닙니다. 학습 작업은 큐가 입장시키고 추론 요청은 경계에서
         걸러집니다. 둘을 한자리에서 세는 순간 같은 카드를 두 번 세게 됩니다.</p>
         <p>그래서 테넌트의 예산은 <code>GPUQuotaPolicy</code>에 한 번 선언하고 그 종류의 일을
         맡은 엔진이 집행합니다. 학습은 Kueue가, 추론은 Gateway의 Token Bucket(요청을 일정 속도로만 통과시키는
@@ -155,7 +155,7 @@
         <p>Kueue의 코호트 차용(cohort borrowing)은 한 테넌트가 다른 테넌트의 놀고 있는 자원을 빌려 쓰게 해
         줍니다. 소유자가 돌아왔을 때 무슨 일이 일어날지를 <code>reclaimWithinCohort</code>가 정합니다.
         <code>Never</code>는 소유자를 기다리게 하고 <code>Any</code>는 자원을 도로 가져옵니다.</p>
-        <p>설정을 양쪽 값으로 두고, kind 위에 실제로 띄운 Kueue에 대고 돌렸습니다. 원장은 검열을 인식하는
+        <p>설정을 양쪽 값으로 두고 kind 위에 실제로 띄운 Kueue에 대고 돌렸습니다. 원장은 검열을 인식하는
         수명주기 원장이라, 사건을 시각 추측이 아니라 컨트롤러 UID로 이어 붙입니다.</p>
 <figure class="diagram">
           <svg viewBox="0 0 720 300" role="img" aria-labelledby="rc-t rc-d" class="figure-svg">
@@ -227,7 +227,7 @@
 
         <h2 id="주장하지-않는-것">이 글이 주장하지 않는 것</h2>
         <ul>
-          <li>이 글의 숫자는 가짜 디바이스 플러그인을 쓴 kind 클러스터의 실행에서 나왔고, 이후 유료 Session에서
+          <li>이 글의 숫자는 가짜 디바이스 플러그인을 쓴 kind 클러스터의 실행에서 나왔고 이후 유료 Session에서
           A10G 네 장으로 옮겨 확인했습니다. 시뮬레이션된 자원에서 나온 값은 그렇다고 표시해 두었습니다.</li>
           <li><strong>쿼터 동기화는 Scheduler가 아닙니다.</strong> 입장은 Kueue가 시킵니다. 이 프로젝트는 그
           위에 <code>MLTrainingJob</code> 추상과 status 번역을 얹을 뿐입니다.</li>
@@ -245,12 +245,12 @@
 
         <div class="wrapup">
         <h2 id="마치며">마치며</h2>
-        <p>정리하면 이렇습니다. 예산은 한 번 선언하되, 일이 실제로 입장하는 자리에서 집행해야 합니다. 학습과
+        <p>예산은 한 번 선언하되, 일이 실제로 입장하는 자리에서 집행해야 합니다. 학습과
         추론은 서로 다른 엔진이 입장시키니, 공유 카운터 하나로 묶으면 같은 카드를 두 번 세게 됩니다. 그리고
         큐 정책을 고를 때 입장 지연만 보면 회수하는 쪽이 언제나 이깁니다. 그 대가는 같은 원장의 다른 열에
         적혀 있을 뿐입니다. 그 열의 내용은 두 가지입니다. 낭비는 회수를 결정한 순간이 아니라 차용자가 실제로
-        멈춘 순간까지 재야 하고, 입장했다는 것은 아직 예약일 뿐 장치를 손에 쥔 것은 아니라는 것.</p>
-        <p>숫자는 정정을 넘어 살아남았고, 이야기는 살아남지 못했습니다. 측정은 맞는데 그 이유를 틀리는, 꽤
+        멈춘 순간까지 재야 하고 입장했다는 것은 아직 예약일 뿐 장치를 손에 쥔 것은 아니라는 것.</p>
+        <p>숫자는 정정을 넘어 살아남았고 이야기는 살아남지 못했습니다. 측정은 맞는데 그 이유를 틀리는, 꽤
         흔한 모양입니다. 첫 판을 정정 옆에 그대로 남겨 두는 것이, 다음 사람이 어느 쪽이 하중을 받고 있었는지
         알 수 있는 유일한 방법입니다.</p>
         </div>
@@ -265,7 +265,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=24b6b547f7"></script>
+  <script src="../assets/content.js?v=f1b32e9931"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=d4af83b541"></script>

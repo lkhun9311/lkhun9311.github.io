@@ -96,10 +96,10 @@
         snapshots were slow. Scheduled snapshots, it said, never finished and ended in failure. I wrote
         an explanation of the cause first. I only found out that the core premise of that document was
         wrong after I actually ran a snapshot and measured it. This post is <strong>the story of
-        measuring away my own first explanation</strong>, and of the picture I rebuilt in its place — by
+        measuring away my own first explanation</strong>, and of the picture I rebuilt in its place, by
         filling a disk on purpose instead of papering over the gap with a guess.</p>
 
-        <p>One thing up front. This post strips out <strong>direct identifiers</strong> — customer names,
+        <p>One thing up front. This post strips out direct identifiers: customer names,
         server addresses, hostnames, pool names, accounts, ticket numbers. I kept only the numbers needed
         to explain the cause, and I tried to <strong>separate, sentence by sentence, what is confirmed
         from what is still only a possibility.</strong> The most important sentence here is not the
@@ -111,7 +111,7 @@
           <li>Anyone chasing a "snapshots and backups are slow" report on block storage</li>
           <li>Anyone curious how image format splits the boot and snapshot paths on a Ceph RBD backend</li>
           <li>Anyone who has never checked a plausible-sounding root cause against code or packets</li>
-          <li>Anyone who likes splitting "slow" into two axes — <em>path</em> and <em>throughput</em></li>
+          <li>Anyone who likes splitting "slow" into two axes: <em>path</em> and <em>throughput</em></li>
         </ul>
 
         <figure class="diagram">
@@ -137,28 +137,26 @@
 
         <h2 id="first-model">The first model: 40 GiB flowing for three hours<a class="anchor" href="#first-model" aria-label="Link to this section">#</a></h2>
 
-        <p>"Slow" usually splits into two axes. <strong>Path</strong> is what flows and how much of it;
-        <strong>throughput</strong> is how fast it flows. The first model joined the two like this.</p>
+        <p>"Slow" usually splits into two axes. Path is what flows and how much of it;
+        throughput is how fast it flows. The first model joined the two like this.</p>
 
-        <p>First, the path. This farm keeps instance disks on Ceph block storage. But the fast copy there
-        — a copy-on-write clone — works <strong>only when the base image is raw</strong>. The base was
+        <p>First, the path. This farm keeps instance disks on Ceph block storage. But the fast copy there (a copy-on-write clone) works <strong>only when the base image is raw</strong>. The base was
         qcow2, so the clone breaks and the snapshot falls back to the slow standard path: extract to a
         file, then upload it over HTTP. All of that is confirmed by the logs.</p>
 
         <p>The next step was the problem. I wrote that <em>"during extract and upload, the empty regions
-        get filled with zeros, so the whole disk size — the provisioned 40 GiB — crosses the network."</em>
+        get filled with zeros, so the whole disk size (the provisioned 40 GiB) crosses the network."</em>
         And since somewhere along that route sat a NIC negotiated down to 100 Mb, I reasoned that pushing
         40 GiB through that narrow link would take hours and blow past the scheduler's budget.</p>
 
         <p>Let me square the arithmetic. 40 GiB alone does not get you to three hours. Over a healthy link,
-        40 GiB is a little over an hour. To exceed three hours you need <strong>a second assumption</strong>
-        — that contention drops the link to roughly 3–4 MB/s — and the first model was quietly leaning on
+        40 GiB is a little over an hour. To exceed three hours you need a second assumption: that contention drops the link to roughly 3–4 MB/s, and the first model was quietly leaning on
         it. Before I measured, I had verified neither assumption: not "40 GiB flows," and not "it drops to
         a few MB/s."</p>
 
         <p>It was a tidy explanation. The fallback was real and the slow NIC was real, so I had built a
-        plausible bridge between two true facts. <strong>The middle of that bridge — "the full 40 GiB
-        flows" — I had never measured.</strong></p>
+        plausible bridge between two true facts. <strong>The middle of that bridge ("the full 40 GiB
+        flows") I had never measured.</strong></p>
 
         <h2 id="before-i-believed">I measured twice before I believed it<a class="anchor" href="#before-i-believed" aria-label="Link to this section">#</a></h2>
 
@@ -174,9 +172,9 @@
           <thead><tr><th>Item</th><th>First model's prediction</th><th>Measured (2 snapshots)</th></tr></thead>
           <tbody>
             <tr><td>Duration</td><td>~3 hours, over budget</td><td><strong>~196 s / 229 s (3.3–3.8 min)</strong></td></tr>
-            <tr><td>Result image data size</td><td>close to 40 GiB</td><td><strong>~1.8 GiB</strong> (format raw, provisioned 40 GiB)</td></tr>
-            <tr><td>Total network transfer</td><td>the full 40 GiB</td><td><strong>~6.8 GB</strong> (3.83 public + 3.00 cluster, both directions)</td></tr>
-            <tr><td>File-share share on the slow link</td><td>large (extract path is the file share)</td><td><strong>~15 MB</strong> (negligible by byte count)</td></tr>
+            <tr><td>Result image data size</td><td>close to 40 GiB</td><td>~1.8 GiB (format raw, provisioned 40 GiB)</td></tr>
+            <tr><td>Total network transfer</td><td>the full 40 GiB</td><td>~6.8 GB (3.83 public + 3.00 cluster, both directions)</td></tr>
+            <tr><td>File-share share on the slow link</td><td>large (extract path is the file share)</td><td>~15 MB (negligible by byte count)</td></tr>
             <tr><td>Slow-link traffic</td><td>—</td><td>~3.0 GB / 229 s (RX+TX summed, per-direction saturation unconfirmed)</td></tr>
           </tbody>
         </table>
@@ -197,10 +195,10 @@
 
         <p>The biggest miss was <strong>"the full 40 GiB flows."</strong> The total that actually crossed
         the network was about 6.8 GB. That is the ~3.83 GB on the public NIC plus the ~3.00 GB on the
-        cluster NIC, <strong>summed across both directions</strong> — not a single 40 GiB stream. With
+        cluster NIC, summed across both directions, not a single 40 GiB stream. With
         real data around 1.8 GiB and the total larger than that, it <em>reads as</em> the same data being
-        counted several times across extract, upload, and replication — but I could not measure how many
-        bytes each stage produced, so <strong>I am not claiming the per-stage breakdown.</strong> One
+        counted several times across extract, upload, and replication, but I could not measure how many
+        bytes each stage produced, so I am not claiming the per-stage breakdown. One
         thing is clear: the empty regions ballooning to a full 40 GiB did not happen in these two runs.</p>
 
         <p>That said, with only two samples of the same size, all I can claim here is that <strong>the
@@ -233,7 +231,7 @@
               <text x="646" y="114" font-size="11" fill="#4a4a4a" text-anchor="middle">100 Mb link</text>
               <text x="646" y="134" font-size="10.5" fill="#d62976" text-anchor="middle">critical-path candidate</text>
               <text x="360" y="196" font-size="11.5" fill="#d62976" text-anchor="middle">the slowest link is likely, but per-direction measurement is needed</text>
-              <text x="360" y="220" font-size="10.5" fill="#8a8a8a" text-anchor="middle">stage 2's actual bytes are left unconfirmed — not measured per direction</text>
+              <text x="360" y="220" font-size="10.5" fill="#8a8a8a" text-anchor="middle">stage 2's actual bytes are left unconfirmed: not measured per direction</text>
             </g>
             <defs>
               <marker id="pth-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
@@ -246,15 +244,15 @@
 
         <p>The makeup of the slow link's traffic was also different from the first model. I had assumed the extract's
         file share saturated it, but per peer that share was only 15 MB. Most of what I observed on the
-        link was <strong>traffic between the block-storage nodes.</strong> This pool keeps three replicas
+        link was traffic between the block-storage nodes. This pool keeps three replicas
         and there are only three nodes, so this node is always on that path. So it looks like
-        replication-related traffic — but because the counter is summed, <strong>I could not pin down how
-        many replicas, in which direction, or whether the link was saturated.</strong></p>
+        replication-related traffic: but because the counter is summed, I could not pin down how
+        many replicas, in which direction, or whether the link was saturated.</p>
 
         <h2 id="slowest-link">The pace looked set by the slowest link<a class="anchor" href="#slowest-link" aria-label="Link to this section">#</a></h2>
 
         <p>So what set the time? At first I estimated it as <em>"total 6.8 GB times the number of hops,
-        divided by the slow link"</em> — which gave about 10 minutes and did not match the measured 4.
+        divided by the slow link"</em>, which gave about 10 minutes and did not match the measured 4.
         6.8 GB is a counter summed across two NICs and both directions, so it is not a serial quantity.
         The lesson here is plain: <strong>do not treat a summed counter as a serial transfer.</strong></p>
 
@@ -264,16 +262,16 @@
         3.0 GB, and the link throughput measured by a load tool was about 11.5 MB/s. Dividing 3.0 GB by
         11.5 MB/s gives about 260 seconds.</p>
 
-        <blockquote><p>260 seconds is <strong>a rough estimate that only shares an order of magnitude</strong>
+        <blockquote><p>260 seconds is a rough estimate that only shares an order of magnitude
         with the measured 196–229 seconds. I cannot promote it to a fact. 3.0 GB is a summed-direction
         figure and 11.5 MB/s is a one-way throughput, so they do not belong in the same equation to begin
         with. In fact, 3.0 GB over 229 seconds is 13.1 MB/s, above the 100 Mb physical ceiling of 12.5
-        MB/s — and that overshoot is itself proof that 3.0 GB cannot be used as a one-way serial quantity.
+        MB/s, and that overshoot is itself proof that 3.0 GB cannot be used as a one-way serial quantity.
         The gap between 260 seconds and the measurement I also <em>cannot explain</em>, without
         per-direction counters and a per-stage timeline.</p></blockquote>
 
-        <p>Something still holds, though: <strong>neither 40 GiB nor 3 MB/s was needed.</strong> A real
-        slow link, carrying traffic on the order of the real data — that much was observed, and the first
+        <p>Something still holds, though: neither 40 GiB nor 3 MB/s was needed. A real
+        slow link, carrying traffic on the order of the real data, that much was observed, and the first
         model's two inflated premises collapse without either. Still, "the slowest link sets the time" is a
         <strong>strong hypothesis</strong>, not a fact: until I measure per-direction bytes, neither the
         critical path nor the saturation is settled.</p>
@@ -281,17 +279,17 @@
         <p>One number deserves care. 11.5 MB/s is not the link's physical ceiling; it is the effective
         throughput (goodput) measured by a load tool, while the 100 Mb physical equivalent is 12.5 MB/s.
         Those are different values. Retransmits also showed up in the forward test, but I did not measure
-        their ratio against the total segment count, so <strong>I am not judging whether that is a lot or
-        the link is healthy.</strong> What is confirmed is that the negotiated speed was 100 Mb; the cause
+        their ratio against the total segment count, so I am not judging whether that is a lot or
+        the link is healthy. What is confirmed is that the negotiated speed was 100 Mb; the cause
         of that, and the retransmit rate, I left as separate items to check.</p>
 
         <h2 id="why-three-hours">So why three hours? I filled the disk to find out<a class="anchor" href="#why-three-hours" aria-label="Link to this section">#</a></h2>
 
         <p>Here I have to be honest once more. The original report was that snapshots never finished and
-        failed, yet my first two measurements finished cleanly in minutes — because the instance's real
+        failed, yet my first two measurements finished cleanly in minutes: because the instance's real
         usage was small. On the spot I had just cleared, I could have laid down another guess:
         <em>"probably it was a large instance."</em> To avoid that, this time I asked the question by
-        filling the data myself: <strong>as real data grows, how does snapshot time grow?</strong></p>
+        filling the data myself: as real data grows, how does snapshot time grow?</p>
 
         <p>I created a new instance, filled the disk step by step with sequential writes, and timed a
         snapshot at each step. These are three direct measurements, not an extrapolation.</p>
@@ -305,7 +303,7 @@
           <tbody>
             <tr><td>1.8 GiB</td><td>~3.8 min (229 s)</td><td>~127 s</td></tr>
             <tr><td>5.7 GiB</td><td>~11.7 min (699 s)</td><td>~123 s</td></tr>
-            <tr><td><strong>11 GiB</strong></td><td><strong>~29.7 min (1,784 s)</strong></td><td><strong>~162 s</strong></td></tr>
+            <tr><td>11 GiB</td><td>~29.7 min (1,784 s)</td><td>~162 s</td></tr>
           </tbody>
         </table>
         </div>
@@ -344,22 +342,22 @@
         data and it could approach or exceed the scheduler's waiting budget.</p>
 
         <p>I also picked up a clue about why it is slow. The write speed to fill the disk itself was only
-        <strong>4–8 MB/s</strong> — below even the link throughput measured by the load tool (11.5 MB/s).
+        4–8 MB/s, below even the link throughput measured by the load tool (11.5 MB/s).
         It looks related to replication (three copies) traversing that slow link with disk sync on top, but
         the critical path is, as noted, still a hypothesis. Either way, at that speed, filling 40–50 GiB
-        alone takes roughly 1.5–3.7 hours. One aside: this instance took <strong>6 minutes just to
-        boot</strong> — possibly related to the same slow path (the cause is still pending a raw comparison
+        alone takes roughly 1.5–3.7 hours. One aside: this instance took 6 minutes just to
+        boot, possibly related to the same slow path (the cause is still pending a raw comparison
         and post-deployment verification).</p>
 
         <p>So the "three hours" in the original report was <em>probably</em> not a wild number. If so, the
-        reason differs from what I first wrote. It is closer to <strong>tens of GiB of real data crossing a
-        slow write path</strong>, not 40 GiB of empty space flowing. This picture is consistent with the
+        reason differs from what I first wrote. It is closer to tens of GiB of real data crossing a
+        slow write path, not 40 GiB of empty space flowing. This picture is consistent with the
         controlled experiment, but confirming it on the actual instance means looking at its real usage,
         host, and timestamp.</p>
 
         <p>Let me be clear about the limit, too. I did not run the <em>literal</em> reproduction of filling
-        tens of GiB — filling that much alone takes hours. So "tens of GiB overruns the budget" is
-        <strong>supported</strong> by the trend up to 11 GiB and the measured write speed, but not nailed
+        tens of GiB, filling that much alone takes hours. So "tens of GiB overruns the budget" is
+        supported by the trend up to 11 GiB and the measured write speed, but not nailed
         down by a single literal measurement. And the actual failed instance's real usage, host, and
         timestamp remain unchecked.</p>
 
@@ -369,21 +367,21 @@
         link are different problems and have to be fixed separately.</p>
 
         <ul class="callout">
-          <li><strong>Format (qcow2 → raw).</strong> Re-registering the base as raw should, I
-          <strong>expect</strong>, avoid the slow standard path and use the storage's internal clone path
+          <li>Format (qcow2 → raw). Re-registering the base as raw should, I
+          expect, avoid the slow standard path and use the storage's internal clone path
           instead. I have not yet verified that in this environment with post-deployment logs. And the
-          effect reaches <strong>only instances newly booted from that raw image</strong>; it does not
+          effect reaches only instances newly booted from that raw image; it does not
           apply retroactively to existing instances already copied without a parent. It is a structural
           improvement for instances to come, not an instant fix for the slow ones now.</li>
-          <li><strong>Link (100 Mb → 1 G).</strong> Raising the slow cluster link would likely relieve the
+          <li>Link (100 Mb → 1 G). Raising the slow cluster link would likely relieve the
           slow link observed now. But how much it drove the finish time is still unconfirmed, and after the
           change I would have to re-measure whether disk, OSD, or upstream network reveals a different
           bottleneck. Also, when real data is small the link being slow does not overrun the budget, so the
           gain from this shows up mainly on large-data instances.</li>
-          <li><strong>Temporary mitigation.</strong> Switching the upload format to a compressed one might
+          <li>Temporary mitigation. Switching the upload format to a compressed one might
           reduce the transfer, but it depends on compressibility, sparse handling, and the conversion path,
-          so it is <strong>unverified</strong> in this environment. Even if it helps, with small real data
-          the absolute savings may be limited — and I did not measure it here. Something to judge after
+          so it is unverified in this environment. Even if it helps, with small real data
+          the absolute savings may be limited, and I did not measure it here. Something to judge after
           re-measuring.</li>
         </ul>
 
@@ -394,21 +392,21 @@
         <h2 id="not-claiming">Limits: what this post does not claim<a class="anchor" href="#not-claiming" aria-label="Link to this section">#</a></h2>
 
         <ul class="callout">
-          <li>No customer, versions, ticket numbers, server addresses, or accounts — platform names appear only
+          <li>No customer, versions, ticket numbers, server addresses, or accounts; platform names appear only
           as far as the explanation needs. Numbers are generalized to what the explanation needs.</li>
           <li>The core sample is two snapshots on an identical instance; behavior by data size was measured
           separately with a three-point controlled experiment. Behavior on other nodes or under concurrent
           load was not measured.</li>
-          <li>I <strong>did not reproduce "three hours" literally</strong> (filling tens of GiB was skipped
+          <li>I did not reproduce "three hours" literally (filling tens of GiB was skipped
           this time). It is only supported by the per-GiB rise at 11 GiB among the three filled points (a
           possible super-linear trend) and the measured write speed; there is no single literal
           measurement yet. The actual failed instance's real usage, host, and timestamp are also
           unchecked.</li>
           <li>The actual bytes produced by the extract stage, the link's per-direction saturation, and the
-          contention cost of file share versus replication are left unconfirmed — not measured per
+          contention cost of file share versus replication are left unconfirmed; not measured per
           direction. I am not asserting causation.</li>
-          <li>That re-registering as raw speeds up snapshots applies only to <strong>newly booted
-          instances</strong>, and it is a prediction to re-check with post-deployment logs.</li>
+          <li>That re-registering as raw speeds up snapshots applies only to newly booted
+          instances, and it is a prediction to re-check with post-deployment logs.</li>
         </ul>
 
         <div class="wrapup">
@@ -430,7 +428,7 @@
         <p>The cause of a slow snapshot can be finished inside a document. The trouble is that the more
         polished it gets, the less you want to measure it. I measured twice right before finalizing, and
         three predictions missed at once. Then, instead of filling the gap with another guess, I poured in
-        real data — and this time the numbers pointed the way themselves. I am glad I measured.</p>
+        real data, and this time the numbers pointed the way themselves. I am glad I measured.</p>
 
         <p>Thanks for reading.</p>
         </div>
@@ -445,7 +443,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=24b6b547f7"></script>
+  <script src="../assets/content.js?v=f1b32e9931"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=d4af83b541"></script>
