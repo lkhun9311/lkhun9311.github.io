@@ -200,15 +200,15 @@
           tags: ["GPUaaS Control Plane", "Operations", "Cost", "Method"]
         },
         {
-          title: "When a Live Host Is Judged Dead, Recovery Becomes the Incident",
-          title_ko: "살아 있는 서버를 죽었다고 판정하면 복구가 사고가 됩니다",
-          title_ja: "生きているサーバーを死んだと判定すると、復旧が事故になります",
+          title: "Instance HA ①: We Judged a Live Node Dead",
+          title_ko: "Instance HA ①: 살아 있는 노드를 죽었다고 판정했습니다",
+          title_ja: "Instance HA ①: 生きているノードを死んだと判定しました",
           url: "writing/the-hard-part-of-ha-was-not-recovery.html",
           source: "company", sourceLabel: "Company work",
-          date: "2026-09-18", dateLabel: "Sep 18, 2026",
-          desc: "A switch failure cut only the controllers from each other, and a leader controller judged a healthy compute node dead — firing mass Nova Evacuate that risked split-brain and storage corruption. Instead of sharpening detection, the failure-response design I authored ranks signals by trust (the agent heartbeat outranks an external probe), splits failure-detection from execution-readiness, and defaults to Hold: seven of eight scenarios stop. Closes with a table of which design elements reached the shipped code and which remain design-only. Also in Korean and Japanese.",
-          desc_ko: "스위치 장애로 컨트롤러끼리만 끊겼는데 Leader Controller가 살아 있는 Compute를 죽었다고 판정해 Nova Evacuate를 대량 실행했고 Split-Brain·Storage 손상까지 갈 수 있었습니다. 감지를 더 정교하게 만드는 대신, 제가 작성한 장애 대응 설계는 신호에 신뢰도 등급을 매기고(Agent HeartBeat > EXT Probe) 장애 판정과 실행 준비를 분리해 기본값을 Hold로 두었습니다. 여덟 시나리오 중 일곱이 멈춥니다. 설계 요소가 코드에 어디까지 반영됐는지 표로 정리했습니다.",
-          desc_ja: "スイッチ障害でコントローラー同士だけが切れたのに、リーダーが生きている Compute を死んだと判定して Nova Evacuate を大量実行し、スプリットブレインとストレージ破損の危険がありました。検知を精緻にする代わりに、私が作成した障害対応設計は信号に信頼度を付け（Agent HeartBeat > EXT Probe）、障害判定と実行準備を分離して既定を Hold にしました。8シナリオ中7つが停止します。設計要素がコードにどこまで反映されたかを表にまとめました。韓国語。",
+          date: "2026-09-19", dateLabel: "Sep 19, 2026",
+          desc: "Part 1 of the Instance HA design series. An L2/L3 switch failure cut the controllers from each other rather than the compute nodes, and in that state a leader controller judged a live Compute dead and fired Nova Evacuate at scale. This part covers how four network strands ended up in different states and how an observer's isolation was read as the target's failure. Also in Korean and Japanese.",
+          desc_ko: "Instance HA 설계 1편. L2/L3 스위치가 죽었는데 끊긴 것은 Compute가 아니라 Controller끼리의 통신이었고 그 상태에서 Leader Controller가 살아 있는 Compute를 죽었다고 판정해 Nova Evacuate가 대량 실행됐습니다. 네트워크 네 갈래가 서로 다른 상태가 되는 구조와 관측자의 고립을 대상의 장애로 읽은 경로를 정리했습니다.",
+          desc_ja: "Instance HA 設計の第1編。L2/L3 スイッチが死んだとき切れたのは Compute ではなく Controller 同士の通信で、その状態で Leader Controller が生きている Compute を死んだと判定して Nova Evacuate が大量に実行されました。四本のネットワークが別々の状態になる構造と、観測者の孤立を対象の障害として読んだ経路をまとめました。",
           tags: ["IaaS Backend", "Reliability", "Method", "Operations"]
         },
         {

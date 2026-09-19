@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>生きているサーバーを死んだと判定すると、復旧が事故になります | Kwanghun Lee</title>
+  <title>Instance HA ①: 生きているノードを死んだと判定しました | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="生きているサーバーを死んだと判定すると、復旧が事故になります" />
-  <meta property="og:description" content="スイッチ障害でコントローラー同士だけが切れたのに、健全な Compute を死んだと判定して VM を大量退避させた事故。検知を精緻にする代わりに、どの信号を信じるかから決め直した Instance HA 障害対応設計をまとめました。" />
+  <meta property="og:title" content="Instance HA ①: 生きているノードを死んだと判定しました" />
+  <meta property="og:description" content="L2/L3 スイッチ障害で Controller 同士だけが切れたのに、生きている Compute を死んだと判定して Nova Evacuate が大量に実行されました。四本のネットワークが別々の状態になる構造と、観測者の孤立を対象の障害として読んだ経路をまとめました。" />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -26,10 +26,10 @@
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta property="og:locale:alternate" content="en_US" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="生きているサーバーを死んだと判定すると、復旧が事故になります" />
-  <meta name="twitter:description" content="健全な Compute を死んだと判定して VM を大量退避させた事故。検知を精緻にする代わりに、どの信号を信じるかから決め直した設計です。" />
+  <meta name="twitter:title" content="Instance HA ①: 生きているノードを死んだと判定しました" />
+  <meta name="twitter:description" content="生きている Compute を死んだと判定し、復旧が事故になった事件です。ネットワークごとに状態が分かれる構造と誤判の経路をまとめた Instance HA 連作の一編目です。" />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="スイッチ障害でコントローラー同士だけが切れたのに、健全な Compute を死んだと判定して VM を大量退避させた事故。検知を精緻にする代わりに、どの信号を信じるかから決め直した Instance HA 障害対応設計を、現状・原因・解決・完成アーキテクチャまでまとめました。" />
+  <meta name="description" content="L2/L3 スイッチ障害で Controller 同士だけが切れたのに、生きている Compute を死んだと判定して Nova Evacuate が大量に実行されました。四本のネットワークが別々の状態になる構造と、観測者の孤立を対象の障害として読んだ経路をまとめました。" />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -72,418 +72,229 @@
         <div class="article-meta"><span class="source-tag company notranslate">会社の仕事</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS バックエンド</a></div>
       </div>
       <section class="page-hero">
-        <h1>生きているサーバーを死んだと判定すると、復旧が事故になります<br><span class="h1-sub">スイッチ障害でコントローラー同士だけが切れたのに、健全な Compute を死んだと判定して VM を大量に退避させた事故がありました。検知を精緻にする代わりに、どの信号を信じるかから決め直した障害対応設計です。</span></h1>
+        <h1>Instance HA ①: 生きているノードを死んだと判定しました<br><span class="h1-sub">スイッチが一つ死んだだけでネットワークごとに状態が分かれ、Controller は自分の孤立を Compute の死として読みました。Instance HA 障害対応設計の連作、その一編目です。</span></h1>
         <p class="article-date">2026年9月</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="the-hard-part-of-ha-was-not-recovery"></aside>
         <nav class="article-toc" aria-label="目次">
           <p class="toc-label">目次</p>
           <ul>
-            <li><a href="#audience">想定読者</a></li>
-            <li><a href="#incident">現状：復旧が事故になった日</a></li>
-            <li><a href="#cause">なぜ生きているサーバーが死んで見えたか</a></li>
-            <li><a href="#signal-rank">検知ではなく、信号に資格を付けた</a></li>
-            <li><a href="#hold-matrix">既定は Hold: 8つのうち7つは止まる</a></li>
-            <li><a href="#fencing">動かす前に電源を確認する</a></li>
-            <li><a href="#consensus">ロックは分散合意ではない</a></li>
-            <li><a href="#rto">復旧はどれくらいかかるか（見積り）</a></li>
-            <li><a href="#architecture">完成アーキテクチャ: 四つの層が一本の鎖に</a></li>
-            <li><a href="#not-claiming">限界：この記事が主張しないこと</a></li>
-            <li><a href="#closing">おわりに</a></li>
+            
+            <li><a href="#想定読者">想定読者</a></li>
+            <li><a href="#事件">復旧が事故になった日</a></li>
+            <li><a href="#ネットワーク">一つのスイッチに四本がぶら下がっていました</a></li>
+            <li><a href="#誤判">届かないことと死んだことを分けられませんでした</a></li>
+            <li><a href="#スプリットブレイン">走るべきでなかった復旧がボリュームを壊します</a></li>
+            <li><a href="#復旧対象">何を復旧するかは二層で決まっていました</a></li>
+            <li><a href="#主張しないこと">限界：この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
           </ul>
         </nav>
-      <article class="article-body">
+      <article>
+        <p>この製品の Instance HA は、Compute ホストが死んだときにその上の VM を生きている別のホストへ
+        退避させて立ち上げ直す機能です。自動復旧です。この機能が最も危うくなる瞬間は
+        <strong>死んでいないホストを死んだと判定するとき</strong>です。そのときシステムは正常に動いている
+        VM を強制的に move し、運が悪ければデータを壊します。</p>
 
-        <p>Instance HA は、Compute ホストが死ぬとその上の VM を生きている別のホストへ退避（evacuate）させ、
-        再び起動する機能です。自動復旧ですね。ところがこの機能が最も危険になる瞬間は、<strong>死んでいない
-        ホストを死んだと判定するとき</strong>です。そのときシステムは、問題なく動いている VM を強制的に移し、
-        運が悪ければデータを壊します。復旧がそのまま事故になります。</p>
+        <p>2026 年 3 月にそれが実際に起こりました。L2/L3 スイッチが死にましたが、切れたのは Compute では
+        なく Controller 同士の通信でした。その状態で Leader Controller が生きている Compute を障害と
+        判定し、Nova Evacuate を大量に実行しました。私は事故を自分で調査した側ではなく、整理された事実を
+        受け取って再発を防ぐ判定体系を設計した側です。</p>
 
-        <p>この記事は、実際にその事故が起きたときに再発を防ぐため、私が単独で作成した<strong>障害対応
-        設計</strong>を、現状・原因・解決の順にまとめたものです。最後に、その完成アーキテクチャを表と図で
-        置きました。</p>
+        <p>この記事は六編に分けて書く連作の一編目で、①編は原因までを扱います。ネットワークが四本に分かれて
+        別々の状態になった経緯、Controller が自分の孤立を対象の死として読んだ理由、誤って実行した復旧が
+        どこまで行き得たかです。信号に等級を付ける話と Phase を分ける話は次の編にあります。</p>
 
-        <p>先に範囲を明かしておきます。この記事は私が設計した目標アーキテクチャの観点での
-        まとめです。事故を経て「どういう構造であるべきか」を基準に、検知 → 判定 → Fencing → 復旧が一本の
-        安全な鎖としてつながる完成形を描きます。実装はチームが引き継ぎましたし、各要素が
-        製品にいつ入るかはこの記事の焦点ではありません。後に出てくる復旧時間（RTO）は、実測ではなく段階別の
-        見積りです。顧客名・サーバーアドレス・ホスト名・アカウントといった識別情報は書いていません。</p>
-
-        <h2 id="audience">想定読者<a class="anchor" href="#audience" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="想定読者">想定読者<a class="anchor" href="#想定読者" aria-label="この節へのリンク">#</a></h2>
 
         <ul class="callout">
-          <li>死んだノードを自動復旧するシステム（Instance HA、Masakari 系）を設計・運用している方</li>
-          <li>ネットワーク分断（partition）で自動化がかえって事故を大きくする場面を経験した方</li>
-          <li>「ノードが死んだ」をどの信号で判定するか、その信号をどこまで信じるかを決める必要がある方</li>
-          <li>Split-Brain と Fencing がなぜ「速い復旧」より先に来るべきか気になる方</li>
+          <li>死んだノードを自動復旧する仕組みを設計または運用している方</li>
+          <li>ネットワーク分断で自動化がかえって事故を大きくする場面を見たことがある方</li>
+          <li>「ノードが死んだ」をどの信号で判定するかを決める立場の方</li>
+          <li>Split-Brain がなぜ速い復旧より先に来るのかが気になる方</li>
         </ul>
 
-        <h2 id="incident">現状：復旧が事故になった日<a class="anchor" href="#incident" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="事件">復旧が事故になった日<a class="anchor" href="#事件" aria-label="この節へのリンク">#</a></h2>
 
-        <p>事件は一行で要約できます。<strong>L2/L3 スイッチ障害のとき、リーダーのコントローラーが生きている
-        Compute ノードを死んだと誤判定し、不要な Instance HA（Nova Evacuate）を大量に実行しました。</strong>
-        健全な VM が一斉に別ホストへ移り、最悪の場合、元が生きているまま退避先が同じボリュームに接続して
-        ファイルシステムが壊れかねない状況でした。</p>
-
-        <div class="table-scroll">
-        <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
-        <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表：横にスクロールすると残りが見えます">
-        <table>
-          <caption class="sr-only">事件の要約：状況・結果・影響・潜在リスク。</caption>
-          <thead><tr><th>項目</th><th>内容</th></tr></thead>
-          <tbody>
-            <tr><td>状況</td><td>L2/L3 スイッチ障害のとき、リーダーのコントローラーが Compute ノードを障害と誤判定</td></tr>
-            <tr><td>結果</td><td>不要な Instance HA が発火（= Nova Evacuate）</td></tr>
-            <tr><td>影響</td><td>誤った退避（Evacuate）が同時多発</td></tr>
-            <tr><td><strong>潜在リスク</strong></td><td>False Positive HA → Split-Brain → ストレージ破損</td></tr>
-          </tbody>
-        </table>
-        </div>
-        </div>
-        <p class="table-note">ここで重要なのは「復旧が遅れた」ではなく「やってはいけない復旧をやった」という
-        点です。この方向の失敗は、元に戻すのがはるかに難しいのです。</p>
-
-        <h2 id="cause">なぜ生きているサーバーが死んで見えたか<a class="anchor" href="#cause" aria-label="この節へのリンク">#</a></h2>
-
-        <p>核心はこれです。スイッチが死ぬと、<strong>ネットワークごとに状態が変わります。</strong>一つが
-        切れたからといって、全部が切れたわけではありません。</p>
+        <p>事件は一行で要約できます。<strong>L2/L3 スイッチ障害のとき Leader Controller が生きている
+        Compute を障害と誤判し、不要な Instance HA を大量に実行しました。</strong>正常な VM が同時に別の
+        ホストへ移され、最悪の場合は原本が生きたまま複製が同じボリュームに付いてファイルシステムが壊れ得る
+        状況でした。</p>
 
         <div class="table-scroll">
-        <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
-        <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表：横にスクロールすると残りが見えます">
-        <table>
-          <caption class="sr-only">L2/L3 スイッチ障害時のネットワーク別状態。</caption>
-          <thead><tr><th>ネットワーク</th><th>用途</th><th>障害時の状態</th></tr></thead>
-          <tbody>
-            <tr><td><strong>MGMT</strong></td><td>Controller ↔ Compute 管理通信</td><td>正常</td></tr>
-            <tr><td>DATA</td><td>VM データトラフィック</td><td>遮断</td></tr>
-            <tr><td>Controller</td><td>Controller ↔ Controller 通信</td><td>遮断</td></tr>
-            <tr><td>BMC</td><td>Fencing（電源制御）</td><td>不在 ← これが問題だった</td></tr>
-          </tbody>
-        </table>
-        </div>
+          <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表：横にスクロールすると残りが見えます">
+          <table>
+            <caption class="sr-only">事件の要約：状況・結果・影響・潜在リスク。</caption>
+            <thead><tr><th>項目</th><th>内容</th></tr></thead>
+            <tbody><tr><td>状況</td><td>L2/L3 スイッチ障害のとき Leader Controller が Compute を障害と誤判</td></tr><tr><td>結果</td><td>不要な Instance HA の実行、すなわち Nova Evacuate</td></tr><tr><td>影響</td><td>誤った VM Migration が同時多発</td></tr><tr><td>潜在リスク</td><td>False Positive HA が Split-Brain を経て Storage 損傷まで</td></tr></tbody>
+          </table>
+          </div>
         </div>
 
-        <p>コントローラー間の通信が切れると、クラスタのQuorum が崩壊します。すると一部の
-        コントローラーが<em>単独で</em>「Compute が死んだ」と判断してしまいます。ところが実際には
-        MGMT は生きていて、その Compute の Agent HeartBeat は正常に受信され続けていました。
-        死んだと判定されたノードは、実は自分の状態をきちんと報告していたのです。</p>
+        <p class="table-note">ここで大切なのは「復旧が遅れた」ではなく「やってはいけない復旧をした」という
+        点です。この方向の失敗は取り消すほうがずっと難しくなります。</p>
 
-        <blockquote><p>私があるノードに届かないというのは、そのノードが死んだという意味かもしれないし、
-        私とそのノードの間の経路が切れたという意味かもしれません。二つはまったく違う状況
-        なのに、外から見ると同じに見えます。事故の根は、観測者の孤立を対象の障害と誤認
-        したことでした。</p></blockquote>
+        <h2 id="ネットワーク">一つのスイッチに四本がぶら下がっていました<a class="anchor" href="#ネットワーク" aria-label="この節へのリンク">#</a></h2>
+
+        <p>核心はこれです。スイッチが死ぬと<strong>ネットワークごとに状態が変わります</strong>。一本が
+        切れたからといって全部が切れたわけではありません。このファームには枝が四本あり、障害が起きたとき
+        四本の運命が分かれました。</p>
 
         <figure class="diagram">
-          <svg viewBox="0 0 720 250" role="img" aria-labelledby="ob-t ob-d" class="figure-svg">
-            <title id="ob-t">観測者の孤立を対象の障害と誤認する構造</title>
-            <desc id="ob-d">中央に Compute ノードがあり、その Agent HeartBeat が MGMT ネットワーク経由で正常に送信されます。左のコントローラーは Controller ネットワークが切れて孤立しているのに、Compute に届かないという理由で Compute を死んだと誤判定します。下にピンクで、届かないことは対象の死ではなく自分の孤立かもしれない、と書かれています。</desc>
+          <svg viewBox="0 0 720 250" role="img" aria-labelledby="net-t net-d" class="figure-svg">
+            <title id="net-t">一つのスイッチにぶら下がった四本のネットワーク</title>
+            <desc id="net-d">左に Controller 三台、右に Compute 二台があります。両者を MGMT・DATA・Controller の三本が結び、四本目の BMC は不在です。L2/L3 スイッチが死ぬと MGMT だけが残り、DATA と Controller が切れます。</desc>
             <g font-family="Inter, sans-serif">
-              <rect x="40" y="90" width="150" height="70" rx="10" fill="none" stroke="#d62976" stroke-width="1.8"/>
-              <text x="115" y="80" font-size="11" fill="#d62976" text-anchor="middle" font-weight="700">Controller（孤立）</text>
-              <text x="115" y="120" font-size="11" fill="#4a4a4a" text-anchor="middle">Controller 網 遮断</text>
-              <text x="115" y="140" font-size="11" fill="#4a4a4a" text-anchor="middle">quorum 喪失</text>
-              <rect x="285" y="90" width="150" height="70" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.8"/>
-              <text x="360" y="80" font-size="11" fill="#4f5bd5" text-anchor="middle" font-weight="700">Compute（正常）</text>
-              <text x="360" y="120" font-size="11" fill="#4a4a4a" text-anchor="middle">VM 正常稼働</text>
-              <text x="360" y="140" font-size="11" fill="#4a4a4a" text-anchor="middle">Agent HeartBeat 送信</text>
-              <rect x="530" y="90" width="150" height="70" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.6"/>
-              <text x="605" y="80" font-size="11" fill="#8a8a8a" text-anchor="middle" font-weight="700">MGMT（正常）</text>
-              <text x="605" y="120" font-size="11" fill="#4a4a4a" text-anchor="middle">HeartBeat はこの経路で</text>
-              <text x="605" y="140" font-size="11" fill="#4a4a4a" text-anchor="middle">届き続ける</text>
-              <path d="M435 125 H 528" fill="none" stroke="#8a8a8a" stroke-width="1.4" marker-end="url(#ob-a)"/>
-              <path d="M285 125 H 192" fill="none" stroke="#d62976" stroke-width="1.4" stroke-dasharray="5 4"/>
-              <text x="238" y="116" font-size="10" fill="#d62976" text-anchor="middle">届かない</text>
-              <text x="360" y="210" font-size="11.5" fill="#d62976" text-anchor="middle">「届かない」は対象の死ではなく自分の孤立かもしれない</text>
+              <rect x="40" y="40" width="150" height="150" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.8"/>
+              <text x="115" y="30" font-size="12" fill="#4f5bd5" text-anchor="middle">Controller ×3</text>
+              <rect x="530" y="40" width="150" height="150" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.8"/>
+              <text x="605" y="30" font-size="12" fill="#4a4a4a" text-anchor="middle">Compute ×2</text>
+              <line x1="190" y1="70" x2="530" y2="70" stroke="#2e9e5b" stroke-width="2"/>
+              <text x="360" y="62" font-size="11.5" fill="#2e9e5b" text-anchor="middle">MGMT · 正常</text>
+              <line x1="190" y1="110" x2="530" y2="110" stroke="#d62976" stroke-width="2" stroke-dasharray="6 5"/>
+              <text x="360" y="102" font-size="11.5" fill="#d62976" text-anchor="middle">DATA · 遮断</text>
+              <line x1="190" y1="150" x2="530" y2="150" stroke="#d62976" stroke-width="2" stroke-dasharray="6 5"/>
+              <text x="360" y="142" font-size="11.5" fill="#d62976" text-anchor="middle">Controller · 遮断</text>
+              <line x1="190" y1="190" x2="530" y2="190" stroke="#b9b9b9" stroke-width="2" stroke-dasharray="2 6"/>
+              <text x="360" y="182" font-size="11.5" fill="#8a8a8a" text-anchor="middle">BMC · 不在</text>
+              <text x="360" y="225" font-size="11" fill="#8a8a8a" text-anchor="middle">緑は残った枝、ピンクは切れた枝</text>
             </g>
-            <defs>
-              <marker id="ob-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-                <path d="M0 0 L10 5 L0 10 z" fill="#8a8a8a"/>
-              </marker>
-            </defs>
           </svg>
-          <figcaption>孤立したコントローラーの目には Compute が死んで見えましたが、MGMT 経由で届く Agent HeartBeat はその Compute が生きていると言っていました。誰の言葉を信じるかが事故を分けました。</figcaption>
+          <figcaption>同じスイッチに四本がぶら下がっていて、残ったのは MGMT だけでした。Fencing に使う BMC の枝は最初からありませんでした。</figcaption>
         </figure>
 
-        <h2 id="signal-rank">検知ではなく、信号に資格を付けた<a class="anchor" href="#signal-rank" aria-label="この節へのリンク">#</a></h2>
-
-        <p>よくある処方は「検知をもっと精緻に」です。ところが観測精度をいくら上げても、<strong>観測者が
-        孤立しているときは何を見ても信じられません。</strong>そこで精度ではなく、<strong>誰の言葉を
-        信じるか</strong>を決めました。信号ごとに信頼度の等級を付けたのです。</p>
-
         <div class="table-scroll">
-        <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
-        <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表：横にスクロールすると残りが見えます">
-        <table>
-          <caption class="sr-only">信号信頼度の4等級。</caption>
-          <thead><tr><th>Signal</th><th>信頼度</th><th>役割</th></tr></thead>
-          <tbody>
-            <tr><td>Agent HeartBeat</td><td>Highest</td><td>Compute ノードの実際の状態を、そのノードが直接報告</td></tr>
-            <tr><td>Controller Quorum</td><td>High</td><td>コントローラークラスタの合意状態</td></tr>
-            <tr><td>Network HeartBeat</td><td>Medium</td><td>Controller ↔ Compute の接続確認</td></tr>
-            <tr><td>EXT Network Probe</td><td>Low</td><td>コントローラー自身のネットワーク分断（partition）判定</td></tr>
-          </tbody>
-        </table>
-        </div>
-        </div>
-        <p class="table-note">核心は最下段です。EXT Probe は Compute 状態を直接検証しません。
-        コントローラー → 外部方向の到達性だけを確認するので、それで Compute の稼働可否を判定すると、すぐに
-        「観測者の孤立を対象の障害と」誤認します。事故がまさにそれでした。</p>
-
-        <p>次に、混ざっていた判断を二つに分けました。「本当に障害か」と「いま安全に実行してよいか」は
-        別の問いなのに、一つにまとまっていて互いを汚染していました。</p>
-
-        <div class="table-scroll">
-        <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
-        <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表：横にスクロールすると残りが見えます">
-        <table>
-          <caption class="sr-only">Phase 1 Failure Detection と Phase 2 Execution Readiness の分離。</caption>
-          <thead><tr><th>Phase 1: Failure Detection（本当に障害か）</th><th>Phase 2: Execution Readiness（いま実行してよいか）</th></tr></thead>
-          <tbody>
-            <tr><td>Quorum 確認。失っていれば判断は信頼できない → Hold</td><td>Storage reachable。VM がストレージに到達できるか</td></tr>
-            <tr><td>Agent HeartBeat TTL（30秒以内）正常 → Compute 正常 → Hold</td><td>RabbitMQ healthy。復旧コマンドを伝えられるか</td></tr>
-            <tr><td>TTL 超過時のみ追加検証（EXT probe · nova-compute · storage session）</td><td>Nova API healthy。API を呼べるか</td></tr>
-          </tbody>
-        </table>
-        </div>
-        </div>
-        <p class="table-note">この分離の狙いの一つ: ストレージ経路の障害を「Compute 障害」と
-        誤判定しないようにすることです（設計基準）。Storage を Phase 2 に置くと、Phase 1 の障害判定を
-        汚染しないからです。</p>
-
-        <h2 id="hold-matrix">既定は Hold: 8つのうち7つは止まる<a class="anchor" href="#hold-matrix" aria-label="この節へのリンク">#</a></h2>
-
-        <p>二つの Phase を基準に、障害シナリオ8種を判定しました。結果は<strong>Fencing 1件、HOLD 7件</strong>。
-        つまりこの設計で「実際に復旧を実行してよい」ケースは、8つのうち1つだけでした。</p>
-
-        <div class="table-scroll">
-        <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
-        <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表：横にスクロールすると残りが見えます">
-        <table>
-          <caption class="sr-only">障害シナリオ8種の判定マトリクス。</caption>
-          <thead><tr><th>シナリオ</th><th>Quorum</th><th>Agent HB</th><th>EXT</th><th>Storage</th><th>Phase 1 結果</th><th>Action</th></tr></thead>
-          <tbody>
-            <tr><td><strong>Compute 実クラッシュ</strong></td><td>✓</td><td>✗</td><td>✓</td><td>✓</td><td>障害確定</td><td>Phase 2 → Fencing</td></tr>
-            <tr><td>Controller network down</td><td>✗</td><td>✓</td><td>✓</td><td>✓</td><td>判断不可</td><td>HOLD</td></tr>
-            <tr><td>DATA network down</td><td>✗</td><td>✓</td><td>✗</td><td>✓</td><td>partition 疑い</td><td>HOLD</td></tr>
-            <tr><td>MGMT network down</td><td>✗</td><td>✗</td><td>✓</td><td>✓</td><td>判断不可</td><td>HOLD</td></tr>
-            <tr><td>Storage path down</td><td>✓</td><td>✓</td><td>✓</td><td>✗</td><td>Compute 正常</td><td>HOLD（Phase 2 失敗）</td></tr>
-            <tr><td>EXT only down</td><td>✓</td><td>✓</td><td>✗</td><td>✓</td><td>Compute 正常</td><td>HOLD</td></tr>
-            <tr><td>HeartBeat 超過 + EXT 失敗</td><td>✓</td><td>✗</td><td>✗</td><td>✓</td><td>partition 疑い</td><td>HOLD → 追加判断</td></tr>
-            <tr><td>Controller 断 + HB 受信</td><td>✗</td><td>✓</td><td>✓</td><td>✓</td><td>判断不可</td><td>HOLD（単一 Controller の独断禁止）</td></tr>
-          </tbody>
-        </table>
-        </div>
-        </div>
-        <p class="table-note">復旧を誤って実行すればデータが壊れ、保留すれば人が介入する時間が生まれます。
-        非対称なコストが判定を決めました。だから確信できないなら何もしないのが既定で、HOLD は
-        オペレーターへの通知を伴います。</p>
-
-        <h2 id="fencing">動かす前に電源を確認する<a class="anchor" href="#fencing" aria-label="この節へのリンク">#</a></h2>
-
-        <p>復旧してよいと判定したとしても、動かす前に必ずやることがあります。<strong>元サーバーの電源が
-        確実に落ちたかを確認する</strong>こと。これがないと Split-Brain が起きます。</p>
-
-<pre data-lang="text"><code>Compute-01 → VM-A still running  → write /dev/vdb   (元の接続を維持)
-Compute-02 → VM-A evacuated      → write /dev/vdb   (新規 attach)
-        → 同時 write → filesystem corruption → データ破損</code></pre>
-
-        <p>そこで原則を<strong>「no fencing = no recovery」</strong>としました。電源遮断（Fencing）を確認
-        できなければ復旧しません。リスクはストレージ種別ごとに違います。</p>
-
-        <div class="table-scroll">
-        <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
-        <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表：横にスクロールすると残りが見えます">
-        <table>
-          <caption class="sr-only">ストレージ種別ごとの Split-Brain 破損リスク。</caption>
-          <thead><tr><th>Storage</th><th>破損リスク</th></tr></thead>
-          <tbody>
-            <tr><td>iSCSI</td><td>SCSI-3 PR はあるが、元の接続を整理する前に新規アクセスすると衝突しうる</td></tr>
-            <tr><td>LVM</td><td>SCSI PR 非対応。同時 write で VG/LV メタデータ破損リスクが高い</td></tr>
-            <tr><td>NFS</td><td>File Lock ベースなので、同時 mount/write では一貫性保証ができない</td></tr>
-          </tbody>
-        </table>
-        </div>
+          <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表：横にスクロールすると残りが見えます">
+          <table>
+            <caption class="sr-only">四つのネットワークの用途と障害時の状態。</caption>
+            <thead><tr><th>ネットワーク</th><th>用途</th><th>障害時</th></tr></thead>
+            <tbody><tr><td>MGMT</td><td>Controller と Compute の管理通信</td><td>正常</td></tr><tr><td>DATA</td><td>VM のデータトラフィック</td><td>遮断</td></tr><tr><td>Controller</td><td>Controller 同士の通信</td><td>遮断</td></tr><tr><td>BMC</td><td>Fencing の経路</td><td>不在</td></tr></tbody>
+          </table>
+          </div>
         </div>
 
-        <p>Fencing は IPMI 電源制御で行います。ただし前提条件が一つ付きます。BMC（電源制御用）
-        ネットワークが MGMT と同じ物理スイッチにあると、スイッチが死ぬとき IPMI も一緒に切れます。
-        すると電源を落とす手段そのものが失われ、Fencing が不可能になります。VLAN 分離だけでは足りません。
-        スイッチが丸ごと死ぬと、その上の VLAN も全部消えるからです。そこでBMC 専用の物理スイッチ
-        を前提条件として明記しました。事故当時、BMC ネットワークは不在でした。</p>
+        <p>Controller 同士の通信が切れるとクラスタの Quorum が崩れ、一部の Controller が単独で判断する
+        ようになります。ところが MGMT は生きていたので、その Compute の Agent HeartBeat は正常に受信されて
+        いました。死んだと判定されたノードが、実は自分の状態をきちんと報告し続けていました。</p>
 
-        <p>復旧手順は四段階に分けました。Detect → Verify → Fence → Recover。このうち
-        Fence 段階に、小さいが重要な順序があります。</p>
+        <h2 id="誤判">届かないことと死んだことを分けられませんでした<a class="anchor" href="#誤判" aria-label="この節へのリンク">#</a></h2>
 
-<pre data-lang="text"><code>1. ipmitool chassis power off        （BMC 専用物理スイッチ経由）
-2. 最低 5 秒待つ                     （電源が実際に落ちる時間、即時照会禁止）
-3. ipmitool chassis power status  →  必ず off を確認
-4. Storage の追加確認                （種別ごとに異なる）
-5. Nova Evacuate 実行</code></pre>
-
-        <p>2 番が核心です。電源を落とした直後に状態を照会すると、まだ off ではありません。
-        待たずに確認すると「off でない」と読まれ、問題のない Fencing を失敗と誤判定したり、逆に楽観的に進んで、
-        落ちてもいないサーバーの VM を移してしまいます。命令を送ることと、その結果を<em>確認</em>することは
-        別の作業で、その間に待機を入れることがこの手順のすべてと言ってもよいくらいです。</p>
+        <p>「あのノードに届かない」は二つのことを意味し得ます。あのノードが死んだという意味かもしれませんし、
+        <strong>自分とあのノードの間の経路が切れた</strong>という意味かもしれません。二つはまったく違う状況
+        なのに、外から見ると同じに見えます。</p>
 
         <figure class="diagram">
-          <svg viewBox="0 0 720 210" role="img" aria-labelledby="stg-t stg-d" class="figure-svg">
-            <title id="stg-t">復旧の四段階: Detect, Verify, Fence, Recover</title>
-            <desc id="stg-d">箱が四つ、左から右へ続きます。Detect は障害判断（Phase 1）、Verify は実行準備確認（Phase 2）、Fence は電源遮断確認、Recover は Nova Evacuate です。Fence の箱だけがピンクで強調されています。下にピンクで、各段階で確信がなければ次へ進まず Hold、と書かれています。</desc>
+          <svg viewBox="0 0 720 240" role="img" aria-labelledby="iso-t iso-d" class="figure-svg">
+            <title id="iso-t">観測者の孤立を対象の死として読む構造</title>
+            <desc id="iso-d">中央に Compute があり、その Agent HeartBeat が MGMT 経由で正常に届いています。左の Controller は Controller の枝が切れて孤立しているにもかかわらず、自分が届かないという理由で Compute が死んだと判定します。</desc>
             <g font-family="Inter, sans-serif">
-              <rect x="8" y="66" width="158" height="66" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
-              <text x="87" y="56" font-size="11" fill="#4f5bd5" text-anchor="middle" font-weight="700">Detect</text>
-              <text x="87" y="98" font-size="10.5" fill="#4a4a4a" text-anchor="middle">障害判断（Phase 1）</text>
-              <text x="87" y="116" font-size="10.5" fill="#4a4a4a" text-anchor="middle">HeartBeat · Quorum</text>
-              <path d="M170 99 H 196" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#stg-a)"/>
-              <rect x="202" y="66" width="158" height="66" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
-              <text x="281" y="56" font-size="11" fill="#4f5bd5" text-anchor="middle" font-weight="700">Verify</text>
-              <text x="281" y="98" font-size="10.5" fill="#4a4a4a" text-anchor="middle">実行準備（Phase 2）</text>
-              <text x="281" y="116" font-size="10.5" fill="#4a4a4a" text-anchor="middle">Storage · MQ · API</text>
-              <path d="M364 99 H 390" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#stg-a)"/>
-              <rect x="396" y="60" width="158" height="78" rx="10" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="475" y="52" font-size="11" fill="#d62976" text-anchor="middle" font-weight="700">Fence</text>
-              <text x="475" y="92" font-size="10.5" fill="#4a4a4a" text-anchor="middle">電源 off 命令</text>
-              <text x="475" y="110" font-size="10.5" fill="#4a4a4a" text-anchor="middle">5 秒待って off 確認</text>
-              <path d="M558 99 H 584" fill="none" stroke="#c9c9c9" stroke-width="1.6" marker-end="url(#stg-a)"/>
-              <rect x="590" y="66" width="122" height="66" rx="10" fill="none" stroke="#4a4a4a" stroke-width="1.6"/>
-              <text x="651" y="56" font-size="11" fill="#4a4a4a" text-anchor="middle" font-weight="700">Recover</text>
-              <text x="651" y="102" font-size="10.5" fill="#4a4a4a" text-anchor="middle">Nova Evacuate</text>
-              <text x="360" y="176" font-size="11.5" fill="#d62976" text-anchor="middle">各段階で確信がなければ次へ進まず Hold</text>
+              <rect x="40" y="80" width="160" height="80" rx="10" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="120" y="70" font-size="12" fill="#d62976" text-anchor="middle">Controller · 孤立</text>
+              <text x="120" y="112" font-size="11.5" fill="#4a4a4a" text-anchor="middle">届かない</text>
+              <text x="120" y="136" font-size="11.5" fill="#d62976" text-anchor="middle">死と判定</text>
+              <rect x="280" y="80" width="160" height="80" rx="10" fill="none" stroke="#2e9e5b" stroke-width="1.8"/>
+              <text x="360" y="70" font-size="12" fill="#2e9e5b" text-anchor="middle">Compute · 稼働</text>
+              <text x="360" y="112" font-size="11.5" fill="#4a4a4a" text-anchor="middle">nova-compute 正常</text>
+              <rect x="520" y="80" width="160" height="80" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.8"/>
+              <text x="600" y="70" font-size="12" fill="#4f5bd5" text-anchor="middle">MGMT 受信側</text>
+              <text x="600" y="112" font-size="11.5" fill="#4a4a4a" text-anchor="middle">Agent HeartBeat</text>
+              <text x="600" y="136" font-size="11.5" fill="#2e9e5b" text-anchor="middle">正常受信</text>
+              <line x1="440" y1="120" x2="520" y2="120" stroke="#2e9e5b" stroke-width="2"/>
+              <line x1="200" y1="120" x2="280" y2="120" stroke="#d62976" stroke-width="2" stroke-dasharray="6 5"/>
+              <text x="360" y="210" font-size="11" fill="#8a8a8a" text-anchor="middle">届かないのは対象の死ではなく自分の孤立かもしれない</text>
             </g>
-            <defs>
-              <marker id="stg-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-                <path d="M0 0 L10 5 L0 10 z" fill="#c9c9c9"/>
-              </marker>
-            </defs>
           </svg>
-          <figcaption>Fence 段階だけが、元に戻せない動作につながります。だからその前の二段階が「進む」ではなく「止まる」を既定にします。</figcaption>
+          <figcaption>Controller が見たのは Compute の状態ではなく自分自身の到達性でした。同じ時刻に MGMT はその Compute が生きていると伝えていました。</figcaption>
         </figure>
 
-        <h2 id="consensus">ロックは分散合意ではない<a class="anchor" href="#consensus" aria-label="この節へのリンク">#</a></h2>
+        <p>事故の根は<strong>観測者の孤立を対象の障害として誤認した</strong>ことでした。孤立した側が自分の
+        孤立を判定に入れられなければ、観測精度をいくら上げても同じ結論に至ります。何をより精緻に見るかでは
+        なく、誰の言葉を信じるかの問題でした。</p>
 
-        <p>「誰が復旧を実行するか」を制御する方式も決める必要がありました。社内にはすでに Galera があり、その
-        DB Lock を使おうという流れがありました。三つの方式を同じ基準で分解しました。</p>
+        <h2 id="スプリットブレイン">走るべきでなかった復旧がボリュームを壊します<a class="anchor" href="#スプリットブレイン" aria-label="この節へのリンク">#</a></h2>
 
-        <div class="table-scroll">
-        <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
-        <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表：横にスクロールすると残りが見えます">
-        <table>
-          <caption class="sr-only">実行制御アーキテクチャ3案の比較。</caption>
-          <thead><tr><th>軸</th><th>Galera + ShedLock</th><th>etcd + Fencing</th><th>Pacemaker + Corosync</th></tr></thead>
-          <tbody>
-            <tr><td>合意方式</td><td>DB Lock</td><td><strong>Raft</strong></td><td><strong>Totem</strong></td></tr>
-            <tr><td>Split-Brain 防止</td><td>低</td><td>中</td><td>高</td></tr>
-            <tr><td>障害検知</td><td>~30秒</td><td>~10秒</td><td>~5秒</td></tr>
-            <tr><td>STONITH</td><td>なし</td><td>なし</td><td>内蔵</td></tr>
-            <tr><td>OpenStack 連携</td><td>非標準</td><td>非標準</td><td>Masakari 標準</td></tr>
-            <tr><td>評価</td><td>暫定対応</td><td>運用環境に適合</td><td>エンタープライズ標準</td></tr>
-          </tbody>
-        </table>
-        </div>
-        </div>
-        <p class="table-note">核心はDB Lock が分散合意ではないという点です。ロックは重複
-        実行を減らしますが、分断状況で両側がそれぞれロックを取るのを止められません。目的が Split-Brain 防止
-        なのに、それを構造的に防げなければ目的を達成できません。そこでPacemaker + Corosync を第一
-        候補に（検知 ~5秒 + STONITH 内蔵で「no fencing = no recovery」を構造が強制）、導入が難しければ
-        etcdを次善策として推奨しました。</p>
-
-        <h2 id="rto">復旧はどれくらいかかるか（見積り）<a class="anchor" href="#rto" aria-label="この節へのリンク">#</a></h2>
-
-        <p>復旧体系を設計すると「どれくらいかかるか」が必ず付いてきます。単一の数字ではなく段階別に分解しました。
-        改めて強調しますが、これは<strong>実測ではなく設計の見積り</strong>で、チームの合意が必要な値です。</p>
+        <p>誤判が高くつく理由はその次にあります。原本の VM がまだ生きてディスクに書いているのに、複製が別の
+        ホストで同じボリュームに付くと、両側が同じ場所へ同時に書きます。壊れるのは VM 一台ではなく
+        ボリューム全体です。</p>
 
         <div class="table-scroll">
-        <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
-        <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表：横にスクロールすると残りが見えます">
-        <table>
-          <caption class="sr-only">復旧時間の段階別見積りとサービス種別ごとの許容基準。</caption>
-          <thead><tr><th>段階</th><th>所要（見積り）</th><th>サービス種別</th><th>判定</th></tr></thead>
-          <tbody>
-            <tr><td>Failure detect（TTL 30秒）</td><td>~30秒</td><td>Stateless API</td><td>~100秒 許容</td></tr>
-            <tr><td>IPMI Fencing</td><td>~5–10秒</td><td>DB ベース</td><td>危険。整合性レビューが必要</td></tr>
-            <tr><td>Nova Evacuate + VM 起動</td><td>~60–120秒</td><td>NFV · リアルタイム</td><td>許容不可（~10–20秒アーキテクチャが必要）</td></tr>
-            <tr><td><strong>総復旧時間</strong></td><td>~100–160秒</td><td>—</td><td>—</td></tr>
-          </tbody>
-        </table>
-        </div>
-        </div>
-        <p class="table-note">RTO は技術ではなくサービス要求が決める値です。だから一つの数字を
-        「達成した」と言う代わりに、段階別の分解と種別ごとの許容基準、そして TTL を 15 秒に縮める短縮オプションと
-        その代償（Jitter 誤判定リスクの増加）を一緒に残しました。縮められるとだけ言っても、判断の助けになりません
-        から。</p>
-
-        <h2 id="architecture">完成アーキテクチャ: 四つの層が一本の鎖に<a class="anchor" href="#architecture" aria-label="この節へのリンク">#</a></h2>
-
-        <p>ここまでの判断を一つにまとめると、この設計は<strong>四つの層が順に連なった鎖</strong>です。
-        検知 → 判定・合意 → Fencing → 復旧。重要なのは構成要素の<em>リスト</em>ではなく<strong>順序</strong>
-        です。前の層を通過できなければ次の層へ進まず、元に戻せない動作（退避）は鎖の最後にだけあります。</p>
-
-        <div class="table-scroll">
-        <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
-        <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表：横にスクロールすると残りが見えます">
-        <table>
-          <caption class="sr-only">完成アーキテクチャの四つの層と、構成要素・役割。</caption>
-          <thead><tr><th>層</th><th>構成要素</th><th>役割</th></tr></thead>
-          <tbody>
-            <tr><td>検知</td><td>Agent HeartBeat · 複数ネットワーク · BMC 状態</td><td>障害の「疑い」を集める。死亡の確定と区別</td></tr>
-            <tr><td>判定 · 合意</td><td>信号信頼度4等級 · Quorum · Phase 1/2</td><td>本当に障害か、そしてこのノードが決定権を持つか</td></tr>
-            <tr><td>Fencing</td><td>IPMI 電源遮断の確認（STONITH）</td><td>元がもう書けないことをFail-closed で保証</td></tr>
-            <tr><td>復旧</td><td>RecoveryMethod · evacuate/live-migration · StateChecker</td><td>対象を選別して安全なホストへ再配置</td></tr>
-          </tbody>
-        </table>
-        </div>
+          <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表：横にスクロールすると残りが見えます">
+          <table>
+            <caption class="sr-only">Storage 種別ごとの同時書き込みリスク。</caption>
+            <thead><tr><th>Storage</th><th>同時書き込みが起きると</th></tr></thead>
+            <tbody><tr><td>iSCSI</td><td>SCSI-3 PR はありますが、原本の接続整理前に新規接続が来ると衝突し得ます</td></tr><tr><td>LVM</td><td>SCSI PR 非対応のため VG と LV のメタデータ損傷リスクが高くなります</td></tr><tr><td>NFS</td><td>File Lock 基盤のため同時 mount と write では一貫性を保証できません</td></tr></tbody>
+          </table>
+          </div>
         </div>
 
-        <p>鎖をできるだけコードに近づけて書くと（要旨だけ）、こういう形です。</p>
+        <p class="table-note">だからこの設計は「速く復旧する」ではなく「確信できなければ止める」を既定に
+        します。非対称なコストが判定を決めました。</p>
 
-<pre data-lang="text"><code>if (!quorum())                 return HOLD;   // 観測者自身が合意できない
-if (agentHeartbeat.isFresh())  return HOLD;   // Compute が生きていると直接報告
-if (extProbe.failed())         return HOLD;   // 自分の孤立を疑う — 対象の障害ではない
-if (!phase2.ready())           return HOLD;   // Storage · MQ · Nova API 未準備
-fence(host); confirmPowerOff();               // 元が書けないことを fail-closed で確認
-evacuate(targets);                            // ここまで来て初めて移す</code></pre>
+        <h2 id="復旧対象">何を復旧するかは二層で決まっていました<a class="anchor" href="#復旧対象" aria-label="この節へのリンク">#</a></h2>
 
-        <p class="table-note">この鎖のうち、検知・既存の判定ロジック・復旧の多くはすでにコードにあります。自己状態の点検
-        ゲート（孤立した観測者は復旧を譲る）、メタデータキー（<code>HA_Enabled</code> · <code>HA_Disabled</code>）
-        による対象選別、<code>RecoveryMethod</code> によるホスト選定がその場所です。そしてこの鎖の
-        安全軸である Fencing と合意（STONITH · Pacemaker/Corosync）は設計が目指す目標であり、有効化
-        済みという意味ではありません。この軸がなければ、残りがどれほど精緻でも、分断時に Split-Brain を
-        構造的に防げません。だから設計はこの軸を鎖の真ん中に置きました。</p>
+        <p>設計を始めるとき、一つはすでに製品にありました。復旧対象を選ぶ軸がホスト制御属性と Instance
+        メタデータの二層だということです。2024 年 9 月にこの機能を検証しながら三つの値をすべて確認して
+        いました。</p>
 
-        <h2 id="not-claiming">限界：この記事が主張しないこと<a class="anchor" href="#not-claiming" aria-label="この節へのリンク">#</a></h2>
+        <figure class="diagram">
+          <svg viewBox="0 0 720 230" role="img" aria-labelledby="tgt-t tgt-d" class="figure-svg">
+            <title id="tgt-t">復旧対象を選ぶ二つの層</title>
+            <desc id="tgt-d">上段はホスト制御属性の三種類、下段は Instance のメタデータです。二つの層が重なって対象リストと除外リストが分かれます。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="360" y="30" font-size="12" fill="#4f5bd5" text-anchor="middle">第一層 · ホスト制御属性</text>
+              <rect x="60" y="45" width="180" height="50" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="150" y="75" font-size="11.5" fill="#4a4a4a" text-anchor="middle">HA_Enabled</text>
+              <rect x="270" y="45" width="180" height="50" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="360" y="75" font-size="11.5" fill="#4a4a4a" text-anchor="middle">HA_Disabled</text>
+              <rect x="480" y="45" width="180" height="50" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
+              <text x="570" y="75" font-size="11.5" fill="#4a4a4a" text-anchor="middle">NONE</text>
+              <text x="360" y="125" font-size="12" fill="#d62976" text-anchor="middle">第二層 · Instance メタデータ</text>
+              <rect x="150" y="140" width="180" height="50" rx="8" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="240" y="170" font-size="11.5" fill="#2e9e5b" text-anchor="middle">対象リスト</text>
+              <rect x="390" y="140" width="180" height="50" rx="8" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="480" y="170" font-size="11.5" fill="#d62976" text-anchor="middle">除外リスト</text>
+              <text x="360" y="215" font-size="11" fill="#8a8a8a" text-anchor="middle">危ないのは復旧されない側ではなく復旧されてはいけない側</text>
+            </g>
+          </svg>
+          <figcaption>ホスト設定と Instance メタデータが重なって対象が分かれます。2024 年に三つの値を総当たりで確認し、除外リストが意図どおり埋まるかを一緒に見ました。</figcaption>
+        </figure>
+
+        <p>ホスト属性が <code>HA_Enabled</code> ならメタデータにその印がある Instance だけが対象になり、
+        <code>HA_Disabled</code> ならその印を持たないものがすべて対象になり、<code>NONE</code> なら
+        メタデータに関係なくすべてが対象になります。つまり opt-in と opt-out と全体をホスト単位で選べる
+        構造です。</p>
+
+        <p>そのとき対象リストだけでなく除外リストが意図どおり埋まるかも一緒に見ました。復旧機能で危ないのは
+        復旧されないことよりも<strong>復旧されてはいけないものが復旧されること</strong>だからです。2026 年の
+        設計で八つのシナリオのうち七つを保留にすると決めたとき、「復旧するかしないか」を判断する地点が製品に
+        すでにあるという前提をここから持ってきました。</p>
+
+        <h2 id="主張しないこと">限界：この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="この節へのリンク">#</a></h2>
 
         <ul class="callout">
-          <li>この記事は目標アーキテクチャのまとめです。私の担当は17ページの障害対応設計書で、
-          実装はチームが引き継ぎました。上の鎖は「こう動く」の完成確認ではなく、「こう動くべき」の設計図です。</li>
-          <li>残るリスクを明確にしておきます。安全軸である Fencing が実際に有効化される前は、
-          分断時の Split-Brain 防止が構造的に保証されません。だから自動復旧を無条件に安全な機能と見なしては
-          いけません。完成条件は、Fencing 成功の確認 · BMC 不通時の復旧中断 · Quorum 喪失時の Fail-closed です。
-          そしてこの軸が立つには、BMC 専用の物理スイッチのような前提が先に整っている必要が
-          あります。</li>
-          <li>RTO ~100–160秒は実測ではありません。段階別の見積りで、設計書にも「チーム合意が
-          必要」と書かれています。</li>
-          <li>誤判定したのは既存の復旧ロジックで、その後に再発を防ぐ判定体系を私が設計しました。
-          私が作ったロジックが誤判定したのではありません。</li>
-          <li>製品名 · バージョン · 顧客 · サーバーアドレス · ホスト名 · アカウントは書いていません。ネットワーク構成や
-          パラメータは、判定ロジックを説明するのに必要なぶんだけ一般化しました。</li>
+          <li>⚠️ この連作の成果物は設計書です。実装は別のメンバーが引き継いでおり、製品にどこまで反映された
+          かはこの記事の範囲ではありません。</li>
+          <li>私は事故を自分で調査していません。整理された事実を受け取って再発を防ぐ判定体系を設計しました。
+          誤判したのは既存の復旧ロジックです。</li>
+          <li>2024 年の確認は設計でも実装でもなく機能検証であり、根拠は画面の記録であって自動テストでは
+          ありません。</li>
+          <li>社内資料のため製品名・顧客名・サーバーアドレス・ホスト名・アカウントは書いていません。
+          ネットワーク構成は判定構造の説明に必要な範囲だけ一般化しました。</li>
         </ul>
 
         <div class="wrapup">
-        <h2 id="closing">おわりに<a class="anchor" href="#closing" aria-label="この節へのリンク">#</a></h2>
-
-        <p>この設計を通してずっと反芻した一文があります。<strong>自動復旧の品質は、どれだけうまく復旧するか
-        より、どれだけ正確にしないかで決まる。</strong>だから検知を精緻にする方向へは行かず、信号に資格を付け、
-        判定と実行を分け、既定を Hold にしました。8つのうち7つを止める設計になった理由です。</p>
-
-        <p>「7つを保留したら、本当の障害のとき復旧が遅れないか」という反問を予想します。遅れます。ですが誤って
-        実行した復旧は元に戻せません。Split-Brain でファイルシステムが壊れると、VM 一つではなくボリューム全体
-        です。非対称なコストがこの設計全体の基調を決めました。自動化が最も危険になる瞬間は自信満々のときだと、
-        この事故が長く思い出させてくれました。</p>
-
+        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="この節へのリンク">#</a></h2>
+        <p>この編で言いたいことは一つです。自動復旧が危うくなる場所は復旧が遅いときではなく、
+        <strong>観測者が自分の状態を知らないまま対象を判定するとき</strong>です。スイッチが一つ死んだだけ
+        なのに四本の運命が分かれ、残った枝はそのノードが生きていると伝えていたのに、切れた枝を持つ側が
+        判定を下しました。</p>
+        <p>次の編はそれで何を変えたかです。検知をより精緻にする代わりに、信号ごとに証言できる範囲を決めた
+        話へ続きます。</p>
         <p>お読みいただきありがとうございました。</p>
         </div>
-
       </article>
     </main>
     <footer class="notranslate">
@@ -494,7 +305,7 @@ evacuate(targets);                            // ここまで来て初めて移�
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=f1b32e9931"></script>
+  <script src="../assets/content.js?v=9651acb782"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=d4af83b541"></script>
