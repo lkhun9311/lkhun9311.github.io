@@ -188,6 +188,18 @@
       },
       items: [
         {
+          title: "Instance HA ④: We Do Not Recover Until the Power Is Confirmed Off",
+          title_ko: "Instance HA ④: 펜싱을 확인하지 못하면 복구하지 않습니다",
+          title_ja: "Instance HA ④: 電源が落ちたと確認できるまで復旧しません",
+          url: "writing/instance-ha-4-no-fencing-no-recovery.html",
+          source: "company", sourceLabel: "Company work",
+          date: "2026-09-20", dateLabel: "Sep 20, 2026",
+          desc: "Part 4 of the Instance HA design series. A verdict that recovery may run is not permission to move anything. Cutting power needs a path that survives the failure, so a dedicated physical switch for BMC became a precondition; the command and the confirmation are separated by five seconds; and leftover attachments clear differently per storage type. Also in Korean and Japanese.",
+          desc_ko: "Instance HA 설계 4편. 복구해도 된다는 판정이 섰더라도 바로 옮기지 않습니다. 전원을 내릴 경로가 장애 때도 살아 있어야 해서 BMC 전용 물리 스위치를 전제 조건으로 요구했고 명령과 확인 사이에 5초를 두었으며 Storage 유형마다 잔여 연결 정리 조건을 따로 두었습니다.",
+          desc_ja: "Instance HA 設計の第4編。復旧してよいという判定が立っても、すぐには移しません。電源を落とす経路が障害時にも生きている必要があるため BMC 専用の物理スイッチを前提条件として求め、命令と確認のあいだに五秒を置き、Storage の種別ごとに残存接続の整理条件を分けました。",
+          tags: ["IaaS Backend", "Reliability", "Method", "Operations"]
+        },
+        {
           title: "Instance HA ②: Each Signal Is Entitled to Testify to Something Different",
           title_ko: "Instance HA ②: 신호마다 증언할 수 있는 범위가 다릅니다",
           title_ja: "Instance HA ②: 信号ごとに証言できる範囲が違います",

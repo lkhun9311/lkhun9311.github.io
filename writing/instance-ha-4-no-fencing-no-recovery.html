@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instance HA ④: We Do Not Recover Until the Power Is Confirmed Off | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/instance-ha-4-no-fencing-no-recovery.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/instance-ha-4-no-fencing-no-recovery.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/instance-ha-4-no-fencing-no-recovery.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/instance-ha-4-no-fencing-no-recovery.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="Instance HA ④: We Do Not Recover Until the Power Is Confirmed Off" />
+  <meta property="og:description" content="Even with a verdict that recovery may run, nothing moves until the original host's power is confirmed off. This part covers why a dedicated physical switch for BMC was required as a precondition, the four stages from Detect to Recover, and the per-storage cleanup of leftover attachments." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/instance-ha-4-no-fencing-no-recovery.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Instance HA ④: We Do Not Recover Until the Power Is Confirmed Off" />
+  <meta name="twitter:description" content="No recovery before the power is confirmed off. The BMC precondition, four stages, and per-storage cleanup, in part four of the Instance HA series." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="Even with a verdict that recovery may run, nothing moves until the original host's power is confirmed off. This part covers why a dedicated physical switch for BMC was required as a precondition, the four stages from Detect to Recover, and the per-storage cleanup of leftover attachments." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"instance-ha-4-no-fencing-no-recovery.html","ko":"instance-ha-4-no-fencing-no-recovery.ko.html","ja":"instance-ha-4-no-fencing-no-recovery.ja.html"}'>
+          <option value="en" selected>English</option>
+          <option value="ko">한국어</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>List</a>
+        <div class="article-meta"><span class="source-tag company notranslate">Company work</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS Backend</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>Instance HA ④: We Do Not Recover Until the Power Is Confirmed Off<br><span class="h1-sub">Sending the power-off command and confirming it took effect are different acts. That is why five seconds sit between them and why each storage type gets its own cleanup condition.</span></h1>
+        <p class="article-date">September 2026</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="instance-ha-4-no-fencing-no-recovery"></aside>
+        <nav class="article-toc" aria-label="Table of contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            
+            
+            
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#why-power-first">Why power comes before recovery</a></li>
+            <li><a href="#bmc-precondition">VLAN separation was not enough</a></li>
+            <li><a href="#four-stages">Split into four stages</a></li>
+            <li><a href="#confirming-power">Five seconds between command and confirmation</a></li>
+            <li><a href="#storage-cleanup">Each storage type clears differently</a></li>
+            <li><a href="#what-this-does-not-claim">Limits: what this post does not claim</a></li>
+            <li><a href="#closing">Closing</a></li>
+          </ul>
+        </nav>
+      <article>
+        <p>In <a href="seven-of-eight-should-not-recover.html">part three</a>, only one of eight scenarios
+        proceeded to recovery. This part is what happens after that one passes. A verdict that recovery may
+        run is not yet permission to move anything.</p>
+
+        <p>The reason is the one from part one. If the original is still alive and writing to its disk while a
+        replica attaches to the same volume, the filesystem breaks. So the principle was set as
+        <strong>nothing moves without confirmation that the original host's power is off</strong>.</p>
+
+        <p>Turning that principle into a procedure brings three things with it. The path for cutting power has
+        to survive the failure, the command has to be separated from the confirmation, and leftover
+        attachments have to be cleared differently per storage type.</p>
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>Anyone adding fencing to automatic recovery and working out the preconditions</li>
+          <li>Anyone deciding which network the IPMI or BMC path belongs on</li>
+          <li>Anyone wondering why leftover attachments are handled differently per storage type</li>
+          <li>Anyone who read part three and wants to know what follows a verdict</li>
+        </ul>
+
+        <h2 id="why-power-first">Why power comes before recovery<a class="anchor" href="#why-power-first" aria-label="Link to this section">#</a></h2>
+
+        <p>Recovery means bringing a VM back up on another host. If the original did not actually die, two
+        sides attach to the same volume. <strong>What breaks is not one VM but the whole volume.</strong></p>
+
+        <p>So the principle became "no fencing, no recovery". Leave a path that proceeds without
+        confirmation and that path eventually opens. Confirmation was made a gate rather than an option.</p>
+
+        <h2 id="bmc-precondition">VLAN separation was not enough<a class="anchor" href="#bmc-precondition" aria-label="Link to this section">#</a></h2>
+
+        <p>Power is cut over IPMI, so if that path dies along with the failure the principle cannot hold at
+        all. Three wiring options were put side by side.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 250" role="img" aria-labelledby="bmc-t bmc-d" class="figure-svg">
+            <title id="bmc-t">Three BMC wiring options and what each leaves during a failure</title>
+            <desc id="bmc-d">From the top: BMC on the same physical switch as MGMT, BMC separated only by VLAN, and a dedicated physical switch. The first two lose the IPMI path along with the switch; only the last survives.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="35" width="280" height="50" rx="8" fill="none" stroke="#d62976" stroke-width="1.7"/>
+              <text x="180" y="65" font-size="11.5" fill="#d62976" text-anchor="middle">BMC + MGMT, one switch</text>
+              <text x="530" y="65" font-size="11.5" fill="#d62976" text-anchor="middle">IPMI cut as well</text>
+              <rect x="40" y="105" width="280" height="50" rx="8" fill="none" stroke="#d62976" stroke-width="1.7"/>
+              <text x="180" y="135" font-size="11.5" fill="#d62976" text-anchor="middle">BMC on its own VLAN</text>
+              <text x="530" y="135" font-size="11.5" fill="#d62976" text-anchor="middle">switch dies, VLAN goes</text>
+              <rect x="40" y="175" width="280" height="50" rx="8" fill="none" stroke="#2e9e5b" stroke-width="2"/>
+              <text x="180" y="205" font-size="11.5" fill="#2e9e5b" text-anchor="middle">dedicated BMC switch</text>
+              <text x="530" y="205" font-size="11.5" fill="#2e9e5b" text-anchor="middle">MGMT cut, IPMI holds</text>
+            </g>
+          </svg>
+          <figcaption>In the first two, the switch that dies takes the means of cutting power with it. At the time of the incident this farm had no BMC path at all.</figcaption>
+        </figure>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+          <table>
+            <caption class="sr-only">Three BMC wiring options and the outcome during a failure.</caption>
+            <thead><tr><th>Wiring</th><th>During an L2/L3 failure</th><th>Outcome</th></tr></thead>
+            <tbody><tr><td>BMC and MGMT on one physical switch</td><td>MGMT and IPMI cut together</td><td>Fencing impossible</td></tr><tr><td>BMC separated by VLAN only</td><td>Switch dies and the VLAN goes with it</td><td>Fencing unreliable</td></tr><tr><td>Dedicated physical switch for BMC</td><td>MGMT cut, IPMI holds</td><td>Fencing possible</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">VLAN separation is logical separation, so it does not cover a switch dying
+        outright. <strong>A dedicated physical switch was required as a precondition.</strong> At the time of
+        the incident this farm had no BMC path at all.</p>
+
+        <h2 id="four-stages">Split into four stages<a class="anchor" href="#four-stages" aria-label="Link to this section">#</a></h2>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 210" role="img" aria-labelledby="chn-t chn-d" class="figure-svg">
+            <title id="chn-t">Four stages from Detect to Recover</title>
+            <desc id="chn-d">Detect, Verify, Fence and Recover run left to right. Only the Fence box is emphasised, and the irreversible act sits at the very end.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="30" y="70" width="140" height="56" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.7"/>
+              <text x="100" y="95" font-size="12" fill="#4f5bd5" text-anchor="middle">Detect</text>
+              <text x="100" y="114" font-size="11" fill="#4a4a4a" text-anchor="middle">Phase 1 done</text>
+              <rect x="205" y="70" width="140" height="56" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.7"/>
+              <text x="275" y="95" font-size="12" fill="#4f5bd5" text-anchor="middle">Verify</text>
+              <text x="275" y="114" font-size="11" fill="#4a4a4a" text-anchor="middle">Phase 2 met</text>
+              <rect x="380" y="70" width="140" height="56" rx="9" fill="none" stroke="#d62976" stroke-width="2.2"/>
+              <text x="450" y="95" font-size="12" fill="#d62976" text-anchor="middle">Fence</text>
+              <text x="450" y="114" font-size="11" fill="#4a4a4a" text-anchor="middle">power off confirmed</text>
+              <rect x="555" y="70" width="135" height="56" rx="9" fill="none" stroke="#2e9e5b" stroke-width="1.7"/>
+              <text x="622" y="95" font-size="12" fill="#2e9e5b" text-anchor="middle">Recover</text>
+              <text x="622" y="114" font-size="11" fill="#4a4a4a" text-anchor="middle">Nova Evacuate</text>
+              <line x1="170" y1="98" x2="205" y2="98" stroke="#8a8a8a" stroke-width="1.5"/>
+              <line x1="345" y1="98" x2="380" y2="98" stroke="#8a8a8a" stroke-width="1.5"/>
+              <line x1="520" y1="98" x2="555" y2="98" stroke="#8a8a8a" stroke-width="1.5"/>
+              <text x="360" y="175" font-size="11" fill="#8a8a8a" text-anchor="middle">the irreversible act sits only at the end</text>
+            </g>
+          </svg>
+          <figcaption>Only Fence leads to something that cannot be undone. That is why the two stages before it default to stopping rather than proceeding.</figcaption>
+        </figure>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+          <table>
+            <caption class="sr-only">The four stages of the recovery procedure.</caption>
+            <thead><tr><th>Stage</th><th>What it does</th></tr></thead>
+            <tbody><tr><td>Detect</td><td>Heartbeat TTL expired and the Phase 1 verdict is complete</td></tr><tr><td>Verify</td><td>All Phase 2 execution conditions are met</td></tr><tr><td>Fence</td><td>Cut power and confirm it went down</td></tr><tr><td>Recover</td><td>Run Nova Evacuate</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p>The point of four stages is to push the irreversible act to the end. The first three can stop at
+        any time and only the last cannot be undone.</p>
+
+        <h2 id="confirming-power">Five seconds between command and confirmation<a class="anchor" href="#confirming-power" aria-label="Link to this section">#</a></h2>
+
+        <p>This is the easiest place in the Fence stage to get wrong. <strong>Reading the status right after
+        cutting power still reports not-off.</strong> There is time between the command arriving and the
+        power actually going down.</p>
+
+        <pre data-lang="shell"><code># cut power over the dedicated BMC switch path
+ipmitool chassis power off
+
+# wait at least five seconds - an immediate read is not yet off
+sleep 5
+
+# the status must read off
+ipmitool chassis power status
+
+# only after the per-storage cleanup is confirmed
+# does Nova Evacuate run</code></pre>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 210" role="img" aria-labelledby="wt-t wt-d" class="figure-svg">
+            <title id="wt-t">The wait between the power-off command and the status read</title>
+            <desc id="wt-d">Reading the status immediately after the command still reports not-off. Only after waiting at least five seconds does it read as off.</desc>
+            <g font-family="Inter, sans-serif">
+              <line x1="70" y1="110" x2="650" y2="110" stroke="#8a8a8a" stroke-width="1.4"/>
+              <circle cx="160" cy="110" r="7" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <text x="160" y="88" font-size="11.5" fill="#4f5bd5" text-anchor="middle">power off sent</text>
+              <circle cx="330" cy="110" r="7" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="330" y="88" font-size="11.5" fill="#d62976" text-anchor="middle">read at once</text>
+              <text x="330" y="140" font-size="11" fill="#d62976" text-anchor="middle">not off yet</text>
+              <circle cx="560" cy="110" r="7" fill="#2e9e5b" stroke="#2e9e5b" stroke-width="2"/>
+              <text x="560" y="88" font-size="11.5" fill="#2e9e5b" text-anchor="middle">read after 5s</text>
+              <text x="560" y="140" font-size="11" fill="#2e9e5b" text-anchor="middle">confirmed off</text>
+              <text x="360" y="180" font-size="11" fill="#8a8a8a" text-anchor="middle">drop the wait and a good fence reads as a failure</text>
+            </g>
+          </svg>
+          <figcaption>Without the wait it goes wrong in both directions: a fence that worked reads as failed, or a host that never went down has its VMs moved.</figcaption>
+        </figure>
+
+        <p>Drop the wait and it goes wrong in both directions. A fence that worked reads as failed and blocks
+        recovery, or an optimistic read moves the VMs of a host that never went down. Five seconds is a lower
+        bound on the power actually dropping, and the upper bound is set separately.</p>
+
+        <h2 id="storage-cleanup">Each storage type clears differently<a class="anchor" href="#storage-cleanup" aria-label="Link to this section">#</a></h2>
+
+        <p>Power being off does not by itself make the move safe. The attachments the original held have to be
+        cleared, and how that is done differs by storage type.</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+          <table>
+            <caption class="sr-only">Per-storage checks before the move.</caption>
+            <thead><tr><th>Storage</th><th>What to confirm</th></tr></thead>
+            <tbody><tr><td>iSCSI</td><td>Session closed and SCSI PR released</td></tr><tr><td>LVM</td><td>VG lock released</td></tr><tr><td>NFS</td><td>Mount released</td></tr><tr><td>Cinder</td><td>Volume attachment cleanup complete</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">The four lines are not collapsed into one because they sit at different layers.
+        A transport protocol, a volume layer and a management service are mixed together, so no single
+        condition covers them.</p>
+
+        <h2 id="what-this-does-not-claim">Limits: what this post does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>⚠️ What this series produced is a design document. I designed the procedure and required the
+          precondition. I did not build the BMC network or run this procedure in production.</li>
+          <li>Five seconds is a proposed value. It was set as a lower bound to forbid an immediate read, not
+          chosen by measuring how long power takes to drop on each model of hardware.</li>
+          <li>The four storage entries are not an exclusive taxonomy. Cinder manages the other three rather
+          than sitting beside them, and two can appear together in one deployment.</li>
+          <li>This is internal material. Product names, customers, addresses and accounts are not used.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="closing">Closing<a class="anchor" href="#closing" aria-label="Link to this section">#</a></h2>
+        <p>One line carries this part. <strong>Sending a command and confirming its result are different
+        acts.</strong> Separating them and putting a wait in between is nearly the whole of the Fence stage,
+        and pinning down the BMC path that makes confirmation possible comes before even that.</p>
+        <p>The next part is about who gets to run this procedure: three architectures compared against the
+        same criteria.</p>
+        <p>Thanks for reading.</p>
+        </div>
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=f94f59d535"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
