@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GPU 실험 Harness의 거부 경로를 실물로 돌려 봤습니다 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/refusal-paths-exercised-for-real.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/refusal-paths-exercised-for-real.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/refusal-paths-exercised-for-real.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/refusal-paths-exercised-for-real.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="GPU 실험 Harness의 거부 경로를 실물로 돌려 봤습니다" />
+  <meta property="og:description" content="실험 Harness가 내놓는 숫자는 클러스터가 시작할 때 깨끗했고 끝날 때 깨끗함이 증명될 때만 값어치가 있습니다. 관측 연속성과 입구 자격과 소유권 지속과 증거 아티팩트를 게이트로 세우고 권한을 한 동사만 잘라 내거나 파일에 결함을 넣어 거부 경로를 실제로 발화시켰습니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/refusal-paths-exercised-for-real.ko.html" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="GPU 실험 Harness의 거부 경로를 실물로 돌려 봤습니다" />
+  <meta name="twitter:description" content="게이트 넷을 세우고 거부 경로를 실물로 돌렸습니다. 구 컬렉터가 재던 4.8초가 실은 측정 오차였습니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="실험 Harness가 내놓는 숫자는 클러스터가 시작할 때 깨끗했고 끝날 때 깨끗함이 증명될 때만 값어치가 있습니다. 관측 연속성과 입구 자격과 소유권 지속과 증거 아티팩트를 게이트로 세우고 권한을 한 동사만 잘라 내거나 파일에 결함을 넣어 거부 경로를 실제로 발화시켰습니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"refusal-paths-exercised-for-real.html","ko":"refusal-paths-exercised-for-real.ko.html","ja":"refusal-paths-exercised-for-real.ja.html"}'>
+          <option value="ko" selected>한국어</option>
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
+        <div class="article-meta"><span class="source-tag side notranslate">개인 프로젝트</span><a class="project-tag notranslate" href="../writing/index.html?tag=GPUaaS%20Control%20Plane">#GPUaaS Control Plane</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>GPU 실험 Harness의 거부 경로를 실물로 돌려 봤습니다<br><span class="h1-sub">게이트를 넷 세우고 나서야 이 도구의 숫자를 증거라고 부를 수 있었습니다.</span></h1>
+        <p class="article-date">2026년 9월</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="refusal-paths-exercised-for-real"></aside>
+        <nav class="article-toc" aria-label="목차">
+          <p class="toc-label">목차</p>
+          <ul>
+            
+            <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+            <li><a href="#증거가-없던-상태">숫자는 있는데 증거가 없었습니다</a></li>
+            <li><a href="#입구">출구만 지키고 입구는 아무도 지키지 않았습니다</a></li>
+            <li><a href="#두-시점">두 시점만 보면 가운데가 빕니다</a></li>
+            <li><a href="#대비를-자격으로">대비 자체를 자격으로 만들었습니다</a></li>
+            <li><a href="#아홉-가지">같은 모양이 아홉 번 나왔습니다</a></li>
+            <li><a href="#주장하지-않는-것">한계: 이 글이 주장하지 않는 것</a></li>
+            <li><a href="#마치며">마치며</a></li>
+          </ul>
+        </nav>
+      <article>
+        <p>실험 도구가 내놓는 숫자는 조건이 하나 붙을 때만 값어치가 있습니다. 클러스터가 시작할 때
+        깨끗했고 끝날 때도 깨끗했음이 증명돼야 합니다.</p>
+
+        <p>이 Harness는 그 증명을 못 하고 있었습니다. 미리보기가 아닌 실행은 전부 거부되고 있었고
+        이유는 유효성 게이트가 미구현이라는 것이었습니다. 정리 쪽은 공을 많이 들여 두었는데 거기가
+        병목이 아니었습니다.</p>
+
+        <p>처음에 저는 관측 연속성 게이트가 이미 상당히 지어져 있다고 봤습니다. 파일이 있고 테스트도
+        있었기 때문입니다. 그 판단이 틀렸다는 것은
+        <a href="every-rejection-opened-a-new-connection.ko.html">앞선 글</a>에 적었습니다. 이 글은 그 뒤에
+        게이트 넷을 세우고 <strong>거부 경로를 하나씩 실물로 발화시킨</strong> 기록입니다.</p>
+
+        <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li>실험 도구나 벤치마크 도구를 직접 만들어 쓰시는 분</li>
+          <li>가드를 넣었는데 그 가드가 실제로 무엇을 잡는지 확인하고 싶으신 분</li>
+          <li>측정값이 시스템의 성질인지 도구의 오차인지 가르는 방법을 찾으시는 분</li>
+          <li>클러스터를 쓰는 실험에서 실행 사이의 경계를 세워야 하는 분</li>
+        </ul>
+
+        <h2 id="증거가-없던-상태">숫자는 있는데 증거가 없었습니다<a class="anchor" href="#증거가-없던-상태" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>게이트는 넷입니다. 관측이 끊기지 않았는가, 시작할 때 환경이 자격을 갖췄는가, 그 자격이
+        실행 내내 유지됐는가, 그리고 그 증거가 레코드에 남았는가입니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 245" role="img" aria-labelledby="gate-t gate-d" class="figure-svg">
+            <title id="gate-t">게이트 넷이 실행의 어느 시점에 서는가</title>
+            <desc id="gate-d">위쪽 선이 실행의 흐름입니다. Worker를 확보한 직후에 입구 자격이 서고 첫 생성 이전부터 해제까지 관측 연속성과 소유권 지속이 이어지며 레코드를 쓸 때 증거 아티팩트가 섭니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="60" y="40" font-size="10" fill="#666" text-anchor="middle">Worker 확보</text>
+              <circle cx="60" cy="58" r="4" fill="#666"/>
+              <text x="215" y="40" font-size="10" fill="#666" text-anchor="middle">첫 생성</text>
+              <circle cx="215" cy="58" r="4" fill="#666"/>
+              <text x="370" y="40" font-size="10" fill="#666" text-anchor="middle">관측</text>
+              <circle cx="370" cy="58" r="4" fill="#666"/>
+              <text x="525" y="40" font-size="10" fill="#666" text-anchor="middle">해제</text>
+              <circle cx="525" cy="58" r="4" fill="#666"/>
+              <text x="660" y="40" font-size="10" fill="#666" text-anchor="middle">레코드</text>
+              <circle cx="660" cy="58" r="4" fill="#666"/>
+              <path d="M60 58 H 660" stroke="#666" stroke-width="1.3" fill="none"/>
+              <rect x="120" y="80" width="230" height="30" rx="6" fill="none" stroke="#b8860b" stroke-width="1.6"/>
+              <text x="235" y="99" font-size="10.5" fill="#b8860b" text-anchor="middle">게이트 2 · 입구 자격</text>
+              <rect x="240" y="120" width="230" height="30" rx="6" fill="none" stroke="#5b7fa6" stroke-width="1.6"/>
+              <text x="355" y="139" font-size="10.5" fill="#5b7fa6" text-anchor="middle">게이트 1 · 관측 연속성</text>
+              <rect x="240" y="160" width="230" height="30" rx="6" fill="none" stroke="#7a5ba6" stroke-width="1.6"/>
+              <text x="355" y="179" font-size="10.5" fill="#7a5ba6" text-anchor="middle">게이트 3 · 소유권 지속</text>
+              <rect x="560" y="200" width="230" height="30" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="675" y="219" font-size="10.5" fill="#2e9e5b" text-anchor="middle">게이트 4 · 증거 아티팩트</text>
+            </g>
+          </svg>
+          <figcaption>넷 가운데 셋은 구간이고 하나만 점입니다. 구간을 점으로 검사하면 가운데가 빕니다.</figcaption>
+        </figure>
+
+        <p>관측 연속성을 고치고 나서 왜곡의 크기를 쟀습니다. 같은 클러스터에서 같은
+        흐름을 구 컬렉터와 신 컬렉터로 각각 돌렸습니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 180" role="img" aria-labelledby="coll-t coll-d" class="figure-svg">
+            <title id="coll-t">구 컬렉터와 신 컬렉터의 관측 시작점</title>
+            <desc id="coll-d">구 컬렉터는 기준 목록 없이 붙은 시점부터 관측을 시작해서 첫 제출과 관측 사이가 비어 있습니다. 신 컬렉터는 기준 목록을 받고 그 지점부터 이어 가므로 그 구간이 사라집니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="30" y="52" font-size="11" fill="#333">구 컬렉터</text>
+              <path d="M150 48 H 660" stroke="#ccc" stroke-width="1.2" fill="none"/>
+              <path d="M300 48 H 660" stroke="#d62976" stroke-width="2.4" fill="none"/>
+              <circle cx="300" cy="48" r="4" fill="#d62976"/>
+              <text x="300" y="34" font-size="9.5" fill="#d62976" text-anchor="middle">여기부터 관측</text>
+              <text x="150" y="34" font-size="9.5" fill="#999" text-anchor="middle">첫 제출</text>
+              <text x="30" y="122" font-size="11" fill="#333">신 컬렉터</text>
+              <path d="M150 118 H 660" stroke="#2e9e5b" stroke-width="2.4" fill="none"/>
+              <circle cx="150" cy="118" r="4" fill="#2e9e5b"/>
+              <text x="150" y="104" font-size="9.5" fill="#2e9e5b" text-anchor="middle">기준 List 뒤 이어서</text>
+              <path d="M150 62 V 104" stroke="#b8860b" stroke-width="1" stroke-dasharray="3 3" fill="none"/>
+              <path d="M300 62 V 104" stroke="#b8860b" stroke-width="1" stroke-dasharray="3 3" fill="none"/>
+              <text x="225" y="88" font-size="10" fill="#b8860b" text-anchor="middle">이 구간이 측정 오차</text>
+              <text x="360" y="162" font-size="10" fill="#666" text-anchor="middle">첫 행 4.846초 · 0.524초</text>
+            </g>
+          </svg>
+          <figcaption>같은 클러스터에서 같은 흐름을 두 컬렉터로 재고 차이를 봤습니다.</figcaption>
+        </figure>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+          <table>
+            <caption class="sr-only">같은 흐름을 두 컬렉터로 잰 제출 시각별 지연.</caption>
+            <thead><tr><th>행 (제출 시각)</th><th>구 컬렉터</th><th>신 컬렉터</th></tr></thead>
+            <tbody><tr><td>첫 번째 (t=0초)</td><td>4.846초</td><td><strong>0.524초</strong></td></tr><tr><td>두 번째 (t=2초)</td><td>3.928초</td><td>0.517초</td></tr><tr><td>세 번째 (t=44초)</td><td>0.936초</td><td>0.943초</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">세 번째 행이 자연 대조군입니다. t=44초에 제출된 행이면 구 컬렉터의 감시도
+        이미 붙어 있었으므로 변화가 없어야 하는데 실제로 0.936초와 0.943초로 같았습니다. 그래서 앞의 두 행에서
+        줄어든 4.3초와 3.4초는 시스템이 빨라진 것이 아니라 <strong>측정 오차였습니다.</strong></p>
+
+        <h2 id="입구">출구만 지키고 입구는 아무도 지키지 않았습니다<a class="anchor" href="#입구" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>정리 절차는 실행이 끝날 때 남은 것이 없음을 증명합니다. 그런데 시작할 때를 보는 쪽은
+        아무도 없었습니다.</p>
+
+        <p>라벨과 taint는 <strong>앞으로의 배치를 막을 뿐 이미 있는 것을 쫓아내지 않습니다.</strong>
+        앞 실행의 정리가 막혀 남은 종료 중인 Pod은 여전히 장치를 쥐고 있는데 taint에게는 보이지 않습니다.
+        그래서 Worker를 확보한 직후이면서 첫 생성 이전인 자리에 검사를 넣었습니다. 용량과 외래 소비자와
+        노드 상태를 보고 그 관측을 레코드에 남깁니다.</p>
+
+        <p>용량 요구치는 픽스처에서 유도합니다. 하드코딩하면 픽스처가 바뀔 때 검사가 조용히 어긋납니다.
+        처음에는 몫의 합만 봤는데 리뷰가 <strong>최대 단일 요청도 경계</strong>라고 짚었습니다. 작업은
+        노드 하나에 통째로 들어가므로 총량이 아무리 넉넉해도 3장짜리 요청은 2장짜리 노드에서 못 돕니다.
+        두 경계의 최댓값을 취하고 어느 쪽이 묶었는지를 이름으로 남기게 고쳤습니다.</p>
+
+        <h2 id="두-시점">두 시점만 보면 가운데가 빕니다<a class="anchor" href="#두-시점" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>배타성은 확보와 해제 두 시점에서만 검사되고 있었습니다. 제3자가 그 사이에 taint를 벗기고
+        다른 작업을 들인 뒤 해제 전에 되돌리면 두 검사는 전부 통과합니다. 그런데 측정된 일정은
+        오염돼 있습니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 150" role="img" aria-labelledby="win-t win-d" class="figure-svg">
+            <title id="win-t">종점 검사가 보지 못하는 창</title>
+            <desc id="win-d">확보와 해제 두 시점의 검사는 모두 통과합니다. 그 사이에서 taint를 제거했다가 원래 값으로 되돌리면 종점 검사로는 드러나지 않고 연속 관측만이 그것을 잡습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="360" y="28" font-size="10.5" fill="#333" text-anchor="middle">실행 구간</text>
+              <path d="M60 60 H 660" stroke="#666" stroke-width="1.3" fill="none"/>
+              <circle cx="60" cy="60" r="5" fill="#2e9e5b"/>
+              <text x="60" y="82" font-size="9.5" fill="#2e9e5b" text-anchor="middle">확보 검사</text>
+              <circle cx="660" cy="60" r="5" fill="#2e9e5b"/>
+              <text x="660" y="82" font-size="9.5" fill="#2e9e5b" text-anchor="middle">해제 검사</text>
+              <rect x="250" y="44" width="200" height="32" rx="6" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="350" y="65" font-size="10.5" fill="#d62976" text-anchor="middle">taint 제거 후 원복</text>
+              <text x="350" y="112" font-size="10" fill="#666" text-anchor="middle">두 종점은 통과 · 연속 관측만 포착</text>
+              <text x="350" y="134" font-size="10" fill="#d62976" text-anchor="middle">위반 1건 · Node 판 4개</text>
+            </g>
+          </svg>
+          <figcaption>되돌려 놓으면 종점에서는 아무 일도 없던 것처럼 보입니다.</figcaption>
+        </figure>
+
+        <p>실제로 실행 도중에 taint를 벗겼다가 <strong>원래 값 그대로 되돌려 봤습니다.</strong> 해제 시점의
+        검사는 정상 통과했고 연속 관측만이 위반 1건을 잡았습니다. 네 개의 Node 판에 걸쳐 설치된 값이
+        갈렸다는 기록이 남았고 실행은 무효가 됐습니다.</p>
+
+        <p>증거 쪽도 한 군데가 비어 있었습니다. 입구와 지속은 자기 증거를 레코드에 남기는데 관측 연속성의
+        증거만 안 남았습니다. 스트림별 기준 지점과 수립 시간과 종료 사유가 없으면 저장된 레코드를 든
+        감사자가 완전한 관측과 잘린 관측을 구별할 수 없습니다. 그래서 판정을 자유 문장이 아니라
+        <strong>필드에서 파생</strong>시켰습니다. 문장을 읽는 판정은 사유가 하나로 덮이면 놓치고
+        필드에서 파생되는 판정은 놓치지 않습니다.</p>
+
+        <h2 id="대비를-자격으로">대비 자체를 자격으로 만들었습니다<a class="anchor" href="#대비를-자격으로" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>이 실험이 재는 것은 회수입니다. 한쪽은 종료 신호를 존중하는 작업이고 다른 쪽은 무시하는
+        작업인데 차이는 셸 명령 한 줄입니다. 클러스터가 신호를 제대로 전달하지 못하면 두 쪽이 하나로
+        무너지는데 <strong>숫자는 정상으로 보입니다.</strong></p>
+
+        <pre data-lang="shell"><code># 존중하는 쪽: 신호를 받으면 그 자리에서 나갑니다
+sh -c "trap 'exit 143' TERM; sleep D &amp; wait"
+
+# 무시하는 쪽: 같은 신호를 받고도 유예가 끝날 때까지 남습니다
+sh -c "sleep D"
+
+# 자격 판정. 두 줄이 서로 다르게 끝나야 이 클러스터에서 대비가 성립합니다
+#   존중  1024ms  exit 143 (TERM)
+#   무시 31138ms  exit 137 (KILL)</code></pre>
+
+        <p>핵심은 대비 자체를 자격으로 만든 것입니다. 존중하는 쪽이 빨리 나가는 것만 보면 모든 것을
+        즉시 강제 종료하는 런타임이 <strong>틀린 이유로 통과합니다.</strong> 무시하는 쪽이 유예 마감까지
+        버티는 것도 같이 봐야 합니다.</p>
+
+        <p>그리고 이것을 매 실행의 의식이 아니라 조합당 한 번으로 두었습니다. 이미지와 클러스터와
+        런타임과 Harness가 같으면 같은 답이 나오기 때문입니다.</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+          <table>
+            <caption class="sr-only">종료 카나리가 자격의 키로 삼는 값.</caption>
+            <thead><tr><th>키에 넣는 것</th><th>왜 넣나</th></tr></thead>
+            <tbody><tr><td>이미지 다이제스트</td><td>이미지가 바뀌면 신호 전달도 바뀔 수 있습니다</td></tr><tr><td>양쪽 렌더된 명령</td><td>대비를 만드는 것이 이 두 줄입니다</td></tr><tr><td>유예 시간</td><td>실행 시간 산술 네 곳이 이 값을 전제로 합니다</td></tr><tr><td>Node UID · kubelet 판 · 컨테이너 런타임</td><td>신호를 실제로 전달하는 쪽입니다</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">저장 위치는 Node의 어노테이션입니다. 자격 대상의 다수가 그 노드의
+        속성이고 권한도 이미 있으며 노드와 함께 사라집니다.</p>
+
+        <h2 id="아홉-가지">같은 모양이 아홉 번 나왔습니다<a class="anchor" href="#아홉-가지" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>이 작업에서 가장 값어치 있는 산출물은 코드가 아니라 결함의 분류였습니다. 같은 형태가
+        되풀이해서 나왔습니다.</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+          <table>
+            <caption class="sr-only">한 작업에서 되풀이된 결함 아홉 가지.</caption>
+            <thead><tr><th>형태</th><th>실제 사례</th></tr></thead>
+            <tbody><tr><td>호출자 없는 컴포넌트</td><td>리뷰와 커밋을 거쳤는데 실행 경로에서 부르는 곳이 0</td></tr><tr><td>자기 자신과 비교하는 단언</td><td>출력을 같은 상수와 비교해서 철자를 바꾸면 양변이 함께 바뀜</td></tr><tr><td>자기가 이름 붙인 결함에 통과하는 함정 테스트</td><td>900밀리초만 관측하는데 주입한 지연은 15초</td></tr><tr><td>공허한 단언</td><td>해제가 어노테이션을 지우므로 최종 상태만 보면 가드 유무와 무관하게 통과</td></tr><tr><td>기억으로 단언한 부정</td><td>「그런 레코드는 임시 폴더 밖에 없다」에 내 실행이 만든 반례</td></tr><tr><td>주 경로에 없는 속성을 주장하는 주석</td><td>「창을 정리 내내 열어 둔다」가 지평선에 닿는 모든 실행에서 거짓</td></tr><tr><td>고치면서 같은 부류를 새로 만드는 수정</td><td>종류별 맵으로 바꾸다 종류마다 마지막 항목만 읽게 됨</td></tr><tr><td>서로 다른 이유로 무력해진 두 가드의 겹침</td><td>겹친 자리만 무방비</td></tr><tr><td>테스트 더블이 현실을 가림</td><td>가짜 클라이언트가 조건부 삭제를 통째로 무시</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">마지막 줄이 가장 자주 나왔습니다. 가짜 클라이언트가 다섯 번 현실을 가렸고
+        그중 하나는 조건부 삭제를 통째로 무시해서 <strong>그 가드가 한 번도 실행된 적이 없었습니다.</strong></p>
+
+        <h2 id="주장하지-않는-것">한계: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li>⚠️ 게이트를 세웠다는 것과 이 도구를 신뢰할 수 있다는 것은 다릅니다. 게이트는 자기가 보는
+          범위 안에서만 말합니다.</li>
+          <li>표의 지연 값은 한 클러스터에서 한 번씩 잰 값입니다. 반복하지 않았으므로 분포가 아닙니다.</li>
+          <li>종료 카나리는 제가 직접 만든 작업을 조사합니다. 실험의 작업이 지나는 다른 경로는 그것으로
+          행사되지 않았고 레코드가 그 사실을 스스로 적습니다.</li>
+          <li>결함 아홉 가지는 이 작업에서 나온 것이고 일반적인 빈도 순위가 아닙니다.</li>
+          <li>이 실행들은 kind 클러스터와 가짜 장치 플러그인 위에서 돌았습니다. 실제 장치가 아닙니다.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>이 글의 결론은 한 줄입니다. <strong>가드를 읽어서 검증하면 그 가드가 실제로 무엇을 잡는지
+        알 수 없습니다.</strong> 권한을 한 동사만 잘라 내고 파일에 결함을 넣어 거부를 실제로 발화시키자
+        가드 자신의 구멍이 나왔습니다.</p>
+        <p>그리고 도구를 고친 뒤에는 고친 효과의 크기를 재야 합니다. 한 실행 안에 변하지 않아야 하는
+        행을 두면 그 행이 대조군이 되어 줍니다.</p>
+        <p>읽어 주셔서 감사합니다.</p>
+        </div></article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=3ea57cf9d0"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GPU 実験 Harness の拒否経路を実物で動かしてみました | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/refusal-paths-exercised-for-real.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/refusal-paths-exercised-for-real.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/refusal-paths-exercised-for-real.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/refusal-paths-exercised-for-real.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="GPU 実験 Harness の拒否経路を実物で動かしてみました" />
+  <meta property="og:description" content="実験 Harness が出す数字は、クラスタが始まるときに綺麗で終わるときにも綺麗だと証明できるときにだけ価値があります。観測の連続性と入口の資格と所有の持続と証拠アーティファクトをゲートとして立て、権限を一つの動詞だけ削ったり、ファイルに欠陥を入れたりして拒否経路を実際に発火させました。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/refusal-paths-exercised-for-real.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="GPU 実験 Harness の拒否経路を実物で動かしてみました" />
+  <meta name="twitter:description" content="ゲートを四つ立てて拒否経路を実物で動かしました。旧コレクタが測っていた4.8秒は測定誤差でした。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="実験 Harness が出す数字は、クラスタが始まるときに綺麗で終わるときにも綺麗だと証明できるときにだけ価値があります。観測の連続性と入口の資格と所有の持続と証拠アーティファクトをゲートとして立て、権限を一つの動詞だけ削ったり、ファイルに欠陥を入れたりして拒否経路を実際に発火させました。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"refusal-paths-exercised-for-real.html","ko":"refusal-paths-exercised-for-real.ko.html","ja":"refusal-paths-exercised-for-real.ja.html"}'>
+          <option value="ja" selected>日本語</option>
+          <option value="en">English</option>
+          <option value="ko">한국어</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Writing へ戻る</a>
+        <div class="article-meta"><span class="source-tag side notranslate">個人プロジェクト</span><a class="project-tag notranslate" href="../writing/index.html?tag=GPUaaS%20Control%20Plane">#GPUaaS コントロールプレーン</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>GPU 実験 Harness の拒否経路を実物で動かしてみました<br><span class="h1-sub">ゲートを四つ立ててはじめて、この道具の数字を証拠と呼べるようになりました。</span></h1>
+        <p class="article-date">2026年9月</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="refusal-paths-exercised-for-real"></aside>
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            
+            <li><a href="#想定読者">この記事の想定読者</a></li>
+            <li><a href="#証拠がない">数字はあるのに証拠がありませんでした</a></li>
+            <li><a href="#入口">出口だけを守り入口は誰も守っていませんでした</a></li>
+            <li><a href="#二つの時点">二つの時点だけを見ると真ん中が空きます</a></li>
+            <li><a href="#対比を資格に">対比そのものを資格にしました</a></li>
+            <li><a href="#九つの形">同じ形が九回出てきました</a></li>
+            <li><a href="#主張しないこと">限界: この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
+          </ul>
+        </nav>
+      <article>
+        <p>実験の道具が出す数字は、条件が一つ付くときにだけ価値があります。クラスタが始まるときに綺麗で、
+        終わるときにも綺麗だったと証明できることです。</p>
+
+        <p>この Harness はその証明ができていませんでした。プレビューでない実行はすべて拒否されていて、
+        理由は有効性ゲートが未実装だということでした。片付けのほうには手をかけてあったのに、そこは
+        ボトルネックではありませんでした。</p>
+
+        <p>最初、私は観測の連続性ゲートがかなり作ってあると見ていました。ファイルがありテストもあったから
+        です。その判断が間違っていたことは<a href="every-rejection-opened-a-new-connection.ja.html">前の記事</a>に
+        書きました。この記事はそのあとにゲートを四つ立て、<strong>拒否経路を一つずつ実物で発火させた</strong>
+        記録です。</p>
+
+        <h2 id="想定読者">この記事の想定読者<a class="anchor" href="#想定読者" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>実験やベンチマークの道具を自分で作って使っている方</li>
+          <li>ガードを入れたが、そのガードが実際に何を捕まえるのか確かめたい方</li>
+          <li>測定値がシステムの性質なのか道具の誤差なのかを分けたい方</li>
+          <li>クラスタを使う実験で実行と実行のあいだに境界を立てたい方</li>
+        </ul>
+
+        <h2 id="証拠がない">数字はあるのに証拠がありませんでした<a class="anchor" href="#証拠がない" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>ゲートは四つです。観測が途切れていないか、始まるときに環境が資格を備えているか、その資格が
+        実行のあいだ保たれたか、そしてその証拠がレコードに残ったかです。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 245" role="img" aria-labelledby="gate-t gate-d" class="figure-svg">
+            <title id="gate-t">四つのゲートが実行のどの時点に立つか</title>
+            <desc id="gate-d">上の線が実行の流れです。Worker を確保した直後に入口の資格が立ち、最初の生成の前から解放まで観測の連続性と所有の持続が続き、レコードを書くときに証拠アーティファクトが立ちます。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="60" y="40" font-size="10" fill="#666" text-anchor="middle">Worker 確保</text>
+              <circle cx="60" cy="58" r="4" fill="#666"/>
+              <text x="215" y="40" font-size="10" fill="#666" text-anchor="middle">最初の生成</text>
+              <circle cx="215" cy="58" r="4" fill="#666"/>
+              <text x="370" y="40" font-size="10" fill="#666" text-anchor="middle">観測</text>
+              <circle cx="370" cy="58" r="4" fill="#666"/>
+              <text x="525" y="40" font-size="10" fill="#666" text-anchor="middle">解放</text>
+              <circle cx="525" cy="58" r="4" fill="#666"/>
+              <text x="660" y="40" font-size="10" fill="#666" text-anchor="middle">レコード</text>
+              <circle cx="660" cy="58" r="4" fill="#666"/>
+              <path d="M60 58 H 660" stroke="#666" stroke-width="1.3" fill="none"/>
+              <rect x="120" y="80" width="230" height="30" rx="6" fill="none" stroke="#b8860b" stroke-width="1.6"/>
+              <text x="235" y="99" font-size="10.5" fill="#b8860b" text-anchor="middle">ゲート2 · 入口の資格</text>
+              <rect x="240" y="120" width="230" height="30" rx="6" fill="none" stroke="#5b7fa6" stroke-width="1.6"/>
+              <text x="355" y="139" font-size="10.5" fill="#5b7fa6" text-anchor="middle">ゲート1 · 観測の連続性</text>
+              <rect x="240" y="160" width="230" height="30" rx="6" fill="none" stroke="#7a5ba6" stroke-width="1.6"/>
+              <text x="355" y="179" font-size="10.5" fill="#7a5ba6" text-anchor="middle">ゲート3 · 所有の持続</text>
+              <rect x="560" y="200" width="230" height="30" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="675" y="219" font-size="10.5" fill="#2e9e5b" text-anchor="middle">ゲート4 · 証拠アーティファクト</text>
+            </g>
+          </svg>
+          <figcaption>四つのうち三つは区間で、点なのは一つだけです。区間を点で検査すると真ん中が空きます。</figcaption>
+        </figure>
+
+        <p>観測の連続性を直したあと、歪みの大きさを測りました。同じクラスタで同じ流れを旧コレクタと
+        新コレクタでそれぞれ走らせました。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 180" role="img" aria-labelledby="coll-t coll-d" class="figure-svg">
+            <title id="coll-t">旧コレクタと新コレクタの観測開始点</title>
+            <desc id="coll-d">旧コレクタは基準リストなしに接続した時点から観測を始めるので、最初の投入と観測のあいだが空いています。新コレクタは基準リストを受けてそこから継続するため、その区間が消えます。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="30" y="52" font-size="11" fill="#333">旧コレクタ</text>
+              <path d="M150 48 H 660" stroke="#ccc" stroke-width="1.2" fill="none"/>
+              <path d="M300 48 H 660" stroke="#d62976" stroke-width="2.4" fill="none"/>
+              <circle cx="300" cy="48" r="4" fill="#d62976"/>
+              <text x="300" y="34" font-size="9.5" fill="#d62976" text-anchor="middle">ここから観測</text>
+              <text x="150" y="34" font-size="9.5" fill="#999" text-anchor="middle">最初の投入</text>
+              <text x="30" y="122" font-size="11" fill="#333">新コレクタ</text>
+              <path d="M150 118 H 660" stroke="#2e9e5b" stroke-width="2.4" fill="none"/>
+              <circle cx="150" cy="118" r="4" fill="#2e9e5b"/>
+              <text x="150" y="104" font-size="9.5" fill="#2e9e5b" text-anchor="middle">基準リストから継続</text>
+              <path d="M150 62 V 104" stroke="#b8860b" stroke-width="1" stroke-dasharray="3 3" fill="none"/>
+              <path d="M300 62 V 104" stroke="#b8860b" stroke-width="1" stroke-dasharray="3 3" fill="none"/>
+              <text x="225" y="88" font-size="10" fill="#b8860b" text-anchor="middle">この区間が測定誤差</text>
+              <text x="360" y="162" font-size="10" fill="#666" text-anchor="middle">最初の行 4.846秒 · 0.524秒</text>
+            </g>
+          </svg>
+          <figcaption>同じクラスタで同じ流れを二つのコレクタで測りました。</figcaption>
+        </figure>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
+          <table>
+            <caption class="sr-only">同じ流れを二つのコレクタで測った投入時刻ごとの遅延。</caption>
+            <thead><tr><th>行 (投入時刻)</th><th>旧コレクタ</th><th>新コレクタ</th></tr></thead>
+            <tbody><tr><td>一つ目 (t=0秒)</td><td>4.846秒</td><td><strong>0.524秒</strong></td></tr><tr><td>二つ目 (t=2秒)</td><td>3.928秒</td><td>0.517秒</td></tr><tr><td>三つ目 (t=44秒)</td><td>0.936秒</td><td>0.943秒</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">三つ目の行が自然な対照群です。t=44秒に投入された行なら旧コレクタの監視も
+        すでに付いていたので変わらないはずで、実際に0.936秒と0.943秒で同じでした。だから前の二行で
+        縮んだ4.3秒と3.4秒はシステムが速くなったのではなく<strong>測定誤差でした。</strong></p>
+
+        <h2 id="入口">出口だけを守り入口は誰も守っていませんでした<a class="anchor" href="#入口" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>片付けの手順は、実行が終わるときに残りがないことを証明します。ところが始まるときを見る側は
+        誰もいませんでした。</p>
+
+        <p>ラベルと taint は<strong>これからの配置を止めるだけで、すでにあるものを追い出しません。</strong>
+        前の実行の片付けが詰まって残った終了中の Pod は依然としてデバイスを握っているのに、taint からは
+        見えません。そこで Worker を確保した直後で最初の生成より前の位置に検査を入れました。容量と外来の
+        消費者とノードの状態を見て、その観測をレコードに残します。</p>
+
+        <p>容量の要求値はフィクスチャから導きます。ハードコードするとフィクスチャが変わったときに検査が
+        静かにずれます。最初は割り当ての合計だけを見ていましたが、レビューが<strong>最大の単一要求も
+        境界だ</strong>と指摘しました。ジョブはノード一つにまるごと入るので、総量がいくら潤沢でも3枚の
+        要求は2枚のノードでは回りません。二つの境界の最大値を取り、どちらが縛ったかを名前で残すように
+        直しました。</p>
+
+        <h2 id="二つの時点">二つの時点だけを見ると真ん中が空きます<a class="anchor" href="#二つの時点" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>排他性は確保と解放の二つの時点でしか検査されていませんでした。第三者がそのあいだに taint を
+        外し、別の作業を入れ、解放の前に戻せば二つの検査は両方とも通ります。それでも測定された日程は
+        汚染されています。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 150" role="img" aria-labelledby="win-t win-d" class="figure-svg">
+            <title id="win-t">端点の検査が見られない窓</title>
+            <desc id="win-d">確保時と解放時の検査はどちらも通過します。そのあいだに taint を外して元の値に戻すと端点の検査には現れず、連続した観測だけがそれを捕まえます。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="360" y="28" font-size="10.5" fill="#333" text-anchor="middle">実行の区間</text>
+              <path d="M60 60 H 660" stroke="#666" stroke-width="1.3" fill="none"/>
+              <circle cx="60" cy="60" r="5" fill="#2e9e5b"/>
+              <text x="60" y="82" font-size="9.5" fill="#2e9e5b" text-anchor="middle">確保時の検査</text>
+              <circle cx="660" cy="60" r="5" fill="#2e9e5b"/>
+              <text x="660" y="82" font-size="9.5" fill="#2e9e5b" text-anchor="middle">解放時の検査</text>
+              <rect x="250" y="44" width="200" height="32" rx="6" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="350" y="65" font-size="10.5" fill="#d62976" text-anchor="middle">taint 除去のあと復元</text>
+              <text x="350" y="112" font-size="10" fill="#666" text-anchor="middle">両端は通過 · 連続観測だけが捕捉</text>
+              <text x="350" y="134" font-size="10" fill="#d62976" text-anchor="middle">違反1件 · Node 版4つ</text>
+            </g>
+          </svg>
+          <figcaption>戻しておくと端点では何も起きなかったように見えます。</figcaption>
+        </figure>
+
+        <p>実際に実行の途中で taint を外し、<strong>元の値のまま戻してみました。</strong>解放時点の検査は
+        正常に通り、連続した観測だけが違反1件を捕まえました。四つの Node 版にわたって設置された値が
+        分かれたという記録が残り、実行は無効になりました。</p>
+
+        <p>証拠の側にも一箇所空きがありました。入口と持続は自分の証拠をレコードに残すのに、観測の連続性の
+        証拠だけが残りませんでした。ストリームごとの基準点と確立の時刻と終了の理由がなければ、保存された
+        レコードを持つ監査者は完全な観測と切れた観測を区別できません。そこで判定を自由な文ではなく
+        <strong>フィールドから導き</strong>ました。文を読む判定は理由が一つに覆われると見落とし、
+        証拠から導く判定は見落としません。</p>
+
+        <h2 id="対比を資格に">対比そのものを資格にしました<a class="anchor" href="#対比を資格に" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>この実験が測るのは回収です。一方は終了信号を尊重する作業で、もう一方は無視する作業で、
+        違いはシェルのコマンド一行です。クラスタが信号をきちんと届けられないと二つの側は一つに潰れるのに、
+        <strong>数字は正常に見えます。</strong></p>
+
+        <pre data-lang="shell"><code># 尊重する側: 信号を受けたらその場で出ます
+sh -c "trap 'exit 143' TERM; sleep D &amp; wait"
+
+# 無視する側: 同じ信号を受けても猶予が切れるまで残ります
+sh -c "sleep D"
+
+# 資格の判定。二行が違う終わり方をしてはじめてこのクラスタで対比が成り立ちます
+#   尊重  1024ms  exit 143 (TERM)
+#   無視 31138ms  exit 137 (KILL)</code></pre>
+
+        <p>要点は対比そのものを資格にしたことです。尊重する側が早く出ることだけを見ると、すべてを即座に
+        強制終了するランタイムが<strong>間違った理由で通ります。</strong>無視する側が猶予の締切まで
+        耐えることも一緒に見る必要があります。</p>
+
+        <p>そしてこれを毎回の儀式ではなく組み合わせごとに一度としました。イメージとクラスタとランタイムと
+        Harness が同じなら同じ答えが出るからです。</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
+          <table>
+            <caption class="sr-only">終了カナリアが資格の鍵に入れるもの。</caption>
+            <thead><tr><th>鍵に入れるもの</th><th>なぜ入れるか</th></tr></thead>
+            <tbody><tr><td>イメージのダイジェスト</td><td>イメージが変われば信号の伝わり方も変わりえます</td></tr><tr><td>両方のレンダされたコマンド</td><td>対比を作るのがこの二行です</td></tr><tr><td>猶予時間</td><td>実行時間の算術四箇所がこの値を前提にしています</td></tr><tr><td>Node UID · kubelet 版 · コンテナランタイム</td><td>信号を実際に届けるのはこちらです</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">保存先は Node の注釈です。資格の対象の多くがそのノードの性質で、権限も
+        すでにあり、ノードと一緒に消えます。</p>
+
+        <h2 id="九つの形">同じ形が九回出てきました<a class="anchor" href="#九つの形" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>この作業で一番価値のある成果物はコードではなく欠陥の分類でした。同じ形が繰り返し出てきました。</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
+          <table>
+            <caption class="sr-only">一つの作業で繰り返した九つの欠陥の形。</caption>
+            <thead><tr><th>形</th><th>実際の例</th></tr></thead>
+            <tbody><tr><td>呼び出し元のないコンポーネント</td><td>レビューもコミットも経たのに実行経路で呼ぶ箇所がゼロ</td></tr><tr><td>自分自身と比べる表明</td><td>出力を同じ定数と比べるので綴りを変えると両辺が一緒に変わります</td></tr><tr><td>自分で名付けた欠陥に通る罠テスト</td><td>900ミリ秒しか観測しないのに注入した遅延は15秒</td></tr><tr><td>空虚な表明</td><td>解放が注釈を消すので最終状態だけ見るとガードの有無と無関係に通ります</td></tr><tr><td>記憶で断言した否定</td><td>「そんなレコードは一時フォルダの外にない」に自分の実行が反例</td></tr><tr><td>主経路にない性質を主張するコメント</td><td>「窓を片付けのあいだ開けておく」が地平線に届く全実行で偽</td></tr><tr><td>直しながら同じ種類を作る修正</td><td>種別ごとのマップに変えて種別ごとに最後の項目だけ読むようになりました</td></tr><tr><td>別々の理由で無力になった二つのガードの重なり</td><td>重なった箇所だけが無防備</td></tr><tr><td>テストダブルが現実を隠す</td><td>偽クライアントが条件付き削除をまるごと無視</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">最後の行が一番よく出ました。偽クライアントが五回現実を隠し、そのうち一つは
+        条件付き削除を無視したせいで<strong>そのガードが一度も実行されたことがありませんでした。</strong></p>
+
+        <h2 id="主張しないこと">限界: この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>⚠️ ゲートを立てたことと、この道具を信頼できることは別です。ゲートは自分が見る範囲の中でしか
+          語りません。</li>
+          <li>表の遅延の値は一つのクラスタで一度ずつ測った値です。繰り返していないので分布ではありません。</li>
+          <li>終了カナリアは自分で作った作業を調べます。実験の作業が通る別の経路はそれでは行使されず、
+          レコードがその事実を自分で書きます。</li>
+          <li>九つの形はこの作業から出たもので、一般的な頻度の順位ではありません。</li>
+          <li>これらの実行は kind クラスタと偽のデバイスプラグインの上で回りました。実デバイスではありません。</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="このセクションへのリンク">#</a></h2>
+        <p>この記事の結論は一行です。<strong>ガードを読んで検証しても、そのガードが実際に何を捕まえるかは
+        分かりません。</strong>権限を一つの動詞だけ削り、ファイルに欠陥を入れて拒否を実際に発火させたら、
+        ガード自身の穴が出てきました。</p>
+        <p>そして道具を直したあとは、直した効果の大きさを測る必要があります。一つの実行の中に動かないはずの
+        行を置けば、その行が対照群になってくれます。</p>
+        <p>お読みいただきありがとうございました。</p>
+        </div></article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=3ea57cf9d0"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

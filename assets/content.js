@@ -192,6 +192,18 @@
       },
       items: [
         {
+          title: "I Fired Every Refusal Path in a GPU Experiment Harness for Real",
+          title_ko: "GPU 실험 Harness의 거부 경로를 실물로 돌려 봤습니다",
+          title_ja: "GPU 実験 Harness の拒否経路を実物で動かしてみました",
+          url: "writing/refusal-paths-exercised-for-real.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "Numbers from an experiment harness are worth something only when the cluster is proven clean at the start and at the end. Four gates went up, and each refusal path was fired for real by cutting one verb from a role and injecting a defect into a file. Fixing observation continuity showed the old collector's 4.8 seconds had been measurement error, with an unmoved row inside the same run as the control.",
+          desc_ko: "실험 Harness가 내놓는 숫자는 클러스터가 시작할 때 깨끗했고 끝날 때도 깨끗함이 증명될 때만 값어치가 있습니다. 게이트 넷을 세우고 권한을 한 동사만 잘라 내거나 파일에 결함을 넣어 거부 경로를 실제로 발화시켰습니다. 관측 연속성을 고치자 구 컬렉터가 재던 4.8초가 측정 오차였음이 드러났고 같은 실행 안의 움직이지 않는 행이 대조군이 됐습니다.",
+          desc_ja: "実験 Harness が出す数字は、クラスタが始まるときに綺麗で終わるときにも綺麗だと証明できるときにだけ価値があります。ゲートを四つ立て、権限を一つの動詞だけ削ったりファイルに欠陥を入れたりして拒否経路を実際に発火させました。観測の連続性を直すと、旧コレクタが測っていた4.8秒は測定誤差だったと分かりました。",
+          tags: ["GPUaaS Control Plane", "Method", "Observability", "Reliability"]
+        },
+        {
           title: "Instance HA ⑥: Whether 100 Seconds Is Enough Is a Service Decision",
           title_ko: "Instance HA ⑥: 100초가 누구에게 충분한지는 서비스가 정합니다",
           title_ja: "Instance HA ⑥: 100秒が誰にとって十分かはサービスが決めます",
