@@ -432,15 +432,15 @@
           tags: ["IaaS Backend", "Migration", "Method"]
         },
         {
-          title: "Seven of Eight Node HA Scenarios Should Not Recover",
+          title: "Instance HA ③: We Split Failure Detection from Execution Readiness",
           url: "writing/seven-of-eight-should-not-recover.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "Node HA 여덟 시나리오 중 일곱은 복구하면 안 됩니다",
-          desc_ko: "스위치 장애로 살아 있는 컴퓨트 Node가 장애로 판정돼 복구가 대량 실행됐습니다. 감지를 정교하게 만드는 대신 신호에 자격을 매겼고 시나리오 여덟 중 일곱이 보류로 남았습니다.",
-          title_ja: "ノード HA の 8 シナリオのうち 7 つは復旧してはいけません",
-          desc_ja: "スイッチ障害で生きているコンピュートノードが障害と判定され、復旧が大量に実行された。検知を精緻にする代わりに、どの信号が何を証言できるかを決めた。8 シナリオのうち 7 つが保留になった。",
-          date: "2026-09", dateLabel: "Sep 2026",
-          desc: "A switch failure made live compute nodes look dead and recovery ran at scale. Grading what each signal is entitled to testify to left seven of eight scenarios on hold. Also in Korean and Japanese.",
+          title_ko: "Instance HA ③: 장애인가와 지금 해도 되는가를 갈랐습니다",
+          desc_ko: "Instance HA 설계 3편. 「정말 장애인가」와 「지금 실행해도 되는가」가 한 판정에 섞여 있어 Storage 장애가 Compute 장애로 읽혔습니다. 두 질문을 Phase 1과 Phase 2로 가르고 판정 순서를 의사코드로 고정했습니다. 같은 기준으로 시나리오 여덟 개를 판정하니 Fencing 1건에 Hold 7건이었습니다.",
+          title_ja: "Instance HA ③: 障害かどうかと今実行してよいかを分けました",
+          desc_ja: "Instance HA 設計の第3編。「本当に障害か」と「今実行してよいか」が一つの判定に混ざり、Storage の障害が Compute の障害として読まれていました。二つを Phase 1 と Phase 2 に分け、判定順序を擬似コードで固定しました。同じ基準で八つのシナリオを判定すると Fencing 1 件と Hold 7 件でした。",
+          date: "2026-09-20", dateLabel: "Sep 20, 2026",
+          desc: "Part 3 of the Instance HA design series. Asking whether a node failed and whether recovery may run were welded into one verdict, which let a storage fault read as a compute fault. Splitting them into Phase 1 and Phase 2 and pinning the order in pseudocode left one fencing and seven holds across eight scenarios. Also in Korean and Japanese.",
           tags: ["IaaS Backend", "Reliability", "Method"]
         },
         {
