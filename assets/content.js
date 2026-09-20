@@ -188,6 +188,18 @@
       },
       items: [
         {
+          title: "Instance HA ⑤: Quorum Cannot Cut the Power",
+          title_ko: "Instance HA ⑤: Quorum은 전원을 내리지 못합니다",
+          title_ja: "Instance HA ⑤: Quorum は電源を落とせません",
+          url: "writing/instance-ha-5-quorum-does-not-cut-power.html",
+          source: "company", sourceLabel: "Company work",
+          date: "2026-09-20", dateLabel: "Sep 20, 2026",
+          desc: "Part 5 of the Instance HA design series. Three architectures compared on one yardstick. The original table lined them up under a single row called consensus mechanism, which hid the real difference; split into four layers, only the bottom one is empty. Galera has its own quorum, so what a DB lock fails to prevent is not split brain but a double attachment.",
+          desc_ko: "Instance HA 설계 5편. 세 아키텍처를 같은 기준으로 비교했습니다. 「합의 방식」 한 줄이 차이를 가리고 있어 Membership과 Quorum 판정과 실행 Lock과 Fencing 네 층으로 갈랐더니 비어 있는 칸은 맨 아래 하나뿐이었습니다. Galera에도 자체 Quorum이 있으므로 DB Lock이 못 막는 것은 Split-Brain이 아니라 이중 접속입니다.",
+          desc_ja: "Instance HA 設計の第5編。三つのアーキテクチャを同じ物差しで比べました。「合意方式」という一行が違いを隠していたため、Membership と Quorum 判定と実行 Lock と Fencing の四層に分けたところ、空いている枠は一番下の一つだけでした。Galera にも自前の Quorum があるので、DB Lock が防げないのは Split-Brain ではなく二重接続です。",
+          tags: ["IaaS Backend", "Reliability", "Method", "Operations"]
+        },
+        {
           title: "Instance HA ④: We Do Not Recover Until the Power Is Confirmed Off",
           title_ko: "Instance HA ④: 펜싱을 확인하지 못하면 복구하지 않습니다",
           title_ja: "Instance HA ④: 電源が落ちたと確認できるまで復旧しません",

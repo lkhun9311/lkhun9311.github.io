@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instance HA ⑤: Quorum은 전원을 내리지 못합니다 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/instance-ha-5-quorum-does-not-cut-power.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/instance-ha-5-quorum-does-not-cut-power.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/instance-ha-5-quorum-does-not-cut-power.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/instance-ha-5-quorum-does-not-cut-power.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="Instance HA ④: 펜싱을 확인하지 못하면 복구하지 않습니다" />
+  <meta property="og:description" content="복구해도 된다는 판정이 섰더라도 원본의 전원이 확실히 내려갔는지 확인하기 전에는 옮기지 않습니다. BMC 전용 물리 스위치를 전제 조건으로 요구한 이유와 Detect에서 Recover까지 네 단계, Storage 유형별 잔여 연결 정리를 정리했습니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/instance-ha-5-quorum-does-not-cut-power.ko.html" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Instance HA ④: 펜싱을 확인하지 못하면 복구하지 않습니다" />
+  <meta name="twitter:description" content="전원 차단을 확인하기 전에는 복구하지 않습니다. BMC 전제와 네 단계 절차, Storage 유형별 정리 조건을 정리한 Instance HA 연작 ④편입니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="복구해도 된다는 판정이 섰더라도 원본의 전원이 확실히 내려갔는지 확인하기 전에는 옮기지 않습니다. BMC 전용 물리 스위치를 전제 조건으로 요구한 이유와 Detect에서 Recover까지 네 단계, Storage 유형별 잔여 연결 정리를 정리했습니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"instance-ha-5-quorum-does-not-cut-power.html","ko":"instance-ha-5-quorum-does-not-cut-power.ko.html","ja":"instance-ha-5-quorum-does-not-cut-power.ja.html"}'>
+          <option value="ko" selected>한국어</option>
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
+        <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>Instance HA ⑤: Quorum은 전원을 내리지 못합니다<br><span class="h1-sub">세 아키텍처를 같은 기준으로 비교했습니다. 가른 것은 합의 알고리즘의 유무가 아니라 전원을 내릴 수단이 있는지였습니다.</span></h1>
+        <p class="article-date">2026년 9월</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="instance-ha-5-quorum-does-not-cut-power"></aside>
+        <nav class="article-toc" aria-label="목차">
+          <p class="toc-label">목차</p>
+          <ul>
+            
+            
+            
+            
+            <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+            <li><a href="#무엇이-갈랐나">세 안을 가른 것은 합의가 아니었습니다</a></li>
+            <li><a href="#네-층">한 줄로는 비교할 수 없어 네 층으로 갈랐습니다</a></li>
+            <li><a href="#세-안">세 안을 같은 기준에 놓았습니다</a></li>
+            <li><a href="#stonith-실패">STONITH가 실패하면 사람이 들어갑니다</a></li>
+            <li><a href="#실행-주체">복구를 실행할 수 있는 노드를 목록으로 묶었습니다</a></li>
+            <li><a href="#주장하지-않는-것">한계: 이 글이 주장하지 않는 것</a></li>
+            <li><a href="#마치며">마치며</a></li>
+          </ul>
+        </nav>
+      <article>
+        <p><a href="instance-ha-4-no-fencing-no-recovery.ko.html">④편</a>에서 전원을 내리고 내려갔는지
+        확인하는 절차를 세웠습니다. 남은 질문은 그 절차를 누가 실행하느냐입니다.</p>
+
+        <p>설계서는 세 구성을 놓고 비교했습니다. Galera와 ShedLock으로 실행을 제어하는 안, etcd의 Leader
+        Election을 쓰는 안, Pacemaker와 Corosync를 얹는 안입니다.</p>
+
+        <p>처음 정리할 때 저는 이 비교의 축이 분산 합의의 유무라고 적었습니다. 다시 보니 틀렸습니다.
+        세 안을 가른 것은 합의가 아니라 전원을 내릴 수단이었습니다.</p>
+
+        <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li>Instance HA를 어느 구성 위에 올릴지 정해야 하는 분</li>
+          <li>DB Lock으로 중복 실행을 막고 있는데 그것으로 충분한지 궁금한 분</li>
+          <li>Pacemaker와 Corosync가 왜 무거운 선택인지 근거가 필요한 분</li>
+          <li>④편을 읽고 그 절차의 실행 주체가 궁금하신 분</li>
+        </ul>
+
+        <h2 id="무엇이-갈랐나">세 안을 가른 것은 합의가 아니었습니다<a class="anchor" href="#무엇이-갈랐나" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>설계서의 첫 문장은 「DB Lock은 Distributed Consensus가 아니므로 Split-Brain을 구조적으로
+        방지하지 못한다」였습니다. 이 문장은 「그럼 Galera의 Quorum은요」 한 마디에 무너집니다.
+        Galera는 wsrep 그룹 통신 위에서 Primary Component를 판정하는 자체 Quorum을 가지고 있습니다.</p>
+
+        <p>실제로 Galera 클러스터는 Quorum을 잃으면 non-Primary로 떨어지고 그 상태에서는 Write를
+        거부합니다. ShedLock은 그 Write 위에 얹혀 있으므로 Lock 획득도 함께 실패합니다.
+        <strong>중복 실행은 막힙니다.</strong></p>
+
+        <p>막히지 않는 것은 다른 쪽입니다. 두 노드가 같은 복구를 동시에 실행하는 것을 막는 일과, 이미
+        살아서 디스크를 쓰고 있는 노드를 끊는 일은 다릅니다.
+        <strong>Quorum은 데이터베이스를 지키지 전원을 내리지 못합니다.</strong></p>
+
+        <h2 id="네-층">한 줄로는 비교할 수 없어 네 층으로 갈랐습니다<a class="anchor" href="#네-층" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>그래서 「합의 방식」 한 줄로 세 안을 세우던 표를 버렸습니다. 합의라는 말이 서로 다른 층의 일을
+        한꺼번에 가리키고 있었습니다. 네 층으로 갈라 놓으면 무엇이 있고 무엇이 없는지가 드러납니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 270" role="img" aria-labelledby="layer-t layer-d" class="figure-svg">
+            <title id="layer-t">네 층으로 가른 세 아키텍처</title>
+            <desc id="layer-d">Membership과 메시지, Quorum 판정, 실행 Lock 세 층은 세 구성 모두 갖추고 있습니다. 네 번째 층인 Fencing만 Pacemaker와 Corosync 구성에 있고 나머지 둘에는 없습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="300" y="62" font-size="10.5" fill="#666" text-anchor="middle">Galera + ShedLock</text>
+              <text x="460" y="62" font-size="10.5" fill="#666" text-anchor="middle">etcd + CAS</text>
+              <text x="620" y="62" font-size="10.5" fill="#666" text-anchor="middle">Pacemaker + Corosync</text>
+              <text x="30" y="99" font-size="11" fill="#333">Membership · 메시지</text>
+              <rect x="240" y="79" width="120" height="32" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="300" y="100" font-size="13" fill="#2e9e5b" text-anchor="middle">○</text>
+              <rect x="400" y="79" width="120" height="32" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="460" y="100" font-size="13" fill="#2e9e5b" text-anchor="middle">○</text>
+              <rect x="560" y="79" width="120" height="32" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="620" y="100" font-size="13" fill="#2e9e5b" text-anchor="middle">○</text>
+              <text x="30" y="144" font-size="11" fill="#333">Quorum 판정</text>
+              <rect x="240" y="124" width="120" height="32" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="300" y="145" font-size="13" fill="#2e9e5b" text-anchor="middle">○</text>
+              <rect x="400" y="124" width="120" height="32" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="460" y="145" font-size="13" fill="#2e9e5b" text-anchor="middle">○</text>
+              <rect x="560" y="124" width="120" height="32" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="620" y="145" font-size="13" fill="#2e9e5b" text-anchor="middle">○</text>
+              <text x="30" y="189" font-size="11" fill="#333">실행 Lock</text>
+              <rect x="240" y="169" width="120" height="32" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="300" y="190" font-size="13" fill="#2e9e5b" text-anchor="middle">○</text>
+              <rect x="400" y="169" width="120" height="32" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="460" y="190" font-size="13" fill="#2e9e5b" text-anchor="middle">○</text>
+              <rect x="560" y="169" width="120" height="32" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="620" y="190" font-size="13" fill="#2e9e5b" text-anchor="middle">○</text>
+              <text x="30" y="234" font-size="11" fill="#333">Fencing</text>
+              <rect x="240" y="214" width="120" height="32" rx="6" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="300" y="235" font-size="13" fill="#d62976" text-anchor="middle">✕</text>
+              <rect x="400" y="214" width="120" height="32" rx="6" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="460" y="235" font-size="13" fill="#d62976" text-anchor="middle">✕</text>
+              <rect x="560" y="214" width="120" height="32" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="620" y="235" font-size="13" fill="#2e9e5b" text-anchor="middle">○</text>
+            </g>
+          </svg>
+          <figcaption>위의 세 층은 셋 다 갖추고 있습니다. 갈리는 곳은 맨 아래 한 층뿐입니다.</figcaption>
+        </figure>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+          <table>
+            <caption class="sr-only">네 층으로 가른 세 아키텍처 비교.</caption>
+            <thead><tr><th>층</th><th>Galera + ShedLock</th><th>etcd + CAS</th><th>Pacemaker + Corosync</th></tr></thead>
+            <tbody><tr><td>Membership · 메시지</td><td>wsrep 그룹 통신</td><td>Raft 피어</td><td>Totem</td></tr><tr><td>Quorum 판정</td><td>Primary Component</td><td>Raft majority</td><td>votequorum</td></tr><tr><td>실행 Lock</td><td>ShedLock (DB row)</td><td>CAS 키</td><td>리소스 제약</td></tr><tr><td>Fencing</td><td>없음</td><td>없음</td><td>STONITH 내장</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">위의 세 층은 세 구성이 모두 갖추고 있습니다. 이름과 구현이 다를 뿐입니다.
+        <strong>비어 있는 칸은 맨 아래 한 층에만 있습니다.</strong></p>
+
+        <p>이렇게 갈라 놓고 나니 원자료 표에서 고쳐야 할 곳이 세 군데 보였습니다. 셋 다 제가 처음에
+        그대로 옮겨 적었던 것입니다.</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+          <table>
+            <caption class="sr-only">원자료 비교표에서 고친 세 가지.</caption>
+            <thead><tr><th>원자료 서술</th><th>고친 내용</th><th>근거</th></tr></thead>
+            <tbody><tr><td>DB Lock은 합의가 아니므로 Split-Brain을 막지 못한다</td><td>Galera는 자체 Quorum으로 Primary를 판정한다. 못 막는 것은 Split-Brain이 아니라 이중 접속이다</td><td>Galera 문서의 Primary Component 판정</td></tr><tr><td>minority partition은 자동으로 freeze 상태가 된다</td><td>Quorum을 잃은 파티션의 동작은 <code>no-quorum-policy</code>가 정하고 기본값은 <code>stop</code>이다</td><td>Pacemaker 클러스터 속성 문서</td></tr><tr><td>합의 방식: Totem</td><td>Totem은 Membership과 메시지 순서를 맡고 Quorum 판정은 votequorum이 한다</td><td>Corosync의 votequorum 구성</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">세 번째가 이 절의 이유입니다. Totem과 votequorum은 Corosync 안에서도
+        서로 다른 층이고 그 둘을 한 칸에 적으면 비교의 축이 무너집니다.</p>
+
+        <h2 id="세-안">세 안을 같은 기준에 놓았습니다<a class="anchor" href="#세-안" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>층을 정리한 뒤 세 구성을 다시 세웠습니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 230" role="img" aria-labelledby="arch-t arch-d" class="figure-svg">
+            <title id="arch-t">세 아키텍처의 구성과 평가</title>
+            <desc id="arch-d">왼쪽부터 Galera와 ShedLock 구성, etcd와 CAS 구성, Pacemaker와 Corosync 구성입니다. 앞의 두 구성은 전원을 차단할 수단이 없고 마지막 구성만 STONITH를 내장합니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="40" width="200" height="150" rx="10" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="140" y="64" font-size="11" fill="#d62976" text-anchor="middle">Galera + ShedLock</text>
+              <text x="140" y="95" font-size="10" fill="#444" text-anchor="middle">wsrep Primary 판정</text>
+              <text x="140" y="125" font-size="10" fill="#444" text-anchor="middle">DB Lock으로 단독 실행</text>
+              <text x="140" y="155" font-size="10" fill="#444" text-anchor="middle">전원 차단 수단 없음</text>
+              <text x="140" y="210" font-size="10.5" fill="#d62976" text-anchor="middle">임시 대응</text>
+              <rect x="260" y="40" width="200" height="150" rx="10" fill="none" stroke="#b8860b" stroke-width="1.8"/>
+              <text x="360" y="64" font-size="11" fill="#b8860b" text-anchor="middle">etcd + CAS</text>
+              <text x="360" y="95" font-size="10" fill="#444" text-anchor="middle">Raft Leader Election</text>
+              <text x="360" y="125" font-size="10" fill="#444" text-anchor="middle">CAS Execution Lock</text>
+              <text x="360" y="155" font-size="10" fill="#444" text-anchor="middle">전원 차단 수단 없음</text>
+              <text x="360" y="210" font-size="10.5" fill="#b8860b" text-anchor="middle">운영 환경 적합</text>
+              <rect x="480" y="40" width="200" height="150" rx="10" fill="none" stroke="#2e9e5b" stroke-width="1.8"/>
+              <text x="580" y="64" font-size="11" fill="#2e9e5b" text-anchor="middle">Pacemaker + Corosync</text>
+              <text x="580" y="95" font-size="10" fill="#444" text-anchor="middle">Totem Membership</text>
+              <text x="580" y="125" font-size="10" fill="#444" text-anchor="middle">votequorum 판정</text>
+              <text x="580" y="155" font-size="10" fill="#444" text-anchor="middle">STONITH 내장</text>
+              <text x="580" y="210" font-size="10.5" fill="#2e9e5b" text-anchor="middle">우선 권고</text>
+            </g>
+          </svg>
+          <figcaption>앞의 두 구성도 단독 실행은 보장합니다. 마지막 한 줄에서 갈립니다.</figcaption>
+        </figure>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+          <table>
+            <caption class="sr-only">항목별 비교와 평가.</caption>
+            <thead><tr><th>항목</th><th>Galera + ShedLock</th><th>etcd + CAS</th><th>Pacemaker + Corosync</th></tr></thead>
+            <tbody><tr><td>장애 감지</td><td>약 30초</td><td>약 10초</td><td>약 5초</td></tr><tr><td>STONITH</td><td>없음</td><td>없음</td><td>내장</td></tr><tr><td>추가 인프라</td><td>Proxy 계층 이중화</td><td>없음 (Controller 공동 배치)</td><td>Pacemaker 구성</td></tr><tr><td>구현 난이도</td><td>낮음</td><td>중간</td><td>높음</td></tr><tr><td>평가</td><td>임시 대응</td><td>운영 환경 적합</td><td>우선 권고</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">감지 시간은 각 소프트웨어의 기본 설정에서 가져온 값이고 이 환경에서 잰
+        값이 아닙니다. OpenStack의 Masakari 문서가 설명하는 Instance HA 구성이 Pacemaker와 Corosync를
+        전제로 합니다.</p>
+
+        <p>세 구성 가운데 Pacemaker와 Corosync를 우선 권고하고 여의치 않으면 etcd를 쓰자고 적었습니다.
+        Galera와 ShedLock은 임시 대응입니다. 중복 실행을 막는 것까지는 하지만 ④편의 원칙을 강제할 수단이
+        그 안에 없기 때문입니다.</p>
+
+        <h2 id="stonith-실패">STONITH가 실패하면 사람이 들어갑니다<a class="anchor" href="#stonith-실패" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>Pacemaker를 골라도 남는 구멍이 있습니다. Network Partition과 STONITH 실패가 함께 일어나면
+        클러스터가 freeze 상태로 들어갑니다. 전원을 내리라고 보냈는데 내려갔는지 확인할 수 없으니
+        멈추는 것입니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 215" role="img" aria-labelledby="fail-t fail-d" class="figure-svg">
+            <title id="fail-t">STONITH 실패 시의 분기</title>
+            <desc id="fail-d">전원 차단이 확인되면 Evacuate로 넘어갑니다. 확인이 실패하면 클러스터가 freeze 상태에 들어가고 BMC 콘솔을 통한 수동 개입으로 이어집니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="30" y="35" width="150" height="46" rx="8" fill="none" stroke="#666" stroke-width="1.6"/>
+              <text x="105" y="63" font-size="10.5" fill="#333" text-anchor="middle">STONITH 요청</text>
+              <path d="M180 58 H 240" stroke="#666" stroke-width="1.4" fill="none"/>
+              <rect x="240" y="35" width="150" height="46" rx="8" fill="none" stroke="#666" stroke-width="1.6"/>
+              <text x="315" y="63" font-size="10.5" fill="#333" text-anchor="middle">전원 차단 확인</text>
+              <path d="M390 58 H 450" stroke="#2e9e5b" stroke-width="1.4" fill="none"/>
+              <rect x="450" y="35" width="150" height="46" rx="8" fill="none" stroke="#2e9e5b" stroke-width="1.8"/>
+              <text x="525" y="63" font-size="10.5" fill="#2e9e5b" text-anchor="middle">Evacuate 진행</text>
+              <path d="M315 81 V 130" stroke="#d62976" stroke-width="1.4" fill="none"/>
+              <text x="335" y="106" font-size="10" fill="#d62976">확인 실패</text>
+              <rect x="240" y="130" width="150" height="46" rx="8" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="315" y="158" font-size="10.5" fill="#d62976" text-anchor="middle">Cluster freeze</text>
+              <path d="M390 153 H 450" stroke="#b8860b" stroke-width="1.4" fill="none"/>
+              <rect x="450" y="130" width="200" height="46" rx="8" fill="none" stroke="#b8860b" stroke-width="1.8"/>
+              <text x="550" y="158" font-size="10.5" fill="#b8860b" text-anchor="middle">BMC 콘솔 수동 개입</text>
+              <text x="550" y="200" font-size="10" fill="#666" text-anchor="middle">전원 확인 후 crm node fence</text>
+            </g>
+          </svg>
+          <figcaption>freeze는 고장이 아니라 설계된 정지입니다. 확인하지 못했으므로 멈춘 것입니다.</figcaption>
+        </figure>
+
+        <p>이때 멈춘 것을 풀 수 있는 것은 사람뿐입니다. 절차를 다섯 단계로 적어 두었습니다.</p>
+
+        <pre data-lang="shell"><code># 1. 실패를 확인합니다
+crm_mon -1
+
+# 2. BMC 콘솔에서 대상 노드가 Power OFF 인지 눈으로 확인합니다
+
+# 3. 확인한 뒤에만 클러스터에 fencing 을 기록합니다
+crm node fence &lt;nodename&gt;
+
+# 4. 노드를 다시 참여시킵니다
+crm node online &lt;nodename&gt;
+
+# 5. STONITH 리소스를 재시작합니다
+crm resource restart stonith-&lt;nodename&gt;</code></pre>
+
+        <p><strong>세 번째 단계는 두 번째 단계 없이 실행하면 안 됩니다.</strong> <code>crm node fence</code>는
+        전원을 내리는 명령이 아니라 내려갔다고 클러스터에 알리는 명령입니다. 확인하지 않고 적으면
+        ④편에서 막으려던 이중 접속을 사람 손으로 여는 셈이 됩니다.</p>
+
+        <p>설정도 두 가지를 함께 권고했습니다. <code>stonith-action</code>의 기본값은 재부팅이고
+        재부팅은 대상 노드가 다시 올라오는 상태를 만듭니다. 전원이 내려간 상태로 두는 쪽이 이중 접속의
+        여지를 줄입니다.</p>
+
+        <h2 id="실행-주체">복구를 실행할 수 있는 노드를 목록으로 묶었습니다<a class="anchor" href="#실행-주체" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>Pacemaker를 바로 얹기 어려운 환경을 위해 운영 레벨의 장치를 하나 더 두었습니다. 복구를 실행할
+        수 있는 노드를 목록으로 묶는 것입니다.</p>
+
+        <pre data-lang="shell"><code># 기본값은 reboot 입니다. off 로 바꾸기를 권고했습니다
+stonith-timeout=60s
+stonith-action=off
+
+# 복구를 실행할 수 있는 노드를 목록으로 제한합니다
+EVACUATION_MANAGERS=("controller-a" "controller-b" "controller-c")</code></pre>
+
+        <p>①편에서 본 사고는 고립된 Controller 하나가 스스로를 정상이라고 여기면서 시작됐습니다.
+        그 Controller가 Leader로 뽑히더라도 실행 목록에 없으면 복구까지 번지지 않습니다.</p>
+
+        <p><strong>다만 이것은 Fencing의 대체물이 아닙니다.</strong> 실행 주체를 줄여 오판이 퍼지는 범위를
+        좁힐 뿐이고 이미 살아 있는 노드를 끊는 일은 여전히 못 합니다. 층이 다른 장치라 같은 칸에
+        놓을 수 없습니다.</p>
+
+        <h2 id="주장하지-않는-것">한계: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li>⚠️ 이 연작의 산출물은 설계서입니다. 저는 세 구성을 비교하고 권고했을 뿐이고 Pacemaker를
+          도입하거나 운영한 것은 아닙니다.</li>
+          <li>감지 시간 세 값은 각 소프트웨어의 기본 설정에서 가져온 것이고 같은 하드웨어에서 나란히 잰
+          값이 아닙니다. 구성에 따라 달라집니다.</li>
+          <li>Masakari 연동은 OpenStack 문서가 그 구성을 전제로 설명한다는 뜻이고 다른 구성이 불가능하다는
+          뜻은 아닙니다.</li>
+          <li>실행 노드 목록은 운영 편의를 위한 장치이고 Fencing을 대신하지 못합니다.</li>
+          <li>사내 자료라 제품명과 고객사와 주소와 계정과 호스트명은 쓰지 않았습니다.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>이 편의 결론은 한 줄입니다. <strong>합의는 누가 실행할지를 정하고 Fencing은 실행해도 되는지를
+        정합니다.</strong> 앞의 것만 갖춘 구성은 중복 실행을 막지만 이중 접속을 막지 못합니다.</p>
+        <p>표 한 줄에 「합의 방식」이라고 적었을 때는 이 차이가 보이지 않았습니다. 층을 갈라 놓고 나서야
+        비어 있는 칸이 어디인지 드러났습니다.</p>
+        <p>다음 편은 이 구성으로 복구가 얼마나 걸리는지를 단계별로 나눠 본 이야기입니다.</p>
+        <p>읽어 주셔서 감사합니다.</p>
+        </div></article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=214c2e0164"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
