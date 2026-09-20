@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GPU 큐 정책 실측 23건이 전부 같은 조건이었습니다 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/twenty-three-runs-one-condition.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/twenty-three-runs-one-condition.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/twenty-three-runs-one-condition.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/twenty-three-runs-one-condition.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="GPU 큐 정책 실측 23건이 전부 같은 조건이었습니다" />
+  <meta property="og:description" content="선점을 존중하는 작업과 무시하는 작업을 비교하려고 만든 실험 도구인데, 쌓인 실측 23건이 전부 선점 없는 조건이었습니다. 게이트의 거부 경로를 실물로 행사한 뒤 세 조건을 처음으로 나란히 돌렸고 다섯 번씩 열다섯 번을 반복해 소유자 대기가 23.40초와 2.79초와 19.42초로 갈리는 것을 봤습니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/twenty-three-runs-one-condition.ko.html" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="GPU 큐 정책 실측 23건이 전부 같은 조건이었습니다" />
+  <meta name="twitter:description" content="비교하려고 만든 도구로 한 조건만 23번 돌고 있었습니다. 세 조건을 처음 나란히 돌린 기록입니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="선점을 존중하는 작업과 무시하는 작업을 비교하려고 만든 실험 도구인데, 쌓인 실측 23건이 전부 선점 없는 조건이었습니다. 게이트의 거부 경로를 실물로 행사한 뒤 세 조건을 처음으로 나란히 돌렸고 다섯 번씩 열다섯 번을 반복해 소유자 대기가 23.40초와 2.79초와 19.42초로 갈리는 것을 봤습니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"twenty-three-runs-one-condition.html","ko":"twenty-three-runs-one-condition.ko.html","ja":"twenty-three-runs-one-condition.ja.html"}'>
+          <option value="ko" selected>한국어</option>
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
+        <div class="article-meta"><span class="source-tag side notranslate">개인 프로젝트</span><a class="project-tag notranslate" href="../writing/index.html?tag=GPUaaS%20Control%20Plane">#GPUaaS Control Plane</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>GPU 큐 정책 실측 23건이 전부 같은 조건이었습니다<br><span class="h1-sub">도구가 믿을 만해진 것과 비교가 끝난 것은 다른 일이었습니다.</span></h1>
+        <p class="article-date">2026년 9월</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="twenty-three-runs-one-condition"></aside>
+        <nav class="article-toc" aria-label="목차">
+          <p class="toc-label">목차</p>
+          <ul>
+            
+            
+            <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+            <li><a href="#스물세-번">쌓인 23건이 전부 한 조건이었습니다</a></li>
+            <li><a href="#거부를-실물로">권한에서 동사 하나만 뺐습니다</a></li>
+            <li><a href="#세-조건">세 조건을 처음으로 나란히 돌렸습니다</a></li>
+            <li><a href="#다섯-번씩">다섯 번씩 돌려 방향을 굳혔습니다</a></li>
+            <li><a href="#쿼터와-장치">쿼터를 얻는 것과 장치를 얻는 것은 다릅니다</a></li>
+            <li><a href="#주장하지-않는-것">한계: 이 글이 주장하지 않는 것</a></li>
+            <li><a href="#마치며">마치며</a></li>
+          </ul>
+        </nav>
+      <article>
+        <p><a href="refusal-paths-exercised-for-real.ko.html">①편</a>에서 게이트 넷을 세우고 거부 경로를
+        하나씩 발화시켰습니다. 도구가 믿을 만해진 뒤에 상태를 표로 정리했는데 예상하지 못한 칸이
+        하나 나왔습니다.</p>
+
+        <p>쌓여 있던 실측 23건이 <strong>전부 같은 조건</strong>이었습니다. 선점이 일어나지 않는 조건만
+        23번이고 선점을 존중하는 조건과 무시하는 조건은 각각 0건이었습니다.</p>
+
+        <p>이 실험 도구는 바로 그 둘을 비교하려고 만든 것입니다. 저는 도구가 신뢰할 만해졌다는 것과
+        결과가 있다는 것을 같은 것으로 보고 있었습니다.</p>
+
+        <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li>A와 B를 비교하려고 실험 도구를 만들어 쓰시는 분</li>
+          <li>가드를 통과시키는 데 시간을 쓰다 정작 비교를 미루고 계신 분</li>
+          <li>큐 정책이 자원을 회수할 때 무엇이 이득이고 무엇이 대가인지 보고 싶으신 분</li>
+          <li>①편을 읽고 게이트를 세운 다음에 무엇을 했는지 궁금하신 분</li>
+        </ul>
+
+        <h2 id="스물세-번">쌓인 23건이 전부 한 조건이었습니다<a class="anchor" href="#스물세-번" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>게이트를 하나씩 통과시키는 동안 그 통과가 시야를 가렸습니다. 매번 무언가가 초록으로 바뀌니
+        나아가고 있다고 느꼈는데 <strong>비교는 한 번도 하지 않았습니다.</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 165" role="img" aria-labelledby="arms-t arms-d" class="figure-svg">
+            <title id="arms-t">쌓인 실측이 어느 조건에 몰려 있었나</title>
+            <desc id="arms-d">왼쪽에 선점이 없는 조건의 실측 23건이 모여 있고 오른쪽의 선점을 존중하는 조건과 무시하는 조건은 각각 0건입니다. 이 도구가 만들어진 이유가 바로 오른쪽 둘을 비교하는 것이었습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="60" y="60" width="16" height="16" rx="3" fill="none" stroke="#5b7fa6" stroke-width="1.4"/>
+              <rect x="82" y="60" width="16" height="16" rx="3" fill="none" stroke="#5b7fa6" stroke-width="1.4"/>
+              <rect x="104" y="60" width="16" height="16" rx="3" fill="none" stroke="#5b7fa6" stroke-width="1.4"/>
+              <rect x="126" y="60" width="16" height="16" rx="3" fill="none" stroke="#5b7fa6" stroke-width="1.4"/>
+              <rect x="148" y="60" width="16" height="16" rx="3" fill="none" stroke="#5b7fa6" stroke-width="1.4"/>
+              <rect x="170" y="60" width="16" height="16" rx="3" fill="none" stroke="#5b7fa6" stroke-width="1.4"/>
+              <rect x="192" y="60" width="16" height="16" rx="3" fill="none" stroke="#5b7fa6" stroke-width="1.4"/>
+              <rect x="214" y="60" width="16" height="16" rx="3" fill="none" stroke="#5b7fa6" stroke-width="1.4"/>
+              <rect x="236" y="60" width="16" height="16" rx="3" fill="none" stroke="#5b7fa6" stroke-width="1.4"/>
+              <rect x="258" y="60" width="16" height="16" rx="3" fill="none" stroke="#5b7fa6" stroke-width="1.4"/>
+              <rect x="280" y="60" width="16" height="16" rx="3" fill="none" stroke="#5b7fa6" stroke-width="1.4"/>
+              <rect x="302" y="60" width="16" height="16" rx="3" fill="none" stroke="#5b7fa6" stroke-width="1.4"/>
+              <rect x="60" y="82" width="16" height="16" rx="3" fill="none" stroke="#5b7fa6" stroke-width="1.4"/>
+              <rect x="82" y="82" width="16" height="16" rx="3" fill="none" stroke="#5b7fa6" stroke-width="1.4"/>
+              <rect x="104" y="82" width="16" height="16" rx="3" fill="none" stroke="#5b7fa6" stroke-width="1.4"/>
+              <rect x="126" y="82" width="16" height="16" rx="3" fill="none" stroke="#5b7fa6" stroke-width="1.4"/>
+              <rect x="148" y="82" width="16" height="16" rx="3" fill="none" stroke="#5b7fa6" stroke-width="1.4"/>
+              <rect x="170" y="82" width="16" height="16" rx="3" fill="none" stroke="#5b7fa6" stroke-width="1.4"/>
+              <rect x="192" y="82" width="16" height="16" rx="3" fill="none" stroke="#5b7fa6" stroke-width="1.4"/>
+              <rect x="214" y="82" width="16" height="16" rx="3" fill="none" stroke="#5b7fa6" stroke-width="1.4"/>
+              <rect x="236" y="82" width="16" height="16" rx="3" fill="none" stroke="#5b7fa6" stroke-width="1.4"/>
+              <rect x="258" y="82" width="16" height="16" rx="3" fill="none" stroke="#5b7fa6" stroke-width="1.4"/>
+              <rect x="280" y="82" width="16" height="16" rx="3" fill="none" stroke="#5b7fa6" stroke-width="1.4"/>
+              <text x="185" y="42" font-size="10.5" fill="#5b7fa6" text-anchor="middle">선점 없음 · 23건</text>
+              <rect x="420" y="60" width="16" height="16" rx="3" fill="none" stroke="#d62976" stroke-width="1.4" stroke-dasharray="3 2"/>
+              <text x="500" y="72" font-size="10.5" fill="#d62976">선점 + 존중 · 0건</text>
+              <rect x="420" y="90" width="16" height="16" rx="3" fill="none" stroke="#d62976" stroke-width="1.4" stroke-dasharray="3 2"/>
+              <text x="500" y="102" font-size="10.5" fill="#d62976">선점 + 무시 · 0건</text>
+              <text x="360" y="150" font-size="10" fill="#666" text-anchor="middle">이 도구가 만들어진 이유는 오른쪽 둘의 비교</text>
+            </g>
+          </svg>
+          <figcaption>게이트가 하나씩 통과한다는 사실이 이 빈칸을 오래 가렸습니다.</figcaption>
+        </figure>
+
+        <p>같은 표에서 두 번째 빈칸도 나왔습니다. 게이트 다섯 가운데 거부 경로를 실물로 확인한 것은
+        셋뿐이었고 나머지 둘은 코드를 일부러 망가뜨리는 방식으로만 거부를 증명해 두고 있었습니다.</p>
+
+        <h2 id="거부를-실물로">권한에서 동사 하나만 뺐습니다<a class="anchor" href="#거부를-실물로" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>관측 연속성 게이트는 「감시를 세우지 못하면 제출하지 말 것」을 강제합니다. 이 거부를 실물에서
+        보려면 감시가 실패해야 합니다. 그래서 실행에 필요한 권한을 전부 주되
+        <strong>한 리소스의 감시 권한 하나만 뺀 신원</strong>을 만들었습니다.</p>
+
+        <pre data-lang="text"><code># 쌓여 있던 실측이 어느 조건이었나
+arms exercised: {'no-preemption': 23}
+
+# 관측 스트림 하나에서 동사 하나만 뺀 신원
+jobs   list  -> yes      workloads  watch -> yes
+jobs   watch -> NO   &lt;-  pods       watch -> yes
+jobs   get   -> yes      nodes      patch -> yes
+
+# 결과: 아무것도 제출하기 전에 거부
+ERROR: setup-failed: the stream ended before it ever established a watch (403)
+ledger: 0 events</code></pre>
+
+        <p>잘라 낸 것이 정확히 한 동사인지 먼저 확인한 것이 중요했습니다. 권한을 넓게 잘라 내면 실행이
+        더 이른 단계에서 실패하고 그러면 이 게이트가 아니라 다른 것을 실증하게 됩니다.</p>
+
+        <p>결과는 정확했습니다. 실행이 아무것도 제출하기 전에 거부했고 산출물에 403 원문이 남았습니다.
+        남은 게이트 하나는 파일에 결함을 넣어 확인했는데 <strong>그때 통과해 버렸고</strong> 그 이야기는
+        <a href="every-rejection-opened-a-new-connection.ko.html">다른 글</a>에 적었습니다.</p>
+
+        <h2 id="세-조건">세 조건을 처음으로 나란히 돌렸습니다<a class="anchor" href="#세-조건" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>거부 경로를 닫고 나서 세 조건을 처음으로 나란히 돌렸습니다. 세 실행 모두 같은 픽스처이고
+        소유자는 같은 시각에 등장합니다.</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+          <table>
+            <caption class="sr-only">세 조건을 처음으로 나란히 돌린 결과.</caption>
+            <thead><tr><th>항목</th><th>선점 없음</th><th>선점 + 존중</th><th>선점 + 무시</th></tr></thead>
+            <tbody><tr><td>선점 발생</td><td>0</td><td>1</td><td>1</td></tr><tr><td>차용자 정지 사유</td><td>해당 없음</td><td>신호를 받고 종료</td><td><strong>끝까지 실행</strong></td></tr><tr><td>소유자가 다시 뜰 때까지</td><td>23초</td><td>3초</td><td>19초</td></tr><tr><td>귀속 폐기</td><td>0</td><td>40.7 GPU-초</td><td>0</td></tr><tr><td>미귀속 점유</td><td>0</td><td>0</td><td>59.3 GPU-초</td></tr><tr><td>도구의 경고</td><td>해당 없음</td><td>해당 없음</td><td>선점이 무효였다고 표시</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">선점의 이득이 거의 전부 <strong>작업이 종료 신호를 존중하는지에 걸려
+        있습니다.</strong> 소유자 대기 23초가 3초로 줄어드는 것이 이득인데 차용자가 신호를 무시하면
+        19초라 되찾은 것이 4초뿐입니다.</p>
+
+        <p>그리고 무시하는 조건은 양쪽을 다 잃습니다. 지연 이득이 거의 없는데도 차용자의 완료된 작업이
+        인정되지 않아 처음부터 다시 실행됩니다. 도구가 이것을 스스로 지목해 경고로 냈습니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 225" role="img" aria-labelledby="ready-t ready-d" class="figure-svg">
+            <title id="ready-t">세 조건에서 소유자가 다시 뜰 때까지</title>
+            <desc id="ready-d">선점이 없으면 23.40초, 선점을 존중하면 2.79초, 선점을 무시하면 19.42초입니다. 다섯 번씩 돌린 평균입니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="30" y="74" font-size="10.5" fill="#333">선점 없음</text>
+              <rect x="170" y="58" width="514" height="24" rx="4" fill="none" stroke="#5b7fa6" stroke-width="1.8"/>
+              <text x="689" y="74" font-size="10.5" fill="#5b7fa6">23.40초</text>
+              <text x="30" y="124" font-size="10.5" fill="#333">선점 + 존중</text>
+              <rect x="170" y="108" width="61" height="24" rx="4" fill="none" stroke="#2e9e5b" stroke-width="1.8"/>
+              <text x="236" y="124" font-size="10.5" fill="#2e9e5b">2.79초</text>
+              <text x="30" y="174" font-size="10.5" fill="#333">선점 + 무시</text>
+              <rect x="170" y="158" width="427" height="24" rx="4" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="602" y="174" font-size="10.5" fill="#d62976">19.42초</text>
+              <text x="360" y="210" font-size="10" fill="#666" text-anchor="middle">소유자가 다시 뜰 때까지 · 다섯 번씩의 평균</text>
+            </g>
+          </svg>
+          <figcaption>가운데와 아래의 차이가 이 실험이 재려던 것입니다.</figcaption>
+        </figure>
+
+        <h2 id="다섯-번씩">다섯 번씩 돌려 방향을 굳혔습니다<a class="anchor" href="#다섯-번씩" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>한 번씩으로는 방향밖에 말할 수 없어서 같은 커밋으로 조건마다 다섯 번씩 열다섯 번을
+        돌렸습니다. 해석 규칙은 결과를 보기 전에 정해서 적어 두었습니다. 나중에 기준을
+        정하면 그건 맞춤입니다.</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+          <table>
+            <caption class="sr-only">조건마다 다섯 번씩 열다섯 번 돌린 결과.</caption>
+            <thead><tr><th>조건</th><th>횟수</th><th>소유자 대기 평균</th><th>최소와 최대</th><th>무효 선점</th></tr></thead>
+            <tbody><tr><td>선점 없음</td><td>5</td><td>23.40초</td><td>23.37 ~ 23.47</td><td>해당 없음</td></tr><tr><td>선점 + 존중</td><td>5</td><td><strong>2.79초</strong></td><td>2.33 ~ 3.49</td><td>0 / 5</td></tr><tr><td>선점 + 무시</td><td>5</td><td>19.42초</td><td>19.35 ~ 19.54</td><td>5 / 5</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">가장 큰 수확은 <strong>게이트의 거짓 양성이 15건 가운데 0건</strong>이었다는
+        것입니다. 그전까지 정상 실행은 대여섯 번뿐이었고 드물게 나는 거짓 양성은 아직 못 봤을 뿐일 수
+        있었습니다.</p>
+
+        <h2 id="쿼터와-장치">쿼터를 얻는 것과 장치를 얻는 것은 다릅니다<a class="anchor" href="#쿼터와-장치" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>사전에 적어 둔 규칙 하나가 발동했습니다. 무시하는 조건의 19초는 재는 값이 아니라 계산되는
+        값이었습니다. 다섯 번 모두 19.35초에서 19.54초 사이였습니다.</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+          <table>
+            <caption class="sr-only">선점 무시 조건에서 소요를 단계로 나눈 것.</caption>
+            <thead><tr><th>단계</th><th>선점 없음</th><th>선점 + 존중</th><th>선점 + 무시</th></tr></thead>
+            <tbody><tr><td>소유자 쿼터 확보</td><td>22.46초</td><td>0.12초</td><td>0.11초</td></tr><tr><td>차용자 정지</td><td>20.45초</td><td>0.16초</td><td>18.60초</td></tr><tr><td>소유자가 다시 뜸</td><td>23.40초</td><td>2.79초</td><td>19.42초</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">무시하는 조건의 소유자는 <strong>0.11초 만에 쿼터를 얻습니다.</strong>
+        그런데 다시 뜨는 것은 19.42초입니다. 그 차이 전부가 차용자가 남은 서비스를 다 쓸 때까지
+        기다린 시간입니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 150" role="img" aria-labelledby="qd-t qd-d" class="figure-svg">
+            <title id="qd-t">쿼터를 얻은 시점과 장치를 얻은 시점</title>
+            <desc id="qd-d">선점을 무시하는 조건에서 소유자는 0.11초 만에 쿼터를 얻지만 장치를 얻는 것은 19.42초 뒤입니다. 그 사이는 차용자가 남은 서비스를 다 쓰는 구간입니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <path d="M60 70 H 660" stroke="#666" stroke-width="1.3" fill="none"/>
+              <circle cx="80" cy="70" r="5" fill="#2e9e5b"/>
+              <text x="80" y="52" font-size="9.5" fill="#2e9e5b" text-anchor="middle">쿼터 확보</text>
+              <text x="80" y="92" font-size="9.5" fill="#666" text-anchor="middle">0.11초</text>
+              <circle cx="600" cy="70" r="5" fill="#d62976"/>
+              <text x="600" y="52" font-size="9.5" fill="#d62976" text-anchor="middle">장치 확보</text>
+              <text x="600" y="92" font-size="9.5" fill="#666" text-anchor="middle">19.42초</text>
+              <path d="M80 110 H 600" stroke="#b8860b" stroke-width="1.6" stroke-dasharray="4 3" fill="none"/>
+              <text x="340" y="132" font-size="10.5" fill="#b8860b" text-anchor="middle">차용자가 남은 서비스를 다 쓰는 구간</text>
+            </g>
+          </svg>
+          <figcaption>두 점 사이를 채우는 것은 선점이 아니라 차용자의 남은 시간입니다.</figcaption>
+        </figure>
+
+        <p>그래서 문장을 고쳤습니다. 「무시하는 조건은 20초 가운데 4초만 회수한다」로 적으려 했는데
+        실제로는 「쿼터를 즉시 얻지만 장치는 못 얻는다」입니다. 되찾은 4초는 서비스가 돌아온 것이 아니라
+        입장 절차를 건너뛴 것이고 나머지는 차용자의 잔여 시간이 정합니다.</p>
+
+        <h2 id="주장하지-않는-것">한계: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li>⚠️ 19초는 강제 종료가 정한 값이 아니라 차용자의 남은 서비스 시간이 정한 하한입니다.
+          더 긴 작업이면 유예 시간에서 잘립니다.</li>
+          <li>조건마다 다섯 번이어도 통계가 아닙니다. 산포가 작은 것은 정밀해서가 아니라 픽스처가
+          결정론적이기 때문이고 한 머신에서 하루에 돌린 것입니다.</li>
+          <li>원자료의 마지막 절에는 「조건당 한 번으로는 방향만 말할 수 있다」가 아직 남아 있습니다.
+          열다섯 번 절이 나중에 붙으면서 옛 줄을 지우지 않은 것으로 보입니다. 이 글은 열다섯 번 쪽을
+          채택했고 그 불일치를 여기 적어 둡니다.</li>
+          <li>존중하는 조건의 40.7 GPU-초는 낭비한 시간이 아니라 버려진 진척입니다. 존중해도 진척 폐기는
+          그대로 일어납니다.</li>
+          <li>이 실행들은 kind 클러스터와 가짜 장치 플러그인 위에서 돌았습니다. 실제 장치가 아닙니다.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>이 편의 결론은 한 줄입니다. <strong>도구가 믿을 만해진 것과 비교가 끝난 것은 다른 일입니다.</strong>
+        게이트가 하나씩 초록으로 바뀌는 동안 정작 이 도구가 존재하는 이유인 비교는 0건이었습니다.</p>
+        <p>그리고 숫자를 얻은 뒤에는 그 숫자가 재는 값인지 계산되는 값인지 갈라야 합니다. 19초는 재는
+        값처럼 보였지만 차용자의 남은 시간이 정하고 있었습니다.</p>
+        <p>읽어 주셔서 감사합니다.</p>
+        </div></article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=db4ddbb639"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -192,6 +192,18 @@
       },
       items: [
         {
+          title: "All Twenty-Three Recorded Runs Used the Same Condition",
+          title_ko: "GPU 큐 정책 실측 23건이 전부 같은 조건이었습니다",
+          title_ja: "記録された実測23件がすべて同じ条件でした",
+          url: "writing/twenty-three-runs-one-condition.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-09", dateLabel: "Sep 2026",
+          desc: "This harness exists to compare a workload that honours the termination signal against one that ignores it. Twenty-three recorded runs had piled up and every one was the no-preemption condition. After firing the refusal paths for real I ran all three side by side, then five times each. Owner wait separated into 23.40, 2.79 and 19.42 seconds, and the 19 turned out to be computed rather than measured.",
+          desc_ko: "선점을 존중하는 작업과 무시하는 작업을 비교하려고 만든 도구인데 쌓인 실측 23건이 전부 선점 없는 조건이었습니다. 거부 경로를 실물로 행사한 뒤 세 조건을 처음 나란히 돌리고 다섯 번씩 반복했습니다. 소유자 대기가 23.40초와 2.79초와 19.42초로 갈렸고 그 19초는 재는 값이 아니라 계산되는 값이었습니다.",
+          desc_ja: "終了信号を尊重する作業と無視する作業を比べるために作った道具なのに、溜まった実測23件はすべて先取りのない条件でした。拒否経路を実物で行使したあと三つの条件を初めて並べ、五回ずつ繰り返しました。所有者の待ちは23.40秒と2.79秒と19.42秒に分かれ、その19秒は測る値ではなく計算される値でした。",
+          tags: ["GPUaaS Control Plane", "Method", "Observability", "Reliability"]
+        },
+        {
           title: "I Fired Every Refusal Path in a GPU Experiment Harness for Real",
           title_ko: "GPU 실험 Harness의 거부 경로를 실물로 돌려 봤습니다",
           title_ja: "GPU 実験 Harness の拒否経路を実物で動かしてみました",
