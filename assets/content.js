@@ -91,6 +91,10 @@
        2월에 멈춘 세 줄이 9월의 발행과 정정을 하나도 보여 주지 못했다. */
     news: {
       items: [
+        { date: "2026-09-20", dateLabel: "Sep 20, 2026",
+          text: "Published the six-part Instance HA design series in three languages. It starts with one observation point calling a live node dead. The five parts after that are all about dividing up the grounds for a decision.",
+          text_ko: "Instance HA 설계 연작 여섯 편을 세 언어로 냈습니다. 관측 지점 하나를 믿어 살아 있는 노드를 죽었다고 판정한 것이 시작입니다. 뒤의 다섯 편은 전부 판단의 근거를 나누는 이야기입니다.",
+          text_ja: "Instance HA 設計の連作六編を三言語で公開しました。観測地点を一つ信じて生きているノードを死んだと判定したのが始まりです。あとの五編はすべて判断の根拠を分ける話です。" },
         { date: "2026-09-13", dateLabel: "Sep 13, 2026",
           text: "Published \u201cLogging Out When Validation Fails Evicts Only the Busiest Users\u201d in three languages. The browser drives the polling, so the check is stopped at exactly the moments that are risky.",
           text_ko: "‘Session 검증이 실패할 때 로그아웃하면 가장 열심히 쓰는 사용자만 쫓겨납니다’를 세 언어로 냈습니다. Polling을 브라우저가 돌리므로 정작 위험한 순간에는 그 검사가 멈춰 있습니다.",
