@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instance HA ⑥: 100초가 누구에게 충분한지는 서비스가 정합니다 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/instance-ha-6-100-seconds-is-a-service-decision.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/instance-ha-6-100-seconds-is-a-service-decision.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/instance-ha-6-100-seconds-is-a-service-decision.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/instance-ha-6-100-seconds-is-a-service-decision.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="Instance HA ⑥: 100초가 누구에게 충분한지는 서비스가 정합니다" />
+  <meta property="og:description" content="복구 시간을 감지와 Fencing과 Evacuate 세 단계로 나눠 약 100~160초로 산정하고 Stateless와 DB와 NFV로 허용 기준을 갈랐습니다. 실측이 아니라 산정치이며 팀 합의가 필요한 값입니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/instance-ha-6-100-seconds-is-a-service-decision.ko.html" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Instance HA ⑥: 100초가 누구에게 충분한지는 서비스가 정합니다" />
+  <meta name="twitter:description" content="복구 시간을 세 단계로 나누고 서비스 유형마다 허용 여부를 따로 적었습니다. Instance HA 연작 ⑥편입니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="복구 시간을 감지와 Fencing과 Evacuate 세 단계로 나눠 약 100~160초로 산정하고 Stateless와 DB와 NFV로 허용 기준을 갈랐습니다. 실측이 아니라 산정치이며 팀 합의가 필요한 값입니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"instance-ha-6-100-seconds-is-a-service-decision.html","ko":"instance-ha-6-100-seconds-is-a-service-decision.ko.html","ja":"instance-ha-6-100-seconds-is-a-service-decision.ja.html"}'>
+          <option value="ko" selected>한국어</option>
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
+        <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>Instance HA ⑥: 100초가 누구에게 충분한지는 서비스가 정합니다<br><span class="h1-sub">복구 시간을 한 숫자로 적으려다 그만두었습니다. 세 단계로 나누고 서비스 유형마다 허용 여부를 따로 적은 뒤에야 합의할 수 있는 값이 되었습니다.</span></h1>
+        <p class="article-date">2026년 9월</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="instance-ha-6-100-seconds-is-a-service-decision"></aside>
+        <nav class="article-toc" aria-label="목차">
+          <p class="toc-label">목차</p>
+          <ul>
+            
+            
+            
+            
+            
+            <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+            <li><a href="#하나의-숫자">처음에는 한 숫자로 적으려 했습니다</a></li>
+            <li><a href="#단계-분해">세 단계로 나눠 산정했습니다</a></li>
+            <li><a href="#유형별-허용">같은 100초가 서비스마다 다릅니다</a></li>
+            <li><a href="#줄이는-대가">줄일 수는 있지만 대가가 있습니다</a></li>
+            <li><a href="#설계-이후">설계서가 어디까지 갔는지</a></li>
+            <li><a href="#주장하지-않는-것">한계: 이 글이 주장하지 않는 것</a></li>
+            <li><a href="#마치며">마치며</a></li>
+          </ul>
+        </nav>
+      <article>
+        <p><a href="instance-ha-5-quorum-does-not-cut-power.ko.html">⑤편</a>까지 판정과 절차와 구성이
+        정해졌습니다. 남은 질문은 하나입니다. 이 설계로 복구하면 얼마나 걸리느냐입니다.</p>
+
+        <p>설계서에는 「약 100초」라고 적혀 있습니다. 이 편은 그 숫자가 어떻게 나왔고 왜 그대로 쓰면
+        안 되는지에 관한 이야기입니다.</p>
+
+        <p>처음에는 한 숫자로 적으려 했습니다. 적어 놓고 보니 그 숫자를 받은 사람이 할 수 있는 일이
+        없었습니다. 충분한지 아닌지를 판단할 근거가 숫자 안에 없었기 때문입니다.</p>
+
+        <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li>복구 목표 시간을 팀과 합의해야 하는 분</li>
+          <li>RTO 숫자는 있는데 그게 충분한지 말하기 어려운 분</li>
+          <li>감지 시간을 줄이자는 제안을 받고 대가를 따져 봐야 하는 분</li>
+          <li>①편부터 읽고 이 설계가 어디까지 갔는지 궁금하신 분</li>
+        </ul>
+
+        <h2 id="하나의-숫자">처음에는 한 숫자로 적으려 했습니다<a class="anchor" href="#하나의-숫자" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>한 숫자로 적으면 두 가지를 못 합니다. 줄이자는 말이 나왔을 때 어디를 줄일지 짚을 수 없고
+        충분하냐는 질문에 답할 수 없습니다. <strong>두 가지 다 숫자가 아니라 그 안의 구성이 답합니다.</strong></p>
+
+        <p>그래서 두 방향으로 갈랐습니다. 시간 쪽으로는 단계별로 나누고 사람 쪽으로는 서비스 유형별로
+        나눴습니다. 앞의 것은 어디를 줄일지 말해 주고 뒤의 것은 줄일 필요가 있는지 말해 줍니다.</p>
+
+        <h2 id="단계-분해">세 단계로 나눠 산정했습니다<a class="anchor" href="#단계-분해" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>복구는 세 단계를 지납니다. 죽었다고 판정하기까지, 전원을 내리고 확인하기까지, 다른 호스트에서
+        다시 띄우기까지입니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="rto-t rto-d" class="figure-svg">
+            <title id="rto-t">복구 시간의 세 단계 분해</title>
+            <desc id="rto-d">왼쪽부터 감지가 약 30초, Fencing이 5초에서 10초, Evacuate와 기동이 60초에서 120초입니다. 합치면 약 100초에서 160초이고 실측이 아니라 산정치입니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="60" y="70" width="200" height="44" rx="6" fill="none" stroke="#5b7fa6" stroke-width="1.8"/>
+              <text x="160" y="97" font-size="10.5" fill="#5b7fa6" text-anchor="middle">감지 (TTL 30초)</text>
+              <rect x="260" y="70" width="60" height="44" rx="6" fill="none" stroke="#b8860b" stroke-width="1.8"/>
+              <text x="290" y="97" font-size="10.5" fill="#b8860b" text-anchor="middle">Fencing</text>
+              <rect x="320" y="70" width="340" height="44" rx="6" fill="none" stroke="#7a5ba6" stroke-width="1.8"/>
+              <text x="490" y="97" font-size="10.5" fill="#7a5ba6" text-anchor="middle">Evacuate와 기동</text>
+              <text x="160" y="134" font-size="10" fill="#666" text-anchor="middle">약 30초</text>
+              <text x="290" y="134" font-size="10" fill="#666" text-anchor="middle">5~10초</text>
+              <text x="490" y="134" font-size="10" fill="#666" text-anchor="middle">60~120초</text>
+              <path d="M60 160 H 660" stroke="#333" stroke-width="1.4" fill="none"/>
+              <text x="360" y="182" font-size="11" fill="#333" text-anchor="middle">합계 약 100~160초 (산정치)</text>
+            </g>
+          </svg>
+          <figcaption>가장 긴 구간은 감지가 아니라 다시 띄우는 쪽입니다. 폭도 가장 넓습니다.</figcaption>
+        </figure>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+          <table>
+            <caption class="sr-only">복구 시간의 단계별 산정.</caption>
+            <thead><tr><th>단계</th><th>소요</th><th>가장 큰 변수</th></tr></thead>
+            <tbody><tr><td>감지 (TTL 30초)</td><td>약 30초</td><td>TTL과 판정 주기</td></tr><tr><td>IPMI Fencing</td><td>5~10초</td><td>전원 확인까지의 대기</td></tr><tr><td>Nova Evacuate와 VM 기동</td><td>60~120초</td><td>이미지 크기와 Storage 유형</td></tr><tr><td>합계 (현 설계)</td><td>약 100~160초</td><td>위 셋의 누적</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">가장 긴 구간은 감지가 아니라 다시 띄우는 쪽이고 폭도 가장 넓습니다.
+        감지를 절반으로 줄여도 합계는 15퍼센트쯤만 줄어듭니다.
+        <strong>줄일 곳을 찾으려면 단계를 먼저 갈라야 합니다.</strong></p>
+
+        <h2 id="유형별-허용">같은 100초가 서비스마다 다릅니다<a class="anchor" href="#유형별-허용" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>시간을 갈라도 충분하냐는 질문에는 아직 답하지 못합니다. 그 답은 설계가 아니라 서비스가
+        가지고 있습니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 225" role="img" aria-labelledby="svc-t svc-d" class="figure-svg">
+            <title id="svc-t">서비스 유형별 허용 경계</title>
+            <desc id="svc-d">점선이 약 100초 지점입니다. Stateless API 서비스는 이 값을 허용하고 DB 기반 서비스는 위험으로 두었으며 NFV와 실시간 서비스는 경계 왼쪽이라 이 설계로는 불가입니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <path d="M300 40 V 210" stroke="#333" stroke-width="1.4" stroke-dasharray="4 4" fill="none"/>
+              <text x="300" y="30" font-size="10.5" fill="#333" text-anchor="middle">약 100초</text>
+              <text x="30" y="74" font-size="11" fill="#333">Stateless API</text>
+              <rect x="320" y="55" width="300" height="30" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.7"/>
+              <text x="470" y="75" font-size="10.5" fill="#2e9e5b" text-anchor="middle">허용</text>
+              <text x="30" y="134" font-size="11" fill="#333">DB 기반</text>
+              <rect x="320" y="115" width="300" height="30" rx="6" fill="none" stroke="#b8860b" stroke-width="1.7"/>
+              <text x="470" y="135" font-size="10.5" fill="#b8860b" text-anchor="middle">위험</text>
+              <text x="30" y="194" font-size="11" fill="#333">NFV와 실시간</text>
+              <rect x="120" y="175" width="170" height="30" rx="6" fill="none" stroke="#d62976" stroke-width="1.7"/>
+              <text x="205" y="195" font-size="10.5" fill="#d62976" text-anchor="middle">불가</text>
+            </g>
+          </svg>
+          <figcaption>같은 산정치인데 셋으로 갈립니다. 숫자가 아니라 서비스가 판정을 정합니다.</figcaption>
+        </figure>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+          <table>
+            <caption class="sr-only">서비스 유형별 허용 기준.</caption>
+            <thead><tr><th>서비스 유형</th><th>판정</th><th>근거</th></tr></thead>
+            <tbody><tr><td>Stateless API 서비스</td><td>허용</td><td>재시도로 흡수되고 상태가 남지 않습니다</td></tr><tr><td>DB 기반 서비스</td><td>위험</td><td>Downtime 동안의 데이터 정합성을 따로 봐야 합니다</td></tr><tr><td>NFV와 실시간 서비스</td><td>불가</td><td>10~20초대 아키텍처가 필요합니다</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">같은 산정치인데 판정이 셋으로 갈립니다. NFV 쪽은 이 설계를 손봐서 닿을 수
+        있는 값이 아니라 아키텍처를 바꿔야 하는 자리입니다.
+        <strong>그 결정은 개발자 혼자 내릴 수 있는 것이 아닙니다.</strong></p>
+
+        <p>설계서에 「RTO 목표, 팀 합의 필요」라고 적은 이유가 이것입니다. 숫자를 합의 사항으로 올려 둔
+        것이지 목표를 정해 놓은 것이 아닙니다.</p>
+
+        <h2 id="줄이는-대가">줄일 수는 있지만 대가가 있습니다<a class="anchor" href="#줄이는-대가" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>줄이는 방법 자체는 있습니다. 감지 구간은 외부 Probe의 TTL이 정하므로 재시도 횟수를 줄이면
+        30초가 15초가 됩니다.</p>
+
+        <pre data-lang="shell"><code># 현 설계: 5초 간격으로 여섯 번 놓치면 죽은 것으로 봅니다
+probe_interval=5s
+probe_retry=6      # 30s TTL
+
+# 단축안: 세 번으로 줄이면 TTL 이 15초가 됩니다
+probe_retry=3      # 15s TTL
+
+# 대가: 순간 지연을 죽음으로 읽을 여지가 함께 커집니다</code></pre>
+
+        <p>다만 ②편에서 본 대로 그 TTL은 순간 지연과 진짜 정지를 가르는 값이기도 합니다. 짧게 잡을수록
+        지연을 죽음으로 읽을 여지가 커집니다. <strong>줄어드는 것은 복구 시간이고 늘어나는 것은 오판
+        가능성입니다.</strong></p>
+
+        <p>그래서 단축안을 적을 때 대가를 같이 적었습니다. 줄일 수 있다는 말만 하면 받는 사람이 결정을
+        할 수 없습니다.</p>
+
+        <h2 id="설계-이후">설계서가 어디까지 갔는지<a class="anchor" href="#설계-이후" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>이 연작의 산출물은 설계서입니다. 구현은 다른 팀원이 이어받았고 저는 거기 참여하지 않았습니다.
+        그래서 이 설계가 살았는지를 말하려면 제 말이 아니라 다른 사람의 문서를 봐야 합니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 180" role="img" aria-labelledby="path-t path-d" class="figure-svg">
+            <title id="path-t">설계서에서 기능 보완으로 이어진 경로</title>
+            <desc id="path-d">설계서의 hold 로직과 Phase 분리가 후속 검토 문서에 인용되고 그 문서가 기능 보완의 구현 방향 기준이 되었습니다. 구현은 다른 팀원이 맡았습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="50" width="160" height="80" rx="10" fill="none" stroke="#2e9e5b" stroke-width="1.8"/>
+              <text x="120" y="82" font-size="11" fill="#2e9e5b" text-anchor="middle">설계서</text>
+              <text x="120" y="104" font-size="9.5" fill="#666" text-anchor="middle">hold 로직 · Phase 분리</text>
+              <rect x="280" y="50" width="160" height="80" rx="10" fill="none" stroke="#b8860b" stroke-width="1.8"/>
+              <text x="360" y="82" font-size="11" fill="#b8860b" text-anchor="middle">후속 검토 문서</text>
+              <text x="360" y="104" font-size="9.5" fill="#666" text-anchor="middle">설계서를 인용</text>
+              <rect x="520" y="50" width="160" height="80" rx="10" fill="none" stroke="#5b7fa6" stroke-width="1.8"/>
+              <text x="600" y="82" font-size="11" fill="#5b7fa6" text-anchor="middle">기능 보완</text>
+              <text x="600" y="104" font-size="9.5" fill="#666" text-anchor="middle">구현 방향의 기준</text>
+              <path d="M200 90 H 280" stroke="#666" stroke-width="1.4" fill="none"/>
+              <path d="M440 90 H 520" stroke="#666" stroke-width="1.4" fill="none"/>
+              <text x="360" y="160" font-size="10" fill="#666" text-anchor="middle">구현: 다른 팀원</text>
+            </g>
+          </svg>
+          <figcaption>설계가 살았는지는 다른 사람 문서에 그 원칙이 들어갔는지로 확인됩니다.</figcaption>
+        </figure>
+
+        <p>같은 시기에 나온 후속 검토 문서가 이 설계서를 인용했습니다. 그 문서의 결론은 관측 지점이
+        고장 났을 때 복구를 수행하지 않아야 한다는 것이었고 이는 설계서의 보류 로직과 Phase 분리와
+        같은 내용입니다.</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+          <table>
+            <caption class="sr-only">설계서가 적은 문제와 개선 효과.</caption>
+            <thead><tr><th>문제</th><th>개선 효과</th></tr></thead>
+            <tbody><tr><td>L2/L3 스위치 장애</td><td>복합 판단을 적용해 복구를 보류합니다</td></tr><tr><td>외부 Probe 과의존</td><td>보조 신호로 격하하고 Quorum과 HeartBeat를 앞에 둡니다</td></tr><tr><td>Storage 경로 장애 오판</td><td>실행 조건으로 옮겨 과억제를 없앱니다</td></tr><tr><td>Controller 단독 판단</td><td>Quorum을 먼저 확인합니다</td></tr><tr><td>Split-Brain</td><td>Fencing을 통과 조건으로 둡니다</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">설계서가 적은 개선 효과입니다. 이 가운데 어느 것이 운영에서 실제로
+        나타났는지는 제가 확인할 수 있는 범위 밖에 있습니다.</p>
+
+        <h2 id="주장하지-않는-것">한계: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <ul class="callout">
+          <li>⚠️ 약 100초에서 160초는 산정치이고 실측이 아닙니다. 단계마다 알려진 소요를
+          더한 값이며 설계서에도 팀 합의가 필요한 항목으로 적혀 있습니다.</li>
+          <li>저는 이 값을 달성한 적이 없습니다. 설계 단계에서 산정하고 유형별 기준을 제안한 것까지가
+          제 범위입니다.</li>
+          <li>서비스 유형 셋은 판단을 돕는 구분이지 모든 서비스가 셋 중 하나에 들어간다는 뜻은 아닙니다.</li>
+          <li>후속 문서가 설계서를 인용했다는 것까지는 문서로 확인했습니다. 두 문서의 선후 관계와
+          작성 이력은 확인하지 못했으므로 그 이상은 적지 않습니다.</li>
+          <li>사내 자료라 제품명과 고객사와 주소와 계정과 호스트명과 이슈 번호와 작성자 이름은
+          쓰지 않았습니다.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>여섯 편을 관통하는 것은 하나입니다. <strong>판단의 근거를 숫자 하나나 신호 하나에 몰아 두면
+        그것이 틀렸을 때 빠져나갈 길이 없습니다.</strong> 관측 지점 하나를 믿어 살아 있는 노드를 죽었다고
+        본 것이 ①편이고 그 뒤 다섯 편은 전부 근거를 나누는 이야기였습니다.</p>
+        <p>신호를 증언할 수 있는 범위로 나누고 장애인가와 지금 해도 되는가를 나누고 명령과 확인을
+        나누고 합의와 Fencing을 나누고 마지막으로 시간을 단계와 서비스로 나눴습니다.</p>
+        <p>여기까지 읽어 주셔서 감사합니다.</p>
+        </div></article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=507a3b0635"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

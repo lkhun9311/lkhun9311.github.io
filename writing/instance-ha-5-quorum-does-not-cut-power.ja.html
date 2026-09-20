@@ -16,8 +16,8 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Instance HA ④: 電源が落ちたと確認できるまで復旧しません" />
-  <meta property="og:description" content="復旧してよいという判定が立っていても、元のホストの電源が確実に落ちたと確認するまでは移しません。BMC 専用の物理スイッチを前提条件として求めた理由と、Detect から Recover までの四段階、Storage 種別ごとの残存接続の整理をまとめました。" />
+  <meta property="og:title" content="Instance HA ⑤: Quorum は電源を落とせません" />
+  <meta property="og:description" content="三つのアーキテクチャを同じ物差しで比べました。「合意方式」という一行が違いを隠していたため四つの層に分けたところ、空いている枠は一番下の一つだけでした。" />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -26,10 +26,10 @@
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta property="og:locale:alternate" content="en_US" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Instance HA ④: 電源が落ちたと確認できるまで復旧しません" />
-  <meta name="twitter:description" content="電源の遮断を確認するまでは復旧しません。BMC の前提と四段階の手順、Storage 種別ごとの整理条件をまとめた Instance HA 連作の四編目です。" />
+  <meta name="twitter:title" content="Instance HA ⑤: Quorum は電源を落とせません" />
+  <meta name="twitter:description" content="Quorum はデータベースを守りますが電源は落とせません。三つのアーキテクチャを四層で比べた Instance HA 連作の第5編です。" />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="復旧してよいという判定が立っていても、元のホストの電源が確実に落ちたと確認するまでは移しません。BMC 専用の物理スイッチを前提条件として求めた理由と、Detect から Recover までの四段階、Storage 種別ごとの残存接続の整理をまとめました。" />
+  <meta name="description" content="三つのアーキテクチャを同じ物差しで比べました。「合意方式」という一行が違いを隠していたため四つの層に分けたところ、空いている枠は一番下の一つだけでした。" />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -346,7 +346,7 @@ EVACUATION_MANAGERS=("controller-a" "controller-b" "controller-c")</code></pre>
         前者だけを備えた構成は重複実行を防ぎますが、二重接続は防げません。</p>
         <p>表の一行に「合意方式」と書いていたあいだ、この違いは見えませんでした。層を分けてはじめて、
         どの枠が空いているのかが表に出ました。</p>
-        <p>次の編は、この構成で復旧にどれだけかかるのかを段階ごとに分けてみた話です。</p>
+        <p><a href="instance-ha-6-100-seconds-is-a-service-decision.ja.html">⑥編</a>は、この構成で復旧にどれだけかかるのかを段階ごとに分けてみた話です。</p>
         <p>お読みいただきありがとうございました。</p>
         </div></article>
     </main>
@@ -358,7 +358,7 @@ EVACUATION_MANAGERS=("controller-a" "controller-b" "controller-c")</code></pre>
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=214c2e0164"></script>
+  <script src="../assets/content.js?v=507a3b0635"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=d4af83b541"></script>

@@ -16,8 +16,8 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Instance HA ④: We Do Not Recover Until the Power Is Confirmed Off" />
-  <meta property="og:description" content="Even with a verdict that recovery may run, nothing moves until the original host's power is confirmed off. This part covers why a dedicated physical switch for BMC was required as a precondition, the four stages from Detect to Recover, and the per-storage cleanup of leftover attachments." />
+  <meta property="og:title" content="Instance HA ⑤: Quorum Cannot Cut the Power" />
+  <meta property="og:description" content="Three architectures compared on one yardstick. The original table lined them up under a single row called consensus mechanism, which hid the real difference. Split into four layers, only the bottom one is empty." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -26,10 +26,10 @@
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Instance HA ④: We Do Not Recover Until the Power Is Confirmed Off" />
-  <meta name="twitter:description" content="No recovery before the power is confirmed off. The BMC precondition, four stages, and per-storage cleanup, in part four of the Instance HA series." />
+  <meta name="twitter:title" content="Instance HA ⑤: Quorum Cannot Cut the Power" />
+  <meta name="twitter:description" content="Quorum protects the database but cannot cut the power. Part five of the Instance HA series compares three architectures across four layers." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="Even with a verdict that recovery may run, nothing moves until the original host's power is confirmed off. This part covers why a dedicated physical switch for BMC was required as a precondition, the four stages from Detect to Recover, and the per-storage cleanup of leftover attachments." />
+  <meta name="description" content="Three architectures compared on one yardstick. The original table lined them up under a single row called consensus mechanism, which hid the real difference. Split into four layers, only the bottom one is empty." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -353,7 +353,7 @@ EVACUATION_MANAGERS=("controller-a" "controller-b" "controller-c")</code></pre>
         duplicate execution while leaving double attachment open.</p>
         <p>While it sat in one table row called consensus mechanism, that difference was invisible. Only
         after the layers were separated did it become clear which cell was empty.</p>
-        <p>The next part breaks down how long recovery takes in this setup, stage by stage.</p>
+        <p><a href="instance-ha-6-100-seconds-is-a-service-decision.html">Part six</a> breaks down how long recovery takes in this setup, stage by stage.</p>
         <p>Thank you for reading.</p>
         </div></article>
     </main>
@@ -365,7 +365,7 @@ EVACUATION_MANAGERS=("controller-a" "controller-b" "controller-c")</code></pre>
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=214c2e0164"></script>
+  <script src="../assets/content.js?v=507a3b0635"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=d4af83b541"></script>

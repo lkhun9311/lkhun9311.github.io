@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instance HA ⑥: Whether 100 Seconds Is Enough Is a Service Decision | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/instance-ha-6-100-seconds-is-a-service-decision.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/instance-ha-6-100-seconds-is-a-service-decision.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/instance-ha-6-100-seconds-is-a-service-decision.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/instance-ha-6-100-seconds-is-a-service-decision.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="Instance HA ⑥: Whether 100 Seconds Is Enough Is a Service Decision" />
+  <meta property="og:description" content="I broke recovery time into detection, fencing, and evacuation, arriving at roughly 100 to 160 seconds, then split the verdict across stateless, database backed, and NFV services. It is an estimate rather than a measurement, and the design document marks it as needing team agreement." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/instance-ha-6-100-seconds-is-a-service-decision.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Instance HA ⑥: Whether 100 Seconds Is Enough Is a Service Decision" />
+  <meta name="twitter:description" content="Recovery time split into three stages, with a separate verdict for each service type. Part six of the Instance HA series." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="I broke recovery time into detection, fencing, and evacuation, arriving at roughly 100 to 160 seconds, then split the verdict across stateless, database backed, and NFV services. It is an estimate rather than a measurement, and the design document marks it as needing team agreement." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"instance-ha-6-100-seconds-is-a-service-decision.html","ko":"instance-ha-6-100-seconds-is-a-service-decision.ko.html","ja":"instance-ha-6-100-seconds-is-a-service-decision.ja.html"}'>
+          <option value="en" selected>English</option>
+          <option value="ko">한국어</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>List</a>
+        <div class="article-meta"><span class="source-tag company notranslate">Company work</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS Backend</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>Instance HA ⑥: Whether 100 Seconds Is Enough Is a Service Decision<br><span class="h1-sub">I started to write the recovery time as a single number and stopped. It only became a number a team could agree on after it was split into three stages and paired with a verdict per service type.</span></h1>
+        <p class="article-date">September 2026</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="instance-ha-6-100-seconds-is-a-service-decision"></aside>
+        <nav class="article-toc" aria-label="Table of contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            
+            
+            
+            
+            
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#one-number">At first I tried to write it as one number</a></li>
+            <li><a href="#three-stages">Splitting the estimate into three stages</a></li>
+            <li><a href="#by-service-type">The same 100 seconds differs by service</a></li>
+            <li><a href="#cost-of-shrinking">It can be shortened, but not for free</a></li>
+            <li><a href="#after-the-design">How far the design document travelled</a></li>
+            <li><a href="#limits">Limits: what this post does not claim</a></li>
+            <li><a href="#wrapping-up">Wrapping up</a></li>
+          </ul>
+        </nav>
+      <article>
+        <p>By <a href="instance-ha-5-quorum-does-not-cut-power.html">part five</a> the decision, the
+        procedure and the foundation were all settled. One question was left. How long does recovery take
+        under this design?</p>
+
+        <p>The design document says about 100 seconds. This post is about where that number came from and
+        why it should not be handed over as it stands.</p>
+
+        <p>At first I tried to write it as a single number. Once it was written down, there was nothing the
+        person receiving it could do with it. Nothing inside the number told them whether it was enough.</p>
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>Anyone who has to agree a recovery time target with their team</li>
+          <li>Anyone holding an RTO figure who cannot say whether it is good enough</li>
+          <li>Anyone asked to shorten detection who needs to weigh what that costs</li>
+          <li>Anyone who read from part one and wants to know where the design ended up</li>
+        </ul>
+
+        <h2 id="one-number">At first I tried to write it as one number<a class="anchor" href="#one-number" aria-label="Link to this section">#</a></h2>
+
+        <p>A single number cannot do two things. It cannot point at where to cut when someone asks for a
+        shorter time, and it cannot answer whether the time is acceptable.
+        <strong>Both answers live in the structure behind the number, not in the number.</strong></p>
+
+        <p>So I split it two ways. Along the time axis I broke it into stages, and along the people axis I
+        broke it out by service type. The first says where to cut. The second says whether cutting is
+        needed at all.</p>
+
+        <h2 id="three-stages">Splitting the estimate into three stages<a class="anchor" href="#three-stages" aria-label="Link to this section">#</a></h2>
+
+        <p>Recovery passes through three stages: reaching a verdict that the host is dead, cutting power and
+        confirming it, and bringing the machine up elsewhere.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="rto-t rto-d" class="figure-svg">
+            <title id="rto-t">Recovery time split into three stages</title>
+            <desc id="rto-d">From the left, detection takes about 30 seconds, fencing 5 to 10 seconds, and evacuation with boot 60 to 120 seconds. Together they come to roughly 100 to 160 seconds, which is an estimate rather than a measurement.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="60" y="70" width="200" height="44" rx="6" fill="none" stroke="#5b7fa6" stroke-width="1.8"/>
+              <text x="160" y="97" font-size="10.5" fill="#5b7fa6" text-anchor="middle">Detect (30s TTL)</text>
+              <rect x="260" y="70" width="60" height="44" rx="6" fill="none" stroke="#b8860b" stroke-width="1.8"/>
+              <text x="290" y="97" font-size="10.5" fill="#b8860b" text-anchor="middle">Fencing</text>
+              <rect x="320" y="70" width="340" height="44" rx="6" fill="none" stroke="#7a5ba6" stroke-width="1.8"/>
+              <text x="490" y="97" font-size="10.5" fill="#7a5ba6" text-anchor="middle">Evacuate and boot</text>
+              <text x="160" y="134" font-size="10" fill="#666" text-anchor="middle">about 30s</text>
+              <text x="290" y="134" font-size="10" fill="#666" text-anchor="middle">5 to 10s</text>
+              <text x="490" y="134" font-size="10" fill="#666" text-anchor="middle">60 to 120s</text>
+              <path d="M60 160 H 660" stroke="#333" stroke-width="1.4" fill="none"/>
+              <text x="360" y="182" font-size="11" fill="#333" text-anchor="middle">Total about 100 to 160s (estimate)</text>
+            </g>
+          </svg>
+          <figcaption>The longest stretch is not detection but bringing the machine back up. It is also the widest.</figcaption>
+        </figure>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+          <table>
+            <caption class="sr-only">Recovery time estimated stage by stage.</caption>
+            <thead><tr><th>Stage</th><th>Duration</th><th>Largest variable</th></tr></thead>
+            <tbody><tr><td>Detection (30s TTL)</td><td>About 30 seconds</td><td>TTL and decision interval</td></tr><tr><td>IPMI fencing</td><td>5 to 10 seconds</td><td>The wait before power is confirmed</td></tr><tr><td>Nova evacuate and VM boot</td><td>60 to 120 seconds</td><td>Image size and storage type</td></tr><tr><td>Total for this design</td><td>About 100 to 160 seconds</td><td>The three above, accumulated</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">The longest stretch is not detection but the restart, and it also has the
+        widest spread. Halving detection moves the total by only about fifteen percent.
+        <strong>Finding where to cut requires splitting the stages first.</strong></p>
+
+        <h2 id="by-service-type">The same 100 seconds differs by service<a class="anchor" href="#by-service-type" aria-label="Link to this section">#</a></h2>
+
+        <p>Splitting the time still does not answer whether it is enough. That answer does not belong to the
+        design. It belongs to the service.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 225" role="img" aria-labelledby="svc-t svc-d" class="figure-svg">
+            <title id="svc-t">Where the line falls for each service type</title>
+            <desc id="svc-d">The dashed line marks about 100 seconds. Stateless API services accept that figure, database backed services are marked risky, and NFV and realtime services sit to the left of the line, so this design cannot reach them.</desc>
+            <g font-family="Inter, sans-serif">
+              <path d="M300 40 V 210" stroke="#333" stroke-width="1.4" stroke-dasharray="4 4" fill="none"/>
+              <text x="300" y="30" font-size="10.5" fill="#333" text-anchor="middle">about 100s</text>
+              <text x="30" y="74" font-size="11" fill="#333">Stateless API</text>
+              <rect x="320" y="55" width="300" height="30" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.7"/>
+              <text x="470" y="75" font-size="10.5" fill="#2e9e5b" text-anchor="middle">Acceptable</text>
+              <text x="30" y="134" font-size="11" fill="#333">Database backed</text>
+              <rect x="320" y="115" width="300" height="30" rx="6" fill="none" stroke="#b8860b" stroke-width="1.7"/>
+              <text x="470" y="135" font-size="10.5" fill="#b8860b" text-anchor="middle">Risky</text>
+              <text x="30" y="194" font-size="11" fill="#333">NFV and realtime</text>
+              <rect x="120" y="175" width="170" height="30" rx="6" fill="none" stroke="#d62976" stroke-width="1.7"/>
+              <text x="205" y="195" font-size="10.5" fill="#d62976" text-anchor="middle">Not possible</text>
+            </g>
+          </svg>
+          <figcaption>One estimate, three verdicts. The service decides, not the number.</figcaption>
+        </figure>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+          <table>
+            <caption class="sr-only">Verdict per service type.</caption>
+            <thead><tr><th>Service type</th><th>Verdict</th><th>Reasoning</th></tr></thead>
+            <tbody><tr><td>Stateless API service</td><td>Acceptable</td><td>Retries absorb it and no state is left behind</td></tr><tr><td>Database backed service</td><td>Risky</td><td>Data consistency across the downtime needs separate review</td></tr><tr><td>NFV and realtime service</td><td>Not possible</td><td>Needs an architecture in the 10 to 20 second range</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">One estimate, and the verdict splits three ways. NFV is not a figure this
+        design can reach by tuning; it is a place where the architecture has to change.
+        <strong>That is not a call an engineer makes alone.</strong></p>
+
+        <p>This is why the design document records it as an RTO target requiring team agreement. The number
+        was raised as something to agree on, not set as a goal already decided.</p>
+
+        <h2 id="cost-of-shrinking">It can be shortened, but not for free<a class="anchor" href="#cost-of-shrinking" aria-label="Link to this section">#</a></h2>
+
+        <p>There is a way to shorten it. The detection stage is governed by the external probe's TTL, so
+        cutting the retry count takes 30 seconds down to 15.</p>
+
+        <pre data-lang="shell"><code># Current design: six missed probes at five second intervals means dead
+probe_interval=5s
+probe_retry=6      # 30s TTL
+
+# Shortened option: three retries brings the TTL to fifteen seconds
+probe_retry=3      # 15s TTL
+
+# The cost: more room to read a momentary delay as a death</code></pre>
+
+        <p>But as part two showed, that same TTL is what separates a momentary delay from a real stop. The
+        shorter it is, the more room there is to read a delay as a death. <strong>What shrinks is the
+        recovery time; what grows is the chance of a wrong call.</strong></p>
+
+        <p>So the shortened option was written down together with its cost. Saying only that it can be
+        shortened leaves the reader unable to decide.</p>
+
+        <h2 id="after-the-design">How far the design document travelled<a class="anchor" href="#after-the-design" aria-label="Link to this section">#</a></h2>
+
+        <p>What this series comes from is a design document. Another engineer picked up the implementation
+        and I was not part of it. So saying whether this design survived means pointing at someone else's
+        document rather than at my own words.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 180" role="img" aria-labelledby="path-t path-d" class="figure-svg">
+            <title id="path-t">From the design document to the feature work</title>
+            <desc id="path-d">The hold logic and phase split from the design document were cited in a follow up review, and that review became the basis for the direction of the feature work. Another engineer carried out the implementation.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="50" width="160" height="80" rx="10" fill="none" stroke="#2e9e5b" stroke-width="1.8"/>
+              <text x="120" y="82" font-size="11" fill="#2e9e5b" text-anchor="middle">Design document</text>
+              <text x="120" y="104" font-size="9.5" fill="#666" text-anchor="middle">hold logic, phase split</text>
+              <rect x="280" y="50" width="160" height="80" rx="10" fill="none" stroke="#b8860b" stroke-width="1.8"/>
+              <text x="360" y="82" font-size="11" fill="#b8860b" text-anchor="middle">Follow up review</text>
+              <text x="360" y="104" font-size="9.5" fill="#666" text-anchor="middle">cites the design</text>
+              <rect x="520" y="50" width="160" height="80" rx="10" fill="none" stroke="#5b7fa6" stroke-width="1.8"/>
+              <text x="600" y="82" font-size="11" fill="#5b7fa6" text-anchor="middle">Feature work</text>
+              <text x="600" y="104" font-size="9.5" fill="#666" text-anchor="middle">basis for direction</text>
+              <path d="M200 90 H 280" stroke="#666" stroke-width="1.4" fill="none"/>
+              <path d="M440 90 H 520" stroke="#666" stroke-width="1.4" fill="none"/>
+              <text x="360" y="160" font-size="10" fill="#666" text-anchor="middle">Implementation: another engineer</text>
+            </g>
+          </svg>
+          <figcaption>Whether a design survived shows up in someone else's document, not in your own.</figcaption>
+        </figure>
+
+        <p>A follow up review written around the same time cites this design document. Its conclusion was
+        that recovery must not run while the observation point itself is broken, which is the same content
+        as the hold logic and the phase split in the design.</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+          <table>
+            <caption class="sr-only">Problems and expected improvements as written in the design.</caption>
+            <thead><tr><th>Problem</th><th>Expected improvement</th></tr></thead>
+            <tbody><tr><td>L2 or L3 switch failure</td><td>Apply the composite decision and hold recovery</td></tr><tr><td>Over reliance on the external probe</td><td>Demote it to a secondary signal and put quorum and heartbeat first</td></tr><tr><td>Misreading a storage path failure</td><td>Move it into execution readiness and remove the over suppression</td></tr><tr><td>A controller deciding alone</td><td>Check quorum first</td></tr><tr><td>Split brain</td><td>Make fencing a condition for passing</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">These are the improvements the design document claims. Which of them actually
+        showed up in operation is outside what I can verify.</p>
+
+        <h2 id="limits">Limits: what this post does not claim<a class="anchor" href="#limits" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>⚠️ The figure of about 100 to 160 seconds is an estimate, not a measurement.
+          It adds up known durations per stage, and the design document itself marks it as needing team
+          agreement.</li>
+          <li>I never hit this figure. Estimating it at design time and proposing the per service criteria
+          is where my part ends.</li>
+          <li>The three service types are a way to make the call easier, not a claim that every service
+          falls into one of them.</li>
+          <li>That a follow up document cites the design is confirmed in writing. The order the two
+          documents were written in, and their authorship history, I could not confirm, so I claim no
+          more than that.</li>
+          <li>This came from internal material, so product names, customers, addresses, accounts,
+          hostnames, issue numbers and author names are left out.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="wrapping-up">Wrapping up<a class="anchor" href="#wrapping-up" aria-label="Link to this section">#</a></h2>
+        <p>One thing runs through all six parts. <strong>When the grounds for a decision are piled onto a
+        single number or a single signal, there is no way out when that one thing is wrong.</strong>
+        Part one was trusting one observation point and calling a live node dead. The five parts after it
+        were all about dividing the grounds up.</p>
+        <p>Signals were divided by what each can testify to, failure detection from execution readiness,
+        the command from the confirmation, consensus from fencing, and finally time itself into stages and
+        into services.</p>
+        <p>Thank you for reading this far.</p>
+        </div></article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=507a3b0635"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

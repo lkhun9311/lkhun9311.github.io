@@ -16,8 +16,8 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Instance HA ④: 펜싱을 확인하지 못하면 복구하지 않습니다" />
-  <meta property="og:description" content="복구해도 된다는 판정이 섰더라도 원본의 전원이 확실히 내려갔는지 확인하기 전에는 옮기지 않습니다. BMC 전용 물리 스위치를 전제 조건으로 요구한 이유와 Detect에서 Recover까지 네 단계, Storage 유형별 잔여 연결 정리를 정리했습니다." />
+  <meta property="og:title" content="Instance HA ⑤: Quorum은 전원을 내리지 못합니다" />
+  <meta property="og:description" content="세 아키텍처를 같은 기준으로 비교했습니다. 「합의 방식」 한 줄이 차이를 가리고 있어 Membership과 Quorum 판정과 실행 Lock과 Fencing 네 층으로 갈랐더니 비어 있는 칸은 맨 아래 하나뿐이었습니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -26,10 +26,10 @@
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Instance HA ④: 펜싱을 확인하지 못하면 복구하지 않습니다" />
-  <meta name="twitter:description" content="전원 차단을 확인하기 전에는 복구하지 않습니다. BMC 전제와 네 단계 절차, Storage 유형별 정리 조건을 정리한 Instance HA 연작 ④편입니다." />
+  <meta name="twitter:title" content="Instance HA ⑤: Quorum은 전원을 내리지 못합니다" />
+  <meta name="twitter:description" content="Quorum은 데이터베이스를 지키지 전원을 내리지 못합니다. 세 아키텍처를 네 층으로 갈라 비교한 Instance HA 연작 ⑤편입니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="복구해도 된다는 판정이 섰더라도 원본의 전원이 확실히 내려갔는지 확인하기 전에는 옮기지 않습니다. BMC 전용 물리 스위치를 전제 조건으로 요구한 이유와 Detect에서 Recover까지 네 단계, Storage 유형별 잔여 연결 정리를 정리했습니다." />
+  <meta name="description" content="세 아키텍처를 같은 기준으로 비교했습니다. 「합의 방식」 한 줄이 차이를 가리고 있어 Membership과 Quorum 판정과 실행 Lock과 Fencing 네 층으로 갈랐더니 비어 있는 칸은 맨 아래 하나뿐이었습니다." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -348,7 +348,7 @@ EVACUATION_MANAGERS=("controller-a" "controller-b" "controller-c")</code></pre>
         정합니다.</strong> 앞의 것만 갖춘 구성은 중복 실행을 막지만 이중 접속을 막지 못합니다.</p>
         <p>표 한 줄에 「합의 방식」이라고 적었을 때는 이 차이가 보이지 않았습니다. 층을 갈라 놓고 나서야
         비어 있는 칸이 어디인지 드러났습니다.</p>
-        <p>다음 편은 이 구성으로 복구가 얼마나 걸리는지를 단계별로 나눠 본 이야기입니다.</p>
+        <p><a href="instance-ha-6-100-seconds-is-a-service-decision.ko.html">⑥편</a>은 이 구성으로 복구가 얼마나 걸리는지를 단계별로 나눠 본 이야기입니다.</p>
         <p>읽어 주셔서 감사합니다.</p>
         </div></article>
     </main>
@@ -360,7 +360,7 @@ EVACUATION_MANAGERS=("controller-a" "controller-b" "controller-c")</code></pre>
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=214c2e0164"></script>
+  <script src="../assets/content.js?v=507a3b0635"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=d4af83b541"></script>

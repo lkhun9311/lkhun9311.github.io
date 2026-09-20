@@ -188,6 +188,18 @@
       },
       items: [
         {
+          title: "Instance HA ⑥: Whether 100 Seconds Is Enough Is a Service Decision",
+          title_ko: "Instance HA ⑥: 100초가 누구에게 충분한지는 서비스가 정합니다",
+          title_ja: "Instance HA ⑥: 100秒が誰にとって十分かはサービスが決めます",
+          url: "writing/instance-ha-6-100-seconds-is-a-service-decision.html",
+          source: "company", sourceLabel: "Company work",
+          date: "2026-09-20", dateLabel: "Sep 20, 2026",
+          desc: "Final part of the Instance HA design series. Recovery time broken into detection, fencing, and evacuation, coming to roughly 100 to 160 seconds, then split across stateless, database backed, and NFV services. An estimate, not a measurement, and the design marks it as needing team agreement. The shortened option is written down with its cost.",
+          desc_ko: "Instance HA 설계 마지막 편. 복구 시간을 감지와 Fencing과 Evacuate 세 단계로 나눠 약 100~160초로 산정하고 Stateless와 DB와 NFV로 허용 기준을 갈랐습니다. 실측이 아니라 산정치이며 팀 합의가 필요한 값입니다. 단축안은 대가와 함께 적었습니다.",
+          desc_ja: "Instance HA 設計の最終編。復旧時間を検知と Fencing と Evacuate の三段階に分けて約100〜160秒と試算し、Stateless と DB と NFV で許容基準を分けました。実測ではなく試算値で、チームの合意が要る値です。短縮案は代償と一緒に書きました。",
+          tags: ["IaaS Backend", "Reliability", "Method", "Operations"]
+        },
+        {
           title: "Instance HA ⑤: Quorum Cannot Cut the Power",
           title_ko: "Instance HA ⑤: Quorum은 전원을 내리지 못합니다",
           title_ja: "Instance HA ⑤: Quorum は電源を落とせません",
