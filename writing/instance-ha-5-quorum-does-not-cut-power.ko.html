@@ -89,6 +89,7 @@
             <li><a href="#세-안">세 안을 같은 기준에 놓았습니다</a></li>
             <li><a href="#stonith-실패">STONITH가 실패하면 사람이 들어갑니다</a></li>
             <li><a href="#실행-주체">복구를 실행할 수 있는 노드를 목록으로 묶었습니다</a></li>
+            <li><a href="#실제-선택">구현이 고른 것은 잠금 하나였습니다</a></li>
             <li><a href="#주장하지-않는-것">한계: 이 글이 주장하지 않는 것</a></li>
             <li><a href="#마치며">마치며</a></li>
           </ul>
@@ -328,6 +329,59 @@ EVACUATION_MANAGERS=("controller-a" "controller-b" "controller-c")</code></pre>
         <p><strong>다만 이것은 Fencing의 대체물이 아닙니다.</strong> 실행 주체를 줄여 오판이 퍼지는 범위를
         좁힐 뿐이고 이미 살아 있는 노드를 끊는 일은 여전히 못 합니다. 층이 다른 장치라 같은 칸에
         놓을 수 없습니다.</p>
+
+        <h2 id="실제-선택">구현이 고른 것은 잠금 하나였습니다<a class="anchor" href="#실제-선택" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>세 안 가운데 실제로 만들어진 것은 첫째 안입니다. 공용 저장소의 한 줄을 먼저 잡은 노드가
+        리더가 됩니다. 그 노드만 복구를 실행합니다. <strong>합의 절차는 없습니다.</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 640 204" role="img" aria-labelledby="lk-t lk-d" class="figure-svg">
+            <title id="lk-t">잠금의 유효 기간으로 리더가 넘어가는 방식</title>
+            <desc id="lk-d">리더 노드가 10초마다 잠금을 갱신하다가 갱신이 끊기면 유효 기간이 지납니다. 그 뒤에 다른 노드가 잠금을 가져가 리더가 됩니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="40" y="54" font-size="10.5" fill="#666">리더 노드</text>
+              <text x="40" y="150" font-size="10.5" fill="#666">다른 노드</text>
+              <path d="M130 48 H 380" stroke="#2e9e5b" stroke-width="1.6" fill="none"/>
+              <circle cx="150" cy="48" r="4.5" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <circle cx="214" cy="48" r="4.5" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <circle cx="278" cy="48" r="4.5" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <circle cx="342" cy="48" r="4.5" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <text x="240" y="30" font-size="10" fill="#2e9e5b" text-anchor="middle">10초마다 갱신</text>
+              <path d="M380 48 H 420" stroke="#d62976" stroke-width="1.6" stroke-dasharray="4 3" fill="none"/>
+              <text x="392" y="30" font-size="11" fill="#d62976">x</text>
+              <text x="430" y="52" font-size="10" fill="#d62976">갱신이 끊김</text>
+              <path d="M400 62 V 132" stroke="#999" stroke-width="1" stroke-dasharray="3 3"/>
+              <path d="M400 144 H 570" stroke="#2e9e5b" stroke-width="1.6" fill="none"/>
+              <circle cx="430" cy="144" r="4.5" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <text x="500" y="126" font-size="10" fill="#2e9e5b" text-anchor="middle">유효 기간이 지나면 가져감</text>
+              <text x="300" y="186" font-size="10.5" fill="#666" text-anchor="middle">합의가 아니라 기한이 지난 잠금을 주워 가는 방식</text>
+            </g>
+          </svg>
+          <figcaption>리더는 합의로 뽑히지 않고 기한이 지난 잠금을 먼저 잡는 쪽이 됩니다.</figcaption>
+        </figure>
+
+        <p>잠금에는 유효 기간을 둡니다. 리더는 살아 있는 동안 기한을 계속 늘립니다. 늘리지 못하면 기한이
+        지나 다른 노드가 잠금을 가져갑니다. 리더가 정해지면 각 노드에 한 번에 알려서, 노드마다 저장소에
+        따로 묻지 않게 했습니다.</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+          <table>
+            <caption class="sr-only">리더 선출을 이루는 네 부분과 각각이 끊겼을 때.</caption>
+            <thead><tr><th>부분</th><th>하는 일</th><th>끊기면</th></tr></thead>
+            <tbody><tr><td>잠금 잡기</td><td>공용 저장소의 한 줄을 먼저 잡은 쪽이 리더가 된다</td><td>아무도 리더가 되지 못하고 복구가 서지 않는다</td></tr><tr><td>유효 기간 갱신</td><td>리더가 살아 있는 동안 기한을 늘린다</td><td>기한이 지나 다른 노드가 잠금을 가져간다</td></tr><tr><td>전체 공표</td><td>누가 리더인지 한 번에 알린다</td><td>각 노드가 저장소에 따로 물어야 한다</td></tr><tr><td>리더 건강 확인</td><td>리더 자신도 판정 대상에 넣는다</td><td>고장 난 리더가 자리를 쥐고 있게 된다</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">네 부분 가운데 하나를 빼면 나머지가 대신하지 못합니다. 갱신만 있고 건강
+        확인이 없으면 고장 난 리더가 기한만 늘리며 자리를 쥡니다.</p>
+
+        <p>이 방식은 <strong>공용 저장소가 살아 있다는 전제 위에 섭니다.</strong> 저장소가 갈라지면
+        잠금도 갈라집니다. 양쪽이 각자 리더를 갖습니다. 이 글이 앞에서 한 이야기가 여기서도 그대로
+        돌아옵니다. 리더를 정하는 것과 전원을 내리는 것은 다른 문제입니다.</p>
 
         <h2 id="주장하지-않는-것">한계: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 

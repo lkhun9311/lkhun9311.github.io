@@ -85,6 +85,7 @@
             <li><a href="#phase-1">Phase 1 asks only whether it failed</a></li>
             <li><a href="#phase-2">Phase 2 asks only whether we may act</a></li>
             <li><a href="#combined-logic">The order is pinned in code</a></li>
+            <li><a href="#consecutive-samples">The phases were not the only guard</a></li>
             <li><a href="#seven-of-eight">Seven of eight stop</a></li>
             <li><a href="#what-this-does-not-claim">Limits: what this post does not claim</a></li>
             <li><a href="#closing">Closing</a></li>
@@ -228,6 +229,71 @@
           </svg>
           <figcaption>All four steps must pass before fencing. There is one way out and it is the default.</figcaption>
         </figure>
+
+        <h2 id="consecutive-samples">The phases were not the only guard<a class="anchor" href="#consecutive-samples" aria-label="Link to this section">#</a></h2>
+
+        <p>That was the design: one verdict split into two questions. Reading the build, there were
+        <strong>two more guards against false positives.</strong> Neither is in the design document. Both
+        were added while building.</p>
+
+        <p>The first is keeping samples. The state is not decided from a single look. Samples accumulate
+        each cycle, and the verdict settles only when the same state repeats consecutively. A single blip
+        never climbs as far as the verdict.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 660 184" role="img" aria-labelledby="cs-t cs-d" class="figure-svg">
+            <title id="cs-t">Holding the verdict back until samples agree</title>
+            <desc id="cs-d">While the samples alternate between healthy and faulty nothing is settled, and only three consecutive faulty samples settle the verdict as a failure.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="40" y="52" font-size="10.5" fill="#666">samples</text>
+              <rect x="110" y="38" width="34" height="26" rx="5" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <text x="127" y="56" font-size="10" fill="#2e9e5b" text-anchor="middle">o</text>
+              <rect x="162" y="38" width="34" height="26" rx="5" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="179" y="56" font-size="10" fill="#d62976" text-anchor="middle">x</text>
+              <rect x="214" y="38" width="34" height="26" rx="5" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <text x="231" y="56" font-size="10" fill="#2e9e5b" text-anchor="middle">o</text>
+              <rect x="266" y="38" width="34" height="26" rx="5" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="283" y="56" font-size="10" fill="#d62976" text-anchor="middle">x</text>
+              <rect x="318" y="38" width="34" height="26" rx="5" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="335" y="56" font-size="10" fill="#d62976" text-anchor="middle">x</text>
+              <rect x="370" y="38" width="34" height="26" rx="5" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <text x="387" y="56" font-size="10" fill="#2e9e5b" text-anchor="middle">o</text>
+              <rect x="422" y="38" width="34" height="26" rx="5" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="439" y="56" font-size="10" fill="#d62976" text-anchor="middle">x</text>
+              <rect x="474" y="38" width="34" height="26" rx="5" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="491" y="56" font-size="10" fill="#d62976" text-anchor="middle">x</text>
+              <rect x="526" y="38" width="34" height="26" rx="5" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="543" y="56" font-size="10" fill="#d62976" text-anchor="middle">x</text>
+              <path d="M110 80 H 578" stroke="#ccc" stroke-width="1"/>
+              <text x="40" y="118" font-size="10.5" fill="#666">verdict</text>
+              <rect x="110" y="98" width="242" height="30" rx="6" fill="none" stroke="#999" stroke-width="1.3" stroke-dasharray="4 3"/>
+              <text x="231" y="118" font-size="10.5" fill="#777" text-anchor="middle">too unsteady to settle</text>
+              <rect x="422" y="98" width="156" height="30" rx="6" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="500" y="118" font-size="10.5" fill="#d62976" text-anchor="middle">three in a row settles it</text>
+              <text x="344" y="166" font-size="10.5" fill="#666" text-anchor="middle">only the run that fills the window</text>
+            </g>
+          </svg>
+          <figcaption>A single sample does not reach the verdict. Only a run of them does.</figcaption>
+        </figure>
+
+        <p>The second is that the judge <strong>checks itself first.</strong> Before acting on a verdict it
+        asks whether it is itself healthy. When the network on the managing side breaks, every node at once
+        looks dead, and this check stops that illusion.</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+          <table>
+            <caption class="sr-only">The three guards against false positives and what each one stops.</caption>
+            <thead><tr><th>Guard</th><th>What it stops</th><th>What it does not stop</th></tr></thead>
+            <tbody><tr><td>Splitting the phases</td><td>Running recovery when nothing failed</td><td>A failure verdict that is simply wrong</td></tr><tr><td>Requiring consecutive samples</td><td>Settling on a single blip</td><td>A management network that stays broken</td></tr><tr><td>The judge checking itself first</td><td>Calling others dead while isolated</td><td>Losing the judge and the target together</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">The three stop different things. They do not overlap, so removing one leaves
+        its column empty, and keeping all three still leaves the case where the judge and the target are cut
+        off together. That is the spot this series keeps returning to.</p>
 
         <h2 id="seven-of-eight">Seven of eight stop<a class="anchor" href="#seven-of-eight" aria-label="Link to this section">#</a></h2>
 

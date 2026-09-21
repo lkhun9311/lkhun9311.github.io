@@ -89,6 +89,7 @@
             <li><a href="#three-options">Putting the three on the same yardstick</a></li>
             <li><a href="#stonith-failure">When STONITH fails, a person steps in</a></li>
             <li><a href="#who-may-execute">Narrowing the set of nodes allowed to execute</a></li>
+            <li><a href="#what-the-build-chose">The build chose a single lock</a></li>
             <li><a href="#limits">Limits: what this post does not claim</a></li>
             <li><a href="#wrapping-up">Wrapping up</a></li>
           </ul>
@@ -331,6 +332,60 @@ EVACUATION_MANAGERS=("controller-a" "controller-b" "controller-c")</code></pre>
         <p><strong>This is not a substitute for fencing.</strong> It narrows how far a wrong call can spread
         by shrinking the set of executors, and it still cannot sever a node that is alive. It belongs to a
         different layer, so it does not belong in the same cell.</p>
+
+        <h2 id="what-the-build-chose">The build chose a single lock<a class="anchor" href="#what-the-build-chose" aria-label="Link to this section">#</a></h2>
+
+        <p>Of the three options, the one actually built is the first. The node that grabs a row in the
+        shared store becomes the leader, and only that node runs recovery. <strong>There is no consensus
+        protocol.</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 640 204" role="img" aria-labelledby="lk-t lk-d" class="figure-svg">
+            <title id="lk-t">How leadership moves through the lock lease</title>
+            <desc id="lk-d">The leader node renews the lock every ten seconds, and when the renewal stops the lease expires, after which another node takes the lock and becomes the leader.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="36" y="54" font-size="10.5" fill="#666">leader</text>
+              <text x="36" y="150" font-size="10.5" fill="#666">another</text>
+              <path d="M130 48 H 380" stroke="#2e9e5b" stroke-width="1.6" fill="none"/>
+              <circle cx="150" cy="48" r="4.5" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <circle cx="214" cy="48" r="4.5" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <circle cx="278" cy="48" r="4.5" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <circle cx="342" cy="48" r="4.5" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <text x="240" y="30" font-size="10" fill="#2e9e5b" text-anchor="middle">renewed every 10s</text>
+              <path d="M380 48 H 420" stroke="#d62976" stroke-width="1.6" stroke-dasharray="4 3" fill="none"/>
+              <text x="392" y="30" font-size="11" fill="#d62976">x</text>
+              <text x="430" y="52" font-size="10" fill="#d62976">renewal stops</text>
+              <path d="M400 62 V 132" stroke="#999" stroke-width="1" stroke-dasharray="3 3"/>
+              <path d="M400 144 H 570" stroke="#2e9e5b" stroke-width="1.6" fill="none"/>
+              <circle cx="430" cy="144" r="4.5" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <text x="500" y="126" font-size="10" fill="#2e9e5b" text-anchor="middle">taken once the lease expires</text>
+              <text x="300" y="186" font-size="10.5" fill="#666" text-anchor="middle">not consensus, just an expired lock picked up</text>
+            </g>
+          </svg>
+          <figcaption>The leader is not elected by agreement. It is whoever grabs an expired lock first.</figcaption>
+        </figure>
+
+        <p>The lock carries a lease. The leader keeps extending the term while it is alive, and when it
+        cannot, the lease expires and another node takes the lock. Once a leader is settled, every node is
+        told at once, so no node has to ask the shared store on its own.</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+          <table>
+            <caption class="sr-only">The four parts of leader election and what breaks when each one stops.</caption>
+            <thead><tr><th>Part</th><th>What it does</th><th>If it stops</th></tr></thead>
+            <tbody><tr><td>Taking the lock</td><td>Whoever grabs the shared row first becomes leader</td><td>Nobody leads and recovery never starts</td></tr><tr><td>Renewing the lease</td><td>The leader extends the term while it is alive</td><td>The lease expires and another node takes the lock</td></tr><tr><td>Announcing to all</td><td>Everyone is told who leads, in one go</td><td>Every node has to ask the shared store itself</td></tr><tr><td>Health-checking the leader</td><td>The leader is judged like any other node</td><td>A broken leader keeps holding the seat</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">Remove one of the four and the others do not cover for it. Renewal without a
+        health check means a broken leader holds the seat by extending its term.</p>
+
+        <p>This rests <strong>on the shared store being alive.</strong> If the store splits, the lock
+        splits with it, and each side gets its own leader. The argument from earlier in this post comes
+        back here unchanged. Choosing a leader and cutting power are different problems.</p>
 
         <h2 id="limits">Limits: what this post does not claim<a class="anchor" href="#limits" aria-label="Link to this section">#</a></h2>
 

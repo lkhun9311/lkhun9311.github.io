@@ -85,6 +85,7 @@
             <li><a href="#phase-1">Phase 1 は障害かどうかだけを見ます</a></li>
             <li><a href="#phase-2">Phase 2 は今実行してよいかだけを見ます</a></li>
             <li><a href="#統合ロジック">順序をコードで固定しました</a></li>
+            <li><a href="#連続標本">誤検知を止めたのは Phase だけではありませんでした</a></li>
             <li><a href="#八つのうち七つ">八つのうち七つは止まります</a></li>
             <li><a href="#主張しないこと">限界：この記事が主張しないこと</a></li>
             <li><a href="#おわりに">おわりに</a></li>
@@ -225,6 +226,69 @@
           </svg>
           <figcaption>四つの段をすべて通って初めて Fencing へ進みます。抜け道は一つだけで、そちらが既定です。</figcaption>
         </figure>
+
+        <h2 id="連続標本">誤検知を止めたのは Phase だけではありませんでした<a class="anchor" href="#連続標本" aria-label="この節へのリンク">#</a></h2>
+
+        <p>設計は問いを二つに分けました。実装を読むと、誤検知を止める仕掛けが<strong>さらに二つ
+        ありました。</strong>どちらも設計書にはなく、作りながら足されたものです。</p>
+
+        <p>一つ目は標本をためておくことです。状態を一度見て決めるのではなく、周期ごとに標本を積み、
+        同じ状態が連続して続いたときだけ確定します。一度跳ねた値は判定まで上がりません。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 660 184" role="img" aria-labelledby="cs-t cs-d" class="figure-svg">
+            <title id="cs-t">連続した標本で確定を待つ方法</title>
+            <desc id="cs-d">標本が正常と異常を行き来している間は確定せず、異常が連続して三回続いたときだけ障害として確定します。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="40" y="52" font-size="10.5" fill="#666">標本</text>
+              <rect x="110" y="38" width="34" height="26" rx="5" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <text x="127" y="56" font-size="10" fill="#2e9e5b" text-anchor="middle">o</text>
+              <rect x="162" y="38" width="34" height="26" rx="5" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="179" y="56" font-size="10" fill="#d62976" text-anchor="middle">x</text>
+              <rect x="214" y="38" width="34" height="26" rx="5" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <text x="231" y="56" font-size="10" fill="#2e9e5b" text-anchor="middle">o</text>
+              <rect x="266" y="38" width="34" height="26" rx="5" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="283" y="56" font-size="10" fill="#d62976" text-anchor="middle">x</text>
+              <rect x="318" y="38" width="34" height="26" rx="5" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="335" y="56" font-size="10" fill="#d62976" text-anchor="middle">x</text>
+              <rect x="370" y="38" width="34" height="26" rx="5" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <text x="387" y="56" font-size="10" fill="#2e9e5b" text-anchor="middle">o</text>
+              <rect x="422" y="38" width="34" height="26" rx="5" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="439" y="56" font-size="10" fill="#d62976" text-anchor="middle">x</text>
+              <rect x="474" y="38" width="34" height="26" rx="5" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="491" y="56" font-size="10" fill="#d62976" text-anchor="middle">x</text>
+              <rect x="526" y="38" width="34" height="26" rx="5" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <text x="543" y="56" font-size="10" fill="#d62976" text-anchor="middle">x</text>
+              <path d="M110 80 H 578" stroke="#ccc" stroke-width="1"/>
+              <text x="40" y="118" font-size="10.5" fill="#666">判定</text>
+              <rect x="110" y="98" width="242" height="30" rx="6" fill="none" stroke="#999" stroke-width="1.3" stroke-dasharray="4 3"/>
+              <text x="231" y="118" font-size="10.5" fill="#777" text-anchor="middle">揺れていて未確定</text>
+              <rect x="422" y="98" width="156" height="30" rx="6" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="500" y="118" font-size="10.5" fill="#d62976" text-anchor="middle">連続三回で確定</text>
+              <text x="344" y="166" font-size="10.5" fill="#666" text-anchor="middle">連続条件を満たした区間だけ確定</text>
+            </g>
+          </svg>
+          <figcaption>一度の標本ではなく、続いた標本だけが判定まで上がります。</figcaption>
+        </figure>
+
+        <p>二つ目は判定する側が<strong>自分から確認することです。</strong>判定を実行する前に、自分自身が
+        正常かどうかをまず見ます。管理する側の網が切れると全ノードが一度に死んだように見えますが、
+        この確認がその錯覚を止めます。</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
+          <table>
+            <caption class="sr-only">誤検知を止める三つの仕掛けと、それぞれが止めるもの。</caption>
+            <thead><tr><th>仕掛け</th><th>止めるもの</th><th>止められないもの</th></tr></thead>
+            <tbody><tr><td>Phase を二つに分ける</td><td>障害でないのに復旧を実行すること</td><td>障害判定そのものが誤っている場合</td></tr><tr><td>連続した標本の確認</td><td>一度跳ねた値で確定すること</td><td>切れ続けている管理網</td></tr><tr><td>判定する側の自己確認</td><td>自分が孤立したまま他を死んだと見ること</td><td>自分と対象が一緒に切れた場合</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">三つはそれぞれ違うものを止めます。重ならないので一つ抜けばその枠がそのまま
+        空き、三つ置いても「自分と対象が一緒に切れた場合」は残ります。この連作が何度も戻ってくる場所が
+        そこです。</p>
 
         <h2 id="八つのうち七つ">八つのうち七つは止まります<a class="anchor" href="#八つのうち七つ" aria-label="この節へのリンク">#</a></h2>
 

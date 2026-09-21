@@ -89,6 +89,7 @@
             <li><a href="#三案の比較">三案を同じ物差しに載せました</a></li>
             <li><a href="#stonith-失敗">STONITH が失敗したら人が入ります</a></li>
             <li><a href="#実行主体">復旧を実行できるノードを一覧で絞りました</a></li>
+            <li><a href="#実装が選んだもの">実装が選んだのは一つのロックでした</a></li>
             <li><a href="#主張しないこと">限界: この記事が主張しないこと</a></li>
             <li><a href="#おわりに">おわりに</a></li>
           </ul>
@@ -273,7 +274,7 @@
               <rect x="450" y="35" width="150" height="46" rx="8" fill="none" stroke="#2e9e5b" stroke-width="1.8"/>
               <text x="525" y="63" font-size="10.5" fill="#2e9e5b" text-anchor="middle">Evacuate へ進む</text>
               <path d="M315 81 V 130" stroke="#d62976" stroke-width="1.4" fill="none"/>
-              <text x="335" y="106" font-size="10" fill="#d62976">確認できない</text>
+              <text x="335" y="106" font-size="10" fill="#d62976">確認失敗</text>
               <rect x="240" y="130" width="150" height="46" rx="8" fill="none" stroke="#d62976" stroke-width="1.8"/>
               <text x="315" y="158" font-size="10.5" fill="#d62976" text-anchor="middle">Cluster freeze</text>
               <path d="M390 153 H 450" stroke="#b8860b" stroke-width="1.4" fill="none"/>
@@ -326,6 +327,59 @@ EVACUATION_MANAGERS=("controller-a" "controller-b" "controller-c")</code></pre>
         <p><strong>ただしこれは Fencing の代わりではありません。</strong>実行主体を減らして誤判定が広がる
         範囲を狭めるだけで、すでに生きているノードを切り離すことは相変わらずできません。層が違う仕掛けなので、
         同じ枠には置けません。</p>
+
+        <h2 id="実装が選んだもの">実装が選んだのは一つのロックでした<a class="anchor" href="#実装が選んだもの" aria-label="この節へのリンク">#</a></h2>
+
+        <p>三案のうち実際に作られたのは一つ目の案です。共用の保管所の一行を先に取ったノードがリーダーに
+        なり、そのノードだけが復旧を実行します。<strong>合意の手続きはありません。</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 640 204" role="img" aria-labelledby="lk-t lk-d" class="figure-svg">
+            <title id="lk-t">ロックの有効期限でリーダーが移る仕組み</title>
+            <desc id="lk-d">リーダーのノードが十秒ごとにロックを更新し、更新が途切れると有効期限が切れ、そのあとで他のノードがロックを取ってリーダーになります。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="36" y="54" font-size="10.5" fill="#666">リーダー</text>
+              <text x="36" y="150" font-size="10.5" fill="#666">他のノード</text>
+              <path d="M130 48 H 380" stroke="#2e9e5b" stroke-width="1.6" fill="none"/>
+              <circle cx="150" cy="48" r="4.5" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <circle cx="214" cy="48" r="4.5" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <circle cx="278" cy="48" r="4.5" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <circle cx="342" cy="48" r="4.5" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <text x="240" y="30" font-size="10" fill="#2e9e5b" text-anchor="middle">10秒ごとに更新</text>
+              <path d="M380 48 H 420" stroke="#d62976" stroke-width="1.6" stroke-dasharray="4 3" fill="none"/>
+              <text x="392" y="30" font-size="11" fill="#d62976">x</text>
+              <text x="430" y="52" font-size="10" fill="#d62976">更新が途切れる</text>
+              <path d="M400 62 V 132" stroke="#999" stroke-width="1" stroke-dasharray="3 3"/>
+              <path d="M400 144 H 570" stroke="#2e9e5b" stroke-width="1.6" fill="none"/>
+              <circle cx="430" cy="144" r="4.5" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <text x="500" y="126" font-size="10" fill="#2e9e5b" text-anchor="middle">期限が切れたら取りに行く</text>
+              <text x="300" y="186" font-size="10.5" fill="#666" text-anchor="middle">合意ではなく、期限切れのロックを拾う方式</text>
+            </g>
+          </svg>
+          <figcaption>リーダーは合意で選ばれず、期限切れのロックを先に掴んだ側になります。</figcaption>
+        </figure>
+
+        <p>ロックには有効期限を置きます。リーダーは生きている間ずっと期限を延ばし、延ばせなくなると期限が
+        切れて他のノードがロックを取ります。リーダーが決まったら各ノードへ一度に知らせ、ノードごとに保管所へ
+        尋ねなくてよいようにしました。</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
+          <table>
+            <caption class="sr-only">リーダー選出を作る四つの部分と、それぞれが止まったとき。</caption>
+            <thead><tr><th>部分</th><th>すること</th><th>止まると</th></tr></thead>
+            <tbody><tr><td>ロックを取る</td><td>共用の保管所の一行を先に取った側がリーダーになる</td><td>誰もリーダーになれず復旧が始まらない</td></tr><tr><td>有効期限の更新</td><td>リーダーが生きている間、期限を延ばす</td><td>期限が切れて他のノードがロックを取る</td></tr><tr><td>全体への公表</td><td>誰がリーダーかを一度に知らせる</td><td>各ノードが保管所へ個別に尋ねることになる</td></tr><tr><td>リーダーの健全性確認</td><td>リーダー自身も判定の対象に入れる</td><td>壊れたリーダーが席を握り続ける</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">四つのうち一つを抜くと残りが代わりをしてくれません。更新だけあって健全性の
+        確認がなければ、壊れたリーダーが期限だけ延ばして席を握ります。</p>
+
+        <p>この方式は<strong>共用の保管所が生きていることを前提にしています。</strong>保管所が分かれれば
+        ロックも分かれ、両側がそれぞれのリーダーを持ちます。この記事が前半で述べたことがここでもそのまま
+        戻ってきます。リーダーを決めることと電源を落とすことは別の問題です。</p>
 
         <h2 id="主張しないこと">限界: この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="このセクションへのリンク">#</a></h2>
 
