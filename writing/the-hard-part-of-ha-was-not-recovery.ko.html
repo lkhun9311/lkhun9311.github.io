@@ -120,7 +120,7 @@
 
         <p>사건은 한 줄로 요약됩니다. <strong>L2/L3 스위치 장애 때 Leader Controller가 살아 있는 Compute를
         장애로 오판해 불필요한 Instance HA를 대량으로 실행했습니다.</strong> 멀쩡한 VM을 다른 호스트에서
-        다시 세우는 evacuate가 동시에 다발로 일어났고, 원본이 아직 살아 있는데 재구축된 쪽이 같은 볼륨에
+        다시 세우는 evacuate가 동시에 다발로 일어났고 원본이 아직 살아 있는데 재구축된 쪽이 같은 볼륨에
         붙으면 최악의 경우 파일시스템이 깨질 수 있는 상황이었습니다.</p>
 
         <div class="table-scroll">
@@ -177,7 +177,7 @@
         </div>
 
         <p>Controller끼리의 통신이 끊기면 Controller들이 서로의 상태를 합의할 수 없게 됩니다. 제대로 된
-        Quorum이라면 다수를 잃고 고립된 쪽은 판단을 멈춰야 하는데, 이때는 고립된 쪽이 멈추지 않고 단독으로
+        Quorum이라면 다수를 잃고 고립된 쪽은 판단을 멈춰야 하는데 이때는 고립된 쪽이 멈추지 않고 단독으로
         판정을 내렸습니다. 그런데 MGMT는 살아 있어서 그 Compute의 Agent HeartBeat는 정상적으로 수신되고
         있었습니다. 죽었다고 판정된 노드가 사실은 자기 상태를 또박또박 보고하고 있었던 것입니다.</p>
 
@@ -267,7 +267,7 @@
         <h2 id="스플릿브레인">잘못 살린 복구가 볼륨을 깹니다<a class="anchor" href="#스플릿브레인" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>오판이 비싼 이유는 그다음에 있습니다. 원본 VM이 아직 살아서 디스크에 쓰고 있는데 재구축된 쪽이
-        다른 호스트에서 같은 볼륨에 붙어 동시에 쓰도록 허용되면, 깨지는 것은 VM 하나가 아니라 볼륨 전체가
+        다른 호스트에서 같은 볼륨에 붙어 동시에 쓰도록 허용되면 깨지는 것은 VM 하나가 아니라 볼륨 전체가
         될 수 있습니다.</p>
 
         <div class="table-scroll">
@@ -314,7 +314,7 @@
         </figure>
 
         <p>호스트 속성이 <code>HA_Enabled</code>면 메타데이터에 <code>HA_Enabled</code> 표시가 붙은
-        Instance만 대상이 되고, <code>HA_Disabled</code>면 반대로 <code>HA_Disabled</code> 표시가 붙지
+        Instance만 대상이 되고 <code>HA_Disabled</code>면 반대로 <code>HA_Disabled</code> 표시가 붙지
         않은 것이 전부 대상이 되며(메타데이터가 아예 없는 Instance도 대상에 포함됩니다), <code>NONE</code>이면
         메타데이터와 무관하게 전부 대상이 됩니다. 곧 opt-in과 opt-out과 전체를 호스트 단위로 고를 수
         있는 구조입니다.</p>
