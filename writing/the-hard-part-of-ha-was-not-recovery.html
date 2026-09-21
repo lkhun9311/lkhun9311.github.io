@@ -100,7 +100,7 @@
         <p>That is what happened in March 2026. An L2/L3 switch died, but what it cut was not the compute
         nodes: it was the controllers talking to each other. In that state a leader controller judged a live
         compute node failed and fired Nova Evacuate at scale. I did not investigate the incident myself. I
-        received the established facts and designed the judgement system meant to stop it recurring.</p>
+        received the established facts and designed the judgement system intended to prevent a recurrence.</p>
 
         <p>This is the first part of the series, and part one stops at the cause. How four network strands ended
         up in different states, why a controller read its own isolation as the target's death, and how far a
@@ -118,9 +118,9 @@
         <h2 id="incident">The day recovery became the incident<a class="anchor" href="#incident" aria-label="Link to this section">#</a></h2>
 
         <p>The incident fits in one line. <strong>During an L2/L3 switch failure a leader controller judged a
-        live compute node failed and fired unnecessary Instance HA at scale.</strong> Healthy VMs moved to
-        other hosts at the same time, and in the worst case a replica would attach to the same volume while
-        the original was still alive, corrupting the filesystem.</p>
+        live compute node failed and fired unnecessary Instance HA at scale.</strong> Evacuate — rebuilding
+        healthy VMs on other hosts — fired for many of them at once, and in the worst case the rebuilt copy
+        would attach to the same volume while the original was still alive, corrupting the filesystem.</p>
 
         <div class="table-scroll">
           <p class="table-scroll-hint">Scroll sideways to see the rest</p>
@@ -128,7 +128,7 @@
           <table>
             <caption class="sr-only">Incident summary: situation, result, impact, latent risk.</caption>
             <thead><tr><th>Item</th><th>Detail</th></tr></thead>
-            <tbody><tr><td>Situation</td><td>During an L2/L3 switch failure the leader controller misjudged a compute node as failed</td></tr><tr><td>Result</td><td>Unnecessary Instance HA, meaning Nova Evacuate</td></tr><tr><td>Impact</td><td>Wrong VM migrations firing together</td></tr><tr><td>Latent risk</td><td>False-positive HA reaching split-brain and storage corruption</td></tr></tbody>
+            <tbody><tr><td>Situation</td><td>During an L2/L3 switch failure the leader controller misjudged a compute node as failed</td></tr><tr><td>Result</td><td>Unnecessary Instance HA, meaning Nova Evacuate</td></tr><tr><td>Impact</td><td>Unnecessary evacuates firing together against a live compute node</td></tr><tr><td>Latent risk</td><td>False-positive HA reaching split-brain and storage corruption</td></tr></tbody>
           </table>
           </div>
         </div>
@@ -176,9 +176,10 @@
           </div>
         </div>
 
-        <p>Once controller-to-controller traffic is cut the cluster quorum collapses and some controllers
-        start judging on their own. Yet MGMT was up, so that compute node's agent heartbeat was arriving
-        normally. The node that had been declared dead was reporting its own health, steadily.</p>
+        <p>Once controller-to-controller traffic is cut the controllers can no longer agree on each other's
+        state. A proper quorum would have the isolated minority stop deciding; here the isolated side did not
+        stop, and made the call on its own. Yet MGMT was up, so that compute node's agent heartbeat was
+        arriving normally. The node that had been declared dead was reporting its own health, steadily.</p>
 
         <h2 id="misjudgment">Unreachable and dead were not told apart<a class="anchor" href="#misjudgment" aria-label="Link to this section">#</a></h2>
 
@@ -211,9 +212,9 @@
         </figure>
 
         <p>The root of the incident was <strong>mistaking the observer's isolation for the target's
-        failure</strong>. If the isolated side cannot feed its own isolation into the judgement, no amount of
-        observational accuracy changes the conclusion. The question was never what to observe more sharply.
-        It was whose word to believe.</p>
+        failure</strong>. Because the judgement never took the observer's own network health as an input, it
+        could not tell a remote node's death apart from a break in the path to it. The question was never what
+        to observe more sharply. It was whose word to believe.</p>
 
         <h2 id="second-incident">There was a second incident with the same shape<a class="anchor" href="#second-incident" aria-label="Link to this section">#</a></h2>
 
@@ -268,8 +269,8 @@
         <h2 id="split-brain">A recovery that should not have run breaks the volume<a class="anchor" href="#split-brain" aria-label="Link to this section">#</a></h2>
 
         <p>What makes the misjudgement expensive comes next. If the original VM is still alive and writing to
-        its disk while a replica attaches to the same volume on another host, both sides write to the same
-        place. What breaks is not one VM. It is the whole volume.</p>
+        its disk while the rebuilt copy attaches to the same volume on another host and both are allowed to
+        write at once, what breaks is not one VM. It can be the whole volume.</p>
 
         <div class="table-scroll">
           <p class="table-scroll-hint">Scroll sideways to see the rest</p>
@@ -314,9 +315,10 @@
           <figcaption>The host setting and the Instance metadata overlap to split the targets. In 2024 I walked all three values and watched whether the excluded list filled as intended.</figcaption>
         </figure>
 
-        <p>If the host attribute is <code>HA_Enabled</code>, only instances carrying that marker in metadata
-        become targets. If it is <code>HA_Disabled</code>, everything without the marker becomes a target. If
-        it is <code>NONE</code>, everything becomes a target regardless of metadata. Opt-in, opt-out and all,
+        <p>If the host attribute is <code>HA_Enabled</code>, only instances carrying the <code>HA_Enabled</code>
+        marker in metadata become targets. If it is <code>HA_Disabled</code>, everything <em>without</em> the
+        <code>HA_Disabled</code> marker becomes a target — including instances with no metadata at all. If it
+        is <code>NONE</code>, everything becomes a target regardless of metadata. Opt-in, opt-out and all,
         selectable per host.</p>
 
         <p>At the time I checked the excluded list as carefully as the target list. In a recovery feature the
@@ -343,8 +345,8 @@
         is slow but <strong>when the observer judges the target without knowing its own state</strong>. A
         single switch died, four strands met different fates, and the surviving strand was saying the node was
         alive while the side holding a cut strand made the call.</p>
-        <p>The next part is what we changed because of it: instead of sharpening detection, deciding what each
-        signal is entitled to testify to. Continue to <a href="instance-ha-2-what-each-signal-can-say.html">part two</a>.</p>
+        <p>The next part is what I designed differently because of it: instead of sharpening detection, deciding
+        what each signal is entitled to testify to. Continue to <a href="instance-ha-2-what-each-signal-can-say.html">part two</a>.</p>
         <p>Thanks for reading.</p>
         </div>
       </article>

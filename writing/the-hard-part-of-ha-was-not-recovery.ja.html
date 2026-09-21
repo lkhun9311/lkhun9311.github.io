@@ -100,7 +100,7 @@
         <p>2026 年 3 月にそれが実際に起こりました。L2/L3 スイッチが死にましたが、切れたのは Compute では
         なく Controller 同士の通信でした。その状態で Leader Controller が生きている Compute を障害と
         判定し、Nova Evacuate を大量に実行しました。私は事故を自分で調査した側ではなく、整理された事実を
-        受け取って再発を防ぐ判定体系を設計した側です。</p>
+        受け取って再発を防ぐことを目的に判定体系を設計した側です。</p>
 
         <p>この記事は連作の一編目で、①編は原因までを扱います。ネットワークが四本に分かれて
         別々の状態になった経緯、Controller が自分の孤立を対象の死として読んだ理由、誤って実行した復旧が
@@ -118,9 +118,9 @@
         <h2 id="事件">復旧が事故になった日<a class="anchor" href="#事件" aria-label="この節へのリンク">#</a></h2>
 
         <p>事件は一行で要約できます。<strong>L2/L3 スイッチ障害のとき Leader Controller が生きている
-        Compute を障害と誤判し、不要な Instance HA を大量に実行しました。</strong>正常な VM が同時に別の
-        ホストへ移され、最悪の場合は原本が生きたまま複製が同じボリュームに付いてファイルシステムが壊れ得る
-        状況でした。</p>
+        Compute を障害と誤判し、不要な Instance HA を大量に実行しました。</strong>正常な VM を別のホストで
+        建て直す evacuate が同時多発で起き、原本がまだ生きているのに再構築された側が同じボリュームに付くと、
+        最悪の場合ファイルシステムが壊れ得る状況でした。</p>
 
         <div class="table-scroll">
           <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
@@ -128,7 +128,7 @@
           <table>
             <caption class="sr-only">事件の要約：状況・結果・影響・潜在リスク。</caption>
             <thead><tr><th>項目</th><th>内容</th></tr></thead>
-            <tbody><tr><td>状況</td><td>L2/L3 スイッチ障害のとき Leader Controller が Compute を障害と誤判</td></tr><tr><td>結果</td><td>不要な Instance HA の実行、すなわち Nova Evacuate</td></tr><tr><td>影響</td><td>誤った VM Migration が同時多発</td></tr><tr><td>潜在リスク</td><td>False Positive HA が Split-Brain を経て Storage 損傷まで</td></tr></tbody>
+            <tbody><tr><td>状況</td><td>L2/L3 スイッチ障害のとき Leader Controller が Compute を障害と誤判</td></tr><tr><td>結果</td><td>不要な Instance HA の実行、すなわち Nova Evacuate</td></tr><tr><td>影響</td><td>生きている Compute に対して不要な Evacuate が同時多発で実行</td></tr><tr><td>潜在リスク</td><td>False Positive HA が Split-Brain を経て Storage 損傷まで</td></tr></tbody>
           </table>
           </div>
         </div>
@@ -176,8 +176,9 @@
           </div>
         </div>
 
-        <p>Controller 同士の通信が切れるとクラスタの Quorum が崩れ、一部の Controller が単独で判断する
-        ようになります。ところが MGMT は生きていたので、その Compute の Agent HeartBeat は正常に受信されて
+        <p>Controller 同士の通信が切れると、Controller は互いの状態を合意できなくなります。まともな Quorum
+        なら多数を失って孤立した側は判断を止めるべきなのに、このときは孤立した側が止まらず単独で判定を下しました。
+        ところが MGMT は生きていたので、その Compute の Agent HeartBeat は正常に受信されて
         いました。死んだと判定されたノードが、実は自分の状態をきちんと報告し続けていました。</p>
 
         <h2 id="誤判">届かないことと死んだことを分けられませんでした<a class="anchor" href="#誤判" aria-label="この節へのリンク">#</a></h2>
@@ -210,9 +211,9 @@
           <figcaption>Controller が見たのは Compute の状態ではなく自分自身の到達性でした。同じ時刻に MGMT はその Compute が生きていると伝えていました。</figcaption>
         </figure>
 
-        <p>事故の根は<strong>観測者の孤立を対象の障害として誤認した</strong>ことでした。孤立した側が自分の
-        孤立を判定に入れられなければ、観測精度をいくら上げても同じ結論に至ります。何をより精緻に見るかでは
-        なく、誰の言葉を信じるかの問題でした。</p>
+        <p>事故の根は<strong>観測者の孤立を対象の障害として誤認した</strong>ことでした。判定が観測者自身の
+        ネットワーク健全性を入力に使っていなかったため、遠隔ノードの死と観測経路の断絶をついに区別できません
+        でした。何をより精緻に見るかではなく、誰の言葉を信じるかの問題でした。</p>
 
         <h2 id="二つ目の事件">同じ構造の事件がもう一つありました<a class="anchor" href="#二つ目の事件" aria-label="この節へのリンク">#</a></h2>
 
@@ -265,9 +266,9 @@
 
         <h2 id="スプリットブレイン">走るべきでなかった復旧がボリュームを壊します<a class="anchor" href="#スプリットブレイン" aria-label="この節へのリンク">#</a></h2>
 
-        <p>誤判が高くつく理由はその次にあります。原本の VM がまだ生きてディスクに書いているのに、複製が別の
-        ホストで同じボリュームに付くと、両側が同じ場所へ同時に書きます。壊れるのは VM 一台ではなく
-        ボリューム全体です。</p>
+        <p>誤判が高くつく理由はその次にあります。原本の VM がまだ生きてディスクに書いているのに、再構築された
+        側が別のホストで同じボリュームに付き、両側が同時に書けてしまうと、壊れるのは VM 一台ではなく
+        ボリューム全体になり得ます。</p>
 
         <div class="table-scroll">
           <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
@@ -312,8 +313,9 @@
           <figcaption>ホスト設定と Instance メタデータが重なって対象が分かれます。2024 年に三つの値を総当たりで確認し、除外リストが意図どおり埋まるかを一緒に見ました。</figcaption>
         </figure>
 
-        <p>ホスト属性が <code>HA_Enabled</code> ならメタデータにその印がある Instance だけが対象になり、
-        <code>HA_Disabled</code> ならその印を持たないものがすべて対象になり、<code>NONE</code> なら
+        <p>ホスト属性が <code>HA_Enabled</code> ならメタデータに <code>HA_Enabled</code> の印がある Instance
+        だけが対象になり、<code>HA_Disabled</code> なら逆に <code>HA_Disabled</code> の印を持たないものが
+        すべて対象になり（メタデータが無い Instance も対象に含まれます）、<code>NONE</code> なら
         メタデータに関係なくすべてが対象になります。つまり opt-in と opt-out と全体をホスト単位で選べる
         構造です。</p>
 
@@ -341,8 +343,8 @@
         <strong>観測者が自分の状態を知らないまま対象を判定するとき</strong>です。スイッチが一つ死んだだけ
         なのに四本の運命が分かれ、残った枝はそのノードが生きていると伝えていたのに、切れた枝を持つ側が
         判定を下しました。</p>
-        <p>次の編はそれで何を変えたかです。検知をより精緻にする代わりに、信号ごとに証言できる範囲を決めた
-        話へ続きます。<a href="instance-ha-2-what-each-signal-can-say.ja.html">②編</a>へ進みます。</p>
+        <p>次の編はそれで何を違えて設計したかです。検知をより精緻にする代わりに、信号ごとに証言できる範囲を
+        決めた設計の話へ続きます。<a href="instance-ha-2-what-each-signal-can-say.ja.html">②編</a>へ進みます。</p>
         <p>お読みいただきありがとうございました。</p>
         </div>
       </article>
