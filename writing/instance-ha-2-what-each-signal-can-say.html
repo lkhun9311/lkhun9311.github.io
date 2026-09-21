@@ -86,6 +86,7 @@
             <li><a href="#signal-grades">We graded the signals into four tiers</a></li>
             <li><a href="#ext-probe">The EXT probe never looks at Compute</a></li>
             <li><a href="#parameters">Six values, each with a reason</a></li>
+            <li><a href="#what-the-build-checks">The build used OR rather than grades</a></li>
             <li><a href="#why-these-numbers">Why ten seconds and why three times</a></li>
             <li><a href="#what-this-does-not-claim">Limits: what this post does not claim</a></li>
             <li><a href="#closing">Closing</a></li>
@@ -223,6 +224,63 @@
           </table>
           </div>
         </div>
+
+        <h2 id="what-the-build-checks">The build used OR rather than grades<a class="anchor" href="#what-the-build-checks" aria-label="Link to this section">#</a></h2>
+
+        <p>That was the design. Reading the build, the verdict works differently. Rather than grading the
+        signals, <strong>every condition is combined with OR and any one of them makes it a failure.</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 264" role="img" aria-labelledby="or-t or-d" class="figure-svg">
+            <title id="or-t">How the build reaches a failure verdict</title>
+            <desc id="or-d">No status request from the control side, an unreachable gateway, a failed TCP connection to the configured address and a network interface that is down are all combined with OR, so any one of them makes the verdict failed.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="50" y="56" width="270" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.5"/>
+              <text x="185" y="78" font-size="10" fill="#5b7fa6" text-anchor="middle">no status request from control</text>
+              <path d="M320 73 H 400" stroke="#666" stroke-width="1.2" fill="none"/>
+              <rect x="50" y="104" width="270" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.5"/>
+              <text x="185" y="126" font-size="10" fill="#5b7fa6" text-anchor="middle">gateway unreachable</text>
+              <path d="M320 121 H 400" stroke="#666" stroke-width="1.2" fill="none"/>
+              <rect x="50" y="152" width="270" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.5"/>
+              <text x="185" y="174" font-size="10" fill="#5b7fa6" text-anchor="middle">TCP to the set address fails</text>
+              <path d="M320 169 H 400" stroke="#666" stroke-width="1.2" fill="none"/>
+              <rect x="50" y="200" width="270" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.5"/>
+              <text x="185" y="222" font-size="10" fill="#5b7fa6" text-anchor="middle">network interface down</text>
+              <path d="M320 217 H 400" stroke="#666" stroke-width="1.2" fill="none"/>
+              <rect x="400" y="100" width="90" height="56" rx="8" fill="none" stroke="#b8860b" stroke-width="1.8"/>
+              <text x="445" y="134" font-size="13" fill="#b8860b" text-anchor="middle">OR</text>
+              <path d="M490 128 H 560" stroke="#d62976" stroke-width="1.4" fill="none"/>
+              <rect x="560" y="106" width="120" height="44" rx="8" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="620" y="133" font-size="11" fill="#d62976" text-anchor="middle">failed</text>
+              <text x="360" y="248" font-size="10.5" fill="#666" text-anchor="middle">not grades · any one of them is enough</text>
+            </g>
+          </svg>
+          <figcaption>The design graded the signals. The build combined the conditions with OR.</figcaption>
+        </figure>
+
+        <p>The agent on the node looks at four things: no status request arriving from the control side for
+        a set time, the configured gateway not answering, no TCP connection to the configured address and
+        port, and a configured network interface that is down or is a loopback.</p>
+
+        <p>Of those, the TCP check <strong>was added later.</strong> Sites where the ping to the gateway is
+        blocked outright turned out to be common, and the ping alone could not reach a verdict there. Where
+        ping cannot be used the value is left empty and only the TCP connection is checked.</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+          <table>
+            <caption class="sr-only">How each kind of network interface is checked.</caption>
+            <thead><tr><th>Kind</th><th>What is read</th><th>Verdict</th></tr></thead>
+            <tbody><tr><td>A single interface</td><td>The operating state the kernel reports</td><td>Anything but up is a failure, and loopback is a failure</td></tr><tr><td>Linux bond</td><td>The state of the bond device itself</td><td>The bond going down is a failure</td></tr><tr><td>OVS bond</td><td>Whether any member is usable in the bond status output</td><td>No usable member is a failure</td></tr><tr><td>Bridge</td><td>Treated like a single interface</td><td>If the check is identical there is no separate case</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">In a redundant setup each kind is checked differently. One thing caught here:
+        without telling the kinds apart, a break on the service side cannot be separated from a break on the
+        management side. An external review raised exactly that, and it stays an open item outside the scope
+        of this series.</p>
 
         <h2 id="why-these-numbers">Why ten seconds and why three times<a class="anchor" href="#why-these-numbers" aria-label="Link to this section">#</a></h2>
 

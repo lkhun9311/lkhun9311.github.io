@@ -86,6 +86,7 @@
             <li><a href="#신호-등급">신호를 네 등급으로 세웠습니다</a></li>
             <li><a href="#ext-probe">EXT Probe는 Compute를 보지 않습니다</a></li>
             <li><a href="#파라미터">값 여섯 개를 정했습니다</a></li>
+            <li><a href="#실제-판정">구현은 등급 대신 OR로 묶었습니다</a></li>
             <li><a href="#근거">왜 10초이고 왜 세 번인가</a></li>
             <li><a href="#주장하지-않는-것">한계: 이 글이 주장하지 않는 것</a></li>
             <li><a href="#마치며">마치며</a></li>
@@ -220,6 +221,62 @@
           </table>
           </div>
         </div>
+
+        <h2 id="실제-판정">구현은 등급 대신 OR로 묶었습니다<a class="anchor" href="#실제-판정" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>여기까지가 설계입니다. 실제 구현을 읽어 보니 판정 방식이 달랐습니다. 신호에 등급을 매기는 대신
+        <strong>조건을 전부 OR로 묶어 하나라도 걸리면 장애로 봅니다.</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 264" role="img" aria-labelledby="or-t or-d" class="figure-svg">
+            <title id="or-t">구현이 장애를 판정하는 방식</title>
+            <desc id="or-d">관리 쪽 요청이 끊긴 것과 Gateway에 닿지 않는 것과 지정한 주소로 TCP 연결이 안 되는 것과 Network Interface가 내려간 것을 모두 OR로 묶어, 하나라도 걸리면 장애로 판정합니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="50" y="56" width="270" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.5"/>
+              <text x="185" y="78" font-size="10.5" fill="#5b7fa6" text-anchor="middle">관리 쪽 요청이 끊김</text>
+              <path d="M320 73 H 400" stroke="#666" stroke-width="1.2" fill="none"/>
+              <rect x="50" y="104" width="270" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.5"/>
+              <text x="185" y="126" font-size="10.5" fill="#5b7fa6" text-anchor="middle">Gateway에 닿지 않음</text>
+              <path d="M320 121 H 400" stroke="#666" stroke-width="1.2" fill="none"/>
+              <rect x="50" y="152" width="270" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.5"/>
+              <text x="185" y="174" font-size="10.5" fill="#5b7fa6" text-anchor="middle">지정한 주소로 TCP 실패</text>
+              <path d="M320 169 H 400" stroke="#666" stroke-width="1.2" fill="none"/>
+              <rect x="50" y="200" width="270" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.5"/>
+              <text x="185" y="222" font-size="10.5" fill="#5b7fa6" text-anchor="middle">Network Interface가 내려감</text>
+              <path d="M320 217 H 400" stroke="#666" stroke-width="1.2" fill="none"/>
+              <rect x="400" y="100" width="90" height="56" rx="8" fill="none" stroke="#b8860b" stroke-width="1.8"/>
+              <text x="445" y="134" font-size="13" fill="#b8860b" text-anchor="middle">OR</text>
+              <path d="M490 128 H 560" stroke="#d62976" stroke-width="1.4" fill="none"/>
+              <rect x="560" y="106" width="120" height="44" rx="8" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="620" y="133" font-size="11" fill="#d62976" text-anchor="middle">장애</text>
+              <text x="360" y="248" font-size="10.5" fill="#666" text-anchor="middle">등급이 아니라 하나라도 걸리면 장애</text>
+            </g>
+          </svg>
+          <figcaption>설계는 신호에 등급을 매겼고 구현은 조건을 OR로 묶었습니다.</figcaption>
+        </figure>
+
+        <p>노드 쪽 Agent는 네 가지를 봅니다. 관리 쪽에서 상태 확인 요청이 일정 시간 오지 않는 것,
+        지정한 Gateway로 닿지 않는 것, 지정한 주소와 Port로 TCP 연결이 안 되는 것, 설정된
+        Network Interface가 내려갔거나 loopback인 것입니다.</p>
+
+        <p>이 가운데 TCP 확인은 <strong>나중에 덧붙은 것입니다.</strong> Gateway로 보내는 ping이 아예
+        막혀 있는 현장이 많아서 그 방법만으로는 판정할 수 없었습니다. ping을 쓸 수 없으면 값을 비워 두고
+        TCP 연결이 서는지만 봅니다.</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+          <table>
+            <caption class="sr-only">Network Interface 종류별 확인 방법.</caption>
+            <thead><tr><th>종류</th><th>확인하는 것</th><th>판정</th></tr></thead>
+            <tbody><tr><td>단일 Interface</td><td>커널이 알려 주는 동작 상태</td><td>up이 아니면 장애. loopback도 장애</td></tr><tr><td>Linux Bond</td><td>Bond 장치 자체의 동작 상태</td><td>Bond가 내려가면 장애</td></tr><tr><td>OVS Bond</td><td>Bond 상태 출력에서 사용 가능 여부</td><td>사용 가능한 구성원이 없으면 장애</td></tr><tr><td>Bridge</td><td>단일 Interface와 같게 다룸</td><td>상태 확인 방법이 같으면 따로 두지 않음</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">이중화한 구성에서는 종류마다 확인 방법이 다릅니다. 여기서 한 가지가
+        걸렸습니다. 인터페이스 종류를 구분하지 못하면 서비스 쪽 단절과 관리 쪽 단절을 가를 수 없습니다.
+        외부 검토에서 그 점이 지적됐고 이 연작이 다루는 범위 밖의 숙제로 남았습니다.</p>
 
         <h2 id="근거">왜 10초이고 왜 세 번인가<a class="anchor" href="#근거" aria-label="이 절로 가는 링크">#</a></h2>
 
