@@ -117,13 +117,13 @@
         <h2 id="설계가-요구한-것">설계는 확인 없이는 옮기지 말라고 했습니다<a class="anchor" href="#설계가-요구한-것" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>복구는 VM을 다른 호스트에서 다시 띄우는 일입니다. 원본이 죽지 않았는데 재기동된 쪽이 같은 볼륨에
-        붙어 두 쪽이 동시에 쓰도록 허용되면, <strong>깨지는 것은 VM 하나가 아니라 볼륨 전체가 될 수
+        붙어 두 쪽이 동시에 쓰도록 허용되면 <strong>깨지는 것은 VM 하나가 아니라 볼륨 전체가 될 수
         있습니다.</strong></p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 150" role="img" aria-labelledby="step-t step-d" class="figure-svg">
             <title id="step-t">복구 절차 네 단계</title>
-            <desc id="step-d">Detect와 Verify는 판단 단계라 언제든 멈출 수 있고, Fence부터는 서비스에 실제 영향을 줍니다. 마지막 Recover는 되돌릴 수 없습니다.</desc>
+            <desc id="step-d">Detect와 Verify는 판단 단계라 언제든 멈출 수 있고 Fence부터는 서비스에 실제 영향을 줍니다. 마지막 Recover는 되돌릴 수 없습니다.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="70" y="60" width="130" height="46" rx="8" fill="none" stroke="#5b7fa6" stroke-width="1.7"/>
               <text x="135" y="88" font-size="11.5" fill="#5b7fa6" text-anchor="middle">Detect</text>
@@ -157,7 +157,7 @@
         </div>
 
         <p>네 단계로 가른 이유는 서비스에 실제 영향을 주는 동작을 뒤로 몰기 위해서입니다. Detect와 Verify는
-        판단 단계라 확신이 서지 않으면 언제든 멈출(Hold) 수 있고, Fence부터는 전원을 내리므로 서비스에 실제
+        판단 단계라 확신이 서지 않으면 언제든 멈출(Hold) 수 있고 Fence부터는 전원을 내리므로 서비스에 실제
         영향을 주기 시작합니다. 그중에서도 되돌릴 수 없는 것은 맨 끝의 Recover입니다.</p>
 
         <p>그리고 전원을 내릴 경로가 장애와 함께 끊기면 원칙 자체가 성립하지 않습니다. 그래서 전용 물리
