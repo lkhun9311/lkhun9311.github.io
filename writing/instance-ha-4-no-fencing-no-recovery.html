@@ -116,8 +116,9 @@
 
         <h2 id="what-the-design-asked">The design said do not move without confirmation<a class="anchor" href="#what-the-design-asked" aria-label="Link to this section">#</a></h2>
 
-        <p>Recovery means starting a VM again on another host. If the original never died, two sides attach
-        to the same volume. <strong>What breaks is not one VM but the whole volume.</strong></p>
+        <p>Recovery means starting a VM again on another host. If the original never died and the restarted
+        copy attaches to the same volume with both allowed to write at once, <strong>what breaks is not one VM
+        but can be the whole volume.</strong></p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 150" role="img" aria-labelledby="step-t step-d" class="figure-svg">
@@ -155,8 +156,10 @@
           </div>
         </div>
 
-        <p>The four stages exist to push the irreversible action to the very end. The first three can be
-        stopped at any point and only the last one cannot be undone.</p>
+        <p>The four stages exist to push the actions that actually affect the service toward the end. Detect
+        and Verify are judgement, so they can be held at any point if certainty is missing; from Fence onward,
+        cutting power starts to affect the service for real. And the one that cannot be undone is the final
+        Recover.</p>
 
         <p>And if the path used to cut power dies with the failure, the rule cannot hold at all. That is why
         a dedicated physical switch became a precondition.</p>
@@ -257,7 +260,7 @@ ipmitool chassis power status
               <text x="540" y="256" font-size="10" fill="#b8860b" text-anchor="middle">something else in the two empty cells</text>
             </g>
           </svg>
-          <figcaption>The two empty cells are what this post is about. Everything else matches.</figcaption>
+          <figcaption>The empty cells are what this post is about. Everything else is already reflected in the code.</figcaption>
         </figure>
 
         <div class="table-scroll">
@@ -341,7 +344,7 @@ ipmitool chassis power status
         <p>The conclusion is one line. <strong>Write what a design asked for and what a build does in the
         same sentence and the reader is misled.</strong> The earlier title did exactly that, which is why the
         title changed first.</p>
-        <p>One difference remains. Power is confirmed from outside; killing processes is decided from inside.
+        <p>The most dangerous difference is one. Power is confirmed from outside; killing processes is decided from inside.
         If the observer misreads itself, the second method does not fire at all.</p>
         <p>The next part is about who gets to run this procedure.</p>
         <p>Thank you for reading.</p>

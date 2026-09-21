@@ -160,7 +160,7 @@
         </div>
 
         <p class="table-note">가장 긴 구간은 감지가 아니라 다시 띄우는 쪽이고 폭도 가장 넓습니다.
-        감지를 절반으로 줄여도 합계는 15퍼센트쯤만 줄어듭니다.
+        감지를 절반으로 줄여도(30초→15초) 합계는 9~15퍼센트쯤만 줄어듭니다(하한 100초 기준 15퍼센트, 상한 160초 기준 9퍼센트).
         <strong>줄일 곳을 찾으려면 단계를 먼저 갈라야 합니다.</strong></p>
 
         <h2 id="동시-복구">100초는 한 대를 복구할 때의 숫자였습니다<a class="anchor" href="#동시-복구" aria-label="이 절로 가는 링크">#</a></h2>
@@ -296,7 +296,7 @@ probe_retry=3      # 15s TTL
         <h2 id="설계-이후">설계서가 어디까지 갔는지<a class="anchor" href="#설계-이후" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>이 연작의 산출물은 설계서입니다. 구현은 다른 팀원이 이어받았고 저는 거기 참여하지 않았습니다.
-        그래서 이 설계가 살았는지를 말하려면 제 말이 아니라 다른 사람의 문서를 봐야 합니다.</p>
+        그래서 이 설계가 참고됐는지를 말하려면 제 말이 아니라 다른 사람의 문서를 봐야 합니다.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 180" role="img" aria-labelledby="path-t path-d" class="figure-svg">
@@ -317,10 +317,10 @@ probe_retry=3      # 15s TTL
               <text x="360" y="160" font-size="10" fill="#666" text-anchor="middle">구현: 다른 팀원</text>
             </g>
           </svg>
-          <figcaption>설계가 살았는지는 다른 사람 문서에 그 원칙이 들어갔는지로 확인됩니다.</figcaption>
+          <figcaption>설계가 참고됐는지는 다른 사람 문서에 그 원칙과 인용이 들어갔는지로 드러납니다. 채택·구현·선후 관계는 별개입니다.</figcaption>
         </figure>
 
-        <p>같은 시기에 나온 후속 검토 문서가 이 설계서를 인용했습니다. 그 문서의 결론은 관측 지점이
+        <p>같은 시기에 나온 다른 검토 문서가 이 설계서를 인용했습니다. 그 문서의 결론은 관측 지점이
         고장 났을 때 복구를 수행하지 않아야 한다는 것이었고 이는 설계서의 보류 로직과 Phase 분리와
         같은 내용입니다.</p>
 
@@ -328,14 +328,14 @@ probe_retry=3      # 15s TTL
           <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
           <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
           <table>
-            <caption class="sr-only">설계서가 적은 문제와 개선 효과.</caption>
-            <thead><tr><th>문제</th><th>개선 효과</th></tr></thead>
-            <tbody><tr><td>L2/L3 스위치 장애</td><td>복합 판단을 적용해 복구를 보류합니다</td></tr><tr><td>외부 Probe 과의존</td><td>보조 신호로 격하하고 Quorum과 HeartBeat를 앞에 둡니다</td></tr><tr><td>Storage 경로 장애 오판</td><td>실행 조건으로 옮겨 과억제를 없앱니다</td></tr><tr><td>Controller 단독 판단</td><td>Quorum을 먼저 확인합니다</td></tr><tr><td>Split-Brain</td><td>Fencing을 통과 조건으로 둡니다</td></tr></tbody>
+            <caption class="sr-only">설계서가 적은 문제와 설계가 노린 효과.</caption>
+            <thead><tr><th>문제</th><th>설계가 노린 효과</th></tr></thead>
+            <tbody><tr><td>L2/L3 스위치 장애</td><td>복합 판단을 적용해 복구를 보류하도록 설계</td></tr><tr><td>외부 Probe 과의존</td><td>보조 신호로 격하하고 Quorum과 HeartBeat를 앞에 둠</td></tr><tr><td>Storage 경로 장애 오판</td><td>실행 조건으로 옮겨 과억제를 줄이도록 설계</td></tr><tr><td>Controller 단독 판단</td><td>Quorum을 먼저 확인</td></tr><tr><td>Split-Brain</td><td>Fencing을 통과 조건으로 둠</td></tr></tbody>
           </table>
           </div>
         </div>
 
-        <p class="table-note">설계서가 적은 개선 효과입니다. 이 가운데 어느 것이 운영에서 실제로
+        <p class="table-note">설계서가 노린 효과입니다. 이 가운데 어느 것이 운영에서 실제로
         나타났는지는 제가 확인할 수 있는 범위 밖에 있습니다.</p>
 
         <h2 id="주장하지-않는-것">한계: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
@@ -355,8 +355,8 @@ probe_retry=3      # 15s TTL
         <div class="wrapup">
         <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
         <p>이 연작을 관통하는 것은 하나입니다. <strong>판단의 근거를 숫자 하나나 신호 하나에 몰아 두면
-        그것이 틀렸을 때 빠져나갈 길이 없습니다.</strong> 관측 지점 하나를 믿어 살아 있는 노드를 죽었다고
-        본 것이 ①편이고 그 뒤로는 전부 근거를 나누는 이야기였습니다.</p>
+        그것이 틀렸을 때 빠져나갈 길이 없습니다.</strong> 기존 복구 로직이 관측 지점 하나를 믿어 살아 있는
+        노드를 죽었다고 본 것이 ①편이고 그 뒤로는 전부 근거를 나누는 이야기였습니다.</p>
         <p>신호를 증언할 수 있는 범위로 나누고 장애인가와 지금 해도 되는가를 나누고 명령과 확인을
         나누고 합의와 Fencing을 나누고 마지막으로 시간을 단계와 서비스로 나눴습니다.</p>
         <p><a href="recovery-host-must-have-the-device.ko.html">⑦편</a>은 옮긴다고 정한 뒤의 이야기입니다. 장치를 요구하는 Instance를 어디로 보낼지 정하는 부분으로 이어집니다.</p>

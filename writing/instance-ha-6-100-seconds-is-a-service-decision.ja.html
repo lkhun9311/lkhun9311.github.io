@@ -161,7 +161,7 @@
         </div>
 
         <p class="table-note">一番長い区間は検知ではなく立ち上げ直すほうで、幅も一番広いです。検知を半分に
-        しても合計は15パーセントほどしか縮みません。
+        しても（30秒→15秒）合計は9〜15パーセントほどしか縮みません（下限100秒基準で15パーセント、上限160秒基準で9パーセント）。
         <strong>削る場所を探すには、まず段階を分ける必要があります。</strong></p>
 
         <h2 id="同時復旧">100秒は一台を復旧するときの数字でした<a class="anchor" href="#同時復旧" aria-label="このセクションへのリンク">#</a></h2>
@@ -296,7 +296,7 @@ probe_retry=3      # 15s TTL
         <h2 id="設計のその後">設計書がどこまで届いたか<a class="anchor" href="#設計のその後" aria-label="このセクションへのリンク">#</a></h2>
 
         <p>この連作の成果物は設計書です。実装はほかのチームメンバーが引き継ぎ、私はそこに参加していません。
-        ですからこの設計が生きたかを言うには、私の言葉ではなくほかの人の文書を見る必要があります。</p>
+        ですからこの設計が参照されたかを言うには、私の言葉ではなくほかの人の文書を見る必要があります。</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 180" role="img" aria-labelledby="path-t path-d" class="figure-svg">
@@ -317,10 +317,10 @@ probe_retry=3      # 15s TTL
               <text x="360" y="160" font-size="10" fill="#666" text-anchor="middle">実装: ほかのチームメンバー</text>
             </g>
           </svg>
-          <figcaption>設計が生きたかどうかは、ほかの人の文書にその原則が入ったかで確かめられます。</figcaption>
+          <figcaption>設計が参照されたかは、ほかの人の文書にその原則と引用が入ったかで見えてきます。採用・実装・前後関係は別の話です。</figcaption>
         </figure>
 
-        <p>同じ時期に出た後続の検討文書が、この設計書を引用しています。その文書の結論は「観測地点が壊れて
+        <p>同じ時期に出た別の検討文書が、この設計書を引用しています。その文書の結論は「観測地点が壊れて
         いるときは復旧を実行すべきでない」というもので、これは設計書の保留ロジックと Phase 分離と同じ
         内容です。</p>
 
@@ -328,14 +328,14 @@ probe_retry=3      # 15s TTL
           <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
           <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
           <table>
-            <caption class="sr-only">設計書が挙げた問題と改善効果。</caption>
-            <thead><tr><th>問題</th><th>改善効果</th></tr></thead>
-            <tbody><tr><td>L2/L3 スイッチ障害</td><td>複合判断を適用して復旧を保留します</td></tr><tr><td>外部 Probe への依存過多</td><td>補助信号へ格下げし、Quorum と HeartBeat を前に置きます</td></tr><tr><td>Storage 経路障害の誤判定</td><td>実行条件へ移して過抑制をなくします</td></tr><tr><td>Controller の単独判断</td><td>Quorum を先に確認します</td></tr><tr><td>Split-Brain</td><td>Fencing を通過条件にします</td></tr></tbody>
+            <caption class="sr-only">設計書が挙げた問題と設計が狙った効果。</caption>
+            <thead><tr><th>問題</th><th>設計が狙った効果</th></tr></thead>
+            <tbody><tr><td>L2/L3 スイッチ障害</td><td>複合判断を適用して復旧を保留する設計</td></tr><tr><td>外部 Probe への依存過多</td><td>補助信号へ格下げし、Quorum と HeartBeat を前に置く</td></tr><tr><td>Storage 経路障害の誤判定</td><td>実行条件へ移して過抑制を減らす設計</td></tr><tr><td>Controller の単独判断</td><td>Quorum を先に確認</td></tr><tr><td>Split-Brain</td><td>Fencing を通過条件にする</td></tr></tbody>
           </table>
           </div>
         </div>
 
-        <p class="table-note">設計書が挙げた改善効果です。このうちどれが運用で実際に現れたのかは、私が
+        <p class="table-note">設計が狙った効果です。このうちどれが運用で実際に現れたのかは、私が
         確かめられる範囲の外にあります。</p>
 
         <h2 id="主張しないこと">限界: この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="このセクションへのリンク">#</a></h2>
@@ -356,8 +356,8 @@ probe_retry=3      # 15s TTL
         <div class="wrapup">
         <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="このセクションへのリンク">#</a></h2>
         <p>この連作を貫くものは一つです。<strong>判断の根拠を一つの数字や一つの信号に寄せてしまうと、それが
-        間違っていたときに抜け道がありません。</strong>観測地点を一つ信じて生きているノードを死んだと見たのが
-        ①編で、そのあとはすべて根拠を分ける話でした。</p>
+        間違っていたときに抜け道がありません。</strong>既存の復旧ロジックが観測地点を一つ信じて生きている
+        ノードを死んだと見たのが①編で、そのあとはすべて根拠を分ける話でした。</p>
         <p>信号を証言できる範囲で分け、障害かどうかと今実行してよいかを分け、命令と確認を分け、合意と
         Fencing を分け、最後に時間を段階とサービスに分けました。</p>
         <p><a href="recovery-host-must-have-the-device.ja.html">⑦編</a>は移すと決めたあとの話です。装置を要求する Instance をどこへ送るかを決める部分へ続きます。</p>

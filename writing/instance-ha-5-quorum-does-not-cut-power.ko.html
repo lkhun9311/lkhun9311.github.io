@@ -281,7 +281,7 @@
               <path d="M390 153 H 450" stroke="#b8860b" stroke-width="1.4" fill="none"/>
               <rect x="450" y="130" width="200" height="46" rx="8" fill="none" stroke="#b8860b" stroke-width="1.8"/>
               <text x="550" y="158" font-size="10.5" fill="#b8860b" text-anchor="middle">BMC 콘솔 수동 개입</text>
-              <text x="550" y="200" font-size="10" fill="#666" text-anchor="middle">전원 확인 후 crm node fence</text>
+              <text x="550" y="200" font-size="10" fill="#666" text-anchor="middle">전원 확인 후 stonith_admin --confirm</text>
             </g>
           </svg>
           <figcaption>freeze는 고장이 아니라 설계된 정지입니다. 확인하지 못했으므로 멈춘 것입니다.</figcaption>
@@ -294,8 +294,8 @@ crm_mon -1
 
 # 2. BMC 콘솔에서 대상 노드가 Power OFF 인지 눈으로 확인합니다
 
-# 3. 확인한 뒤에만 클러스터에 fencing 을 기록합니다
-crm node fence &lt;nodename&gt;
+# 3. 확인한 뒤에만 클러스터에 「내려갔음」을 기록합니다
+stonith_admin --confirm &lt;nodename&gt;
 
 # 4. 노드를 다시 참여시킵니다
 crm node online &lt;nodename&gt;
@@ -303,9 +303,10 @@ crm node online &lt;nodename&gt;
 # 5. STONITH 리소스를 재시작합니다
 crm resource restart stonith-&lt;nodename&gt;</code></pre>
 
-        <p><strong>세 번째 단계는 두 번째 단계 없이 실행하면 안 됩니다.</strong> <code>crm node fence</code>는
-        전원을 내리는 명령이 아니라 내려갔다고 클러스터에 알리는 명령입니다. 확인하지 않고 적으면
-        ④편에서 막으려던 이중 접속을 사람 손으로 여는 셈이 됩니다.</p>
+        <p><strong>세 번째 단계는 두 번째 단계 없이 실행하면 안 됩니다.</strong> <code>stonith_admin --confirm</code>은
+        전원을 내리는 명령이 아니라 이미 내려간 것을 사람이 확인했다고 클러스터에 알리는 명령입니다. 확인하지
+        않고 적으면 ④편에서 막으려던 이중 접속을 사람 손으로 여는 셈이 됩니다. 반대로 <code>crm node fence</code>는
+        대상 노드에 실제 fencing을 요청하는 명령이라 이 자리에서 쓰면 오히려 살아 있는 노드를 끊습니다.</p>
 
         <p>설정도 두 가지를 함께 권고했습니다. <code>stonith-action</code>의 기본값은 재부팅이고
         재부팅은 대상 노드가 다시 올라오는 상태를 만듭니다. 전원이 내려간 상태로 두는 쪽이 이중 접속의
