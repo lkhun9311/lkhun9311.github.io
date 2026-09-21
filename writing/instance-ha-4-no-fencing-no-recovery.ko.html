@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Instance HA ④: 펜싱을 확인하지 못하면 복구하지 않습니다 | Kwanghun Lee</title>
+  <title>Instance HA ④: 펜싱 대신 프로세스를 종료하고 있었습니다 | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Instance HA ④: 펜싱을 확인하지 못하면 복구하지 않습니다" />
-  <meta property="og:description" content="복구해도 된다는 판정이 섰더라도 원본의 전원이 확실히 내려갔는지 확인하기 전에는 옮기지 않습니다. BMC 전용 물리 스위치를 전제 조건으로 요구한 이유와 Detect에서 Recover까지 네 단계, Storage 유형별 잔여 연결 정리를 정리했습니다." />
+  <meta property="og:title" content="Instance HA ④: 펜싱 대신 프로세스를 종료하고 있었습니다" />
+  <meta property="og:description" content="원본이 살아 있는데 복제본이 같은 볼륨에 붙으면 파일시스템이 깨집니다. 그래서 설계는 전원을 내리고 내려갔는지 확인한 뒤에만 옮기라고 요구했습니다. 그런데 현재 구현에는 그 확인이 없고 대신 노드 자신이 장애를 확정했을 때 로컬 VM 프로세스를 종료하는 장치가 들어가 있습니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -26,10 +26,10 @@
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Instance HA ④: 펜싱을 확인하지 못하면 복구하지 않습니다" />
-  <meta name="twitter:description" content="전원 차단을 확인하기 전에는 복구하지 않습니다. BMC 전제와 네 단계 절차, Storage 유형별 정리 조건을 정리한 Instance HA 연작 ④편입니다." />
+  <meta name="twitter:title" content="Instance HA ④: 펜싱 대신 프로세스를 종료하고 있었습니다" />
+  <meta name="twitter:description" content="설계는 전원 확인을 요구했고 구현은 프로세스를 종료합니다. 그 차이를 그대로 적었습니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="복구해도 된다는 판정이 섰더라도 원본의 전원이 확실히 내려갔는지 확인하기 전에는 옮기지 않습니다. BMC 전용 물리 스위치를 전제 조건으로 요구한 이유와 Detect에서 Recover까지 네 단계, Storage 유형별 잔여 연결 정리를 정리했습니다." />
+  <meta name="description" content="원본이 살아 있는데 복제본이 같은 볼륨에 붙으면 파일시스템이 깨집니다. 그래서 설계는 전원을 내리고 내려갔는지 확인한 뒤에만 옮기라고 요구했습니다. 그런데 현재 구현에는 그 확인이 없고 대신 노드 자신이 장애를 확정했을 때 로컬 VM 프로세스를 종료하는 장치가 들어가 있습니다." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div>
       </div>
       <section class="page-hero">
-        <h1>Instance HA ④: 펜싱을 확인하지 못하면 복구하지 않습니다<br><span class="h1-sub">전원을 내리라고 명령하는 것과 내려갔는지 확인하는 것은 다른 일입니다. 그 사이에 5초를 넣고 Storage 유형마다 정리 조건을 따로 둔 이유입니다.</span></h1>
+        <h1>Instance HA ④: 펜싱 대신 프로세스를 종료하고 있었습니다<br><span class="h1-sub">설계는 전원이 내려간 것을 확인한 뒤에만 옮기라고 했습니다. 구현에는 그 확인이 없고 대신 다른 장치가 들어가 있습니다.</span></h1>
         <p class="article-date">2026년 9월</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="instance-ha-4-no-fencing-no-recovery"></aside>
@@ -82,110 +82,66 @@
             
             
             
+            
             <li><a href="#예상-독자">이 글의 예상 독자</a></li>
-            <li><a href="#왜-먼저인가">왜 복구보다 전원이 먼저인가</a></li>
-            <li><a href="#bmc-전제">VLAN 분리로는 모자랐습니다</a></li>
-            <li><a href="#네-단계">네 단계로 갈랐습니다</a></li>
+            <li><a href="#설계가-요구한-것">설계는 확인 없이는 옮기지 말라고 했습니다</a></li>
             <li><a href="#전원-확인">명령과 확인 사이에 5초를 넣었습니다</a></li>
             <li><a href="#storage-정리">Storage 유형마다 정리 조건이 다릅니다</a></li>
+            <li><a href="#구현은-다릅니다">구현에는 그 확인이 없습니다</a></li>
+            <li><a href="#프로세스-종료">대신 노드가 자기 VM을 종료합니다</a></li>
             <li><a href="#주장하지-않는-것">한계: 이 글이 주장하지 않는 것</a></li>
             <li><a href="#마치며">마치며</a></li>
           </ul>
         </nav>
       <article>
         <p><a href="seven-of-eight-should-not-recover.ko.html">③편</a>에서 여덟 시나리오 가운데 하나만
-        복구로 넘어갔습니다. 이 편은 그 하나가 통과한 뒤의 이야기입니다. 판정이 섰다고 해서 바로 옮기지는
-        않습니다.</p>
+        복구로 넘어갔습니다. 판정이 섰다고 해서 바로 옮기지는 않습니다.</p>
 
         <p>이유는 ①편에서 본 것과 같습니다. 원본이 아직 살아서 디스크를 쓰고 있는데 복제본이 같은 볼륨에
-        붙으면 파일시스템이 깨집니다. 그래서 <strong>원본의 전원이 확실히 내려갔다는 확인 없이는 옮기지
-        않는다</strong>를 원칙으로 세웠습니다.</p>
+        붙으면 파일시스템이 깨집니다. 그래서 설계는 <strong>원본의 전원이 확실히 내려갔다는 확인 없이는
+        옮기지 않는다</strong>를 원칙으로 세웠습니다.</p>
 
-        <p>이 원칙을 절차로 옮기면 세 가지가 따라옵니다. 전원을 내릴 경로가 장애 때도 살아 있어야 하고
-        명령과 확인을 갈라야 하며 Storage 유형마다 잔여 연결을 다르게 정리해야 합니다.</p>
+        <p>그런데 자료를 다시 읽고 나서 이 편을 고쳐 씁니다. <strong>현재 구현에는 그 확인이
+        없습니다.</strong> 원칙은 설계서의 것이고 제품이 그렇게 동작한다는 뜻이 아니었는데 이전 판은
+        그 차이를 적지 않았습니다.</p>
 
         <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul class="callout">
           <li>자동 복구에 Fencing을 넣으려는데 전제 조건을 정리해야 하는 분</li>
-          <li>IPMI나 BMC 경로를 어느 네트워크에 둘지 정해야 하는 분</li>
-          <li>Storage 유형마다 잔여 연결 처리가 다른 이유가 궁금한 분</li>
+          <li>설계 문서와 실제 구현이 어긋날 때 무엇을 먼저 적어야 하는지 궁금한 분</li>
+          <li>전원을 확인할 수 없는 환경에서 무엇으로 대신하는지 보고 싶은 분</li>
           <li>③편을 읽고 판정이 선 뒤에 무엇을 하는지 궁금하신 분</li>
         </ul>
 
-        <h2 id="왜-먼저인가">왜 복구보다 전원이 먼저인가<a class="anchor" href="#왜-먼저인가" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="설계가-요구한-것">설계는 확인 없이는 옮기지 말라고 했습니다<a class="anchor" href="#설계가-요구한-것" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>복구는 VM을 다른 호스트에서 다시 띄우는 일입니다. 그런데 원본이 죽지 않았다면 같은 볼륨에 두
-        쪽이 동시에 붙습니다. <strong>깨지는 것은 VM 하나가 아니라 볼륨 전체입니다.</strong></p>
-
-        <p>그래서 원칙을 「Fencing을 확인하지 못하면 복구도 없다」로 세웠습니다. 확인하지 못한 채 넘어가는
-        경로를 남기면 그 경로가 언젠가 열립니다. 확인을 선택이 아니라 통과 조건으로 두었습니다.</p>
-
-        <h2 id="bmc-전제">VLAN 분리로는 모자랐습니다<a class="anchor" href="#bmc-전제" aria-label="이 절로 가는 링크">#</a></h2>
-
-        <p>전원을 내리는 경로가 IPMI인데 그 경로가 장애와 함께 끊기면 원칙 자체가 성립하지 않습니다.
-        세 구성을 같은 기준으로 놓고 봤습니다.</p>
+        <p>복구는 VM을 다른 호스트에서 다시 띄우는 일입니다. 원본이 죽지 않았다면 같은 볼륨에 두 쪽이
+        동시에 붙습니다. <strong>깨지는 것은 VM 하나가 아니라 볼륨 전체입니다.</strong></p>
 
         <figure class="diagram">
-          <svg viewBox="0 0 720 250" role="img" aria-labelledby="bmc-t bmc-d" class="figure-svg">
-            <title id="bmc-t">BMC 결선 세 구성과 장애 때의 결과</title>
-            <desc id="bmc-d">위에서부터 BMC와 MGMT가 같은 물리 스위치인 구성, VLAN만 나눈 구성, 전용 물리 스위치를 둔 구성입니다. 앞의 둘은 스위치가 죽을 때 IPMI 경로도 함께 끊기고 마지막만 남습니다.</desc>
+          <svg viewBox="0 0 720 150" role="img" aria-labelledby="step-t step-d" class="figure-svg">
+            <title id="step-t">복구 절차 네 단계</title>
+            <desc id="step-d">Detect와 Verify와 Fence는 언제든 멈출 수 있습니다. 마지막 Recover만 되돌릴 수 없습니다.</desc>
             <g font-family="Inter, sans-serif">
-              <rect x="40" y="35" width="280" height="50" rx="8" fill="none" stroke="#d62976" stroke-width="1.7"/>
-              <text x="180" y="65" font-size="11.5" fill="#d62976" text-anchor="middle">BMC + MGMT 같은 스위치</text>
-              <text x="530" y="65" font-size="11.5" fill="#d62976" text-anchor="middle">IPMI 동시 차단</text>
-              <rect x="40" y="105" width="280" height="50" rx="8" fill="none" stroke="#d62976" stroke-width="1.7"/>
-              <text x="180" y="135" font-size="11.5" fill="#d62976" text-anchor="middle">BMC VLAN 분리</text>
-              <text x="530" y="135" font-size="11.5" fill="#d62976" text-anchor="middle">스위치 소실 시 VLAN 소실</text>
-              <rect x="40" y="175" width="280" height="50" rx="8" fill="none" stroke="#2e9e5b" stroke-width="2"/>
-              <text x="180" y="205" font-size="11.5" fill="#2e9e5b" text-anchor="middle">BMC 전용 물리 스위치</text>
-              <text x="530" y="205" font-size="11.5" fill="#2e9e5b" text-anchor="middle">MGMT 차단, IPMI 유지</text>
+              <rect x="70" y="60" width="130" height="46" rx="8" fill="none" stroke="#5b7fa6" stroke-width="1.7"/>
+              <text x="135" y="88" font-size="11.5" fill="#5b7fa6" text-anchor="middle">Detect</text>
+              <path d="M200 83 H 240" stroke="#666" stroke-width="1.3" fill="none"/>
+              <rect x="240" y="60" width="130" height="46" rx="8" fill="none" stroke="#5b7fa6" stroke-width="1.7"/>
+              <text x="305" y="88" font-size="11.5" fill="#5b7fa6" text-anchor="middle">Verify</text>
+              <path d="M370 83 H 410" stroke="#666" stroke-width="1.3" fill="none"/>
+              <rect x="410" y="60" width="130" height="46" rx="8" fill="none" stroke="#b8860b" stroke-width="1.7"/>
+              <text x="475" y="88" font-size="11.5" fill="#b8860b" text-anchor="middle">Fence</text>
+              <path d="M540 83 H 580" stroke="#666" stroke-width="1.3" fill="none"/>
+              <rect x="580" y="60" width="130" height="46" rx="8" fill="none" stroke="#d62976" stroke-width="1.7"/>
+              <text x="645" y="88" font-size="11.5" fill="#d62976" text-anchor="middle">Recover</text>
+              <text x="135" y="132" font-size="10" fill="#666" text-anchor="middle">멈출 수 있음</text>
+              <text x="305" y="132" font-size="10" fill="#666" text-anchor="middle">멈출 수 있음</text>
+              <text x="475" y="132" font-size="10" fill="#666" text-anchor="middle">멈출 수 있음</text>
+              <text x="645" y="132" font-size="10" fill="#d62976" text-anchor="middle">되돌릴 수 없음</text>
             </g>
           </svg>
-          <figcaption>앞의 두 구성은 같은 스위치가 죽으면 전원을 내릴 수단까지 함께 사라집니다. 사고 당시 이 팜에는 BMC 경로가 아예 없었습니다.</figcaption>
-        </figure>
-
-        <div class="table-scroll">
-          <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
-          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
-          <table>
-            <caption class="sr-only">BMC 결선 세 구성과 장애 때의 결과.</caption>
-            <thead><tr><th>구성</th><th>L2/L3 장애 시</th><th>결과</th></tr></thead>
-            <tbody><tr><td>BMC와 MGMT가 같은 물리 스위치</td><td>MGMT와 IPMI가 동시에 차단</td><td>Fencing 불가</td></tr><tr><td>BMC를 VLAN으로만 분리</td><td>스위치 자체가 죽으면 VLAN도 소실</td><td>Fencing 불안정</td></tr><tr><td>BMC 전용 물리 스위치</td><td>MGMT는 차단되나 IPMI는 유지</td><td>Fencing 가능</td></tr></tbody>
-          </table>
-          </div>
-        </div>
-
-        <p class="table-note">VLAN 분리는 논리적 분리라 스위치가 통째로 죽는 경우를 막지 못합니다. 그래서
-        <strong>전용 물리 스위치를 전제 조건으로 요구했습니다.</strong> 사고 당시 이 팜에는 BMC 경로가
-        아예 없었습니다.</p>
-
-        <h2 id="네-단계">네 단계로 갈랐습니다<a class="anchor" href="#네-단계" aria-label="이 절로 가는 링크">#</a></h2>
-
-        <figure class="diagram">
-          <svg viewBox="0 0 720 210" role="img" aria-labelledby="chn-t chn-d" class="figure-svg">
-            <title id="chn-t">Detect에서 Recover까지 네 단계</title>
-            <desc id="chn-d">Detect, Verify, Fence, Recover가 왼쪽에서 오른쪽으로 이어집니다. Fence 상자만 강조돼 있고 되돌릴 수 없는 동작은 맨 끝에 있습니다.</desc>
-            <g font-family="Inter, sans-serif">
-              <rect x="30" y="70" width="140" height="56" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.7"/>
-              <text x="100" y="95" font-size="12" fill="#4f5bd5" text-anchor="middle">Detect</text>
-              <text x="100" y="114" font-size="11" fill="#4a4a4a" text-anchor="middle">Phase 1 완료</text>
-              <rect x="205" y="70" width="140" height="56" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.7"/>
-              <text x="275" y="95" font-size="12" fill="#4f5bd5" text-anchor="middle">Verify</text>
-              <text x="275" y="114" font-size="11" fill="#4a4a4a" text-anchor="middle">Phase 2 충족</text>
-              <rect x="380" y="70" width="140" height="56" rx="9" fill="none" stroke="#d62976" stroke-width="2.2"/>
-              <text x="450" y="95" font-size="12" fill="#d62976" text-anchor="middle">Fence</text>
-              <text x="450" y="114" font-size="11" fill="#4a4a4a" text-anchor="middle">전원 off 확인</text>
-              <rect x="555" y="70" width="135" height="56" rx="9" fill="none" stroke="#2e9e5b" stroke-width="1.7"/>
-              <text x="622" y="95" font-size="12" fill="#2e9e5b" text-anchor="middle">Recover</text>
-              <text x="622" y="114" font-size="11" fill="#4a4a4a" text-anchor="middle">Nova Evacuate</text>
-              <line x1="170" y1="98" x2="205" y2="98" stroke="#8a8a8a" stroke-width="1.5"/>
-              <line x1="345" y1="98" x2="380" y2="98" stroke="#8a8a8a" stroke-width="1.5"/>
-              <line x1="520" y1="98" x2="555" y2="98" stroke="#8a8a8a" stroke-width="1.5"/>
-              <text x="360" y="175" font-size="11" fill="#8a8a8a" text-anchor="middle">되돌릴 수 없는 동작은 사슬의 맨 끝에만 둠</text>
-            </g>
-          </svg>
-          <figcaption>Fence만이 되돌릴 수 없는 동작으로 이어집니다. 그래서 앞의 두 단계가 진행이 아니라 멈춤을 기본값으로 둡니다.</figcaption>
+          <figcaption>되돌릴 수 없는 동작을 맨 끝에 몰아 두었습니다. 앞의 셋은 기본값이 멈춤입니다.</figcaption>
         </figure>
 
         <div class="table-scroll">
@@ -202,6 +158,28 @@
         <p>네 단계로 가른 이유는 되돌릴 수 없는 동작을 맨 끝에 몰기 위해서입니다. 앞의 세 단계는 언제든
         멈출 수 있고 마지막 하나만 되돌릴 수 없습니다.</p>
 
+        <p>그리고 전원을 내릴 경로가 장애와 함께 끊기면 원칙 자체가 성립하지 않습니다. 그래서 전용 물리
+        스위치를 전제 조건으로 요구했습니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 250" role="img" aria-labelledby="bmc-t bmc-d" class="figure-svg">
+            <title id="bmc-t">BMC 결선 세 구성과 장애 때의 결과</title>
+            <desc id="bmc-d">BMC와 관리망이 같은 스위치이거나 VLAN으로만 나뉜 구성은 스위치가 죽을 때 전원을 내릴 경로까지 함께 사라집니다. 전용 물리 스위치만 남습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="40" y="45" width="290" height="46" rx="8" fill="none" stroke="#d62976" stroke-width="1.7"/>
+              <text x="185" y="73" font-size="11" fill="#d62976" text-anchor="middle">BMC와 MGMT 같은 스위치</text>
+              <text x="530" y="73" font-size="11" fill="#d62976" text-anchor="middle">IPMI 동시 차단</text>
+              <rect x="40" y="115" width="290" height="46" rx="8" fill="none" stroke="#d62976" stroke-width="1.7"/>
+              <text x="185" y="143" font-size="11" fill="#d62976" text-anchor="middle">BMC VLAN 분리</text>
+              <text x="530" y="143" font-size="11" fill="#d62976" text-anchor="middle">스위치 소실 시 VLAN 소실</text>
+              <rect x="40" y="185" width="290" height="46" rx="8" fill="none" stroke="#2e9e5b" stroke-width="1.7"/>
+              <text x="185" y="213" font-size="11" fill="#2e9e5b" text-anchor="middle">BMC 전용 물리 스위치</text>
+              <text x="530" y="213" font-size="11" fill="#2e9e5b" text-anchor="middle">MGMT 차단 · IPMI 유지</text>
+            </g>
+          </svg>
+          <figcaption>VLAN 분리는 논리적 분리라 스위치가 통째로 죽는 경우를 막지 못합니다.</figcaption>
+        </figure>
+
         <h2 id="전원-확인">명령과 확인 사이에 5초를 넣었습니다<a class="anchor" href="#전원-확인" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>Fence 단계에서 가장 틀리기 쉬운 자리가 여기입니다. <strong>전원을 내린 직후에 상태를 조회하면
@@ -211,7 +189,7 @@
         <pre data-lang="shell"><code># BMC 전용 물리 스위치 경로로 전원을 내린다
 ipmitool chassis power off
 
-# 최소 5초 대기 — 즉시 조회하면 아직 off 가 아니다
+# 최소 5초 대기. 즉시 조회하면 아직 off 가 아니다
 sleep 5
 
 # 반드시 off 로 읽히는지 확인한다
@@ -220,29 +198,8 @@ ipmitool chassis power status
 # Storage 유형별 잔여 연결 정리를 확인한 뒤에야
 # Nova Evacuate 로 넘어간다</code></pre>
 
-        <figure class="diagram">
-          <svg viewBox="0 0 720 210" role="img" aria-labelledby="wt-t wt-d" class="figure-svg">
-            <title id="wt-t">전원 off 명령과 상태 확인 사이의 대기</title>
-            <desc id="wt-d">명령을 보낸 직후 조회하면 아직 off가 아닙니다. 최소 5초를 기다린 뒤 조회해야 off로 읽힙니다.</desc>
-            <g font-family="Inter, sans-serif">
-              <line x1="70" y1="110" x2="650" y2="110" stroke="#8a8a8a" stroke-width="1.4"/>
-              <circle cx="160" cy="110" r="7" fill="none" stroke="#4f5bd5" stroke-width="2"/>
-              <text x="160" y="88" font-size="11.5" fill="#4f5bd5" text-anchor="middle">power off 명령</text>
-              <circle cx="330" cy="110" r="7" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="330" y="88" font-size="11.5" fill="#d62976" text-anchor="middle">즉시 조회</text>
-              <text x="330" y="140" font-size="11" fill="#d62976" text-anchor="middle">아직 off 아님</text>
-              <circle cx="560" cy="110" r="7" fill="#2e9e5b" stroke="#2e9e5b" stroke-width="2"/>
-              <text x="560" y="88" font-size="11.5" fill="#2e9e5b" text-anchor="middle">5초 뒤 조회</text>
-              <text x="560" y="140" font-size="11" fill="#2e9e5b" text-anchor="middle">off 확인</text>
-              <text x="360" y="180" font-size="11" fill="#8a8a8a" text-anchor="middle">대기를 빼면 정상 Fencing을 실패로 읽음</text>
-            </g>
-          </svg>
-          <figcaption>대기를 넣지 않으면 두 방향으로 틀립니다. 멀쩡한 Fencing을 실패로 읽거나 내려가지도 않은 서버의 VM을 옮깁니다.</figcaption>
-        </figure>
-
         <p>대기를 빼면 두 방향으로 틀립니다. 멀쩡히 동작한 Fencing을 실패로 읽어 복구를 막거나, 반대로
-        낙관적으로 넘어가 내려가지도 않은 서버의 VM을 옮깁니다. 5초는 전원이 실제로 내려가는 시간을 보는
-        하한이고 상한은 따로 둡니다.</p>
+        낙관적으로 넘어가 내려가지도 않은 서버의 VM을 옮깁니다. 5초는 하한이고 상한은 따로 둡니다.</p>
 
         <h2 id="storage-정리">Storage 유형마다 정리 조건이 다릅니다<a class="anchor" href="#storage-정리" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -263,28 +220,126 @@ ipmitool chassis power status
         <p class="table-note">네 줄을 한 줄로 묶지 않은 이유는 확인 대상이 서로 다른 층에 있기 때문입니다.
         전송 규약과 Volume 계층과 관리 서비스가 섞여 있어 하나의 조건으로는 덮이지 않습니다.</p>
 
+        <h2 id="구현은-다릅니다">구현에는 그 확인이 없습니다<a class="anchor" href="#구현은-다릅니다" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>여기까지가 설계입니다. 구현은 다릅니다. 지금 제품은 <strong>전원을 내리지도 확인하지도 않고
+        복구합니다.</strong> 원본이 살아 있지 않다는 근거를 전원 상태가 아니라 통신 상태에서 얻습니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 272" role="img" aria-labelledby="gap-t gap-d" class="figure-svg">
+            <title id="gap-t">설계가 요구한 단계와 구현이 하는 단계</title>
+            <desc id="gap-d">장애 판정과 옮기기는 양쪽에 다 있습니다. 전원 차단과 전원 확인 두 칸이 구현 쪽에만 비어 있고 그 자리에 다른 장치가 들어가 있습니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="180" y="34" font-size="11.5" fill="#2e9e5b" text-anchor="middle">설계가 요구한 것</text>
+              <text x="540" y="34" font-size="11.5" fill="#d62976" text-anchor="middle">구현이 하는 것</text>
+              <text x="360" y="74" font-size="10.5" fill="#333" text-anchor="middle">장애 판정</text>
+              <text x="360" y="122" font-size="10.5" fill="#333" text-anchor="middle">전원 차단</text>
+              <text x="360" y="170" font-size="10.5" fill="#333" text-anchor="middle">전원 확인</text>
+              <text x="360" y="218" font-size="10.5" fill="#333" text-anchor="middle">옮기기</text>
+              <rect x="125" y="59" width="110" height="30" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="180" y="79" font-size="13" fill="#2e9e5b" text-anchor="middle">○</text>
+              <rect x="485" y="59" width="110" height="30" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="540" y="79" font-size="13" fill="#2e9e5b" text-anchor="middle">○</text>
+              <rect x="125" y="107" width="110" height="30" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="180" y="127" font-size="13" fill="#2e9e5b" text-anchor="middle">○</text>
+              <rect x="485" y="107" width="110" height="30" rx="6" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="540" y="127" font-size="13" fill="#d62976" text-anchor="middle">✕</text>
+              <rect x="125" y="155" width="110" height="30" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="180" y="175" font-size="13" fill="#2e9e5b" text-anchor="middle">○</text>
+              <rect x="485" y="155" width="110" height="30" rx="6" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="540" y="175" font-size="13" fill="#d62976" text-anchor="middle">✕</text>
+              <rect x="125" y="203" width="110" height="30" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="180" y="223" font-size="13" fill="#2e9e5b" text-anchor="middle">○</text>
+              <rect x="485" y="203" width="110" height="30" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="540" y="223" font-size="13" fill="#2e9e5b" text-anchor="middle">○</text>
+              <text x="540" y="256" font-size="10" fill="#b8860b" text-anchor="middle">빠진 두 칸 자리에 다른 장치</text>
+            </g>
+          </svg>
+          <figcaption>비어 있는 두 칸이 이 글의 주제입니다. 나머지는 같습니다.</figcaption>
+        </figure>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+          <table>
+            <caption class="sr-only">설계 요소가 코드에 어디까지 들어갔나.</caption>
+            <thead><tr><th>설계 요소</th><th>상태</th><th>코드에서 확인되는 것</th></tr></thead>
+            <tbody><tr><td>관측자가 자기 상태를 먼저 본다</td><td>활성</td><td>복구 배치가 자기 노드 상태를 먼저 확인하고 비정상이면 복구를 넘김</td></tr><tr><td>복구 대상 선별 두 겹</td><td>활성</td><td>호스트 제어 속성과 Instance 메타데이터를 함께 사용</td></tr><tr><td>복구 방식 미설정 시 차단</td><td>활성</td><td>방식이 없으면 복구를 건너뜀</td></tr><tr><td>Fencing</td><td><strong>골격만 · 비활성</strong></td><td>전원 대기와 재시도 설정이 주석 골격으로만 존재</td></tr><tr><td>분산 합의 실행 제어</td><td>골격만 · 비활성</td><td>같은 골격에 딸려 있음</td></tr><tr><td>Phase 1과 Phase 2 분리</td><td>코드에 없음</td><td>해당 구조가 확인되지 않음</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">설계 요소를 코드와 맞춰 보면 세 층으로 갈립니다. 미반영이 아니라
+        도입 대기인 쪽이 있어서 그렇게 적었습니다. 전원 대기와 재시도 설정이 주석 골격으로
+        들어가 있습니다.</p>
+
+        <h2 id="프로세스-종료">대신 노드가 자기 VM을 종료합니다<a class="anchor" href="#프로세스-종료" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>그러면 원본이 계속 쓰는 것은 무엇이 막느냐가 남습니다. 답은 노드 자신입니다. 각 노드에서 도는
+        Agent가 스스로 장애를 확정하면 <strong>자기 위에 있는 VM 프로세스를 종료합니다.</strong></p>
+
+        <pre data-lang="text"><code># 노드가 스스로 장애를 확정하는 조건. 어느 하나만 걸려도 장애다
+  관리 쪽에서 상태 확인 요청이 일정 시간 오지 않음
+  지정된 Gateway 로 ping 이 닿지 않음
+  지정된 IP 와 Port 로 TCP 연결이 되지 않음
+  지정된 Network Interface 가 up 이 아니거나 loopback 임
+
+# 확정이 일정 시간 이어지면
+  자기 위의 VM 프로세스를 찾아 종료
+  단, 이주 중으로 표시된 VM 은 제외</code></pre>
+
+        <p>조건은 네 가지이고 어느 하나만 걸려도 장애로 봅니다. 관리 쪽 요청이 끊긴 것, Gateway에 ping이
+        닿지 않는 것, 지정한 IP와 Port로 TCP 연결이 안 되는 것, Network Interface가 내려간 것입니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 215" role="img" aria-labelledby="kill-t kill-d" class="figure-svg">
+            <title id="kill-t">장애 확정 뒤의 프로세스 종료와 이주 이벤트</title>
+            <desc id="kill-d">노드가 장애를 확정하면 잠시 기다린 뒤 자기 위의 VM 프로세스를 종료합니다. 그 사이에 이주 시작 이벤트가 오면 해당 VM은 종료 제외 목록에 들어가고 이주가 끝나면 목록에서 빠집니다.</desc>
+            <g font-family="Inter, sans-serif">
+              <path d="M50 80 H 670" stroke="#666" stroke-width="1.3" fill="none"/>
+              <circle cx="110" cy="80" r="5" fill="#d62976"/>
+              <text x="110" y="62" font-size="10" fill="#d62976" text-anchor="middle">장애 확정</text>
+              <circle cx="330" cy="80" r="5" fill="#666"/>
+              <text x="330" y="62" font-size="10" fill="#666" text-anchor="middle">대기</text>
+              <circle cx="560" cy="80" r="5" fill="#d62976"/>
+              <text x="560" y="62" font-size="10" fill="#d62976" text-anchor="middle">프로세스 종료</text>
+              <rect x="240" y="120" width="300" height="34" rx="7" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="390" y="142" font-size="10.5" fill="#2e9e5b" text-anchor="middle">이주 시작 · 종료 제외 목록에 추가</text>
+              <rect x="240" y="168" width="300" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.6"/>
+              <text x="390" y="190" font-size="10.5" fill="#5b7fa6" text-anchor="middle">이주 완료 · 목록에서 제거</text>
+              <path d="M390 120 V 96" stroke="#2e9e5b" stroke-width="1.2" stroke-dasharray="3 3" fill="none"/>
+            </g>
+          </svg>
+          <figcaption>종료가 이주보다 빠를 수 있어서 제외 목록이 따로 필요합니다.</figcaption>
+        </figure>
+
+        <p>그런데 종료가 이주보다 빠를 수 있습니다. 옮기는 중인 VM을 종료해 버리면 복구가 실패합니다.
+        그래서 이주 시작과 완료를 메시지로 받아 <strong>종료 제외 목록을 따로 둡니다.</strong></p>
+
+        <p>이 장치는 전원 차단과 같은 것이 아닙니다. 노드가 자기 상태를 잘못 읽으면 종료도 일어나지
+        않습니다. 전원 차단은 밖에서 확인하지만 이것은 안에서 판단합니다.</p>
+
         <h2 id="주장하지-않는-것">한계: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul class="callout">
           <li>⚠️ 이 연작의 산출물은 설계서입니다. 저는 절차를 설계하고 전제 조건을 요구했을 뿐이고 BMC 망을
-          실제로 구축하거나 이 절차를 운영에서 실행한 것은 아닙니다.</li>
-          <li>5초는 제안값입니다. 장비별로 전원이 내려가는 시간을 재서 고른 값이 아니라 즉시 조회를 막기 위한
-          하한으로 둔 값입니다.</li>
-          <li>Storage 네 항목은 배타적인 분류가 아닙니다. Cinder는 앞의 셋을 관리하는 서비스라 같은 층이
-          아니고 한 구성에서 둘이 함께 나타날 수 있습니다.</li>
-          <li>사내 자료라 제품명과 고객사와 주소와 계정은 쓰지 않았습니다.</li>
+          구축하거나 이 절차를 운영에서 실행한 것은 아닙니다.</li>
+          <li>「도입 대기」는 주석 골격과 진행 중인 업그레이드에서 미루어 본 것입니다. 채택 여부를 정한
+          기록으로 확인한 것이 아닙니다.</li>
+          <li>5초는 제안값입니다. 장비별로 전원이 내려가는 시간을 재서 고른 값이 아닙니다.</li>
+          <li>Storage 네 항목은 배타적인 분류가 아닙니다. 한 구성에서 둘이 함께 나타날 수 있습니다.</li>
+          <li>사내 자료라 제품명과 고객사와 주소와 계정과 호스트명은 쓰지 않았습니다.</li>
         </ul>
 
         <div class="wrapup">
         <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>이 편의 결론은 한 줄입니다. <strong>명령을 보내는 것과 결과를 확인하는 것은 다른 일입니다.</strong>
-        그 둘을 가르고 사이에 대기를 넣는 것이 Fence 단계의 거의 전부이고 확인할 수단인 BMC 경로를
-        전제 조건으로 못 박은 것이 그 앞에 있습니다.</p>
-        <p><a href="instance-ha-5-quorum-does-not-cut-power.ko.html">⑤편</a>은 이 절차를 누가 실행할지 정하는 이야기입니다. 세 아키텍처를 같은 기준으로 비교한
-        결과로 이어집니다.</p>
+        <p>이 편의 결론은 한 줄입니다. <strong>설계가 요구한 것과 구현이 하는 것을 같은 문장으로 적으면
+        읽는 사람이 속습니다.</strong> 이전 판의 제목이 그랬고 그래서 제목부터 바꿨습니다.</p>
+        <p>남은 차이는 하나입니다. 전원 차단은 밖에서 확인하고 프로세스 종료는 안에서 판단합니다.
+        관측자가 자기를 잘못 읽으면 두 번째 방법은 작동하지 않습니다.</p>
+        <p>다음 편은 이 절차를 누가 실행할지 정하는 이야기입니다.</p>
         <p>읽어 주셔서 감사합니다.</p>
-        </div>
-      </article>
+        </div></article>
     </main>
     <footer class="notranslate">
       <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
@@ -294,7 +349,7 @@ ipmitool chassis power status
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=db4ddbb639"></script>
+  <script src="../assets/content.js?v=a64a7fa938"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=d4af83b541"></script>

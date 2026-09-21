@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Instance HA ④: 電源が落ちたと確認できるまで復旧しません | Kwanghun Lee</title>
+  <title>Instance HA ④: Fencing の代わりにプロセスを終了していました | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Instance HA ④: 電源が落ちたと確認できるまで復旧しません" />
-  <meta property="og:description" content="復旧してよいという判定が立っていても、元のホストの電源が確実に落ちたと確認するまでは移しません。BMC 専用の物理スイッチを前提条件として求めた理由と、Detect から Recover までの四段階、Storage 種別ごとの残存接続の整理をまとめました。" />
+  <meta property="og:title" content="Instance HA ④: Fencing の代わりにプロセスを終了していました" />
+  <meta property="og:description" content="元が生きているのに複製が同じボリュームに付くとファイルシステムが壊れます。だから設計は、電源を落として落ちたと確認できてからでなければ移すなと求めました。ところが現在の実装にはその確認がなく、代わりにノード自身が障害を確定したときに自分の上の VM プロセスを終了する仕掛けが入っています。" />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -26,10 +26,10 @@
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta property="og:locale:alternate" content="en_US" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Instance HA ④: 電源が落ちたと確認できるまで復旧しません" />
-  <meta name="twitter:description" content="電源の遮断を確認するまでは復旧しません。BMC の前提と四段階の手順、Storage 種別ごとの整理条件をまとめた Instance HA 連作の四編目です。" />
+  <meta name="twitter:title" content="Instance HA ④: Fencing の代わりにプロセスを終了していました" />
+  <meta name="twitter:description" content="設計は電源の確認を求め、実装はプロセスを終了します。その差をそのまま書きました。" />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="復旧してよいという判定が立っていても、元のホストの電源が確実に落ちたと確認するまでは移しません。BMC 専用の物理スイッチを前提条件として求めた理由と、Detect から Recover までの四段階、Storage 種別ごとの残存接続の整理をまとめました。" />
+  <meta name="description" content="元が生きているのに複製が同じボリュームに付くとファイルシステムが壊れます。だから設計は、電源を落として落ちたと確認できてからでなければ移すなと求めました。ところが現在の実装にはその確認がなく、代わりにノード自身が障害を確定したときに自分の上の VM プロセスを終了する仕掛けが入っています。" />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">会社の仕事</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS バックエンド</a></div>
       </div>
       <section class="page-hero">
-        <h1>Instance HA ④: 電源が落ちたと確認できるまで復旧しません<br><span class="h1-sub">電源を落とせと命じることと、落ちたと確認することは別の行為です。その間に五秒を置き、Storage の種別ごとに整理条件を分けた理由です。</span></h1>
+        <h1>Instance HA ④: Fencing の代わりにプロセスを終了していました<br><span class="h1-sub">設計は電源が落ちたと確認できるまで移すなと言いました。実装にはその確認がなく、代わりに別の仕掛けが入っています。</span></h1>
         <p class="article-date">2026年9月</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="instance-ha-4-no-fencing-no-recovery"></aside>
@@ -82,206 +82,261 @@
             
             
             
-            <li><a href="#想定読者">想定読者</a></li>
-            <li><a href="#なぜ電源が先か">なぜ復旧より電源が先か</a></li>
-            <li><a href="#bmc前提">VLAN 分離では足りませんでした</a></li>
-            <li><a href="#四段階">四つの段階に分けました</a></li>
-            <li><a href="#電源確認">命令と確認のあいだに五秒を置きました</a></li>
-            <li><a href="#storage整理">Storage 種別ごとに整理条件が違います</a></li>
-            <li><a href="#主張しないこと">限界：この記事が主張しないこと</a></li>
+            
+            <li><a href="#想定読者">この記事の想定読者</a></li>
+            <li><a href="#設計が求めたもの">設計は確認なしに移すなと言いました</a></li>
+            <li><a href="#五秒">命令と確認のあいだに五秒を置きました</a></li>
+            <li><a href="#storage-整理">Storage の種別ごとに整理の条件が違います</a></li>
+            <li><a href="#実装は違う">実装にはその確認がありません</a></li>
+            <li><a href="#プロセス終了">代わりにノードが自分の VM を終了します</a></li>
+            <li><a href="#主張しないこと">限界: この記事が主張しないこと</a></li>
             <li><a href="#おわりに">おわりに</a></li>
           </ul>
         </nav>
       <article>
-        <p><a href="seven-of-eight-should-not-recover.ja.html">③編</a>では八つのシナリオのうち一つだけが
-        復旧へ進みました。この編はその一つが通ったあとの話です。判定が立ったからといって、すぐに移すわけでは
-        ありません。</p>
+        <p><a href="seven-of-eight-should-not-recover.ja.html">③編</a>で八つのシナリオのうち一つだけが
+        復旧へ進みました。判定が立ったからといって、すぐに移すわけではありません。</p>
 
-        <p>理由は①編で見たものと同じです。元がまだ生きてディスクを書いているのに複製が同じボリュームに付けば、
-        ファイルシステムが壊れます。そこで<strong>元のホストの電源が確実に落ちたという確認なしには移さない</strong>を
-        原則にしました。</p>
+        <p>理由は①編で見たものと同じです。元がまだ生きてディスクへ書いているのに複製が同じボリュームへ付くと
+        ファイルシステムが壊れます。だから設計は<strong>元の電源が確実に落ちたと確認できるまで移さない</strong>を
+        原則として立てました。</p>
 
-        <p>この原則を手順に移すと三つが付いてきます。電源を落とす経路が障害時にも生きていること、命令と確認を
-        分けること、そして Storage の種別ごとに残存接続を別々に整理することです。</p>
+        <p>ところが資料を読み直して、この編を書き直します。<strong>現在の実装にはその確認がありません。</strong>
+        原則は設計書のもので、製品がそう動くという意味ではなかったのに、前の版はその差を書いていませんでした。</p>
 
-        <h2 id="想定読者">想定読者<a class="anchor" href="#想定読者" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="想定読者">この記事の想定読者<a class="anchor" href="#想定読者" aria-label="このセクションへのリンク">#</a></h2>
 
         <ul class="callout">
-          <li>自動復旧に Fencing を入れるため前提条件を整理している方</li>
-          <li>IPMI や BMC の経路をどのネットワークに置くか決める立場の方</li>
-          <li>Storage の種別ごとに残存接続の扱いが違う理由が気になる方</li>
-          <li>③編を読んで、判定が立ったあとに何をするのかが気になる方</li>
+          <li>自動復旧に Fencing を入れようとして前提条件を整理したい方</li>
+          <li>設計書と実際の実装が食い違うとき、何を先に書くべきか迷っている方</li>
+          <li>電源を確認できない環境で何がその代わりになるのか見たい方</li>
+          <li>③編を読んで、判定が立ったあとに何をするのか気になる方</li>
         </ul>
 
-        <h2 id="なぜ電源が先か">なぜ復旧より電源が先か<a class="anchor" href="#なぜ電源が先か" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="設計が求めたもの">設計は確認なしに移すなと言いました<a class="anchor" href="#設計が求めたもの" aria-label="このセクションへのリンク">#</a></h2>
 
-        <p>復旧は VM を別のホストで立て直す作業です。ところが元が死んでいなければ、同じボリュームに両側が同時に付きます。<strong>壊れるのは VM 一台ではなくボリューム全体です。</strong></p>
+        <p>復旧は VM を別のホストで立て直すことです。元が死んでいなければ、同じボリュームに二つが同時に
+        付きます。<strong>壊れるのは VM 一つではなくボリューム全体です。</strong></p>
 
-        <p>そこで原則を「Fencing を確認できなければ復旧もしない」としました。確認しないまま進む経路を残せば、
-        その経路はいつか開きます。確認を選択ではなく通過条件として置きました。</p>
+        <figure class="diagram">
+          <svg viewBox="0 0 720 150" role="img" aria-labelledby="step-t step-d" class="figure-svg">
+            <title id="step-t">復旧手順の四段階</title>
+            <desc id="step-d">Detect と Verify と Fence はいつでも止められます。最後の Recover だけが戻せません。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="70" y="60" width="130" height="46" rx="8" fill="none" stroke="#5b7fa6" stroke-width="1.7"/>
+              <text x="135" y="88" font-size="11.5" fill="#5b7fa6" text-anchor="middle">Detect</text>
+              <path d="M200 83 H 240" stroke="#666" stroke-width="1.3" fill="none"/>
+              <rect x="240" y="60" width="130" height="46" rx="8" fill="none" stroke="#5b7fa6" stroke-width="1.7"/>
+              <text x="305" y="88" font-size="11.5" fill="#5b7fa6" text-anchor="middle">Verify</text>
+              <path d="M370 83 H 410" stroke="#666" stroke-width="1.3" fill="none"/>
+              <rect x="410" y="60" width="130" height="46" rx="8" fill="none" stroke="#b8860b" stroke-width="1.7"/>
+              <text x="475" y="88" font-size="11.5" fill="#b8860b" text-anchor="middle">Fence</text>
+              <path d="M540 83 H 580" stroke="#666" stroke-width="1.3" fill="none"/>
+              <rect x="580" y="60" width="130" height="46" rx="8" fill="none" stroke="#d62976" stroke-width="1.7"/>
+              <text x="645" y="88" font-size="11.5" fill="#d62976" text-anchor="middle">Recover</text>
+              <text x="135" y="132" font-size="10" fill="#666" text-anchor="middle">止められる</text>
+              <text x="305" y="132" font-size="10" fill="#666" text-anchor="middle">止められる</text>
+              <text x="475" y="132" font-size="10" fill="#666" text-anchor="middle">止められる</text>
+              <text x="645" y="132" font-size="10" fill="#d62976" text-anchor="middle">戻せない</text>
+            </g>
+          </svg>
+          <figcaption>戻せない動作を一番うしろに寄せました。前の三つは既定値が停止です。</figcaption>
+        </figure>
 
-        <h2 id="bmc前提">VLAN 分離では足りませんでした<a class="anchor" href="#bmc前提" aria-label="この節へのリンク">#</a></h2>
+        <div class="table-scroll">
+          <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
+          <table>
+            <caption class="sr-only">復旧手順の四段階。</caption>
+            <thead><tr><th>段階</th><th>すること</th></tr></thead>
+            <tbody><tr><td>Detect</td><td>HeartBeat の TTL 満了と Phase 1 の判定完了</td></tr><tr><td>Verify</td><td>Phase 2 の実行条件をすべて満たすか確認</td></tr><tr><td>Fence</td><td>電源を落として落ちたか確認</td></tr><tr><td>Recover</td><td>Evacuate を実行</td></tr></tbody>
+          </table>
+          </div>
+        </div>
 
-        <p>電源を落とす経路が IPMI なのに、その経路が障害と一緒に切れれば原則そのものが成り立ちません。
-        三つの構成を同じ基準で並べました。</p>
+        <p>四段階に分けた理由は、戻せない動作を一番うしろに寄せるためです。前の三段階はいつでも止められ、
+        最後の一つだけが戻せません。</p>
+
+        <p>そして電源を落とす経路が障害と一緒に切れると、原則そのものが成り立ちません。だから専用の物理
+        スイッチを前提条件として求めました。</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 250" role="img" aria-labelledby="bmc-t bmc-d" class="figure-svg">
-            <title id="bmc-t">BMC の三つの結線と障害時の結果</title>
-            <desc id="bmc-d">上から、BMC と MGMT が同じ物理スイッチの構成、VLAN だけ分けた構成、専用の物理スイッチを置いた構成です。前の二つはスイッチが死ぬと IPMI の経路も一緒に切れ、最後だけが残ります。</desc>
+            <title id="bmc-t">BMC の結線三つと障害時の結果</title>
+            <desc id="bmc-d">BMC が管理網と同じスイッチにある構成や VLAN だけで分けた構成は、スイッチが死ぬと電源を落とす経路まで一緒に消えます。専用の物理スイッチだけが残ります。</desc>
             <g font-family="Inter, sans-serif">
-              <rect x="40" y="35" width="280" height="50" rx="8" fill="none" stroke="#d62976" stroke-width="1.7"/>
-              <text x="180" y="65" font-size="11.5" fill="#d62976" text-anchor="middle">BMC と MGMT が同じスイッチ</text>
-              <text x="530" y="65" font-size="11.5" fill="#d62976" text-anchor="middle">IPMI も同時に遮断</text>
-              <rect x="40" y="105" width="280" height="50" rx="8" fill="none" stroke="#d62976" stroke-width="1.7"/>
-              <text x="180" y="135" font-size="11.5" fill="#d62976" text-anchor="middle">BMC を VLAN で分離</text>
-              <text x="530" y="135" font-size="11.5" fill="#d62976" text-anchor="middle">スイッチ消失で VLAN も消失</text>
-              <rect x="40" y="175" width="280" height="50" rx="8" fill="none" stroke="#2e9e5b" stroke-width="2"/>
-              <text x="180" y="205" font-size="11.5" fill="#2e9e5b" text-anchor="middle">BMC 専用の物理スイッチ</text>
-              <text x="530" y="205" font-size="11.5" fill="#2e9e5b" text-anchor="middle">MGMT は遮断、IPMI は維持</text>
+              <rect x="40" y="45" width="290" height="46" rx="8" fill="none" stroke="#d62976" stroke-width="1.7"/>
+              <text x="185" y="73" font-size="10.5" fill="#d62976" text-anchor="middle">BMC と管理網が同じスイッチ</text>
+              <text x="530" y="73" font-size="10.5" fill="#d62976" text-anchor="middle">IPMI も同時に遮断</text>
+              <rect x="40" y="115" width="290" height="46" rx="8" fill="none" stroke="#d62976" stroke-width="1.7"/>
+              <text x="185" y="143" font-size="10.5" fill="#d62976" text-anchor="middle">BMC を VLAN でのみ分離</text>
+              <text x="530" y="143" font-size="10.5" fill="#d62976" text-anchor="middle">スイッチ消失で VLAN も消失</text>
+              <rect x="40" y="185" width="290" height="46" rx="8" fill="none" stroke="#2e9e5b" stroke-width="1.7"/>
+              <text x="185" y="213" font-size="10.5" fill="#2e9e5b" text-anchor="middle">BMC 専用の物理スイッチ</text>
+              <text x="530" y="213" font-size="10.5" fill="#2e9e5b" text-anchor="middle">管理網は遮断 · IPMI は維持</text>
             </g>
           </svg>
-          <figcaption>前の二つは、死ぬスイッチが電源を落とす手段まで一緒に持っていきます。事故の当時このファームには BMC の経路がそもそもありませんでした。</figcaption>
+          <figcaption>VLAN 分離は論理的な分離なので、スイッチごと死ぬ場合を防げません。</figcaption>
         </figure>
 
-        <div class="table-scroll">
-          <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
-          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表：横にスクロールすると残りが見えます">
-          <table>
-            <caption class="sr-only">BMC の三つの結線と障害時の結果。</caption>
-            <thead><tr><th>構成</th><th>L2/L3 障害時</th><th>結果</th></tr></thead>
-            <tbody><tr><td>BMC と MGMT が同じ物理スイッチ</td><td>MGMT と IPMI が同時に遮断</td><td>Fencing 不可</td></tr><tr><td>BMC を VLAN でのみ分離</td><td>スイッチ自体が死ねば VLAN も消失</td><td>Fencing が不安定</td></tr><tr><td>BMC 専用の物理スイッチ</td><td>MGMT は遮断されるが IPMI は維持</td><td>Fencing 可能</td></tr></tbody>
-          </table>
-          </div>
-        </div>
+        <h2 id="五秒">命令と確認のあいだに五秒を置きました<a class="anchor" href="#五秒" aria-label="このセクションへのリンク">#</a></h2>
 
-        <p class="table-note">VLAN 分離は論理的な分離なので、スイッチが丸ごと死ぬ場合を防げません。そこで
-        <strong>専用の物理スイッチを前提条件として求めました。</strong>事故の当時このファームには BMC の経路が
-        そもそもありませんでした。</p>
+        <p>Fence 段階で一番間違えやすいのがここです。<strong>電源を落とした直後に状態を照会すると、まだ
+        off ではありません。</strong>命令が届くことと実際に電源が落ちることのあいだに時間があるからです。</p>
 
-        <h2 id="四段階">四つの段階に分けました<a class="anchor" href="#四段階" aria-label="この節へのリンク">#</a></h2>
-
-        <figure class="diagram">
-          <svg viewBox="0 0 720 210" role="img" aria-labelledby="chn-t chn-d" class="figure-svg">
-            <title id="chn-t">Detect から Recover までの四段階</title>
-            <desc id="chn-d">Detect、Verify、Fence、Recover が左から右へ続きます。Fence の箱だけが強調され、取り消せない動作は最後にあります。</desc>
-            <g font-family="Inter, sans-serif">
-              <rect x="30" y="70" width="140" height="56" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.7"/>
-              <text x="100" y="95" font-size="12" fill="#4f5bd5" text-anchor="middle">Detect</text>
-              <text x="100" y="114" font-size="11" fill="#4a4a4a" text-anchor="middle">Phase 1 完了</text>
-              <rect x="205" y="70" width="140" height="56" rx="9" fill="none" stroke="#4f5bd5" stroke-width="1.7"/>
-              <text x="275" y="95" font-size="12" fill="#4f5bd5" text-anchor="middle">Verify</text>
-              <text x="275" y="114" font-size="11" fill="#4a4a4a" text-anchor="middle">Phase 2 充足</text>
-              <rect x="380" y="70" width="140" height="56" rx="9" fill="none" stroke="#d62976" stroke-width="2.2"/>
-              <text x="450" y="95" font-size="12" fill="#d62976" text-anchor="middle">Fence</text>
-              <text x="450" y="114" font-size="11" fill="#4a4a4a" text-anchor="middle">電源 off の確認</text>
-              <rect x="555" y="70" width="135" height="56" rx="9" fill="none" stroke="#2e9e5b" stroke-width="1.7"/>
-              <text x="622" y="95" font-size="12" fill="#2e9e5b" text-anchor="middle">Recover</text>
-              <text x="622" y="114" font-size="11" fill="#4a4a4a" text-anchor="middle">Nova Evacuate</text>
-              <line x1="170" y1="98" x2="205" y2="98" stroke="#8a8a8a" stroke-width="1.5"/>
-              <line x1="345" y1="98" x2="380" y2="98" stroke="#8a8a8a" stroke-width="1.5"/>
-              <line x1="520" y1="98" x2="555" y2="98" stroke="#8a8a8a" stroke-width="1.5"/>
-              <text x="360" y="175" font-size="11" fill="#8a8a8a" text-anchor="middle">取り消せない動作は最後にだけ置く</text>
-            </g>
-          </svg>
-          <figcaption>Fence だけが取り消せない動作につながります。だから手前の二段階は進行ではなく停止を既定にしています。</figcaption>
-        </figure>
-
-        <div class="table-scroll">
-          <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
-          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表：横にスクロールすると残りが見えます">
-          <table>
-            <caption class="sr-only">復旧手順の四段階。</caption>
-            <thead><tr><th>段階</th><th>やること</th></tr></thead>
-            <tbody><tr><td>Detect</td><td>HeartBeat TTL の満了と Phase 1 の判定完了</td></tr><tr><td>Verify</td><td>Phase 2 の実行条件をすべて満たすかの確認</td></tr><tr><td>Fence</td><td>電源を落とし、落ちたことを確認</td></tr><tr><td>Recover</td><td>Nova Evacuate の実行</td></tr></tbody>
-          </table>
-          </div>
-        </div>
-
-        <p>四段階に分けた理由は、取り消せない動作を最後に寄せるためです。手前の三段階はいつでも止められ、
-        最後の一つだけが取り消せません。</p>
-
-        <h2 id="電源確認">命令と確認のあいだに五秒を置きました<a class="anchor" href="#電源確認" aria-label="この節へのリンク">#</a></h2>
-
-        <p>Fence の段階で最も外しやすいのがここです。<strong>電源を落とした直後に状態を照会すると、まだ off では
-        ありません。</strong>命令が届くことと実際に電源が落ちることのあいだに時間があるからです。</p>
-
-        <pre data-lang="shell"><code># BMC 専用スイッチの経路で電源を落とす
+        <pre data-lang="shell"><code># BMC 専用の物理スイッチ経路で電源を落とす
 ipmitool chassis power off
 
-# 最低五秒待つ - 直後の照会はまだ off ではない
+# 最低五秒待つ。すぐ照会すると、まだ off ではない
 sleep 5
 
-# off と読めることを必ず確認する
+# 必ず off と読めるか確認する
 ipmitool chassis power status
 
-# Storage 種別ごとの整理を確認してから
-# Nova Evacuate へ進む</code></pre>
+# Storage 種別ごとの残存接続の整理を確認してから
+# Evacuate へ進む</code></pre>
 
-        <figure class="diagram">
-          <svg viewBox="0 0 720 210" role="img" aria-labelledby="wt-t wt-d" class="figure-svg">
-            <title id="wt-t">電源 off の命令と状態照会のあいだの待機</title>
-            <desc id="wt-d">命令の直後に照会するとまだ off ではありません。最低五秒待ってから照会して初めて off と読めます。</desc>
-            <g font-family="Inter, sans-serif">
-              <line x1="70" y1="110" x2="650" y2="110" stroke="#8a8a8a" stroke-width="1.4"/>
-              <circle cx="160" cy="110" r="7" fill="none" stroke="#4f5bd5" stroke-width="2"/>
-              <text x="160" y="88" font-size="11.5" fill="#4f5bd5" text-anchor="middle">power off 命令</text>
-              <circle cx="330" cy="110" r="7" fill="none" stroke="#d62976" stroke-width="2"/>
-              <text x="330" y="88" font-size="11.5" fill="#d62976" text-anchor="middle">直後に照会</text>
-              <text x="330" y="140" font-size="11" fill="#d62976" text-anchor="middle">まだ off ではない</text>
-              <circle cx="560" cy="110" r="7" fill="#2e9e5b" stroke="#2e9e5b" stroke-width="2"/>
-              <text x="560" y="88" font-size="11.5" fill="#2e9e5b" text-anchor="middle">五秒後に照会</text>
-              <text x="560" y="140" font-size="11" fill="#2e9e5b" text-anchor="middle">off を確認</text>
-              <text x="360" y="180" font-size="11" fill="#8a8a8a" text-anchor="middle">待機を外すと正常な Fencing を失敗と読む</text>
-            </g>
-          </svg>
-          <figcaption>待機を入れないと二方向に外します。うまくいった Fencing を失敗と読むか、落ちていないホストの VM を移してしまいます。</figcaption>
-        </figure>
+        <p>待機を外すと二方向に間違えます。きちんと動いた Fencing を失敗と読んで復旧を止めるか、逆に楽観的に
+        進んで落ちてもいないサーバの VM を移します。五秒は下限で、上限は別に置きます。</p>
 
-        <p>待機を外すと二方向に外します。正常に働いた Fencing を失敗と読んで復旧を止めるか、逆に楽観的に進んで
-        落ちてもいないホストの VM を移します。五秒は電源が実際に落ちる時間を見る下限で、上限は別に置きます。</p>
+        <h2 id="storage-整理">Storage の種別ごとに整理の条件が違います<a class="anchor" href="#storage-整理" aria-label="このセクションへのリンク">#</a></h2>
 
-        <h2 id="storage整理">Storage 種別ごとに整理条件が違います<a class="anchor" href="#storage整理" aria-label="この節へのリンク">#</a></h2>
-
-        <p>電源が落ちたからといってすぐ移せるわけではありません。元が掴んでいた接続が整理される必要があり、
+        <p>電源が落ちたからといって、すぐ移せるわけではありません。元がつかんでいた接続が整理される必要があり、
         その方法が Storage の種別ごとに違います。</p>
 
         <div class="table-scroll">
           <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
-          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロール可能な表：横にスクロールすると残りが見えます">
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
           <table>
-            <caption class="sr-only">移す前の Storage 種別ごとの確認。</caption>
+            <caption class="sr-only">Storage 種別ごとの追加確認。</caption>
             <thead><tr><th>Storage</th><th>確認すること</th></tr></thead>
-            <tbody><tr><td>iSCSI</td><td>session の終了と SCSI PR の解放</td></tr><tr><td>LVM</td><td>VG Lock の解放</td></tr><tr><td>NFS</td><td>mount の解除</td></tr><tr><td>Cinder</td><td>volume attachment の整理完了</td></tr></tbody>
+            <tbody><tr><td>iSCSI</td><td>セッション終了と SCSI PR の解放</td></tr><tr><td>LVM</td><td>VG Lock の解放</td></tr><tr><td>NFS</td><td>マウントの解除</td></tr><tr><td>Cinder</td><td>Volume attachment の整理完了</td></tr></tbody>
           </table>
           </div>
         </div>
 
-        <p class="table-note">四行を一行にまとめない理由は、確認対象が別々の層にあるからです。転送規約と
-        Volume の層と管理サービスが混ざっており、一つの条件では覆えません。</p>
+        <p class="table-note">四行を一行にまとめなかったのは、確認の対象が違う層にあるからです。転送の規約と
+        Volume の層と管理サービスが混ざっていて、一つの条件では覆えません。</p>
 
-        <h2 id="主張しないこと">限界：この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="実装は違う">実装にはその確認がありません<a class="anchor" href="#実装は違う" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>ここまでが設計です。実装は違います。いまの製品は<strong>電源を落としも確認もせずに復旧します。</strong>
+        元が生きていないという根拠を、電源の状態ではなく通信の状態から得ています。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 272" role="img" aria-labelledby="gap-t gap-d" class="figure-svg">
+            <title id="gap-t">設計が求めた段階と実装がする段階</title>
+            <desc id="gap-d">障害の判定と移すことは両方にあります。電源遮断と電源確認の二つだけが実装の側で空いていて、その場所に別の仕掛けが入っています。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="180" y="34" font-size="11.5" fill="#2e9e5b" text-anchor="middle">設計が求めたもの</text>
+              <text x="540" y="34" font-size="11.5" fill="#d62976" text-anchor="middle">実装がすること</text>
+              <text x="360" y="74" font-size="10.5" fill="#333" text-anchor="middle">障害の判定</text>
+              <text x="360" y="122" font-size="10.5" fill="#333" text-anchor="middle">電源遮断</text>
+              <text x="360" y="170" font-size="10.5" fill="#333" text-anchor="middle">電源確認</text>
+              <text x="360" y="218" font-size="10.5" fill="#333" text-anchor="middle">移す</text>
+              <rect x="125" y="59" width="110" height="30" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="180" y="79" font-size="13" fill="#2e9e5b" text-anchor="middle">○</text>
+              <rect x="485" y="59" width="110" height="30" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="540" y="79" font-size="13" fill="#2e9e5b" text-anchor="middle">○</text>
+              <rect x="125" y="107" width="110" height="30" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="180" y="127" font-size="13" fill="#2e9e5b" text-anchor="middle">○</text>
+              <rect x="485" y="107" width="110" height="30" rx="6" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="540" y="127" font-size="13" fill="#d62976" text-anchor="middle">✕</text>
+              <rect x="125" y="155" width="110" height="30" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="180" y="175" font-size="13" fill="#2e9e5b" text-anchor="middle">○</text>
+              <rect x="485" y="155" width="110" height="30" rx="6" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="540" y="175" font-size="13" fill="#d62976" text-anchor="middle">✕</text>
+              <rect x="125" y="203" width="110" height="30" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="180" y="223" font-size="13" fill="#2e9e5b" text-anchor="middle">○</text>
+              <rect x="485" y="203" width="110" height="30" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="540" y="223" font-size="13" fill="#2e9e5b" text-anchor="middle">○</text>
+              <text x="540" y="256" font-size="10" fill="#b8860b" text-anchor="middle">空いた二つの枠に別の仕掛け</text>
+            </g>
+          </svg>
+          <figcaption>空いている二つの枠がこの記事の主題です。ほかは同じです。</figcaption>
+        </figure>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
+          <table>
+            <caption class="sr-only">設計要素がコードにどこまで入ったか。</caption>
+            <thead><tr><th>設計要素</th><th>状態</th><th>コードで確認できること</th></tr></thead>
+            <tbody><tr><td>観測者が自分の状態を先に見る</td><td>有効</td><td>復旧バッチが自分のノードを先に確認し、異常なら復旧を譲る</td></tr><tr><td>復旧対象の二重の選別</td><td>有効</td><td>ホストの制御属性と Instance のメタデータを併用</td></tr><tr><td>復旧方式が未設定なら遮断</td><td>有効</td><td>方式がなければ復旧を飛ばす</td></tr><tr><td>Fencing</td><td><strong>骨組みのみ · 無効</strong></td><td>電源待ちと再試行の設定がコメントの骨組みとして存在</td></tr><tr><td>合意による実行制御</td><td>骨組みのみ · 無効</td><td>同じ骨組みに付随</td></tr><tr><td>Phase 1 と Phase 2 の分離</td><td>コードにない</td><td>該当する構造が見当たらない</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">設計要素をコードと突き合わせると三つの層に分かれます。未反映ではなく導入待ちの
+        ものがあるので、そう書きました。電源待ちと再試行の設定がコメントの骨組みとして入っています。</p>
+
+        <h2 id="プロセス終了">代わりにノードが自分の VM を終了します<a class="anchor" href="#プロセス終了" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>では元が書き続けるのを何が止めるのかが残ります。答えはノード自身です。各ノードで動く Agent が
+        自分で障害を確定すると、<strong>自分の上にある VM プロセスを終了します。</strong></p>
+
+        <pre data-lang="text"><code># ノードが自分で障害を確定する条件。どれか一つでも当たれば障害
+  管理側から状態確認の要求が一定時間来ない
+  指定した Gateway へ ping が届かない
+  指定した IP と Port へ TCP 接続ができない
+  指定した Network Interface が up でない、または loopback
+
+# 確定が一定時間続けば
+  自分の上の VM プロセスを探して終了
+  ただし移動中と印が付いた VM は除外</code></pre>
+
+        <p>条件は四つで、どれか一つでも当たれば障害と見ます。管理側の要求が途切れたこと、Gateway へ ping が
+        届かないこと、指定した IP と Port へ TCP 接続ができないこと、Network Interface が落ちたことです。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 215" role="img" aria-labelledby="kill-t kill-d" class="figure-svg">
+            <title id="kill-t">障害確定のあとのプロセス終了と移動イベント</title>
+            <desc id="kill-d">ノードが自分の障害を確定すると少し待ってから自分の上の VM プロセスを終了します。そのあいだに移動開始のイベントが届くと、その VM は除外リストに入り、移動が終わるとリストから外れます。</desc>
+            <g font-family="Inter, sans-serif">
+              <path d="M50 80 H 670" stroke="#666" stroke-width="1.3" fill="none"/>
+              <circle cx="110" cy="80" r="5" fill="#d62976"/>
+              <text x="110" y="62" font-size="10" fill="#d62976" text-anchor="middle">障害の確定</text>
+              <circle cx="330" cy="80" r="5" fill="#666"/>
+              <text x="330" y="62" font-size="10" fill="#666" text-anchor="middle">待機</text>
+              <circle cx="560" cy="80" r="5" fill="#d62976"/>
+              <text x="560" y="62" font-size="10" fill="#d62976" text-anchor="middle">プロセス終了</text>
+              <rect x="240" y="120" width="300" height="34" rx="7" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="390" y="142" font-size="10.5" fill="#2e9e5b" text-anchor="middle">移動開始 · 除外リストに追加</text>
+              <rect x="240" y="168" width="300" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.6"/>
+              <text x="390" y="190" font-size="10.5" fill="#5b7fa6" text-anchor="middle">移動完了 · リストから削除</text>
+              <path d="M390 120 V 96" stroke="#2e9e5b" stroke-width="1.2" stroke-dasharray="3 3" fill="none"/>
+            </g>
+          </svg>
+          <figcaption>終了が移動より早いことがあるので、除外リストが別に要ります。</figcaption>
+        </figure>
+
+        <p>ところが終了が移動より早いことがあります。移している最中の VM を終了すると復旧が失敗します。
+        だから移動の開始と完了をメッセージで受け取り、<strong>終了の除外リストを別に持ちます。</strong></p>
+
+        <p>この仕掛けは電源遮断と同じものではありません。ノードが自分の状態を読み違えれば終了も起きません。
+        電源遮断は外から確認しますが、これは中で判断します。</p>
+
+        <h2 id="主張しないこと">限界: この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="このセクションへのリンク">#</a></h2>
 
         <ul class="callout">
-          <li>⚠️ この連作の成果物は設計書です。私は手順を設計し前提条件を求めただけで、BMC 網を実際に構築したり
-          この手順を運用で実行したりはしていません。</li>
-          <li>五秒は提案値です。機種ごとに電源が落ちる時間を測って選んだ値ではなく、直後の照会を禁じるための
-          下限として置いた値です。</li>
-          <li>Storage の四項目は排他的な分類ではありません。Cinder は他の三つを管理する側で同じ層ではなく、
-          一つの構成で二つが同時に現れることもあります。</li>
-          <li>社内資料のため製品名・顧客名・アドレス・アカウントは書いていません。</li>
+          <li>⚠️ この連作の成果物は設計書です。私は手順を設計して前提条件を求めただけで、BMC 網を構築したり
+          この手順を運用で実行したりしたわけではありません。</li>
+          <li>「導入待ち」はコメントの骨組みと進行中のアップグレードから推し量ったものです。採否を決めた
+          記録で確認したものではありません。</li>
+          <li>五秒は提案値です。機器ごとに電源が落ちる時間を測って選んだ値ではありません。</li>
+          <li>Storage の四項目は排他的な分類ではありません。一つの構成で二つが同時に現れることがあります。</li>
+          <li>社内資料なので、製品名と顧客名とアドレスとアカウントとホスト名は書いていません。</li>
         </ul>
 
         <div class="wrapup">
-        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="この節へのリンク">#</a></h2>
-        <p>この編の結論は一行です。<strong>命令を送ることと結果を確認することは別の行為です。</strong>
-        その二つを分けてあいだに待機を置くことが Fence 段階のほぼすべてで、確認の手段である BMC の経路を
-        前提条件として固めることがその手前にあります。</p>
-        <p><a href="instance-ha-5-quorum-does-not-cut-power.ja.html">⑤編</a>はこの手順を誰が実行するかを決める話です。三つのアーキテクチャを同じ基準で比べた結果へ
-        続きます。</p>
+        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="このセクションへのリンク">#</a></h2>
+        <p>この編の結論は一行です。<strong>設計が求めたことと実装がすることを同じ文で書くと、読む人が
+        だまされます。</strong>前の版の題がそうでした。だから題から変えました。</p>
+        <p>残る差は一つです。電源遮断は外から確認し、プロセス終了は中で判断します。観測者が自分を読み違えれば、
+        二つ目の方法は働きません。</p>
+        <p>次の編は、この手順を誰が実行するかを決める話です。</p>
         <p>お読みいただきありがとうございました。</p>
-        </div>
-      </article>
+        </div></article>
     </main>
     <footer class="notranslate">
       <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
@@ -291,7 +346,7 @@ ipmitool chassis power status
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=db4ddbb639"></script>
+  <script src="../assets/content.js?v=a64a7fa938"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=d4af83b541"></script>
