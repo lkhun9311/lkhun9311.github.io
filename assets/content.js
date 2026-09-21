@@ -192,6 +192,18 @@
       },
       items: [
         {
+          title: "Instance HA ⑦: A GPU Instance Only Goes to a Host That Has the Device",
+          title_ko: "Instance HA ⑦: GPU Instance는 장치를 가진 호스트로만 갑니다",
+          title_ja: "Instance HA ⑦: GPU Instance は装置を持つホストにだけ行きます",
+          url: "writing/recovery-host-must-have-the-device.html",
+          source: "company", sourceLabel: "Company work",
+          date: "2026-09-21", dateLabel: "Sep 21, 2026",
+          desc: "Part 7 of the Instance HA design series. Recovery evacuation names its target host outright, so no scheduler picks a suitable one. Required resources and traits are read from the flavor and matched against what each host actually holds across its provider tree. Two quiet defects in that logic are written up with what each one did.",
+          desc_ko: "Instance HA 설계 7편. 복구의 evacuate는 타깃 호스트를 강제로 지정해 스케줄러가 끼어들지 않습니다. flavor에서 요구 자원과 필수 특성을 읽고 호스트가 공급자 트리에 실제로 가진 것과 맞춰 봅니다. 그 로직에서 조용히 틀린 두 곳도 증상과 함께 적었습니다.",
+          desc_ja: "Instance HA 設計の第7編。復旧の evacuate は対象ホストを強制で指定するため、スケジューラが入りません。flavor から要求資源と必須の特性を読み、ホストが提供者ツリーに実際に持つものと突き合わせます。その処理で静かに間違えた二箇所も症状とともに書きました。",
+          tags: ["IaaS Backend", "Reliability", "GPU", "Method"]
+        },
+        {
           title: "All Twenty-Three Recorded Runs Used the Same Condition",
           title_ko: "GPU 큐 정책 실측 23건이 전부 같은 조건이었습니다",
           title_ja: "記録された実測23件がすべて同じ条件でした",

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instance HA ⑦: GPU Instance は装置を持つホストにだけ行きます | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/recovery-host-must-have-the-device.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/recovery-host-must-have-the-device.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/recovery-host-must-have-the-device.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/recovery-host-must-have-the-device.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="Instance HA ⑦: GPU Instance は装置を持つホストにだけ行きます" />
+  <meta property="og:description" content="復旧で使う evacuate は対象ホストを強制で指定するため、スケジューラが適したホストを選んでくれません。GPU や PCI の装置を要求する Instance を装置のないホストへ送ると、あとになって失敗します。だから要求する資源と必須の特性を先に読み、ホストが実際に持つものと突き合わせます。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/recovery-host-must-have-the-device.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Instance HA ⑦: GPU Instance は装置を持つホストにだけ行きます" />
+  <meta name="twitter:description" content="evacuate は対象を強制で指定します。GPU Instance を装置のないホストへ送らないためには、先に絞る必要があります。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="復旧で使う evacuate は対象ホストを強制で指定するため、スケジューラが適したホストを選んでくれません。GPU や PCI の装置を要求する Instance を装置のないホストへ送ると、あとになって失敗します。だから要求する資源と必須の特性を先に読み、ホストが実際に持つものと突き合わせます。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"recovery-host-must-have-the-device.html","ko":"recovery-host-must-have-the-device.ko.html","ja":"recovery-host-must-have-the-device.ja.html"}'>
+          <option value="ja" selected>日本語</option>
+          <option value="ko">한국어</option>
+          <option value="en">English</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>一覧</a>
+        <div class="article-meta"><span class="source-tag company notranslate">会社の仕事</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS バックエンド</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>Instance HA ⑦: GPU Instance は装置を持つホストにだけ行きます<br><span class="h1-sub">復旧の evacuate は対象ホストを強制で指定するので、スケジューラが入りません。だから送る前に絞る必要がありました。</span></h1>
+        <p class="article-date">2026年9月</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="recovery-host-must-have-the-device"></aside>
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            
+            
+            
+            
+            
+            <li><a href="#想定読者">この記事の想定読者</a></li>
+            <li><a href="#スケジューラがいない">復旧にはスケジューラが入りません</a></li>
+            <li><a href="#何を要求するか">Instance が何を要求するかを読みます</a></li>
+            <li><a href="#ホストが持つもの">ホストが実際に持つものを数えます</a></li>
+            <li><a href="#二つの条件">二つの条件を両方満たすときだけ配置します</a></li>
+            <li><a href="#二度間違えた">同じ場所で二度間違えました</a></li>
+            <li><a href="#主張しないこと">限界: この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
+          </ul>
+        </nav>
+      <article>
+        <p><a href="instance-ha-4-no-fencing-no-recovery.ja.html">④編</a>までは移してよいかを扱いました。
+        この編は移すと決めたあとの問いです。<strong>どこへ送るかです。</strong></p>
+
+        <p>普段 Instance を作るときは、スケジューラが条件に合うホストを選んでくれます。ところが復旧で使う
+        evacuate は対象ホストを強制で指定します。選んでくれる側がいません。</p>
+
+        <p>最初はこれが問題になると思っていませんでした。残りのメモリと CPU とディスクだけ見て送ればよいと
+        考えていたのですが、GPU を要求する Instance を装置のないホストへ送ると、かなりあとで失敗します。</p>
+
+        <h2 id="想定読者">この記事の想定読者<a class="anchor" href="#想定読者" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>GPU や PCI の装置を使う Instance を運用で扱っている方</li>
+          <li>自動復旧のうち、どこへ送るかを決める部分に手を入れる方</li>
+          <li>先に絞ることと、あとで失敗することの違いが気になる方</li>
+          <li>④編を読んで、移すと決めたあとに何をするのか気になる方</li>
+        </ul>
+
+        <h2 id="スケジューラがいない">復旧にはスケジューラが入りません<a class="anchor" href="#スケジューラがいない" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>違いは一行です。普段の作成は条件を渡せばスケジューラが候補を探してくれます。復旧の evacuate は
+        <strong>すでに決まったホストへ送れと指示します。</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 192" role="img" aria-labelledby="path-t path-d" class="figure-svg">
+            <title id="path-t">通常の作成経路と復旧の evacuate 経路</title>
+            <desc id="path-d">通常の作成はスケジューラが候補を選ぶので合うホストに配置されます。復旧の evacuate は対象を強制で指定するため、装置のないホストを選ぶと遅れて失敗します。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="180" y="32" font-size="11" fill="#5b7fa6" text-anchor="middle">通常の作成</text>
+              <rect x="60" y="48" width="240" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.6"/>
+              <text x="180" y="70" font-size="10.5" fill="#5b7fa6" text-anchor="middle">スケジューラが候補を選ぶ</text>
+              <path d="M180 82 V 110" stroke="#5b7fa6" stroke-width="1.3" fill="none"/>
+              <rect x="60" y="110" width="240" height="34" rx="7" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="180" y="132" font-size="10.5" fill="#2e9e5b" text-anchor="middle">合うホストに配置</text>
+              <text x="540" y="32" font-size="11" fill="#d62976" text-anchor="middle">復旧の evacuate</text>
+              <rect x="420" y="48" width="240" height="34" rx="7" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="540" y="70" font-size="10.5" fill="#d62976" text-anchor="middle">対象を強制で指定</text>
+              <path d="M540 82 V 110" stroke="#d62976" stroke-width="1.3" fill="none"/>
+              <rect x="420" y="110" width="240" height="34" rx="7" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="540" y="132" font-size="10.5" fill="#d62976" text-anchor="middle">装置がなければ遅れて失敗</text>
+              <text x="360" y="176" font-size="10" fill="#b8860b" text-anchor="middle">送る前の絞り込みが空きを埋める</text>
+            </g>
+          </svg>
+          <figcaption>右の経路には選んでくれる側がいません。その場所を自分で埋めました。</figcaption>
+        </figure>
+
+        <p>だから選び間違えるとあとで失敗します。その失敗は遅く、原因もぼやけます。送る前に絞れば
+        「合うホストなし」として早くはっきり終わり、ほかの Instance の復旧はそのまま進みます。</p>
+
+        <h2 id="何を要求するか">Instance が何を要求するかを読みます<a class="anchor" href="#何を要求するか" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>まず Instance が何を要求するかを読みます。要求は flavor の追加項目にあり、種類が二つです。
+        一つは数量で、もう一つは特性です。</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
+          <table>
+            <caption class="sr-only">flavor の追加項目から何を取り出すか。</caption>
+            <thead><tr><th>追加項目の例</th><th>取り出す結果</th></tr></thead>
+            <tbody><tr><td><code>resources:VGPU=1</code></td><td>特殊資源の要求が一つ</td></tr><tr><td><code>resources:VCPU=4</code></td><td>除外。標準資源なので別に計算</td></tr><tr><td><code>trait:…=required</code></td><td>必須の特性。消費されないので差し引かない</td></tr><tr><td><code>pci_passthrough:alias=…</code></td><td>要求量として数えず記録だけ残す</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">標準資源の三つを除く理由は、その三つがどのホストにもあり、すでに残り容量として
+        別に計算しているからです。除いて残るのが装置の系統です。</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
+          <table>
+            <caption class="sr-only">指定の仕方ごとに事前に絞れるか。</caption>
+            <thead><tr><th>flavor の指定方法</th><th>事前の絞り込み</th><th>根拠</th></tr></thead>
+            <tbody><tr><td>resource class で指定</td><td><strong>できる</strong></td><td>提供者の在庫にそのまま現れます</td></tr><tr><td>必須の特性で指定</td><td>できる。ホスト単位</td><td>ツリー全体の和集合で判定します</td></tr><tr><td>古い方式の別名で指定</td><td>できない</td><td>別名を resource class に解けないので記録だけ残して渡します</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">三行目がここでは閉じられない箇所です。<strong>古い方式の別名は resource class
+        に解けません。</strong>だから記録だけ残し、最終の判定は実際に送る時点で行われます。</p>
+
+        <h2 id="ホストが持つもの">ホストが実際に持つものを数えます<a class="anchor" href="#ホストが持つもの" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>要求を読んだら、ホストが何を持っているかを数えます。ここで一度つまずきます。
+        <strong>装置はホスト自身ではなく、その下に付いた提供者に載っています。</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 220" role="img" aria-labelledby="rp-t rp-d" class="figure-svg">
+            <title id="rp-t">ホスト一つの資源提供者ツリー</title>
+            <desc id="rp-d">ホストごとに名前がホスト名と同じ root 提供者があり、GPU や PCI の装置はたいてい子の提供者に付きます。可用量は総量から予約と使用を引いた値で、特性はツリー全体の和集合として見ます。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="270" y="40" width="180" height="38" rx="8" fill="none" stroke="#5b7fa6" stroke-width="1.8"/>
+              <text x="360" y="64" font-size="11" fill="#5b7fa6" text-anchor="middle">root · 名前はホスト名</text>
+              <path d="M360 78 V 100" stroke="#666" stroke-width="1.2" fill="none"/>
+              <path d="M180 100 H 540" stroke="#666" stroke-width="1.2" fill="none"/>
+              <path d="M180 100 V 122" stroke="#666" stroke-width="1.2" fill="none"/>
+              <rect x="120" y="122" width="120" height="34" rx="7" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="180" y="144" font-size="10" fill="#2e9e5b" text-anchor="middle">child · VGPU</text>
+              <path d="M380 100 V 122" stroke="#666" stroke-width="1.2" fill="none"/>
+              <rect x="320" y="122" width="120" height="34" rx="7" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="380" y="144" font-size="10" fill="#2e9e5b" text-anchor="middle">child · PCI</text>
+              <path d="M580 100 V 122" stroke="#666" stroke-width="1.2" fill="none"/>
+              <rect x="520" y="122" width="120" height="34" rx="7" fill="none" stroke="#999" stroke-width="1.6"/>
+              <text x="580" y="144" font-size="10" fill="#999" text-anchor="middle">child · その他</text>
+              <text x="360" y="184" font-size="10.5" fill="#333" text-anchor="middle">可用量 = 総量 引く 予約 引く 使用</text>
+              <text x="360" y="204" font-size="10" fill="#666" text-anchor="middle">特性はツリー全体の和集合</text>
+            </g>
+          </svg>
+          <figcaption>装置が root ではなく子に付いているので、ツリーとしてまとめて数えます。</figcaption>
+        </figure>
+
+        <p>そこでホスト名と同じ root を探し、その root を根に持つ提供者を全部集めて一つのツリーとして見ます。
+        在庫を合算して可用量を出し、特性はツリー全体の和集合として集めます。</p>
+
+        <h2 id="二つの条件">二つの条件を両方満たすときだけ配置します<a class="anchor" href="#二つの条件" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>配置は大きい Instance から順に詰めます。一つの Instance が一つのホストに入るには、二つの条件を
+        両方満たす必要があります。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 212" role="img" aria-labelledby="and-t and-d" class="figure-svg">
+            <title id="and-t">配置判定の二つの条件</title>
+            <desc id="and-d">標準資源と特殊な要求を両方満たすときだけ配置が確定し、両方を差し引きます。特性は消費される資源ではないので差し引きません。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="70" y="50" width="250" height="44" rx="8" fill="none" stroke="#5b7fa6" stroke-width="1.7"/>
+              <text x="195" y="77" font-size="10.5" fill="#5b7fa6" text-anchor="middle">標準資源を満たす</text>
+              <rect x="400" y="50" width="250" height="44" rx="8" fill="none" stroke="#b8860b" stroke-width="1.7"/>
+              <text x="525" y="77" font-size="10.5" fill="#b8860b" text-anchor="middle">特殊な要求を満たす</text>
+              <text x="360" y="77" font-size="12" fill="#333" text-anchor="middle">AND</text>
+              <path d="M195 94 V 120 H 525 V 94" stroke="#666" stroke-width="1.2" fill="none"/>
+              <rect x="250" y="134" width="220" height="40" rx="8" fill="none" stroke="#2e9e5b" stroke-width="1.8"/>
+              <text x="360" y="159" font-size="10.5" fill="#2e9e5b" text-anchor="middle">配置確定 · 両方を差し引く</text>
+              <text x="360" y="196" font-size="10" fill="#b8860b" text-anchor="middle">特性は消費されないので差し引かない</text>
+            </g>
+          </svg>
+          <figcaption>どちらか一方だけを見ると、装置のないホストが通ります。</figcaption>
+        </figure>
+
+        <pre data-lang="text"><code># Instance 側から読むもの
+  resources: で始まる項目から標準資源の三つを除いた残り  -> 要求する数量
+  trait: で始まり値が required のもの                  -> 必須の特性
+
+# 特殊な要求が一つもなければここで終わり。提供者への照会はしない
+
+# ホスト側で数えるもの
+  ツリーの全提供者の在庫を合算  -> 可用量 = 総量 - 予約 - 使用
+  ツリーの全特性を和集合に      -> 保有する特性
+
+# 配置
+  標準資源を満たす AND 数量を満たす AND 必須の特性を全部持つ -> 確定して差し引く
+  どのホストにも入らなければ、その Instance は失敗として記録</code></pre>
+
+        <p>確定したら標準資源と特殊資源を両方差し引きます。同じホストに偏って載るのを防ぐためです。特性は
+        消費されないので差し引きません。</p>
+
+        <p>特殊な要求が一つもなければ、提供者への照会を<strong>まったくしません。</strong>装置を使わない
+        環境では、これまでの計算とまったく同じに動きます。</p>
+
+        <h2 id="二度間違えた">同じ場所で二度間違えました<a class="anchor" href="#二度間違えた" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>この処理で二度間違えました。二度とも静かに間違えました。失敗としてではなく、誤った配置として
+        現れました。</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
+          <table>
+            <caption class="sr-only">同じ処理で二度間違えた箇所。</caption>
+            <thead><tr><th>間違えたこと</th><th>症状</th><th>直し方</th></tr></thead>
+            <tbody><tr><td>埋め込み項目ではなく再照会</td><td>名前で照会して失敗し、要求が空になって GPU Instance を普通の VM と見なした</td><td>埋め込みで来たものを先に使い、空のときだけ照会する</td></tr><tr><td>余裕がちょうど零かだけ見て繰り返しを中断</td><td>前のホストが満杯だと、うしろの余裕があるホストを全部飛ばす。負の余裕も通す</td><td>零以下で満杯と判定し、次のホストを評価し続ける</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="bug-t bug-d" class="figure-svg">
+            <title id="bug-t">配置の繰り返しを直す前と直したあと</title>
+            <desc id="bug-d">直す前は前のホストが満杯になると繰り返しが止まり、うしろの余裕があるホストを飛ばしていました。負の余裕も見逃していました。直したあとは次のホストを評価し続け、負の値も捕まえます。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="180" y="34" font-size="11" fill="#d62976" text-anchor="middle">直す前</text>
+              <text x="540" y="34" font-size="11" fill="#2e9e5b" text-anchor="middle">直したあと</text>
+              <text x="360" y="64" font-size="10" fill="#333" text-anchor="middle">前のホストが満杯</text>
+              <text x="360" y="112" font-size="10" fill="#333" text-anchor="middle">うしろのホスト</text>
+              <text x="360" y="160" font-size="10" fill="#333" text-anchor="middle">負の余裕</text>
+              <rect x="110" y="49" width="140" height="30" rx="6" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="180" y="69" font-size="10.5" fill="#d62976" text-anchor="middle">繰り返しが止まる</text>
+              <rect x="470" y="49" width="140" height="30" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="540" y="69" font-size="10.5" fill="#2e9e5b" text-anchor="middle">繰り返しを続ける</text>
+              <rect x="110" y="97" width="140" height="30" rx="6" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="180" y="117" font-size="10.5" fill="#d62976" text-anchor="middle">飛ばす</text>
+              <rect x="470" y="97" width="140" height="30" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="540" y="117" font-size="10.5" fill="#2e9e5b" text-anchor="middle">評価する</text>
+              <rect x="110" y="145" width="140" height="30" rx="6" fill="none" stroke="#d62976" stroke-width="1.6"/>
+              <text x="180" y="165" font-size="10.5" fill="#d62976" text-anchor="middle">見逃す</text>
+              <rect x="470" y="145" width="140" height="30" rx="6" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
+              <text x="540" y="165" font-size="10.5" fill="#2e9e5b" text-anchor="middle">捕まえる</text>
+            </g>
+          </svg>
+          <figcaption>一文字の比較と繰り返しの制御が、配置の結果を変えました。</figcaption>
+        </figure>
+
+        <p>二つ目のほうが厄介です。余裕がちょうど零かだけ見て繰り返しを止めると、優先順位の並びで
+        <strong>前のホストが満杯のときに、うしろの余裕があるホストを全部飛ばします。</strong>しかも
+        超過割り当てで負になった余裕は零ではないので、そのまま通ってしまいます。</p>
+
+        <h2 id="主張しないこと">限界: この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>⚠️ 古い方式の別名で指定された装置は事前に絞れません。別名を resource class に解けないため
+          記録だけ残して渡し、最終の判定は送る時点で行われます。</li>
+          <li>特性の判定はホスト単位です。資源と特性がちょうど同じ提供者になければならない細かい突き合わせは
+          しません。明らかに不可能なホストを先に外す程度です。</li>
+          <li>提供者のサービスが使えないときは警告を残し、標準資源だけで配置します。この場合は装置の
+          絞り込みが働きません。</li>
+          <li>可用量と要求は復旧一回の範囲でだけ Cache します。実行の途中で状態が変わっても、その周期の中では
+          最初の値を使います。</li>
+          <li>社内資料なので、製品名と顧客名とアドレスとアカウントとホスト名は書いていません。</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="このセクションへのリンク">#</a></h2>
+        <p>この編の結論は一行です。<strong>選んでくれる側がいない経路では、送る前に自分で絞る必要があります。</strong>
+        スケジューラがある経路の習慣をそのまま持ち込むと、失敗が遅れて来ます。</p>
+        <p>そして先に絞ることの値打ちは、成功率ではなく<strong>失敗の形</strong>にあります。「合うホストなし」で
+        早く終われば、ほかの Instance の復旧はそのまま進みます。</p>
+        <p>お読みいただきありがとうございました。</p>
+        </div></article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=ce3e6d3fa2"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>
