@@ -91,6 +91,10 @@
        2월에 멈춘 세 줄이 9월의 발행과 정정을 하나도 보여 주지 못했다. */
     news: {
       items: [
+        { date: "2026-09-21", dateLabel: "Sep 21, 2026",
+          text: "Rewrote the Instance HA series against eighteen implementation documents. Each part now shows where what the design asked for and what was actually built came apart.",
+          text_ko: "Instance HA 연작을 구현 기록 열여덟 건과 맞대어 다시 썼습니다. 설계가 요구한 것과 실제로 만들어진 것이 갈라지는 지점을 편마다 드러냈습니다.",
+          text_ja: "Instance HA の連作を実装記録十八件と突き合わせて書き直しました。設計が求めたものと実際に作られたものが分かれる地点を編ごとに示しました。" },
         { date: "2026-09-20", dateLabel: "Sep 20, 2026",
           text: "Published the Instance HA design series in three languages. It starts with one observation point calling a live node dead. Everything after that is about dividing up the grounds for a decision.",
           text_ko: "Instance HA 설계 연작을 세 언어로 냈습니다. 관측 지점 하나를 믿어 살아 있는 노드를 죽었다고 판정한 것이 시작입니다. 그 뒤로는 전부 판단의 근거를 나누는 이야기입니다.",
