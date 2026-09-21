@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Instance HA ②: 신호마다 증언할 수 있는 범위가 다릅니다 | Kwanghun Lee</title>
+  <title>Instance HA ②: 신호마다 볼 수 있는 것이 다릅니다 | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Instance HA ②: 신호마다 증언할 수 있는 범위가 다릅니다" />
-  <meta property="og:description" content="관측 정확도를 올려도 관측자가 고립되면 무엇을 봐도 믿을 수 없습니다. 신호를 신뢰도 4등급으로 세우고 EXT Probe가 증언할 수 있는 범위를 좁힌 과정과 파라미터 여섯 개에 각각 근거를 붙인 방식을 정리했습니다." />
+  <meta property="og:title" content="Instance HA ②: 신호마다 볼 수 있는 것이 다릅니다" />
+  <meta property="og:description" content="관측 정확도를 올려도 관측자가 고립되면 무엇을 봐도 믿을 수 없습니다. 신호를 신뢰도 4등급으로 세우고 EXT Probe가 볼 수 있는 범위를 좁힌 과정과 파라미터 여섯 개에 각각 근거를 붙인 방식을 정리했습니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -26,10 +26,10 @@
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Instance HA ②: 신호마다 증언할 수 있는 범위가 다릅니다" />
+  <meta name="twitter:title" content="Instance HA ②: 신호마다 볼 수 있는 것이 다릅니다" />
   <meta name="twitter:description" content="감지 정확도 대신 신호의 자격을 정했습니다. 신뢰도 4등급과 EXT Probe 파라미터 여섯 개의 근거를 정리한 Instance HA 연작 ②편입니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="관측 정확도를 올려도 관측자가 고립되면 무엇을 봐도 믿을 수 없습니다. 신호를 신뢰도 4등급으로 세우고 EXT Probe가 증언할 수 있는 범위를 좁힌 과정과 파라미터 여섯 개에 각각 근거를 붙인 방식을 정리했습니다." />
+  <meta name="description" content="관측 정확도를 올려도 관측자가 고립되면 무엇을 봐도 믿을 수 없습니다. 신호를 신뢰도 4등급으로 세우고 EXT Probe가 볼 수 있는 범위를 좁힌 과정과 파라미터 여섯 개에 각각 근거를 붙인 방식을 정리했습니다." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div>
       </div>
       <section class="page-hero">
-        <h1>Instance HA ②: 신호마다 증언할 수 있는 범위가 다릅니다<br><span class="h1-sub">감지를 더 정교하게 만드는 대신 어느 신호가 무엇을 말할 자격이 있는지를 먼저 정했습니다. Instance HA 장애 대응 설계 연작의 두 번째 편입니다.</span></h1>
+        <h1>Instance HA ②: 신호마다 볼 수 있는 것이 다릅니다<br><span class="h1-sub">감지를 더 정교하게 만드는 대신 어느 신호가 무엇을 볼 수 있는지를 먼저 정했습니다. Instance HA 장애 대응 설계 연작의 두 번째 편입니다.</span></h1>
         <p class="article-date">2026년 9월</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="instance-ha-2-what-each-signal-can-say"></aside>
@@ -120,15 +120,14 @@
         고립된 Controller는 아무리 자주 찔러 봐도 계속 닿지 않는다는 같은 답을 받습니다.</p>
 
         <p>여기서 질문을 바꿨습니다. 무엇을 더 볼 것인가가 아니라 지금 보고 있는 것들 가운데 누가 무엇을
-        말할 수 있는가입니다. 이 질문은 답이 달라집니다. 신호마다 관측 지점이 다르고 관측 지점이 다르면
-        증언할 수 있는 대상도 다르기 때문입니다.</p>
+        말할 수 있는가입니다. 이 질문은 답이 달라집니다. 신호마다 관측 지점이 다르고 관측 지점이 다르면 볼 수 있는 대상도 다르기 때문입니다.</p>
 
         <h2 id="신호-등급">신호를 네 등급으로 세웠습니다<a class="anchor" href="#신호-등급" aria-label="이 절로 가는 링크">#</a></h2>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 260" role="img" aria-labelledby="sig-t sig-d" class="figure-svg">
             <title id="sig-t">신호 네 등급과 각자가 말할 수 있는 것</title>
-            <desc id="sig-d">위에서 아래로 네 칸이 있습니다. Agent HeartBeat가 가장 높고 Controller Quorum, Network HeartBeat, EXT Probe 순입니다. 오른쪽에는 각 신호가 실제로 증언할 수 있는 대상이 적혀 있습니다.</desc>
+            <desc id="sig-d">위에서 아래로 네 칸이 있습니다. Agent HeartBeat가 가장 높고 Controller Quorum, Network HeartBeat, EXT Probe 순입니다. 오른쪽에는 각 신호가 실제로 볼 수 있는 대상이 적혀 있습니다.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="40" y="35" width="300" height="42" rx="8" fill="none" stroke="#2e9e5b" stroke-width="2"/>
               <text x="190" y="61" font-size="12" fill="#2e9e5b" text-anchor="middle">Agent HeartBeat · Highest</text>
@@ -144,7 +143,7 @@
               <text x="530" y="226" font-size="11.5" fill="#d62976" text-anchor="middle">나의 고립 여부</text>
             </g>
           </svg>
-          <figcaption>등급은 정확도 순서가 아니라 증언 자격의 순서입니다. 맨 아래 신호는 대상이 아니라 관측자 자신을 말합니다.</figcaption>
+          <figcaption>등급은 정확도 순서가 아니라 볼 수 있는 범위의 순서입니다. 맨 아래 신호는 대상이 아니라 관측자 자신을 말합니다.</figcaption>
         </figure>
 
         <div class="table-scroll">
@@ -230,7 +229,7 @@
         <figure class="diagram">
           <svg viewBox="0 0 720 264" role="img" aria-labelledby="or-t or-d" class="figure-svg">
             <title id="or-t">구현이 장애를 판정하는 방식</title>
-            <desc id="or-d">관리 쪽 요청이 끊긴 것과 Gateway에 닿지 않는 것과 지정한 주소로 TCP 연결이 안 되는 것과 Network Interface가 내려간 것을 모두 OR로 묶어, 하나라도 걸리면 장애로 판정합니다.</desc>
+            <desc id="or-d">관리 쪽 요청이 끊긴 것과 Gateway에 닿지 않는 것과 지정한 VIP에 닿지 않는 것과 Network Interface가 내려간 것을 모두 OR로 묶어, 하나라도 걸리면 장애로 판정합니다.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="50" y="56" width="270" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.5"/>
               <text x="185" y="78" font-size="10.5" fill="#5b7fa6" text-anchor="middle">관리 쪽 요청이 끊김</text>
@@ -256,12 +255,10 @@
         </figure>
 
         <p>노드 쪽 Agent는 네 가지를 봅니다. 관리 쪽에서 상태 확인 요청이 일정 시간 오지 않는 것,
-        지정한 Gateway로 닿지 않는 것, 지정한 주소와 Port로 TCP 연결이 안 되는 것, 설정된
+        지정한 Gateway로 닿지 않는 것, 지정한 VIP에 닿지 않는 것, 설정된
         Network Interface가 내려갔거나 loopback인 것입니다.</p>
 
-        <p>이 가운데 TCP 확인은 <strong>나중에 덧붙은 것입니다.</strong> Gateway로 보내는 ping이 아예
-        막혀 있는 현장이 많아서 그 방법만으로는 판정할 수 없었습니다. ping을 쓸 수 없으면 값을 비워 두고
-        TCP 연결이 서는지만 봅니다.</p>
+        <p>세 번째 자리는 <strong>뒤에 한 번 바뀌었습니다.</strong> Gateway로 보내는 ping이 아예 막혀 있는 현장이 많아 그 방법만으로는 판정할 수 없었습니다. 그래서 지정한 주소와 Port로 TCP 연결이 서는지 보는 방법이 더해졌습니다. ping을 쓸 수 없으면 값을 비워 두고 TCP 연결만 봅니다.</p>
 
         <div class="table-scroll">
           <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
@@ -339,7 +336,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=f80f8d8d50"></script>
+  <script src="../assets/content.js?v=2514468404"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=d4af83b541"></script>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Instance HA ②: Each Signal Is Entitled to Testify to Something Different | Kwanghun Lee</title>
+  <title>Instance HA ②: Each Signal Can See Something Different | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Instance HA ②: Each Signal Is Entitled to Testify to Something Different" />
-  <meta property="og:description" content="Raising observational accuracy does not help when the observer is isolated. This part covers grading the signals into four tiers, narrowing what the EXT probe is allowed to testify to, and attaching a reason to each of six parameters." />
+  <meta property="og:title" content="Instance HA ②: Each Signal Can See Something Different" />
+  <meta property="og:description" content="Raising observational accuracy does not help when the observer is isolated. This part covers grading the signals into four tiers, narrowing what the EXT probe can actually see, and attaching a reason to each of six parameters." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -26,10 +26,10 @@
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Instance HA ②: Each Signal Is Entitled to Testify to Something Different" />
-  <meta name="twitter:description" content="Signal standing instead of detection accuracy. Four tiers and the reasoning behind six EXT probe parameters, in part two of the Instance HA series." />
+  <meta name="twitter:title" content="Instance HA ②: Each Signal Can See Something Different" />
+  <meta name="twitter:description" content="What each signal can see, instead of detection accuracy. Four tiers and the reasoning behind six EXT probe parameters, in part two of the Instance HA series." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="Raising observational accuracy does not help when the observer is isolated. This part covers grading the signals into four tiers, narrowing what the EXT probe is allowed to testify to, and attaching a reason to each of six parameters." />
+  <meta name="description" content="Raising observational accuracy does not help when the observer is isolated. This part covers grading the signals into four tiers, narrowing what the EXT probe can actually see, and attaching a reason to each of six parameters." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">Company work</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS Backend</a></div>
       </div>
       <section class="page-hero">
-        <h1>Instance HA ②: Each Signal Is Entitled to Testify to Something Different<br><span class="h1-sub">Instead of sharpening detection, we first decided which signal has standing to say what. Second part of the series on the Instance HA failure-response design.</span></h1>
+        <h1>Instance HA ②: Each Signal Can See Something Different<br><span class="h1-sub">Instead of sharpening detection, we first decided what each signal can actually see. Second part of the series on the Instance HA failure-response design.</span></h1>
         <p class="article-date">September 2026</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="instance-ha-2-what-each-signal-can-say"></aside>
@@ -98,11 +98,9 @@
         was my first instinct too.</p>
 
         <p>It does not work on this incident. <strong>When the observer is isolated, no amount of extra
-        precision makes its observation trustworthy.</strong> Raising accuracy and questioning standing are
-        different jobs.</p>
+        precision makes its observation trustworthy.</strong> Raising accuracy and asking what a signal can see are different jobs.</p>
 
-        <p>So the first decision in the design was not to touch the detector. It was to decide
-        <strong>what each signal has standing to say</strong>. This part is that tier list, and the six
+        <p>So the first decision in the design was not to touch the detector. It was to decide <strong>what each signal can actually see</strong>. This part is that tier list, and the six
         parameters of the EXT probe that we pushed to the bottom tier, each with a reason attached.</p>
 
         <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
@@ -121,16 +119,15 @@
         <strong>the observer's awareness of its own state</strong>. An isolated controller can poll as often
         as it likes and keep getting the same answer back.</p>
 
-        <p>So we changed the question. Not what to observe more closely, but which of the things already
-        being observed is entitled to speak about what. That question has a different answer, because each
-        signal is collected at a different point, and where it is collected decides what it can testify to.</p>
+        <p>So we changed the question. Not what to observe more closely, but which of the things already being observed can actually see what. That question has a different answer, because each
+        signal is collected at a different point, and where it is collected decides what it can see.</p>
 
         <h2 id="signal-grades">We graded the signals into four tiers<a class="anchor" href="#signal-grades" aria-label="Link to this section">#</a></h2>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 260" role="img" aria-labelledby="sig-t sig-d" class="figure-svg">
             <title id="sig-t">Four signal tiers and what each can speak to</title>
-            <desc id="sig-d">Four rows from top to bottom. Agent heartbeat sits highest, then controller quorum, network heartbeat and the EXT probe. The right column names what each signal can actually testify to.</desc>
+            <desc id="sig-d">Four rows from top to bottom. Agent heartbeat sits highest, then controller quorum, network heartbeat and the EXT probe. The right column names what each signal can actually see.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="40" y="35" width="300" height="42" rx="8" fill="none" stroke="#2e9e5b" stroke-width="2"/>
               <text x="190" y="61" font-size="12" fill="#2e9e5b" text-anchor="middle">Agent HeartBeat · Highest</text>
@@ -146,7 +143,7 @@
               <text x="530" y="226" font-size="11.5" fill="#d62976" text-anchor="middle">whether I am isolated</text>
             </g>
           </svg>
-          <figcaption>The tiers rank standing rather than accuracy. The bottom signal speaks about the observer, not about the target.</figcaption>
+          <figcaption>The tiers rank what each signal can see rather than accuracy. The bottom signal speaks about the observer, not about the target.</figcaption>
         </figure>
 
         <div class="table-scroll">
@@ -233,7 +230,7 @@
         <figure class="diagram">
           <svg viewBox="0 0 720 264" role="img" aria-labelledby="or-t or-d" class="figure-svg">
             <title id="or-t">How the build reaches a failure verdict</title>
-            <desc id="or-d">No status request from the control side, an unreachable gateway, a failed TCP connection to the configured address and a network interface that is down are all combined with OR, so any one of them makes the verdict failed.</desc>
+            <desc id="or-d">No status request from the control side, an unreachable gateway, an unreachable VIP and a network interface that is down are all combined with OR, so any one of them makes the verdict failed.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="50" y="56" width="270" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.5"/>
               <text x="185" y="78" font-size="10" fill="#5b7fa6" text-anchor="middle">no status request from control</text>
@@ -259,12 +256,9 @@
         </figure>
 
         <p>The agent on the node looks at four things: no status request arriving from the control side for
-        a set time, the configured gateway not answering, no TCP connection to the configured address and
-        port, and a configured network interface that is down or is a loopback.</p>
+        a set time, the configured gateway not answering, an unreachable VIP, and a configured network interface that is down or is a loopback.</p>
 
-        <p>Of those, the TCP check <strong>was added later.</strong> Sites where the ping to the gateway is
-        blocked outright turned out to be common, and the ping alone could not reach a verdict there. Where
-        ping cannot be used the value is left empty and only the TCP connection is checked.</p>
+        <p>The third of those <strong>changed once.</strong> Sites where the ping to the gateway is blocked outright turned out to be common, and the ping alone could not reach a verdict there. A TCP check against a configured address and port was added for exactly that. Where ping cannot be used the value is left empty and only the TCP connection is checked.</p>
 
         <div class="table-scroll">
           <p class="table-scroll-hint">Scroll sideways to see the rest</p>
@@ -328,9 +322,7 @@
 
         <div class="wrapup">
         <h2 id="closing">Closing<a class="anchor" href="#closing" aria-label="Link to this section">#</a></h2>
-        <p>One line carries this part. <strong>Raising detection accuracy and deciding a signal's standing
-        are different jobs.</strong> An isolated observer is wrong precisely when it looks carefully, and a
-        signal with defined standing can tell you that you are not the one who should be judging.</p>
+        <p>One line carries this part. <strong>Raising detection accuracy and deciding what a signal can see are different jobs.</strong> An isolated observer is wrong precisely when it looks carefully, and a signal with a defined scope can tell you that you are not the one who should be judging.</p>
         <p>The next part turns these tiers into an actual verdict: splitting "is this really a failure" from
         "is it safe to act now", and what eight scenarios came out as. Continue to <a href="seven-of-eight-should-not-recover.html">part three</a>.</p>
         <p>Thanks for reading.</p>
@@ -345,7 +337,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=f80f8d8d50"></script>
+  <script src="../assets/content.js?v=2514468404"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=d4af83b541"></script>

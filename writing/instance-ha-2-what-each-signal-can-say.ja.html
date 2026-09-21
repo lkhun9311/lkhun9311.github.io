@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Instance HA ②: 信号ごとに証言できる範囲が違います | Kwanghun Lee</title>
+  <title>Instance HA ②: 信号ごとに見えているものが違います | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Instance HA ②: 信号ごとに証言できる範囲が違います" />
-  <meta property="og:description" content="観測精度を上げても観測者が孤立していれば何を見ても信じられません。信号を信頼度の四段階に並べ、EXT Probe が証言できる範囲を狭めた過程と、六つのパラメータそれぞれに根拠を付けた方法をまとめました。" />
+  <meta property="og:title" content="Instance HA ②: 信号ごとに見えているものが違います" />
+  <meta property="og:description" content="観測精度を上げても観測者が孤立していれば何を見ても信じられません。信号を信頼度の四段階に並べ、EXT Probe が見ている範囲を狭めた過程と、六つのパラメータそれぞれに根拠を付けた方法をまとめました。" />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -26,10 +26,10 @@
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta property="og:locale:alternate" content="en_US" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Instance HA ②: 信号ごとに証言できる範囲が違います" />
+  <meta name="twitter:title" content="Instance HA ②: 信号ごとに見えているものが違います" />
   <meta name="twitter:description" content="検知精度ではなく信号の資格を決めました。四段階の等級と EXT Probe パラメータ六つの根拠をまとめた Instance HA 連作の二編目です。" />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="観測精度を上げても観測者が孤立していれば何を見ても信じられません。信号を信頼度の四段階に並べ、EXT Probe が証言できる範囲を狭めた過程と、六つのパラメータそれぞれに根拠を付けた方法をまとめました。" />
+  <meta name="description" content="観測精度を上げても観測者が孤立していれば何を見ても信じられません。信号を信頼度の四段階に並べ、EXT Probe が見ている範囲を狭めた過程と、六つのパラメータそれぞれに根拠を付けた方法をまとめました。" />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">会社の仕事</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS バックエンド</a></div>
       </div>
       <section class="page-hero">
-        <h1>Instance HA ②: 信号ごとに証言できる範囲が違います<br><span class="h1-sub">検知をより精緻にする代わりに、どの信号が何を言う資格を持つかを先に決めました。Instance HA 障害対応設計の連作、その二編目です。</span></h1>
+        <h1>Instance HA ②: 信号ごとに見えているものが違います<br><span class="h1-sub">検知をより精緻にする代わりに、どの信号が何を見ているのかを先に決めました。Instance HA 障害対応設計の連作、その二編目です。</span></h1>
         <p class="article-date">2026年9月</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="instance-ha-2-what-each-signal-can-say"></aside>
@@ -119,14 +119,14 @@
         Controller はいくら頻繁に突いても、届かないという同じ答えを受け取り続けます。</p>
 
         <p>ここで問いを変えました。何をより多く見るかではなく、いま見ているもののうち誰が何を言えるのかです。
-        この問いは答えが変わります。信号ごとに観測地点が違い、観測地点が違えば証言できる対象も違うからです。</p>
+        この問いは答えが変わります。信号ごとに観測地点が違い、観測地点が違えば見えている対象も違うからです。</p>
 
         <h2 id="信号の等級">信号を四つの等級に並べました<a class="anchor" href="#信号の等級" aria-label="この節へのリンク">#</a></h2>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 260" role="img" aria-labelledby="sig-t sig-d" class="figure-svg">
             <title id="sig-t">四つの信号等級と各自が言えること</title>
-            <desc id="sig-d">上から下へ四つの枠があります。Agent HeartBeat が最上位で、続いて Controller Quorum、Network HeartBeat、EXT Probe の順です。右側には各信号が実際に証言できる対象が書かれています。</desc>
+            <desc id="sig-d">上から下へ四つの枠があります。Agent HeartBeat が最上位で、続いて Controller Quorum、Network HeartBeat、EXT Probe の順です。右側には各信号が実際に見ている対象が書かれています。</desc>
             <g font-family="Inter, sans-serif">
               <rect x="40" y="35" width="300" height="42" rx="8" fill="none" stroke="#2e9e5b" stroke-width="2"/>
               <text x="190" y="61" font-size="12" fill="#2e9e5b" text-anchor="middle">Agent HeartBeat · Highest</text>
@@ -142,7 +142,7 @@
               <text x="530" y="226" font-size="11.5" fill="#d62976" text-anchor="middle">自分が孤立しているか</text>
             </g>
           </svg>
-          <figcaption>等級は精度の順ではなく証言資格の順です。最下段の信号は対象ではなく観測者自身について語ります。</figcaption>
+          <figcaption>等級は精度の順ではなく見える範囲の順です。最下段の信号は対象ではなく観測者自身について語ります。</figcaption>
         </figure>
 
         <div class="table-scroll">
@@ -228,7 +228,7 @@
         <figure class="diagram">
           <svg viewBox="0 0 720 264" role="img" aria-labelledby="or-t or-d" class="figure-svg">
             <title id="or-t">実装が障害を判定する方法</title>
-            <desc id="or-d">管理側の要求が途切れること、Gateway に届かないこと、指定した宛先へ TCP 接続ができないこと、Network Interface が落ちることをすべて OR でまとめ、どれか一つでも当たれば障害と判定します。</desc>
+            <desc id="or-d">管理側の要求が途切れること、Gateway に届かないこと、指定した VIP へ届かないこと、Network Interface が落ちることをすべて OR でまとめ、どれか一つでも当たれば障害と判定します。</desc>
             <g font-family="Inter, sans-serif">
               <rect x="50" y="56" width="270" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.5"/>
               <text x="185" y="78" font-size="10" fill="#5b7fa6" text-anchor="middle">管理側の要求が途切れる</text>
@@ -254,12 +254,10 @@
         </figure>
 
         <p>ノード側の Agent は四つを見ます。管理側から状態確認の要求が一定時間来ないこと、指定した
-        Gateway へ届かないこと、指定した宛先と Port へ TCP 接続ができないこと、設定された
+        Gateway へ届かないこと、指定した VIP へ届かないこと、設定された
         Network Interface が落ちているか loopback であることです。</p>
 
-        <p>このうち TCP の確認は<strong>あとから足されたものです。</strong>Gateway へ送る ping が
-        そもそも塞がれている現場が多く、その方法だけでは判定できませんでした。ping を使えないときは
-        値を空けておき、TCP 接続が立つかどうかだけを見ます。</p>
+        <p>三つ目の場所は<strong>途中で一度変わりました。</strong>Gateway へ送る ping がそもそも塞がれている現場が多く、その方法だけでは判定できませんでした。そこで指定した宛先と Port へ TCP 接続が立つかを見る方法が足されました。ping を使えないときは値を空けておき、TCP 接続だけを見ます。</p>
 
         <div class="table-scroll">
           <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
@@ -336,7 +334,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=f80f8d8d50"></script>
+  <script src="../assets/content.js?v=2514468404"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=d4af83b541"></script>

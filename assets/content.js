@@ -280,15 +280,15 @@
           tags: ["IaaS Backend", "Reliability", "Method", "Operations"]
         },
         {
-          title: "Instance HA ②: Each Signal Is Entitled to Testify to Something Different",
-          title_ko: "Instance HA ②: 신호마다 증언할 수 있는 범위가 다릅니다",
-          title_ja: "Instance HA ②: 信号ごとに証言できる範囲が違います",
+          title: "Instance HA ②: Each Signal Can See Something Different",
+          title_ko: "Instance HA ②: 신호마다 볼 수 있는 것이 다릅니다",
+          title_ja: "Instance HA ②: 信号ごとに見えているものが違います",
           url: "writing/instance-ha-2-what-each-signal-can-say.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-20", dateLabel: "Sep 20, 2026",
-          desc: "Part 2 of the Instance HA design series. When the observer is isolated, no amount of extra precision makes its observation trustworthy. So instead of sharpening detection we decided what each signal has standing to say, putting the Agent HeartBeat highest and the EXT Probe lowest. Each of the six EXT Probe parameters carries the reason for the value it holds. Also in Korean and Japanese.",
-          desc_ko: "Instance HA 설계 2편. 관측자가 고립되면 정확도를 아무리 올려도 그 관측을 믿을 수 없습니다. 그래서 감지를 정교하게 만드는 대신 신호마다 증언할 자격을 정했고 Agent HeartBeat를 Highest로 EXT Probe를 Low로 두었습니다. EXT Probe 파라미터 여섯 개에는 각각 무엇을 구별하려는 값인지 근거를 붙였습니다.",
-          desc_ja: "Instance HA 設計の第2編。観測者が孤立していれば精度をいくら上げてもその観測を信じられません。そこで検知を精緻にする代わりに信号ごとに証言する資格を決め、Agent HeartBeat を Highest に、EXT Probe を Low に置きました。EXT Probe のパラメータ六つにはそれぞれ何を区別するための値かという根拠を付けました。",
+          desc: "Part 2 of the Instance HA design series. When the observer is isolated, no amount of extra precision makes its observation trustworthy. So instead of sharpening detection we decided what each signal can actually see, putting the Agent HeartBeat highest and the EXT Probe lowest. Each of the six EXT Probe parameters carries the reason for the value it holds. Also in Korean and Japanese.",
+          desc_ko: "Instance HA 설계 2편. 관측자가 고립되면 정확도를 아무리 올려도 그 관측을 믿을 수 없습니다. 그래서 감지를 정교하게 만드는 대신 신호마다 볼 수 있는 범위를 정했고 Agent HeartBeat를 Highest로 EXT Probe를 Low로 두었습니다. EXT Probe 파라미터 여섯 개에는 각각 무엇을 구별하려는 값인지 근거를 붙였습니다.",
+          desc_ja: "Instance HA 設計の第2編。観測者が孤立していれば精度をいくら上げてもその観測を信じられません。そこで検知を精緻にする代わりに信号ごとに見えている範囲を決め、Agent HeartBeat を Highest に、EXT Probe を Low に置きました。EXT Probe のパラメータ六つにはそれぞれ何を区別するための値かという根拠を付けました。",
           tags: ["IaaS Backend", "Reliability", "Method", "Operations"]
         },
         {
