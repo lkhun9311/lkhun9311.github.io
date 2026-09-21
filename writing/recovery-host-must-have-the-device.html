@@ -147,8 +147,9 @@
 
         <h2 id="what-it-asks-for">Reading what the instance asks for<a class="anchor" href="#what-it-asks-for" aria-label="Link to this section">#</a></h2>
 
-        <p>First, read what the instance asks for. The demands live in the flavor's extra entries and come in
-        two kinds: an amount and a trait.</p>
+        <p>First, read what the instance asks for. The demands this filter reads are the device requests in the
+        flavor's extra entries, and they come in two kinds: an amount and a trait. Other constraints such as
+        image properties or NUMA and CPU pinning are outside this filter's scope.</p>
 
         <div class="table-scroll">
           <p class="table-scroll-hint">Scroll sideways to see the rest</p>
@@ -314,6 +315,8 @@
           standard resources alone. Device filtering does not run in that case.</li>
           <li>Availability and demands are cached for one recovery run only. If state changes mid-run, the
           first reading is what that cycle uses.</li>
+          <li>This selection logic and the two defects were confirmed from the design and from implementation
+          and test records; I did not fix that code myself.</li>
           <li>This came from internal material, so product names, customers, addresses, accounts and
           hostnames are left out.</li>
         </ul>

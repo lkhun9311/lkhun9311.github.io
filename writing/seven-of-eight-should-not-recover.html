@@ -84,7 +84,7 @@
             <li><a href="#two-questions">Two questions were tangled into one verdict</a></li>
             <li><a href="#phase-1">Phase 1 asks only whether it failed</a></li>
             <li><a href="#phase-2">Phase 2 asks only whether we may act</a></li>
-            <li><a href="#combined-logic">The order is pinned in code</a></li>
+            <li><a href="#combined-logic">The order is pinned in pseudocode</a></li>
             <li><a href="#consecutive-samples">The phases were not the only guard</a></li>
             <li><a href="#seven-of-eight">Seven of eight stop</a></li>
             <li><a href="#what-this-does-not-claim">Limits: what this post does not claim</a></li>
@@ -180,7 +180,7 @@
         <strong>whether this is a state in which recovery can be carried out.</strong> If one fails, nothing
         runs even when the failure itself is confirmed.</p>
 
-        <h2 id="combined-logic">The order is pinned in code<a class="anchor" href="#combined-logic" aria-label="Link to this section">#</a></h2>
+        <h2 id="combined-logic">The order is pinned in pseudocode<a class="anchor" href="#combined-logic" aria-label="Link to this section">#</a></h2>
 
         <p>Left as tables alone, every reader reconstructs a different order. So the design document wrote
         the order out as pseudocode. Its point is that there is exactly one way out.</p>
@@ -193,8 +193,10 @@
    within TTL -> the Compute is up -> Hold
 
 3. If the TTL expired, check further
-   EXT probe result - nova-compute state - storage session
+   EXT probe result - nova-compute state
    if certainty is missing -> Hold (notify an operator)
+   note: storage reachability is not read here; it is an
+         execution condition and moves to Phase 2
 
 [Phase 2 - may we act now]
 1. Storage unreachable -> Hold
@@ -333,13 +335,14 @@
           <table>
             <caption class="sr-only">The verdict for each of the eight scenarios.</caption>
             <thead><tr><th>Scenario</th><th>Phase 1 result</th><th>Action</th></tr></thead>
-            <tbody><tr><td>Compute genuinely crashed</td><td>Failure confirmed</td><td>On to Phase 2, then fencing</td></tr><tr><td>Controller network cut</td><td>Cannot judge</td><td>Hold</td></tr><tr><td>DATA network cut</td><td>Suspect partition</td><td>Hold</td></tr><tr><td>MGMT network cut</td><td>Cannot judge</td><td>Hold</td></tr><tr><td>Storage path fault</td><td>Compute is healthy</td><td>Hold, stopped in Phase 2</td></tr><tr><td>EXT only unreachable</td><td>Compute is healthy</td><td>Hold</td></tr><tr><td>HeartBeat expired and EXT failed</td><td>Suspect partition</td><td>Hold, then judge further</td></tr><tr><td>Controller cut yet heartbeat arriving</td><td>Cannot judge</td><td>Hold, no solo verdict</td></tr></tbody>
+            <tbody><tr><td>Compute genuinely crashed</td><td>Failure confirmed</td><td>On to Phase 2, then fencing</td></tr><tr><td>Controller network cut</td><td>Cannot judge</td><td>Hold</td></tr><tr><td>DATA network cut</td><td>Suspect partition</td><td>Hold</td></tr><tr><td>MGMT network cut</td><td>Cannot judge</td><td>Hold</td></tr><tr><td>Storage path fault</td><td>Compute is healthy</td><td>Hold, not a recovery target in Phase 1</td></tr><tr><td>EXT only unreachable</td><td>Compute is healthy</td><td>Hold</td></tr><tr><td>HeartBeat expired and EXT failed</td><td>Suspect partition</td><td>Hold, then judge further</td></tr><tr><td>Controller cut yet heartbeat arriving</td><td>Cannot judge</td><td>Hold, no solo verdict</td></tr></tbody>
           </table>
           </div>
         </div>
 
         <p class="table-note">Seven holds does not mean seven were wrong. It means the signals in hand do not
-        support saying that recovery may run. A wrongly executed recovery cannot be undone, while a hold
+        support saying that recovery may run. The double boot or data corruption a wrongly executed recovery
+        can cause is hard to undo, while a hold
         leaves time for a human to step in.</p>
 
         <h2 id="what-this-does-not-claim">Limits: what this post does not claim<a class="anchor" href="#what-this-does-not-claim" aria-label="Link to this section">#</a></h2>

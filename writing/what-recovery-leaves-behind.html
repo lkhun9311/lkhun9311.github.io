@@ -241,13 +241,13 @@
           <table>
             <caption class="sr-only">Two failures and what actually caused them.</caption>
             <thead><tr><th>Failure</th><th>Actual cause</th><th>Fix</th></tr></thead>
-            <tbody><tr><td>Instance files on shared storage in an invalid state</td><td>Not a setting. An allocation left by the earlier failure</td><td>Clear the leftover allocation and retry</td></tr><tr><td>No valid host to move to</td><td>Same root. The uncleared allocation is holding capacity</td><td>Clear it and refresh the resource count</td></tr></tbody>
+            <tbody><tr><td>Instance files on shared storage in an invalid state</td><td>Not a setting. An allocation left by the earlier recovery</td><td>Clear the leftover allocation and retry</td></tr><tr><td>No valid host to move to</td><td>Same root. The uncleared allocation is holding capacity</td><td>Clear it and refresh the resource count</td></tr></tbody>
           </table>
           </div>
         </div>
 
         <p class="table-note">In both cases the surface message and the real cause differed.
-        <strong>An allocation left by the earlier failure was the common root.</strong> It stays invisible
+        <strong>An allocation left by the earlier recovery was the common root.</strong> It stays invisible
         while you change settings and retry.</p>
 
         <h2 id="turning-it-back-on">Restoring is not automatic<a class="anchor" href="#turning-it-back-on" aria-label="Link to this section">#</a></h2>
@@ -276,11 +276,11 @@
 
         <pre data-lang="text"><code># What to check after the screen says recovery finished
 
-  1. compute service state
-     switch it back on. Recovery switched it off and will not switch it back
-
-  2. per-node state value
+  1. per-node state value
      confirm the node uses its own value rather than a shared path
+
+  2. compute service state
+     switch it back on. Recovery switched it off and will not switch it back
 
   3. agent state
      restart it if it was disconnected for a long time
@@ -294,7 +294,7 @@
           <table>
             <caption class="sr-only">What to check when restoring.</caption>
             <thead><tr><th>Check</th><th>Why</th></tr></thead>
-            <tbody><tr><td>Is the compute service switched back on</td><td>Recovery switched it off and nothing switches it back</td></tr><tr><td>Does the node hold its own state value</td><td>With a shared file another node's value overwrites it</td></tr><tr><td>Has the agent come back</td><td>After a long disconnection it needs restarting</td></tr><tr><td>Is the departed allocation empty</td><td>If not, the next recovery fails</td></tr></tbody>
+            <tbody><tr><td>Does the node hold its own state value</td><td>With a shared file another node's value overwrites it</td></tr><tr><td>Is the compute service switched back on</td><td>Recovery switched it off and nothing switches it back</td></tr><tr><td>Has the agent come back</td><td>After a long disconnection it needs restarting</td></tr><tr><td>Is the departed allocation empty</td><td>If not, the next recovery fails</td></tr></tbody>
           </table>
           </div>
         </div>
@@ -312,6 +312,8 @@
           <li>The allocation cleanup runs on a best-effort basis. It is skipped when the resource count
           service is unavailable.</li>
           <li>The shared state file problem only appears in setups that use shared storage.</li>
+          <li>This post covers post-recovery cleanup and the failed node's service rejoin; it does not cover
+          failback, moving the instance back to its original host.</li>
           <li>This came from internal material, so product names, customers, addresses, accounts, hostnames
           and paths are left out.</li>
         </ul>

@@ -84,7 +84,7 @@
             <li><a href="#二つの問い">一つの判定に二つの問いが混ざっていました</a></li>
             <li><a href="#phase-1">Phase 1 は障害かどうかだけを見ます</a></li>
             <li><a href="#phase-2">Phase 2 は今実行してよいかだけを見ます</a></li>
-            <li><a href="#統合ロジック">順序をコードで固定しました</a></li>
+            <li><a href="#統合ロジック">順序を擬似コードで固定しました</a></li>
             <li><a href="#連続標本">誤検知を止めたのは Phase だけではありませんでした</a></li>
             <li><a href="#八つのうち七つ">八つのうち七つは止まります</a></li>
             <li><a href="#主張しないこと">限界：この記事が主張しないこと</a></li>
@@ -177,7 +177,7 @@
         <p>三つの条件は対象の生死とは無関係です。すべて<strong>復旧を実行できる状態か</strong>を問います。
         一つでも欠ければ障害が確定していても実行しません。</p>
 
-        <h2 id="統合ロジック">順序をコードで固定しました<a class="anchor" href="#統合ロジック" aria-label="この節へのリンク">#</a></h2>
+        <h2 id="統合ロジック">順序を擬似コードで固定しました<a class="anchor" href="#統合ロジック" aria-label="この節へのリンク">#</a></h2>
 
         <p>表だけで置くと読む人ごとに順序が変わります。そこで設計書には判定の順序を擬似コードで書きました。
         抜け道が一つだけだということがこのコードの要点です。</p>
@@ -190,8 +190,9 @@
    TTL 以内で正常 -> Compute は正常 -> Hold
 
 3. TTL 超過なら追加検証
-   EXT Probe の結果 - nova-compute の状態 - Storage session
+   EXT Probe の結果 - nova-compute の状態
    確信が持てなければ -> Hold (運用者へ通知)
+   ※ Storage 到達性はここで見ない。実行条件なので Phase 2 へ回す
 
 [Phase 2 - 今実行してよいか]
 1. Storage へ到達不可 -> Hold
@@ -327,13 +328,13 @@
           <table>
             <caption class="sr-only">八つのシナリオの判定。</caption>
             <thead><tr><th>シナリオ</th><th>Phase 1 の結果</th><th>処置</th></tr></thead>
-            <tbody><tr><td>Compute が実際に crash</td><td>障害確定</td><td>Phase 2 へ進み Fencing</td></tr><tr><td>Controller ネットワーク断</td><td>判断不可</td><td>Hold</td></tr><tr><td>DATA ネットワーク断</td><td>Partition の疑い</td><td>Hold</td></tr><tr><td>MGMT ネットワーク断</td><td>判断不可</td><td>Hold</td></tr><tr><td>Storage 経路の障害</td><td>Compute は正常</td><td>Hold (Phase 2 で停止)</td></tr><tr><td>EXT のみ不達</td><td>Compute は正常</td><td>Hold</td></tr><tr><td>HeartBeat 超過で EXT も失敗</td><td>Partition の疑い</td><td>Hold のうえ追加判断</td></tr><tr><td>Controller 断だが HeartBeat は受信</td><td>判断不可</td><td>Hold (単独判定の禁止)</td></tr></tbody>
+            <tbody><tr><td>Compute が実際に crash</td><td>障害確定</td><td>Phase 2 へ進み Fencing</td></tr><tr><td>Controller ネットワーク断</td><td>判断不可</td><td>Hold</td></tr><tr><td>DATA ネットワーク断</td><td>Partition の疑い</td><td>Hold</td></tr><tr><td>MGMT ネットワーク断</td><td>判断不可</td><td>Hold</td></tr><tr><td>Storage 経路の障害</td><td>Compute は正常</td><td>Hold (Phase 1 で復旧対象外)</td></tr><tr><td>EXT のみ不達</td><td>Compute は正常</td><td>Hold</td></tr><tr><td>HeartBeat 超過で EXT も失敗</td><td>Partition の疑い</td><td>Hold のうえ追加判断</td></tr><tr><td>Controller 断だが HeartBeat は受信</td><td>判断不可</td><td>Hold (単独判定の禁止)</td></tr></tbody>
           </table>
           </div>
         </div>
 
         <p class="table-note">七つが Hold だということは七つが間違いだという意味ではありません。今ある信号では
-        復旧してよいと言う根拠が足りないという意味です。誤って実行した復旧は取り消せず、保留は人が介入する
+        復旧してよいと言う根拠が足りないという意味です。誤って実行した復旧が招く二重起動やデータ破損は取り消しにくく、保留は人が介入する
         時間を残します。</p>
 
         <h2 id="主張しないこと">限界：この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="この節へのリンク">#</a></h2>
