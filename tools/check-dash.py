@@ -31,8 +31,6 @@ BASELINE = {
     "writing/it-deleted-the-tenant.html": 19,
     "writing/it-deleted-the-tenant.ja.html": 11,
     "writing/parallelism-made-the-tail-worse.html": 12,
-    "writing/seven-of-eight-should-not-recover.html": 10,
-    "writing/seven-of-eight-should-not-recover.ja.html": 6,
     "writing/slow-screens-2-instance-list.ja.html": 2,
     "writing/slow-screens-6-polling-pileup.html": 6,
     "writing/slow-screens-7-nothing-to-fix.html": 1,
