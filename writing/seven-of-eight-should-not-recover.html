@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Instance HA ③: We Split Failure Detection from Execution Readiness | Kwanghun Lee</title>
+  <title>Instance HA ③: Of Eight Failures, Only One Should Recover | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Instance HA ③: We Split Failure Detection from Execution Readiness" />
+  <meta property="og:title" content="Instance HA ③: Of Eight Failures, Only One Should Recover" />
   <meta property="og:description" content="Asking whether a node has failed and whether recovery may run right now are different questions, and tangling them let a storage fault read as a compute fault. This part splits them into Phase 1 and Phase 2 and records the verdict for eight scenarios." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
@@ -26,7 +26,7 @@
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Instance HA ③: We Split Failure Detection from Execution Readiness" />
+  <meta name="twitter:title" content="Instance HA ③: Of Eight Failures, Only One Should Recover" />
   <meta name="twitter:description" content="Two questions split into two phases, and eight scenarios judged against them. Exactly one allowed recovery. Part three of the Instance HA series." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="Asking whether a node has failed and whether recovery may run right now are different questions, and tangling them let a storage fault read as a compute fault. This part splits them into Phase 1 and Phase 2 and records the verdict for eight scenarios." />
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">Company work</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS Backend</a></div>
       </div>
       <section class="page-hero">
-        <h1>Instance HA ③: We Split Failure Detection from Execution Readiness<br><span class="h1-sub">Two questions of different kinds had been tangled into one verdict. Separated, eight failure scenarios produced exactly one case where recovery was allowed to run.</span></h1>
+        <h1>Instance HA ③: Of Eight Failures, Only One Should Recover<br><span class="h1-sub">Two questions of different kinds had been tangled into one verdict. Separating them into Phase 1 and Phase 2 is the third part of the Instance HA failure-response design series.</span></h1>
         <p class="article-date">Sep 2026</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="seven-of-eight-should-not-recover"></aside>
@@ -374,7 +374,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=2514468404"></script>
+  <script src="../assets/content.js?v=f6ac66d5dc"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=d4af83b541"></script>

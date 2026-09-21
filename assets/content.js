@@ -244,9 +244,9 @@
           tags: ["GPUaaS Control Plane", "Method", "Observability", "Reliability"]
         },
         {
-          title: "Instance HA ⑥: Whether 100 Seconds Is Enough Is a Service Decision",
-          title_ko: "Instance HA ⑥: 100초가 누구에게 충분한지는 서비스가 정합니다",
-          title_ja: "Instance HA ⑥: 100秒が誰にとって十分かはサービスが決めます",
+          title: "Instance HA ⑥: Recovery Time Would Not Fit in One Number",
+          title_ko: "Instance HA ⑥: 복구 시간은 한 숫자로 적을 수 없었습니다",
+          title_ja: "Instance HA ⑥: 復旧時間は一つの数字では書けませんでした",
           url: "writing/instance-ha-6-100-seconds-is-a-service-decision.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-20", dateLabel: "Sep 20, 2026",
@@ -524,12 +524,12 @@
           tags: ["IaaS Backend", "Migration", "Method"]
         },
         {
-          title: "Instance HA ③: We Split Failure Detection from Execution Readiness",
+          title: "Instance HA ③: Of Eight Failures, Only One Should Recover",
           url: "writing/seven-of-eight-should-not-recover.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "Instance HA ③: 장애인가와 지금 해도 되는가를 갈랐습니다",
+          title_ko: "Instance HA ③: 여덟 가지 장애 중 복구해도 되는 것은 하나였습니다",
           desc_ko: "Instance HA 설계 3편. 「정말 장애인가」와 「지금 실행해도 되는가」가 한 판정에 섞여 있어 Storage 장애가 Compute 장애로 읽혔습니다. 두 질문을 Phase 1과 Phase 2로 가르고 판정 순서를 의사코드로 고정했습니다. 같은 기준으로 시나리오 여덟 개를 판정하니 Fencing 1건에 Hold 7건이었습니다.",
-          title_ja: "Instance HA ③: 障害かどうかと今実行してよいかを分けました",
+          title_ja: "Instance HA ③: 八つの障害のうち復旧してよいのは一つでした",
           desc_ja: "Instance HA 設計の第3編。「本当に障害か」と「今実行してよいか」が一つの判定に混ざり、Storage の障害が Compute の障害として読まれていました。二つを Phase 1 と Phase 2 に分け、判定順序を擬似コードで固定しました。同じ基準で八つのシナリオを判定すると Fencing 1 件と Hold 7 件でした。",
           date: "2026-09-20", dateLabel: "Sep 20, 2026",
           desc: "Part 3 of the Instance HA design series. Asking whether a node failed and whether recovery may run were welded into one verdict, which let a storage fault read as a compute fault. Splitting them into Phase 1 and Phase 2 and pinning the order in pseudocode left one fencing and seven holds across eight scenarios. Also in Korean and Japanese.",
