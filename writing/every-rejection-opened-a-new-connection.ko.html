@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Go 벤치 Harness가 거부 응답 884건에 TCP Connection 884개를 열었습니다 | Kwanghun Lee</title>
+  <title>왜 Go Benchmark Harness는 Connection을 재사용하지 못했을까 | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Go 벤치 Harness가 거부 응답 884건에 TCP Connection 884개를 열었습니다" />
-  <meta property="og:description" content="200이 아닌 응답의 Body를 읽지 않고 닫아서 실제 런이 쓰는 pooled 모드가 요청 하나에 Connection 하나를 열고 있었습니다. 읽어 비우게 고치자 22개가 됐습니다. Pool의 효과를 보여 준 431 → 6은 거부가 0건인 트레이스에서 잰 숫자였습니다." />
+  <meta property="og:title" content="왜 Go Benchmark Harness는 Connection을 재사용하지 못했을까" />
+  <meta property="og:description" content="pooled 모드인 Go Benchmark Harness가 요청마다 새 Connection을 열고 있었습니다. 429 Response의 Body를 읽지 않고 닫아 Connection이 Pool로 돌아가지 못했기 때문입니다. Pool 효과의 근거였던 431→6은 거부가 0건인 Trace에서 잰 값이었습니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -26,10 +26,10 @@
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Go 벤치 Harness가 거부 응답 884건에 TCP Connection 884개를 열었습니다" />
-  <meta name="twitter:description" content="200이 아닌 응답의 Body를 읽지 않고 닫아서 실제 런이 쓰는 pooled 모드가 요청 하나에 Connection 하나를 열고 있었습니다. 읽어 비우게 고치자 22개가 됐습니다. Pool의 효과를 보여 준 431 → 6은 거부가 0건인 트레이스에서 잰 숫자였습니다." />
+  <meta name="twitter:title" content="왜 Go Benchmark Harness는 Connection을 재사용하지 못했을까" />
+  <meta name="twitter:description" content="pooled 모드인 Go Benchmark Harness가 요청마다 새 Connection을 열고 있었습니다. 429 Response의 Body를 읽지 않고 닫아 Connection이 Pool로 돌아가지 못했기 때문입니다. Pool 효과의 근거였던 431→6은 거부가 0건인 Trace에서 잰 값이었습니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="200이 아닌 응답의 Body를 읽지 않고 닫아서 실제 런이 쓰는 pooled 모드가 요청 하나에 Connection 하나를 열고 있었습니다. 읽어 비우게 고치자 22개가 됐습니다. Pool의 효과를 보여 준 431 → 6은 거부가 0건인 트레이스에서 잰 숫자였습니다." />
+  <meta name="description" content="pooled 모드인 Go Benchmark Harness가 요청마다 새 Connection을 열고 있었습니다. 429 Response의 Body를 읽지 않고 닫아 Connection이 Pool로 돌아가지 못했기 때문입니다. Pool 효과의 근거였던 431→6은 거부가 0건인 Trace에서 잰 값이었습니다." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag side notranslate">개인 프로젝트</span><a class="project-tag notranslate" href="../writing/index.html?tag=GPUaaS%20Control%20Plane">#GPUaaS Control Plane</a></div>
       </div>
       <section class="page-hero">
-        <h1>Go 벤치 Harness가 거부 응답 884건에 TCP Connection 884개를 열었습니다<br><span class="h1-sub">429 응답의 Body를 읽지 않고 닫아서 Connection을 한 번도 다시 쓰지 못했습니다.</span></h1>
+        <h1>왜 Go Benchmark Harness는 Connection을 재사용하지 못했을까</h1>
         <p class="article-date">2026년 9월</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="every-rejection-opened-a-new-connection"></aside>
