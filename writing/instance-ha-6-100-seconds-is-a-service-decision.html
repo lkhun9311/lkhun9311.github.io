@@ -163,7 +163,8 @@
         </div>
 
         <p class="table-note">The longest stretch is not detection but the restart, and it also has the
-        widest spread. Halving detection moves the total by only about fifteen percent.
+        widest spread. Halving detection (30s to 15s) moves the total by only about nine to fifteen percent
+        (fifteen against the 100-second lower bound, nine against the 160-second upper bound).
         <strong>Finding where to cut requires splitting the stages first.</strong></p>
 
         <h2 id="how-many-at-once">100 seconds was the figure for one host<a class="anchor" href="#how-many-at-once" aria-label="Link to this section">#</a></h2>
@@ -300,7 +301,7 @@ probe_retry=3      # 15s TTL
         <h2 id="after-the-design">How far the design document travelled<a class="anchor" href="#after-the-design" aria-label="Link to this section">#</a></h2>
 
         <p>What this series comes from is a design document. Another engineer picked up the implementation
-        and I was not part of it. So saying whether this design survived means pointing at someone else's
+        and I was not part of it. So saying whether this design was referenced means pointing at someone else's
         document rather than at my own words.</p>
 
         <figure class="diagram">
@@ -322,10 +323,10 @@ probe_retry=3      # 15s TTL
               <text x="360" y="160" font-size="10" fill="#666" text-anchor="middle">Implementation: another engineer</text>
             </g>
           </svg>
-          <figcaption>Whether a design survived shows up in someone else's document, not in your own.</figcaption>
+          <figcaption>Whether a design was referenced shows up as its principles and citations in someone else's document. Adoption, implementation and ordering are separate questions.</figcaption>
         </figure>
 
-        <p>A follow up review written around the same time cites this design document. Its conclusion was
+        <p>Another review written around the same time cites this design document. Its conclusion was
         that recovery must not run while the observation point itself is broken, which is the same content
         as the hold logic and the phase split in the design.</p>
 
@@ -333,14 +334,14 @@ probe_retry=3      # 15s TTL
           <p class="table-scroll-hint">Scroll sideways to see the rest</p>
           <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
           <table>
-            <caption class="sr-only">Problems and expected improvements as written in the design.</caption>
-            <thead><tr><th>Problem</th><th>Expected improvement</th></tr></thead>
-            <tbody><tr><td>L2 or L3 switch failure</td><td>Apply the composite decision and hold recovery</td></tr><tr><td>Over reliance on the external probe</td><td>Demote it to a secondary signal and put quorum and heartbeat first</td></tr><tr><td>Misreading a storage path failure</td><td>Move it into execution readiness and remove the over suppression</td></tr><tr><td>A controller deciding alone</td><td>Check quorum first</td></tr><tr><td>Split brain</td><td>Make fencing a condition for passing</td></tr></tbody>
+            <caption class="sr-only">Problems and the effects the design aimed for.</caption>
+            <thead><tr><th>Problem</th><th>Effect the design aimed for</th></tr></thead>
+            <tbody><tr><td>L2 or L3 switch failure</td><td>Designed to apply the composite decision and hold recovery</td></tr><tr><td>Over reliance on the external probe</td><td>Demote it to a secondary signal and put quorum and heartbeat first</td></tr><tr><td>Misreading a storage path failure</td><td>Move it into execution readiness to reduce over suppression</td></tr><tr><td>A controller deciding alone</td><td>Check quorum first</td></tr><tr><td>Split brain</td><td>Make fencing a condition for passing</td></tr></tbody>
           </table>
           </div>
         </div>
 
-        <p class="table-note">These are the improvements the design document claims. Which of them actually
+        <p class="table-note">These are the effects the design aimed for. Which of them actually
         showed up in operation is outside what I can verify.</p>
 
         <h2 id="limits">Limits: what this post does not claim<a class="anchor" href="#limits" aria-label="Link to this section">#</a></h2>
@@ -364,8 +365,8 @@ probe_retry=3      # 15s TTL
         <h2 id="wrapping-up">Wrapping up<a class="anchor" href="#wrapping-up" aria-label="Link to this section">#</a></h2>
         <p>One thing runs through this series. <strong>When the grounds for a decision are piled onto a
         single number or a single signal, there is no way out when that one thing is wrong.</strong>
-        Part one was trusting one observation point and calling a live node dead. Everything after it
-        was about dividing the grounds up.</p>
+        Part one was the existing recovery logic trusting one observation point and calling a live node dead.
+        Everything after it was about dividing the grounds up.</p>
         <p>Signals were divided by what each can testify to, failure detection from execution readiness,
         the command from the confirmation, consensus from fencing, and finally time itself into stages and
         into services.</p>

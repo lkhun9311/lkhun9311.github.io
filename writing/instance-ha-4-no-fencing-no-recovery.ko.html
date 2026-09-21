@@ -116,13 +116,14 @@
 
         <h2 id="설계가-요구한-것">설계는 확인 없이는 옮기지 말라고 했습니다<a class="anchor" href="#설계가-요구한-것" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>복구는 VM을 다른 호스트에서 다시 띄우는 일입니다. 원본이 죽지 않았다면 같은 볼륨에 두 쪽이
-        동시에 붙습니다. <strong>깨지는 것은 VM 하나가 아니라 볼륨 전체입니다.</strong></p>
+        <p>복구는 VM을 다른 호스트에서 다시 띄우는 일입니다. 원본이 죽지 않았는데 재기동된 쪽이 같은 볼륨에
+        붙어 두 쪽이 동시에 쓰도록 허용되면, <strong>깨지는 것은 VM 하나가 아니라 볼륨 전체가 될 수
+        있습니다.</strong></p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 150" role="img" aria-labelledby="step-t step-d" class="figure-svg">
             <title id="step-t">복구 절차 네 단계</title>
-            <desc id="step-d">Detect와 Verify와 Fence는 언제든 멈출 수 있습니다. 마지막 Recover만 되돌릴 수 없습니다.</desc>
+            <desc id="step-d">Detect와 Verify는 판단 단계라 언제든 멈출 수 있고, Fence부터는 서비스에 실제 영향을 줍니다. 마지막 Recover는 되돌릴 수 없습니다.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="70" y="60" width="130" height="46" rx="8" fill="none" stroke="#5b7fa6" stroke-width="1.7"/>
               <text x="135" y="88" font-size="11.5" fill="#5b7fa6" text-anchor="middle">Detect</text>
@@ -155,8 +156,9 @@
           </div>
         </div>
 
-        <p>네 단계로 가른 이유는 되돌릴 수 없는 동작을 맨 끝에 몰기 위해서입니다. 앞의 세 단계는 언제든
-        멈출 수 있고 마지막 하나만 되돌릴 수 없습니다.</p>
+        <p>네 단계로 가른 이유는 서비스에 실제 영향을 주는 동작을 뒤로 몰기 위해서입니다. Detect와 Verify는
+        판단 단계라 확신이 서지 않으면 언제든 멈출(Hold) 수 있고, Fence부터는 전원을 내리므로 서비스에 실제
+        영향을 주기 시작합니다. 그중에서도 되돌릴 수 없는 것은 맨 끝의 Recover입니다.</p>
 
         <p>그리고 전원을 내릴 경로가 장애와 함께 끊기면 원칙 자체가 성립하지 않습니다. 그래서 전용 물리
         스위치를 전제 조건으로 요구했습니다.</p>
@@ -255,7 +257,7 @@ ipmitool chassis power status
               <text x="540" y="256" font-size="10" fill="#b8860b" text-anchor="middle">빠진 두 칸 자리에 다른 장치</text>
             </g>
           </svg>
-          <figcaption>비어 있는 두 칸이 이 글의 주제입니다. 나머지는 같습니다.</figcaption>
+          <figcaption>비어 있는 칸이 이 글의 주제입니다. 나머지는 이미 코드에 반영돼 있습니다.</figcaption>
         </figure>
 
         <div class="table-scroll">
@@ -335,7 +337,7 @@ ipmitool chassis power status
         <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
         <p>이 편의 결론은 한 줄입니다. <strong>설계가 요구한 것과 구현이 하는 것을 같은 문장으로 적으면
         읽는 사람이 속습니다.</strong> 이전 판의 제목이 그랬고 그래서 제목부터 바꿨습니다.</p>
-        <p>남은 차이는 하나입니다. 전원 차단은 밖에서 확인하고 프로세스 종료는 안에서 판단합니다.
+        <p>가장 위험한 차이는 하나입니다. 전원 차단은 밖에서 확인하고 프로세스 종료는 안에서 판단합니다.
         관측자가 자기를 잘못 읽으면 두 번째 방법은 작동하지 않습니다.</p>
         <p>다음 편은 이 절차를 누가 실행할지 정하는 이야기입니다.</p>
         <p>읽어 주셔서 감사합니다.</p>

@@ -280,7 +280,7 @@
               <path d="M390 153 H 450" stroke="#b8860b" stroke-width="1.4" fill="none"/>
               <rect x="450" y="130" width="200" height="46" rx="8" fill="none" stroke="#b8860b" stroke-width="1.8"/>
               <text x="550" y="158" font-size="10.5" fill="#b8860b" text-anchor="middle">BMC コンソールで手動介入</text>
-              <text x="550" y="200" font-size="10" fill="#666" text-anchor="middle">電源確認のあと crm node fence</text>
+              <text x="550" y="200" font-size="10" fill="#666" text-anchor="middle">電源確認のあと stonith_admin --confirm</text>
             </g>
           </svg>
           <figcaption>freeze は故障ではなく設計された停止です。確認できなかったから止まったのです。</figcaption>
@@ -293,8 +293,8 @@ crm_mon -1
 
 # 2. BMC コンソールで対象ノードが Power OFF かを目で確認します
 
-# 3. 確認したあとにだけクラスタへ fencing を記録します
-crm node fence &lt;nodename&gt;
+# 3. 確認したあとにだけクラスタへ「ダウン済み」を記録します
+stonith_admin --confirm &lt;nodename&gt;
 
 # 4. ノードをクラスタに戻します
 crm node online &lt;nodename&gt;
@@ -302,9 +302,10 @@ crm node online &lt;nodename&gt;
 # 5. STONITH リソースを再起動します
 crm resource restart stonith-&lt;nodename&gt;</code></pre>
 
-        <p><strong>三番目は二番目なしに実行してはいけません。</strong><code>crm node fence</code> は電源を
-        落とす命令ではなく、落ちたとクラスタに伝える命令です。確認せずに記録すれば、④編で塞ごうとした
-        二重接続を人の手で開くことになります。</p>
+        <p><strong>三番目は二番目なしに実行してはいけません。</strong><code>stonith_admin --confirm</code> は電源を
+        落とす命令ではなく、すでに落ちていることを運用者が確認したとクラスタに伝える命令です。確認せずに記録すれば、
+        ④編で塞ごうとした二重接続を人の手で開くことになります。逆に <code>crm node fence</code> は対象ノードに
+        実際の fencing を要求する命令なので、ここで使うと生きているノードを切ってしまいます。</p>
 
         <p>設定も二つ併せて推奨しました。<code>stonith-action</code> の既定値は再起動で、再起動は対象ノードが
         また上がってくる状態を作ります。電源が落ちたまま置くほうが、二重接続の余地を狭めます。</p>
