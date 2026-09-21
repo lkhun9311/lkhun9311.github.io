@@ -87,6 +87,7 @@
             <li><a href="#who-this-is-for">Who this is for</a></li>
             <li><a href="#one-number">At first I tried to write it as one number</a></li>
             <li><a href="#three-stages">Splitting the estimate into three stages</a></li>
+            <li><a href="#how-many-at-once">100 seconds was the figure for one host</a></li>
             <li><a href="#by-service-type">The same 100 seconds differs by service</a></li>
             <li><a href="#cost-of-shrinking">It can be shortened, but not for free</a></li>
             <li><a href="#after-the-design">How far the design document travelled</a></li>
@@ -164,6 +165,72 @@
         <p class="table-note">The longest stretch is not detection but the restart, and it also has the
         widest spread. Halving detection moves the total by only about fifteen percent.
         <strong>Finding where to cut requires splitting the stages first.</strong></p>
+
+        <h2 id="how-many-at-once">100 seconds was the figure for one host<a class="anchor" href="#how-many-at-once" aria-label="Link to this section">#</a></h2>
+
+        <p>Every estimate so far is <strong>the figure for recovering one host.</strong> When a node goes
+        down, every instance that was running on it becomes a target at the same moment. Not one. Twenty.</p>
+
+        <p>Recovering them together made errors climb on the shared storage. On the same 10G network the
+        errors started rising from the fifth one, and running ten at once left only two successful.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 660 208" role="img" aria-labelledby="cc-t cc-d" class="figure-svg">
+            <title id="cc-t">Recovering ten at once against ten in turn</title>
+            <desc id="cc-d">Recovering ten at once on the same network leaves only two successful and eight failed. Doing them one after another gets all ten through, but the total time runs longer.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="150" y="34" font-size="11" fill="#555" text-anchor="middle">ten at once</text>
+              <text x="480" y="34" font-size="11" fill="#555" text-anchor="middle">ten one after another</text>
+              <rect x="70" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <rect x="400" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <rect x="87" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <rect x="417" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <rect x="104" y="56" width="11" height="52" rx="2" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <rect x="434" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <rect x="121" y="56" width="11" height="52" rx="2" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <rect x="451" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <rect x="138" y="56" width="11" height="52" rx="2" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <rect x="468" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <rect x="155" y="56" width="11" height="52" rx="2" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <rect x="485" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <rect x="172" y="56" width="11" height="52" rx="2" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <rect x="502" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <rect x="189" y="56" width="11" height="52" rx="2" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <rect x="519" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <rect x="206" y="56" width="11" height="52" rx="2" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <rect x="536" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <rect x="223" y="56" width="11" height="52" rx="2" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <rect x="553" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <text x="150" y="128" font-size="10.5" fill="#d62976" text-anchor="middle">2 succeeded, 8 failed</text>
+              <text x="480" y="128" font-size="10.5" fill="#2e9e5b" text-anchor="middle">10 succeeded, 0 failed</text>
+              <text x="150" y="150" font-size="10" fill="#777" text-anchor="middle">the failures must be redone</text>
+              <text x="480" y="150" font-size="10" fill="#777" text-anchor="middle">but the total runs longer</text>
+              <path d="M300 82 H 360" stroke="#999" stroke-width="1.2" stroke-dasharray="4 3" fill="none"/>
+              <text x="330" y="190" font-size="10.5" fill="#666" text-anchor="middle">the stretch a single-host figure does not cover</text>
+            </g>
+          </svg>
+          <figcaption>Firing everything at once is not faster. The failed share has to be done again.</figcaption>
+        </figure>
+
+        <p>So the maximum number running at once became a setting, and the next recovery starts only after
+        the previous migration finishes. <strong>Firing them all at once is the slower option.</strong> The
+        failed share has to be done again.</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+          <table>
+            <caption class="sr-only">What concurrent recovery changed, and why.</caption>
+            <thead><tr><th>What changed</th><th>How</th><th>Why</th></tr></thead>
+            <tbody><tr><td>Maximum concurrent recoveries</td><td>Capped at a configured number</td><td>The shared storage cannot absorb that many requests at once</td></tr><tr><td>When the next one starts</td><td>Only after the previous migration finishes</td><td>Firing them together means redoing the failures, which takes longer</td></tr><tr><td>Minimum detection interval</td><td>Lowered from 20 seconds to 10</td><td>The front half can shrink. The back half does not shrink with this value</td></tr><tr><td>Total recovery time</td><td>The single-host figure times the queue length</td><td>The number of instances on the node is what sets the real RTO</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">This sends you back to the estimate in the previous section. 100 seconds is
+        the figure for whichever host stands at the front of the queue. For the instance at the back, the RTO
+        is set by how many stand ahead of it. Lowering detection from 20 seconds to 10 does not shorten that
+        stretch.</p>
 
         <h2 id="by-service-type">The same 100 seconds differs by service<a class="anchor" href="#by-service-type" aria-label="Link to this section">#</a></h2>
 

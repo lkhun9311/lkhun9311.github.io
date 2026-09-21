@@ -87,6 +87,7 @@
             <li><a href="#想定読者">この記事の想定読者</a></li>
             <li><a href="#一つの数字">最初は一つの数字で書こうとしました</a></li>
             <li><a href="#三段階">三つの段階に分けて試算しました</a></li>
+            <li><a href="#同時復旧">100秒は一台を復旧するときの数字でした</a></li>
             <li><a href="#サービス種別">同じ100秒がサービスごとに違います</a></li>
             <li><a href="#縮める代償">縮めることはできますが代償があります</a></li>
             <li><a href="#設計のその後">設計書がどこまで届いたか</a></li>
@@ -162,6 +163,71 @@
         <p class="table-note">一番長い区間は検知ではなく立ち上げ直すほうで、幅も一番広いです。検知を半分に
         しても合計は15パーセントほどしか縮みません。
         <strong>削る場所を探すには、まず段階を分ける必要があります。</strong></p>
+
+        <h2 id="同時復旧">100秒は一台を復旧するときの数字でした<a class="anchor" href="#同時復旧" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>ここまでの試算はすべて<strong>一台を復旧するときの数字です。</strong>ノードが落ちると、その上に
+        載っていた Instance が一度に対象になります。一台ではなく二十台です。</p>
+
+        <p>一度に復旧すると共用の保管所の側でエラーが急増しました。同じ 10G の網で五個目から
+        エラーが増え始め、十個を同時に実行したときは二個しか成功しませんでした。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 660 208" role="img" aria-labelledby="cc-t cc-d" class="figure-svg">
+            <title id="cc-t">同時復旧と順番の復旧の結果の違い</title>
+            <desc id="cc-d">同じ網で10個を一度に復旧すると2個だけ成功して8個が失敗します。一台ずつ順番に行えばすべて成功しますが、全体の時間は伸びます。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="150" y="34" font-size="11" fill="#555" text-anchor="middle">同時に10個</text>
+              <text x="480" y="34" font-size="11" fill="#555" text-anchor="middle">順番に10個</text>
+              <rect x="70" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <rect x="400" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <rect x="87" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <rect x="417" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <rect x="104" y="56" width="11" height="52" rx="2" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <rect x="434" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <rect x="121" y="56" width="11" height="52" rx="2" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <rect x="451" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <rect x="138" y="56" width="11" height="52" rx="2" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <rect x="468" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <rect x="155" y="56" width="11" height="52" rx="2" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <rect x="485" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <rect x="172" y="56" width="11" height="52" rx="2" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <rect x="502" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <rect x="189" y="56" width="11" height="52" rx="2" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <rect x="519" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <rect x="206" y="56" width="11" height="52" rx="2" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <rect x="536" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <rect x="223" y="56" width="11" height="52" rx="2" fill="none" stroke="#d62976" stroke-width="1.5"/>
+              <rect x="553" y="56" width="11" height="52" rx="2" fill="none" stroke="#2e9e5b" stroke-width="1.5"/>
+              <text x="150" y="128" font-size="10.5" fill="#d62976" text-anchor="middle">成功 2 ・ 失敗 8</text>
+              <text x="480" y="128" font-size="10.5" fill="#2e9e5b" text-anchor="middle">成功 10 ・ 失敗 0</text>
+              <text x="150" y="150" font-size="10" fill="#777" text-anchor="middle">失敗分のやり直しが必要</text>
+              <text x="480" y="150" font-size="10" fill="#777" text-anchor="middle">ただし全体の時間は増加</text>
+              <path d="M300 82 H 360" stroke="#999" stroke-width="1.2" stroke-dasharray="4 3" fill="none"/>
+              <text x="330" y="190" font-size="10.5" fill="#666" text-anchor="middle">一台基準の数値では説明できない区間</text>
+            </g>
+          </svg>
+          <figcaption>一度に投げても速くなりません。失敗した分をやり直すことになるからです。</figcaption>
+        </figure>
+
+        <p>そこで同時に実行する最大数を設定として置き、一台の移送が終わってから次を始めるように
+        変えました。<strong>一度に投げるほうがむしろ遅いのです。</strong>失敗した分をやり直すことに
+        なるからです。</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
+          <table>
+            <caption class="sr-only">同時復旧のために変わった設定と、その理由。</caption>
+            <thead><tr><th>変わったもの</th><th>どう変えたか</th><th>なぜ</th></tr></thead>
+            <tbody><tr><td>同時復旧の最大数</td><td>設定した数を超えないよう制限する</td><td>共用の保管所が同時の要求を受け切れない</td></tr><tr><td>次の復旧を始める時点</td><td>一台の移送が終わってから次を始める</td><td>一度に投げると失敗分をやり直すことになり、かえって伸びる</td></tr><tr><td>検知周期の最小値</td><td>20秒から10秒へ下げた</td><td>前半は縮められる。後半はこの値では縮まらない</td></tr><tr><td>復旧の総時間</td><td>一台基準の数値に待ち行列の長さを掛ける</td><td>ノードに載った Instance の数が実際の RTO を決める</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">これが前の節の試算を読み直させます。100秒は待ち行列の先頭に立つ一台の
+        数字です。最後尾の Instance にとって RTO は、前に何台いるかで決まります。検知周期を20秒から
+        10秒へ下げても、この区間は縮みません。</p>
 
         <h2 id="サービス種別">同じ100秒がサービスごとに違います<a class="anchor" href="#サービス種別" aria-label="このセクションへのリンク">#</a></h2>
 
