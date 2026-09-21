@@ -164,6 +164,24 @@
         しても（30秒→15秒）合計は9〜15パーセントほどしか縮みません（下限100秒基準で15パーセント、上限160秒基準で9パーセント）。
         <strong>削る場所を探すには、まず段階を分ける必要があります。</strong></p>
 
+
+        <p>ここまでは試算です。あとで実際に測った記録が残っています。</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
+          <table>
+            <caption class="sr-only">四つのシナリオで検知から復旧完了までにかかった時間。</caption>
+            <thead><tr><th>シナリオ</th><th>検知から完了まで</th><th>復旧方式</th></tr></thead>
+            <tbody><tr><td>Agent 停止</td><td>26秒</td><td>live migration</td></tr><tr><td>サービス網の分離</td><td>31秒</td><td>live migration</td></tr><tr><td>電源遮断</td><td>40秒</td><td>evacuate</td></tr><tr><td>管理網の分離</td><td>47秒</td><td>evacuate</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note"><strong>実測は試算より短く出ます。</strong>試算が段階ごとに上限を取ったから
+        です。同じ表から復旧方式が二つに分かれることも見えます。Compute のサービスが生きていれば
+        live migration へ、通信が切れていれば evacuate へ進みます。</p>
+
         <h2 id="同時復旧">100秒は一台を復旧するときの数字でした<a class="anchor" href="#同時復旧" aria-label="このセクションへのリンク">#</a></h2>
 
         <p>ここまでの試算はすべて<strong>一台を復旧するときの数字です。</strong>ノードが落ちると、その上に

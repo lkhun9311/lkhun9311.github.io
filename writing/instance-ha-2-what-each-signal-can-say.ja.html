@@ -274,6 +274,25 @@
         Interface の種類を見分けられないと、サービス側の断絶と管理側の断絶を分けられません。外部の検討で
         その点が指摘され、この連作が扱う範囲の外の宿題として残っています。</p>
 
+
+        <p>判定が一か所で終わるわけでもありません。ノード側の Agent が答えを返すと、管理側のバッチは
+        その答えをそのまま信じず、七つの項目を確かめ直します。</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
+          <table>
+            <caption class="sr-only">管理側のバッチが Agent の応答を確かめ直す七項目。</caption>
+            <thead><tr><th>確かめ直すもの</th><th>何を見るか</th></tr></thead>
+            <tbody><tr><td>Agent への到達</td><td>Agent に届かないだけで offline</td></tr><tr><td>Agent の応答状態</td><td>Agent 自身が offline と答えたか</td></tr><tr><td>ホストの宛先</td><td>Hypervisor の宛先に届くか</td></tr><tr><td>応答の宛先一覧</td><td>Agent が返した宛先に届くか</td></tr><tr><td>Gateway の状態</td><td>返された Gateway に offline があるか</td></tr><tr><td>VIP の状態</td><td>返された VIP に offline があるか</td></tr><tr><td>Interface の状態</td><td>返された Interface に down があるか</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">文書が理由を書き残しています。一時的な通信エラーや一度の検査失敗で、すぐに
+        障害イベントを作らないためです。誤検知を実際に止めているのは等級表ではなく、両側が同じものを二度見る
+        この構造です。</p>
+
         <h2 id="根拠">なぜ十秒でなぜ三回か<a class="anchor" href="#根拠" aria-label="この節へのリンク">#</a></h2>
 
         <figure class="diagram">

@@ -167,6 +167,24 @@
         (fifteen against the 100-second lower bound, nine against the 160-second upper bound).
         <strong>Finding where to cut requires splitting the stages first.</strong></p>
 
+
+        <p>Everything so far is an estimate. Measurements were taken later and the records survive.</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+          <table>
+            <caption class="sr-only">Time from detection to completed recovery across four scenarios.</caption>
+            <thead><tr><th>Scenario</th><th>Detection to done</th><th>Method</th></tr></thead>
+            <tbody><tr><td>Agent stopped</td><td>26s</td><td>live migration</td></tr><tr><td>Service network cut</td><td>31s</td><td>live migration</td></tr><tr><td>Power off</td><td>40s</td><td>evacuate</td></tr><tr><td>Management network cut</td><td>47s</td><td>evacuate</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note"><strong>The measurements come in under the estimate.</strong> The estimate took
+        an upper bound at each stage. The same table shows the method splitting in two. Where the compute
+        service is still alive it goes by live migration, and where communication is cut it goes by evacuate.</p>
+
         <h2 id="how-many-at-once">100 seconds was the figure for one host<a class="anchor" href="#how-many-at-once" aria-label="Link to this section">#</a></h2>
 
         <p>Every estimate so far is <strong>the figure for recovering one host.</strong> When a node goes

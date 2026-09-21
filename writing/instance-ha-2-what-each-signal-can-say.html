@@ -276,6 +276,25 @@
         management side. An external review raised exactly that, and it stays an open item outside the scope
         of this series.</p>
 
+
+        <p>The verdict does not end in one place either. When the agent on the node answers, the
+        batch on the control side does not take that answer as given. It re-checks seven things.</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+          <table>
+            <caption class="sr-only">The seven things the control-side batch re-checks in the agent's answer.</caption>
+            <thead><tr><th>Re-checked</th><th>What it confirms</th></tr></thead>
+            <tbody><tr><td>Agent reachability</td><td>Failing to reach the agent is offline on its own</td></tr><tr><td>Agent's own status</td><td>Whether the agent answered that it is offline</td></tr><tr><td>Host address</td><td>Whether the hypervisor address answers</td></tr><tr><td>Returned address list</td><td>Whether the addresses the agent returned answer</td></tr><tr><td>Gateway state</td><td>Whether any returned gateway is offline</td></tr><tr><td>VIP state</td><td>Whether any returned VIP is offline</td></tr><tr><td>Interface state</td><td>Whether any returned interface is down</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">The document records why. It is so that a transient communication error or a
+        single failed check does not become a failure event on the spot. What actually holds false positives
+        back is not the tier list. It is both sides looking at the same thing twice.</p>
+
         <h2 id="why-these-numbers">Why ten seconds and why three times<a class="anchor" href="#why-these-numbers" aria-label="Link to this section">#</a></h2>
 
         <figure class="diagram">

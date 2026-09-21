@@ -388,6 +388,18 @@ EVACUATION_MANAGERS=("controller-a" "controller-b" "controller-c")</code></pre>
         splits with it, and each side gets its own leader. The argument from earlier in this post comes
         back here unchanged. Choosing a leader and cutting power are different problems.</p>
 
+
+        <p>A settled leader does not mean recovery runs either. The job that fires each cycle checks
+        four things in order, and the last of them is its own health: whether it is connected to the message
+        bus and whether a query still answers on the store. If either fails, that cycle skips recovery.</p>
+
+        <p>The document records the reason in one line. It is so that a control node whose network is cut
+        does not lead a recovery. This is the point where the incident from part one is stopped in code.</p>
+
+        <p>What that stops, though, is a non-leader executing. There is still no lock that keeps two nodes
+        from picking up the same notification at once. The document says so plainly: duplicates are held back
+        only inside a single process, and a separate lock across nodes would be needed but is not built.</p>
+
         <h2 id="limits">Limits: what this post does not claim<a class="anchor" href="#limits" aria-label="Link to this section">#</a></h2>
 
         <ul class="callout">

@@ -275,6 +275,25 @@
         걸렸습니다. 인터페이스 종류를 구분하지 못하면 서비스 쪽 단절과 관리 쪽 단절을 가를 수 없습니다.
         외부 검토에서 그 점이 지적됐고 이 연작이 다루는 범위 밖의 숙제로 남았습니다.</p>
 
+
+        <p>판정이 한 곳에서 끝나지도 않습니다. 노드 쪽 Agent가 답을 보내면 관리 쪽 배치가 그 답을
+        그대로 믿지 않고 일곱 항목을 다시 확인합니다.</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="스크롤 가능한 표: 가로로 스크롤하면 나머지가 보입니다">
+          <table>
+            <caption class="sr-only">관리 쪽 배치가 Agent 응답을 다시 확인하는 일곱 항목.</caption>
+            <thead><tr><th>다시 보는 것</th><th>무엇을 확인하나</th></tr></thead>
+            <tbody><tr><td>Agent 통신</td><td>Agent에 닿지 못하면 그것만으로 offline</td></tr><tr><td>Agent 응답 상태</td><td>Agent가 스스로 offline이라 답했는지</td></tr><tr><td>호스트 주소</td><td>Hypervisor 주소에 닿는지</td></tr><tr><td>응답 주소 목록</td><td>Agent가 돌려준 주소들에 닿는지</td></tr><tr><td>Gateway 상태</td><td>돌려준 Gateway 가운데 offline이 있는지</td></tr><tr><td>VIP 상태</td><td>돌려준 VIP 가운데 offline이 있는지</td></tr><tr><td>Interface 상태</td><td>돌려준 Interface 가운데 down이 있는지</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">문서가 이유를 적어 두었습니다. 일시적인 통신 오류나 한 번의 검사 실패로
+        곧바로 장애 이벤트를 만들지 않기 위해서입니다. 오탐을 막는 실제 장치는 등급표가 아니라 양쪽이 같은
+        것을 두 번 보는 이 구조입니다.</p>
+
         <h2 id="근거">왜 10초이고 왜 세 번인가<a class="anchor" href="#근거" aria-label="이 절로 가는 링크">#</a></h2>
 
         <figure class="diagram">

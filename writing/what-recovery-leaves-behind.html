@@ -152,6 +152,12 @@
         <p class="table-note">The four sit on different layers. A resource count, a service state, a file and
         a process cannot be cleared in one action, and each is checked somewhere else.</p>
 
+
+        <p>A version number can change the outcome too. Call evacuate with the Nova API pinned to 2.95
+        or above and the instance comes up on another host <strong>in a stopped state.</strong> The screen
+        says it moved, and it did move, but the service is not running. That is why the operations script
+        pins the version at 2.94 or below.</p>
+
         <h2 id="allocations-left">An allocation stays where it left<a class="anchor" href="#allocations-left" aria-label="Link to this section">#</a></h2>
 
         <p>The first row took the longest. The instance was running on the new node while the node it left
