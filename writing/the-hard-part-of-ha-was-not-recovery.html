@@ -84,6 +84,7 @@
             <li><a href="#incident">The day recovery became the incident</a></li>
             <li><a href="#networks">Four strands hung off one switch</a></li>
             <li><a href="#misjudgment">Unreachable and dead were not told apart</a></li>
+            <li><a href="#second-incident">There was a second incident with the same shape</a></li>
             <li><a href="#split-brain">A recovery that should not have run breaks the volume</a></li>
             <li><a href="#recovery-targets">What to recover was already decided in two layers</a></li>
             <li><a href="#what-this-does-not-claim">Limits: what this post does not claim</a></li>
@@ -213,6 +214,56 @@
         failure</strong>. If the isolated side cannot feed its own isolation into the judgement, no amount of
         observational accuracy changes the conclusion. The question was never what to observe more sharply.
         It was whose word to believe.</p>
+
+        <h2 id="second-incident">There was a second incident with the same shape<a class="anchor" href="#second-incident" aria-label="Link to this section">#</a></h2>
+
+        <p>This was not the only one. In a setup with three controllers, when some of them hit a failure or
+        lost their link, <strong>the failed node itself was elected leader</strong> and recovery spread across
+        every node and VM. That was a separate case.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 268" role="img" aria-labelledby="two-t two-d" class="figure-svg">
+            <title id="two-t">Both incidents share one shape</title>
+            <desc id="two-d">The first incident was a dead switch cutting strands and the second was some controllers being cut off from each other. Both were failures of the observation point, read as failures of the target, and recovery spread from there.</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="180" y="30" font-size="11" fill="#5b7fa6" text-anchor="middle">first incident</text>
+              <text x="540" y="30" font-size="11" fill="#7a5ba6" text-anchor="middle">second incident</text>
+              <rect x="60" y="46" width="240" height="40" rx="8" fill="none" stroke="#5b7fa6" stroke-width="1.6"/>
+              <text x="180" y="71" font-size="10.5" fill="#5b7fa6" text-anchor="middle">a switch died, strands cut</text>
+              <rect x="420" y="46" width="240" height="40" rx="8" fill="none" stroke="#7a5ba6" stroke-width="1.6"/>
+              <text x="540" y="71" font-size="10.5" fill="#7a5ba6" text-anchor="middle">some controllers cut off</text>
+              <path d="M180 86 V 112" stroke="#666" stroke-width="1.2" fill="none"/>
+              <path d="M540 86 V 112" stroke="#666" stroke-width="1.2" fill="none"/>
+              <rect x="210" y="112" width="300" height="44" rx="8" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="360" y="139" font-size="11" fill="#d62976" text-anchor="middle">failure of the observation point</text>
+              <path d="M360 156 V 182" stroke="#d62976" stroke-width="1.3" fill="none"/>
+              <rect x="210" y="182" width="300" height="44" rx="8" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="360" y="209" font-size="11" fill="#d62976" text-anchor="middle">read as failure of the target</text>
+              <text x="360" y="252" font-size="10.5" fill="#b8860b" text-anchor="middle">recovery spreads</text>
+            </g>
+          </svg>
+          <figcaption>What was cut differed. The shape of the misjudgement did not.</figcaption>
+        </figure>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+          <table>
+            <caption class="sr-only">The two incidents side by side.</caption>
+            <thead><tr><th></th><th>First incident</th><th>Second incident</th></tr></thead>
+            <tbody><tr><td>What was cut</td><td>The data strand and the controller strand, through a dead switch</td><td>Communication between controllers</td></tr><tr><td>What the observer saw</td><td>That compute node is unreachable</td><td>That compute node is unreachable</td></tr><tr><td>The compute node in fact</td><td>Alive</td><td>Alive</td></tr><tr><td>How it spread</td><td>One controller decided on its own</td><td>The cut-off node was elected leader and it went wide</td></tr><tr><td>Shared cause</td><td>Failure of the observation point</td><td>Failure of the observation point</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">The cut is in a different place each time. One was a dead switch taking strands
+        with it; the other was controllers losing each other. Yet <strong>what the observer saw was the same,
+        and in both the compute node was alive.</strong></p>
+
+        <p>So the two fold into one sentence. It was not the compute node that failed but the observation
+        point, and that point never put its own state into the verdict. This is where the first rule of the
+        series comes from. Check whether you are in a state fit to judge, and if that is broken, do not
+        recover.</p>
 
         <h2 id="split-brain">A recovery that should not have run breaks the volume<a class="anchor" href="#split-brain" aria-label="Link to this section">#</a></h2>
 

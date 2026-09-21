@@ -84,6 +84,7 @@
             <li><a href="#事件">復旧が事故になった日</a></li>
             <li><a href="#ネットワーク">一つのスイッチに四本がぶら下がっていました</a></li>
             <li><a href="#誤判">届かないことと死んだことを分けられませんでした</a></li>
+            <li><a href="#二つ目の事件">同じ構造の事件がもう一つありました</a></li>
             <li><a href="#スプリットブレイン">走るべきでなかった復旧がボリュームを壊します</a></li>
             <li><a href="#復旧対象">何を復旧するかは二層で決まっていました</a></li>
             <li><a href="#主張しないこと">限界：この記事が主張しないこと</a></li>
@@ -212,6 +213,55 @@
         <p>事故の根は<strong>観測者の孤立を対象の障害として誤認した</strong>ことでした。孤立した側が自分の
         孤立を判定に入れられなければ、観測精度をいくら上げても同じ結論に至ります。何をより精緻に見るかでは
         なく、誰の言葉を信じるかの問題でした。</p>
+
+        <h2 id="二つ目の事件">同じ構造の事件がもう一つありました<a class="anchor" href="#二つ目の事件" aria-label="この節へのリンク">#</a></h2>
+
+        <p>この事故だけではありませんでした。Controller を三つ置く構成で、そのうち一部が障害や断絶に
+        遭ったとき、<strong>障害が起きたそのノードがリーダーに選ばれて</strong>復旧が全ノードと VM へ
+        広がった件が別にありました。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 268" role="img" aria-labelledby="two-t two-d" class="figure-svg">
+            <title id="two-t">二つの事件が同じ構造を持つ</title>
+            <desc id="two-d">一つ目はスイッチ障害で枝が切れたもの、二つ目は Controller の一部が互いに断絶したものです。どちらも観測地点の障害なのに対象の障害として誤判され、復旧が広がりました。</desc>
+            <g font-family="Inter, sans-serif">
+              <text x="180" y="30" font-size="11" fill="#5b7fa6" text-anchor="middle">一つ目の事件</text>
+              <text x="540" y="30" font-size="11" fill="#7a5ba6" text-anchor="middle">二つ目の事件</text>
+              <rect x="60" y="46" width="240" height="40" rx="8" fill="none" stroke="#5b7fa6" stroke-width="1.6"/>
+              <text x="180" y="71" font-size="10.5" fill="#5b7fa6" text-anchor="middle">スイッチ障害で枝が切れる</text>
+              <rect x="420" y="46" width="240" height="40" rx="8" fill="none" stroke="#7a5ba6" stroke-width="1.6"/>
+              <text x="540" y="71" font-size="10.5" fill="#7a5ba6" text-anchor="middle">Controller の一部が断絶</text>
+              <path d="M180 86 V 112" stroke="#666" stroke-width="1.2" fill="none"/>
+              <path d="M540 86 V 112" stroke="#666" stroke-width="1.2" fill="none"/>
+              <rect x="210" y="112" width="300" height="44" rx="8" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="360" y="139" font-size="11" fill="#d62976" text-anchor="middle">観測地点の障害</text>
+              <path d="M360 156 V 182" stroke="#d62976" stroke-width="1.3" fill="none"/>
+              <rect x="210" y="182" width="300" height="44" rx="8" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="360" y="209" font-size="11" fill="#d62976" text-anchor="middle">対象の障害として誤判</text>
+              <text x="360" y="252" font-size="10.5" fill="#b8860b" text-anchor="middle">復旧が広がる</text>
+            </g>
+          </svg>
+          <figcaption>切れた場所は違い、誤判の形は同じでした。</figcaption>
+        </figure>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
+          <table>
+            <caption class="sr-only">二つの事件の対比。</caption>
+            <thead><tr><th></th><th>一つ目の事件</th><th>二つ目の事件</th></tr></thead>
+            <tbody><tr><td>切れた場所</td><td>スイッチ障害でデータの枝と Controller の枝</td><td>Controller どうしの通信</td></tr><tr><td>観測者が見たもの</td><td>あの Compute に届かない</td><td>あの Compute に届かない</td></tr><tr><td>実際の Compute</td><td>生きていた</td><td>生きていた</td></tr><tr><td>広がり方</td><td>一つの Controller が単独で判定</td><td>断絶したノードがリーダーに選ばれて全体へ</td></tr><tr><td>共通の原因</td><td>観測地点の障害</td><td>観測地点の障害</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">切れた場所は違います。一方はスイッチが死んで枝が切れ、もう一方は Controller
+        どうしの通信が切れました。それなのに<strong>観測者が見た画面は同じで、実際の Compute も両方とも
+        生きていました。</strong></p>
+
+        <p>だから二つを一文にまとめられます。Compute 自体の障害ではなく観測地点の障害なのに、その観測地点が
+        自分の状態を判定に入れていなかったのです。ここからこの連作の最初の原則が出ます。自分が判断できる
+        状態かを先に見て、それが壊れていれば復旧を行いません。</p>
 
         <h2 id="スプリットブレイン">走るべきでなかった復旧がボリュームを壊します<a class="anchor" href="#スプリットブレイン" aria-label="この節へのリンク">#</a></h2>
 
