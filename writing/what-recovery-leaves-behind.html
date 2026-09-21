@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instance HA ⑧: Recovery Succeeded and It Still Was Not Over | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/what-recovery-leaves-behind.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/what-recovery-leaves-behind.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/what-recovery-leaves-behind.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/what-recovery-leaves-behind.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="Instance HA ⑧: Recovery Succeeded and It Still Was Not Over" />
+  <meta property="og:description" content="Moving an instance successfully makes recovery look finished. But an allocation stays behind where it left, the failed node's compute service is still switched off, and a shared state file can be overwritten. Leave any of it and the next recovery fails for lack of room." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/what-recovery-leaves-behind.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Instance HA ⑧: Recovery Succeeded and It Still Was Not Over" />
+  <meta name="twitter:description" content="A successful move is not the end. Leftover allocations and a switched-off service block the next recovery." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="Moving an instance successfully makes recovery look finished. But an allocation stays behind where it left, the failed node's compute service is still switched off, and a shared state file can be overwritten. Leave any of it and the next recovery fails for lack of room." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"what-recovery-leaves-behind.html","ko":"what-recovery-leaves-behind.ko.html","ja":"what-recovery-leaves-behind.ja.html"}'>
+          <option value="en" selected>English</option>
+          <option value="ko">한국어</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>List</a>
+        <div class="article-meta"><span class="source-tag company notranslate">Company work</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS Backend</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>Instance HA ⑧: Recovery Succeeded and It Still Was Not Over<br><span class="h1-sub">Resource allocations and service states survive a successful move. Leave them and the next recovery is the one that fails.</span></h1>
+        <p class="article-date">September 2026</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="what-recovery-leaves-behind"></aside>
+        <nav class="article-toc" aria-label="Table of contents">
+          <p class="toc-label">Contents</p>
+          <ul>
+            
+            
+            
+            
+            
+            
+            <li><a href="#who-this-is-for">Who this is for</a></li>
+            <li><a href="#thought-it-was-over">I thought moving it was the end</a></li>
+            <li><a href="#allocations-left">An allocation stays where it left</a></li>
+            <li><a href="#identifier-clash">A shared state file gets overwritten</a></li>
+            <li><a href="#two-failures">Both failures had the same root</a></li>
+            <li><a href="#turning-it-back-on">Restoring is not automatic</a></li>
+            <li><a href="#limits">Limits: what this post does not claim</a></li>
+            <li><a href="#wrapping-up">Wrapping up</a></li>
+          </ul>
+        </nav>
+      <article>
+        <p>In <a href="recovery-host-must-have-the-device.html">part seven</a> we settled where to send it.
+        It was sent, the instance came back up, and the screen reported recovery complete.</p>
+
+        <p>Then the next recovery failed. The reason given was that there was no valid host to move to, and
+        the nodes had room.</p>
+
+        <p>I assumed the capacity calculation was wrong. It was not. <strong>The earlier recovery had left an
+        allocation behind on the node the instance departed from.</strong></p>
+
+        <h2 id="who-this-is-for">Who this is for<a class="anchor" href="#who-this-is-for" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>Anyone whose automatic recovery went strange from the second run onward</li>
+          <li>Anyone writing down the restore procedure that follows a successful recovery</li>
+          <li>Anyone keeping per-node state on shared storage</li>
+          <li>Anyone who read part seven and wondered what is left after the send</li>
+        </ul>
+
+        <h2 id="thought-it-was-over">I thought moving it was the end<a class="anchor" href="#thought-it-was-over" aria-label="Link to this section">#</a></h2>
+
+        <p>A successful recovery means the instance came back up on another node. That verdict is correct.
+        <strong>It is simply not the point where cleanup finished.</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 190" role="img" aria-labelledby="gap-t gap-d" class="figure-svg">
+            <title id="gap-t">Between a successful move and a finished cleanup</title>
+            <desc id="gap-d">The point where the move succeeds looks like the end, but the real end comes later. In between sit a leftover allocation, a service left switched off and an overwritten state file.</desc>
+            <g font-family="Inter, sans-serif">
+              <path d="M60 90 H 660" stroke="#666" stroke-width="1.3" fill="none"/>
+              <circle cx="140" cy="90" r="6" fill="#2e9e5b"/>
+              <text x="140" y="68" font-size="10.5" fill="#2e9e5b" text-anchor="middle">move succeeds</text>
+              <text x="140" y="116" font-size="9.5" fill="#666" text-anchor="middle">looks finished here</text>
+              <circle cx="580" cy="90" r="6" fill="#d62976"/>
+              <text x="580" y="68" font-size="10.5" fill="#d62976" text-anchor="middle">cleanup done</text>
+              <text x="580" y="116" font-size="9.5" fill="#666" text-anchor="middle">where it actually ends</text>
+              <path d="M140 148 H 580" stroke="#b8860b" stroke-width="1.6" stroke-dasharray="4 3" fill="none"/>
+              <text x="360" y="172" font-size="10.5" fill="#b8860b" text-anchor="middle">leftover allocation · service off · overwritten state file</text>
+            </g>
+          </svg>
+          <figcaption>The gap between the two points is what this post is about. Only the success is on screen.</figcaption>
+        </figure>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+          <table>
+            <caption class="sr-only">What survives a successful recovery.</caption>
+            <thead><tr><th>What is left</th><th>Symptom</th><th>When it shows</th></tr></thead>
+            <tbody><tr><td>Allocation where the instance left</td><td>The same instance is held in two places and capacity is counted twice</td><td>When the next recovery fails for lack of room</td></tr><tr><td>The failed node's compute service</td><td>Left switched off, so it never becomes a target again</td><td>When the node is back but stays empty</td></tr><tr><td>A shared state file</td><td>Overwritten by whichever node came up first</td><td>When a node is restarted and the service will not start</td></tr><tr><td>A stopped agent</td><td>After a long disconnection it does not return on its own</td><td>When the node is alive but still reads as failed</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">The four sit on different layers. A resource count, a service state, a file and
+        a process cannot be cleared in one action, and each is checked somewhere else.</p>
+
+        <h2 id="allocations-left">An allocation stays where it left<a class="anchor" href="#allocations-left" aria-label="Link to this section">#</a></h2>
+
+        <p>The first row took the longest. The instance was running on the new node while the node it left
+        still held an allocation for that same instance.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 206" role="img" aria-labelledby="alloc-t alloc-d" class="figure-svg">
+            <title id="alloc-t">How a leftover allocation gets counted twice</title>
+            <desc id="alloc-d">When the same instance holds resources on both the node it left and the node it now runs on, the capacity is counted twice. In that state the next recovery fails for lack of room.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="60" y="50" width="230" height="44" rx="8" fill="none" stroke="#d62976" stroke-width="1.7"/>
+              <text x="175" y="70" font-size="10.5" fill="#d62976" text-anchor="middle">the node it left</text>
+              <text x="175" y="86" font-size="9.5" fill="#d62976" text-anchor="middle">allocation still held</text>
+              <rect x="430" y="50" width="230" height="44" rx="8" fill="none" stroke="#2e9e5b" stroke-width="1.7"/>
+              <text x="545" y="70" font-size="10.5" fill="#2e9e5b" text-anchor="middle">the node it runs on</text>
+              <text x="545" y="86" font-size="9.5" fill="#2e9e5b" text-anchor="middle">allocation correct</text>
+              <text x="360" y="78" font-size="11" fill="#333" text-anchor="middle">same instance</text>
+              <rect x="240" y="126" width="240" height="40" rx="8" fill="none" stroke="#b8860b" stroke-width="1.8"/>
+              <text x="360" y="151" font-size="10.5" fill="#b8860b" text-anchor="middle">counted twice</text>
+              <path d="M175 94 V 126" stroke="#b8860b" stroke-width="1.2" stroke-dasharray="3 3" fill="none"/>
+              <path d="M545 94 V 126" stroke="#b8860b" stroke-width="1.2" stroke-dasharray="3 3" fill="none"/>
+              <text x="360" y="190" font-size="10" fill="#666" text-anchor="middle">next recovery fails for lack of room</text>
+            </g>
+          </svg>
+          <figcaption>Only the departed side gets cleared. The side actually running is left alone.</figcaption>
+        </figure>
+
+        <p>There is a path that clears this automatically. It does not run when the node returns through a
+        network reconnection. So a separate cleanup went in for the moment a node comes back, and
+        <strong>it clears only the allocation on the departed side.</strong></p>
+
+        <p>One thing needs care here. The allocation on the side that is actually running must not be
+        touched. So the target is narrowed to instances running elsewhere that still hold an allocation on
+        the returning node.</p>
+
+        <h2 id="identifier-clash">A shared state file gets overwritten<a class="anchor" href="#identifier-clash" aria-label="Link to this section">#</a></h2>
+
+        <p>The second long one was a node that came back but whose service would not start. The log said the
+        identifier this node holds is not its own.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 222" role="img" aria-labelledby="id-t id-d" class="figure-svg">
+            <title id="id-t">Three nodes sharing one state file</title>
+            <desc id="id-d">When three nodes share the same state file it ends up holding whichever value came up first. The fix is to give each node its own copy.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="270" y="40" width="180" height="40" rx="8" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="360" y="65" font-size="10.5" fill="#d62976" text-anchor="middle">one shared state file</text>
+              <path d="M360 80 V 104" stroke="#666" stroke-width="1.2" fill="none"/>
+              <path d="M150 104 H 570" stroke="#666" stroke-width="1.2" fill="none"/>
+              <path d="M150 104 V 126" stroke="#666" stroke-width="1.2" fill="none"/>
+              <rect x="90" y="126" width="120" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.5"/>
+              <text x="150" y="148" font-size="10" fill="#5b7fa6" text-anchor="middle">node A</text>
+              <path d="M360 104 V 126" stroke="#666" stroke-width="1.2" fill="none"/>
+              <rect x="300" y="126" width="120" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.5"/>
+              <text x="360" y="148" font-size="10" fill="#5b7fa6" text-anchor="middle">node B</text>
+              <path d="M570 104 V 126" stroke="#666" stroke-width="1.2" fill="none"/>
+              <rect x="510" y="126" width="120" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.5"/>
+              <text x="570" y="148" font-size="10" fill="#5b7fa6" text-anchor="middle">node C</text>
+              <text x="360" y="186" font-size="10.5" fill="#b8860b" text-anchor="middle">overwritten by whichever came up first</text>
+              <text x="360" y="206" font-size="10" fill="#2e9e5b" text-anchor="middle">fix · each node keeps its own value</text>
+            </g>
+          </svg>
+          <figcaption>What is good to share and what must not be shared sat in one directory.</figcaption>
+        </figure>
+
+        <p>The cause was the shared storage. Several nodes share one directory, and inside it
+        <strong>a file that has to differ per node existed only once.</strong> Depending on the order the
+        nodes start, whichever came up first overwrites it.</p>
+
+        <p>The fix was to take that file off the shared path and let each node keep its own. What is good to
+        share and what must not be shared were sitting in one directory.</p>
+
+        <h2 id="two-failures">Both failures had the same root<a class="anchor" href="#two-failures" aria-label="Link to this section">#</a></h2>
+
+        <p>Two messages came back when recovery failed. One said the instance files on shared storage were
+        in an invalid state; the other said there was no valid host to move to.</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+          <table>
+            <caption class="sr-only">Two failures and what actually caused them.</caption>
+            <thead><tr><th>Failure</th><th>Actual cause</th><th>Fix</th></tr></thead>
+            <tbody><tr><td>Instance files on shared storage in an invalid state</td><td>Not a setting. An allocation left by the earlier failure</td><td>Clear the leftover allocation and retry</td></tr><tr><td>No valid host to move to</td><td>Same root. The uncleared allocation is holding capacity</td><td>Clear it and refresh the resource count</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">In both cases the surface message and the real cause differed.
+        <strong>An allocation left by the earlier failure was the common root.</strong> It stays invisible
+        while you change settings and retry.</p>
+
+        <h2 id="turning-it-back-on">Restoring is not automatic<a class="anchor" href="#turning-it-back-on" aria-label="Link to this section">#</a></h2>
+
+        <p>Last comes restoring. Recovery switches off the failed node's compute service. That is correct, so
+        nothing gets scheduled there again, but <strong>bringing the node back does not switch it on.</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 238" role="img" aria-labelledby="left-t left-d" class="figure-svg">
+            <title id="left-t">The four things recovery leaves behind</title>
+            <desc id="left-d">An allocation left where the instance departed, a compute service left switched off, an overwritten state file and a stopped agent. All four survive after the screen reports success.</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="60" y="60" width="280" height="50" rx="8" fill="none" stroke="#b8860b" stroke-width="1.7"/>
+              <text x="200" y="90" font-size="11" fill="#b8860b" text-anchor="middle">allocation left behind</text>
+              <rect x="380" y="60" width="280" height="50" rx="8" fill="none" stroke="#b8860b" stroke-width="1.7"/>
+              <text x="520" y="90" font-size="11" fill="#b8860b" text-anchor="middle">compute service off</text>
+              <rect x="60" y="140" width="280" height="50" rx="8" fill="none" stroke="#b8860b" stroke-width="1.7"/>
+              <text x="200" y="170" font-size="11" fill="#b8860b" text-anchor="middle">state file overwritten</text>
+              <rect x="380" y="140" width="280" height="50" rx="8" fill="none" stroke="#b8860b" stroke-width="1.7"/>
+              <text x="520" y="170" font-size="11" fill="#b8860b" text-anchor="middle">agent stopped</text>
+              <text x="360" y="222" font-size="10.5" fill="#333" text-anchor="middle">all four remain after the success message</text>
+            </g>
+          </svg>
+          <figcaption>They sit on four different layers, so no single action clears them.</figcaption>
+        </figure>
+
+        <pre data-lang="text"><code># What to check after the screen says recovery finished
+
+  1. compute service state
+     switch it back on. Recovery switched it off and will not switch it back
+
+  2. per-node state value
+     confirm the node uses its own value rather than a shared path
+
+  3. agent state
+     restart it if it was disconnected for a long time
+
+  4. allocation where the instance left
+     confirm the same instance is not held in two places</code></pre>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">Scroll sideways to see the rest</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="Scrollable table: scroll sideways to see the rest">
+          <table>
+            <caption class="sr-only">What to check when restoring.</caption>
+            <thead><tr><th>Check</th><th>Why</th></tr></thead>
+            <tbody><tr><td>Is the compute service switched back on</td><td>Recovery switched it off and nothing switches it back</td></tr><tr><td>Does the node hold its own state value</td><td>With a shared file another node's value overwrites it</td></tr><tr><td>Has the agent come back</td><td>After a long disconnection it needs restarting</td></tr><tr><td>Is the departed allocation empty</td><td>If not, the next recovery fails</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">The four are in order. The state file has to be right before the service is
+        switched on, and the allocation is checked last so that the first three are reflected.</p>
+
+        <h2 id="limits">Limits: what this post does not claim<a class="anchor" href="#limits" aria-label="Link to this section">#</a></h2>
+
+        <ul class="callout">
+          <li>⚠️ What this series comes from is a design document. This part is read out of the build and the
+          test records; I did not change that code.</li>
+          <li>The four leftovers are what was observed in this environment. It does not follow that the same
+          list appears in another setup.</li>
+          <li>The allocation cleanup runs on a best-effort basis. It is skipped when the resource count
+          service is unavailable.</li>
+          <li>The shared state file problem only appears in setups that use shared storage.</li>
+          <li>This came from internal material, so product names, customers, addresses, accounts, hostnames
+          and paths are left out.</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="wrapping-up">Wrapping up<a class="anchor" href="#wrapping-up" aria-label="Link to this section">#</a></h2>
+        <p>The conclusion is one line. <strong>The verdict that recovery succeeded and the moment cleanup
+        finished are two different points.</strong> Leave the gap and the next recovery fails in its place.</p>
+        <p>And none of the leftovers appear on screen. Only the success shows, and the rest returns later
+        wearing a different face. That is why the restore steps are worth writing down.</p>
+        <p>Thank you for reading.</p>
+        </div></article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=0c1627a76d"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

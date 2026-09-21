@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instance HA ⑧: 復旧が成功しても終わりではありませんでした | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/what-recovery-leaves-behind.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/what-recovery-leaves-behind.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/what-recovery-leaves-behind.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/what-recovery-leaves-behind.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="Instance HA ⑧: 復旧が成功しても終わりではありませんでした" />
+  <meta property="og:description" content="Instance を移すのに成功すると復旧が終わったように見えます。ところが去った場所に資源の割り当てが残り、障害ノードの Compute サービスは切れたままで、共有された状態ファイルが上書きされることもあります。片付けないと次の復旧が場所がないと言って失敗します。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/what-recovery-leaves-behind.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Instance HA ⑧: 復旧が成功しても終わりではありませんでした" />
+  <meta name="twitter:description" content="移すのに成功しても終わりではありません。残った割り当てと切れたサービスが次の復旧を止めます。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="Instance を移すのに成功すると復旧が終わったように見えます。ところが去った場所に資源の割り当てが残り、障害ノードの Compute サービスは切れたままで、共有された状態ファイルが上書きされることもあります。片付けないと次の復旧が場所がないと言って失敗します。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"what-recovery-leaves-behind.html","ko":"what-recovery-leaves-behind.ko.html","ja":"what-recovery-leaves-behind.ja.html"}'>
+          <option value="ja" selected>日本語</option>
+          <option value="ko">한국어</option>
+          <option value="en">English</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>一覧</a>
+        <div class="article-meta"><span class="source-tag company notranslate">会社の仕事</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS バックエンド</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>Instance HA ⑧: 復旧が成功しても終わりではありませんでした<br><span class="h1-sub">移すのに成功したあとも資源の割り当てとサービスの状態が残ります。片付けないと次の復旧が失敗します。</span></h1>
+        <p class="article-date">2026年9月</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="what-recovery-leaves-behind"></aside>
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            
+            
+            
+            
+            
+            
+            <li><a href="#想定読者">この記事の想定読者</a></li>
+            <li><a href="#終わりだと思った">移せば終わりだと思っていました</a></li>
+            <li><a href="#残った割り当て">去った場所に割り当てが残ります</a></li>
+            <li><a href="#識別子の衝突">共有された状態ファイルが上書きされます</a></li>
+            <li><a href="#二つの失敗">二つの失敗は同じ根でした</a></li>
+            <li><a href="#元に戻す">元に戻すのは自動ではありません</a></li>
+            <li><a href="#主張しないこと">限界: この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
+          </ul>
+        </nav>
+      <article>
+        <p><a href="recovery-host-must-have-the-device.ja.html">⑦編</a>でどこへ送るかを決めました。
+        送って Instance が立ち上がり、画面には復旧完了と出ました。</p>
+
+        <p>ところが次の復旧が失敗しました。送る場所がないという理由でしたが、ノードには空きが
+        ありました。</p>
+
+        <p>最初は容量の計算が違うのだと思いました。違いました。<strong>先の復旧が、去った場所に
+        資源の割り当てを残していました。</strong></p>
+
+        <h2 id="想定読者">この記事の想定読者<a class="anchor" href="#想定読者" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>自動復旧を入れて二回目からおかしくなった経験のある方</li>
+          <li>復旧成功のあとの復元手順をまとめる必要がある方</li>
+          <li>共有ストレージの上でノードごとの状態を扱っている方</li>
+          <li>⑦編を読んで、送ったあとに何が残るのか気になる方</li>
+        </ul>
+
+        <h2 id="終わりだと思った">移せば終わりだと思っていました<a class="anchor" href="#終わりだと思った" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>復旧の成功は Instance が別のノードで立ち上がったという意味です。その判定は正しいです。
+        ただ<strong>その時点が片付けの終わった時点ではありません。</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 190" role="img" aria-labelledby="gap-t gap-d" class="figure-svg">
+            <title id="gap-t">移動の成功と片付けの完了のあいだ</title>
+            <desc id="gap-d">移動が成功した地点は終わりのように見えますが、実際に終わる場所はもっとうしろです。そのあいだに残った割り当てと切れたサービスと上書きされた状態ファイルがあります。</desc>
+            <g font-family="Inter, sans-serif">
+              <path d="M60 90 H 660" stroke="#666" stroke-width="1.3" fill="none"/>
+              <circle cx="140" cy="90" r="6" fill="#2e9e5b"/>
+              <text x="140" y="68" font-size="10.5" fill="#2e9e5b" text-anchor="middle">移動が成功</text>
+              <text x="140" y="116" font-size="9.5" fill="#666" text-anchor="middle">ここで終わりに見える</text>
+              <circle cx="580" cy="90" r="6" fill="#d62976"/>
+              <text x="580" y="68" font-size="10.5" fill="#d62976" text-anchor="middle">片付け完了</text>
+              <text x="580" y="116" font-size="9.5" fill="#666" text-anchor="middle">実際に終わる場所</text>
+              <path d="M140 148 H 580" stroke="#b8860b" stroke-width="1.6" stroke-dasharray="4 3" fill="none"/>
+              <text x="360" y="172" font-size="10.5" fill="#b8860b" text-anchor="middle">残った割り当て · 切れたサービス · 上書きされた状態ファイル</text>
+            </g>
+          </svg>
+          <figcaption>二つの点のあいだがこの記事の主題です。画面には成功だけが出ます。</figcaption>
+        </figure>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
+          <table>
+            <caption class="sr-only">復旧が成功したあとに残るもの。</caption>
+            <thead><tr><th>残るもの</th><th>症状</th><th>いつ現れるか</th></tr></thead>
+            <tbody><tr><td>去った場所の資源の割り当て</td><td>同じ Instance が二か所で押さえられ資源が二度数えられる</td><td>次の復旧が場所なしで失敗するとき</td></tr><tr><td>障害ノードの Compute サービス</td><td>切れたままで復旧の対象になれない</td><td>ノードを戻したあとも空のとき</td></tr><tr><td>共有された状態ファイル</td><td>先に起動したノードの値で上書きされる</td><td>ノードを再起動してサービスが上がらないとき</td></tr><tr><td>止まった Agent</td><td>長く切れていると自分では戻らない</td><td>ノードは生きているのに障害に見えるとき</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">四つが違う層にあります。資源の集計とサービスの状態とファイルとプロセスなので
+        一度には片付かず、確認する場所も違います。</p>
+
+        <h2 id="残った割り当て">去った場所に割り当てが残ります<a class="anchor" href="#残った割り当て" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>一番長くかかったのが一行目です。Instance は新しいノードで動いているのに、去ったノードの側にも
+        その Instance の資源の割り当てが残っていました。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 206" role="img" aria-labelledby="alloc-t alloc-d" class="figure-svg">
+            <title id="alloc-t">去ったノードに残った割り当てが二度数えられる形</title>
+            <desc id="alloc-d">同じ Instance の資源が去ったノードといま動くノードの両方で押さえられていると二度数えられます。その状態では次の復旧が場所なしで失敗します。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="60" y="50" width="230" height="44" rx="8" fill="none" stroke="#d62976" stroke-width="1.7"/>
+              <text x="175" y="70" font-size="10.5" fill="#d62976" text-anchor="middle">去ったノード</text>
+              <text x="175" y="86" font-size="9.5" fill="#d62976" text-anchor="middle">割り当てが残る</text>
+              <rect x="430" y="50" width="230" height="44" rx="8" fill="none" stroke="#2e9e5b" stroke-width="1.7"/>
+              <text x="545" y="70" font-size="10.5" fill="#2e9e5b" text-anchor="middle">いま動くノード</text>
+              <text x="545" y="86" font-size="9.5" fill="#2e9e5b" text-anchor="middle">割り当ては正常</text>
+              <text x="360" y="78" font-size="11" fill="#333" text-anchor="middle">同じ Instance</text>
+              <rect x="240" y="126" width="240" height="40" rx="8" fill="none" stroke="#b8860b" stroke-width="1.8"/>
+              <text x="360" y="151" font-size="10.5" fill="#b8860b" text-anchor="middle">二度数えられた資源</text>
+              <path d="M175 94 V 126" stroke="#b8860b" stroke-width="1.2" stroke-dasharray="3 3" fill="none"/>
+              <path d="M545 94 V 126" stroke="#b8860b" stroke-width="1.2" stroke-dasharray="3 3" fill="none"/>
+              <text x="360" y="190" font-size="10" fill="#666" text-anchor="middle">次の復旧が場所なしで失敗</text>
+            </g>
+          </svg>
+          <figcaption>去った側の割り当てだけを消し、いま動く側は触りません。</figcaption>
+        </figure>
+
+        <p>片付け自体は自動で回る経路が元からあります。ところがノードがネットワークの再接続で戻る場合には
+        その経路が回りません。そこでノードが戻るときに<strong>去った側の割り当てだけを選んで消す片付けを
+        別に入れました。</strong></p>
+
+        <p>ここで気をつけることが一つあります。いま実際に動いている側の割り当てまで消してはいけません。
+        だから別のノードで動いているのに復帰ノードの割り当てが残っているものだけを対象にします。</p>
+
+        <h2 id="識別子の衝突">共有された状態ファイルが上書きされます<a class="anchor" href="#識別子の衝突" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>二番目に長くかかったのは、ノードを戻したのにサービスが上がらなかったことです。ログはこのノードの
+        識別子が自分のものではないと言っていました。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 222" role="img" aria-labelledby="id-t id-d" class="figure-svg">
+            <title id="id-t">三つのノードが一つの状態ファイルを共有する構造</title>
+            <desc id="id-d">三つのノードが同じ状態ファイルを共有すると、先に起動したノードの値で上書きされます。ノードごとに自分の値を持つように直しました。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="270" y="40" width="180" height="40" rx="8" fill="none" stroke="#d62976" stroke-width="1.8"/>
+              <text x="360" y="65" font-size="10.5" fill="#d62976" text-anchor="middle">共有された状態ファイル一つ</text>
+              <path d="M360 80 V 104" stroke="#666" stroke-width="1.2" fill="none"/>
+              <path d="M150 104 H 570" stroke="#666" stroke-width="1.2" fill="none"/>
+              <path d="M150 104 V 126" stroke="#666" stroke-width="1.2" fill="none"/>
+              <rect x="90" y="126" width="120" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.5"/>
+              <text x="150" y="148" font-size="10" fill="#5b7fa6" text-anchor="middle">ノード A</text>
+              <path d="M360 104 V 126" stroke="#666" stroke-width="1.2" fill="none"/>
+              <rect x="300" y="126" width="120" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.5"/>
+              <text x="360" y="148" font-size="10" fill="#5b7fa6" text-anchor="middle">ノード B</text>
+              <path d="M570 104 V 126" stroke="#666" stroke-width="1.2" fill="none"/>
+              <rect x="510" y="126" width="120" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.5"/>
+              <text x="570" y="148" font-size="10" fill="#5b7fa6" text-anchor="middle">ノード C</text>
+              <text x="360" y="186" font-size="10.5" fill="#b8860b" text-anchor="middle">先に起動したノードの値で上書き</text>
+              <text x="360" y="206" font-size="10" fill="#2e9e5b" text-anchor="middle">修正 · ノードごとに自分の値を持つ</text>
+            </g>
+          </svg>
+          <figcaption>共有してよいものと共有してはいけないものが、同じディレクトリにありました。</figcaption>
+        </figure>
+
+        <p>原因は共有ストレージでした。複数のノードが同じディレクトリを分け合っていて、その中に
+        <strong>ノードごとに違うべき状態ファイルが一つしかありませんでした。</strong>ノードを起動する順番に
+        よって、先に上がった側の値で上書きされます。</p>
+
+        <p>直した方法は、そのファイルを共有パスから外してノードごとに自分の値を使わせることです。共有して
+        よいものと共有してはいけないものが、一つのディレクトリにあったわけです。</p>
+
+        <h2 id="二つの失敗">二つの失敗は同じ根でした<a class="anchor" href="#二つの失敗" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>復旧が失敗したときに出たメッセージは二つでした。一つは共有ストレージ上の状態が正しくないという
+        もので、もう一つは送る場所がないというものです。</p>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
+          <table>
+            <caption class="sr-only">二つの失敗の原因と解決。</caption>
+            <thead><tr><th>失敗</th><th>実際の原因</th><th>解決</th></tr></thead>
+            <tbody><tr><td>共有ストレージ上の状態が正しくないという失敗</td><td>設定値ではなく、先の失敗が残した割り当て</td><td>残った割り当てを片付けてから再試行</td></tr><tr><td>送る場所がないという失敗</td><td>同じ根。片付いていない割り当てが容量を使っている</td><td>割り当てを片付けて資源の集計を更新</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">どちらも表面の言葉と実際の原因が違いました。<strong>先の失敗が残した割り当てが
+        二つの共通の根でした。</strong>設定値を変えて再試行しているあいだは見えません。</p>
+
+        <h2 id="元に戻す">元に戻すのは自動ではありません<a class="anchor" href="#元に戻す" aria-label="このセクションへのリンク">#</a></h2>
+
+        <p>最後は復元です。復旧は障害ノードの Compute サービスを切ります。もう一度スケジューリングされない
+        ようにするためで正しい動作ですが、<strong>ノードを戻してもそのサービスは切れたままです。</strong></p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 238" role="img" aria-labelledby="left-t left-d" class="figure-svg">
+            <title id="left-t">復旧のあとに残る四つ</title>
+            <desc id="left-d">去った場所の資源の割り当てと切れた Compute サービスと上書きされた状態ファイルと止まった Agent です。四つとも画面に成功が出たあとに残ります。</desc>
+            <g font-family="Inter, sans-serif">
+              <rect x="60" y="60" width="280" height="50" rx="8" fill="none" stroke="#b8860b" stroke-width="1.7"/>
+              <text x="200" y="90" font-size="11" fill="#b8860b" text-anchor="middle">去った場所の割り当て</text>
+              <rect x="380" y="60" width="280" height="50" rx="8" fill="none" stroke="#b8860b" stroke-width="1.7"/>
+              <text x="520" y="90" font-size="11" fill="#b8860b" text-anchor="middle">切れた Compute サービス</text>
+              <rect x="60" y="140" width="280" height="50" rx="8" fill="none" stroke="#b8860b" stroke-width="1.7"/>
+              <text x="200" y="170" font-size="11" fill="#b8860b" text-anchor="middle">上書きされた状態ファイル</text>
+              <rect x="380" y="140" width="280" height="50" rx="8" fill="none" stroke="#b8860b" stroke-width="1.7"/>
+              <text x="520" y="170" font-size="11" fill="#b8860b" text-anchor="middle">止まった Agent</text>
+              <text x="360" y="222" font-size="10.5" fill="#333" text-anchor="middle">四つとも成功表示のあとに残るもの</text>
+            </g>
+          </svg>
+          <figcaption>四つが違う層にあるので、一度には片付きません。</figcaption>
+        </figure>
+
+        <pre data-lang="text"><code># 画面が復旧完了と言ったあとに確認すること
+
+  1. compute サービスの状態
+     切れていたら入れ直す。復旧が切っており、自分では入らない
+
+  2. ノードごとの状態値
+     共有パスではなくノード自身のものを使っているか見る
+
+  3. Agent の状態
+     長く切れていたなら起動し直す
+
+  4. 去った場所の資源の割り当て
+     同じ Instance が二か所で押さえられていないか見る</code></pre>
+
+        <div class="table-scroll">
+          <p class="table-scroll-hint">横にスクロールすると残りが見えます</p>
+          <div class="table-scroll-viewport" tabindex="0" role="region" aria-label="スクロールできる表: 横にスクロールすると残りが見えます">
+          <table>
+            <caption class="sr-only">元に戻すときに確認すること。</caption>
+            <thead><tr><th>確認</th><th>なぜ</th></tr></thead>
+            <tbody><tr><td>Compute サービスを入れ直したか</td><td>復旧が切っており、自動では入りません</td></tr><tr><td>ノードごとの状態値が自分のものか</td><td>共有ファイルを使うと他のノードの値で上書きされます</td></tr><tr><td>Agent が戻ったか</td><td>長く切れていたなら起動し直す必要があります</td></tr><tr><td>去った場所の割り当ては空か</td><td>残っていると次の復旧が失敗します</td></tr></tbody>
+          </table>
+          </div>
+        </div>
+
+        <p class="table-note">四行を順番に置きました。サービスを入れる前に状態ファイルを直す必要があり、
+        割り当ては最後に見てこそ前の三つが作った変化が反映されます。</p>
+
+        <h2 id="主張しないこと">限界: この記事が主張しないこと<a class="anchor" href="#主張しないこと" aria-label="このセクションへのリンク">#</a></h2>
+
+        <ul class="callout">
+          <li>⚠️ この連作の成果物は設計書です。この編の内容は実装とテストの記録から読んだもので、私がその
+          コードを直したわけではありません。</li>
+          <li>残る四つはこの環境で観察されたものです。ほかの構成で同じ一覧になるという意味ではありません。</li>
+          <li>割り当ての片付けは最善努力で動きます。資源の集計サービスが使えないときは飛ばします。</li>
+          <li>共有状態ファイルの問題は、共有ストレージを使う構成でだけ現れます。</li>
+          <li>社内資料なので、製品名と顧客名とアドレスとアカウントとホスト名とパスは書いていません。</li>
+        </ul>
+
+        <div class="wrapup">
+        <h2 id="おわりに">おわりに<a class="anchor" href="#おわりに" aria-label="このセクションへのリンク">#</a></h2>
+        <p>この編の結論は一行です。<strong>復旧が成功したという判定と、片付けが終わった時点は別です。</strong>
+        そのあいだを空けておくと、次の復旧が代わりに失敗します。</p>
+        <p>そして残るものは画面に出ません。成功だけが見え、残りは次に別の顔で戻ってきます。だから復元を
+        手順として書いておくほうがよいのです。</p>
+        <p>お読みいただきありがとうございました。</p>
+        </div></article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=0c1627a76d"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

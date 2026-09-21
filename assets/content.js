@@ -192,6 +192,18 @@
       },
       items: [
         {
+          title: "Instance HA ⑧: Recovery Succeeded and It Still Was Not Over",
+          title_ko: "Instance HA ⑧: 복구가 성공해도 끝난 것은 아니었습니다",
+          title_ja: "Instance HA ⑧: 復旧が成功しても終わりではありませんでした",
+          url: "writing/what-recovery-leaves-behind.html",
+          source: "company", sourceLabel: "Company work",
+          date: "2026-09-21", dateLabel: "Sep 21, 2026",
+          desc: "Part 8 of the Instance HA design series. A successful move makes recovery look finished, but an allocation stays where the instance left, the failed node's compute service is still off, a shared state file can be overwritten, and the agent may not come back. The next recovery is the one that fails for it.",
+          desc_ko: "Instance HA 설계 8편. 옮기는 데 성공하면 끝난 것처럼 보이지만 떠난 자리에 자원 할당이 남고 장애 노드의 Compute 서비스는 꺼진 채이며 공유된 상태 파일이 덮어써지기도 하고 Agent가 돌아오지 않기도 합니다. 그 대가는 다음 복구가 치릅니다.",
+          desc_ja: "Instance HA 設計の第8編。移すのに成功すると終わったように見えますが、去った場所に資源の割り当てが残り、障害ノードの Compute サービスは切れたままで、共有された状態ファイルが上書きされ、Agent が戻らないこともあります。その代償は次の復旧が払います。",
+          tags: ["IaaS Backend", "Reliability", "Operations", "Method"]
+        },
+        {
           title: "Instance HA ⑦: A GPU Instance Only Goes to a Host That Has the Device",
           title_ko: "Instance HA ⑦: GPU Instance는 장치를 가진 호스트로만 갑니다",
           title_ja: "Instance HA ⑦: GPU Instance は装置を持つホストにだけ行きます",
