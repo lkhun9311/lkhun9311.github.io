@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AWS リソース96個を消した Teardown が「残存なし」と出しましたが、2行は照会していません | Kwanghun Lee</title>
+  <title>AWS Teardown Report の [残存なし] は [Empty] ではなく [Not Queried] だった | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="AWS リソース96個を消した Teardown が「残存なし」と出しましたが、2行は照会していません" />
-  <meta property="og:description" content="VPC が既に無いと Load Balancer と Network Interface の照会は実行されず、初期値の空文字がそのまま出力されます。照会して無いことと、尋ねていないことが同じ文字で出ます。" />
+  <meta property="og:title" content="AWS Teardown Report の [残存なし] は [Empty] ではなく [Not Queried] だった" />
+  <meta property="og:description" content="毎晩走る AWS Teardown はいつも [残存なし] で成功していました。しかし出力の一部は、VPC がすでに無いため AWS に照会すらしていない空値でした — [Empty] ではなく [Not Queried] でした。" />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -26,10 +26,10 @@
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="AWS リソース96個を消した Teardown が「残存なし」と出しましたが、2行は照会していません" />
-  <meta name="twitter:description" content="VPC が既に無いと Load Balancer と Network Interface の照会は実行されず、初期値の空文字がそのまま出力されます。照会して無いことと、尋ねていないことが同じ文字で出ます。" />
+  <meta name="twitter:title" content="AWS Teardown Report の [残存なし] は [Empty] ではなく [Not Queried] だった" />
+  <meta name="twitter:description" content="毎晩走る AWS Teardown はいつも [残存なし] で成功していました。しかし出力の一部は、VPC がすでに無いため AWS に照会すらしていない空値でした — [Empty] ではなく [Not Queried] でした。" />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="VPC が既に無いと Load Balancer と Network Interface の照会は実行されず、初期値の空文字がそのまま出力されます。照会して無いことと、尋ねていないことが同じ文字で出ます。" />
+  <meta name="description" content="毎晩走る AWS Teardown はいつも [残存なし] で成功していました。しかし出力の一部は、VPC がすでに無いため AWS に照会すらしていない空値でした — [Empty] ではなく [Not Queried] でした。" />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag side notranslate">個人プロジェクト</span><a class="project-tag notranslate" href="../writing/index.html?tag=GPUaaS%20Control%20Plane">#GPUaaS コントロールプレーン</a></div>
       </div>
       <section class="page-hero">
-        <h1>AWS リソース96個を消した Teardown が「残存なし」と出しましたが、2行は照会していません<br><span class="h1-sub">VPC が既に無いと Load Balancer と Network Interface の照会は実行されず、初期値の空文字がそのまま出力されます。</span></h1>
+        <h1>AWS Teardown Report の [残存なし] は [Empty] ではなく [Not Queried] だった</h1>
         <p class="article-date">2026年9月</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="two-lines-that-asked-nothing"></aside>
@@ -110,7 +110,7 @@
 
         <ul class="callout">
           <li>Terraform でクラスタを丸ごと立てて消す経路を作っている方</li>
-          <li>片付けの最後に出る「残存なし」を根拠にしている方</li>
+          <li>片付けの最後に出る [残存なし] を根拠にしている方</li>
           <li>検査が通ったのか、実行されなかったのかを見分けようとしたことがある方</li>
         </ul>
 

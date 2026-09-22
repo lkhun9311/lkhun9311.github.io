@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>A Go Benchmark Harness Opened 884 TCP Connections for 884 Rejections | Kwanghun Lee</title>
+  <title>Why the Go Benchmark Harness Could Not Reuse a Connection | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="A Go Benchmark Harness Opened 884 TCP Connections for 884 Rejections" />
-  <meta property="og:description" content="Non-200 response bodies were closed unread, so the pooled mode real runs use opened one connection per request. Draining them brought it to 22. The 431 → 6 figure that showed the pool working had been measured on a trace with zero rejections." />
+  <meta property="og:title" content="Why the Go Benchmark Harness Could Not Reuse a Connection" />
+  <meta property="og:description" content="The Go Benchmark Harness ran in pooled mode yet opened a new Connection for every request. It closed each 429 Response without reading the Body, so the Connection never returned to the Pool. The 431 → 6 figure that showed the Pool working had been measured on a Trace with zero rejections." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -26,10 +26,10 @@
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="A Go Benchmark Harness Opened 884 TCP Connections for 884 Rejections" />
-  <meta name="twitter:description" content="Non-200 response bodies were closed unread, so the pooled mode real runs use opened one connection per request. Draining them brought it to 22. The 431 → 6 figure that showed the pool working had been measured on a trace with zero rejections." />
+  <meta name="twitter:title" content="Why the Go Benchmark Harness Could Not Reuse a Connection" />
+  <meta name="twitter:description" content="The Go Benchmark Harness ran in pooled mode yet opened a new Connection for every request. It closed each 429 Response without reading the Body, so the Connection never returned to the Pool. The 431 → 6 figure that showed the Pool working had been measured on a Trace with zero rejections." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="Non-200 response bodies were closed unread, so the pooled mode real runs use opened one connection per request. Draining them brought it to 22. The 431 → 6 figure that showed the pool working had been measured on a trace with zero rejections." />
+  <meta name="description" content="The Go Benchmark Harness ran in pooled mode yet opened a new Connection for every request. It closed each 429 Response without reading the Body, so the Connection never returned to the Pool. The 431 → 6 figure that showed the Pool working had been measured on a Trace with zero rejections." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag side notranslate">Personal project</span><a class="project-tag notranslate" href="../writing/index.html?tag=GPUaaS%20Control%20Plane">#GPUaaS Control Plane</a></div>
       </div>
       <section class="page-hero">
-        <h1>A Go Benchmark Harness Opened 884 TCP Connections for 884 Rejections<br><span class="h1-sub">It closed 429 responses without reading their bodies, so no connection was ever reused.</span></h1>
+        <h1>Why the Go Benchmark Harness Could Not Reuse a Connection</h1>
         <p class="article-date">Sep 2026</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="every-rejection-opened-a-new-connection"></aside>

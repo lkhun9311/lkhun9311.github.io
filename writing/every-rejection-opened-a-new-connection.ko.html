@@ -97,7 +97,7 @@
         <p>2026년 8월 15일에 브랜치를 올리자 푸시 훅이 codex와 Claude 리뷰를 돌렸고 지적 10건이 나왔습니다. 그중 두 건이
         측정 도구 자체의 결함이었습니다. 이 글은 그 가운데 하나를 다룹니다.</p>
 
-        <p>지적은 짧았습니다. 벤치 Harness의 <code>Send</code>가 200이 아닌 응답의 Body를 읽지 않고 반환한다는 것이었습니다.
+        <p>지적은 짧았습니다. Benchmark Harness의 <code>Send</code>가 200이 아닌 응답의 Body를 읽지 않고 반환한다는 것이었습니다.
         같은 파일의 주석에는 Connection Pool이 효과가 있다는 근거로 <code>431 → 6</code>이라는 측정값이 적혀 있었습니다.
         저는 그 근거를 열어 봤고 근거가 잰 트레이스에는 거부 응답이 한 건도 없었습니다.</p>
 
@@ -107,7 +107,7 @@
 
         <h2 id="예상-독자">이 글의 예상 독자</h2>
         <ul>
-          <li>Go <code>net/http</code> 클라이언트로 부하 생성기나 벤치 Harness를 만드시는 분</li>
+          <li>Go <code>net/http</code> 클라이언트로 부하 생성기나 Benchmark Harness를 만드시는 분</li>
           <li>429 같은 거부 응답이 많이 나오는 시스템(Rate Limit, 입장 제어)을 재시는 분</li>
           <li>코드 주석이나 문서에 측정값을 근거로 적어 두시는 분</li>
         </ul>
@@ -116,15 +116,15 @@
         <p>개인 프로젝트로 만들고 있는 GPUaaS 플랫폼에는 LLM 요청을 받는 Gateway가 있고 그 안에 입장 가드가 있습니다.
         가드는 요청 Body를 읽고 보낼 Backend를 정한 뒤 vLLM으로 프록시하기 전에 섭니다. 가드는 <strong>거부해서 용량을 지킵니다.</strong>
         가드가 받지 않기로 한 요청은 429로 돌아옵니다.</p>
-        <p>벤치 Harness는 요청 트레이스 하나를 가드를 끈 설정, 부하를 보지 않는 고정 상한, KV Cache 압력을 보는 가드에
+        <p>Benchmark Harness는 요청 트레이스 하나를 가드를 끈 설정, 부하를 보지 않는 고정 상한, KV Cache 압력을 보는 가드에
         똑같이 재생하고 Premium 요청의 TTFT p99를 비교합니다.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 200" role="img" aria-labelledby="rej1-t rej1-d" class="figure-svg">
             <title id="rej1-t">Harness와 입장 가드</title>
-            <desc id="rej1-d">왼쪽은 벤치 Harness입니다. 트레이스를 재생하는 Go http.Client와 그 안의 Connection Pool이 있습니다. TCP Connection 화살표가 가운데 Gateway의 입장 가드로 갑니다. 가드를 통과한 요청은 오른쪽 vLLM으로 프록시되어 추론됩니다. 거부된 요청은 429 응답이 되어 아래쪽 화살표로 Harness에 돌아옵니다.</desc>
+            <desc id="rej1-d">왼쪽은 Benchmark Harness입니다. 트레이스를 재생하는 Go http.Client와 그 안의 Connection Pool이 있습니다. TCP Connection 화살표가 가운데 Gateway의 입장 가드로 갑니다. 가드를 통과한 요청은 오른쪽 vLLM으로 프록시되어 추론됩니다. 거부된 요청은 429 응답이 되어 아래쪽 화살표로 Harness에 돌아옵니다.</desc>
             <g font-family="Inter, sans-serif">
-              <text x="110" y="20" font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="600">벤치 Harness</text>
+              <text x="110" y="20" font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="600">Benchmark Harness</text>
               <rect x="10" y="32" width="200" height="120" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
               <text x="110" y="58" font-size="12" fill="#8a8a8a" text-anchor="middle">트레이스 재생</text>
               <text x="110" y="84" font-size="12" fill="#4f5bd5" text-anchor="middle">Go http.Client</text>

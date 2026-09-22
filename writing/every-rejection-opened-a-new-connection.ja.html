@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Go ベンチ Harness が拒否応答884件に TCP Connection を884本開きました | Kwanghun Lee</title>
+  <title>なぜ Go Benchmark Harness は Connection を再利用できなかったのか | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Go ベンチ Harness が拒否応答884件に TCP Connection を884本開きました" />
-  <meta property="og:description" content="200 以外の応答の Body を読まずに閉じていたため、実際のランが使う pooled モードが要求1件ごとに Connection を1本開いていました。読み切るように直すと22本になりました。Pool の効果を示した 431 → 6 は、拒否が0件のトレースで測った数字でした。" />
+  <meta property="og:title" content="なぜ Go Benchmark Harness は Connection を再利用できなかったのか" />
+  <meta property="og:description" content="pooled モードの Go Benchmark Harness が要求ごとに新しい Connection を開いていました。429 Response の Body を読まずに閉じたため、Connection が Pool へ戻らなかったからです。Pool の効果を示した 431 → 6 は、拒否が 0 件の Trace で測った数字でした。" />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -26,10 +26,10 @@
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Go ベンチ Harness が拒否応答884件に TCP Connection を884本開きました" />
-  <meta name="twitter:description" content="200 以外の応答の Body を読まずに閉じていたため、実際のランが使う pooled モードが要求1件ごとに Connection を1本開いていました。読み切るように直すと22本になりました。Pool の効果を示した 431 → 6 は、拒否が0件のトレースで測った数字でした。" />
+  <meta name="twitter:title" content="なぜ Go Benchmark Harness は Connection を再利用できなかったのか" />
+  <meta name="twitter:description" content="pooled モードの Go Benchmark Harness が要求ごとに新しい Connection を開いていました。429 Response の Body を読まずに閉じたため、Connection が Pool へ戻らなかったからです。Pool の効果を示した 431 → 6 は、拒否が 0 件の Trace で測った数字でした。" />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="200 以外の応答の Body を読まずに閉じていたため、実際のランが使う pooled モードが要求1件ごとに Connection を1本開いていました。読み切るように直すと22本になりました。Pool の効果を示した 431 → 6 は、拒否が0件のトレースで測った数字でした。" />
+  <meta name="description" content="pooled モードの Go Benchmark Harness が要求ごとに新しい Connection を開いていました。429 Response の Body を読まずに閉じたため、Connection が Pool へ戻らなかったからです。Pool の効果を示した 431 → 6 は、拒否が 0 件の Trace で測った数字でした。" />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag side notranslate">個人プロジェクト</span><a class="project-tag notranslate" href="../writing/index.html?tag=GPUaaS%20Control%20Plane">#GPUaaS コントロールプレーン</a></div>
       </div>
       <section class="page-hero">
-        <h1>Go ベンチ Harness が拒否応答884件に TCP Connection を884本開きました<br><span class="h1-sub">429 応答の Body を読まずに閉じたため、Connection を一度も再利用できませんでした。</span></h1>
+        <h1>なぜ Go Benchmark Harness は Connection を再利用できなかったのか</h1>
         <p class="article-date">2026年9月</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="every-rejection-opened-a-new-connection"></aside>
@@ -97,7 +97,7 @@
         <p>2026年8月15日にブランチを上げると、プッシュフックが codex と Claude のレビューを回し、指摘が10件出ました。そのうち2件が
         測定ツールそのものの欠陥でした。この記事はそのうちの1つを扱います。</p>
 
-        <p>指摘は短いものでした。ベンチ Harness の <code>Send</code> が、200 以外の応答の Body を読まずに返しているというものです。
+        <p>指摘は短いものでした。Benchmark Harness の <code>Send</code> が、200 以外の応答の Body を読まずに返しているというものです。
         同じファイルのコメントには、Connection Pool に効果がある根拠として <code>431 → 6</code> という測定値が書かれていました。
         私はその根拠を開いてみましたが、根拠が測ったトレースには拒否応答が1件もありませんでした。</p>
 
@@ -107,7 +107,7 @@
 
         <h2 id="想定読者">この記事の想定読者</h2>
         <ul>
-          <li>Go の <code>net/http</code> クライアントで負荷生成器やベンチ Harness を作っている方</li>
+          <li>Go の <code>net/http</code> クライアントで負荷生成器やBenchmark Harness を作っている方</li>
           <li>429 のような拒否応答が多く出るシステム(Rate Limit、入場制御)を測っている方</li>
           <li>コードコメントや文書に測定値を根拠として書いている方</li>
         </ul>
@@ -116,15 +116,15 @@
         <p>個人プロジェクトとして作っている GPUaaS プラットフォームには LLM の要求を受ける Gateway があり、その中に入場ガードが
         あります。ガードは要求の Body を読んで送り先の Backend を決め、vLLM へプロキシする手前に立ちます。ガードは
         <strong>拒否することで容量を守ります。</strong>ガードが受け付けないと決めた要求は 429 で返ります。</p>
-        <p>ベンチ Harness は1つの要求トレースを、ガードを切った設定、負荷を見ない固定上限、KV Cache の圧力を見るガードに
+        <p>Benchmark Harness は1つの要求トレースを、ガードを切った設定、負荷を見ない固定上限、KV Cache の圧力を見るガードに
         まったく同じように再生し、Premium 要求の TTFT p99 を比べます。</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 200" role="img" aria-labelledby="rej1-t rej1-d" class="figure-svg">
             <title id="rej1-t">Harness と入場ガード</title>
-            <desc id="rej1-d">左はベンチ Harness です。トレースを再生する Go http.Client と、その中の Connection Pool があります。TCP Connection の矢印が中央の Gateway の入場ガードへ向かいます。ガードを通った要求は右の vLLM へプロキシされて推論されます。拒否された要求は 429 応答になり、下側の矢印で Harness へ戻ります。</desc>
+            <desc id="rej1-d">左はBenchmark Harness です。トレースを再生する Go http.Client と、その中の Connection Pool があります。TCP Connection の矢印が中央の Gateway の入場ガードへ向かいます。ガードを通った要求は右の vLLM へプロキシされて推論されます。拒否された要求は 429 応答になり、下側の矢印で Harness へ戻ります。</desc>
             <g font-family="Inter, sans-serif">
-              <text x="110" y="20" font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="600">ベンチ Harness</text>
+              <text x="110" y="20" font-size="12" fill="#4a4a4a" text-anchor="middle" font-weight="600">Benchmark Harness</text>
               <rect x="10" y="32" width="200" height="120" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
               <text x="110" y="58" font-size="12" fill="#8a8a8a" text-anchor="middle">トレース再生</text>
               <text x="110" y="84" font-size="12" fill="#4f5bd5" text-anchor="middle">Go http.Client</text>

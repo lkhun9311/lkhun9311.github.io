@@ -292,15 +292,15 @@
           tags: ["IaaS Backend", "Reliability", "Method", "Operations"]
         },
         {
-          title: "A Teardown Destroyed 96 Resources and Two of Its Seven Lines Never Asked",
-          title_ko: "AWS 자원 96개를 지운 Teardown이 「잔여 없음」을 찍었는데 두 줄은 조회하지 않았습니다",
-          title_ja: "AWS リソース96個を消した Teardown が「残存なし」と出しましたが、2行は照会していません",
+          title: "The AWS Teardown Report's [No Remnants] Was Not [Empty] but [Not Queried]",
+          title_ko: "AWS Teardown Report의 [잔여 없음]은 [Empty]가 아니라 [Not Queried]이었다",
+          title_ja: "AWS Teardown Report の [残存なし] は [Empty] ではなく [Not Queried] だった",
           url: "writing/two-lines-that-asked-nothing.html",
           source: "side", sourceLabel: "Personal project",
           date: "2026-09-18", dateLabel: "Sep 18, 2026",
-          desc: "An EKS cluster was stood up and torn down once to find out whether the teardown removes what it created. It did, and the seven-line list that confirmed it had two lines that never ran a query: the load balancer and interface lookups sit behind a check for the VPC value, so once it was empty both printed the value they started with.",
-          desc_ko: "Teardown이 만든 것을 실제로 지우는지 확인하려고 EKS 클러스터를 한 번 세웠다가 지웠습니다. 지우는 것은 됐고 그것을 확인한 일곱 줄 가운데 두 줄은 질의를 실행한 적이 없었습니다. Load Balancer와 Network Interface 조회는 VPC 값이 있어야 돌기 때문에 그 값이 비면 빈 초기값이 그대로 찍혔습니다.",
-          desc_ja: "Teardown が作ったものを本当に消すのかを確かめるため、EKS クラスタを一度立てて消しました。消すことはできましたが、それを確認した七行のうち2行は照会を実行していませんでした。Load Balancer と Network Interface の照会は VPC の値がないと回らないので、値が空になった後は初期値がそのまま出ていました。",
+          desc: "A nightly AWS Teardown always reported [No Remnants] as success. But some of that output was an empty value that AWS was never even queried for, because the VPC was already gone — [Not Queried], not [Empty].",
+          desc_ko: "밤마다 도는 AWS Teardown이 늘 [잔여 없음]으로 성공했습니다. 그러나 출력 일부는 VPC가 이미 없어 AWS에 조회조차 하지 않은 빈 값이었습니다 — [Empty]가 아니라 [Not Queried]이었습니다.",
+          desc_ja: "毎晩走る AWS Teardown はいつも [残存なし] で成功していました。しかし出力の一部は、VPC がすでに無いため AWS に照会すらしていない空値でした — [Empty] ではなく [Not Queried] でした。",
           tags: ["GPUaaS Control Plane", "Operations", "Cost", "Method"]
         },
         {
@@ -440,15 +440,15 @@
           tags: ["Social Polling Platform", "Postgres", "Backend", "Method"]
         },
         {
-          title: "A Go Benchmark Harness Opened 884 TCP Connections for 884 Rejections",
+          title: "Why the Go Benchmark Harness Could Not Reuse a Connection",
           url: "writing/every-rejection-opened-a-new-connection.html",
           source: "side", sourceLabel: "Personal project",
-          title_ko: "Go 벤치 Harness가 거부 응답 884건에 TCP Connection 884개를 열었습니다",
-          desc_ko: "429 응답의 Body를 읽지 않고 닫아서 실제 런이 쓰는 pooled 모드가 요청 하나에 Connection 하나를 열고 있었습니다. 읽어 비우게 고치자 22개가 됐습니다. Pool의 효과를 보여 준 431 → 6은 거부가 0건인 트레이스에서 잰 숫자였습니다. 한국어와 일본어로도 읽을 수 있습니다.",
-          title_ja: "Go ベンチ Harness が拒否応答884件に TCP Connection を884本開きました",
-          desc_ja: "429 応答の Body を読まずに閉じていたため、実際のランが使う pooled モードが要求1件ごとに Connection を1本開いていました。読み切るように直すと22本になりました。Pool の効果を示した 431 → 6 は、拒否が0件のトレースで測った数字でした。",
+          title_ko: "왜 Go Benchmark Harness는 Connection을 재사용하지 못했을까",
+          desc_ko: "pooled 모드인 Go Benchmark Harness가 요청마다 새 Connection을 열고 있었습니다. 429 Response의 Body를 읽지 않고 닫아 Connection이 Pool로 돌아가지 못했기 때문입니다. Pool 효과의 근거였던 431→6은 거부가 0건인 Trace에서 잰 값이었습니다. 한국어와 일본어로도 읽을 수 있습니다.",
+          title_ja: "なぜ Go Benchmark Harness は Connection を再利用できなかったのか",
+          desc_ja: "pooled モードの Go Benchmark Harness が要求ごとに新しい Connection を開いていました。429 Response の Body を読まずに閉じたため、Connection が Pool へ戻らなかったからです。Pool の効果を示した 431 → 6 は、拒否が 0 件の Trace で測った数字でした。",
           date: "2026-09", dateLabel: "Sep 2026",
-          desc: "The harness closed 429 responses without reading their bodies, so the pooled mode real runs use opened one connection per request. Draining them brought it to 22. The 431 → 6 figure that showed the pool working had been measured on a trace with zero rejections. Also in Korean and Japanese.",
+          desc: "The Go Benchmark Harness ran in pooled mode yet opened a new Connection for every request. It closed each 429 Response without reading the Body, so the Connection never returned to the Pool. The 431 → 6 figure that showed the Pool working had been measured on a Trace with zero rejections. Also in Korean and Japanese.",
           tags: ["GPUaaS Control Plane", "Performance", "Method"]
         },
         {
@@ -500,15 +500,15 @@
           tags: ["GPUaaS Control Plane", "Cost", "Operations", "Method"]
         },
         {
-          title: "GPU Admission Control Did Not Protect p99. It Dropped 1,788 Requests.",
+          title: "The Hallucination in the GPU Admission Control Report That Omitted the 413 Response",
           url: "writing/it-deleted-the-tenant.html",
           source: "side", sourceLabel: "Personal project",
-          title_ko: "GPU 입장 제어가 p99를 지킨 게 아니라 요청 1,788건을 버렸습니다",
-          desc_ko: "GPU 한 장 위의 4-arm 실험. 거절을 0건 했다는 Arm이 완료 수는 프리미엄 요청 수와 정확히 같았습니다. Report의 판정이 전부 비율이라 유료 반복 4회 동안 아무도 그것을 보지 못했습니다.",
-          title_ja: "GPU 入場制御は p99 を守らず、リクエスト 1,788 件を捨てていました",
-          desc_ja: "GPU 1 枚の上での 4-arm 実験。拒否 0 件だという Arm の完了数が、プレミアムの要求数とぴったり同じだった。レポートの判定がすべて比だったため、4 回の有料実行の間それは見えなかった。",
+          title_ko: "413 Response를 누락한 GPU Admission Control Report의 Hallucination",
+          desc_ko: "단일 GPU 4-arm 실험에서 p99를 지켰다던 Admission Control Arm이 실은 요청 1,788건을 413으로 버렸습니다. Report가 429만 집계하고 413을 빼서 유료 실험 네 번 내내 드러나지 않았습니다.",
+          title_ja: "413 Response を落とした GPU Admission Control Report の Hallucination",
+          desc_ja: "GPU 1 枚の 4-arm 実験で、p99 を守ったとされた Admission Control Arm が、実際には要求 1,788 件を 413 で捨てていました。Report が 429 だけを集計して 413 を除いたため、有料の実験 4 回のあいだ表に出ませんでした。",
           date: "2026-09", dateLabel: "Sep 2026",
-          desc: "A four-arm experiment on one A10G. The arm that rejected nothing completed exactly the premium request count, and every check was a tail ratio. Also in Korean and Japanese.",
+          desc: "On a single-GPU four-arm experiment, the Admission Control Arm that supposedly protected p99 had in fact dropped 1,788 requests with 413. The Report counted only 429 and left 413 out, so it stayed hidden across four paid experiments. Also in Korean and Japanese.",
           tags: ["GPUaaS Control Plane", "GPU", "Method", "Observability"]
         },
         {
@@ -644,15 +644,15 @@
           tags: ["IaaS Backend", "Performance", "Method"]
         },
         {
-          title: "Pre-fetching Everything and Polling a Ten-Second Query Blocked the Dialog",
+          title: "The Request Pileup in the Cloud Console Made by Prefetch and 5s Polling",
           url: "writing/slow-screens-6-polling-pileup.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "안 고른 것까지 미리 받고 10s 조회를 5s마다 불러 창이 막혔습니다",
-          desc_ko: "버튼을 눌러도 창이 안 열리고 로딩만 돌았습니다. 개발자 도구에는 끝나지 않은 요청이 4건 남아 있었습니다. 목록 조회가 10s 넘게 걸리는데 화면은 5s마다 다시 불렀고 창이 열려 있는 동안에도 멈추지 않았습니다. 그리고 그 5s가 Backend Cache 결정의 근거가 됐습니다. 연작 ‘느린 화면’ ⑥.",
-          title_ja: "選んでいないものまで先に取り、10 秒の取得を 5 秒ごとに呼んでダイアログが塞がりました",
-          desc_ja: "ボタンを押してもダイアログが開かず、ローディングだけが回っていました。開発者ツールには未完了のリクエストが 4 件。一覧の取得に 10 秒以上かかるのに画面は 5 秒ごとに取り直し、ダイアログが開いているあいだも止まりませんでした。そしてその 5 秒が Backend Cache の判断の根拠になりました。連載「遅い画面」⑥。",
+          title_ko: "Prefetch와 5s Polling이 만든 Cloud Console의 Request Pileup",
+          desc_ko: "Volume 생성 Modal이 열리지 않았습니다. 안 고른 선택지까지 전부 미리 조회하는 Prefetch와, 10s 넘는 목록을 5s마다 다시 부르는 Polling이 겹쳐 Request Pileup을 만들었습니다. 그리고 그 5s가 Backend Cache 결정의 근거가 됐습니다. 연작 ‘느린 화면’ ⑥.",
+          title_ja: "Prefetch と 5s Polling が生んだ Cloud Console の Request Pileup",
+          desc_ja: "Volume 作成 Modal が開きませんでした。選んでいない選択肢まで先に取る Prefetch と、10s を超える一覧を 5s ごとに取り直す Polling が重なって Request Pileup を作りました。そしてその 5s が Backend Cache の判断の根拠になりました。連載「遅い画面」⑥。",
           date: "2026-09", dateLabel: "Sep 2026",
-          desc: "Clicking the create button left the dialog spinning. DevTools showed four requests still pending. The list query took over ten seconds while the screen re-fetched it every five, and kept doing so while the dialog was open — and those five seconds became the reason behind a backend cache setting. Slow Screens, part six. Also in Korean and Japanese.",
+          desc: "The Volume create Modal would not open. A Prefetch that fetched every option no one had selected, layered over Polling that re-ran a 10s list every 5s, combined into a Request Pileup — and those 5s became the reason behind a Backend Cache setting. Slow Screens, part six. Also in Korean and Japanese.",
           tags: ["IaaS Backend", "Frontend", "Performance", "Method"]
         },
         {
@@ -744,13 +744,13 @@
           tags: ["IaaS Backend", "Performance", "Backend", "Method"]
         },
         {
-          title: "Ten Bugs, Zero Failed Tests",
+          title: "Why Every Kubernetes GPU Scheduling Test Passed With the Implementation as Its Oracle",
           url: "writing/bugs-that-return-exit-code-zero.html",
           source: "side", sourceLabel: "Personal project",
-          title_ko: "결함 10건, 실패한 테스트 0건",
-          desc_ko: "멀티테넌트 GPU 스케줄링용 쿠버네티스 오퍼레이터와 Gateway를 일주일 검증하며 결함 10건을 찾았고 어느 것도 테스트를 실패시키거나 0이 아닌 종료 코드를 내지 않았습니다. 아홉은 옳아 보이는 결과를 읽다가, 하나는 산출물이 스스로 모순되면서 나왔습니다. 우연이었던 관측 합의, 객체를 지울 수 없게 만들 수 있었던 웹훅, 그리고 테스트 스위트가 볼 수 없었던 O(N) 비용을 자세히 봅니다.",
+          title_ko: "왜 Implementation을 Oracle로 삼은 Kubernetes GPU Scheduling Test는 모두 통과했나",
+          desc_ko: "Multi-tenant GPU Scheduling Kubernetes Operator와 Gateway를 일주일 검증하며 결함 10건을 찾았지만, 어느 것도 Test를 실패시키지 않았습니다. Test의 Oracle이 Spec이 아니라 코드의 현재 Implementation이었기 때문입니다.",
           date: "2026-08", dateLabel: "Aug 2026",
-          desc: "Control-plane verification on a Kubernetes GPU operator. What each defect broke, how it was found, and the guard that now holds it.",
+          desc: "A week of verifying a multi-tenant GPU Scheduling Kubernetes Operator and Gateway turned up ten defects, yet none of them failed a Test. The Test's Oracle was the code's current Implementation, not the Spec.",
           tags: ["GPUaaS Control Plane", "Kubernetes", "Observability", "GPU"]
         }
       ]
