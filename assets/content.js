@@ -611,7 +611,7 @@
           title: "The Screen I Found No Case to Fix Took 6.8 Seconds",
           url: "writing/monitoring-the-screen-i-said-not-to-fix.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "잘못된 성능 측정이 만든 오판: 사용자는 REST 응답이 아니라 SSE 첫 데이터를 기다렸다",
+          title_ko: "REST로 성능을 쟀지만, 사용자는 SSE 첫 데이터를 6.8s 기다렸다",
           desc_ko: "모니터링 화면 3개를 검토하고 ‘고칠 근거를 못 찾았다’고 발행했는데 같은 화면의 첫 데이터가 6.8s였습니다. 저는 REST 응답을 쟀고 사용자는 SSE의 첫 data를 기다리고 있었습니다. 요청 경로에서 계산을 떼어 내자 세 화면 모두 약 23ms가 됐습니다. 연작 ‘통합 모니터링’ ①.",
           title_ja: "直す根拠が見つからないと書いた画面が 6.8 秒でした",
           desc_ja: "モニタリング画面 3 つをレビューして「直す根拠が見つからなかった」と公開したのに、同じ画面の最初のデータが 6.8 秒でした。私は REST の応答を測り、利用者は SSE の最初の data を待っていました。リクエスト経路から計算を外すと、三画面とも約 23ms になりました。連載「統合モニタリング」①。",
