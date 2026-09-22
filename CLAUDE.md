@@ -41,8 +41,9 @@ codex에 사실 요약 + 후보안 + 위 규칙을 주고, 편별 최선안·형
 한국어, 무엇을·왜 요약. 끝에:
 `Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>`
 
-## 진행 상태 (2026-09-22 기준)
-- **배치1 완료**(커밋 e315774d): bugs-that-return-exit-code-zero / every-rejection-opened-a-new-connection / it-deleted-the-tenant / slow-screens-6-polling-pileup / two-lines-that-asked-nothing — ko·en·ja 제목·부제·description + content.js + 교차링크.
-- **배치2 ko 완료**(커밋 d01d1d7d): slow-screens 1·2·3·4·7 ko 제목(codex 문장형). en·ja 미반영(다음 패스).
-- **Instance HA 1~8 제목**: 질문형 우선·영어 용어 영문화로 codex 확정안 도출됨. 아직 파일 미반영(확정 대기). 슬러그: 1=the-hard-part-of-ha-was-not-recovery, 2=instance-ha-2-what-each-signal-can-say, 3=seven-of-eight-should-not-recover, 4=instance-ha-4-no-fencing-no-recovery, 5=instance-ha-5-quorum-does-not-cut-power, 6=instance-ha-6-100-seconds-is-a-service-decision, 7=recovery-host-must-have-the-device, 8=what-recovery-leaves-behind.
-- 남은 일: 배치2 en·ja, slow-screens 8, monitoring 연작, 그리고 전 연작 회차표기 `①→N.` 통일.
+## 진행 상태 (ko 전수조사 2026-09-22): 47편 중 18 정리됨 / 29 남음
+판정 신호: ko 파일에 `h1-sub`(부제) 있으면 "미정리". `grep -L h1-sub writing/*.ko.html`로 확인 가능.
+- **정리됨 ko 18편**: [배치1 e315774d] bugs-that-return-exit-code-zero, every-rejection-opened-a-new-connection, it-deleted-the-tenant, slow-screens-6-polling-pileup, two-lines-that-asked-nothing / [배치2 d01d1d7d] slow-screens-1·2·3·4·7 / [Instance HA 0bc4ce0e] the-hard-part-of-ha-was-not-recovery(1), instance-ha-2-what-each-signal-can-say(2), seven-of-eight-should-not-recover(3), instance-ha-4-no-fencing-no-recovery(4), instance-ha-5-quorum-does-not-cut-power(5), instance-ha-6-100-seconds-is-a-service-decision(6), recovery-host-must-have-the-device(7), what-recovery-leaves-behind(8).
+- **남음 ko 29편**: monitoring 연작 5(empty-is-not-zero, one-shared-cache, the-screen-i-said-not-to-fix, three-races-in-one-cache, two-gates-one-screen) · snapshot 연작 6(history-outlives-schedule, history-result-model, root-volume-identity, scheduler-observability, a-schedule-that-failed-in-silence, the-history-tab-that-had-a-hole) · slow-screens 잔여 2(slow-screens-8-load-test-harness, parallelism-made-the-tail-worse) · GPU 쿼터/가드 7(every-guarantee-ends-at-a-writable-field, four-fixes-that-were-not-there, gpu-quota-control-plane, the-ladder-that-could-not-be-climbed, twenty-three-runs-one-condition, refusal-paths-exercised-for-real, three-documents-on-a-false-premise) · standalone 9(a-pooler-fixes-only-one, gpu-node-readiness, the-40-gib-that-did-not-move, the-ceiling-was-not-in-the-code, the-dependency-only-the-tests-installed, the-only-control-that-caught-something, the-review-that-skipped-the-big-file, until-the-guarantee-was-a-sentence, validation-failed-is-not-invalid).
+- **다음 우선순위(ko)**: ① monitoring 연작 5 → ② snapshot 6 → ③ slow-8·parallelism → ④ GPU 쿼터 7 → ⑤ standalone 9.
+- **en·ja 미착수**: 정리된 18편 모두 ko만 반영. en·ja(제목 `①→N.` + 영문 규칙 + content.js title/title_ja + 교차링크)는 전체 별도 패스로 남음.
