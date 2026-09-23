@@ -197,7 +197,7 @@
       items: [
         {
           title: "Instance HA ⑧: Recovery Succeeded and It Still Was Not Over",
-          title_ko: "Instance HA 8. 왜 Evacuate가 성공해도 다음 복구는 실패할까: 정리되지 않은 자원 할당과 서비스 상태",
+          title_ko: "Instance HA 08. 왜 Evacuate가 성공해도 다음 복구는 실패할까: 정리되지 않은 자원 할당과 서비스 상태",
           title_ja: "Instance HA ⑧: 復旧が成功しても終わりではありませんでした",
           url: "writing/what-recovery-leaves-behind.html",
           source: "company", sourceLabel: "Company work",
@@ -209,7 +209,7 @@
         },
         {
           title: "Instance HA ⑦: A GPU Instance Only Goes to a Host That Has the Device",
-          title_ko: "Instance HA 7. GPU Instance는 Device를 가진 Host로만 Evacuate된다",
+          title_ko: "Instance HA 07. GPU Instance는 Device를 가진 Host로만 Evacuate된다",
           title_ja: "Instance HA ⑦: GPU Instance は装置を持つホストにだけ行きます",
           url: "writing/recovery-host-must-have-the-device.html",
           source: "company", sourceLabel: "Company work",
@@ -245,7 +245,7 @@
         },
         {
           title: "Instance HA ⑥: Recovery Time Would Not Fit in One Number",
-          title_ko: "Instance HA 6. 왜 복구 시간은 단일 목표치로 정할 수 없을까: 단계와 서비스 유형마다 다른 허용치",
+          title_ko: "Instance HA 06. 왜 복구 시간은 단일 목표치로 정할 수 없을까: 단계와 서비스 유형마다 다른 허용치",
           title_ja: "Instance HA ⑥: 復旧時間は一つの数字では書けませんでした",
           url: "writing/instance-ha-6-100-seconds-is-a-service-decision.html",
           source: "company", sourceLabel: "Company work",
@@ -257,7 +257,7 @@
         },
         {
           title: "Instance HA ⑤: Quorum Cannot Cut the Power",
-          title_ko: "Instance HA 5. 3가지 아키텍처를 가른 기준: 전원 차단 수단(STONITH) 유무",
+          title_ko: "Instance HA 05. 3가지 아키텍처를 가른 기준: 전원 차단 수단(STONITH) 유무",
           title_ja: "Instance HA ⑤: Quorum は電源を落とせません",
           url: "writing/instance-ha-5-quorum-does-not-cut-power.html",
           source: "company", sourceLabel: "Company work",
@@ -269,7 +269,7 @@
         },
         {
           title: "Instance HA ④: The Design Asked for Fencing and the Build Kills Processes",
-          title_ko: "Instance HA 4. Process 종료만으로는 Fencing이 아니다",
+          title_ko: "Instance HA 04. Process 종료만으로는 Fencing이 아니다",
           title_ja: "Instance HA ④: Fencing の代わりにプロセスを終了していました",
           url: "writing/instance-ha-4-no-fencing-no-recovery.html",
           source: "company", sourceLabel: "Company work",
@@ -281,7 +281,7 @@
         },
         {
           title: "Instance HA ②: Each Signal Can See Something Different",
-          title_ko: "Instance HA 2. HeartBeat와 외부 Probe: 무엇을 더 믿어야 할까",
+          title_ko: "Instance HA 02. HeartBeat와 외부 Probe: 무엇을 더 믿어야 할까",
           title_ja: "Instance HA ②: 信号ごとに見えているものが違います",
           url: "writing/instance-ha-2-what-each-signal-can-say.html",
           source: "company", sourceLabel: "Company work",
@@ -305,7 +305,7 @@
         },
         {
           title: "Instance HA ①: We Judged a Live Node Dead",
-          title_ko: "Instance HA 1. 왜 Switch 한 대에 장애가 발생하면 Controller는 살아 있는 Compute Node를 [Down]으로 판정할까",
+          title_ko: "Instance HA 01. 왜 Switch 한 대에 장애가 발생하면 Controller는 살아 있는 Compute Node를 [Down]으로 판정할까",
           title_ja: "Instance HA ①: 生きているノードを死んだと判定しました",
           url: "writing/the-hard-part-of-ha-was-not-recovery.html",
           source: "company", sourceLabel: "Company work",
@@ -527,7 +527,7 @@
           title: "Instance HA ③: Of Eight Failures, Only One Should Recover",
           url: "writing/seven-of-eight-should-not-recover.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "Instance HA 3. 왜 8가지 장애 중 복구해도 되는 것은 하나뿐일까",
+          title_ko: "Instance HA 03. 왜 8가지 장애 중 복구해도 되는 것은 하나뿐일까",
           desc_ko: "Instance HA 설계 3편. 「정말 장애인가」와 「지금 실행해도 되는가」가 한 판정에 섞여 있어 Storage 장애가 Compute 장애로 읽혔습니다. 두 질문을 Phase 1과 Phase 2로 가르고 판정 순서를 의사코드로 고정했습니다. 같은 기준으로 시나리오 여덟 개를 판정하니 Fencing 1건에 Hold 7건이었습니다.",
           title_ja: "Instance HA ③: 八つの障害のうち復旧してよいのは一つでした",
           desc_ja: "Instance HA 設計の第3編。「本当に障害か」と「今実行してよいか」が一つの判定に混ざり、Storage の障害が Compute の障害として読まれていました。二つを Phase 1 と Phase 2 に分け、判定順序を擬似コードで固定しました。同じ基準で八つのシナリオを判定すると Fencing 1 件と Hold 7 件でした。",
