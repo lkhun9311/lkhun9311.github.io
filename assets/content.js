@@ -329,7 +329,7 @@
         },
         {
           title: "Did the Snapshot Scheduler Run? Making Invisible Automation Trustworthy",
-          title_ko: "스냅샷 스케줄러는 실행됐는가: 보이지 않던 자동화를 신뢰하게 만들기",
+          title_ko: "Snapshot Scheduler 실행 이력: 자동화의 추적과 기록",
           url: "writing/snapshot-scheduler-observability.ko.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-16", dateLabel: "Sep 16, 2026",
@@ -339,7 +339,7 @@
         },
         {
           title: "Which Volume Is Root When Both Are Bootable?",
-          title_ko: "둘 다 bootable인 Volume 중 실제 Root를 어떻게 찾았나",
+          title_ko: "Snapshot Scheduler 실행 이력 05. OpenStack4j를 확장해 Root Volume을 식별한다",
           url: "writing/snapshot-root-volume-identity.ko.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-16", dateLabel: "Sep 16, 2026",
@@ -349,7 +349,7 @@
         },
         {
           title: "Run History Should Outlive Its Schedule",
-          title_ko: "스케줄을 지워도 실행 이력은 지우지 않았습니다",
+          title_ko: "Snapshot Scheduler 실행 이력 04. 이력 사후 보존: 추적은 사후에도 필요하다",
           url: "writing/snapshot-history-outlives-schedule.ko.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-16", dateLabel: "Sep 16, 2026",
@@ -359,7 +359,7 @@
         },
         {
           title: "Why Is a 2/2 Run Only Partially Successful?",
-          title_ko: "성공 2/2인데 왜 일부 작업 실패인가",
+          title_ko: "Snapshot Scheduler 실행 이력 03. 일부 작업 실패 처리: 보조 작업도 실행 이력에 남긴다",
           url: "writing/snapshot-history-result-model.ko.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-16", dateLabel: "Sep 16, 2026",
@@ -383,7 +383,7 @@
           title: "The Run History Tab Had a Path That Left No History",
           url: "writing/the-history-tab-that-had-a-hole.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "실행 이력은 모든 종료 경로에 남아야 합니다",
+          title_ko: "Snapshot Scheduler 실행 이력 02. 정지와 재시도의 기준: 대상 부재는 정지, 오류는 이력을 남기고 재시도한다",
           desc_ko: "대상이 사라져 중단된 실행까지 기록해야 미실행과 실패를 구분할 수 있었습니다. 모든 종료 경로가 한 줄의 증거를 남기게 만든 과정입니다.",
           title_ja: "履歴タブを作ってみたら履歴が残らない経路がありました",
           desc_ja: "スナップショットスケジューラの実行履歴を画面に付けたのに、対象が消えて停止した実行は履歴が一行も残りませんでした。照会の失敗を対象無しと読み、一時的な障害が永久停止になっていました。",
@@ -395,7 +395,7 @@
           title: "A Snapshot Schedule Failed Every Run and the Screen Said STARTED",
           url: "writing/a-schedule-that-failed-in-silence.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "스냅샷이 생성되지 않았는데 화면은 STARTED였습니다",
+          title_ko: "Snapshot Scheduler 실행 이력 01. 실패해도 Status [STARTED] 표시: [FAILED] Enum을 정의만 하고 사용하지 않았다",
           desc_ko: "할당량 부족으로 Snapshot 생성이 거절됐지만 실패가 화면에 전달되지 않아 Scheduler 장애로 오인됐습니다. 실패 경로와 이전 백업을 먼저 지우던 보관 순서를 바로잡았습니다.",
           title_ja: "スナップショットスケジューラが毎回失敗しても画面は STARTED でした",
           desc_ja: "プロジェクトのスナップショットクォータが満杯だとスケジューラが毎回失敗するのに画面は STARTED でした。FAILED という状態値はすでにあり、それを書くコードがありませんでした。そしてその瞬間にコードは前のバックアップを先に消していました。",
