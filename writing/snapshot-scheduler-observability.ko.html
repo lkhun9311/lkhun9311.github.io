@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Snapshot Scheduler 실행 이력: 자동화의 추적과 기록 | Kwanghun Lee</title>
+  <title>Snapshot Scheduler 실행 이력: 실행 이력의 추적과 기록 | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -14,7 +14,7 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Snapshot Scheduler 실행 이력: 자동화의 추적과 기록" />
+  <meta property="og:title" content="Snapshot Scheduler 실행 이력: 실행 이력의 추적과 기록" />
   <meta property="og:description" content="Snapshot이 없어도 원인을 알 수 없어 할당량 부족을 Scheduler 장애로 오인했습니다. 실행 이력을 직접 설계·구현해 생성 결과와 실패 사유를 추적하고 자동화의 신뢰를 높인 과정입니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
@@ -22,7 +22,7 @@
   <meta property="og:url" content="https://lkhun9311.github.io/writing/snapshot-scheduler-observability.ko.html" />
   <meta property="og:locale" content="ko_KR" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Snapshot Scheduler 실행 이력: 자동화의 추적과 기록" />
+  <meta name="twitter:title" content="Snapshot Scheduler 실행 이력: 실행 이력의 추적과 기록" />
   <meta name="twitter:description" content="생성 여부를 확인할 수 없던 기능에 실행 이력을 설계해 장애 오인을 줄이고 운영 신뢰를 높였습니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="생성 여부를 확인할 수 없던 기능에 실행 이력을 설계해 장애 오인을 줄이고 운영 신뢰를 높였습니다." />
@@ -37,7 +37,7 @@
   </nav></div></div>
   <div class="container reading"><main>
     <div class="hero-top"><a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a><div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div></div>
-    <section class="page-hero"><h1>Snapshot Scheduler 실행 이력: 자동화의 추적과 기록</h1><p class="article-date">2026년 9월</p></section>
+    <section class="page-hero"><h1>Snapshot Scheduler 실행 이력: 실행 이력의 추적과 기록</h1><p class="article-date">2026년 9월</p></section>
     <aside class="article-aside" data-aside="writing" data-slug="snapshot-scheduler-observability"></aside>
     <nav class="article-toc" aria-label="목차"><p class="toc-label">목차</p><ul>
       <li><a href="#예상-독자">이 글의 예상 독자</a></li>
@@ -220,11 +220,11 @@
 
       <h2 id="시리즈">이 시리즈에서 다루는 것<a class="anchor" href="#시리즈" aria-label="이 절로 가는 링크">#</a></h2>
       <ol>
-        <li><a href="a-schedule-that-failed-in-silence.ko.html">Snapshot Scheduler 실행 이력 01. 실패해도 Status [STARTED] 표시: [FAILED] Enum을 정의만 하고 사용하지 않았다</a>: 할당량 실패가 제품 장애로 오인된 출발점</li>
+        <li><a href="a-schedule-that-failed-in-silence.ko.html">Snapshot Scheduler 실행 이력 01. 실패해도 Status [STARTED]를 표시하는 현상: [FAILED] Enum을 정의만 하고 사용하지 않았다</a>: 할당량 실패가 제품 장애로 오인된 출발점</li>
         <li><a href="the-history-tab-that-had-a-hole.ko.html">Snapshot Scheduler 실행 이력 02. 정지와 재시도의 기준: 대상 부재는 정지, 오류는 이력을 남기고 재시도한다</a>: 미실행과 실패를 구분하는 기록 계약</li>
         <li><a href="snapshot-history-result-model.ko.html">성공 2/2인데 일부 작업 실패인 이유</a>: 백업 완성도와 실행 건전성의 분리</li>
         <li><a href="snapshot-history-outlives-schedule.ko.html">스케줄을 지워도 이력을 지우지 않은 이유</a>: 현재 상태와 실행 증거의 수명 분리</li>
-        <li><a href="snapshot-root-volume-identity.ko.html">Snapshot Scheduler 실행 이력 05. OpenStack4j를 확장해 Root Volume을 식별한다</a>: OpenStack4j 확장과 권위 신호</li>
+        <li><a href="snapshot-root-volume-identity.ko.html">Snapshot Scheduler 실행 이력 05. Root Volume 식별: OpenStack4j를 확장한다</a>: OpenStack4j 확장과 권위 신호</li>
       </ol>
 
       <div class="wrapup">

@@ -329,7 +329,7 @@
         },
         {
           title: "Did the Snapshot Scheduler Run? Making Invisible Automation Trustworthy",
-          title_ko: "Snapshot Scheduler 실행 이력: 자동화의 추적과 기록",
+          title_ko: "Snapshot Scheduler 실행 이력: 실행 이력의 추적과 기록",
           url: "writing/snapshot-scheduler-observability.ko.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-16", dateLabel: "Sep 16, 2026",
@@ -339,7 +339,7 @@
         },
         {
           title: "Which Volume Is Root When Both Are Bootable?",
-          title_ko: "Snapshot Scheduler 실행 이력 05. OpenStack4j를 확장해 Root Volume을 식별한다",
+          title_ko: "Snapshot Scheduler 실행 이력 05. Root Volume 식별: OpenStack4j를 확장한다",
           url: "writing/snapshot-root-volume-identity.ko.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-16", dateLabel: "Sep 16, 2026",
@@ -349,7 +349,7 @@
         },
         {
           title: "Run History Should Outlive Its Schedule",
-          title_ko: "Snapshot Scheduler 실행 이력 04. 이력 사후 보존: 추적은 사후에도 필요하다",
+          title_ko: "Snapshot Scheduler 실행 이력 04. 실행 이력 사후 보존",
           url: "writing/snapshot-history-outlives-schedule.ko.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-16", dateLabel: "Sep 16, 2026",
@@ -359,7 +359,7 @@
         },
         {
           title: "Why Is a 2/2 Run Only Partially Successful?",
-          title_ko: "Snapshot Scheduler 실행 이력 03. 일부 작업 실패 처리: 보조 작업도 실행 이력에 남긴다",
+          title_ko: "Snapshot Scheduler 실행 이력 03. 일부 작업 실패: 보조 작업도 실행 이력에 남긴다",
           url: "writing/snapshot-history-result-model.ko.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-16", dateLabel: "Sep 16, 2026",
@@ -395,7 +395,7 @@
           title: "A Snapshot Schedule Failed Every Run and the Screen Said STARTED",
           url: "writing/a-schedule-that-failed-in-silence.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "Snapshot Scheduler 실행 이력 01. 실패해도 Status [STARTED] 표시: [FAILED] Enum을 정의만 하고 사용하지 않았다",
+          title_ko: "Snapshot Scheduler 실행 이력 01. 실패해도 Status [STARTED]를 표시하는 현상: [FAILED] Enum을 정의만 하고 사용하지 않았다",
           desc_ko: "할당량 부족으로 Snapshot 생성이 거절됐지만 실패가 화면에 전달되지 않아 Scheduler 장애로 오인됐습니다. 실패 경로와 이전 백업을 먼저 지우던 보관 순서를 바로잡았습니다.",
           title_ja: "スナップショットスケジューラが毎回失敗しても画面は STARTED でした",
           desc_ja: "プロジェクトのスナップショットクォータが満杯だとスケジューラが毎回失敗するのに画面は STARTED でした。FAILED という状態値はすでにあり、それを書くコードがありませんでした。そしてその瞬間にコードは前のバックアップを先に消していました。",
