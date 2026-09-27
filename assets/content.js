@@ -329,7 +329,7 @@
         },
         {
           title: "Did the Snapshot Scheduler Run? Making Invisible Automation Trustworthy",
-          title_ko: "Snapshot Scheduler 실행 이력: 실행 이력의 추적과 기록",
+          title_ko: "Snapshot Scheduler 실행 이력: 자동화의 추적과 기록",
           url: "writing/snapshot-scheduler-observability.ko.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-16", dateLabel: "Sep 16, 2026",
@@ -349,7 +349,7 @@
         },
         {
           title: "Run History Should Outlive Its Schedule",
-          title_ko: "Snapshot Scheduler 실행 이력 04. 실행 이력 사후 보존",
+          title_ko: "Snapshot Scheduler 실행 이력 04. 사후 보존: 추적은 사후에도 필요하다",
           url: "writing/snapshot-history-outlives-schedule.ko.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-16", dateLabel: "Sep 16, 2026",
