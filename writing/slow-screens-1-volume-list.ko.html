@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Volume·Snapshot 조회 성능 개선 01. 목록 Cache: Caffeine LoadingCache로 구현한 single-flight와 5초 stale-while-refresh | Kwanghun Lee</title>
+  <title>Volume·Snapshot 조회 성능 개선 01. 목록 Cache: Caffeine LoadingCache로 구현한 single-flight와 stale-while-refresh | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Volume·Snapshot 조회 성능 개선 01. 목록 Cache: Caffeine LoadingCache로 구현한 single-flight와 5초 stale-while-refresh | Kwanghun Lee" />
+  <meta property="og:title" content="Volume·Snapshot 조회 성능 개선 01. 목록 Cache: Caffeine LoadingCache로 구현한 single-flight와 stale-while-refresh | Kwanghun Lee" />
   <meta property="og:description" content="Volume 목록 조회를 6단계로 나눠 쟀습니다. 순차를 병렬로 바꾸자 중앙값은 21배 빨라지고 P99는 1.9배 느려졌습니다. 코드에서는 Cache의 키 하나를 잠근 채 외부 API를 기다리고 있었는데 이 테스트만으로는 그것이 원인이라고 가르지 못합니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
@@ -26,7 +26,7 @@
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Volume·Snapshot 조회 성능 개선 01. 목록 Cache: Caffeine LoadingCache로 구현한 single-flight와 5초 stale-while-refresh | Kwanghun Lee" />
+  <meta name="twitter:title" content="Volume·Snapshot 조회 성능 개선 01. 목록 Cache: Caffeine LoadingCache로 구현한 single-flight와 stale-while-refresh | Kwanghun Lee" />
   <meta name="twitter:description" content="Volume 목록 조회를 6단계로 나눠 쟀습니다. 순차를 병렬로 바꾸자 중앙값은 21배 빨라지고 P99는 1.9배 느려졌습니다. 코드에서는 Cache의 키 하나를 잠근 채 외부 API를 기다리고 있었는데 이 테스트만으로는 그것이 원인이라고 가르지 못합니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="Volume 목록 조회를 6단계로 나눠 쟀습니다. 순차를 병렬로 바꾸자 중앙값은 21배 빨라지고 P99는 1.9배 느려졌습니다. 코드에서는 Cache의 키 하나를 잠근 채 외부 API를 기다리고 있었는데 이 테스트만으로는 그것이 원인이라고 가르지 못합니다." />
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div>
       </div>
               <section class="page-hero">
-          <h1>Volume·Snapshot 조회 성능 개선 01. 목록 Cache: Caffeine LoadingCache로 구현한 single-flight와 5초 stale-while-refresh</h1>
+          <h1>Volume·Snapshot 조회 성능 개선 01. 목록 Cache: Caffeine LoadingCache로 구현한 single-flight와 stale-while-refresh</h1>
           <p class="article-date">2026년 9월</p>
         </section>
 
@@ -88,6 +88,7 @@
             <li><a href="#원인-1">원인 ①: Lock 안에서 네트워크를 기다렸습니다</a></li>
             <li><a href="#원인-2">원인 ②: 0건을 Cache에 담지 않았습니다</a></li>
             <li><a href="#왜-줄을-서나">이유: ConcurrentHashMap인데도 줄을 섭니다</a></li>
+            <li><a href="#캐시-선택">설계: 분산 Cache가 아니라 JVM 안의 Cache였습니다</a></li>
             <li><a href="#수정">수정: Lock을 잘 다루기보다 Lock에 들어갈 일을 없앴습니다</a></li>
             <li><a href="#정합성">정합성: Cache를 지우면 다음 사람이 느려집니다</a></li>
             <li><a href="#반론">반론: “Thread를 늘리면 되지 않나요?”</a></li>
@@ -457,6 +458,28 @@ if (messages == null || messages.isEmpty()) {
         <p>사내 문서에는 이걸 ‘세그먼트 Lock’이라고 적어 뒀는데 정확하지 않습니다.
         세그먼트는 Java 7의 구현이고 Java 8부터 <code>ConcurrentHashMap</code>은 Bin 단위로 잠급니다.
         틀린 이름을 쓰면 다음 사람이 잘못된 곳을 찾아보게 됩니다.</p>
+
+        <h2 id="캐시-선택">설계: 분산 Cache가 아니라 JVM 안의 Cache였습니다<a class="anchor" href="#캐시-선택" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>Lock에 들어갈 일을 없애기 전에 정할 것이 하나 있었습니다. <strong>Cache를 어디에 둘 것인가</strong>입니다.
+        이 Console은 sticky 라우팅이라 한 사용자의 트래픽이 같은 앱 서버로 붙습니다.
+        그래서 조회 결과를 <strong>그 서버의 JVM 안</strong>에 두면 됩니다. Redis 같은 분산 Cache로 빼면
+        노드 사이의 정합을 맞출 수 있지만, 여기서는 맞출 상대가 없습니다.
+        대신 네트워크 왕복 한 번과 운영할 컴포넌트 하나가 늘어납니다.
+        필요 없는 정합을 위해 그 비용을 낼 이유가 없었습니다.</p>
+
+        <p>그러니 <strong>‘local이라서 느렸다’가 아닙니다.</strong> 앞에서 본 <code>CacheManager</code>도
+        이미 JVM 안의 local Cache였습니다. 느렸던 것은 자리(local)가 아니라 그 구현이었습니다 —
+        전역 <code>synchronized</code>, 키마다 Loader가 없어 생기는 Stampede, 분 단위 TTL, 0건을 담지 않던 것.
+        <strong>카테고리는 맞았고 구현이 문제였습니다.</strong></p>
+
+        <p>그래서 고른 것이 Caffeine입니다. <strong>같은 local Cache를 유지하면서</strong> 그 구현의 결함만 메웁니다.
+        키마다 Loader 하나(single-flight)로 Stampede를 구조로 막고, <code>refreshAfterWrite</code>로 낡은 값을
+        돌려주면서 뒤에서 갱신하고, 읽기를 전용 Executor로 넘깁니다. 분산 Cache로 갈아타는 큰 이동이 아니라,
+        <strong>자리는 그대로 두고 local Cache를 제대로 된 라이브러리로 바꾼</strong> 선택이었습니다.</p>
+
+        <p>이 적합성은 sticky 라우팅에 기대고 있습니다. 앱 서버가 여럿이고 라우팅이 흩어진다면
+        한 서버에서의 무효화가 다른 서버의 JVM Cache에는 닿지 않습니다. 그 구성은 이 글의 범위 밖입니다.</p>
 
         <h2 id="수정">수정: Lock을 잘 다루기보다 Lock에 들어갈 일을 없앴습니다<a class="anchor" href="#수정" aria-label="이 절로 가는 링크">#</a></h2>
 
