@@ -695,7 +695,7 @@
           title: "A Volume List: Ten-Minute Timeout → 23 ms",
           url: "writing/slow-screens-1-volume-list.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "Volume/Snapshot 조회 성능 개선 01. 목록 조회 Caching: Caffeine LoadingCache로 구현한 single-flight와 stale-while-refresh",
+          title_ko: "Volume/Snapshot 조회 성능 개선 01. 목록 조회 Caching: Caffeine LoadingCache로 Cache Stampede 해결",
           desc_ko: "관리 Volume 목록이 6번에 5번 Timeout이 났습니다. 고친 뒤 구성을 6가지로 나눠 같은 부하로 따로 쟀더니, 초를 가장 많이 줄인 것은 Cache 하나였고 병렬화는 중앙값과 꼬리를 반대 방향으로 움직였습니다. 연작 ‘느린 화면’ ①.",
           title_ja: "ボリューム一覧の P99 が 10 分の Timeout → 23ms になりました",
           desc_ja: "管理ボリューム一覧が 6 回に 5 回 Timeout しました。直したあと構成を 6 通りに分けて同じ負荷で測ると、秒を最も減らしたのは Cache 1 つで、並列化は中央値と裾を逆方向に動かしました。連載「遅い画面」①。",
