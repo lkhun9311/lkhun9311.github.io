@@ -707,7 +707,7 @@
           title: "Going Parallel Made the Volume List p99 1.85 Times Worse",
           url: "writing/parallelism-made-the-tail-worse.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "Volume/Snapshot 조회 성능 개선 02. 병렬 조회 P99 악화: 공유 Thread Pool 포화와 CallerRunsPolicy",
+          title_ko: "Volume/Snapshot 조회 성능 개선 02. 병렬 조회 P99 악화: 공유 Thread Pool 포화와 CallerRunsPolicy의 Request Thread 실행",
           desc_ko: "Cache 설정을 고정한 채 순차를 병렬로 바꾸니 P99가 42.6s에서 79.0s로 나빠졌습니다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다. 여섯 구성을 같은 조건으로 재고 나서야 보였습니다. 연작 ‘느린 화면’ ⑤.",
           title_ja: "ボリューム一覧を並列にしたら P99 が 1.85 倍悪化しました",
           desc_ja: "キャッシュ設定を固定したまま逐次を並列に変えると、p99 が 42.6 秒から 79.0 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンがロックされる。6 構成を同条件で測って初めて見えたこと。連載「遅い画面」⑤。",
