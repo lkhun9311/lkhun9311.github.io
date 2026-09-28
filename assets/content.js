@@ -648,7 +648,7 @@
           url: "writing/slow-screens-6-polling-pileup.html",
           source: "company", sourceLabel: "Company work",
           title_ko: "Volume/Snapshot 조회 성능 개선 03. 생성 Modal 조회 지연: 세부 항목을 선택하기 전 Prefetch Request 적체",
-          desc_ko: "Volume 생성 Modal이 열리지 않았습니다. 안 고른 선택지까지 전부 미리 조회하는 Prefetch와, 10s 넘는 목록을 5s마다 다시 부르는 Polling이 겹쳐 Request Pileup을 만들었습니다. 그리고 그 5s가 Backend Cache 결정의 근거가 됐습니다. 연작 ‘느린 화면’ ⑥.",
+          desc_ko: "Volume 생성 Modal이 열리지 않았습니다. 안 고른 선택지까지 전부 미리 조회하는 Prefetch와, 10s 넘는 목록을 5s마다 다시 부르는 Polling이 겹쳐 요청 적체를 만들었습니다. 그리고 그 5s가 Backend Cache 결정의 근거가 됐습니다. 연작 ‘느린 화면’ ⑥.",
           title_ja: "Prefetch と 5s Polling が生んだ Cloud Console の Request Pileup",
           desc_ja: "Volume 作成 Modal が開きませんでした。選んでいない選択肢まで先に取る Prefetch と、10s を超える一覧を 5s ごとに取り直す Polling が重なって Request Pileup を作りました。そしてその 5s が Backend Cache の判断の根拠になりました。連載「遅い画面」⑥。",
           date: "2026-09", dateLabel: "Sep 2026",
