@@ -197,7 +197,7 @@
       items: [
         {
           title: "A Half-Filled Cache Erased the Project Boxes on Cold Start",
-          title_ko: "cold Cache 회귀: 반쪽만 채워진 상태가 프로젝트 박스를 지웠다",
+          title_ko: "통합 모니터링 이슈 01. UI Rendering 부분 실패: Cold Cache Regression",
           url: "writing/cold-cache-hid-the-boxes.ko.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-22", dateLabel: "Sep 22, 2026",
@@ -207,7 +207,7 @@
         },
         {
           title: "Self-Heal Is a Mechanism, Not a Fixed Number",
-          title_ko: "무손실 스냅샷 회전의 데드락: 고정 숫자로는 못 막고 메커니즘으로 푼다",
+          title_ko: "Snapshot Scheduler 이슈 01. Quota가 부족하면 Snapshot 보관 개수 최신화 실패: Quota에 막혀 새 Snapshot을 만들 수 없어 선회전 불가",
           url: "writing/self-heal-is-not-a-fixed-number.ko.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-21", dateLabel: "Sep 21, 2026",
