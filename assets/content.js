@@ -196,6 +196,26 @@
       },
       items: [
         {
+          title: "A Half-Filled Cache Erased the Project Boxes on Cold Start",
+          title_ko: "cold Cache 회귀: 반쪽만 채워진 상태가 프로젝트 박스를 지웠다",
+          url: "writing/cold-cache-hid-the-boxes.ko.html",
+          source: "company", sourceLabel: "Company work",
+          date: "2026-09-22", dateLabel: "Sep 22, 2026",
+          desc: "A shared-cache refactor that made partial failures robust created a cold-start state where node was filled but instance was empty; the front end read that empty half as the source for project boxes, and the REST fallback that should have saved it had been a self-assignment no-op for years.",
+          desc_ko: "부분 실패에 강하게 만든 공유 Cache 리팩터가 cold에서 node는 채우고 instance는 비운 반쪽 상태를 만들었고, 프론트가 그 빈 목록을 프로젝트 박스 소스로 읽었습니다. 살렸어야 할 REST 폴백은 자기대입 no-op으로 죽어 있었고, 결정론적 재현으로 단일 소스 수정을 검증했습니다.",
+          tags: ["IaaS Backend", "Frontend", "Observability", "Reliability", "Method"]
+        },
+        {
+          title: "Self-Heal Is a Mechanism, Not a Fixed Number",
+          title_ko: "무손실 스냅샷 회전의 데드락: 고정 숫자로는 못 막고 메커니즘으로 푼다",
+          url: "writing/self-heal-is-not-a-fixed-number.ko.html",
+          source: "company", sourceLabel: "Company work",
+          date: "2026-09-21", dateLabel: "Sep 21, 2026",
+          desc: "Lossless snapshot rotation needs one spare slot at the moment it rotates; when a hard quota equals the retention count, that slot never appears and every run fails forever. Why lowering retention or raising the quota both fail, how three major clouds avoid it, and the serialization, reservation, and tiering design we backlogged.",
+          desc_ko: "무손실 회전은 회전 순간 보관수+1칸이 필요한데, 하드 쿼터가 보관수와 같으면 그 칸이 사라져 매 실행이 영구 실패합니다. 보관수를 줄여도 쿼터를 키워도 안 되는 이유, 클라우드 3사가 피하는 원리, 직렬화·예약·지연 재시도와 티어링 설계를 코드 착수 전 설계 판단으로 정리했습니다.",
+          tags: ["IaaS Backend", "Reliability", "Design", "Method"]
+        },
+        {
           title: "Instance HA ⑧: Recovery Succeeded and It Still Was Not Over",
           title_ko: "Instance HA 08. 왜 Evacuate가 성공해도 다음 복구는 실패할까: 정리되지 않은 자원 할당과 서비스 상태",
           title_ja: "Instance HA ⑧: 復旧が成功しても終わりではありませんでした",
