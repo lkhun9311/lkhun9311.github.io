@@ -207,7 +207,7 @@
         },
         {
           title: "Self-Heal Is a Mechanism, Not a Fixed Number",
-          title_ko: "Snapshot Scheduler 이슈 01. Quota가 부족하면 Snapshot 보관 개수 최신화 실패: Quota에 막혀 새 Snapshot을 만들 수 없어 선회전 불가",
+          title_ko: "Snapshot Scheduler 이슈 01. 스냅샷 회전에 필요한 여유 한 칸이 없다: Quota가 만든 Deadlock과 단계적 해결 방안",
           url: "writing/self-heal-is-not-a-fixed-number.ko.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-21", dateLabel: "Sep 21, 2026",
