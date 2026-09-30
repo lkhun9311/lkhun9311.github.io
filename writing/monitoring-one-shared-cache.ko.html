@@ -357,6 +357,40 @@ lastPageByPath[경로]  각 경로의 마지막 성공 payload
         다만 가상자원 재측정 당시 일부 Metric이 없는 환경이었습니다.
         데이터가 있는 조건의 직접 비교는 ④편의 개별 측정을 기준으로 삼았습니다.</p>
 
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+            <svg viewBox="0 0 720 200" role="img" aria-labelledby="rt-t rt-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="rt-t">세 화면 첫 데이터 중앙값, 개선 전과 통합 후(로그축)</title>
+              <desc id="rt-d">가로 로그축(10ms부터 10,000ms) 위에 세 화면의 개선 전(분홍)과 통합 후(파랑) 중앙값을 선으로 이었습니다. 대시보드 6,776ms·물리 Node 3,938ms·가상자원 1,436ms가 통합 후에는 모두 약 23ms로 왼쪽 같은 자리에 모입니다.</desc>
+              <g font-size="11">
+                <circle cx="132" cy="20" r="4.5" fill="#d62976"/><text x="142" y="24" fill="#4a4a4a">개선 전</text>
+                <circle cx="212" cy="20" r="4.5" fill="#4f5bd5"/><text x="222" y="24" fill="#4a4a4a">통합 후</text>
+              </g>
+              <g stroke="#e6e6e6" stroke-width="1">
+                <line x1="120" y1="40" x2="120" y2="156"/><line x1="307" y1="40" x2="307" y2="156"/><line x1="493" y1="40" x2="493" y2="156"/><line x1="680" y1="40" x2="680" y2="156"/>
+              </g>
+              <g font-size="10.5" fill="#8a8a8a" text-anchor="middle">
+                <text x="120" y="172">10ms</text><text x="307" y="172">100ms</text><text x="493" y="172">1,000ms</text><text x="680" y="172">10,000ms</text>
+              </g>
+              <g font-size="12">
+                <text x="14" y="62" fill="#18121d">대시보드</text>
+                <line x1="188" y1="58" x2="649" y2="58" stroke="#c9c9c9" stroke-width="1.5"/>
+                <circle cx="649" cy="58" r="4.5" fill="#d62976"/><text x="657" y="62" fill="#d62976" font-size="11">6,776ms</text>
+                <circle cx="188" cy="58" r="4.5" fill="#4f5bd5"/><text x="180" y="62" fill="#4f5bd5" font-size="11" text-anchor="end">23ms</text>
+                <text x="14" y="102" fill="#18121d">물리 Node</text>
+                <line x1="188" y1="98" x2="605" y2="98" stroke="#c9c9c9" stroke-width="1.5"/>
+                <circle cx="605" cy="98" r="4.5" fill="#d62976"/><text x="613" y="102" fill="#d62976" font-size="11">3,938ms</text>
+                <circle cx="188" cy="98" r="4.5" fill="#4f5bd5"/><text x="180" y="102" fill="#4f5bd5" font-size="11" text-anchor="end">23ms</text>
+                <text x="14" y="142" fill="#18121d">가상자원</text>
+                <line x1="188" y1="138" x2="523" y2="138" stroke="#c9c9c9" stroke-width="1.5"/>
+                <circle cx="523" cy="138" r="4.5" fill="#d62976"/><text x="531" y="142" fill="#d62976" font-size="11">1,436ms</text>
+                <circle cx="188" cy="138" r="4.5" fill="#4f5bd5"/><text x="180" y="142" fill="#4f5bd5" font-size="11" text-anchor="end">23ms</text>
+              </g>
+            </svg>
+          </div>
+          <figcaption>개선 전 중앙값은 6,776 / 3,938 / 1,436ms로 화면마다 흩어져 있었지만, 통합 후에는 셋 다 약 23ms로 로그축 왼쪽 같은 자리에 모입니다. (가상자원 재측정은 일부 Metric이 없는 환경 — ④편 개별 측정 기준.)</figcaption>
+        </figure>
+
         <h2 id="확인할-것">공유 상태를 합칠 때 확인할 것<a class="anchor" href="#확인할-것" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>Cache 통합은 <strong>객체 수를 줄이는 리팩터링이 아닙니다.</strong> 이 질문들에 답해야 합니다.</p>
