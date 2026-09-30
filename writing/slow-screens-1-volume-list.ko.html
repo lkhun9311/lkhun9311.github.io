@@ -549,7 +549,7 @@ if (messages == null || messages.isEmpty()) {
         <table>
           <thead><tr><th>DTO 조각</th><th>공급 경로</th><th>Cache 설정</th><th>재사용 검사에 포함</th></tr></thead>
           <tbody>
-            <tr><td>상태·이름·크기·타입</td><td>Volume 목록</td><td><code>refreshAfterWrite(5s)</code></td><td>포함</td></tr>
+            <tr><td>상태·크기 등 값 필드</td><td>Volume 목록</td><td><code>refreshAfterWrite(5s)</code></td><td>포함</td></tr>
             <tr><td>에러 메시지</td><td>Message Cache</td><td><code>refreshAfterWrite(10s)</code></td><td>미포함</td></tr>
             <tr><td>그룹 정보</td><td>Group Cache</td><td><code>refreshAfterWrite(30s)</code></td><td>미포함</td></tr>
             <tr><td>프로젝트 이름</td><td>Project Resolver</td><td>60s 주기</td><td>미포함</td></tr>
@@ -566,7 +566,7 @@ if (messages == null || messages.isEmpty()) {
             <svg viewBox="0 0 720 286" role="img" aria-labelledby="mt-t mt-d" xmlns="http://www.w3.org/2000/svg">
               <title id="mt-t">서로 다른 주기의 Cache 넷을 합쳐 만든 DTO</title>
               <desc id="mt-d">왼쪽에 Cache 넷이 위아래로 있습니다. 목록 5s, 메시지 10s, 그룹 30s, 프로젝트 60s입니다.
-              넷이 가운데의 DTO 조립 상자로 화살표로 모입니다. 조립 상자 아래에는 재사용 검사가 상태·이름·크기·타입은 비교하고
+              넷이 가운데의 DTO 조립 상자로 화살표로 모입니다. 조립 상자 아래에는 재사용 검사가 Volume 자체의 값 필드(상태·크기 등)는 비교하고
               프로젝트 이름·메시지·그룹 정보는 비교하지 않는다고 적혀 있습니다. 조립 상자에서 DTO Cache 30s를 거쳐 응답으로 나갑니다.</desc>
 
               <g font-size="14">
@@ -592,7 +592,7 @@ if (messages == null || messages.isEmpty()) {
               <text x="410" y="132" font-size="12.5" fill="#7b7186" text-anchor="middle">서로 다른 시점의 값</text>
 
               <g font-size="12.5">
-                <text x="320" y="182" fill="#18121d">재사용 검사 비교: 상태·이름·크기·타입</text>
+                <text x="320" y="182" fill="#18121d">재사용 검사 비교: 상태·크기 등 값 필드</text>
                 <text x="320" y="202" fill="#d62976" font-weight="700">미비교: 프로젝트 이름·메시지·그룹 정보</text>
               </g>
 
@@ -608,19 +608,21 @@ if (messages == null || messages.isEmpty()) {
               </defs>
             </svg>
           </div>
-          <figcaption>한 줄(DTO)은 주기가 다른 Cache 넷을 합쳐 만듭니다. 재사용 검사는 상태·이름·크기·타입만 보고, 프로젝트 이름·메시지·그룹 정보는 보지 않습니다.</figcaption>
+          <figcaption>한 줄(DTO)은 주기가 다른 Cache 넷을 합쳐 만듭니다. 재사용 검사는 상태·크기 등 Volume 자체의 값 필드만 보고, 프로젝트 이름·메시지·그룹 정보는 보지 않습니다.</figcaption>
         </figure>
 
         <p>조립된 DTO에도 <code>expireAfterWrite(30s)</code> Cache가 있습니다. 담아 둔 DTO를 다시 쓸지는
-        상태·이름·크기·타입을 비교해 판단하는데, 이 비교에 <code>projectName</code>·<code>messages</code>·<code>groupInfo</code>는
-        들어가지 않습니다. 그래서 이 세 값만 바뀌면 재사용 검사가 옛 DTO의 재사용을 막지 않고,
-        그 DTO는 Cache에 기록된 시점부터 30s가 지나기 전까지 그대로 반환될 수 있습니다.</p>
+        상태·크기 등 Volume 자체의 값 필드를 비교해 판단하는데, 이 비교에 <code>projectName</code>·<code>messages</code>·<code>groupInfo</code>는
+        들어가지 않습니다. 그래서 이 세 값만 바뀌면 기존 DTO가 그대로 재사용되어,
+        Cache에 기록된 시점부터 30s가 지나기 전까지 반환될 수 있습니다.</p>
 
 <pre data-lang="java"><code>boolean canReuse(VolumeDto cached, CinderVolume fresh) {
     return cached.status().equals(fresh.status())
         && cached.name().equals(fresh.name())
         && cached.size() == fresh.size()
-        && cached.type().equals(fresh.type());
+        && cached.description().equals(fresh.description())
+        && cached.volumeType().equals(fresh.volumeType())
+        && cached.migrationStatus().equals(fresh.migrationStatus());
     // projectName, messages, groupInfo 는 비교하지 않는다
     // → 이 값만 바뀌면 옛 DTO의 재사용을 막지 못한다
 }</code></pre>
