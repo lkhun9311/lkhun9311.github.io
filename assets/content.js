@@ -97,7 +97,7 @@
           text_ja: "Instance HA の連作を実装記録十八件と突き合わせて書き直しました。設計が求めたものと実際に作られたものが分かれる地点を編ごとに示しました。" },
         { date: "2026-09-20", dateLabel: "Sep 20, 2026",
           text: "Published the Instance HA design series in three languages. It starts with one observation point calling a live node dead. Everything after that is about dividing up the grounds for a decision.",
-          text_ko: "Instance HA 설계 연작을 세 언어로 냈습니다. 관측 지점 하나를 믿어 살아 있는 노드를 죽었다고 판정한 것이 시작입니다. 그 뒤로는 전부 판단의 근거를 나누는 이야기입니다.",
+          text_ko: "Instance HA 설계 연작을 세 언어로 냈습니다. 관측 지점 하나를 믿어 살아 있는 Node를 죽었다고 판정한 것이 시작입니다. 그 뒤로는 전부 판단의 근거를 나누는 이야기입니다.",
           text_ja: "Instance HA 設計の連作を三言語で公開しました。観測地点を一つ信じて生きているノードを死んだと判定したのが始まりです。そのあとはすべて判断の根拠を分ける話です。" },
         { date: "2026-09-13", dateLabel: "Sep 13, 2026",
           text: "Published \u201cLogging Out When Validation Fails Evicts Only the Busiest Users\u201d in three languages. The browser drives the polling, so the check is stopped at exactly the moments that are risky.",
@@ -223,7 +223,7 @@
           source: "company", sourceLabel: "Company work",
           date: "2026-09-21", dateLabel: "Sep 21, 2026",
           desc: "Part 8 of the Instance HA design series. A successful move makes recovery look finished, but an allocation stays where the instance left, the failed node's compute service is still off, a shared state file can be overwritten, and the agent may not come back. The next recovery is the one that fails for it.",
-          desc_ko: "Instance HA 설계 8편. 옮기는 데 성공하면 끝난 것처럼 보이지만 떠난 자리에 자원 할당이 남고 장애 노드의 Compute 서비스는 꺼진 채이며 공유된 상태 파일이 덮어써지기도 하고 Agent가 돌아오지 않기도 합니다. 그 대가는 다음 복구가 치릅니다.",
+          desc_ko: "Instance HA 설계 8편. 옮기는 데 성공하면 끝난 것처럼 보이지만 떠난 자리에 자원 할당이 남고 장애 Node의 Compute 서비스는 꺼진 채이며 공유된 상태 파일이 덮어써지기도 하고 Agent가 돌아오지 않기도 합니다. 그 대가는 다음 복구가 치릅니다.",
           desc_ja: "Instance HA 設計の第8編。移すのに成功すると終わったように見えますが、去った場所に資源の割り当てが残り、障害ノードの Compute サービスは切れたままで、共有された状態ファイルが上書きされ、Agent が戻らないこともあります。その代償は次の復旧が払います。",
           tags: ["IaaS Backend", "Reliability", "Operations", "Method"]
         },
@@ -295,7 +295,7 @@
           source: "company", sourceLabel: "Company work",
           date: "2026-09-20", dateLabel: "Sep 20, 2026",
           desc: "Part 4 of the Instance HA design series. The design required cutting power and confirming it went down before moving anything. The shipped build has no such confirmation, and in its place a node that decides it has failed kills the VM processes running on itself, with an exempt list for anything being moved.",
-          desc_ko: "Instance HA 설계 4편. 설계는 전원을 내리고 내려갔는지 확인한 뒤에만 옮기라고 요구했습니다. 그런데 현재 구현에는 그 확인이 없고 대신 노드가 스스로 장애를 확정하면 자기 위의 VM 프로세스를 종료합니다. 이주 중인 VM은 종료 제외 목록으로 따로 둡니다.",
+          desc_ko: "Instance HA 설계 4편. 설계는 전원을 내리고 내려갔는지 확인한 뒤에만 옮기라고 요구했습니다. 그런데 현재 구현에는 그 확인이 없고 대신 Node가 스스로 장애를 확정하면 자기 위의 VM Process를 종료합니다. 이주 중인 VM은 종료 제외 목록으로 따로 둡니다.",
           desc_ja: "Instance HA 設計の第4編。設計は電源を落として落ちたと確認できてから移すよう求めました。ところが現在の実装にはその確認がなく、代わりにノードが自分で障害を確定すると自分の上の VM プロセスを終了します。移動中の VM は除外リストで別に扱います。",
           tags: ["IaaS Backend", "Reliability", "Method", "Operations"]
         },
@@ -331,7 +331,7 @@
           source: "company", sourceLabel: "Company work",
           date: "2026-09-19", dateLabel: "Sep 19, 2026",
           desc: "Part 1 of the Instance HA design series. An L2/L3 switch failure cut the controllers from each other rather than the compute nodes, and in that state a leader controller judged a live Compute dead and fired Nova Evacuate at scale. This part covers how four network strands ended up in different states and how an observer's isolation was read as the target's failure. Also in Korean and Japanese.",
-          desc_ko: "Instance HA 설계 1편. L2/L3 스위치가 죽었는데 끊긴 것은 Compute가 아니라 Controller끼리의 통신이었고 그 상태에서 Leader Controller가 살아 있는 Compute를 죽었다고 판정해 Nova Evacuate가 대량 실행됐습니다. 네트워크 네 갈래가 서로 다른 상태가 되는 구조와 관측자의 고립을 대상의 장애로 읽은 경로를 정리했습니다.",
+          desc_ko: "Instance HA 설계 1편. L2/L3 Switch가 죽었는데 끊긴 것은 Compute가 아니라 Controller끼리의 통신이었고 그 상태에서 Leader Controller가 살아 있는 Compute를 죽었다고 판정해 Nova Evacuate가 대량 실행됐습니다. 네트워크 네 갈래가 서로 다른 상태가 되는 구조와 관측자의 고립을 대상의 장애로 읽은 경로를 정리했습니다.",
           desc_ja: "Instance HA 設計の第1編。L2/L3 スイッチが死んだとき切れたのは Compute ではなく Controller 同士の通信で、その状態で Leader Controller が生きている Compute を死んだと判定して Nova Evacuate が大量に実行されました。四本のネットワークが別々の状態になる構造と、観測者の孤立を対象の障害として読んだ経路をまとめました。",
           tags: ["IaaS Backend", "Reliability", "Method", "Operations"]
         },
