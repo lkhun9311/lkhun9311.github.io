@@ -31,12 +31,12 @@
       <li><a href="#신호의-의미">bootable은 Root의 식별자가 아닙니다</a></li>
       <li><a href="#권위-신호">OpenStack4j에 root_device_name을 직접 확장했습니다</a></li>
       <li><a href="#세션-함정">Client 변수는 session을 격리하지 않았습니다</a></li>
-      <li><a href="#판별-순서">권위 신호 우선, 휴리스틱 폴백으로 정리했습니다</a></li>
+      <li><a href="#판별-순서">권위 신호 우선, 휴리스틱 Fallback으로 정리했습니다</a></li>
       <li><a href="#트레이드오프">트레이드오프와 남은 위험</a></li>
       <li><a href="#마치며">마치며</a></li>
     </ul></nav>
     <article class="article-body">
-      <p>스냅샷 실행 이력 설계 연작의 한 편입니다. 여기서는 복구할 자원을 어떻게 정확히 짚어냈는지를
+      <p>Snapshot 실행 이력 설계 연작의 한 편입니다. 여기서는 복구할 자원을 어떻게 정확히 짚어냈는지를
       다룹니다. <a href="snapshot-scheduler-observability.ko.html">전체 개요와 글 순서</a>를 먼저 볼 수 있습니다.</p>
 
       <p>Volume으로 부팅한 Instance에 데이터 Volume 하나를 더 붙였습니다. 둘 다 Cinder에서
@@ -56,7 +56,7 @@
       <ul class="callout">
         <li>Cloud API의 여러 속성 가운데 자원 identity를 판별할 신호를 고르시는 분</li>
         <li>SDK의 전역 또는 ThreadLocal context 때문에 Client가 예상과 다르게 동작한 경험이 있는 분</li>
-        <li>호환성 폴백과 Fail-closed 사이의 설계 판단을 실제 사례로 보고 싶은 분</li>
+        <li>호환성 Fallback과 Fail-closed 사이의 설계 판단을 실제 사례로 보고 싶은 분</li>
       </ul>
 
       <h2 id="충돌">두 Volume을 모두 Root로 분류했습니다<a class="anchor" href="#충돌" aria-label="이 절로 가는 링크">#</a></h2>
@@ -90,7 +90,7 @@
 
       <div class="table-scroll"><div class="table-scroll-hint">가로로 넘겨 표 전체를 볼 수 있습니다.</div><div class="table-scroll-viewport">
         <table><thead><tr><th>신호</th><th>말해 주는 것</th><th>말해 주지 않는 것</th><th>판별 역할</th></tr></thead><tbody>
-          <tr><td>Cinder bootable</td><td>이 Volume의 부팅 가능성</td><td>현재 Instance의 Root 여부</td><td>호환성 폴백</td></tr>
+          <tr><td>Cinder bootable</td><td>이 Volume의 부팅 가능성</td><td>현재 Instance의 Root 여부</td><td>호환성 Fallback</td></tr>
           <tr><td>Device 이름 목록</td><td>관례상 Root일 가능성</td><td>환경별 실제 Attachment</td><td>마지막 휴리스틱</td></tr>
           <tr><td>Nova root_device_name</td><td>Instance의 Root Device</td><td>Volume 자체의 상태</td><td>권위 신호</td></tr>
           <tr><td>Server image.id</td><td>Image 부팅 여부</td><td>Root attachment identity</td><td>부팅 형태 분기</td></tr>
@@ -121,7 +121,7 @@ public String getRootDeviceName() {
     return rootDeviceName;
 }</code></pre>
 
-      <p>인터페이스에는 default getter를 추가해 기존 구현과 테스트 목 객체가 한꺼번에 깨지지 않게 했고
+      <p>인터페이스에는 default getter를 추가해 기존 구현과 테스트 Mock 객체가 한꺼번에 깨지지 않게 했고
       <code>NovaServer</code>에는 실제 JSON field mapping을 추가했습니다. 그 다음 서비스 관리자 Client에
       <code>X-OpenStack-Nova-API-Version: 2.3</code> header를 붙여 Server를 조회했습니다. 지원하지 않는
       환경이나 권한 부족에서는 null을 반환하고 기존 휴리스틱으로 내려가도록 호환성 경계도 남겼습니다.</p>
@@ -165,7 +165,7 @@ String rootDevice = server != null ? server.getRootDeviceName() : null;</code></
       배치했습니다. 이미지 부팅이나 무 Volume 경로에서는 조회 결과를 쓰지 않지만 session 복원 순서를
       단순하게 유지하려고 같은 순서를 택했습니다. 불필요한 Nova 한 번과 context 안전성 사이의 선택입니다.</p>
 
-      <h2 id="판별-순서">권위 신호 우선, 휴리스틱 폴백으로 정리했습니다<a class="anchor" href="#판별-순서" aria-label="이 절로 가는 링크">#</a></h2>
+      <h2 id="판별-순서">권위 신호 우선, 휴리스틱 Fallback으로 정리했습니다<a class="anchor" href="#판별-순서" aria-label="이 절로 가는 링크">#</a></h2>
       <p>최종 판별은 <code>root_device_name</code>이 있으면 Device 일치만 봅니다. 이때 다른 Volume이
       bootable이어도 Mount입니다. 권위 신호가 없을 때만 <code>bootable</code>, 마지막으로 알려진 Root Device
       이름 목록을 봅니다.</p>
@@ -205,7 +205,7 @@ String rootDevice = server != null ? server.getRootDeviceName() : null;</code></
       <h2 id="트레이드오프">트레이드오프와 남은 위험<a class="anchor" href="#트레이드오프" aria-label="이 절로 가는 링크">#</a></h2>
       <ul class="callout">
         <li>정확성: 가능성을 뜻하는 bootable보다 실제 Attachment를 뜻하는 root_device_name을 우선했습니다.</li>
-        <li>호환성: microversion을 지원하지 않는 환경을 위해 휴리스틱 폴백은 남겼습니다.</li>
+        <li>호환성: microversion을 지원하지 않는 환경을 위해 휴리스틱 Fallback은 남겼습니다.</li>
         <li>호환성 구현: OpenStack4j interface에는 default getter를 추가해 기존 구현과 테스트의 파급을 줄였습니다.</li>
         <li>개선 과제: 호출 순서에 기대는 ThreadLocal Session 대신 Token과 Header가 Client에 귀속되는 경계가 필요합니다.</li>
       </ul>

@@ -12,7 +12,7 @@
   <!-- og:start -->
   <meta property="og:type" content="article" /><meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="Snapshot Scheduler 실행 이력 04. 사후 보존: 추적은 사후에도 필요하다" />
-  <meta property="og:description" content="현재 스케줄 행을 참조하던 실행 이력을 실행 시점의 증거로 바꿨습니다. FK 제거, JSON 스냅샷, 권한 폴백과 그 비용을 설명합니다." />
+  <meta property="og:description" content="현재 Schedule 행을 참조하던 실행 이력을 실행 시점의 증거로 바꿨습니다. FK 제거, JSON Snapshot, 권한 Fallback과 그 비용을 설명합니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" />
   <meta property="og:url" content="https://lkhun9311.github.io/writing/snapshot-history-outlives-schedule.ko.html" /><meta property="og:locale" content="ko_KR" />
   <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content="Snapshot Scheduler 실행 이력 04. 사후 보존: 추적은 사후에도 필요하다" />
@@ -41,18 +41,18 @@
       <li><a href="#예상-독자">이 글의 예상 독자</a></li>
       <li><a href="#처음-설계">처음에는 함께 지우는 것이 정합성이라고 생각했습니다</a></li>
       <li><a href="#삭제-경로">삭제 경로는 하나가 아니라 셋이었습니다</a></li>
-      <li><a href="#실행-시점-스냅샷">현재 상태 대신 실행 시점 설정을 저장했습니다</a></li>
+      <li><a href="#실행-시점-Snapshot">현재 상태 대신 실행 시점 설정을 저장했습니다</a></li>
       <li><a href="#권한">부모가 없어도 소유권을 검사해야 합니다</a></li>
       <li><a href="#트레이드오프">JSON 비정규화가 만든 새 계약</a></li>
       <li><a href="#마치며">마치며</a></li>
     </ul></nav>
     <article class="article-body">
-      <p>스냅샷 실행 이력 설계 연작의 한 편입니다. 이번 주제는, 스케줄이 사라진 뒤에도 실행의 증거는
+      <p>Snapshot 실행 이력 설계 연작의 한 편입니다. 이번 주제는, Schedule이 사라진 뒤에도 실행의 증거는
       남아야 한다는 것입니다. <a href="snapshot-scheduler-observability.ko.html">전체 개요와 글 순서</a>를 먼저
       볼 수 있습니다.</p>
 
       <p>Scheduler 하나를 지운 뒤 그 Scheduler가 지난주에 왜 실패했는지 물었습니다. 초기 설계에서는
-      답할 수 없었습니다. 부모 행을 지우면 외래키 cascade와 애플리케이션 삭제가 실행 이력까지 함께
+      답할 수 없었습니다. 부모 행을 지우면 FK cascade와 애플리케이션 삭제가 실행 이력까지 함께
       지웠기 때문입니다.</p>
 
       <p>처음에는 그것을 정합성으로 봤습니다. 화면의 진입점이 사라지면 이력은 도달할 수 없는 orphan이 되고
@@ -60,7 +60,7 @@
       증거였습니다. 부모의 수명에 묶는 순간 증거가 운영 편의보다 먼저 사라졌습니다.</p>
 
       <p>리뷰 뒤 저는 설계를 뒤집었습니다. 실행 시작 시 설정과 프로젝트를 캡처하고 이력 테이블에는 의도적으로
-      외래키를 두지 않았습니다. 이 글은 <a href="snapshot-history-result-model.ko.html">실행 결과 모델</a> 다음으로,
+      FK를 두지 않았습니다. 이 글은 <a href="snapshot-history-result-model.ko.html">실행 결과 모델</a> 다음으로,
       변경·삭제되는 현재 상태와 보존해야 할 실행 기록을 어떻게 분리했는지 다룹니다.</p>
 
       <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
@@ -100,14 +100,14 @@
       어느 쪽이 먼저 잠금을 잡았는지가 감사 기록의 존재를 결정했습니다.</p>
 
       <h2 id="삭제-경로">삭제 경로는 하나가 아니라 셋이었습니다<a class="anchor" href="#삭제-경로" aria-label="이 절로 가는 링크">#</a></h2>
-      <p>외래키만 제거하면 끝날 것 같았지만 실제 코드에는 세 겹의 삭제가 있었습니다. DDL의 cascade,
+      <p>FK만 제거하면 끝날 것 같았지만 실제 코드에는 세 겹의 삭제가 있었습니다. DDL의 cascade,
       Scheduler 서비스의 Repository 직접 호출, 별도 History Service의 bulk delete였습니다. 하나라도 남으면
       환경이나 호출 경로에 따라 이력이 다시 사라집니다.</p>
 
       <figure class="diagram">
         <svg viewBox="0 0 720 242" role="img" aria-labelledby="three-t three-d" class="figure-svg">
           <title id="three-t">겹쳐 있던 세 삭제 경로</title>
-          <desc id="three-d">외래키 cascade, Scheduler 서비스의 직접 삭제, History 서비스의 bulk delete 세 층이 한 이력 테이블을 지우고 있었습니다. 변경 뒤에는 세 경로가 모두 제거되고 조회 인덱스만 남습니다.</desc>
+          <desc id="three-d">FK cascade, Scheduler 서비스의 직접 삭제, History 서비스의 bulk delete 세 층이 한 이력 테이블을 지우고 있었습니다. 변경 뒤에는 세 경로가 모두 제거되고 조회 Index만 남습니다.</desc>
           <g font-family="Inter, sans-serif">
             <text x="186" y="32" text-anchor="middle" font-size="12" fill="#d62976" font-weight="700">변경 전</text>
             <rect x="28" y="50" width="316" height="136" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
@@ -125,7 +125,7 @@
         <figcaption>데이터 수명 정책은 한 줄의 FK 옵션이 아니라 모든 삭제 경로의 합입니다.</figcaption>
       </figure>
 
-      <h2 id="실행-시점-스냅샷">현재 상태 대신 실행 시점 설정을 저장했습니다<a class="anchor" href="#실행-시점-스냅샷" aria-label="이 절로 가는 링크">#</a></h2>
+      <h2 id="실행-시점-Snapshot">현재 상태 대신 실행 시점 설정을 저장했습니다<a class="anchor" href="#실행-시점-Snapshot" aria-label="이 절로 가는 링크">#</a></h2>
       <p>부모를 없애면 과거 행의 <em>무엇으로 실행했는가</em>도 잃습니다. Scheduler 이름, 대상, 주기,
       보관 개수는 모두 현재 행에 있었습니다. 따라서 FK만 끊으면 이력은 남아도 해석할 수 없는 ID 모음이 됩니다.</p>
 
@@ -152,8 +152,8 @@ scheduleService.recordRun(run.toBuilder()
     .scheduleSnapshot(capturedScheduleSnapshot)
     .build());</code></pre>
 
-      <p>스냅샷을 캡처해 놓고도 저장 서비스가 Scheduler를 다시 읽으면 삭제 경합이 돌아옵니다. 그래서
-      <code>SnapshotScheduleRunRecord</code>가 프로젝트와 설정 스냅샷을 함께 전달합니다. 저장 서비스는
+      <p>Snapshot을 캡처해 놓고도 저장 서비스가 Scheduler를 다시 읽으면 삭제 경합이 돌아옵니다. 그래서
+      <code>SnapshotScheduleRunRecord</code>가 프로젝트와 설정 Snapshot을 함께 전달합니다. 저장 서비스는
       현재 Scheduler 존재 여부를 묻지 않고 받은 실행 사실을 append합니다.</p>
 
       <h2 id="권한">부모가 없어도 소유권을 검사해야 합니다<a class="anchor" href="#권한" aria-label="이 절로 가는 링크">#</a></h2>
@@ -168,8 +168,8 @@ scheduleService.recordRun(run.toBuilder()
 
       <figure class="diagram">
         <svg viewBox="0 0 720 258" role="img" aria-labelledby="auth-t auth-d" class="figure-svg">
-          <title id="auth-t">삭제된 스케줄의 이력 조회 권한 흐름</title>
-          <desc id="auth-d">스케줄 행이 있으면 그 프로젝트를, 없으면 최신 이력의 프로젝트를 소유자로 선택합니다. 요청 프로젝트가 같거나 시스템 관리자일 때만 이력을 반환합니다.</desc>
+          <title id="auth-t">삭제된 Schedule의 이력 조회 권한 흐름</title>
+          <desc id="auth-d">Schedule 행이 있으면 그 프로젝트를, 없으면 최신 이력의 프로젝트를 소유자로 선택합니다. 요청 프로젝트가 같거나 시스템 관리자일 때만 이력을 반환합니다.</desc>
           <defs><marker id="auth-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#bbb"/></marker></defs>
           <g font-family="Inter, sans-serif">
             <rect x="270" y="18" width="180" height="46" rx="10" fill="none" stroke="#777" stroke-width="1.5"/><text x="360" y="47" text-anchor="middle" font-size="11.5" fill="#444">Schedule 행</text>

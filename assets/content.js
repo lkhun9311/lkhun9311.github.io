@@ -202,17 +202,17 @@
           source: "company", sourceLabel: "Company work",
           date: "2026-09-22", dateLabel: "Sep 22, 2026",
           desc: "A shared-cache refactor that made partial failures robust created a cold-start state where node was filled but instance was empty; the front end read that empty half as the source for project boxes, and the REST fallback that should have saved it had been a self-assignment no-op for years.",
-          desc_ko: "부분 실패에 강하게 만든 공유 Cache 리팩터가 cold에서 node는 채우고 instance는 비운 반쪽 상태를 만들었고, 프론트가 그 빈 목록을 프로젝트 박스 소스로 읽었습니다. 살렸어야 할 REST 폴백은 자기대입 no-op으로 죽어 있었고, 결정론적 재현으로 단일 소스 수정을 검증했습니다.",
+          desc_ko: "부분 실패에 강하게 만든 공유 Cache 리팩터가 cold에서 node는 채우고 instance는 비운 반쪽 상태를 만들었고, 프론트가 그 빈 목록을 프로젝트 박스 소스로 읽었습니다. 살렸어야 할 REST Fallback은 자기대입 no-op으로 죽어 있었고, 결정론적 재현으로 단일 소스 수정을 검증했습니다.",
           tags: ["IaaS Backend", "Frontend", "Observability", "Reliability", "Method"]
         },
         {
           title: "Self-Heal Is a Mechanism, Not a Fixed Number",
-          title_ko: "Snapshot Scheduler 이슈 01. Quota가 만든 스냅샷 회전 Deadlock: 여유 한 칸을 확보하기 위한 단계적 해결 방안",
+          title_ko: "Snapshot Scheduler 이슈 01. Quota가 만든 Snapshot 회전 Deadlock: 여유 한 칸을 확보하기 위한 단계적 해결 방안",
           url: "writing/self-heal-is-not-a-fixed-number.ko.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-21", dateLabel: "Sep 21, 2026",
           desc: "Lossless snapshot rotation needs one spare slot at the moment it rotates; when a hard quota equals the retention count, that slot never appears and every run fails forever. Why lowering retention or raising the quota both fail, how three major clouds avoid it, and the serialization, reservation, and tiering design we backlogged.",
-          desc_ko: "무손실 회전은 회전 순간 보관수+1칸이 필요한데, 하드 쿼터가 보관수와 같으면 그 칸이 사라져 매 실행이 영구 실패합니다. 보관수를 줄여도 쿼터를 키워도 안 되는 이유, 클라우드 3사가 피하는 원리, 직렬화·예약·지연 재시도와 티어링 설계를 코드 착수 전 설계 판단으로 정리했습니다.",
+          desc_ko: "무손실 회전은 회전 순간 보관수+1칸이 필요한데, 하드 Quota가 보관수와 같으면 그 칸이 사라져 매 실행이 영구 실패합니다. 보관수를 줄여도 Quota를 키워도 안 되는 이유, 클라우드 3사가 피하는 원리, 직렬화·예약·지연 재시도와 티어링 설계를 코드 착수 전 설계 판단으로 정리했습니다.",
           tags: ["IaaS Backend", "Reliability", "Design", "Method"]
         },
         {
@@ -235,7 +235,7 @@
           source: "company", sourceLabel: "Company work",
           date: "2026-09-21", dateLabel: "Sep 21, 2026",
           desc: "Part 7 of the Instance HA design series. Recovery evacuation names its target host outright, so no scheduler picks a suitable one. Required resources and traits are read from the flavor and matched against what each host actually holds across its provider tree. Two quiet defects in that logic are written up with what each one did.",
-          desc_ko: "Instance HA 설계 7편. 복구의 evacuate는 타깃 호스트를 강제로 지정해 스케줄러가 끼어들지 않습니다. flavor에서 요구 자원과 필수 특성을 읽고 호스트가 공급자 트리에 실제로 가진 것과 맞춰 봅니다. 그 로직에서 조용히 틀린 두 곳도 증상과 함께 적었습니다.",
+          desc_ko: "Instance HA 설계 7편. 복구의 evacuate는 타깃 호스트를 강제로 지정해 Scheduler가 끼어들지 않습니다. flavor에서 요구 자원과 필수 특성을 읽고 호스트가 공급자 트리에 실제로 가진 것과 맞춰 봅니다. 그 로직에서 조용히 틀린 두 곳도 증상과 함께 적었습니다.",
           desc_ja: "Instance HA 設計の第7編。復旧の evacuate は対象ホストを強制で指定するため、スケジューラが入りません。flavor から要求資源と必須の特性を読み、ホストが提供者ツリーに実際に持つものと突き合わせます。その処理で静かに間違えた二箇所も症状とともに書きました。",
           tags: ["IaaS Backend", "Reliability", "GPU", "Method"]
         },
@@ -343,7 +343,7 @@
           source: "company", sourceLabel: "Company work",
           date: "2026-09-18", dateLabel: "Sep 18, 2026",
           desc: "A snapshot was said to take three hours, so I wrote the cause down first — then measured two real snapshots and watched the 40 GiB model fall apart: the bytes tracked the real ~1.8 GiB and it finished in minutes. Instead of guessing why 'three hours' was real, I filled a disk on purpose and timed snapshots at 1.8, 5.7, and 11 GiB — 11 GiB alone took 30 minutes. Also in Korean and Japanese.",
-          desc_ko: "느린 스냅샷의 원인을 문서로 먼저 적었다가, 실제 스냅샷 두 건을 재보며 40 GiB 모델을 지웠습니다. 바이트는 실데이터(약 1.8 GiB)를 따라갔고 실행은 몇 분에 끝났습니다. '세 시간'을 추측으로 메우는 대신 디스크를 직접 채워 1.8·5.7·11 GiB에서 스냅샷을 쟀고 11 GiB만으로 30분이 걸렸습니다. 영어·일본어로도 볼 수 있습니다.",
+          desc_ko: "느린 Snapshot의 원인을 문서로 먼저 적었다가, 실제 Snapshot 두 건을 재보며 40 GiB 모델을 지웠습니다. 바이트는 실데이터(약 1.8 GiB)를 따라갔고 실행은 몇 분에 끝났습니다. '세 시간'을 추측으로 메우는 대신 디스크를 직접 채워 1.8·5.7·11 GiB에서 Snapshot을 쟀고 11 GiB만으로 30분이 걸렸습니다. 영어·일본어로도 볼 수 있습니다.",
           desc_ja: "遅いスナップショットの原因を先に書きましたが、実際のスナップショット2件を測って 40 GiB モデルを消しました。バイトは実データ（約 1.8 GiB）に沿い、実行は数分で終わりました。「3時間」を推測で埋める代わりにディスクを直接埋めて 1.8・5.7・11 GiB でスナップショットを測り、11 GiB だけで 30 分かかりました。韓国語・英語でも読めます。",
           tags: ["IaaS Backend", "Method", "Performance", "Reliability"]
         },
@@ -384,7 +384,7 @@
           source: "company", sourceLabel: "Company work",
           date: "2026-09-16", dateLabel: "Sep 16, 2026",
           desc: "The first article in a Korean series models snapshot creation counts separately from retention and local-save outcomes so that 2/2 and PARTIAL can both be true without contradiction.",
-          desc_ko: "실행 이력 설계 상세 1편. Snapshot 생성 카운트와 보관 정리·로컬 저장 결과를 분리해 2/2와 일부 작업 실패가 모순 없이 함께 참이 되게 했습니다.",
+          desc_ko: "실행 이력 설계 상세 1편. Snapshot 생성 Count와 보관 정리·로컬 저장 결과를 분리해 2/2와 일부 작업 실패가 모순 없이 함께 참이 되게 했습니다.",
           tags: ["IaaS Backend", "Backend", "Observability", "Reliability"]
         },
         {
@@ -499,7 +499,7 @@
           title: "Four GPU Quota Defences Broke the Same Way",
           url: "writing/every-guarantee-ends-at-a-writable-field.html",
           source: "side", sourceLabel: "Personal project",
-          title_ko: "GPU 쿼터 방어 4건이 같은 방식으로 뚫렸습니다",
+          title_ko: "GPU Quota 방어 4건이 같은 방식으로 뚫렸습니다",
           desc_ko: "같은 방식으로 뚫린 방어 4건. 전부 읽어서가 아니라 공격해서 찾았습니다. 검사는 자기가 읽은 것에 대해 옳았고 틀린 것은 테넌트가 쓰는 값을 테넌트에 관한 증거로 읽은 쪽이었습니다.",
           title_ja: "GPU クォータの防御 4 件が同じ形で破れました",
           desc_ja: "同じやり方で破られた防御が 4 件。すべて読んで見つけたのではなく攻撃して見つけた。検査は自分が読んだものについては正しく、誤っていたのはテナントが書く値をテナントについての証拠として読んだ側だった。",
@@ -1064,7 +1064,7 @@
     );
   }
 
-  /* 섹션 인덱스는 **행**으로 그린다.
+  /* 섹션 Index는 **행**으로 그린다.
      카드 격자였을 때는 열세 장이 전부 같은 무게로 서 있고 카드마다 요약이 네댓 줄이라
      "먼저 읽을 것"이 보이지 않았다. 행으로 바꾸면 제목이 왼쪽 한 줄로 정렬돼 훑는 축이 하나가
      되고 요약을 한 줄로 자르면 행 높이가 균일해져 눈이 흔들리지 않는다. 테두리도 사라진다.
@@ -1369,7 +1369,7 @@
 
     /* 관련 글은 **주제**로 고른다(사용자 지시, 2026-09-12).
        예전에는 `source` 가 같은 글 넷을 그냥 잘라 왔다. 「회사 업무」가 같다는 것은 주제가
-       아니라 출처라, 볼륨 목록 글 옆에 프라이버시 보장선 글이 붙었다. 태그가 겹치는 수로
+       아니라 출처라, Volume 목록 글 옆에 프라이버시 보장선 글이 붙었다. 태그가 겹치는 수로
        줄을 세우고 겹치는 것이 없을 때만 같은 출처로 내려간다. */
     /* 겹치는 태그를 그냥 세면 **흔한 태그가 이긴다.** `#Method` 는 거의 모든 글에 붙어 있어서
        그것 하나만 겹치는 글 넷이 올라왔다. 태그마다 **드문 정도**로 무게를 준다. */

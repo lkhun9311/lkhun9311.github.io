@@ -91,7 +91,7 @@
       <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
       <ul class="callout">
         <li>자동화 작업의 결과를 운영자가 추적할 수 있게 설계하시는 분</li>
-        <li>배치 이력의 상태·사유·성공 카운트 의미를 정해야 하는 분</li>
+        <li>배치 이력의 상태·사유·성공 Count 의미를 정해야 하는 분</li>
         <li>변경되거나 삭제되는 설정과 과거 실행 증거의 수명을 분리하려는 분</li>
       </ul>
 
@@ -142,7 +142,7 @@
       <h2 id="설계">실행·증거·표현의 경계를 분리했습니다<a class="anchor" href="#설계" aria-label="이 절로 가는 링크">#</a></h2>
       <p>구현의 중심은 테이블보다 경계였습니다. Batch는 모든 종료 경로를 모아 실행 결과를 한 번 확정하고
       History는 변경 가능한 Scheduler와 다른 수명으로 그 증거를 보존합니다. API와 화면은 저장된 의미를
-      다시 추론하지 않고 필터·페이징·표현에 집중합니다.</p>
+      다시 추론하지 않고 필터·Paging·표현에 집중합니다.</p>
 
       <figure class="diagram">
         <svg viewBox="0 0 720 240" role="img" aria-labelledby="boundary-t boundary-d" class="figure-svg">
@@ -171,7 +171,7 @@
       <ul class="callout">
         <li>Batch: <code>RunStats</code>와 <code>recordRunHistory</code>를 설계하고 정상·예외·조기 중단 경로가 모두 한 행을 남기게 했습니다.</li>
         <li>Domain·DB: 결과와 사유 Enum, 성공/시도 수, 대상별 설명, 실행 당시 설정 JSON과 소유 프로젝트를 모델링했습니다.</li>
-        <li>API·화면: 페이징 조회 API와 실행 이력 탭을 구현해 결과, 사유, 대상, 실행 시간과 상세 설명을 연결했습니다.</li>
+        <li>API·화면: Paging 조회 API와 실행 이력 탭을 구현해 결과, 사유, 대상, 실행 시간과 상세 설명을 연결했습니다.</li>
         <li>OpenStack4j: <code>Server</code>와 <code>NovaServer</code>에 <code>root_device_name</code>을 추가하고 Nova 2.3 관리자 조회와 member session 복원 순서를 설계했습니다.</li>
         <li>검증: 할당량 부족, 부분 성공, retention·로컬 저장 실패, 대상 삭제, 다중 bootable Volume을 단위 테스트와 실제 OpenStack에서 확인했습니다.</li>
       </ul>
@@ -180,9 +180,9 @@
       <div class="table-scroll"><div class="table-scroll-hint">가로로 넘겨 표 전체를 볼 수 있습니다.</div><div class="table-scroll-viewport">
         <table><thead><tr><th>선택</th><th>얻은 것</th><th>지불한 것</th></tr></thead><tbody>
           <tr><td>API 접수가 아닌 자원 완료 뒤 성공 확정</td><td>실제 백업 완성과 같은 숫자</td><td>대기 시간과 Timeout 처리</td></tr>
-          <tr><td>생성 카운트와 전체 결과 분리</td><td>2/2와 후처리 실패를 함께 표현</td><td>Enum 하나만 보는 것보다 UI가 복합적</td></tr>
+          <tr><td>생성 Count와 전체 결과 분리</td><td>2/2와 후처리 실패를 함께 표현</td><td>Enum 하나만 보는 것보다 UI가 복합적</td></tr>
           <tr><td>Scheduler FK 없이 실행 설정 복제</td><td>삭제 뒤에도 실행 증거 보존</td><td>JSON 스키마와 보존 정책 관리</td></tr>
-          <tr><td>Nova의 Root Device를 우선</td><td>bootable 반례에서도 정확한 자원 식별</td><td>microversion·권한·호환 폴백 필요</td></tr>
+          <tr><td>Nova의 Root Device를 우선</td><td>bootable 반례에서도 정확한 자원 식별</td><td>microversion·권한·호환 Fallback 필요</td></tr>
           <tr><td>한 실행을 한 행으로 요약</td><td>목록 조회와 운영 판단이 단순</td><td>대상별 상세 분석은 로그에 의존</td></tr>
         </tbody></table>
       </div></div>
@@ -200,7 +200,7 @@
 
       <figure class="diagram">
         <svg viewBox="0 0 720 224" role="img" aria-labelledby="loop-t loop-d" class="figure-svg">
-          <title id="loop-t">실행 이력이 만드는 운영 개선 루프</title>
+          <title id="loop-t">실행 이력이 만드는 운영 개선 순환</title>
           <desc id="loop-d">구조화된 실행 이력을 원인별로 모아 반복 실패를 찾고 개선 우선순위를 정한 뒤 다음 실행 결과로 효과를 확인하는 순환 구조입니다.</desc>
           <defs><marker id="loop-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#bbb"/></marker></defs>
           <g font-family="Inter, sans-serif">
@@ -223,7 +223,7 @@
         <li><a href="a-schedule-that-failed-in-silence.ko.html">Snapshot Scheduler 실행 이력 01. 실패해도 Status [STARTED]를 표시하는 현상: [FAILED] Enum을 정의만 하고 사용하지 않았다</a>: 할당량 실패가 제품 장애로 오인된 출발점</li>
         <li><a href="the-history-tab-that-had-a-hole.ko.html">Snapshot Scheduler 실행 이력 02. 정지와 재시도의 기준: 대상 부재는 정지, 오류는 이력을 남기고 재시도한다</a>: 미실행과 실패를 구분하는 기록 계약</li>
         <li><a href="snapshot-history-result-model.ko.html">성공 2/2인데 일부 작업 실패인 이유</a>: 백업 완성도와 실행 건전성의 분리</li>
-        <li><a href="snapshot-history-outlives-schedule.ko.html">스케줄을 지워도 이력을 지우지 않은 이유</a>: 현재 상태와 실행 증거의 수명 분리</li>
+        <li><a href="snapshot-history-outlives-schedule.ko.html">Schedule을 지워도 이력을 지우지 않은 이유</a>: 현재 상태와 실행 증거의 수명 분리</li>
         <li><a href="snapshot-root-volume-identity.ko.html">Snapshot Scheduler 실행 이력 05. Root Volume 식별: OpenStack4j를 확장한다</a>: OpenStack4j 확장과 권위 신호</li>
       </ol>
 
@@ -231,7 +231,7 @@
         <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
         <p>실행 이력은 과거를 쌓는 부가 화면이 아닙니다. 자동화가 무엇을 했고 그 결과를 어디까지 믿을 수
         있는지 설명하는 운영 인터페이스입니다.</p>
-        <p>그래서 시작점은 테이블 컬럼이 아니라 운영 질문이어야 했습니다. 그 질문을 기준으로 성공의 경계,
+        <p>그래서 시작점은 테이블 Column이 아니라 운영 질문이어야 했습니다. 그 질문을 기준으로 성공의 경계,
         이력의 수명, 자원 식별의 권위를 정하자 Batch와 API, 화면의 역할도 함께 정리됐습니다.</p>
         <p>읽어 주셔서 감사합니다.</p>
       </div>

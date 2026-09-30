@@ -15,7 +15,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="Snapshot Scheduler 실행 이력 03. 일부 작업 실패: 보조 작업도 실행 이력에 남긴다" />
-  <meta property="og:description" content="Snapshot 생성 2건은 모두 성공했는데 보관 정리가 실패했습니다. 생성 카운트와 실행 결과를 분리해 모순 없이 표현한 설계와 코드를 설명합니다." />
+  <meta property="og:description" content="Snapshot 생성 2건은 모두 성공했는데 보관 정리가 실패했습니다. 생성 Count와 실행 결과를 분리해 모순 없이 표현한 설계와 코드를 설명합니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -23,9 +23,9 @@
   <meta property="og:locale" content="ko_KR" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Snapshot Scheduler 실행 이력 03. 일부 작업 실패: 보조 작업도 실행 이력에 남긴다" />
-  <meta name="twitter:description" content="Snapshot 생성 카운트와 보관 정리·로컬 저장 결과를 서로 다른 축으로 모델링한 이유를 실제 코드로 설명합니다." />
+  <meta name="twitter:description" content="Snapshot 생성 Count와 보관 정리·로컬 저장 결과를 서로 다른 축으로 모델링한 이유를 실제 코드로 설명합니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="Snapshot 생성 카운트와 보관 정리·로컬 저장 결과를 서로 다른 축으로 모델링한 이유를 실제 코드로 설명합니다." />
+  <meta name="description" content="Snapshot 생성 Count와 보관 정리·로컬 저장 결과를 서로 다른 축으로 모델링한 이유를 실제 코드로 설명합니다." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -66,7 +66,7 @@
           <li><a href="#예상-독자">이 글의 예상 독자</a></li>
           <li><a href="#한-실행의-대상">한 실행에는 같은 종류의 일이 들어 있지 않습니다</a></li>
           <li><a href="#분모의-계약">분모를 Snapshot 생성 시도로 고정했습니다</a></li>
-          <li><a href="#결과-파생">결과는 카운트와 후처리 상태에서 파생합니다</a></li>
+          <li><a href="#결과-파생">결과는 Count와 후처리 상태에서 파생합니다</a></li>
           <li><a href="#성공-확정선">외부 API 접수를 성공으로 세지 않았습니다</a></li>
           <li><a href="#화면-표현">색 하나에 모든 의미를 맡기지 않았습니다</a></li>
           <li><a href="#트레이드오프">선택한 트레이드오프</a></li>
@@ -74,12 +74,12 @@
         </ul>
       </nav>
       <article class="article-body">
-        <p>스냅샷 실행 이력 설계 연작의 한 편입니다. 여기서는 「몇 개 성공했나」와 「전체가 성공인가」를
+        <p>Snapshot 실행 이력 설계 연작의 한 편입니다. 여기서는 「몇 개 성공했나」와 「전체가 성공인가」를
         왜 따로 세는지를 다룹니다. <a href="snapshot-scheduler-observability.ko.html">전체 개요와 글 순서</a>를 먼저
         볼 수 있습니다.</p>
 
-        <p>볼륨 부팅 Instance에 Root Volume 하나와 Mount Volume 하나가 붙어 있었습니다. Scheduler가
-        둘의 Snapshot을 모두 만들었고 화면의 카운트는 <strong>2/2</strong>였습니다. 그런데 결과 칩은
+        <p>Volume 부팅 Instance에 Root Volume 하나와 Mount Volume 하나가 붙어 있었습니다. Scheduler가
+        둘의 Snapshot을 모두 만들었고 화면의 Count는 <strong>2/2</strong>였습니다. 그런데 결과 칩은
         성공이 아니라 「일부 작업 실패」였습니다.</p>
 
         <p>처음 보면 모순입니다. 실제로 실패한 것은 새 Snapshot이 아니라 보관 개수를 맞추려고 지우던
@@ -94,7 +94,7 @@
         <ul class="callout">
           <li>여러 대상과 후처리가 섞인 배치의 실행 결과를 설계하시는 분</li>
           <li>부분 성공을 Boolean이나 단일 상태값으로 표현하다 한계를 만난 분</li>
-          <li>화면의 성공 카운트와 운영 상태가 왜 다른지 설명해야 하는 분</li>
+          <li>화면의 성공 Count와 운영 상태가 왜 다른지 설명해야 하는 분</li>
         </ul>
 
         <figure class="diagram">
@@ -115,7 +115,7 @@
               <text x="589" y="40" font-size="12" fill="#777" text-anchor="middle" font-weight="700">로컬 저장</text>
               <text x="589" y="96" font-size="12" fill="#4a4a4a" text-anchor="middle">선택 기능</text>
               <text x="589" y="130" font-size="13" fill="#777" text-anchor="middle" font-weight="700">미사용</text>
-              <text x="180" y="210" font-size="11.5" fill="#4f5bd5" text-anchor="middle">카운트: 새 백업의 완성도</text>
+              <text x="180" y="210" font-size="11.5" fill="#4f5bd5" text-anchor="middle">Count: 새 백업의 완성도</text>
               <text x="540" y="210" font-size="11.5" fill="#d62976" text-anchor="middle">결과: 실행 전체의 건전성</text>
             </g>
           </svg>
@@ -123,7 +123,7 @@
         </figure>
 
         <h2 id="한-실행의-대상">한 실행에는 같은 종류의 일이 들어 있지 않습니다<a class="anchor" href="#한-실행의-대상" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>스케줄 유형은 하나지만 생성 대상은 하나가 아닐 수 있습니다. 코드의 최상위 분기는 이름이 아니라
+        <p>Schedule 유형은 하나지만 생성 대상은 하나가 아닐 수 있습니다. 코드의 최상위 분기는 이름이 아니라
         Volume 부착 여부와 부팅 형태를 따라갑니다. 이미지 부팅 Instance에 데이터 Volume이 붙으면 Instance
         Image와 Mount Volume Snapshot을 함께 만들고 Volume 부팅이면 Image 없이 Root와 Mount Volume을 만듭니다.</p>
 
@@ -131,7 +131,7 @@
           <div class="table-scroll-hint">가로로 넘겨 표 전체를 볼 수 있습니다.</div>
           <div class="table-scroll-viewport">
             <table>
-              <thead><tr><th>실행 유형</th><th>생성 대상</th><th>정상 카운트</th><th>생성 뒤 작업</th></tr></thead>
+              <thead><tr><th>실행 유형</th><th>생성 대상</th><th>정상 Count</th><th>생성 뒤 작업</th></tr></thead>
               <tbody>
                 <tr><td>Image 부팅, Volume 없음</td><td>Instance Image</td><td>1/1</td><td>보관 정리, 선택적 로컬 저장</td></tr>
                 <tr><td>Image 부팅, Mount 1개</td><td>Instance Image + Mount Snapshot</td><td>2/2</td><td>대상별 보관 정리와 저장</td></tr>
@@ -143,9 +143,9 @@
           </div>
         </div>
 
-        <p>여기에 준비 단계가 더 있습니다. 전용 사용자와 역할, 프로젝트, 스케줄 설정을 확인하다 실패하면
+        <p>여기에 준비 단계가 더 있습니다. 전용 사용자와 역할, 프로젝트, Schedule 설정을 확인하다 실패하면
         생성 API를 한 번도 부르지 않습니다. 이때 <code>0/1</code>을 보여 주면 존재하지 않은 시도를 만든
-        셈입니다. 그래서 대상 시도 전 실패의 카운트는 <code>null</code>로 두고 화면에서 배지를 숨겼습니다.</p>
+        셈입니다. 그래서 대상 시도 전 실패의 Count는 <code>null</code>로 두고 화면에서 배지를 숨겼습니다.</p>
 
         <h2 id="분모의-계약">분모를 Snapshot 생성 시도로 고정했습니다<a class="anchor" href="#분모의-계약" aria-label="이 절로 가는 링크">#</a></h2>
         <p>분모에 생성·정리·저장을 모두 넣으면 기능 설정에 따라 숫자의 뜻이 바뀝니다. 로컬 저장을 켠 순간
@@ -153,10 +153,10 @@
         실행마다 다른 단위로 읽어야 합니다.</p>
 
         <p>그래서 <code>succeeded_count / total_count</code>는 오직 이번 실행의 Snapshot 생성 대상만 셉니다.
-        정리와 로컬 저장은 이름 목록과 실패 목록으로 따로 모읍니다. 카운트는 백업 세트가 얼마나 완성됐는지,
+        정리와 로컬 저장은 이름 목록과 실패 목록으로 따로 모읍니다. Count는 백업 세트가 얼마나 완성됐는지,
         최종 결과는 실행 전체가 얼마나 건강했는지 답합니다.</p>
 
-        <h2 id="결과-파생">결과는 카운트와 후처리 상태에서 파생합니다<a class="anchor" href="#결과-파생" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="결과-파생">결과는 Count와 후처리 상태에서 파생합니다<a class="anchor" href="#결과-파생" aria-label="이 절로 가는 링크">#</a></h2>
         <p>저장할 결과는 <code>SUCCESS</code>, <code>PARTIAL</code>, <code>FAILED</code> 셋입니다. 하지만 코드가
         이 값을 직접 여기저기 쓰게 두지 않았습니다. 종료 지점에서 생성 집계, 전파된 예외, 후처리 실패를 모아
         결과를 한 번 계산합니다.</p>
@@ -210,7 +210,7 @@
         <figure class="diagram">
           <svg viewBox="0 0 720 220" role="img" aria-labelledby="commit-t commit-d" class="figure-svg">
             <title id="commit-t">Snapshot 성공 확정선</title>
-            <desc id="commit-d">생성 API 접수, 완료 상태 대기, 내부 원장 저장을 통과한 뒤에 성공 카운트를 올립니다. 보관 정리와 로컬 저장은 그 뒤의 별도 단계입니다.</desc>
+            <desc id="commit-d">생성 API 접수, 완료 상태 대기, 내부 원장 저장을 통과한 뒤에 성공 Count를 올립니다. 보관 정리와 로컬 저장은 그 뒤의 별도 단계입니다.</desc>
             <defs><marker id="commit-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#bbb"/></marker></defs>
             <g font-family="Inter, sans-serif">
               <rect x="16" y="70" width="140" height="68" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="86" y="110" font-size="11" text-anchor="middle" fill="#444">API 접수 · ID</text>
@@ -219,7 +219,7 @@
               <path d="M346 104 H382" stroke="#bbb" marker-end="url(#commit-a)"/>
               <rect x="388" y="70" width="140" height="68" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="458" y="110" font-size="11" text-anchor="middle" fill="#444">내부 원장 저장</text>
               <path d="M532 104 H568" stroke="#4f5bd5" stroke-width="2" marker-end="url(#commit-a)"/>
-              <rect x="574" y="70" width="130" height="68" rx="10" fill="#f4f5ff" stroke="#4f5bd5" stroke-width="1.8"/><text x="639" y="98" font-size="11" text-anchor="middle" fill="#4f5bd5" font-weight="700">성공 확정선</text><text x="639" y="120" font-size="10.5" text-anchor="middle" fill="#4f5bd5">카운트 +1</text>
+              <rect x="574" y="70" width="130" height="68" rx="10" fill="#f4f5ff" stroke="#4f5bd5" stroke-width="1.8"/><text x="639" y="98" font-size="11" text-anchor="middle" fill="#4f5bd5" font-weight="700">성공 확정선</text><text x="639" y="120" font-size="10.5" text-anchor="middle" fill="#4f5bd5">Count +1</text>
               <text x="360" y="184" font-size="11.5" text-anchor="middle" fill="#d62976">정리 · 로컬 저장은 확정선 뒤의 독립 결과</text>
             </g>
           </svg>
@@ -237,9 +237,9 @@
 
         <h2 id="트레이드오프">선택한 트레이드오프<a class="anchor" href="#트레이드오프" aria-label="이 절로 가는 링크">#</a></h2>
         <ul class="callout">
-          <li>고정한 것: 카운트는 언제나 새 Snapshot 생성 성공 수와 시도 수만 뜻합니다.</li>
+          <li>고정한 것: Count는 언제나 새 Snapshot 생성 성공 수와 시도 수만 뜻합니다.</li>
           <li>분리한 것: 백업 완성도와 실행 전체 건전성은 서로 다른 값으로 보여 줍니다.</li>
-          <li>감수한 것: <code>PARTIAL</code>만으로는 부족하므로 사유 코드와 카운트를 함께 읽어야 합니다.</li>
+          <li>감수한 것: <code>PARTIAL</code>만으로는 부족하므로 사유 코드와 Count를 함께 읽어야 합니다.</li>
         </ul>
 
         <div class="wrapup">
