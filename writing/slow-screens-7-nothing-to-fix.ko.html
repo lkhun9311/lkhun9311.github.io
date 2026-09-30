@@ -82,7 +82,7 @@
           <p class="toc-label">목차</p>
           <ul>
             <li><a href="#예상-독자">이 글의 예상 독자</a></li>
-            <li><a href="#어떤-화면">무엇을 검토했나요?</a></li>
+            <li><a href="#어떤-화면">무엇을 검토했나</a></li>
             <li><a href="#이미-빠른-곳">대시보드와 물리 자원: 이미 뒤에서 채워지고 있었습니다</a></li>
             <li><a href="#cache-안-넣음">그래서 Cache를 더 넣지 않았습니다</a></li>
             <li><a href="#과한-설정">과해 보이는 설정을 일부러 뒀습니다</a></li>
@@ -116,7 +116,7 @@
           <li>Cache를 더 넣을지 말지 정해야 하는 분</li>
         </ul>
 
-        <h2 id="어떤-화면">무엇을 검토했나요?<a class="anchor" href="#어떤-화면" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="어떤-화면">무엇을 검토했나<a class="anchor" href="#어떤-화면" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>모니터링 화면이 3개입니다. <strong>대시보드</strong>, <strong>물리 자원</strong>,
         가상 자원. 셋 다 시계열 저장소에서 값을 읽어 그래프를 그립니다.</p>
@@ -141,14 +141,15 @@
               <rect x="8" y="96" width="120" height="26" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="68" y="114" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">가상 자원</text>
 
-              <path d="M128 40 H 176" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#rv-ar)"/>
+              <path d="M128 27 H 152 M128 61 H 152 M152 27 V 61" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <path d="M152 44 H 176" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#rv-ar)"/>
               <rect x="184" y="26" width="176" height="28" rx="5" fill="none" stroke="#4f5bd5" stroke-width="2"/>
               <text x="272" y="45" font-size="12" fill="#4f5bd5" font-weight="700" text-anchor="middle">갱신 Cache · 60s마다</text>
               <path d="M128 109 H 176" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#rv-arA)"/>
               <rect x="184" y="95" width="176" height="28" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="272" y="114" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">초기 로드 · 프로젝트마다 반복</text>
 
-              <path d="M360 40 H 408" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#rv-ar)"/>
+              <path d="M360 75 H 408" fill="none" stroke="#3b3344" stroke-width="1.5" marker-end="url(#rv-ar)"/>
               <path d="M360 109 H 408" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#rv-arA)"/>
               <rect x="416" y="95" width="180" height="28" rx="5" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="506" y="114" font-size="12" fill="#d62976" font-weight="700" text-anchor="middle">인증 · 자원 조회 API</text>
@@ -169,15 +170,15 @@
             </svg>
           </div>
           <figcaption>화면 3개가 값을 읽는 경로입니다. 분홍색이
-          <a href="slow-screens-4-client-per-loop.ko.html">④편</a>에서 고친 구간이고 그쪽은 시계열 저장소가
-          아니라 <strong>프로젝트마다 도는 인증과 조회</strong>가 비용이었습니다.</figcaption>
+          <a href="slow-screens-4-client-per-loop.ko.html">④편</a>에서 고친 구간이고 그쪽 비용은
+          <strong>프로젝트마다 도는 인증과 조회</strong>였습니다.</figcaption>
         </figure>
 
         <h2 id="이미-빠른-곳">대시보드와 물리 자원: 이미 뒤에서 채워지고 있었습니다<a class="anchor" href="#이미-빠른-곳" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>이 둘은 요청이 올 때 밖에 나가지 않습니다. Backend 안에 값을 미리 담아 두는 자리(Cache)가 있고
         거기서 읽습니다. 그 자리는 <strong>60s마다 뒤에서 스스로 채워집니다.</strong>
-        담아 둔 값은 5min이 지나면 버립니다.</p>
+        담아 둔 값은 300s가 지나면 버립니다.</p>
 
         <p>그래서 요청을 처리하는 쪽은 <strong>기다리지 않습니다.</strong> 밖으로 나가는 일은
         요청과 무관한 시각에 따로 일어납니다.</p>
@@ -333,7 +334,7 @@
         <blockquote><p>이건 예상입니다. 코드 구조를 보고 그렇게 될 것이라고 판단했고
         실제로 돌려서 확인한 것이 아닙니다.</p></blockquote>
 
-        <p>의미 있는 축은 동시 사용자가 아니라 프로젝트 수라고 기록에 적어 뒀습니다.
+        <p>의미 있는 축은 프로젝트 수라고 기록에 적어 뒀습니다.
         적어만 뒀고 재지는 않았습니다.</p>
 
         <h2 id="확인이-어렵다">‘하지 마라’로 끝난 검토는 확인하기 어렵습니다<a class="anchor" href="#확인이-어렵다" aria-label="이 절로 가는 링크">#</a></h2>
@@ -349,14 +350,14 @@
         누가 언제 무엇을 물었는지는 기록에 없고 남은 것은 두 번 봤다는 것과
         결론이 같았다는 것뿐입니다.</p>
 
-        <blockquote><p>그래도 이것은 측정이 아니라 검토입니다.
+        <blockquote><p>그래도 이것은 측정이 아닌 검토입니다.
         두 번 봐서 같았다는 것이 옳다는 뜻은 아닙니다. 틀렸다면 같은 방식으로 두 번 틀렸을
         것입니다.</p></blockquote>
 
         <h2 id="주장하지-않는-것">한계: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul>
-          <li>‘하지 마라’로 끝난 검토는 맞았는지 확인하기가 어렵습니다. 안 했으니 나빠지지 않은 것도 증명할 수 없습니다.</li>
+          <li>‘하지 마라’로 끝난 검토는 맞았는지 확인하기가 어렵습니다. 안 했으니 나빠지지 않은 것도, Cache를 넣지 않은 결정이 넣는 쪽보다 나았는지도 증명할 수 없습니다. 이 글은 그 한계를 안고 있습니다.</li>
           <li>사내 제품이라 코드와 화면을 그대로 옮기지 않았습니다. 제품명·고객사·내부 주소는 빼고 구조와 설정값만 남겼습니다.</li>
 
           <li><strong>부하 테스트를 돌린 기록이 없습니다.</strong> ‘사용자를 늘려도 평평하다’는
@@ -368,8 +369,6 @@
           본 것이고 넓게 두는 비용은 재지 않았습니다.</li>
           <li>‘고칠 것이 없다’는 그 시점의 판단입니다. 자원이 늘거나 화면이 늘면
           같은 검토가 다른 결론을 낼 수 있습니다.</li>
-          <li>Cache를 넣지 않은 결정이 넣는 쪽보다 나았는지 증명할 수 없습니다.
-          안 했으니 비교할 대상이 없습니다. 이 글은 그 한계를 안고 있습니다.</li>
         </ul>
 
         <div class="wrapup">
@@ -387,10 +386,10 @@
           고친 결정보다 확인하기 어렵습니다.</li>
         </ul>
 
-        <p>성능 작업의 절반은 고칠 곳을 찾는 것이 아니라 고칠 필요가 없는 후보를 제외하는 것입니다.
+        <p>성능 작업의 절반은 고칠 필요가 없는 후보를 제외하는 일입니다.
         이번 검토에서 실제로 한 일이 그것이었습니다.</p>
 
-        <p>다음 편이 마지막입니다. 그 표들을 만든 재는 도구에 대한 이야기입니다
+        <p>다음 편이 마지막입니다. 그 수치를 잰 도구 이야기입니다
         (<a href="slow-screens-8-load-test-harness.ko.html">⑧편</a>). 읽어 주셔서 감사합니다.</p>
         </div>
 
