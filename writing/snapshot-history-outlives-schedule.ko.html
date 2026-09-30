@@ -40,10 +40,10 @@
     <nav class="article-toc" aria-label="목차"><p class="toc-label">목차</p><ul>
       <li><a href="#예상-독자">이 글의 예상 독자</a></li>
       <li><a href="#처음-설계">처음에는 함께 지우는 것이 정합성이라고 생각했습니다</a></li>
-      <li><a href="#삭제-경로">삭제 경로는 하나가 아니라 셋이었습니다</a></li>
+      <li><a href="#삭제-경로">삭제 경로는 세 겹이었습니다</a></li>
       <li><a href="#실행-시점-Snapshot">현재 상태 대신 실행 시점 설정을 저장했습니다</a></li>
       <li><a href="#권한">부모가 없어도 소유권을 검사해야 합니다</a></li>
-      <li><a href="#트레이드오프">JSON 비정규화가 만든 새 계약</a></li>
+      <li><a href="#트레이드오프">JSON 비정규화가 남긴 유지 부담</a></li>
       <li><a href="#마치며">마치며</a></li>
     </ul></nav>
     <article class="article-body">
@@ -99,7 +99,7 @@
       먼저 보이면 실행은 끝났어도 이력이 생기지 않습니다. 기록이 먼저 들어가도 뒤의 cascade가 지웁니다.
       어느 쪽이 먼저 잠금을 잡았는지가 감사 기록의 존재를 결정했습니다.</p>
 
-      <h2 id="삭제-경로">삭제 경로는 하나가 아니라 셋이었습니다<a class="anchor" href="#삭제-경로" aria-label="이 절로 가는 링크">#</a></h2>
+      <h2 id="삭제-경로">삭제 경로는 세 겹이었습니다<a class="anchor" href="#삭제-경로" aria-label="이 절로 가는 링크">#</a></h2>
       <p>FK만 제거하면 끝날 것 같았지만 실제 코드에는 세 겹의 삭제가 있었습니다. DDL의 cascade,
       Scheduler 서비스의 Repository 직접 호출, 별도 History Service의 bulk delete였습니다. 하나라도 남으면
       환경이나 호출 경로에 따라 이력이 다시 사라집니다.</p>
@@ -184,10 +184,10 @@ scheduleService.recordRun(run.toBuilder()
         <figcaption>부모가 없다는 이유로 권한까지 없어져서는 안 됩니다.</figcaption>
       </figure>
 
-      <h2 id="트레이드오프">JSON 비정규화가 만든 새 계약<a class="anchor" href="#트레이드오프" aria-label="이 절로 가는 링크">#</a></h2>
+      <h2 id="트레이드오프">JSON 비정규화가 남긴 유지 부담<a class="anchor" href="#트레이드오프" aria-label="이 절로 가는 링크">#</a></h2>
       <ul class="callout">
         <li>얻은 것: 부모가 삭제돼도 실행 당시 설정과 소유 프로젝트가 남습니다.</li>
-        <li>지불한 것: 실행마다 설정을 복사하고 JSON key를 장기 계약으로 관리해야 합니다.</li>
+        <li>지불한 것: 실행마다 설정을 복사하고 JSON key를 장기적으로 안정되게 유지해야 합니다.</li>
         <li>남은 것: 보존된 이력을 찾는 별도 검색 화면과 보존 기간 정책은 다음 문제입니다.</li>
       </ul>
 

@@ -16,8 +16,8 @@
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" />
   <meta property="og:url" content="https://lkhun9311.github.io/writing/self-heal-is-not-a-fixed-number.ko.html" /><meta property="og:locale" content="ko_KR" />
   <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content="Snapshot Scheduler 이슈 01. Quota가 만든 Snapshot 회전 Deadlock: 여유 한 칸을 확보하기 위한 단계적 해결 방안" />
-  <meta name="twitter:description" content="보관수+1칸을 하드 Quota로 봉인하면 무손실 회전이 영구 Deadlock이 됩니다. 비둘기집 논증, 클라우드 3사 비교, 직렬화·예약·지연 재시도와 티어링 설계까지 — 코드 착수 전 설계 판단으로 정리합니다." />
-  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta name="description" content="보관수+1칸을 하드 Quota로 봉인하면 무손실 회전이 영구 Deadlock이 됩니다. 비둘기집 논증, 클라우드 3사 비교, 직렬화·예약·지연 재시도와 티어링 설계까지 — 코드 착수 전 설계 판단으로 정리합니다." />
+  <meta name="twitter:description" content="보관수+1칸을 하드 Quota로 고정하면 무손실 회전이 영구 Deadlock이 됩니다. 비둘기집 논증, 클라우드 3사 비교, 직렬화·예약·지연 재시도와 티어링 설계까지 — 코드 착수 전 설계 판단으로 정리합니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta name="description" content="보관수+1칸을 하드 Quota로 고정하면 무손실 회전이 영구 Deadlock이 됩니다. 비둘기집 논증, 클라우드 3사 비교, 직렬화·예약·지연 재시도와 티어링 설계까지 — 코드 착수 전 설계 판단으로 정리합니다." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -144,9 +144,9 @@
 
       <h2 id="단기">단기 해결책: Quota를 크게 잡았다<a class="anchor" href="#단기" aria-label="이 절로 가는 링크">#</a></h2>
       <p>현실은 시간이 정합니다. 대상 고객사는 지금 <strong>프로젝트를 하나만</strong> 쓰고 있어서,
-      <strong>하드 Quota를 크게 잡아 급한 불을 껐습니다.</strong> 앞 절의 논리대로 이건 일반해가 아닙니다 —
+      <strong>하드 Quota를 크게 잡아 임시로 막았습니다.</strong> 앞 절의 논리대로 이건 일반해가 아닙니다 —
       공유 Quota라 상한이 없어, 프로젝트가 늘거나 수동 Snapshot·외부 호출이 끼면 언제든 다시 걸립니다.
-      단일 프로젝트라는 조건에서만 통하는 임시 봉합이고, 그래서 <strong>근본 설계를 따로 냈습니다.</strong></p>
+      단일 프로젝트라는 조건에서만 통하는 임시 조치이고, 그래서 <strong>근본 설계를 따로 냈습니다.</strong></p>
 
       <h2 id="설계안">설계안 비교<a class="anchor" href="#설계안" aria-label="이 절로 가는 링크">#</a></h2>
       <p>검토한 안은 다섯입니다. 판정 기준은 <strong>무손실 유지 · Deadlock 제거 · 공수</strong>입니다.</p>
@@ -217,10 +217,10 @@
 
       <div class="wrapup">
         <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
-        <p>무손실 회전에는 +1칸이 구조적으로 필요하고, 그 한 칸을 하드 Quota로 봉인하면 영구 Deadlock이 됩니다.
+        <p>무손실 회전에는 +1칸이 구조적으로 필요하고, 그 한 칸을 하드 Quota로 고정하면 영구 Deadlock이 됩니다.
         고정 숫자로는 공유 Quota의 무한 소비를 못 막으니, 자가치유는 숫자가 아니라 메커니즘 —
         직렬화·원자 예약·지연 재시도, 또는 티어링 — 이어야 합니다. 우리는 단일 프로젝트라는 조건에서
-        큰 Quota로 급한 불을 끄고, <strong>1차(headroom 검증·UI) → 본안(직렬화·예약·지연 재시도) → 정석(티어링)</strong>의
+        큰 Quota로 임시로 막고, <strong>1차(headroom 검증·UI) → 본안(직렬화·예약·지연 재시도) → 정석(티어링)</strong>의
         단계적 권장안을 냈습니다. 구현은 백로그에 있지만, 무엇을 왜 그 순서로 할지는 정해졌습니다.</p>
       </div>
     </article>
