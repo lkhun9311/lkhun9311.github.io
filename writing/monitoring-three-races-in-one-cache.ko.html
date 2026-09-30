@@ -83,7 +83,7 @@
           <ul>
             <li><a href="#예상-독자">이 글의 예상 독자</a></li>
             <li><a href="#접속이-곧-계산">접속이 곧 계산이었습니다</a></li>
-            <li><a href="#무한-로딩">오류가 아니라 무한 로딩으로 보였습니다</a></li>
+            <li><a href="#무한-로딩">무한 로딩으로만 보였습니다</a></li>
             <li><a href="#계산을-떼어">요청 경로에서 계산을 떼어 냈습니다</a></li>
             <li><a href="#경합-셋">그런데 경합이 셋 있었습니다</a></li>
             <li><a href="#결과">결과</a></li>
@@ -169,10 +169,10 @@
         다음 Tick을 기다린 뒤 수초짜리 계산까지 기다렸습니다. 빠른 표본과 6~9s 표본으로
         갈라진 이유입니다.</p>
 
-        <h2 id="무한-로딩">오류가 아니라 무한 로딩으로 보였습니다<a class="anchor" href="#무한-로딩" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="무한-로딩">무한 로딩으로만 보였습니다<a class="anchor" href="#무한-로딩" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>전송 경로가 계산 예외를 삼키면 <strong>연결은 살아 있는데 데이터는 오지 않습니다.</strong>
-        프런트엔드는 연결 오류만 기록하고 로딩 레이어를 풀지 않았습니다. 그래서 사용자에게는
+        Frontend는 연결 오류만 기록하고 로딩 레이어를 풀지 않았습니다. 그래서 사용자에게는
         오류 메시지가 아니라 <strong>영원히 도는 스피너</strong>가 보였습니다.</p>
 
         <p>느린 것과 안 오는 것이 화면에서 같은 모양이었다는 뜻입니다.
@@ -184,7 +184,7 @@
         그러면 접속마다 같은 계산을 되풀이할 이유가 없습니다.</p>
 
 <pre data-lang="text"><code>주기 작업 또는 부팅 워밍업
-    → 제한 시간 안에서 메트릭 수집
+    → 제한 시간 안에서 Metric 수집
     → 화면에 필요한 payload 완성
     → 완성된 Snapshot을 참조 하나로 교체
     → 현재 Session에 방송
@@ -217,9 +217,9 @@
               <rect x="8" y="148" width="150" height="38" rx="6" fill="none" stroke="#d62976" stroke-width="2"/>
               <text x="83" y="172" font-size="12" fill="#18121d" text-anchor="middle">새 접속</text>
 
-              <path d="M158 39 H 230 V 96" fill="none" stroke="#8a8a8a" stroke-width="1.5" marker-end="url(#rc-ar)"/>
-              <path d="M158 103 H 230" fill="none" stroke="#8a8a8a" stroke-width="1.5" marker-end="url(#rc-ar)"/>
-              <path d="M158 167 H 230 V 116" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#rc-arp)"/>
+              <path d="M158 39 H 240 V 90 H 248" fill="none" stroke="#8a8a8a" stroke-width="1.5" marker-end="url(#rc-ar)"/>
+              <path d="M158 103 H 248" fill="none" stroke="#8a8a8a" stroke-width="1.5" marker-end="url(#rc-ar)"/>
+              <path d="M158 167 H 240 V 116 H 248" fill="none" stroke="#d62976" stroke-width="2" marker-end="url(#rc-arp)"/>
 
               <rect x="248" y="76" width="160" height="54" rx="6" fill="none" stroke="#3b3344" stroke-width="2"/>
               <text x="328" y="99" font-size="13" fill="#18121d" text-anchor="middle" font-weight="700">갱신 자리</text>
@@ -306,8 +306,8 @@
         </figure>
 
         <p>셋째, Timeout 하나가 남의 Query를 끊습니다.
-        메트릭 클라이언트에 전체 요청 시간 상한을 걸면 같은 클라이언트를 쓰는
-        장기 리포팅 Query까지 끊깁니다. 전역 총시간 대신 연결과 읽기 단계의 상한만 두고
+        Metric 클라이언트에 전체 요청 시간 상한을 걸면 같은 클라이언트를 쓰는
+        장기 Reporting Query까지 끊깁니다. 전역 총시간 대신 연결과 읽기 단계의 상한만 두고
         기능별로 클라이언트 정책을 갈랐습니다.</p>
 
         <blockquote><p>셋 다 측정으로 찾은 것이 아닙니다. 구현 검토에서 코드를 읽다 나왔습니다.
