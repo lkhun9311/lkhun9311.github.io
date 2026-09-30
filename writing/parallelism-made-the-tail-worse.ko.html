@@ -147,8 +147,9 @@
 
         <p>Cache를 고정한 쌍은 ②와 ④입니다. 둘 다 Cache 5s이고 순차냐 병렬이냐만 다릅니다.</p>
 
-        <p>P99가 42.6s → 79.0s로 올랐습니다. Thread를 늘렸는데 꼬리가 1.85배가 됐습니다.
-        이것이 이 실험에서 병렬화 단독의 효과로 말할 수 있는 전부이고 방향은 분명합니다. 해로웠습니다.</p>
+        <p>P99가 42.6s → 79.0s로 올랐습니다. 다만 같은 쌍에서 중앙값(Median)은 10,974ms → 508ms로 약 21배 빨라졌고
+        Apdex도 0.014 → 0.526으로 올랐습니다. 병렬화는 전형값을 크게 당기고 <strong>꼬리(P99)만 1.85배로 늘렸습니다.</strong>
+        이 화면에선 그 꼬리가 Timeout을 부르니, 병렬화 단독은 P99에 해로웠다고 말할 수 있습니다.</p>
 
         <h2 id="왜-3이-2보다-나쁜가">왜 ③이 ②보다 나쁜가<a class="anchor" href="#왜-3이-2보다-나쁜가" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -282,11 +283,11 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         <figure class="diagram">
           <svg viewBox="0 0 720 300" role="img" aria-labelledby="p9-t p9-d" class="figure-svg">
             <title id="p9-t">여섯 구성 중 네 줄의 P99를 나란히 놓은 막대</title>
-            <desc id="p9-d">가로 막대가 넷 있습니다. 위에서부터 Cache 없음 순차, Cache 없음 병렬, Cache 5s 순차, Cache 5s 병렬 순서입니다. Cache를 고정한 두 쌍이 각각 같은 색으로 묶여 있습니다. 아래에 분홍색으로 Cache를 고정한 쌍만 비교할 수 있다고 적혀 있습니다.</desc>
+            <desc id="p9-d">가로 막대가 넷 있습니다. 위에서부터 Cache 없음 순차, Cache 없음 병렬, Cache 5s 순차, Cache 5s 병렬 순서입니다. 비교 불가한 ①③은 회색, 비교 가능한 ②④는 서로 다른 색으로 두어 꼬리 악화를 대비시켰습니다. 아래에 분홍색으로 Cache를 고정한 쌍만 비교할 수 있다고 적혀 있습니다.</desc>
             <g font-family="Inter, sans-serif">
               <text x="176" y="70" font-size="11.5" fill="#8a8a8a" text-anchor="end">① Cache 없음 · 순차</text>
               <rect x="190" y="50" width="430" height="28" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.8"/>
-              <text x="630" y="70" font-size="11.5" fill="#4a4a4a">600s · Timeout 상한</text>
+              <text x="614" y="70" font-size="11.5" fill="#4a4a4a" text-anchor="end">600s · Timeout 상한</text>
               <text x="176" y="122" font-size="11.5" fill="#8a8a8a" text-anchor="end">③ Cache 없음 · 병렬</text>
               <rect x="190" y="102" width="92" height="28" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.8"/>
               <text x="292" y="122" font-size="11.5" fill="#4a4a4a">129.9s</text>
@@ -518,8 +519,9 @@ Caffeine.newBuilder().refreshAfterWrite(5, SECONDS).executor(executor).build(loa
         <p>①과 ⑥만 쟀다면 보고서는 이렇게 나왔을 것입니다. <em>"Cache와 병렬화를 적용해 오류율 83.3%를 0%로,
         P99를 10min에서 23ms로 개선했다."</em></p>
 
-        <p>모든 숫자가 참입니다. 그리고 <strong>병렬화가 기여했다는 함의는 거짓</strong>입니다. 병렬화는 단독으로는
-        해로웠습니다. Cache를 고정해도 병렬이 순차보다 나빴으므로 이 실험은 병렬화의 양의 기여를 보이지 않습니다. 그 사실을 모른 채 다른 화면에 "여기도 병렬화하자"를 처방했다면
+        <p>모든 숫자가 참입니다. 그러나 <strong>그 개선을 병렬화가 이끌었다는 함의는 거짓</strong>입니다.
+        Cache를 고정한 ②↔④에서 병렬화는 중앙값을 21배 당겼지만 <strong>꼬리(P99)는 1.85배로 악화</strong>시켰고,
+        목록 화면에선 그 꼬리가 Timeout을 부릅니다. 그 사실을 모른 채 다른 화면에 "여기도 병렬화하자"를 처방했다면
         같은 함정에 다시 들어갔을 것입니다.</p>
 
         <p>실제로 이 표는 진단 근거로도 쓰였습니다. Cache를 고정한 채 병렬화가 악화라는 것은 병목이 CPU나
@@ -532,8 +534,8 @@ Caffeine.newBuilder().refreshAfterWrite(5, SECONDS).executor(executor).build(loa
         ②↔④ 가 정확히 그 실험입니다. 같은 Cache 설정에서 순차보다 병렬이 느렸습니다.</p>
 
         <p><strong>"Median 4ms는 Cache 히트라 당연한 것 아닌가?"</strong>. 맞습니다. 그래서 Median만 보지 않습니다.
-        같은 줄의 P99가 23ms이고 Apdex가 1.000입니다. Apdex는 만족·용인·불만족을 가중해 세는 값이라
-        Apdex는 모든 표본을 만족·용인·불만족 세 구간으로 나눠 집계합니다. 따라서 분포 전체의 모양을 보여 주지는 않습니다. 1.000이라는 표기가 표본 전체를 증명하지도 않습니다.</p>
+        같은 줄의 P99가 23ms이고 Apdex가 1.000입니다. Apdex는 모든 표본을 만족·용인·불만족 세 구간으로 나눠
+        가중 집계하는 값이라 분포 전체의 모양을 보여 주지는 않습니다. 1.000이라는 표기만으로 표본 전체가 만족 구간이라 할 수는 없습니다.</p>
 
         <h2 id="이-글이-주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#이-글이-주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
