@@ -109,7 +109,7 @@
           text_ja: "韓国語・英語・日本語を機械翻訳ではなく人が書きます。メニューと一覧ページ、カードの文言まで書き下ろしに変えました。" },
         { date: "2026-09-06", dateLabel: "Sep 6, 2026",
           text: "Published “The Moderation Throughput Ceiling Was an SDK Default” in three languages. The limit was a default of five connections per host in a library the AWS SDK pulled in.",
-          text_ko: "‘콘텐츠 검열 처리량 상한이 SDK 기본값에 있었습니다’를 세 언어로 냈습니다. 상한은 AWS SDK가 끌고 온 라이브러리의 ‘호스트당 5’ 기본값이었습니다.",
+          text_ko: "‘콘텐츠 검열 처리량 상한이 SDK 기본값에 있었습니다’를 세 언어로 냈습니다. 상한은 AWS SDK가 끌고 온 라이브러리의 ‘Host당 5’ 기본값이었습니다.",
           text_ja: "「検閲経路のスループット上限は SDK の既定値でした」を三言語で公開しました。上限は AWS SDK が引き連れてきたライブラリの「ホストあたり5」という既定値でした。" },
         { date: "2026-09-05", dateLabel: "Sep 5, 2026",
           text: "Corrected the connection-exhaustion article: the claims without numbers were replaced with harness measurements, and what is still unmeasured is now said so.",
@@ -235,7 +235,7 @@
           source: "company", sourceLabel: "Company work",
           date: "2026-09-21", dateLabel: "Sep 21, 2026",
           desc: "Part 7 of the Instance HA design series. Recovery evacuation names its target host outright, so no scheduler picks a suitable one. Required resources and traits are read from the flavor and matched against what each host actually holds across its provider tree. Two quiet defects in that logic are written up with what each one did.",
-          desc_ko: "Instance HA 설계 7편. 복구의 evacuate는 타깃 호스트를 강제로 지정해 Scheduler가 끼어들지 않습니다. flavor에서 요구 자원과 필수 특성을 읽고 호스트가 공급자 트리에 실제로 가진 것과 맞춰 봅니다. 그 로직에서 조용히 틀린 두 곳도 증상과 함께 적었습니다.",
+          desc_ko: "Instance HA 설계 7편. 복구의 evacuate는 타깃 Host를 강제로 지정해 Scheduler가 끼어들지 않습니다. flavor에서 요구 자원과 필수 특성을 읽고 Host가 공급자 트리에 실제로 가진 것과 맞춰 봅니다. 그 로직에서 조용히 틀린 두 곳도 증상과 함께 적었습니다.",
           desc_ja: "Instance HA 設計の第7編。復旧の evacuate は対象ホストを強制で指定するため、スケジューラが入りません。flavor から要求資源と必須の特性を読み、ホストが提供者ツリーに実際に持つものと突き合わせます。その処理で静かに間違えた二箇所も症状とともに書きました。",
           tags: ["IaaS Backend", "Reliability", "GPU", "Method"]
         },

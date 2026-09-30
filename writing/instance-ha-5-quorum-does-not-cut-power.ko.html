@@ -27,7 +27,7 @@
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Instance HA 05. 3가지 아키텍처를 가른 기준: 전원 차단 수단(STONITH) 유무" />
-  <meta name="twitter:description" content="Quorum은 데이터베이스를 지키지 전원을 내리지 못합니다. 세 아키텍처를 네 층으로 갈라 비교한 Instance HA 연작 ⑤편입니다." />
+  <meta name="twitter:description" content="Quorum은 데이터베이스를 지키지만 전원을 내리지 못합니다. 세 아키텍처를 네 층으로 갈라 비교한 Instance HA 연작 ⑤편입니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="세 아키텍처를 같은 기준으로 비교했습니다. 「합의 방식」 한 줄이 차이를 가리고 있어 Membership과 Quorum 판정과 실행 Lock과 Fencing 네 층으로 갈랐더니 비어 있는 칸은 맨 아래 하나뿐이었습니다." />
   <!-- og:end -->
@@ -116,7 +116,7 @@
         <h2 id="무엇이-갈랐나">세 안을 가른 것은 합의가 아니었습니다<a class="anchor" href="#무엇이-갈랐나" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>설계서의 첫 문장은 「DB Lock은 Distributed Consensus가 아니므로 Split-Brain을 구조적으로
-        방지하지 못한다」였습니다. 이 문장은 「그럼 Galera의 Quorum은요」 한 마디에 무너집니다.
+        방지하지 못한다」였습니다. 이 문장은 「그럼 Galera의 Quorum은요」 한 마디에 성립하지 않습니다.
         Galera는 wsrep 그룹 통신 위에서 Primary Component를 판정하는 자체 Quorum을 가지고 있습니다.</p>
 
         <p>실제로 Galera 클러스터는 Quorum을 잃으면 non-Primary로 떨어지고 그 상태에서는 Write를
@@ -202,7 +202,7 @@
         </div>
 
         <p class="table-note">세 번째가 이 절의 이유입니다. Totem과 votequorum은 Corosync 안에서도
-        서로 다른 층이고 그 둘을 한 칸에 적으면 비교의 축이 무너집니다.</p>
+        서로 다른 층이고 그 둘을 한 칸에 적으면 비교의 축이 성립하지 않습니다.</p>
 
         <h2 id="세-안">세 안을 같은 기준에 놓았습니다<a class="anchor" href="#세-안" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -306,7 +306,7 @@ crm resource restart stonith-&lt;nodename&gt;</code></pre>
         <p><strong>세 번째 단계는 두 번째 단계 없이 실행하면 안 됩니다.</strong> <code>stonith_admin --confirm</code>은
         전원을 내리는 명령이 아니라 이미 내려간 것을 사람이 확인했다고 클러스터에 알리는 명령입니다. 확인하지
         않고 적으면 ④편에서 막으려던 이중 접속을 사람 손으로 여는 셈이 됩니다. 반대로 <code>crm node fence</code>는
-        대상 Node에 실제 fencing을 요청하는 명령이라 이 자리에서 쓰면 오히려 살아 있는 Node를 끊습니다.</p>
+        대상 Node에 실제 Fencing을 요청하는 명령이라 이 자리에서 쓰면 오히려 살아 있는 Node를 끊습니다.</p>
 
         <p>설정도 두 가지를 함께 권고했습니다. <code>stonith-action</code>의 기본값은 재부팅이고
         재부팅은 대상 Node가 다시 올라오는 상태를 만듭니다. 전원이 내려간 상태로 두는 쪽이 이중 접속의
@@ -407,7 +407,7 @@ EVACUATION_MANAGERS=("controller-a" "controller-b" "controller-c")</code></pre>
           <li>Masakari 연동은 OpenStack 문서가 그 구성을 전제로 설명한다는 뜻이고 다른 구성이 불가능하다는
           뜻은 아닙니다.</li>
           <li>실행 Node 목록은 운영 편의를 위한 장치이고 Fencing을 대신하지 못합니다.</li>
-          <li>사내 자료라 제품명과 고객사와 주소와 계정과 호스트명은 쓰지 않았습니다.</li>
+          <li>사내 자료라 제품명과 고객사와 주소와 계정과 Host명은 쓰지 않았습니다.</li>
         </ul>
 
         <div class="wrapup">

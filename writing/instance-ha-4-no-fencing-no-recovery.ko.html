@@ -116,7 +116,7 @@
 
         <h2 id="설계가-요구한-것">설계는 확인 없이는 옮기지 말라고 했습니다<a class="anchor" href="#설계가-요구한-것" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>복구는 VM을 다른 호스트에서 다시 띄우는 일입니다. 원본이 죽지 않았는데 재기동된 쪽이 같은 볼륨에
+        <p>복구는 VM을 다른 Host에서 다시 띄우는 일입니다. 원본이 죽지 않았는데 재기동된 쪽이 같은 볼륨에
         붙어 두 쪽이 동시에 쓰도록 허용되면 <strong>깨지는 것은 VM 하나가 아니라 볼륨 전체가 될 수
         있습니다.</strong></p>
 
@@ -267,7 +267,7 @@ ipmitool chassis power status
           <table>
             <caption class="sr-only">설계 요소가 코드에 어디까지 들어갔나.</caption>
             <thead><tr><th>설계 요소</th><th>상태</th><th>코드에서 확인되는 것</th></tr></thead>
-            <tbody><tr><td>관측자가 자기 상태를 먼저 본다</td><td>활성</td><td>복구 배치가 자기 Node 상태를 먼저 확인하고 비정상이면 복구를 넘김</td></tr><tr><td>복구 대상 선별 두 겹</td><td>활성</td><td>호스트 제어 속성과 Instance 메타데이터를 함께 사용</td></tr><tr><td>복구 방식 미설정 시 차단</td><td>활성</td><td>방식이 없으면 복구를 건너뜀</td></tr><tr><td>Fencing</td><td><strong>골격만 · 비활성</strong></td><td>전원 대기와 재시도 설정이 주석 골격으로만 존재</td></tr><tr><td>분산 합의 실행 제어</td><td>골격만 · 비활성</td><td>같은 골격에 딸려 있음</td></tr><tr><td>Phase 1과 Phase 2 분리</td><td>코드에 없음</td><td>해당 구조가 확인되지 않음</td></tr></tbody>
+            <tbody><tr><td>관측자가 자기 상태를 먼저 본다</td><td>활성</td><td>복구 배치가 자기 Node 상태를 먼저 확인하고 비정상이면 복구를 넘김</td></tr><tr><td>복구 대상 선별 두 겹</td><td>활성</td><td>Host 제어 속성과 Instance 메타데이터를 함께 사용</td></tr><tr><td>복구 방식 미설정 시 차단</td><td>활성</td><td>방식이 없으면 복구를 건너뜀</td></tr><tr><td>Fencing</td><td><strong>골격만 · 비활성</strong></td><td>전원 대기와 재시도 설정이 주석 골격으로만 존재</td></tr><tr><td>분산 합의 실행 제어</td><td>골격만 · 비활성</td><td>같은 골격에 딸려 있음</td></tr><tr><td>Phase 1과 Phase 2 분리</td><td>코드에 없음</td><td>해당 구조가 확인되지 않음</td></tr></tbody>
           </table>
           </div>
         </div>
@@ -331,7 +331,7 @@ ipmitool chassis power status
           기록으로 확인한 것이 아닙니다.</li>
           <li>5초는 제안값입니다. 장비별로 전원이 내려가는 시간을 재서 고른 값이 아닙니다.</li>
           <li>Storage 네 항목은 배타적인 분류가 아닙니다. 한 구성에서 둘이 함께 나타날 수 있습니다.</li>
-          <li>사내 자료라 제품명과 고객사와 주소와 계정과 호스트명은 쓰지 않았습니다.</li>
+          <li>사내 자료라 제품명과 고객사와 주소와 계정과 Host명은 쓰지 않았습니다.</li>
         </ul>
 
         <div class="wrapup">
