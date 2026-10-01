@@ -202,9 +202,9 @@
           url: "writing/gpu-input-length-in-characters.html",
           source: "side", sourceLabel: "Personal project",
           date: "2026-10", dateLabel: "Oct 2026",
-          desc: "The CRD declares input length in tokens and the trace generator takes characters. The ceil(chars/4) estimate that joined them is 36% low at 200 characters and 30% high at 40,000, so the direction flips, and the characters-to-tokens curve is not monotone either. Measured inside the serving image, 256 tokens is 1,174 characters and 8,192 is 42,579.",
-          desc_ko: "CRD는 입력 길이를 토큰으로 선언하고 트레이스 생성기는 문자 수를 받습니다. 둘을 잇는 ceil(chars/4) 어림은 200자에서 36% 낮고 40,000자에서 30% 높아 방향이 뒤집혔고 문자에서 토큰으로 가는 곡선은 단조도 아니었습니다. 서빙 이미지 안에서 재서 256토큰은 1,174자, 8,192토큰은 42,579자로 고정했습니다.",
-          desc_ja: "CRD は入力長をトークンで宣言し、トレース生成器は文字数を受け取ります。両者をつなぐ ceil(chars/4) の目安は 200 文字で 36% 低く、40,000 文字で 30% 高く、方向が逆転します。文字からトークンへの曲線は単調でもありません。Serving Image の中で測り、256 トークンは 1,174 文字、8,192 トークンは 42,579 文字に固定しました。",
+          desc: "The CRD declares input length in tokens and the trace generator takes characters. The ceil(chars/4) estimate that joined them puts 50 tokens against a measured 68 at 200 characters and 10,000 against 7,695 at 40,000, so the direction flips, and the characters-to-tokens curve is not monotone either. Measured inside the serving image, 256 tokens is 1,174 characters and 8,192 is 42,579.",
+          desc_ko: "CRD는 입력 길이를 토큰으로 선언하고 트레이스 생성기는 문자 수를 받습니다. 둘을 잇는 ceil(chars/4) 어림은 200자에서 50토큰을 추정했는데 실측이 68이고 40,000자에서 10,000을 추정했는데 실측이 7,695여서 방향이 뒤집혔고 문자에서 토큰으로 가는 곡선은 단조도 아니었습니다. 서빙 이미지 안에서 재서 256토큰은 1,174자, 8,192토큰은 42,579자로 고정했습니다.",
+          desc_ja: "CRD は入力長をトークンで宣言し、トレース生成器は文字数を受け取ります。両者をつなぐ ceil(chars/4) の目安は 200 文字で 50 トークンと見積もったのに実測は 68 で、40,000 文字で 10,000 と見積もったのに実測は 7,695 でした。方向が逆転します。文字からトークンへの曲線は単調でもありません。Serving Image の中で測り、256 トークンは 1,174 文字、8,192 トークンは 42,579 文字に固定しました。",
           tags: ["GPUaaS Control Plane", "GPU", "Method", "Observability"]
         },
         {

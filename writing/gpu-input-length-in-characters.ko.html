@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="GPUaaS 플랫폼 입력 길이: 1자를 보내도 30토큰이었습니다" />
-  <meta property="og:description" content="CRD는 입력 길이를 토큰으로 선언하고 트레이스 생성기는 문자 수를 받습니다. 둘을 잇는 ceil(chars/4) 어림은 200자에서 36% 낮고 40,000자에서 30% 높아 방향이 뒤집혔고 문자에서 토큰으로 가는 곡선은 단조도 아니었습니다. 서빙 이미지 안에서 재서 256토큰은 1,174자, 8,192토큰은 42,579자로 고정했습니다." />
+  <meta property="og:description" content="CRD는 입력 길이를 토큰으로 선언하고 트레이스 생성기는 문자 수를 받습니다. 둘을 잇는 ceil(chars/4) 어림은 200자에서 50토큰을 추정했는데 실측이 68이고 40,000자에서 10,000을 추정했는데 실측이 7,695여서 방향이 뒤집혔고 문자에서 토큰으로 가는 곡선은 단조도 아니었습니다. 서빙 이미지 안에서 재서 256토큰은 1,174자, 8,192토큰은 42,579자로 고정했습니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -27,9 +27,9 @@
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="GPUaaS 플랫폼 입력 길이: 1자를 보내도 30토큰이었습니다" />
-  <meta name="twitter:description" content="CRD는 입력 길이를 토큰으로 선언하고 트레이스 생성기는 문자 수를 받습니다. 둘을 잇는 ceil(chars/4) 어림은 200자에서 36% 낮고 40,000자에서 30% 높아 방향이 뒤집혔고 문자에서 토큰으로 가는 곡선은 단조도 아니었습니다. 서빙 이미지 안에서 재서 256토큰은 1,174자, 8,192토큰은 42,579자로 고정했습니다." />
+  <meta name="twitter:description" content="CRD는 입력 길이를 토큰으로 선언하고 트레이스 생성기는 문자 수를 받습니다. 둘을 잇는 ceil(chars/4) 어림은 200자에서 50토큰을 추정했는데 실측이 68이고 40,000자에서 10,000을 추정했는데 실측이 7,695여서 방향이 뒤집혔고 문자에서 토큰으로 가는 곡선은 단조도 아니었습니다. 서빙 이미지 안에서 재서 256토큰은 1,174자, 8,192토큰은 42,579자로 고정했습니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="CRD는 입력 길이를 토큰으로 선언하고 트레이스 생성기는 문자 수를 받습니다. 둘을 잇는 ceil(chars/4) 어림은 200자에서 36% 낮고 40,000자에서 30% 높아 방향이 뒤집혔고 문자에서 토큰으로 가는 곡선은 단조도 아니었습니다. 서빙 이미지 안에서 재서 256토큰은 1,174자, 8,192토큰은 42,579자로 고정했습니다." />
+  <meta name="description" content="CRD는 입력 길이를 토큰으로 선언하고 트레이스 생성기는 문자 수를 받습니다. 둘을 잇는 ceil(chars/4) 어림은 200자에서 50토큰을 추정했는데 실측이 68이고 40,000자에서 10,000을 추정했는데 실측이 7,695여서 방향이 뒤집혔고 문자에서 토큰으로 가는 곡선은 단조도 아니었습니다. 서빙 이미지 안에서 재서 256토큰은 1,174자, 8,192토큰은 42,579자로 고정했습니다." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -101,7 +101,7 @@
 
         <p>그런데 부하를 만드는 Harness는 문자 수를 받습니다. <code>--premium-prompt-chars 200</code>처럼요.
         둘을 잇는 것이 <code>ceil(chars/4)</code>, 대략 4자에 1토큰이라는 어림이었습니다. 그 어림을 실제
-        tokenizer로 재 봤더니 200자에서 36% 낮고 40,000자에서 30% 높았습니다. 방향이 반대로 바뀝니다.</p>
+        tokenizer로 재 봤더니 200자에서 50토큰을 추정했는데 실측은 68이었고 40,000자에서 10,000을 추정했는데 실측은 7,695였습니다. 방향이 반대로 바뀝니다.</p>
 
         <p>그래서 「256토큰을 주는 문자 길이」를 역산할 수 없었고 재서 표로 만드는 것 말고는 길이
         없었습니다. 재는 과정에서 두 가지가 나왔습니다. 1자를 보내도 30토큰이 나오고 글자를 늘렸는데

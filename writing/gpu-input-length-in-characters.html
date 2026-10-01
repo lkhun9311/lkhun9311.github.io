@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="GPUaaS Input Length: One Character Still Cost 30 Tokens" />
-  <meta property="og:description" content="The CRD declares input length in tokens and the trace generator takes characters. The ceil(chars/4) estimate that joined them is 36% low at 200 characters and 30% high at 40,000, so the direction flips, and the characters-to-tokens curve is not monotone either. Measured inside the serving image, 256 tokens is 1,174 characters and 8,192 is 42,579." />
+  <meta property="og:description" content="The CRD declares input length in tokens and the trace generator takes characters. The ceil(chars/4) estimate that joined them puts 50 tokens against a measured 68 at 200 characters and 10,000 against 7,695 at 40,000, so the direction flips, and the characters-to-tokens curve is not monotone either. Measured inside the serving image, 256 tokens is 1,174 characters and 8,192 is 42,579." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -27,9 +27,9 @@
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="GPUaaS Input Length: One Character Still Cost 30 Tokens" />
-  <meta name="twitter:description" content="The CRD declares input length in tokens and the trace generator takes characters. The ceil(chars/4) estimate that joined them is 36% low at 200 characters and 30% high at 40,000, so the direction flips, and the characters-to-tokens curve is not monotone either. Measured inside the serving image, 256 tokens is 1,174 characters and 8,192 is 42,579." />
+  <meta name="twitter:description" content="The CRD declares input length in tokens and the trace generator takes characters. The ceil(chars/4) estimate that joined them puts 50 tokens against a measured 68 at 200 characters and 10,000 against 7,695 at 40,000, so the direction flips, and the characters-to-tokens curve is not monotone either. Measured inside the serving image, 256 tokens is 1,174 characters and 8,192 is 42,579." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="The CRD declares input length in tokens and the trace generator takes characters. The ceil(chars/4) estimate that joined them is 36% low at 200 characters and 30% high at 40,000, so the direction flips, and the characters-to-tokens curve is not monotone either. Measured inside the serving image, 256 tokens is 1,174 characters and 8,192 is 42,579." />
+  <meta name="description" content="The CRD declares input length in tokens and the trace generator takes characters. The ceil(chars/4) estimate that joined them puts 50 tokens against a measured 68 at 200 characters and 10,000 against 7,695 at 40,000, so the direction flips, and the characters-to-tokens curve is not monotone either. Measured inside the serving image, 256 tokens is 1,174 characters and 8,192 is 42,579." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -101,8 +101,7 @@
 
         <p>The Harness that generates the load takes characters: <code>--premium-prompt-chars 200</code>.
         What joined the two was <code>ceil(chars/4)</code>, the estimate that roughly four characters make
-        one token. Measured against the real tokenizer, that estimate is 36% low at 200 characters and 30%
-        high at 40,000. The direction of the error flips.</p>
+        one token. Measured against the real tokenizer, that estimate puts 50 tokens against a measured 68 at 200 characters, and 10,000 against 7,695 at 40,000. The direction of the error flips.</p>
 
         <p>So there was no way to invert "the character length that gives 256 tokens", and nothing to do
         but measure it and write it down. Two things turned up while measuring. One character still costs

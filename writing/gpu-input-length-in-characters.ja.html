@@ -17,7 +17,7 @@
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
   <meta property="og:title" content="GPUaaS プラットフォームの入力長: 1 文字でも 30 トークンでした" />
-  <meta property="og:description" content="CRD は入力長をトークンで宣言し、トレース生成器は文字数を受け取ります。両者をつなぐ ceil(chars/4) の目安は 200 文字で 36% 低く、40,000 文字で 30% 高く、方向が逆転します。文字からトークンへの曲線は単調でもありません。Serving Image の中で測り、256 トークンは 1,174 文字、8,192 トークンは 42,579 文字に固定しました。" />
+  <meta property="og:description" content="CRD は入力長をトークンで宣言し、トレース生成器は文字数を受け取ります。両者をつなぐ ceil(chars/4) の目安は 200 文字で 50 トークンと見積もったのに実測は 68 で、40,000 文字で 10,000 と見積もったのに実測は 7,695 でした。方向が逆転します。文字からトークンへの曲線は単調でもありません。Serving Image の中で測り、256 トークンは 1,174 文字、8,192 トークンは 42,579 文字に固定しました。" />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -27,9 +27,9 @@
   <meta property="og:locale:alternate" content="ko_KR" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="GPUaaS プラットフォームの入力長: 1 文字でも 30 トークンでした" />
-  <meta name="twitter:description" content="CRD は入力長をトークンで宣言し、トレース生成器は文字数を受け取ります。両者をつなぐ ceil(chars/4) の目安は 200 文字で 36% 低く、40,000 文字で 30% 高く、方向が逆転します。文字からトークンへの曲線は単調でもありません。Serving Image の中で測り、256 トークンは 1,174 文字、8,192 トークンは 42,579 文字に固定しました。" />
+  <meta name="twitter:description" content="CRD は入力長をトークンで宣言し、トレース生成器は文字数を受け取ります。両者をつなぐ ceil(chars/4) の目安は 200 文字で 50 トークンと見積もったのに実測は 68 で、40,000 文字で 10,000 と見積もったのに実測は 7,695 でした。方向が逆転します。文字からトークンへの曲線は単調でもありません。Serving Image の中で測り、256 トークンは 1,174 文字、8,192 トークンは 42,579 文字に固定しました。" />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="CRD は入力長をトークンで宣言し、トレース生成器は文字数を受け取ります。両者をつなぐ ceil(chars/4) の目安は 200 文字で 36% 低く、40,000 文字で 30% 高く、方向が逆転します。文字からトークンへの曲線は単調でもありません。Serving Image の中で測り、256 トークンは 1,174 文字、8,192 トークンは 42,579 文字に固定しました。" />
+  <meta name="description" content="CRD は入力長をトークンで宣言し、トレース生成器は文字数を受け取ります。両者をつなぐ ceil(chars/4) の目安は 200 文字で 50 トークンと見積もったのに実測は 68 で、40,000 文字で 10,000 と見積もったのに実測は 7,695 でした。方向が逆転します。文字からトークンへの曲線は単調でもありません。Serving Image の中で測り、256 トークンは 1,174 文字、8,192 トークンは 42,579 文字に固定しました。" />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -100,7 +100,7 @@
         で宣言できるようにし、そこにはプロンプト長をトークン数で書きます。 <code>inputTokens: 256</code> のような形です。</p>
 
         <p>ところが、負荷を作る Harness は文字数を受け取ります。 <code>--premium-prompt-chars 200</code> のように渡します。両者をつないでいたのが <code>ceil(chars/4)</code>、おおよそ 4 文字で 1 トークンという目安でした。その目安を実際の tokenizer
-        で測ってみると、200 文字では 36% 低く、40,000 文字では 30% 高くなりました。
+        で測ってみると、200 文字では 50 トークンと見積もったのに実測は 68 で、40,000 文字では 10,000 と見積もったのに実測は 7,695 でした。
         誤差の向きが逆になります。</p>
 
         <p>そのため「256 トークンを与える文字長」を逆算することができず、測って表にするしかありませんでした。
