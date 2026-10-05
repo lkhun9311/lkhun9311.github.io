@@ -129,7 +129,7 @@
     projects: {
       /* Writing과 같은 축으로 나눈다 — 섹션마다 기준이 달라지면 왼쪽 레일을 매번 다시 배운다. */
       tagGroups: {
-        "Area": ["GPU", "Kubernetes", "Backend", "Postgres", "IaaS", "Control Plane"],
+        "Area": ["GPU", "Kubernetes", "Backend", "Postgres", "IaaS", "Control Plane", "Data Platform"],
         "Perspective": ["Operations", "Privacy"]
       },
       items: [
@@ -189,12 +189,102 @@
       tagGroups: {
         /* 프로젝트를 맨 위에 둔다 — 「어느 시스템 이야기인가」가 독자의 첫 질문이다.
            글 머리의 #태그 버튼이 여기로 걸러 들어온다. */
-        "Project": ["IaaS Backend", "GPUaaS Control Plane", "Social Polling Platform"],
-        "Area": ["GPU", "Kubernetes", "Backend", "Postgres", "IaaS", "Control Plane"],
+        "Project": ["IaaS Backend", "GPUaaS Control Plane", "Social Polling Platform", "Driving Data Studio"],
+        "Area": ["GPU", "Kubernetes", "Backend", "Postgres", "IaaS", "Control Plane", "Data Platform"],
         "Perspective": ["Method", "Observability", "Reliability", "Performance",
                 "Security", "Privacy", "Cost", "Operations", "Migration"]
       },
       items: [
+        {
+          title: "Why the Console Does Not Show \"Approved\" When You Click Approve",
+          title_ko: "자율주행 데이터 플랫폼 09. 운영 콘솔은 승인 버튼을 눌러도 왜 바로 「승인됨」을 띄우지 않을까",
+          url: "writing/autonomy-9-no-optimistic-approve.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-06", dateLabel: "Oct 6, 2026",
+          desc: "The operator console changes a release badge only after the event arrives, borrows AWS console and CI/CD grammar, and keeps one name in three languages.",
+          desc_ko: "승인을 눌러도 결과 이벤트가 오기 전에는 「승인됨」을 띄우지 않습니다. AWS 콘솔과 CI/CD 도구의 화면 문법을 빌린 운영 콘솔 설계입니다.",
+          tags: ["Driving Data Studio", "Data Platform", "Method"]
+        },
+        {
+          title: "Three Outside Instruments Instead of Grading Ourselves",
+          title_ko: "자율주행 데이터 플랫폼 08. 자기 채점을 피하려고 외부 계측기 3개를 붙였습니다",
+          url: "writing/autonomy-8-borrowed-instruments.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-06", dateLabel: "Oct 6, 2026",
+          desc: "MLPerf Storage, Croissant and RefAV score three results; reading the MLPerf rules split M2 into a closed-division run and a separate format comparison.",
+          desc_ko: "스스로 정한 숫자만 내놓지 않으려고 외부 계측기 셋을 붙였습니다. MLPerf Storage 규칙을 끝까지 읽고 M2를 Closed 실행과 별도 포맷 비교로 나눈 과정도 적었습니다.",
+          tags: ["Driving Data Studio", "Data Platform", "Performance"]
+        },
+        {
+          title: "Why Sensor Gates Count Evaluations and Skips",
+          title_ko: "자율주행 데이터 플랫폼 07. 센서 품질 Gate는 왜 건너뜀과 평가 횟수까지 셀까",
+          url: "writing/autonomy-7-counting-skipped-gates.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-06", dateLabel: "Oct 6, 2026",
+          desc: "Six sensor-level checks, four counters per gate, and separating \"incomplete\" from \"skipped\" so a stopped check never looks green.",
+          desc_ko: "「실패 0건」은 깨끗한 날과 검사가 멈춘 날에 똑같이 나옵니다. 평가 횟수와 건너뜀을 함께 세고 미완료를 따로 둔 센서 품질 Gate 설계입니다.",
+          tags: ["Driving Data Studio", "Data Platform", "Observability"]
+        },
+        {
+          title: "How Far Can \"Batch and Streaming Agree\" Go?",
+          title_ko: "자율주행 데이터 플랫폼 06. 배치와 스트리밍 결과가 같다는 주장은 어디까지 할 수 있을까",
+          url: "writing/autonomy-6-how-far-equivalence-goes.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-06", dateLabel: "Oct 6, 2026",
+          desc: "Two README claims were retracted: sensor rates do not reorder events by themselves, and equal final tables do not prove exactly-once.",
+          desc_ko: "센서 주기가 순서를 뒤섞는다는 문장과 결과가 같으면 exactly-once라는 문장을 폐기하고 주장을 출고된 테이블의 다중집합 비교로 좁혔습니다.",
+          tags: ["Driving Data Studio", "Data Platform", "Method"]
+        },
+        {
+          title: "Four Defaults That Break a Transactional Outbox",
+          title_ko: "자율주행 데이터 플랫폼 05. Outbox로 Release 상태를 알릴 때 기본값 4개가 만드는 실패",
+          url: "writing/autonomy-5-outbox-defaults.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-06", dateLabel: "Oct 6, 2026",
+          desc: "An adversarial review turned a ten-row failure table into thirty findings; four documented defaults in Kafka, Debezium and Postgres anchor them.",
+          desc_ko: "실패 처리 표 10행을 공격받아 30줄이 돌아왔습니다. Kafka · Debezium · Postgres 기본값 넷이 만드는 실패와, 그 결과로 바뀐 원칙 다섯입니다.",
+          tags: ["Driving Data Studio", "Data Platform", "Reliability"]
+        },
+        {
+          title: "Kafka Stays Out of the M1 Data Path Because Batch Is the Reference",
+          title_ko: "자율주행 데이터 플랫폼 04. Kafka를 M1 데이터 경로에서 뺀 이유: 배치가 스트리밍의 비교 기준입니다",
+          url: "writing/autonomy-4-where-kafka-sits.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-06", dateLabel: "Oct 6, 2026",
+          desc: "Kafka was placed seven times in a month; the M1 data path never used it, and why that changed from \"static data\" to \"batch is the oracle\".",
+          desc_ko: "Kafka의 자리는 한 달 사이 일곱 번 정해졌습니다. M1 데이터 경로에는 한 번도 들어가지 않았고 그 이유가 정적 데이터에서 비교 기준으로 바뀐 기록입니다.",
+          tags: ["Driving Data Studio", "Data Platform", "Method"]
+        },
+        {
+          title: "Does an Iceberg Snapshot Protect the File Behind blob_uri?",
+          title_ko: "자율주행 데이터 플랫폼 03. Iceberg Snapshot은 blob_uri가 가리키는 파일까지 지켜 줄까",
+          url: "writing/autonomy-3-snapshots-do-not-guard-blobs.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-06", dateLabel: "Oct 6, 2026",
+          desc: "A snapshot guards table files, not the sensor files rows point to; content-addressed names, immutability and read-time checks fill the gap.",
+          desc_ko: "Snapshot은 Iceberg가 관리하는 테이블 파일만 지킵니다. 행이 가리키는 센서 파일을 지키려고 내용 기반 이름 · 덮어쓰기 금지 · 읽을 때 대조를 더했습니다.",
+          tags: ["Driving Data Studio", "Data Platform", "Reliability"]
+        },
+        {
+          title: "What a Release Id Has to Pin to Return the Same Rows and Bytes",
+          title_ko: "자율주행 데이터 플랫폼 02. Release id 하나로 같은 rows와 bytes를 다시 받으려면 무엇을 고정해야 할까",
+          url: "writing/autonomy-2-what-a-release-pins.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-06", dateLabel: "Oct 6, 2026",
+          desc: "Five things a dataset release pins, publishing across Iceberg and Postgres in one transaction, and fixing the pin when evaluation starts.",
+          desc_ko: "Snapshot id · 파일 Hash · 변환과 정책 버전 · 검사 결과 · 선택된 행을 함께 고정합니다. Iceberg와 Postgres에 걸친 공개를 한 Transaction으로 묶고 평가 시작에 Pin을 고정한 이유입니다.",
+          tags: ["Driving Data Studio", "Data Platform", "Reliability"]
+        },
+        {
+          title: "Why a Solo Autonomous-Driving Project Became a Data Platform",
+          title_ko: "자율주행 데이터 플랫폼 01. 로컬 GPU 없이 시작한 자율주행 프로젝트는 왜 데이터 플랫폼이 됐을까",
+          url: "writing/autonomy-1-why-a-data-platform.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-06", dateLabel: "Oct 6, 2026",
+          desc: "Measuring the machine first, finding the AWS path, and narrowing twelve planned directories to one data platform with a release contract.",
+          desc_ko: "로컬 GPU가 없다는 이유로 범위를 줄이려던 첫 판정이 틀렸습니다. 제약을 시간과 예산으로 다시 적고 Iceberg가 해 주는 일과 직접 만들 일을 가른 과정입니다.",
+          tags: ["Driving Data Studio", "Data Platform", "Method"]
+        },
         {
           title: "A Half-Filled Cache Erased the Project Boxes on Cold Start",
           title_ko: "통합 모니터링 이슈 01. UI Rendering 부분 실패: Cold Cache Regression",
