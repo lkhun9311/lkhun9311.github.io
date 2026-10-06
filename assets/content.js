@@ -196,6 +196,16 @@
       },
       items: [
         {
+          title: "The Build Setting That Git Was Told to Ignore",
+          title_ko: "Gradle 빌드가 제 컴퓨터에서만 성공했습니다",
+          url: "writing/the-setting-git-never-tracked.ko.html",
+          source: "commercial", sourceLabel: "Commercial project",
+          date: "2026-10-06",
+          desc: "Verifying a dependency bot's Kotlin bump, the build died with OutOfMemoryError and I reported the version as the cause. Reverting the version failed the same way, which is how the real cause surfaced: the heap setting sat in git's exclude list, so CI and every fresh clone never received it.",
+          desc_ko: "의존성 봇이 올린 Kotlin 버전 범프를 검증하다 빌드가 OutOfMemoryError로 죽었고 저는 그것을 버전 탓으로 보고했습니다. 버전을 되돌려도 똑같이 죽는 것을 보고서야 원인이 git 추적에서 빠진 힙 설정임을 알았습니다. 추적이 0건이면 CI와 새 클론도 그 설정을 받지 못합니다.",
+          tags: ["Social Polling Platform", "Tooling", "Backend", "Method"]
+        },
+        {
           title: "GPUaaS Input Length: One Character Still Cost 30 Tokens",
           title_ko: "GPUaaS 플랫폼 입력 길이: 1자를 보내도 30토큰이었습니다",
           title_ja: "GPUaaS プラットフォームの入力長: 1 文字でも 30 トークンでした",
