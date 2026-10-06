@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>자율주행 데이터 플랫폼 06. 배치와 스트리밍 결과가 같다는 주장은 어디까지 할 수 있을까 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet"><link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/autonomy-6-how-far-equivalence-goes.ko.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/autonomy-6-how-far-equivalence-goes.ko.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" /><meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="자율주행 데이터 플랫폼 06. 배치와 스트리밍 결과가 같다는 주장은 어디까지 할 수 있을까" />
+  <meta property="og:description" content="센서 주기가 순서를 뒤섞는다는 문장과 결과가 같으면 exactly-once라는 문장을 폐기하고 주장을 출고된 테이블의 다중집합 비교로 좁혔습니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/autonomy-6-how-far-equivalence-goes.ko.html" /><meta property="og:locale" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content="자율주행 데이터 플랫폼 06. 배치와 스트리밍 결과가 같다는 주장은 어디까지 할 수 있을까" />
+  <meta name="twitter:description" content="센서 주기가 순서를 뒤섞는다는 문장과 결과가 같으면 exactly-once라는 문장을 폐기하고 주장을 출고된 테이블의 다중집합 비교로 좁혔습니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta name="description" content="센서 주기가 순서를 뒤섞는다는 문장과 결과가 같으면 exactly-once라는 문장을 폐기하고 주장을 출고된 테이블의 다중집합 비교로 좁혔습니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar"><div class="topbar-inner notranslate"><a class="site-name" href="../index.html#about">Kwanghun</a>
+    <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+      <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang" data-authored='{"ko":"autonomy-6-how-far-equivalence-goes.ko.html"}'>
+        <option value="ko" selected>한국어</option><option value="en">English</option><option value="ja">日本語</option><option value="zh-CN">简体中文</option><option value="zh-TW">繁體中文</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ru">Русский</option><option value="vi">Tiếng Việt</option><option value="id">Bahasa Indonesia</option><option value="hi">हिन्दी</option><option value="ar">العربية</option>
+      </select><div id="google_translate_element" aria-hidden="true"></div>
+      <a href="../index.html#about">About</a><a href="../index.html#news">News</a><a href="../index.html#projects">Projects</a><a href="../index.html#writing" class="active">Writing</a><a href="../index.html#notes">Notes</a><a href="../index.html#cv">CV</a>
+    </nav>
+  </div></div>
+  <div class="container reading"><main>
+    <div class="hero-top">
+      <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
+      <div class="article-meta"><span class="source-tag side notranslate">개인 프로젝트</span><a class="project-tag notranslate" href="../writing/index.html?tag=Driving%20Data%20Studio">#Driving Data Studio</a></div>
+    </div>
+    <section class="page-hero"><h1>자율주행 데이터 플랫폼 06. 배치와 스트리밍 결과가 같다는 주장은 어디까지 할 수 있을까</h1><p class="article-date">2026년 10월</p></section>
+    <aside class="article-aside" data-aside="writing" data-slug="autonomy-6-how-far-equivalence-goes"></aside>
+    <nav class="article-toc" aria-label="목차"><p class="toc-label">목차</p><ul>
+      <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+      <li><a href="#순서가-뒤바뀌는-조건을-직접-정했습니다">순서가 뒤바뀌는 조건을 직접 정했습니다</a></li>
+      <li><a href="#최종-테이블이-같아도-정확히-한-번-반영됐다는-뜻은-아닙니다">최종 테이블이 같아도 정확히 한 번 반영됐다는 뜻은 아닙니다</a></li>
+      <li><a href="#같은-행이-몇-번-나오는지까지-비교합니다">같은 행이 몇 번 나오는지까지 비교합니다</a></li>
+      <li><a href="#두-경로의-일치는-두-번째-검사입니다">두 경로의 일치는 두 번째 검사입니다</a></li>
+      <li><a href="#이-글이-주장하지-않는-것">이 글이 주장하지 않는 것</a></li>
+      <li><a href="#마치며">마치며</a></li>
+    </ul></nav>
+    <article class="article-body">
+      <p>이 프로젝트의 M4는 같은 센서 로그를 두 경로로 넣을 계획입니다. 한 번은 M1에서 만들 Spark 배치 경로로, 한 번은 Kafka로 녹화 시각대로 재생하는 스트리밍 경로로 넣고 두 경로가 만든 테이블이 같은지 비교합니다. M4가 내놓는 주장은 이 비교 하나입니다.</p>
+      <p>「같다」는 말에는 여러 층이 있습니다. 최종 테이블이 같다는 것, 도중에 테이블을 읽은 사람도 같은 내용을 봤다는 것, 모든 이벤트가 정확히 한 번 반영됐다는 것입니다. 이 세 주장은 각각 증명에 필요한 증거가 다릅니다.</p>
+      <p>9월 5일 README에 이 마일스톤을 처음 쓸 때 저는 세 층을 구분하지 않았습니다. 같은 커밋에 「센서마다 주기가 달라서 이벤트 순서가 뒤바뀐다」는 문장도 함께 썼습니다.</p>
+      <p>하루 뒤 codex(gpt-6-astra) 검토가 판정표 13줄 가운데 두 줄을 폐기했는데 그 두 줄이 이 두 문장이었습니다. 그 뒤 README의 M4 주장은 한 줄로 줄었습니다. 「같은 로그에서 나온, 출고된 스트리밍 테이블은 출고된 배치 테이블과 행 단위로, 중복 개수까지 같다」. 이 글은 두 문장이 어떻게 틀렸고 남은 한 줄을 지키려고 무엇을 정해 두었는지 적습니다.</p>
+      <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
+      <ul class="callout"><li>배치와 스트리밍 파이프라인의 결과가 같다고 주장해야 하는 분</li><li>exactly-once라는 말을 문서에 쓰기 전에 무엇을 증명해야 하는지 알고 싶은 분</li><li>두 테이블을 비교하는 검증을 설계하는 분</li></ul>
+      <h2 id="순서가-뒤바뀌는-조건을-직접-정했습니다">순서가 뒤바뀌는 조건을 직접 정했습니다<a class="anchor" href="#순서가-뒤바뀌는-조건을-직접-정했습니다" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>처음 문장의 논리는 카메라는 초당 20장, 라이다는 초당 10번 찍으니 둘을 섞어 보내면 도착 순서가 뒤섞인다는 것이었습니다.</p>
+      <p>codex는 반례를 들었습니다. Producer 하나가 모든 센서의 기록을 타임스탬프 순으로 병합 정렬해 한 파티션에 넣으면 주기가 얼마나 다르든 역전은 생기지 않습니다. 역전은 데이터를 <strong>보내는 방식</strong>이 만듭니다.</p>
+      <p>이 반례를 받고 선택지를 두 가지로 봤습니다. 순서 뒤섞임을 M4에서 빼는 것과, 뒤섞임이 생기는 조건을 직접 만드는 것입니다. 뒤섞임을 빼면 스트리밍 경로에서 Event Time과 Watermark를 시험할 이유가 사라지고 Kafka를 남긴 이유 가운데 하나가 없어집니다. 그래서 조건을 만들기로 했습니다.</p>
+      <p>센서 스트림마다 Producer를 하나씩 두고 도착이 얼마나 늦어지는지를 정한 모델(Arrival Model)을 문서에 적고 seed를 고정합니다. 녹화 데이터에는 도착 시각이 없으므로 이 모델은 제가 만든 가정이고 그렇다고 적어 둡니다. 같은 seed와 같은 실패 주입 조건에서 순서만 지킨 대조 실행을 한 번 더 돌립니다. 두 실행의 출고 테이블을 같은 방식으로 비교하면 대조 실행과 달라진 행이 순서 뒤섞임 때문에 생긴 차이입니다.</p>
+      <figure class="diagram"><svg viewBox="0 0 720 202" role="img" aria-labelledby="f06-1-t" class="figure-svg"><title id="f06-1-t">순서 뒤바뀜은 데이터의 성질이 아니라 보내는 방식이 만듭니다.</title><defs><marker id="f06-1-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#bbb"/></marker></defs><g font-family="Inter, sans-serif"><text x="184" y="34" text-anchor="middle" font-size="12" fill="#777" font-weight="700">병합 정렬 · 한 파티션</text><rect x="20" y="48" width="328" height="40" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="184" y="72" text-anchor="middle" font-size="11" fill="#444">카메라 20 fps</text><rect x="20" y="96" width="328" height="40" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="184" y="120" text-anchor="middle" font-size="11" fill="#444">라이다 10 Hz</text><rect x="20" y="144" width="328" height="40" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="184" y="168" text-anchor="middle" font-size="11" fill="#444">역전 0</text><text x="536" y="34" text-anchor="middle" font-size="12" fill="#777" font-weight="700">센서별 Producer + 지연 모델</text><rect x="372" y="48" width="328" height="40" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="536" y="72" text-anchor="middle" font-size="11" fill="#444">카메라 Producer</text><rect x="372" y="96" width="328" height="40" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="536" y="120" text-anchor="middle" font-size="11" fill="#444">라이다 Producer</text><rect x="372" y="144" width="328" height="40" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="536" y="168" text-anchor="middle" font-size="11" fill="#444">역전 발생</text></g></svg><figcaption>순서 뒤바뀜은 데이터의 성질이 아니라 보내는 방식이 만듭니다.</figcaption></figure>
+      <h2 id="최종-테이블이-같아도-정확히-한-번-반영됐다는-뜻은-아닙니다">최종 테이블이 같아도 정확히 한 번 반영됐다는 뜻은 아닙니다<a class="anchor" href="#최종-테이블이-같아도-정확히-한-번-반영됐다는-뜻은-아닙니다" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>두 번째로 폐기된 문장은 「배치와 스트리밍의 결과가 같으면 exactly-once가 증명된다」였습니다. codex는 이 문장이 틀린 경우를 하나 들었습니다.</p>
+      <p>Sink가 Iceberg에 커밋한 직후, 자기 진행 위치(Checkpoint)를 기록하기 전에 죽습니다. 재시작한 Sink는 기록된 위치부터 다시 읽어 같은 행을 한 번 더 붙입니다. 출고 단계에서 그 중복을 제거하면 최종 테이블은 배치 테이블과 같아집니다. 그런데 그 사이에 중간 Snapshot을 읽은 사람은 중복된 행을 봤습니다.</p>
+      <p>최종 테이블을 비교하는 검사는 이 경우에도 통과합니다. 이 검사는 최종 상태를 보여 줄 뿐이고 파이프라인이 지나온 상태는 보여 주지 않습니다. 정확히 한 번 반영됐다고 말하려면 중간 상태와 외부 효과까지 봐야 하는데 M4는 그것까지 보지 않기로 했습니다. 그래서 주장의 범위를 「출고된 테이블」로 줄였습니다.</p>
+      <p>M4는 중복 이벤트를 일부러 넣고 Consumer를 도중에 죽이는 조건에서 출고된 두 테이블을 비교합니다. 비교가 통과하면 말할 수 있는 것은 「이 조건, 이 로컬 구성에서 출고 결과가 같다」까지입니다. 설정 파일에서 전달 보장 옵션이 켜져 있다고 인용하는 것은 이보다 약한 증거입니다. 옵션이 켜져 있다는 것만으로는 그 옵션이 이 경로의 실패를 실제로 막았는지 알 수 없습니다.</p>
+      <figure class="diagram"><svg viewBox="0 0 720 98" role="img" aria-labelledby="f06-2-t" class="figure-svg"><title id="f06-2-t">최종 테이블은 같아도 t3와 t4 사이의 중간 Snapshot을 읽은 사람은 중복을 봅니다.</title><defs><marker id="f06-2-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#bbb"/></marker></defs><g font-family="Inter, sans-serif"><rect x="20" y="20" width="156" height="56" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="98" y="52" text-anchor="middle" font-size="11" fill="#444">t1 Iceberg 커밋</text><path d="M178 48 L192 48" stroke="#bbb" stroke-width="1.5" marker-end="url(#f06-2-a)"/><rect x="194" y="20" width="156" height="56" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="272" y="52" text-anchor="middle" font-size="11" fill="#444">t2 사망 (Checkpoint 없음)</text><path d="M353 48 L367 48" stroke="#bbb" stroke-width="1.5" marker-end="url(#f06-2-a)"/><rect x="369" y="20" width="156" height="56" rx="10" fill="#f4f5ff" stroke="#4f5bd5" stroke-width="1.5"/><text x="447" y="52" text-anchor="middle" font-size="11" fill="#444">t3 재시작 · 재적재</text><path d="M527 48 L541 48" stroke="#bbb" stroke-width="1.5" marker-end="url(#f06-2-a)"/><rect x="543" y="20" width="156" height="56" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="621" y="52" text-anchor="middle" font-size="11" fill="#444">t4 출고 시 중복 제거</text></g></svg><figcaption>최종 테이블은 같아도 t3와 t4 사이의 중간 Snapshot을 읽은 사람은 중복을 봅니다.</figcaption></figure>
+      <h2 id="같은-행이-몇-번-나오는지까지-비교합니다">같은 행이 몇 번 나오는지까지 비교합니다<a class="anchor" href="#같은-행이-몇-번-나오는지까지-비교합니다" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>비교 방법에도 함정이 있었습니다. 두 테이블을 행의 <strong>집합</strong>으로 비교하면 집합 비교 규칙상 배치 테이블의 <code>[a]</code>와 스트리밍 테이블의 <code>[a, a]</code>는 같은 테이블입니다. 중복을 잡으려는 비교가 중복을 놓칩니다. 그래서 같은 행이 몇 번 나오는지까지 세는 다중집합 비교로 정했습니다.</p>
+      <p>여기서 중복은 두 종류입니다. 원본에 같은 값의 행이 두 번 있으면 그것은 데이터이고 두 테이블 모두에 두 번 있어야 합니다. 재시작이나 일부러 넣은 중복 이벤트 때문에 Sink가 같은 이벤트를 두 번 쓴 것은 처리 과정의 흔적이고 출고 전에 이벤트 키로 걸러야 합니다. 다중집합 비교는 이 둘을 구분해 다루는지 확인합니다.</p>
+      <p>비교 조건은 실행 전에 README에 고정합니다. 실행한 뒤에 조건을 고르면 결과가 같게 나오는 조건을 고를 수 있기 때문입니다. 지금 정해 둔 것과 실행 전에 정할 것은 이렇습니다.</p>
+      <div class="table-wrap"><table><thead><tr><th>조건</th><th>지금 상태</th></tr></thead><tbody><tr><td>비교하는 열</td><td>정했습니다. 적재 시각(<code>ingested_at</code>)과 실행 id는 뺍니다. 두 경로에서 당연히 다른 값입니다</td></tr><tr><td>입력 범위</td><td>정했습니다. 두 경로에 같은 로그 묶음을 넣습니다</td></tr><tr><td>늦게 온 이벤트</td><td>실행 전에 정합니다. Watermark를 넘겨 한쪽 경로에만 늦게 도착한 이벤트를 넣을지 뺄지에 따라 비교 대상 행이 달라집니다</td></tr><tr><td>종료 조건</td><td>실행 전에 정합니다. 스트림이 「다 보냈다」고 판단하는 시점이 정해져야 비교를 시작할 수 있습니다</td></tr></tbody></table></div>
+      <p>두 테이블의 차이는 Trino로 계산합니다.</p>
+      <h2 id="두-경로의-일치는-두-번째-검사입니다">두 경로의 일치는 두 번째 검사입니다<a class="anchor" href="#두-경로의-일치는-두-번째-검사입니다" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>마지막 문제는 codex 1차 검토도 저도 보지 못한 것이었고 같은 astra 검토가 짚었습니다. 배치와 스트리밍은 같은 정규화 코드를 씁니다. 그 코드가 라이다 레이저 하나의 점을 빠뜨리면 두 경로는 <strong>같은 오답</strong>을 내고 비교는 통과합니다.</p>
+      <p>그래서 두 경로의 일치는 두 번째 검사로 내렸습니다. 첫 번째 검사는 배치 결과를 정규화 코드를 거치지 않은 값과 대조하는 것이고 그 값은 두 가지입니다.</p>
+      <ul><li><strong>원본에서 센 센서별 이벤트 수.</strong> 원본 메타데이터에서 센서마다 기록이 몇 개인지 직접 셉니다. 센서 하나가 통째로 빠지거나 기록 수가 줄면 이 수와 어긋납니다. 레이저 하나의 점이 빠지는 것처럼 기록 수는 그대로이고 내용만 줄어드는 경우는 잡지 못합니다.</li><li>손으로 검산한 픽스처. 로그 몇 개를 골라 레이저별 점 수 같은 값을 원본에서 손으로 계산해 둡니다. 내용이 줄어드는 누락은 이 픽스처가 잡습니다. 다만 고른 로그 안에서만 잡습니다.</li></ul>
+      <p>데이터가 빠짐없이 들어왔는지를 재는 <code>completeness</code>의 분모도 정규화 결과가 아니라 이 두 값에서 가져옵니다.</p>
+      <figure class="diagram"><svg viewBox="0 0 720 176" role="img" aria-labelledby="f06-3-t" class="figure-svg"><title id="f06-3-t">두 경로의 일치는 두 번째 검사이고 첫 번째 검사는 변환을 거치지 않은 값과 비교합니다.</title><defs><marker id="f06-3-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#bbb"/></marker></defs><g font-family="Inter, sans-serif"><rect x="20" y="20" width="331" height="56" rx="10" fill="#f4f5ff" stroke="#4f5bd5" stroke-width="1.5"/><text x="185" y="52" text-anchor="middle" font-size="11" fill="#444">원본에서 센 수 · 손 검산 Fixture</text><path d="M353 48 L367 48" stroke="#bbb" stroke-width="1.5" marker-end="url(#f06-3-a)"/><rect x="369" y="20" width="331" height="56" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="534" y="52" text-anchor="middle" font-size="11" fill="#444">배치 결과</text><rect x="20" y="98" width="331" height="56" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="185" y="130" text-anchor="middle" font-size="11" fill="#444">배치 결과</text><path d="M353 126 L367 126" stroke="#bbb" stroke-width="1.5" marker-end="url(#f06-3-a)"/><rect x="369" y="98" width="331" height="56" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="534" y="130" text-anchor="middle" font-size="11" fill="#444">스트리밍 결과 (다중집합)</text></g></svg><figcaption>두 경로의 일치는 두 번째 검사이고 첫 번째 검사는 변환을 거치지 않은 값과 비교합니다.</figcaption></figure>
+      <h2 id="이-글이-주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#이-글이-주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
+      <ul><li><strong>아직 아무것도 돌리지 않았습니다.</strong> 배치 경로도 스트리밍 경로도 구현 전이고 위 비교는 M4의 계획입니다.</li><li>도착 지연 모델은 녹화 데이터에 없는 정보를 가정으로 채운 것입니다. 실제 차량에서 데이터가 도착하는 방식을 재현한다고 주장하지 않습니다.</li><li>비교가 통과해도 범위는 로컬 구성 하나입니다. 다른 클러스터 구성이나 S3 위에서도 같다고 말하지 않습니다.</li></ul>
+      <div class="wrapup">
+      <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>남은 일은 표의 아래 두 칸입니다. 늦게 온 이벤트와 종료 조건을 정하지 않은 채 실행하면 비교 결과가 나온 뒤 어느 쪽으로 정할지 고를 수 있게 됩니다. 두 칸은 M4 첫 실행 전에 README에 적고 커밋한 뒤 실행합니다. 다음 편은 데이터가 테이블에 들어오기 전에 거치는 센서 품질 Gate와, 그 Gate가 결과를 세는 방식을 다룹니다.</p>
+      <p>읽어 주셔서 감사합니다.</p></div>
+    </article>
+  </main>
+  <footer class="notranslate"><div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div><div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div></footer>
+  </div>
+  <script>window.CONTENT_BASE = "../";</script><script src="../assets/i18n.js?v=e0fa0917be"></script><script src="../assets/content.js?v=e9eae83b2e"></script><script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script><script defer src="../assets/highlight.js?v=d4af83b541"></script><script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>(function(){var el=document.querySelector(".article-aside");if(el&&window.renderArticleAside){renderArticleAside(el,el.dataset.aside,el.dataset.slug);}})();</script>
+</body>
+</html>
