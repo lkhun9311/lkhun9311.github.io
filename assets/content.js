@@ -196,6 +196,16 @@
       },
       items: [
         {
+          title: "Product Retrieval 07. With 20% of simulated corrections wrong, R@5 fell from 0.857 to 0.299",
+          title_ko: "상품 검색 07. 모의 교정의 20%가 틀리자 R@5가 0.857에서 0.299로 떨어졌습니다",
+          url: "writing/product-retrieval-07-noisy-corrections.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-08", dateLabel: "Oct 8, 2026",
+          desc: "Flipping 20% of simulated answers dropped one seed to R@5 0.2985 at 100 labels, and the 3,000-label mean stayed below baseline. Because positives are rare, a 20% flip makes about 80% of positive labels fake by calculation. A deployment gate on R@5, positive-label rate and R@1 is designed but not built. Korean only.",
+          desc_ko: "모의 교정의 20%를 뒤집자 라벨 100개에서 R@5가 0.2985까지 떨어진 seed가 있었습니다. 정답이 드물어서 뒤집기 20%가 정답 라벨에서는 계산상 80%의 오염이 됩니다. R@5, 정답 라벨 비율, R@1을 확인하는 배포 게이트를 설계했고 아직 구현하지 않았습니다.",
+          tags: ["Product Retrieval Studio", "Method", "Operations"]
+        },
+        {
           title: "Product Retrieval 06. 108 runs and the R@5 0.887 target was not reached",
           title_ko: "상품 검색 06. 108번 실행했지만 목표 R@5 0.887에 미치지 못했습니다",
           url: "writing/product-retrieval-06-learning-curve.ko.html",
