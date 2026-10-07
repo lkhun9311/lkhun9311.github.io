@@ -196,6 +196,16 @@
       },
       items: [
         {
+          title: "Product Retrieval 06. 108 runs and the R@5 0.887 target was not reached",
+          title_ko: "상품 검색 06. 108번 실행했지만 목표 R@5 0.887에 미치지 못했습니다",
+          url: "writing/product-retrieval-06-learning-curve.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-08", dateLabel: "Oct 8, 2026",
+          desc: "All 108 preregistered runs completed. No seed reached validation R@5 0.887 within 3,000 labels, and the one-time test check came in at +0.0096 over baseline, 0.0204 short of the success line. The small gain reproduced on both splits; the +0.03 target did not. Korean only.",
+          desc_ko: "사전등록한 108개 조건을 모두 실행했습니다. 어느 seed도 라벨 3,000개까지 목표 R@5 0.887에 도달하지 못했습니다. 한 번 연 시험셋에서도 기준선보다 0.0096 높아 성공 기준에 0.0204 모자랐습니다.",
+          tags: ["Product Retrieval Studio", "Method"]
+        },
+        {
           title: "Product Retrieval 05. A reranker stuck at R@5 0.858 even with 100,000 labels",
           title_ko: "상품 검색 05. 라벨 10만 개로도 R@5가 0.858에 머문 재정렬 모델",
           url: "writing/product-retrieval-05-reranker-features.ko.html",
