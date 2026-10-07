@@ -196,6 +196,16 @@
       },
       items: [
         {
+          title: "Product Retrieval 04. Candidates nobody clicked are not negative labels",
+          title_ko: "상품 검색 04. 누르지 않은 후보는 오답 라벨로 쓰지 않습니다",
+          url: "writing/product-retrieval-04-event-labels.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-08", dateLabel: "Oct 8, 2026",
+          desc: "Only match and not-match become labels; skips and no-response do not. When judgements on the same candidate disagree, the last one within a session wins and sessions vote, with the winning share kept as a weight. Simulated corrections produced no conflicts. Korean only.",
+          desc_ko: "\"맞다\"와 \"아니다\"만 라벨이 됩니다. 건너뛰기와 무반응은 라벨을 만들지 않습니다. 같은 후보에 판단이 엇갈리면 세션 안에서는 고친 판단을, 세션 사이에서는 다수결을 씁니다. 모의 교정에서는 충돌이 없었습니다.",
+          tags: ["Product Retrieval Studio", "Method", "Design"]
+        },
+        {
           title: "Product Retrieval 03. Fixing the order to collect 3,000 correction labels before running",
           title_ko: "상품 검색 03. 교정 라벨 3,000개를 모을 순서를 미리 정했습니다",
           url: "writing/product-retrieval-03-preregistration.ko.html",
