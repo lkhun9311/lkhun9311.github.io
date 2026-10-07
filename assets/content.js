@@ -196,6 +196,16 @@
       },
       items: [
         {
+          title: "Product Retrieval 03. Fixing the order to collect 3,000 correction labels before running",
+          title_ko: "상품 검색 03. 교정 라벨 3,000개를 모을 순서를 미리 정했습니다",
+          url: "writing/product-retrieval-03-preregistration.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-07", dateLabel: "Oct 7, 2026",
+          desc: "Before the experiment, a contract fixed how candidates are picked for labels (alternating across three rank bands), nine measurement points from 100 to 3,000, and the target of validation R@5 0.887. Same seed, same labels and same answers. Korean only.",
+          desc_ko: "실험 전에 계약으로 라벨 고르는 방법, 측정 지점, 성공 기준을 고정했습니다. 후보는 순위 구간 세 층에서 번갈아 고릅니다. 목표는 검증셋 R@5 0.887입니다. 같은 seed면 같은 후보와 같은 답이 나옵니다.",
+          tags: ["Product Retrieval Studio", "Method"]
+        },
+        {
           title: "Product Retrieval 02. The IDs of all 53,882 training queries contained the answer",
           title_ko: "상품 검색 02. 학습 질의 53,882개의 ID에 정답 상품 ID를 넣었습니다",
           url: "writing/product-retrieval-02-query-id-leak.ko.html",
