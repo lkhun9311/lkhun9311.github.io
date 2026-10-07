@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>상품 검색 07. 모의 교정의 20%가 틀리자 R@5가 0.857에서 0.299로 떨어졌습니다 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet"><link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/product-retrieval-07-noisy-corrections.ko.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/product-retrieval-07-noisy-corrections.ko.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" /><meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="상품 검색 07. 모의 교정의 20%가 틀리자 R@5가 0.857에서 0.299로 떨어졌습니다" />
+  <meta property="og:description" content="교정에 오류를 섞자 재정렬 모델이 기준선보다 나빠졌습니다. 배포 전에 막는 게이트를 설계했습니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/product-retrieval-07-noisy-corrections.ko.html" /><meta property="og:locale" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content="상품 검색 07. 모의 교정의 20%가 틀리자 R@5가 0.857에서 0.299로 떨어졌습니다" />
+  <meta name="twitter:description" content="모의 교정의 20%를 뒤집자 라벨 100개에서 R@5가 0.2985까지 떨어진 seed가 있었습니다. 정답이 드물어서 정답 라벨의 오염률은 계산상 80%입니다. 배포 전에 R@5, 정답 라벨 비율, R@1을 확인하는 게이트를 설계했습니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta name="description" content="모의 교정의 20%를 뒤집자 라벨 100개에서 R@5가 0.2985까지 떨어진 seed가 있었습니다. 정답이 드물어서 정답 라벨의 오염률은 계산상 80%입니다. 배포 전에 R@5, 정답 라벨 비율, R@1을 확인하는 게이트를 설계했습니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar"><div class="topbar-inner notranslate"><a class="site-name" href="../index.html#about">Kwanghun</a>
+    <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+      <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang" data-authored='{"ko":"product-retrieval-07-noisy-corrections.ko.html"}'>
+        <option value="ko" selected>한국어</option><option value="en">English</option><option value="ja">日本語</option><option value="zh-CN">简体中文</option><option value="zh-TW">繁體中文</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ru">Русский</option><option value="vi">Tiếng Việt</option><option value="id">Bahasa Indonesia</option><option value="hi">हिन्दी</option><option value="ar">العربية</option>
+      </select><div id="google_translate_element" aria-hidden="true"></div>
+      <a href="../index.html#about">About</a><a href="../index.html#news">News</a><a href="../index.html#projects">Projects</a><a href="../index.html#writing" class="active">Writing</a><a href="../index.html#notes">Notes</a><a href="../index.html#cv">CV</a>
+    </nav>
+  </div></div>
+  <div class="container reading"><main>
+    <div class="hero-top">
+      <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
+      <div class="article-meta"><span class="source-tag side notranslate">개인 프로젝트</span><a class="project-tag notranslate" href="../writing/index.html?tag=Product%20Retrieval%20Studio">#Product Retrieval Studio</a></div>
+    </div>
+    <section class="page-hero"><h1>상품 검색 07. 모의 교정의 20%가 틀리자 R@5가 0.857에서 0.299로 떨어졌습니다</h1><p class="article-date">2026년 10월</p></section>
+    <aside class="article-aside" data-aside="writing" data-slug="product-retrieval-07-noisy-corrections"></aside>
+    <nav class="article-toc" aria-label="목차"><p class="toc-label">목차</p><ul>
+      <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+      <li><a href="#결과">오류 비율별 결과</a></li>
+      <li><a href="#가짜-정답">정답 라벨 중 가짜 정답의 비율</a></li>
+      <li><a href="#게이트">배포 전에 새 모델을 평가합니다</a></li>
+      <li><a href="#주장하지-않는-것">이 글이 주장하지 않는 것</a></li>
+      <li><a href="#마치며">마치며</a></li>
+    </ul></nav>
+    <article class="article-body">
+      <p>06편의 학습 곡선을 재면서 판정에 쓰지 않는 보조 조건으로 교정에 오류를 섞어 봤습니다. 시뮬레이터 답의 10%나 20%를 뒤집는 조건입니다.</p>
+
+      <p>오류 20%, 라벨 100개에서 한 <code>seed</code>의 R@5가 0.2985까지 떨어졌습니다. 기준선은 0.857입니다. 이 실험에서는 교정으로 학습한 모델의 검색 성능이 기준선보다 낮아졌습니다.</p>
+
+      <p>이 글의 수치는 개발 검증셋에서 모의 교정으로 얻었습니다. 뒤집기는 무작위이고 사람의 실수는 무작위가 아닐 수 있습니다.</p>
+
+      <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
+      <ul class="callout">
+        <li>사용자 피드백으로 모델을 자동 재학습하는 파이프라인을 만드는 분</li>
+        <li>라벨 노이즈가 모델에 주는 영향을 숫자로 보고 싶은 분</li>
+        <li>새 모델을 배포하기 전에 무엇을 확인해야 할지 정하는 분</li>
+      </ul>
+
+      <h2 id="결과">오류 비율별 결과<a class="anchor" href="#결과" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>재정렬 모델 v2를 사용했고 라벨은 층화 무작위 선택으로 골랐습니다. 기준선 R@5는 0.8571입니다.</p>
+
+      <div class="table-scroll"><div class="table-scroll-hint">가로로 넘겨 표 전체를 볼 수 있습니다.</div><div class="table-scroll-viewport">
+        <table><thead><tr><th>오류 비율</th><th>라벨 100 (seed 0 / 1 / 2)</th><th>라벨 3,000 (seed 0 / 1 / 2)</th></tr></thead><tbody>
+          <tr><td>0</td><td>0.8533 / 0.8449 / 0.8563</td><td>0.8687 / 0.8684 / 0.8623</td></tr>
+          <tr><td>0.1</td><td>0.8348 / 0.8455 / 0.7954</td><td>0.8542 / 0.8580 / 0.8578</td></tr>
+          <tr><td>0.2</td><td>0.6295 / 0.8393 / 0.2985</td><td>0.8246 / 0.8514 / 0.8572</td></tr>
+        </tbody></table>
+      </div></div>
+
+      <figure class="diagram">
+        <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+          <svg viewBox="0 0 720 260" role="img" aria-labelledby="nz-t nz-d" xmlns="http://www.w3.org/2000/svg">
+            <title id="nz-t">오류 0.2에서 seed별 R@5</title>
+            <desc id="nz-d">오류 0.2에서 seed 2는 라벨 100에서 0.2985, 200에서 0.6793이었다가 300부터 0.85 근처로 돌아옵니다. seed 0은 100에서 0.6295였고 1,500에서 0.7941, 3,000에서 0.8246으로 다시 떨어집니다. seed 1은 0.84에서 0.86 사이입니다.</desc>
+            <g font-family="Inter, sans-serif" font-size="12" fill="#444">
+              <line x1="90" y1="40" x2="90" y2="230" stroke="#ccc"/><line x1="90" y1="230" x2="620" y2="230" stroke="#ccc"/>
+              <text x="80" y="220.2" text-anchor="end" fill="#777">0.3</text>
+              <text x="80" y="164.8" text-anchor="end" fill="#777">0.5</text>
+              <text x="80" y="109.4" text-anchor="end" fill="#777">0.7</text>
+              <text x="80" y="54.0" text-anchor="end" fill="#777">0.9</text>
+              <line x1="90" y1="61.9" x2="620" y2="61.9" stroke="#999" stroke-dasharray="4 4"/><text x="626" y="65.9" fill="#777" font-size="11">기준선 0.857</text>
+              <polyline points="110,124.9 170,71.0 230,64.6 290,63.8 350,64.9 410,62.1 470,79.3 530,68.1 590,70.9" fill="none" stroke="#d62976" stroke-width="2"/>
+              <circle cx="110" cy="124.9" r="3" fill="#d62976"/><circle cx="170" cy="71.0" r="3" fill="#d62976"/><circle cx="230" cy="64.6" r="3" fill="#d62976"/><circle cx="290" cy="63.8" r="3" fill="#d62976"/><circle cx="350" cy="64.9" r="3" fill="#d62976"/><circle cx="410" cy="62.1" r="3" fill="#d62976"/><circle cx="470" cy="79.3" r="3" fill="#d62976"/><circle cx="530" cy="68.1" r="3" fill="#d62976"/><circle cx="590" cy="70.9" r="3" fill="#d62976"/>
+              <polyline points="110,66.8 170,62.9 230,63.9 290,63.6 350,63.4 410,62.8 470,61.8 530,62.4 590,63.5" fill="none" stroke="#8f97e6" stroke-width="2"/>
+              <circle cx="110" cy="66.8" r="3" fill="#8f97e6"/><circle cx="170" cy="62.9" r="3" fill="#8f97e6"/><circle cx="230" cy="63.9" r="3" fill="#8f97e6"/><circle cx="290" cy="63.6" r="3" fill="#8f97e6"/><circle cx="350" cy="63.4" r="3" fill="#8f97e6"/><circle cx="410" cy="62.8" r="3" fill="#8f97e6"/><circle cx="470" cy="61.8" r="3" fill="#8f97e6"/><circle cx="530" cy="62.4" r="3" fill="#8f97e6"/><circle cx="590" cy="63.5" r="3" fill="#8f97e6"/>
+              <polyline points="110,216.6 170,111.1 230,61.8 290,62.1 350,62.5 410,62.3 470,62.3 530,62.5 590,61.9" fill="none" stroke="#4f5bd5" stroke-width="2"/>
+              <circle cx="110" cy="216.6" r="3" fill="#4f5bd5"/><circle cx="170" cy="111.1" r="3" fill="#4f5bd5"/><circle cx="230" cy="61.8" r="3" fill="#4f5bd5"/><circle cx="290" cy="62.1" r="3" fill="#4f5bd5"/><circle cx="350" cy="62.5" r="3" fill="#4f5bd5"/><circle cx="410" cy="62.3" r="3" fill="#4f5bd5"/><circle cx="470" cy="62.3" r="3" fill="#4f5bd5"/><circle cx="530" cy="62.5" r="3" fill="#4f5bd5"/><circle cx="590" cy="61.9" r="3" fill="#4f5bd5"/>
+              <text x="118" y="220.6" fill="#4f5bd5" font-weight="700">seed 2 · 0.2985</text>
+              <text x="118" y="128.9" fill="#d62976" font-weight="700">seed 0 · 0.6295</text>
+              <text x="470" y="97.3" text-anchor="middle" fill="#d62976">0.7941</text>
+              <g font-size="11"><rect x="440" y="150" width="10" height="10" fill="#d62976"/><text x="456" y="159">seed 0</text><rect x="510" y="150" width="10" height="10" fill="#8f97e6"/><text x="526" y="159">seed 1</text><rect x="580" y="150" width="10" height="10" fill="#4f5bd5"/><text x="596" y="159">seed 2</text></g>
+              <g text-anchor="middle" fill="#777" font-size="11"><text x="110" y="248">100</text><text x="170" y="248">200</text><text x="230" y="248">300</text><text x="290" y="248">500</text><text x="350" y="248">700</text><text x="410" y="248">1,000</text><text x="470" y="248">1,500</text><text x="530" y="248">2,000</text><text x="590" y="248">3,000</text></g>
+            </g>
+          </svg>
+        </div>
+        <figcaption>오류 0.2 조건입니다. 가로축은 측정 지점 순서이고 간격은 라벨 수에 비례하지 않습니다.</figcaption>
+      </figure>
+
+      <ul>
+        <li>오류 0.2, 라벨 100개에서 <code>seed</code> 2는 R@5 0.2985, R@1 0.0782까지 떨어졌습니다. 라벨 200개에서도 0.6793이었습니다.</li>
+        <li><code>seed</code> 1과 2는 라벨 300개부터 0.85 근처로 돌아왔습니다. <code>seed</code> 0은 1,500개에서 0.7941, 3,000개에서 0.8246으로 다시 떨어졌습니다.</li>
+        <li>라벨 3,000개에서 오류 0.2의 세 <code>seed</code> 평균은 0.8444로 기준선보다 낮습니다. 오류 0.1은 0.8567로 기준선 수준입니다. 오류가 없을 때 3,000개에서 보이던 개선(평균 0.8664)은 오류 10% 조건에서 나타나지 않았습니다.</li>
+      </ul>
+
+      <h2 id="가짜-정답">정답 라벨 중 가짜 정답의 비율<a class="anchor" href="#가짜-정답" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>답을 뒤집는 확률은 정답과 오답에 똑같이 적용됩니다. 그런데 라벨의 대부분은 오답입니다. 오류가 없을 때 라벨 100개 중 정답은 3, 5, 6개였습니다. 오류 0.2에서는 정답 라벨이 20, 21, 19개로 늘었습니다.</p>
+
+      <figure class="diagram">
+        <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="fk-t fk-d" xmlns="http://www.w3.org/2000/svg">
+            <title id="fk-t">라벨 100개에서 정답 라벨의 구성</title>
+            <desc id="fk-d">오류가 없으면 정답 라벨은 3에서 6개입니다. 오류 0.2에서는 관측한 정답 라벨이 19에서 21개이고 계산상 진짜 정답 약 4개와 뒤집혀 생긴 가짜 정답 약 19개로 이루어집니다.</desc>
+            <g font-family="Inter, sans-serif" font-size="12" fill="#444">
+              <text x="150" y="58" text-anchor="end">오류 0</text>
+              <rect x="170" y="40" width="60" height="28" rx="4" fill="#4f5bd5"/><text x="240" y="59">정답 라벨 3–6개 (관측)</text>
+              <text x="150" y="118" text-anchor="end">오류 0.2</text>
+              <rect x="170" y="100" width="64" height="28" rx="4" fill="#4f5bd5"/>
+              <rect x="234" y="100" width="304" height="28" rx="4" fill="#d62976"/>
+              <text x="202" y="119" text-anchor="middle" fill="#fff" font-weight="700">약 4</text>
+              <text x="386" y="119" text-anchor="middle" fill="#fff" font-weight="700">가짜 약 19</text>
+              <text x="548" y="119">관측 19–21개</text>
+              <text x="170" y="160" fill="#777" font-size="11">계산: 진짜 약 5개 × 0.8 ≈ 4 · 오답 약 95개 × 0.2 ≈ 19</text>
+            </g>
+          </svg>
+        </div>
+        <figcaption>분홍색은 오답이 뒤집혀 생긴 가짜 정답의 기댓값입니다. 관측값은 정답 라벨의 총수만 셌습니다.</figcaption>
+      </figure>
+
+      <p>늘어난 정답 라벨은 계산상 대부분 가짜 정답입니다. 오답 약 95개의 20%를 정답으로 뒤집으면 약 19개가 생깁니다. 진짜 정답 약 5개 중에는 약 4개만 남습니다. 이 계산으로 보면 정답 라벨의 약 80%가 가짜입니다.</p>
+
+      <p>라벨 3,000개에서도 같은 계산으로 오류 0.2일 때 정답 라벨의 약 80%, 오류 0.1일 때 약 67%가 가짜입니다. 계산한 정답 라벨 수는 관측한 정답 라벨 수 642–728개, 402–462개와 맞습니다.</p>
+
+      <p>정답이 드물기 때문에 뒤집는 비율은 20%여도 정답 라벨의 오염률은 계산상 80%가 됩니다. 실험 계약에도 「대칭으로 뒤집어도 클래스 불균형 때문에 관측한 정답 라벨의 오염률은 p와 다르다」고 적어 두었습니다. 라벨이 적을 때 가짜 정답 라벨 때문에 모델이 다른 후보를 1위로 올렸는지는 확인하지 않았습니다.</p>
+
+      <h2 id="게이트">배포 전에 새 모델을 평가합니다<a class="anchor" href="#게이트" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>설계 문서(D20)에는 새 모델을 지금 모델과 같은 평가셋으로 비교하는 게이트가 있습니다. 성능이 낮아지면 게이트가 배포를 막도록 설계했습니다. 아직 구현하지 않았습니다.</p>
+
+      <figure class="diagram">
+        <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="gt-t gt-d" xmlns="http://www.w3.org/2000/svg">
+            <title id="gt-t">교정에서 배포까지의 흐름과 게이트</title>
+            <desc id="gt-d">교정이 라벨이 되고 라벨로 새 모델을 학습합니다. 게이트가 R@5, 정답 라벨 비율, R@1을 확인해 통과하면 배포하고 막히면 지금 모델을 유지합니다.</desc>
+            <defs><marker id="gt-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#999"/></marker></defs>
+            <g font-family="Inter, sans-serif" font-size="12" fill="#444" text-anchor="middle">
+              <rect x="20" y="70" width="90" height="44" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="65" y="97">교정</text>
+              <rect x="140" y="70" width="90" height="44" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="185" y="97">라벨</text>
+              <rect x="260" y="70" width="90" height="44" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="305" y="97">학습</text>
+              <rect x="380" y="40" width="160" height="104" rx="10" fill="#fdf0f5" stroke="#d62976" stroke-width="1.8"/>
+              <text x="460" y="62" fill="#d62976" font-weight="700">게이트 (설계만 함)</text>
+              <text x="460" y="86">R@5 차이와 구간</text><text x="460" y="106">정답 라벨 비율</text><text x="460" y="126">R@1</text>
+              <rect x="590" y="30" width="110" height="40" rx="10" fill="#f4f5ff" stroke="#4f5bd5" stroke-width="1.5"/><text x="645" y="55" fill="#4f5bd5" font-weight="700">배포</text>
+              <rect x="590" y="116" width="110" height="40" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="645" y="141">지금 모델 유지</text>
+              <path d="M114 92 H136" stroke="#999" stroke-width="1.5" marker-end="url(#gt-a)"/>
+              <path d="M234 92 H256" stroke="#999" stroke-width="1.5" marker-end="url(#gt-a)"/>
+              <path d="M354 92 H376" stroke="#999" stroke-width="1.5" marker-end="url(#gt-a)"/>
+              <path d="M544 70 L586 52" stroke="#999" stroke-width="1.5" marker-end="url(#gt-a)"/><text x="562" y="52" font-size="11" fill="#777">통과</text>
+              <path d="M544 114 L586 134" stroke="#d62976" stroke-width="1.5" marker-end="url(#gt-a)"/><text x="562" y="140" font-size="11" fill="#d62976">막음</text>
+            </g>
+          </svg>
+        </div>
+        <figcaption>게이트는 설계 문서에만 있습니다. 세 항목 중 하나라도 나빠지면 새 모델을 배포하지 않습니다.</figcaption>
+      </figure>
+
+      <p>게이트에서 확인할 항목은 다음과 같습니다.</p>
+      <ul>
+        <li>새 모델이 지금 모델보다 나쁘지 않은지. 같은 평가셋에서 R@5의 차이와 구간을 봅니다. 오류 0.2, 라벨 100개의 <code>seed</code> 2처럼 기준선보다 낮은 결과를 배포하지 않도록 합니다.</li>
+        <li>정답 라벨이 이상하게 늘지 않았는지. 정답 비율이 평소의 몇 배가 되면 라벨 오염을 의심합니다. 오류 0.2에서 라벨 100개 중 정답 라벨이 20개였던 경우가 여기에 해당합니다.</li>
+        <li>1위 정확도가 떨어지지 않았는지. R@1도 확인합니다. 오류 0.1, 라벨 100개의 <code>seed</code> 1은 R@5가 0.8455로 기준선(0.8571) 근처였습니다. 그런데 R@1은 0.5821로 기준선(0.6966)보다 0.11 낮았습니다. R@5만 보면 이런 모델을 놓칩니다.</li>
+      </ul>
+
+      <h2 id="주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
+      <ul>
+        <li>사람의 실수율이 10%나 20%라는 것. 실제 교정의 오류율은 재지 않았습니다.</li>
+        <li>사람의 실수가 무작위라는 것. 비슷한 상품을 같은 상품으로 누르는 식의 치우친 실수는 다른 결과를 낼 수 있습니다.</li>
+        <li>게이트가 이 문제를 모두 막는다는 것. 게이트는 설계만 했고 구현하지 않았습니다.</li>
+        <li>오염률 80%가 측정값이라는 것. 뒤집기 확률과 라벨 수로 계산한 기댓값입니다. 관측한 정답 라벨 수와 맞는지만 확인했습니다.</li>
+      </ul>
+
+      <div class="wrapup">
+        <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>교정의 20%를 뒤집자 라벨 100개에서 R@5가 0.2985까지 떨어진 <code>seed</code>가 있었습니다. 라벨 3,000개에서도 오류 0.2의 평균은 기준선보다 낮았습니다.</p>
+        <p>정답이 드물어서 뒤집기 20%가 정답 라벨에서는 계산상 80%의 오염이 됩니다. 그래서 새 모델은 R@5, 정답 라벨 비율, R@1을 확인하는 게이트를 거쳐 배포하도록 설계했습니다.</p>
+        <p>08편은 판단을 "맞다/아니다" 두 단계 대신 "일치/유사/아님" 세 단계로 받는 안을 검토합니다.</p>
+        <p>읽어 주셔서 감사합니다.</p>
+      </div>
+    </article>
+  </main>
+  <footer class="notranslate"><div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div><div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div></footer>
+  </div>
+  <script>window.CONTENT_BASE = "../";</script><script src="../assets/i18n.js?v=e0fa0917be"></script><script src="../assets/content.js?v=e1e5abf5d0"></script><script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script><script defer src="../assets/highlight.js?v=d4af83b541"></script><script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>(function(){var el=document.querySelector(".article-aside");if(el&&window.renderArticleAside){renderArticleAside(el,el.dataset.aside,el.dataset.slug);}})();</script>
+</body>
+</html>
