@@ -189,12 +189,22 @@
       tagGroups: {
         /* 프로젝트를 맨 위에 둔다 — 「어느 시스템 이야기인가」가 독자의 첫 질문이다.
            글 머리의 #태그 버튼이 여기로 걸러 들어온다. */
-        "Project": ["IaaS Backend", "GPUaaS Control Plane", "Social Polling Platform"],
+        "Project": ["IaaS Backend", "GPUaaS Control Plane", "Social Polling Platform", "Product Retrieval Studio"],
         "Area": ["GPU", "Kubernetes", "Backend", "Postgres", "IaaS", "Control Plane"],
         "Perspective": ["Method", "Observability", "Reliability", "Performance",
                 "Security", "Privacy", "Cost", "Operations", "Migration"]
       },
       items: [
+        {
+          title: "Product Retrieval 01. If 98% of answers are already in the top 100, what should change",
+          title_ko: "상품 검색 01. 정답의 98%가 이미 후보 100개 안에 있다면 무엇을 고쳐야 할까",
+          url: "writing/product-retrieval-01-reorder-not-retrain.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-07", dateLabel: "Oct 7, 2026",
+          desc: "Changing the embedding model means re-embedding the whole gallery. On 3,243 validation products, product-level R@100 was 98.1% and R@5 was 85.7%, so I fixed the embedding and decided to change only the order of candidates. The code is split into three layers to match. Korean only.",
+          desc_ko: "임베딩 모델을 바꾸면 갤러리 전체를 다시 임베딩해야 합니다. 검증셋 상품 3,243개에서 상품 단위 R@100은 98.1%, R@5는 85.7%였습니다. 임베딩은 고정한 채 후보의 순서만 고치기로 했습니다. 그 결정에 맞춰 코드를 세 층으로 나눈 방식도 다룹니다.",
+          tags: ["Product Retrieval Studio", "Method", "Design"]
+        },
         {
           title: "Instance HA ⑧: Recovery Succeeded and It Still Was Not Over",
           title_ko: "Instance HA ⑧: 복구가 성공해도 끝난 것은 아니었습니다",
