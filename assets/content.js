@@ -196,6 +196,16 @@
       },
       items: [
         {
+          title: "Product Retrieval 08. Graded relevance labels are not adopted for now",
+          title_ko: "상품 검색 08. 세 단계 판단은 지금 적용하지 않습니다",
+          url: "writing/product-retrieval-08-graded-labels.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-08", dateLabel: "Oct 8, 2026",
+          desc: "Industry datasets collect graded relevance, but people disagree at the boundaries. Simulated corrections cannot produce a similar label and the preregistered target is same-product R@5, so M1 keeps two levels. A 200-pair pilot and its pass criteria are fixed in advance. Korean only.",
+          desc_ko: "업계는 판단을 여러 단계로 받지만 경계에서 의견이 갈립니다. 모의 교정은 유사를 만들 수 없고 사전등록 기준과도 맞지 않아 M1은 두 단계로 두었습니다. 200쌍 시험과 통과 기준을 먼저 정했습니다.",
+          tags: ["Product Retrieval Studio", "Method", "Design"]
+        },
+        {
           title: "Product Retrieval 07. With 20% of simulated corrections wrong, R@5 fell from 0.857 to 0.299",
           title_ko: "상품 검색 07. 모의 교정의 20%가 틀리자 R@5가 0.857에서 0.299로 떨어졌습니다",
           url: "writing/product-retrieval-07-noisy-corrections.ko.html",
