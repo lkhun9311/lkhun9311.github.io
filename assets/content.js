@@ -196,6 +196,16 @@
       },
       items: [
         {
+          title: "Product Retrieval 05. A reranker stuck at R@5 0.858 even with 100,000 labels",
+          title_ko: "상품 검색 05. 라벨 10만 개로도 R@5가 0.858에 머문 재정렬 모델",
+          url: "writing/product-retrieval-05-reranker-features.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-08", dateLabel: "Oct 8, 2026",
+          desc: "Rerankers fed score features and image statistics stayed at R@5 0.858 even with 33 times the label budget, because every feature came from the cosine similarity the search had already used. Feeding the vector components directly (v2) was the first model that improved as labels grew. Korean only.",
+          desc_ko: "점수와 이미지 통계를 넣은 재정렬 모델은 라벨을 예산의 33배로 늘려도 R@5가 0.858에 머물렀습니다. 특징이 모두 검색이 이미 쓴 코사인 유사도에서 나왔기 때문입니다. 벡터 성분을 직접 넣은 v2에서 처음으로 라벨이 늘수록 R@5가 올랐습니다.",
+          tags: ["Product Retrieval Studio", "Method", "Design"]
+        },
+        {
           title: "Product Retrieval 04. Candidates nobody clicked are not negative labels",
           title_ko: "상품 검색 04. 누르지 않은 후보는 오답 라벨로 쓰지 않습니다",
           url: "writing/product-retrieval-04-event-labels.ko.html",
