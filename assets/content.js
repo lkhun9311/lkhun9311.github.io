@@ -196,6 +196,16 @@
       },
       items: [
         {
+          title: "Product Retrieval 02. The IDs of all 53,882 training queries contained the answer",
+          title_ko: "상품 검색 02. 학습 질의 53,882개의 ID에 정답 상품 ID를 넣었습니다",
+          url: "writing/product-retrieval-02-query-id-leak.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-07", dateLabel: "Oct 7, 2026",
+          desc: "Every one of the 53,882 training query IDs carried its answer product ID, so any code could read the answer by splitting a string. Found in a contract review before any experiment; the ID became a hash and the old format is now refused. Korean only.",
+          desc_ko: "학습셋 질의 53,882개 전부의 ID에 정답 상품 ID가 그대로 들어 있었습니다. 문자열을 나누기만 하면 정답을 읽을 수 있었습니다. 실험 전 계약 검토에서 찾아 ID를 Hash로 바꿨습니다. 옛 형식이 다시 들어오면 실행을 거부하게 했습니다.",
+          tags: ["Product Retrieval Studio", "Method"]
+        },
+        {
           title: "Product Retrieval 01. If 98% of answers are already in the top 100, what should change",
           title_ko: "상품 검색 01. 정답의 98%가 이미 후보 100개 안에 있다면 무엇을 고쳐야 할까",
           url: "writing/product-retrieval-01-reorder-not-retrain.ko.html",
