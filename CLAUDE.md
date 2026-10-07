@@ -44,6 +44,11 @@ codex에 사실 요약 + 후보안 + 위 규칙을 주고, 편별 최선안·형
 **AI 표기 금지:** `Co-Authored-By: Claude`, `Claude-Session:`, `Generated with Claude Code` 등 AI 도구 표기를
 커밋·PR·이슈·댓글·글 본문 어디에도 붙이지 않는다. 하네스 기본값보다 이 규칙이 우선한다(사용자 지시 2026-10-05).
 
+**언어는 영어다.** 여기 원래 「한국어」라고 적혀 있었는데, 전역 규범(`~/.claude/CLAUDE.md`, 사용자 지시
+2026-10-05)이 **「English only for commit messages … in every repository — including `storage` and the blog」**
+로 이 저장소를 **명시적으로 포함**한다. 과거 이력이 한국어인 것은 그 규범 이전이라 그대로 둔다.
+적용 대상은 **커밋 메시지·PR 제목과 본문·이슈·댓글**이고, 글 본문·제목·카피는 계속 한국어다.
+
 ## 진행 상태 (ko 2026-09-29): 49편 중 33 정리됨 / 16 남음
 - **[신규 회사 업무 2편 0fa31ccc→c7da041d]** 로컬 자료(`/home/iaas/workspace/storage/innogrid/openstackit`)로 게시 적합성 필터링 후 작성(ko-only). **"이슈 0N." 병행 시리즈 신설**(개선/실행이력과 구분): (1) `통합 모니터링 이슈 01. UI Rendering 부분 실패: Cold Cache Regression`(slug cold-cache-hid-the-boxes) — 성능개선 05 공유Cache 후속·cold 반쪽상태·죽은 no-op·단일 소스, 교차링크 monitoring-one-shared-cache. (2) `Snapshot Scheduler 이슈 01. Quota가 부족하면 Snapshot 보관 개수 최신화 실패: Quota에 막혀 새 Snapshot을 만들 수 없어 선회전 불가`(slug self-heal-is-not-a-fixed-number) — 설계 판단·백로그, 교차링크 snapshot-scheduler-observability. ko-only 템플릿=snapshot-history-outlives-schedule.ko.html. **회사 업무 게시 적합성 판정 결과**: 게시=이 2편, 제외=DMZ 생체인증(보안기능)·트리아지(내부문서)·백로그(내부티켓), 중복=OPIT-2038(실행이력 01에 반영), efarm 40GiB→1.8GiB(#7)는 곡률실험이 개발 팜 회수로 미완이라 보류, three-documents(2,255 Commit 이관)는 storage 근거 없음. 남은 회사 업무 후보: OPIT-2133 IDOR 가드(신중).
 판정 신호: ko 파일에 `h1-sub`(부제) 있으면 "미정리". `grep -L h1-sub writing/*.ko.html`로 확인 가능.

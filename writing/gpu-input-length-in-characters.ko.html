@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GPUaaS 플랫폼 입력 길이: 1자를 보내도 30토큰이었습니다 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/gpu-input-length-in-characters.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/gpu-input-length-in-characters.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/gpu-input-length-in-characters.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/gpu-input-length-in-characters.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="GPUaaS 플랫폼 입력 길이: 1자를 보내도 30토큰이었습니다" />
+  <meta property="og:description" content="CRD는 입력 길이를 토큰으로 선언하고 트레이스 생성기는 문자 수를 받습니다. 둘을 잇는 ceil(chars/4) 어림은 200자에서 50토큰을 추정했는데 실측이 68이고 40,000자에서 10,000을 추정했는데 실측이 7,695여서 방향이 뒤집혔고 문자에서 토큰으로 가는 곡선은 단조도 아니었습니다. 서빙 이미지 안에서 재서 256토큰은 1,174자, 8,192토큰은 42,579자로 고정했습니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/gpu-input-length-in-characters.ko.html" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="GPUaaS 플랫폼 입력 길이: 1자를 보내도 30토큰이었습니다" />
+  <meta name="twitter:description" content="CRD는 입력 길이를 토큰으로 선언하고 트레이스 생성기는 문자 수를 받습니다. 둘을 잇는 ceil(chars/4) 어림은 200자에서 50토큰을 추정했는데 실측이 68이고 40,000자에서 10,000을 추정했는데 실측이 7,695여서 방향이 뒤집혔고 문자에서 토큰으로 가는 곡선은 단조도 아니었습니다. 서빙 이미지 안에서 재서 256토큰은 1,174자, 8,192토큰은 42,579자로 고정했습니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="CRD는 입력 길이를 토큰으로 선언하고 트레이스 생성기는 문자 수를 받습니다. 둘을 잇는 ceil(chars/4) 어림은 200자에서 50토큰을 추정했는데 실측이 68이고 40,000자에서 10,000을 추정했는데 실측이 7,695여서 방향이 뒤집혔고 문자에서 토큰으로 가는 곡선은 단조도 아니었습니다. 서빙 이미지 안에서 재서 256토큰은 1,174자, 8,192토큰은 42,579자로 고정했습니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"gpu-input-length-in-characters.html","ko":"gpu-input-length-in-characters.ko.html","ja":"gpu-input-length-in-characters.ja.html"}'>
+          <option value="ko" selected>한국어</option>
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html">목록</a>
+        <div class="article-meta"><span class="source-tag side notranslate">개인 프로젝트</span><a class="project-tag notranslate" href="../writing/index.html?tag=GPUaaS%20Control%20Plane">#GPUaaS Control Plane</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>GPUaaS 플랫폼 입력 길이: 1자를 보내도 30토큰이었습니다</h1>
+        <p class="article-date">2026년 10월</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="gpu-input-length-in-characters"></aside>
+        <nav class="article-toc" aria-label="목차">
+          <p class="toc-label">목차</p>
+          <ul>
+            <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+            <li><a href="#어떤-서비스인가요">어떤 서비스인가요?</a></li>
+            <li><a href="#처음엔">처음엔 어림으로 나눠 쓰면 되는 줄 알았습니다</a></li>
+            <li><a href="#결론부터">결론부터 말씀드리자면</a></li>
+            <li><a href="#30토큰">1자를 보내도 30토큰입니다</a></li>
+            <li><a href="#길이가-여럿">같은 토큰 수를 주는 길이가 여럿입니다</a></li>
+            <li><a href="#engine-안에서">tokenizer를 가져오는 것이 아니라 Engine 안에서 셌습니다</a></li>
+            <li><a href="#무엇에-대해">표가 무엇에 대해 측정됐는지도 같이 적습니다</a></li>
+            <li><a href="#동결했더니-비교가-끊겼습니다">동결했더니 이전 표와 비교가 끊겼습니다</a></li>
+            <li><a href="#잘못-읽었습니다">계측을 한 번 잘못 읽었습니다</a></li>
+            <li><a href="#주장하지-않는-것">이 글이 주장하지 않는 것</a></li>
+            <li><a href="#마치며">마치며</a></li>
+          </ul>
+        </nav>
+      <article class="article-body">
+
+        <p>GPU 한 장을 두 tenant가 나눠 쓸 때 앞 tenant의 꼬리 지연이 얼마나 나빠지는지 재는 실험이
+        있습니다. 그 실험을 Kubernetes CRD로 선언하게 만들었고 거기에는 프롬프트 길이를 토큰 수로
+        적습니다. <code>inputTokens: 256</code>처럼요.</p>
+
+        <p>그런데 부하를 만드는 Harness는 문자 수를 받습니다. <code>--premium-prompt-chars 200</code>처럼요.
+        둘을 잇는 것이 <code>ceil(chars/4)</code>, 대략 4자에 1토큰이라는 어림이었습니다. 그 어림을 실제
+        tokenizer로 재 봤더니 200자에서 50토큰을 추정했는데 실측은 68이었고 40,000자에서 10,000을 추정했는데 실측은 7,695였습니다. 방향이 반대로 바뀝니다.</p>
+
+        <p>그래서 「256토큰을 주는 문자 길이」를 역산할 수 없었고 재서 표로 만드는 것 말고는 길이
+        없었습니다. 재는 과정에서 두 가지가 나왔습니다. 1자를 보내도 30토큰이 나오고 글자를 늘렸는데
+        토큰이 줄어드는 자리가 한 구간에 21곳 있었습니다.</p>
+
+        <h2 id="예상-독자">이 글의 예상 독자</h2>
+
+        <ul>
+          <li>LLM Serving 부하를 프롬프트 길이로 규정해 보신 분</li>
+          <li>Kubernetes CRD에 측정 프로토콜을 선언해 두고 그것을 실행기로 옮기려는 분</li>
+          <li>「대략 4자에 1토큰」이라는 어림을 코드에 넣어 두신 분</li>
+        </ul>
+        <h2 id="어떤-서비스인가요">어떤 서비스인가요?</h2>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 300" role="img" aria-labelledby="tok1-t tok1-d" class="figure-svg" xmlns="http://www.w3.org/2000/svg" font-family="system-ui, sans-serif">
+            <title id="tok1-t">선언 단위와 실행 단위가 다르다</title>
+            <desc id="tok1-d">CRD는 입력 길이를 토큰으로 선언하고 트레이스 생성기는 문자로 프롬프트를 만듭니다. 256토큰이 1174자로 해석되고 실제 토큰 수는 엔진이 셉니다.</desc>
+            <rect x="20" y="84" width="200" height="126" rx="6" fill="none" stroke="#6e7781" stroke-width="2"/>
+            <text x="120" y="110" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="bold">GpuSharingBenchmark</text>
+            <text x="120" y="130" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="bold">CRD</text>
+            <text x="120" y="158" font-size="14" fill="#6e7781" text-anchor="middle" font-weight="normal">선언 · 토큰 단위</text>
+            <text x="120" y="176" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="normal">inputTokens: 256</text>
+            <rect x="260" y="84" width="200" height="126" rx="6" fill="none" stroke="#6e7781" stroke-width="2"/>
+            <text x="360" y="110" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="bold">Trace Generator</text>
+            <text x="360" y="138" font-size="14" fill="#6e7781" text-anchor="middle" font-weight="normal">생성 · 문자 단위</text>
+            <text x="360" y="176" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="normal">--premium-prompt-chars</text>
+            <text x="360" y="198" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="bold">1174</text>
+            <rect x="500" y="84" width="200" height="126" rx="6" fill="none" stroke="#1f2328" stroke-width="2"/>
+            <text x="600" y="110" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="bold">vLLM Engine</text>
+            <text x="600" y="138" font-size="14" fill="#6e7781" text-anchor="middle" font-weight="normal">권위 · 토큰 단위</text>
+            <text x="600" y="176" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="normal">실제 토큰 수</text>
+            <line x1="226" y1="147" x2="252" y2="147" stroke="#cf222e" stroke-width="3"/>
+            <polygon points="256,147 244,141 244,153" fill="#cf222e"/>
+            <text x="240" y="128" font-size="18" fill="#cf222e" text-anchor="middle" font-weight="bold">?</text>
+            <text x="240" y="246" font-size="14" fill="#cf222e" text-anchor="middle" font-weight="normal">이 글의 주제</text>
+            <line x1="466" y1="147" x2="492" y2="147" stroke="#6e7781" stroke-width="3"/>
+            <polygon points="496,147 484,141 484,153" fill="#6e7781"/>
+            <text x="20" y="56" font-size="14" fill="#6e7781" text-anchor="start" font-weight="normal">선언에서 실행까지</text>
+            <text x="700" y="246" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">최종 권위는 엔진</text>
+          </svg>
+          <figcaption>CRD는 토큰으로 선언하고 생성기는 문자로 만듭니다. 그 사이를 잇는 화살표가 이 글의 주제입니다.</figcaption>
+        </figure>
+        <ul>
+          <li>CRD는 실험 프로토콜을 등록합니다. 한번 만들면 <code>spec</code>은 바뀌지 않습니다.</li>
+          <li>Trace Generator는 프롬프트를 문자 길이로 만듭니다. 코퍼스 하나를 잘라서 씁니다.</li>
+          <li>두 단위를 잇는 화살표가 이 글의 주제입니다.</li>
+        </ul>
+        <h2 id="처음엔">처음엔 어림으로 나눠 쓰면 되는 줄 알았습니다</h2>
+
+        <p><code>ceil(chars/4)</code>가 코드에 이미 있었습니다. Gateway가 입력 토큰 수를 추정할 때 쓰는
+        값입니다. 역으로 쓰면 <code>256 * 4 = 1024자</code>입니다. 그렇게 넘기면 될 것 같았습니다.</p>
+
+        <p>그 어림이 얼마나 맞는지는 이 저장소에 이미 측정돼 있었습니다.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 300" role="img" aria-labelledby="tok3-t tok3-d" class="figure-svg" xmlns="http://www.w3.org/2000/svg" font-family="system-ui, sans-serif">
+            <title id="tok3-t">추정 토큰 수와 실측 토큰 수의 비</title>
+            <desc id="tok3-d">세 프롬프트 길이에서 실측을 ceil(chars/4) 추정으로 나눈 값입니다. 짧은 프롬프트에서는 1보다 크고 긴 프롬프트에서는 1보다 작아 오차의 방향이 뒤집힙니다.</desc>
+            <line x1="92" y1="160" x2="680" y2="160" stroke="#1f2328" stroke-width="2" stroke-dasharray="6 4"/>
+            <text x="82" y="165" font-size="14" fill="#1f2328" text-anchor="end" font-weight="normal">1.0</text>
+            <line x1="92" y1="201" x2="680" y2="201" stroke="#d8dee4" stroke-width="1"/>
+            <text x="82" y="206" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">0.8</text>
+            <line x1="92" y1="119" x2="680" y2="119" stroke="#d8dee4" stroke-width="1"/>
+            <text x="82" y="124" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">1.2</text>
+            <line x1="92" y1="78" x2="680" y2="78" stroke="#d8dee4" stroke-width="1"/>
+            <text x="82" y="83" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">1.4</text>
+            <line x1="190" y1="160" x2="190" y2="87" stroke="#cf222e" stroke-width="3"/>
+            <circle cx="190" cy="87" r="7" fill="#cf222e"/>
+            <text x="190" y="71" font-size="14" fill="#cf222e" text-anchor="middle" font-weight="bold">1.360</text>
+            <text x="190" y="268" font-size="14" fill="#1f2328" text-anchor="middle" font-weight="normal">200자</text>
+            <text x="190" y="288" font-size="14" fill="#6e7781" text-anchor="middle" font-weight="normal">추정 50 · 실측 68</text>
+            <line x1="386" y1="160" x2="386" y2="206" stroke="#6e7781" stroke-width="3"/>
+            <circle cx="386" cy="206" r="7" fill="#ffffff" stroke="#6e7781" stroke-width="3"/>
+            <text x="386" y="232" font-size="14" fill="#6e7781" text-anchor="middle" font-weight="bold">0.774</text>
+            <text x="386" y="268" font-size="14" fill="#1f2328" text-anchor="middle" font-weight="normal">16,384자</text>
+            <text x="386" y="288" font-size="14" fill="#6e7781" text-anchor="middle" font-weight="normal">추정 4,096 · 실측 3,171</text>
+            <line x1="582" y1="160" x2="582" y2="207" stroke="#6e7781" stroke-width="3"/>
+            <circle cx="582" cy="207" r="7" fill="#ffffff" stroke="#6e7781" stroke-width="3"/>
+            <text x="582" y="233" font-size="14" fill="#6e7781" text-anchor="middle" font-weight="bold">0.769</text>
+            <text x="582" y="268" font-size="14" fill="#1f2328" text-anchor="middle" font-weight="normal">40,000자</text>
+            <text x="582" y="288" font-size="14" fill="#6e7781" text-anchor="middle" font-weight="normal">추정 10,000 · 실측 7,695</text>
+            <text x="92" y="30" font-size="14" fill="#6e7781" text-anchor="start" font-weight="normal">실측 ÷ 추정</text>
+            <text x="680" y="30" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">채운 원은 1 초과 · 빈 원은 1 미만</text>
+          </svg>
+          <figcaption>짧은 프롬프트에서는 추정이 적게 세고 긴 프롬프트에서는 많이 셉니다. 하나의 보정 계수로는 맞출 수 없습니다.</figcaption>
+        </figure>
+        <table>
+          <caption class="sr-only">세 프롬프트 길이에서 ceil(chars/4) 추정과 실측 토큰 수, 그리고 그 비.</caption>
+          <thead><tr><th scope="col">프롬프트 길이</th><th scope="col"><code>ceil(chars/4)</code> 추정</th><th scope="col">실측 토큰</th><th scope="col">실측 / 추정</th></tr></thead>
+          <tbody>
+            <tr><td>200자</td><td>50</td><td>68</td><td>1.360</td></tr>
+            <tr><td>16,384자</td><td>4,096</td><td>3,171</td><td>0.774</td></tr>
+            <tr><td>40,000자</td><td>10,000</td><td>7,695</td><td>0.769</td></tr>
+          </tbody>
+        </table>
+
+        <p>짧은 프롬프트에서는 추정이 적게 세고 긴 프롬프트에서는 많이 셉니다. <strong>하나의 보정 계수로
+        맞출 수 없습니다.</strong> 200자에서 1.36배로 맞추면 40,000자에서 1.8배 틀립니다.</p>
+        <h2 id="결론부터">결론부터 말씀드리자면</h2>
+
+        <p><strong>문자를 토큰으로 바꾸는 함수는 없습니다. 재서 표로 만들어야 하고 그 탐색은 이분 탐색이면
+        안 됩니다.</strong></p>
+
+        <table>
+          <caption class="sr-only">선언한 토큰 수와 측정으로 얻은 문자 길이, 그리고 같은 토큰 수를 주는 길이의 개수.</caption>
+          <thead><tr><th scope="col">선언한 토큰 수</th><th scope="col">재서 얻은 문자 길이</th><th scope="col">같은 값을 주는 길이 개수</th></tr></thead>
+          <tbody>
+            <tr><td>256</td><td>1,174자</td><td>8개</td></tr>
+            <tr><td>8,192</td><td>42,579자</td><td>3개</td></tr>
+          </tbody>
+        </table>
+
+        <p>그리고 세 구간에서 곡선이 단조 증가가 아닙니다.</p>
+
+        <table>
+          <caption class="sr-only">세 탐색 창의 문자 범위와 토큰 범위, 토큰 수가 감소한 횟수와 이웃한 길이가 같은 값을 준 횟수.</caption>
+          <thead><tr><th scope="col">탐색 창</th><th scope="col">문자 범위</th><th scope="col">토큰 범위</th><th scope="col">감소한 횟수</th><th scope="col">값이 같은 횟수</th></tr></thead>
+          <tbody>
+            <tr><td>짧은 프롬프트</td><td>1 ~ 242자</td><td>30 ~ 75</td><td>21</td><td>153</td></tr>
+            <tr><td>중간</td><td>218 ~ 518자</td><td>71 ~ 130</td><td>21</td><td>197</td></tr>
+            <tr><td>256토큰 근처</td><td>1,027 ~ 1,327자</td><td>227 ~ 283</td><td>30</td><td>181</td></tr>
+          </tbody>
+        </table>
+
+        <p>감소가 한 번이라도 있으면 <strong>이분 탐색은 존재하는 답을 넘어갑니다</strong>. 그래서 창을 좁히는
+        데만 어림을 쓰고 창 안은 전수로 훑었습니다.</p>
+        <h2 id="30토큰">1자를 보내도 30토큰입니다</h2>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 400" role="img" aria-labelledby="tok2-t tok2-d" class="figure-svg" xmlns="http://www.w3.org/2000/svg" font-family="system-ui, sans-serif">
+            <title id="tok2-t">짧은 프롬프트 구간의 문자 수 대 토큰 수</title>
+            <desc id="tok2-d">문자 1자에서 242자까지 한 자씩 늘려 잰 토큰 수입니다. 1자에서 이미 30토큰이고 문자가 늘었는데 토큰이 줄어든 자리가 21곳입니다.</desc>
+            <line x1="74" y1="344" x2="686" y2="344" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="349" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">30</text>
+            <line x1="74" y1="313" x2="686" y2="313" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="318" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">35</text>
+            <line x1="74" y1="282" x2="686" y2="282" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="287" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">40</text>
+            <line x1="74" y1="251" x2="686" y2="251" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="256" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">45</text>
+            <line x1="74" y1="220" x2="686" y2="220" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="225" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">50</text>
+            <line x1="74" y1="188" x2="686" y2="188" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="193" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">55</text>
+            <line x1="74" y1="157" x2="686" y2="157" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="162" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">60</text>
+            <line x1="74" y1="126" x2="686" y2="126" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="131" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">65</text>
+            <line x1="74" y1="95" x2="686" y2="95" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="100" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">70</text>
+            <line x1="74" y1="64" x2="686" y2="64" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="69" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">75</text>
+            <polyline points="74.0,344.0 76.5,337.8 79.1,337.8 81.6,337.8 84.2,337.8 86.7,337.8 89.2,337.8 91.8,331.6 94.3,331.6 96.9,337.8 99.4,337.8 101.9,331.6 104.5,331.6 107.0,331.6 109.6,331.6 112.1,331.6 114.6,325.3 117.2,325.3 119.7,325.3 122.2,325.3 124.8,319.1 127.3,325.3 129.9,325.3 132.4,319.1 134.9,319.1 137.5,319.1 140.0,319.1 142.6,319.1 145.1,312.9 147.6,312.9 150.2,312.9 152.7,306.7 155.3,306.7 157.8,306.7 160.3,306.7 162.9,306.7 165.4,300.4 168.0,306.7 170.5,300.4 173.0,300.4 175.6,300.4 178.1,300.4 180.7,294.2 183.2,294.2 185.7,300.4 188.3,294.2 190.8,294.2 193.4,294.2 195.9,294.2 198.4,288.0 201.0,288.0 203.5,288.0 206.0,288.0 208.6,281.8 211.1,281.8 213.7,281.8 216.2,281.8 218.7,281.8 221.3,281.8 223.8,275.6 226.4,275.6 228.9,281.8 231.4,281.8 234.0,275.6 236.5,275.6 239.1,275.6 241.6,275.6 244.1,269.3 246.7,269.3 249.2,263.1 251.8,269.3 254.3,275.6 256.8,269.3 259.4,263.1 261.9,263.1 264.5,263.1 267.0,256.9 269.5,256.9 272.1,256.9 274.6,256.9 277.2,250.7 279.7,250.7 282.2,250.7 284.8,244.4 287.3,250.7 289.9,244.4 292.4,244.4 294.9,244.4 297.5,244.4 300.0,244.4 302.5,244.4 305.1,238.2 307.6,238.2 310.2,244.4 312.7,238.2 315.2,238.2 317.8,238.2 320.3,238.2 322.9,232.0 325.4,232.0 327.9,232.0 330.5,232.0 333.0,225.8 335.6,225.8 338.1,232.0 340.6,225.8 343.2,225.8 345.7,225.8 348.3,225.8 350.8,225.8 353.3,219.6 355.9,219.6 358.4,225.8 361.0,219.6 363.5,219.6 366.0,219.6 368.6,219.6 371.1,213.3 373.7,213.3 376.2,219.6 378.7,219.6 381.3,213.3 383.8,207.1 386.3,207.1 388.9,207.1 391.4,207.1 394.0,200.9 396.5,200.9 399.0,200.9 401.6,200.9 404.1,194.7 406.7,200.9 409.2,194.7 411.7,194.7 414.3,194.7 416.8,188.4 419.4,188.4 421.9,188.4 424.4,188.4 427.0,182.2 429.5,188.4 432.1,182.2 434.6,182.2 437.1,182.2 439.7,182.2 442.2,182.2 444.8,176.0 447.3,176.0 449.8,176.0 452.4,176.0 454.9,176.0 457.5,176.0 460.0,169.8 462.5,169.8 465.1,169.8 467.6,163.6 470.1,163.6 472.7,163.6 475.2,157.3 477.8,157.3 480.3,157.3 482.8,163.6 485.4,163.6 487.9,157.3 490.5,157.3 493.0,157.3 495.5,157.3 498.1,151.1 500.6,151.1 503.2,144.9 505.7,157.3 508.2,151.1 510.8,144.9 513.3,144.9 515.9,144.9 518.4,144.9 520.9,138.7 523.5,138.7 526.0,138.7 528.6,138.7 531.1,132.4 533.6,132.4 536.2,132.4 538.7,132.4 541.3,132.4 543.8,132.4 546.3,126.2 548.9,126.2 551.4,126.2 554.0,120.0 556.5,120.0 559.0,120.0 561.6,120.0 564.1,113.8 566.6,113.8 569.2,113.8 571.7,113.8 574.3,107.6 576.8,113.8 579.3,107.6 581.9,107.6 584.4,107.6 587.0,101.3 589.5,101.3 592.0,101.3 594.6,101.3 597.1,95.1 599.7,95.1 602.2,95.1 604.7,88.9 607.3,95.1 609.8,88.9 612.4,88.9 614.9,88.9 617.4,88.9 620.0,88.9 622.5,82.7 625.1,88.9 627.6,82.7 630.1,82.7 632.7,82.7 635.2,82.7 637.8,82.7 640.3,82.7 642.8,76.4 645.4,76.4 647.9,76.4 650.4,82.7 653.0,76.4 655.5,76.4 658.1,70.2 660.6,70.2 663.1,70.2 665.7,70.2 668.2,70.2 670.8,70.2 673.3,64.0 675.8,70.2 678.4,64.0 680.9,64.0 683.5,64.0 686.0,64.0" fill="none" stroke="#1f2328" stroke-width="2"/>
+            <circle cx="96.9" cy="337.8" r="4.5" fill="#cf222e"/>
+            <circle cx="127.3" cy="325.3" r="4.5" fill="#cf222e"/>
+            <circle cx="168.0" cy="306.7" r="4.5" fill="#cf222e"/>
+            <circle cx="185.7" cy="300.4" r="4.5" fill="#cf222e"/>
+            <circle cx="228.9" cy="281.8" r="4.5" fill="#cf222e"/>
+            <circle cx="251.8" cy="269.3" r="4.5" fill="#cf222e"/>
+            <circle cx="254.3" cy="275.6" r="4.5" fill="#cf222e"/>
+            <circle cx="287.3" cy="250.7" r="4.5" fill="#cf222e"/>
+            <circle cx="310.2" cy="244.4" r="4.5" fill="#cf222e"/>
+            <circle cx="338.1" cy="232.0" r="4.5" fill="#cf222e"/>
+            <circle cx="358.4" cy="225.8" r="4.5" fill="#cf222e"/>
+            <circle cx="376.2" cy="219.6" r="4.5" fill="#cf222e"/>
+            <circle cx="406.7" cy="200.9" r="4.5" fill="#cf222e"/>
+            <circle cx="429.5" cy="188.4" r="4.5" fill="#cf222e"/>
+            <circle cx="482.8" cy="163.6" r="4.5" fill="#cf222e"/>
+            <circle cx="505.7" cy="157.3" r="4.5" fill="#cf222e"/>
+            <circle cx="576.8" cy="113.8" r="4.5" fill="#cf222e"/>
+            <circle cx="607.3" cy="95.1" r="4.5" fill="#cf222e"/>
+            <circle cx="625.1" cy="88.9" r="4.5" fill="#cf222e"/>
+            <circle cx="650.4" cy="82.7" r="4.5" fill="#cf222e"/>
+            <circle cx="675.8" cy="70.2" r="4.5" fill="#cf222e"/>
+            <text x="74" y="30" font-size="14" fill="#6e7781" text-anchor="start" font-weight="normal">토큰 수</text>
+            <text x="74" y="382" font-size="14" fill="#6e7781" text-anchor="start" font-weight="normal">문자 수 1 → 242</text>
+            <text x="686" y="382" font-size="14" fill="#cf222e" text-anchor="end" font-weight="normal">붉은 점 21곳 · 문자가 늘고 토큰이 줄어든 자리</text>
+            <line x1="96" y1="94" x2="78" y2="337" stroke="#6e7781" stroke-width="1"/>
+            <circle cx="74.0" cy="344.0" r="4" fill="#ffffff" stroke="#1f2328" stroke-width="2"/>
+            <text x="100" y="86" font-size="14" fill="#1f2328" text-anchor="start" font-weight="bold">1자에 30토큰</text>
+            <text x="686" y="52" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">242자에 75토큰</text>
+          </svg>
+          <figcaption>문자가 늘었는데 토큰이 줄어든 자리가 붉은 점입니다. 이 구간에서 21곳이었습니다.</figcaption>
+        </figure>
+        <table>
+          <caption class="sr-only">1자부터 10자까지의 문자 수와 그에 대응하는 토큰 수.</caption>
+          <thead><tr><th scope="col">문자</th><th scope="col">1</th><th scope="col">2</th><th scope="col">3</th><th scope="col">4</th><th scope="col">5</th><th scope="col">6</th><th scope="col">7</th><th scope="col">8</th><th scope="col">9</th><th scope="col">10</th></tr></thead>
+          <tbody>
+            <tr><td>토큰</td><td>30</td><td>31</td><td>31</td><td>31</td><td>31</td><td>31</td><td>31</td><td>32</td><td>32</td><td>31</td></tr>
+          </tbody>
+        </table>
+
+        <p>1자에 30토큰입니다. <strong>그 30은 프롬프트가 아니라 Chat Template입니다.</strong> Engine에 보내는
+        것은 프롬프트 문자열이 아니고 역할·구분자·생성 시작 표식이 감싼 요청 하나여서, 내용이 1자여도 그
+        껍데기가 30토큰을 씁니다.</p>
+
+        <p>그리고 9자에서 32였던 것이 <strong>10자에서 31로 줄어듭니다</strong>. 글자를 하나 늘렸는데 토큰이
+        하나 줄었습니다.</p>
+
+        <p>이유는 Byte Pair Encoding입니다. tokenizer는 자주 같이 나오는 글자 짝을 하나로 합치는데
+        문자열을 한 글자 더 길게 자르면 경계에서 합쳐지는 짝이 달라집니다. 앞에서 세 토큰으로 쪼개졌던
+        자리가 두 토큰으로 합쳐지면 뒤에 한 글자가 늘었어도 전체가 줄어듭니다.</p>
+
+        <p>같은 구간에서 이런 자리가 21곳이었습니다. <code>9자 32토큰 → 10자 31토큰</code>,
+        <code>21자 34 → 22자 33</code>, <code>37자 37 → 38자 36</code>, <code>44자 38 → 45자 37</code> 같은
+        식입니다.</p>
+        <h2 id="길이가-여럿">같은 토큰 수를 주는 길이가 여럿입니다</h2>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 360" role="img" aria-labelledby="tok4-t tok4-d" class="figure-svg" xmlns="http://www.w3.org/2000/svg" font-family="system-ui, sans-serif">
+            <title id="tok4-t">하나의 토큰 수를 주는 문자 길이의 개수</title>
+            <desc id="tok4-d">256토큰 근처 문자 길이 301개를 토큰 수별로 센 것입니다. 서로 다른 토큰 수가 57개이고 한 토큰 수당 평균 5.28개 길이가 같은 값을 줍니다.</desc>
+            <line x1="74" y1="302" x2="686" y2="302" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="307" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">0</text>
+            <line x1="74" y1="249" x2="686" y2="249" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="254" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">2</text>
+            <line x1="74" y1="195" x2="686" y2="195" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="200" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">4</text>
+            <line x1="74" y1="142" x2="686" y2="142" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="147" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">6</text>
+            <line x1="74" y1="89" x2="686" y2="89" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="94" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">8</text>
+            <rect x="74" y="115" width="9" height="187" fill="#6e7781"/>
+            <rect x="85" y="142" width="9" height="160" fill="#6e7781"/>
+            <rect x="95" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="106" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="117" y="115" width="9" height="187" fill="#6e7781"/>
+            <rect x="128" y="222" width="9" height="80" fill="#6e7781"/>
+            <rect x="138" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="149" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="160" y="169" width="9" height="133" fill="#6e7781"/>
+            <rect x="171" y="115" width="9" height="187" fill="#6e7781"/>
+            <rect x="181" y="115" width="9" height="187" fill="#6e7781"/>
+            <rect x="192" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="203" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="214" y="169" width="9" height="133" fill="#6e7781"/>
+            <rect x="224" y="115" width="9" height="187" fill="#6e7781"/>
+            <rect x="235" y="222" width="9" height="80" fill="#6e7781"/>
+            <rect x="246" y="89" width="9" height="213" fill="#6e7781"/>
+            <rect x="257" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="267" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="278" y="222" width="9" height="80" fill="#6e7781"/>
+            <rect x="289" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="299" y="222" width="9" height="80" fill="#6e7781"/>
+            <rect x="310" y="115" width="9" height="187" fill="#6e7781"/>
+            <rect x="321" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="332" y="222" width="9" height="80" fill="#6e7781"/>
+            <rect x="342" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="353" y="115" width="9" height="187" fill="#6e7781"/>
+            <rect x="364" y="62" width="9" height="240" fill="#6e7781"/>
+            <rect x="375" y="89" width="9" height="213" fill="#6e7781"/>
+            <rect x="385" y="89" width="9" height="213" fill="#cf222e"/>
+            <polygon points="391,81 385,69 397,69" fill="#cf222e"/>
+            <text x="391" y="61" font-size="14" fill="#cf222e" text-anchor="middle" font-weight="bold">256토큰 · 8개 길이</text>
+            <rect x="396" y="142" width="9" height="160" fill="#6e7781"/>
+            <rect x="407" y="142" width="9" height="160" fill="#6e7781"/>
+            <rect x="418" y="62" width="9" height="240" fill="#6e7781"/>
+            <rect x="428" y="115" width="9" height="187" fill="#6e7781"/>
+            <rect x="439" y="169" width="9" height="133" fill="#6e7781"/>
+            <rect x="450" y="62" width="9" height="240" fill="#6e7781"/>
+            <rect x="461" y="142" width="9" height="160" fill="#6e7781"/>
+            <rect x="471" y="169" width="9" height="133" fill="#6e7781"/>
+            <rect x="482" y="142" width="9" height="160" fill="#6e7781"/>
+            <rect x="493" y="249" width="9" height="53" fill="#6e7781"/>
+            <rect x="503" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="514" y="169" width="9" height="133" fill="#6e7781"/>
+            <rect x="525" y="142" width="9" height="160" fill="#6e7781"/>
+            <rect x="536" y="142" width="9" height="160" fill="#6e7781"/>
+            <rect x="546" y="222" width="9" height="80" fill="#6e7781"/>
+            <rect x="557" y="142" width="9" height="160" fill="#6e7781"/>
+            <rect x="568" y="249" width="9" height="53" fill="#6e7781"/>
+            <rect x="579" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="589" y="115" width="9" height="187" fill="#6e7781"/>
+            <rect x="600" y="169" width="9" height="133" fill="#6e7781"/>
+            <rect x="611" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="622" y="169" width="9" height="133" fill="#6e7781"/>
+            <rect x="632" y="142" width="9" height="160" fill="#6e7781"/>
+            <rect x="643" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="654" y="142" width="9" height="160" fill="#6e7781"/>
+            <rect x="665" y="142" width="9" height="160" fill="#6e7781"/>
+            <rect x="675" y="195" width="9" height="107" fill="#6e7781"/>
+            <text x="74" y="30" font-size="14" fill="#6e7781" text-anchor="start" font-weight="normal">같은 값을 주는 문자 길이의 개수</text>
+            <text x="74" y="342" font-size="14" fill="#6e7781" text-anchor="start" font-weight="normal">토큰 수 227 → 283</text>
+            <text x="686" y="342" font-size="14" fill="#cf222e" text-anchor="end" font-weight="normal">256토큰으로 고른 길이는 가장 작은 1174자</text>
+          </svg>
+          <figcaption>한 토큰 수를 여러 문자 길이가 함께 줍니다. 256토큰을 주는 길이는 여덟 개였습니다.</figcaption>
+        </figure>
+        <p>256토큰 근처를 301개 길이로 훑으니 서로 다른 토큰 수가 57개 나왔습니다. <strong>한 토큰 수당 평균
+        5.28개 길이가 같은 값을 줍니다.</strong> 가장 많이 겹치는 것은 9개였습니다.</p>
+
+        <p>256토큰을 주는 길이는 이렇습니다.</p>
+
+        <pre><code>1174  1175  1178  1179  1180  1181  1182  1185</code></pre>
+
+        <p>여덟 개 중 어느 것을 쓸지 정해야 합니다. 가장 작은 것으로 정했습니다. 같은 토큰 수라면 오가는
+        바이트가 가장 적고 그보다 더 들여다볼 근거가 필요 없는 하나뿐인 선택이기 때문입니다. 운영에서
+        이 선택이 하는 일은 하나 더 있습니다. 창을 넓혀 다시 재도 같은 규칙이 같은 값을 고르므로 표를
+        다시 만들 때 값이 흔들리지 않습니다.</p>
+
+        <p>그 규칙이 실제로 강제되는지는 일부러 깨뜨려 봤습니다. 기록된 값을 1175로 바꿨습니다. 1175도
+        목록에 있는 값이지만 가장 작은 것이 아니라서, <strong>대조 test와 계획 test 두 곳에서 빨간불이
+        났습니다.</strong></p>
+        <h2 id="engine-안에서">tokenizer를 가져오는 것이 아니라 Engine 안에서 셌습니다</h2>
+
+        <p>이 저장소에는 「tokenizer를 들여오지 않는다」는 결정이 이미 있었습니다. 이유가 적혀 있습니다.</p>
+
+        <blockquote>
+          <p>「Engine에게 묻는 것이지 tokenizer를 import하는 것이 아니다. Engine이 권위다. 그 tokenizer와
+          Chat Template이 하는 일이 바로 그 기준이 뜻하는 수다. 여기에 tokenizer를 넣으면 served model에
+          있는 결정의 사본이 하나 더 생기고 둘 중 하나가 움직이는 순간 갈린다.」</p>
+        </blockquote>
+
+        <p>그 반대 근거가 옳습니다. 그래서 <strong>Serving에 쓰는 그 Image 안에서 셌습니다.</strong> Digest로
+        고정된 <code>vllm/vllm-openai@sha256:0a51ea…</code>이고 그 Image에 <code>transformers 5.15.0</code>과
+        <code>tokenizers 0.22.2</code>가 들어 있습니다. CPU Image와 같은 버전인 것도 재서 확인했습니다.
+        사본이 아니라 같은 구현입니다.</p>
+
+        <p>모델 가중치는 내리지 않았습니다. 토큰을 세는 데 3.7GB가 보탤 것이 없습니다. tokenizer 파일
+        4개만 받았고 Qwen2.5의 0.5B·3B·7B가 그 4개를 <strong>바이트 단위로 똑같이</strong> 갖고 있는 것도
+        재서 확인했습니다. 저장소 revision은 셋이 다릅니다. revision만으로는 이 사실을 말할 수 없고 파일
+        hash가 말했습니다.</p>
+        <h2 id="무엇에-대해">표가 무엇에 대해 측정됐는지도 같이 적습니다</h2>
+
+        <p>표에 값만 있으면 다음 사람이 재현할 수 없습니다. 그래서 같이 적은 것들입니다.</p>
+
+        <table>
+          <caption class="sr-only">표와 함께 기록한 다섯 가지 식별자와 각각이 필요한 이유.</caption>
+          <thead><tr><th scope="col">기록한 것</th><th scope="col">값</th><th scope="col">왜 필요한가</th></tr></thead>
+          <tbody>
+            <tr><td>tokenizer revision</td><td><code>aa8e7253…</code></td><td>표가 어느 tokenizer에 대한 것인지</td></tr>
+            <tr><td>tokenizer 파일 4개의 결합 hash</td><td><code>81feaac8…</code></td><td>revision은 가중치만 바뀌어도 달라집니다. 이 값은 tokenizer 바이트 자체를 고정합니다</td></tr>
+            <tr><td>Chat Template의 hash</td><td><code>cd8e9439…</code></td><td>30토큰의 고정 비용이 여기서 나옵니다</td></tr>
+            <tr><td>프롬프트 코퍼스의 hash</td><td><code>dec10207…</code></td><td>코퍼스가 바뀌면 모든 토큰 수가 달라집니다</td></tr>
+            <tr><td>Serving Image의 digest</td><td><code>sha256:0a51ea…</code></td><td>어느 구현이 셌는지</td></tr>
+          </tbody>
+        </table>
+
+        <p>코퍼스 hash는 처음에 <strong>빠져 있었습니다.</strong> 표의 첫 주석은 코퍼스를 기록한다고 말하는데
+        실제로는 없었고 그러면 코퍼스를 바꿔도 표의 두 사본이 서로 일치한 채 토큰 수만 무효가 됩니다.
+        외부 검토가 그것을 지적해서 넣었습니다. 한 글자만 바꿔 보니 대조 test가
+        <code>every count in it is stale</code>로 빨간불이 났습니다.</p>
+        <h2 id="동결했더니-비교가-끊겼습니다">동결했더니 이전 표와 비교가 끊겼습니다</h2>
+
+        <p>표를 만든 다음에 그 값을 실행 계약에 넣었습니다. 등록이 고정하던 것은 다섯 개였습니다.
+        도착률, 가중치 세 개, 재생 시간. 프롬프트 길이는 그 안에 없었습니다.</p>
+
+        <p>없다는 것이 무슨 뜻인지 유료 실행 두 번을 하고 알았습니다. 같은 study, 같은 seed 11,
+        같은 도착 스케줄, 같은 코퍼스 hash로 돌린 두 실행이 <strong>서로 비교할 수 없는 수를
+        냈습니다.</strong></p>
+
+        <table>
+          <caption>같은 등록을 만족한 두 실행이 보낸 것. 세 단위가 다릅니다.</caption>
+          <thead><tr><th>보낸 것</th><th>2026-09-13</th><th>2026-10-01</th></tr></thead>
+          <tbody>
+            <tr><td>생성기 입력</td><td>200자</td><td>1,174자</td></tr>
+            <tr><td>어림 추정 <code>ceil(chars/4)</code></td><td>50토큰</td><td>294토큰</td></tr>
+            <tr><td>Engine이 센 값</td><td>68토큰</td><td><code>256</code>토큰</td></tr>
+            <tr><td>요청 Timeout</td><td>30,000ms</td><td>60,000ms</td></tr>
+            <tr><td>반복</td><td>2</td><td>5</td></tr>
+          </tbody>
+        </table>
+
+        <p>세 번째 줄이 이 글의 표가 한 일입니다. 2026-10-01 실행에서 Engine은 premium 요청
+        46,549건 전부를 <code>256</code>토큰으로 셌습니다. 선언이 <code>inputTokens: 256</code>
+        이었으니 선언과 실행이 처음으로 같아진 것입니다.</p>
+
+        <p>2026-09-13 실행은 이 표가 생기기 전이라 생성기의 기본값 200자로 돌았습니다. 그 길이를
+        Engine은 68토큰으로 읽습니다. 어느 <code>inputTokens</code> 선언에도 대응하지 않는 수입니다.</p>
+
+        <p>그래서 두 실행의 격리 기준선이 움직였습니다. 같은 카드, 같은 Engine인데 피해 요청의
+        꼬리 지연이 69.5ms와 174ms입니다. 요청마다 싣는 prefill 양이 다르면 기준선도 같이
+        움직이고 그러면 한쪽 기준선에 대한 비를 다른 쪽 것과 나란히 읽을 수 없습니다.</p>
+
+        <p>동결 튜플을 다섯에서 아홉으로 늘렸습니다. 프롬프트 길이 둘, 요청 Timeout, 출력 상한 둘,
+        그리고 위 표의 식별자들입니다. Timeout을 넣은 이유는 그것이 어느 요청을 잘라낼지 정하기
+        때문입니다. 길이만 고정하고 Timeout을 두면 다음 비교에서 같은 일이 반복됩니다.</p>
+
+        <h2 id="잘못-읽었습니다">계측을 한 번 잘못 읽었습니다</h2>
+
+        <p>첫 측정에서 11자와 200자가 둘 다 2토큰으로 나왔습니다. tokenizer가 고장 난 것처럼 보였습니다.</p>
+
+        <p>고장이 아니었습니다. <code>transformers 5.15.0</code>의
+        <code>apply_chat_template(tokenize=True)</code>는 리스트가 아니라 <code>BatchEncoding</code>을
+        돌려주고 <strong><code>len()</code>은 그 key 개수인 2를 셉니다.</strong> 토큰 수는
+        <code>['input_ids']</code>의 길이입니다.</p>
+
+        <p>대조군을 하나 두고서야 알았습니다. Template 없이 평문만 인코딩하면 11자 2토큰, 200자 25토큰,
+        2,000자 250토큰으로 길이에 따라 늘어납니다. Template을 적용하면 31·54·279입니다. 앞의 것이
+        늘어나는데 뒤의 것이 늘어나지 않으면 판독이 틀린 것입니다.</p>
+
+        <p><strong>그 숫자를 표에 넣었다면 모든 길이가 2토큰이라는 표가 커밋됐을 것입니다.</strong></p>
+        <h2 id="주장하지-않는-것">이 글이 주장하지 않는 것</h2>
+
+        <ul>
+          <li>⚠️ <strong>다른 모델의 tokenizer에 대해서는 아무 말도 하지 않습니다.</strong> 재 본 것은
+          Qwen2.5 하나입니다. 같은 저장소에 Phi-3와 비교한 기록이 있고 40,000자 한 프롬프트를 Qwen2.5는
+          5,029토큰, Phi-3는 10,004토큰으로 읽었습니다. 배가 다릅니다.</li>
+          <li>여기서 정한 문자 길이가 Engine이 세는 수와 같다고 확립하지 않았습니다. Engine이 권위이고
+          실행 시점에 다시 묻는 도구가 따로 있습니다. 둘이 어긋나면 Engine이 맞고 표가 낡은 것입니다.</li>
+          <li>「가장 작은 것」은 훑은 창 안에서 가장 작은 것입니다. 창 밖에 더 작은 길이가 있을 수 있고
+          그것을 확인하지는 않았습니다.</li>
+          <li>비단조가 모든 구간에서 같은 밀도로 나온다고 말하지 않습니다. 세 창에서 21·21·30회였고
+          그 사이 구간은 재지 않았습니다.</li>
+          <li><strong>이 표는 CRD의 <code>status</code>를 채우지 않습니다.</strong> 측정 프로토콜을 실행기로
+          옮기는 조각 하나이고 결과를 CRD에 기록하는 것은 아직 없습니다.</li>
+          <li>이 교정이 이전 결과를 설명한다고 말하지 않습니다. 두 실행 사이에서 프롬프트 길이와
+          요청 Timeout과 반복 수가 함께 바뀌었고 셋을 분리한 측정이 없습니다. 꼬리 지연 비가 27.2에서
+          23.0으로 바뀐 것을 길이 교정의 효과로 읽을 근거는 여기에 없습니다.</li>
+        </ul>
+        <div class="wrapup">
+        <h2 id="마치며">마치며</h2>
+
+        <ul>
+          <li><strong>어림은 창을 좁히는 데만 쓰고 답으로 쓰지 않았습니다.</strong> 세 점에 맞춘 직선의
+          잔차가 1.1토큰 안쪽이어도 수락은 실측한 값이 같을 때만 했습니다.</li>
+          <li><strong>단조성을 확인하고 나서 탐색 방법을 정했습니다.</strong> 확인하지 않고 이분 탐색을
+          썼다면 답이 있는데 없다고 보고했을 것입니다.</li>
+          <li>tokenizer를 들여오는 대신 Serving Image 안에서 셌습니다. 라이브러리 버전이 같은 것을 재서
+          확인했기 때문에 사본이 아니라고 말할 수 있습니다.</li>
+          <li>표가 무엇에 대해 측정됐는지를 값과 같이 적었습니다. revision·파일 hash·Template hash·코퍼스
+          hash·Image digest 다섯 개입니다.</li>
+        </ul>
+
+        <p>단위가 다른 두 층을 잇는 자리에서는 변환 함수를 찾기 전에 그 함수가 있는지를 먼저 물어보는 것이
+        나았습니다.</p>
+
+        <p>읽어 주셔서 감사합니다.</p>
+        </div>
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=87103a74f0"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -50,7 +50,6 @@ SUBTITLE_GRANDFATHERED = {
     "four-fixes-that-were-not-there.html",
     "four-fixes-that-were-not-there.ja.html",
     "four-fixes-that-were-not-there.ko.html",
-    "gpu-input-length-in-characters.ko.html",
     "gpu-node-readiness.html",
     "gpu-node-readiness.ko.html",
     "gpu-quota-control-plane.html",

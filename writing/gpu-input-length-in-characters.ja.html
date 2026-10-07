@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GPUaaS プラットフォームの入力長: 1 文字でも 30 トークンでした | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="en" href="https://lkhun9311.github.io/writing/gpu-input-length-in-characters.html" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/gpu-input-length-in-characters.ko.html" />
+  <link rel="alternate" hreflang="ja" href="https://lkhun9311.github.io/writing/gpu-input-length-in-characters.ja.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/gpu-input-length-in-characters.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="GPUaaS プラットフォームの入力長: 1 文字でも 30 トークンでした" />
+  <meta property="og:description" content="CRD は入力長をトークンで宣言し、トレース生成器は文字数を受け取ります。両者をつなぐ ceil(chars/4) の目安は 200 文字で 50 トークンと見積もったのに実測は 68 で、40,000 文字で 10,000 と見積もったのに実測は 7,695 でした。方向が逆転します。文字からトークンへの曲線は単調でもありません。Serving Image の中で測り、256 トークンは 1,174 文字、8,192 トークンは 42,579 文字に固定しました。" />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/gpu-input-length-in-characters.ja.html" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="GPUaaS プラットフォームの入力長: 1 文字でも 30 トークンでした" />
+  <meta name="twitter:description" content="CRD は入力長をトークンで宣言し、トレース生成器は文字数を受け取ります。両者をつなぐ ceil(chars/4) の目安は 200 文字で 50 トークンと見積もったのに実測は 68 で、40,000 文字で 10,000 と見積もったのに実測は 7,695 でした。方向が逆転します。文字からトークンへの曲線は単調でもありません。Serving Image の中で測り、256 トークンは 1,174 文字、8,192 トークンは 42,579 文字に固定しました。" />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
+  <meta name="description" content="CRD は入力長をトークンで宣言し、トレース生成器は文字数を受け取ります。両者をつなぐ ceil(chars/4) の目安は 200 文字で 50 トークンと見積もったのに実測は 68 で、40,000 文字で 10,000 と見積もったのに実測は 7,695 でした。方向が逆転します。文字からトークンへの曲線は単調でもありません。Serving Image の中で測り、256 トークンは 1,174 文字、8,192 トークンは 42,579 文字に固定しました。" />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner notranslate">
+      <a class="site-name" href="../index.html#about">Kwanghun</a>
+      <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+        <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang"
+                data-authored='{"en":"gpu-input-length-in-characters.html","ko":"gpu-input-length-in-characters.ko.html","ja":"gpu-input-length-in-characters.ja.html"}'>
+          <option value="ko">한국어</option>
+          <option value="en">English</option>
+          <option value="ja" selected>日本語</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ar">العربية</option>
+        </select>
+        <div id="google_translate_element" aria-hidden="true"></div>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#news">News</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#writing" class="active">Writing</a>
+        <a href="../index.html#notes">Notes</a>
+        <a href="../index.html#cv">CV</a>
+      </nav>
+    </div>
+  </div>
+  <div class="container reading">
+    <main>
+      <div class="hero-top">
+        <a class="back-link notranslate" href="index.html">목록</a>
+        <div class="article-meta"><span class="source-tag side notranslate">개인 프로젝트</span><a class="project-tag notranslate" href="../writing/index.html?tag=GPUaaS%20Control%20Plane">#GPUaaS Control Plane</a></div>
+      </div>
+      <section class="page-hero">
+        <h1>GPUaaS プラットフォームの入力長: 1 文字でも 30 トークンでした</h1>
+        <p class="article-date">2026年10月</p>
+      </section>
+      <aside class="article-aside" data-aside="writing" data-slug="gpu-input-length-in-characters"></aside>
+        <nav class="article-toc" aria-label="目次">
+          <p class="toc-label">目次</p>
+          <ul>
+            <li><a href="#想定読者">想定読者</a></li>
+            <li><a href="#二つの単位">変換できない二つの単位</a></li>
+            <li><a href="#目安で足りると">はじめは目安で足りると思っていました</a></li>
+            <li><a href="#結論から">結論から申し上げます</a></li>
+            <li><a href="#三十トークン">1 文字でも 30 トークンです</a></li>
+            <li><a href="#同じ値を与える長さ">同じトークン数を与える長さが複数あります</a></li>
+            <li><a href="#エンジンの中で">tokenizer を取り込まず Engine の中で数えました</a></li>
+            <li><a href="#何に対して測ったか">表が何に対して測られたかも併せて記録します</a></li>
+            <li><a href="#凍結で比較が切れた">凍結したら以前の表との比較が切れました</a></li>
+            <li><a href="#読み違え">計測を一度読み違えました</a></li>
+            <li><a href="#主張しないこと">この記事が主張しないこと</a></li>
+            <li><a href="#おわりに">おわりに</a></li>
+          </ul>
+        </nav>
+      <article class="article-body">
+
+        <p>GPU 1 枚を二つの tenant で分け合うとき、先に入っている tenant
+        の尾部遅延がどれだけ悪化するかを測る実験があります。その実験を Kubernetes CRD
+        で宣言できるようにし、そこにはプロンプト長をトークン数で書きます。 <code>inputTokens: 256</code> のような形です。</p>
+
+        <p>ところが、負荷を作る Harness は文字数を受け取ります。 <code>--premium-prompt-chars 200</code> のように渡します。両者をつないでいたのが <code>ceil(chars/4)</code>、おおよそ 4 文字で 1 トークンという目安でした。その目安を実際の tokenizer
+        で測ってみると、200 文字では 50 トークンと見積もったのに実測は 68 で、40,000 文字では 10,000 と見積もったのに実測は 7,695 でした。
+        誤差の向きが逆になります。</p>
+
+        <p>そのため「256 トークンを与える文字長」を逆算することができず、測って表にするしかありませんでした。
+        測る途中で二つのことが出てきました。1 文字を送っても 30 トークンになり、
+        文字を増やしたのにトークンが減る箇所が一つの区間に 21 箇所ありました。</p>
+
+        <h2 id="想定読者">想定読者</h2>
+
+        <ul>
+          <li>LLM Serving の負荷をプロンプト長で規定したことがある方</li>
+          <li>Kubernetes CRD に測定プロトコルを宣言し、それを実行器へ移そうとしている方</li>
+          <li>「おおよそ 4 文字で 1 トークン」という目安をコードに入れている方</li>
+        </ul>
+        <h2 id="二つの単位">変換できない二つの単位</h2>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 300" role="img" aria-labelledby="tok1-t tok1-d" class="figure-svg" xmlns="http://www.w3.org/2000/svg" font-family="system-ui, sans-serif">
+            <title id="tok1-t">宣言の単位と実行の単位の違い</title>
+            <desc id="tok1-d">CRD は入力長をトークンで宣言し、トレース生成器は文字でプロンプトを作ります。256 トークンが 1174 文字と解釈され、実際のトークン数は Engine が数えます。</desc>
+            <rect x="20" y="84" width="200" height="126" rx="6" fill="none" stroke="#6e7781" stroke-width="2"/>
+            <text x="120" y="110" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="bold">GpuSharingBenchmark</text>
+            <text x="120" y="130" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="bold">CRD</text>
+            <text x="120" y="158" font-size="14" fill="#6e7781" text-anchor="middle" font-weight="normal">宣言 · トークン単位</text>
+            <text x="120" y="176" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="normal">inputTokens: 256</text>
+            <rect x="260" y="84" width="200" height="126" rx="6" fill="none" stroke="#6e7781" stroke-width="2"/>
+            <text x="360" y="110" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="bold">Trace Generator</text>
+            <text x="360" y="138" font-size="14" fill="#6e7781" text-anchor="middle" font-weight="normal">生成 · 文字単位</text>
+            <text x="360" y="176" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="normal">--premium-prompt-chars</text>
+            <text x="360" y="198" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="bold">1174</text>
+            <rect x="500" y="84" width="200" height="126" rx="6" fill="none" stroke="#1f2328" stroke-width="2"/>
+            <text x="600" y="110" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="bold">vLLM Engine</text>
+            <text x="600" y="138" font-size="14" fill="#6e7781" text-anchor="middle" font-weight="normal">権威 · トークン単位</text>
+            <text x="600" y="176" font-size="15" fill="#1f2328" text-anchor="middle" font-weight="normal">実際のトークン数</text>
+            <line x1="226" y1="147" x2="252" y2="147" stroke="#cf222e" stroke-width="3"/>
+            <polygon points="256,147 244,141 244,153" fill="#cf222e"/>
+            <text x="240" y="128" font-size="18" fill="#cf222e" text-anchor="middle" font-weight="bold">?</text>
+            <text x="240" y="246" font-size="14" fill="#cf222e" text-anchor="middle" font-weight="normal">この記事の主題</text>
+            <line x1="466" y1="147" x2="492" y2="147" stroke="#6e7781" stroke-width="3"/>
+            <polygon points="496,147 484,141 484,153" fill="#6e7781"/>
+            <text x="20" y="56" font-size="14" fill="#6e7781" text-anchor="start" font-weight="normal">宣言から実行まで</text>
+            <text x="700" y="246" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">最終的な権威は Engine</text>
+          </svg>
+          <figcaption>CRD はトークンで宣言し、生成器は文字で作ります。その間をつなぐ矢印がこの記事の主題です。</figcaption>
+        </figure>
+        <ul>
+          <li>CRD は実験のプロトコルを登録します。一度作れば <code>spec</code> は変わりません。</li>
+          <li>Trace Generator はプロンプトを文字長で作ります。コーパス一つを切り出して使います。</li>
+          <li>二つの単位をつなぐ矢印がこの記事の主題です。</li>
+        </ul>
+        <h2 id="目安で足りると">はじめは目安で足りると思っていました</h2>
+
+        <p><code>ceil(chars/4)</code> はすでにコードにありました。Gateway が入力トークン数を推定するときに使う値です。逆に使えば <code>256 * 4 = 1024 文字</code>です。そう渡せばよさそうに見えました。</p>
+
+        <p>その目安がどれだけ合っているかは、このリポジトリですでに測られていました。</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 300" role="img" aria-labelledby="tok3-t tok3-d" class="figure-svg" xmlns="http://www.w3.org/2000/svg" font-family="system-ui, sans-serif">
+            <title id="tok3-t">推定トークン数と実測トークン数の比</title>
+            <desc id="tok3-d">三つのプロンプト長で、実測を ceil(chars/4) の推定で割った値です。短いプロンプトでは 1 より大きく、長いプロンプトでは 1 より小さくなり、誤差の向きが逆転します。</desc>
+            <line x1="92" y1="160" x2="680" y2="160" stroke="#1f2328" stroke-width="2" stroke-dasharray="6 4"/>
+            <text x="82" y="165" font-size="14" fill="#1f2328" text-anchor="end" font-weight="normal">1.0</text>
+            <line x1="92" y1="201" x2="680" y2="201" stroke="#d8dee4" stroke-width="1"/>
+            <text x="82" y="206" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">0.8</text>
+            <line x1="92" y1="119" x2="680" y2="119" stroke="#d8dee4" stroke-width="1"/>
+            <text x="82" y="124" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">1.2</text>
+            <line x1="92" y1="78" x2="680" y2="78" stroke="#d8dee4" stroke-width="1"/>
+            <text x="82" y="83" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">1.4</text>
+            <line x1="190" y1="160" x2="190" y2="87" stroke="#cf222e" stroke-width="3"/>
+            <circle cx="190" cy="87" r="7" fill="#cf222e"/>
+            <text x="190" y="71" font-size="14" fill="#cf222e" text-anchor="middle" font-weight="bold">1.360</text>
+            <text x="190" y="268" font-size="14" fill="#1f2328" text-anchor="middle" font-weight="normal">200 文字</text>
+            <text x="190" y="288" font-size="14" fill="#6e7781" text-anchor="middle" font-weight="normal">推定 50 · 実測 68</text>
+            <line x1="386" y1="160" x2="386" y2="206" stroke="#6e7781" stroke-width="3"/>
+            <circle cx="386" cy="206" r="7" fill="#ffffff" stroke="#6e7781" stroke-width="3"/>
+            <text x="386" y="232" font-size="14" fill="#6e7781" text-anchor="middle" font-weight="bold">0.774</text>
+            <text x="386" y="268" font-size="14" fill="#1f2328" text-anchor="middle" font-weight="normal">16,384 文字</text>
+            <text x="386" y="288" font-size="14" fill="#6e7781" text-anchor="middle" font-weight="normal">推定 4,096 · 実測 3,171</text>
+            <line x1="582" y1="160" x2="582" y2="207" stroke="#6e7781" stroke-width="3"/>
+            <circle cx="582" cy="207" r="7" fill="#ffffff" stroke="#6e7781" stroke-width="3"/>
+            <text x="582" y="233" font-size="14" fill="#6e7781" text-anchor="middle" font-weight="bold">0.769</text>
+            <text x="582" y="268" font-size="14" fill="#1f2328" text-anchor="middle" font-weight="normal">40,000 文字</text>
+            <text x="582" y="288" font-size="14" fill="#6e7781" text-anchor="middle" font-weight="normal">推定 10,000 · 実測 7,695</text>
+            <text x="92" y="30" font-size="14" fill="#6e7781" text-anchor="start" font-weight="normal">実測 ÷ 推定</text>
+            <text x="680" y="30" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">塗った円は 1 超 · 白い円は 1 未満</text>
+          </svg>
+          <figcaption>短いプロンプトでは推定が少なく数え、長いプロンプトでは多く数えます。一つの補正係数では合わせられません。</figcaption>
+        </figure>
+        <table>
+          <caption class="sr-only">三つのプロンプト長での ceil(chars/4) の推定と実測トークン数、そしてその比。</caption>
+          <thead><tr><th scope="col">プロンプト長</th><th scope="col"><code>ceil(chars/4)</code> 推定</th><th scope="col">実測トークン</th><th scope="col">実測 / 推定</th></tr></thead>
+          <tbody>
+            <tr><td>200 文字</td><td>50</td><td>68</td><td>1.360</td></tr>
+            <tr><td>16,384 文字</td><td>4,096</td><td>3,171</td><td>0.774</td></tr>
+            <tr><td>40,000 文字</td><td>10,000</td><td>7,695</td><td>0.769</td></tr>
+          </tbody>
+        </table>
+
+        <p>短いプロンプトでは推定が少なく数え、長いプロンプトでは多く数えます。 <strong>一つの補正係数では合わせられません。</strong> 200 文字で 1.36 倍に合わせると、40,000 文字では 1.8 倍ずれます。</p>
+        <h2 id="結論から">結論から申し上げます</h2>
+
+        <p><strong>文字をトークンに変換する関数はありません。測って表にする必要があり、その探索は二分探索ではいけません。</strong></p>
+
+        <table>
+          <caption class="sr-only">宣言したトークン数と測定で得た文字長、そして同じトークン数を与える長さの個数。</caption>
+          <thead><tr><th scope="col">宣言したトークン数</th><th scope="col">測って得た文字長</th><th scope="col">同じ値を与える長さの個数</th></tr></thead>
+          <tbody>
+            <tr><td>256</td><td>1,174 文字</td><td>8 個</td></tr>
+            <tr><td>8,192</td><td>42,579 文字</td><td>3 個</td></tr>
+          </tbody>
+        </table>
+
+        <p>そして三つの区間で曲線が単調増加ではありません。</p>
+
+        <table>
+          <caption class="sr-only">三つの探索窓の文字範囲とトークン範囲、トークン数が減少した回数と、隣り合う長さが同じ値を与えた回数。</caption>
+          <thead><tr><th scope="col">探索窓</th><th scope="col">文字範囲</th><th scope="col">トークン範囲</th><th scope="col">減少した回数</th><th scope="col">同じ値になった回数</th></tr></thead>
+          <tbody>
+            <tr><td>短いプロンプト</td><td>1 ~ 242 文字</td><td>30 ~ 75</td><td>21</td><td>153</td></tr>
+            <tr><td>中間</td><td>218 ~ 518 文字</td><td>71 ~ 130</td><td>21</td><td>197</td></tr>
+            <tr><td>256 トークン付近</td><td>1,027 ~ 1,327 文字</td><td>227 ~ 283</td><td>30</td><td>181</td></tr>
+          </tbody>
+        </table>
+
+        <p>減少が一度でもあれば <strong>二分探索は存在する答えを飛び越えます</strong>。だから窓を狭めるためだけに目安を使い、窓の中は全数で走査しました。</p>
+        <h2 id="三十トークン">1 文字でも 30 トークンです</h2>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 400" role="img" aria-labelledby="tok2-t tok2-d" class="figure-svg" xmlns="http://www.w3.org/2000/svg" font-family="system-ui, sans-serif">
+            <title id="tok2-t">短いプロンプト区間の文字数とトークン数</title>
+            <desc id="tok2-d">文字 1 文字から 242 文字まで一文字ずつ増やして測ったトークン数です。1 文字ですでに 30 トークンで、文字が増えたのにトークンが減った箇所が 21 箇所あります。</desc>
+            <line x1="74" y1="344" x2="686" y2="344" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="349" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">30</text>
+            <line x1="74" y1="313" x2="686" y2="313" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="318" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">35</text>
+            <line x1="74" y1="282" x2="686" y2="282" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="287" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">40</text>
+            <line x1="74" y1="251" x2="686" y2="251" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="256" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">45</text>
+            <line x1="74" y1="220" x2="686" y2="220" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="225" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">50</text>
+            <line x1="74" y1="188" x2="686" y2="188" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="193" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">55</text>
+            <line x1="74" y1="157" x2="686" y2="157" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="162" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">60</text>
+            <line x1="74" y1="126" x2="686" y2="126" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="131" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">65</text>
+            <line x1="74" y1="95" x2="686" y2="95" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="100" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">70</text>
+            <line x1="74" y1="64" x2="686" y2="64" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="69" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">75</text>
+            <polyline points="74.0,344.0 76.5,337.8 79.1,337.8 81.6,337.8 84.2,337.8 86.7,337.8 89.2,337.8 91.8,331.6 94.3,331.6 96.9,337.8 99.4,337.8 101.9,331.6 104.5,331.6 107.0,331.6 109.6,331.6 112.1,331.6 114.6,325.3 117.2,325.3 119.7,325.3 122.2,325.3 124.8,319.1 127.3,325.3 129.9,325.3 132.4,319.1 134.9,319.1 137.5,319.1 140.0,319.1 142.6,319.1 145.1,312.9 147.6,312.9 150.2,312.9 152.7,306.7 155.3,306.7 157.8,306.7 160.3,306.7 162.9,306.7 165.4,300.4 168.0,306.7 170.5,300.4 173.0,300.4 175.6,300.4 178.1,300.4 180.7,294.2 183.2,294.2 185.7,300.4 188.3,294.2 190.8,294.2 193.4,294.2 195.9,294.2 198.4,288.0 201.0,288.0 203.5,288.0 206.0,288.0 208.6,281.8 211.1,281.8 213.7,281.8 216.2,281.8 218.7,281.8 221.3,281.8 223.8,275.6 226.4,275.6 228.9,281.8 231.4,281.8 234.0,275.6 236.5,275.6 239.1,275.6 241.6,275.6 244.1,269.3 246.7,269.3 249.2,263.1 251.8,269.3 254.3,275.6 256.8,269.3 259.4,263.1 261.9,263.1 264.5,263.1 267.0,256.9 269.5,256.9 272.1,256.9 274.6,256.9 277.2,250.7 279.7,250.7 282.2,250.7 284.8,244.4 287.3,250.7 289.9,244.4 292.4,244.4 294.9,244.4 297.5,244.4 300.0,244.4 302.5,244.4 305.1,238.2 307.6,238.2 310.2,244.4 312.7,238.2 315.2,238.2 317.8,238.2 320.3,238.2 322.9,232.0 325.4,232.0 327.9,232.0 330.5,232.0 333.0,225.8 335.6,225.8 338.1,232.0 340.6,225.8 343.2,225.8 345.7,225.8 348.3,225.8 350.8,225.8 353.3,219.6 355.9,219.6 358.4,225.8 361.0,219.6 363.5,219.6 366.0,219.6 368.6,219.6 371.1,213.3 373.7,213.3 376.2,219.6 378.7,219.6 381.3,213.3 383.8,207.1 386.3,207.1 388.9,207.1 391.4,207.1 394.0,200.9 396.5,200.9 399.0,200.9 401.6,200.9 404.1,194.7 406.7,200.9 409.2,194.7 411.7,194.7 414.3,194.7 416.8,188.4 419.4,188.4 421.9,188.4 424.4,188.4 427.0,182.2 429.5,188.4 432.1,182.2 434.6,182.2 437.1,182.2 439.7,182.2 442.2,182.2 444.8,176.0 447.3,176.0 449.8,176.0 452.4,176.0 454.9,176.0 457.5,176.0 460.0,169.8 462.5,169.8 465.1,169.8 467.6,163.6 470.1,163.6 472.7,163.6 475.2,157.3 477.8,157.3 480.3,157.3 482.8,163.6 485.4,163.6 487.9,157.3 490.5,157.3 493.0,157.3 495.5,157.3 498.1,151.1 500.6,151.1 503.2,144.9 505.7,157.3 508.2,151.1 510.8,144.9 513.3,144.9 515.9,144.9 518.4,144.9 520.9,138.7 523.5,138.7 526.0,138.7 528.6,138.7 531.1,132.4 533.6,132.4 536.2,132.4 538.7,132.4 541.3,132.4 543.8,132.4 546.3,126.2 548.9,126.2 551.4,126.2 554.0,120.0 556.5,120.0 559.0,120.0 561.6,120.0 564.1,113.8 566.6,113.8 569.2,113.8 571.7,113.8 574.3,107.6 576.8,113.8 579.3,107.6 581.9,107.6 584.4,107.6 587.0,101.3 589.5,101.3 592.0,101.3 594.6,101.3 597.1,95.1 599.7,95.1 602.2,95.1 604.7,88.9 607.3,95.1 609.8,88.9 612.4,88.9 614.9,88.9 617.4,88.9 620.0,88.9 622.5,82.7 625.1,88.9 627.6,82.7 630.1,82.7 632.7,82.7 635.2,82.7 637.8,82.7 640.3,82.7 642.8,76.4 645.4,76.4 647.9,76.4 650.4,82.7 653.0,76.4 655.5,76.4 658.1,70.2 660.6,70.2 663.1,70.2 665.7,70.2 668.2,70.2 670.8,70.2 673.3,64.0 675.8,70.2 678.4,64.0 680.9,64.0 683.5,64.0 686.0,64.0" fill="none" stroke="#1f2328" stroke-width="2"/>
+            <circle cx="96.9" cy="337.8" r="4.5" fill="#cf222e"/>
+            <circle cx="127.3" cy="325.3" r="4.5" fill="#cf222e"/>
+            <circle cx="168.0" cy="306.7" r="4.5" fill="#cf222e"/>
+            <circle cx="185.7" cy="300.4" r="4.5" fill="#cf222e"/>
+            <circle cx="228.9" cy="281.8" r="4.5" fill="#cf222e"/>
+            <circle cx="251.8" cy="269.3" r="4.5" fill="#cf222e"/>
+            <circle cx="254.3" cy="275.6" r="4.5" fill="#cf222e"/>
+            <circle cx="287.3" cy="250.7" r="4.5" fill="#cf222e"/>
+            <circle cx="310.2" cy="244.4" r="4.5" fill="#cf222e"/>
+            <circle cx="338.1" cy="232.0" r="4.5" fill="#cf222e"/>
+            <circle cx="358.4" cy="225.8" r="4.5" fill="#cf222e"/>
+            <circle cx="376.2" cy="219.6" r="4.5" fill="#cf222e"/>
+            <circle cx="406.7" cy="200.9" r="4.5" fill="#cf222e"/>
+            <circle cx="429.5" cy="188.4" r="4.5" fill="#cf222e"/>
+            <circle cx="482.8" cy="163.6" r="4.5" fill="#cf222e"/>
+            <circle cx="505.7" cy="157.3" r="4.5" fill="#cf222e"/>
+            <circle cx="576.8" cy="113.8" r="4.5" fill="#cf222e"/>
+            <circle cx="607.3" cy="95.1" r="4.5" fill="#cf222e"/>
+            <circle cx="625.1" cy="88.9" r="4.5" fill="#cf222e"/>
+            <circle cx="650.4" cy="82.7" r="4.5" fill="#cf222e"/>
+            <circle cx="675.8" cy="70.2" r="4.5" fill="#cf222e"/>
+            <text x="74" y="30" font-size="14" fill="#6e7781" text-anchor="start" font-weight="normal">トークン数</text>
+            <text x="74" y="382" font-size="14" fill="#6e7781" text-anchor="start" font-weight="normal">文字数 1 → 242</text>
+            <text x="686" y="382" font-size="14" fill="#cf222e" text-anchor="end" font-weight="normal">赤い点 21 箇所 · 文字が増えてトークンが減った箇所</text>
+            <line x1="96" y1="94" x2="78" y2="337" stroke="#6e7781" stroke-width="1"/>
+            <circle cx="74.0" cy="344.0" r="4" fill="#ffffff" stroke="#1f2328" stroke-width="2"/>
+            <text x="100" y="86" font-size="14" fill="#1f2328" text-anchor="start" font-weight="bold">1 文字で 30 トークン</text>
+            <text x="686" y="52" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">242 文字で 75 トークン</text>
+          </svg>
+          <figcaption>文字が増えたのにトークンが減った箇所が赤い点です。この区間では 21 箇所でした。</figcaption>
+        </figure>
+        <table>
+          <caption class="sr-only">1 文字から 10 文字までの文字数と、それに対応するトークン数。</caption>
+          <thead><tr><th scope="col">文字</th><th scope="col">1</th><th scope="col">2</th><th scope="col">3</th><th scope="col">4</th><th scope="col">5</th><th scope="col">6</th><th scope="col">7</th><th scope="col">8</th><th scope="col">9</th><th scope="col">10</th></tr></thead>
+          <tbody>
+            <tr><td>トークン</td><td>30</td><td>31</td><td>31</td><td>31</td><td>31</td><td>31</td><td>31</td><td>32</td><td>32</td><td>31</td></tr>
+          </tbody>
+        </table>
+
+        <p>1 文字で 30 トークンです。 <strong>その 30 はプロンプトではなく Chat Template です。</strong> Engine に送るのはプロンプト文字列ではなく、
+        役割・区切り・生成開始の印が包んだリクエスト一つなので、中身が 1 文字でもその外側が 30
+        トークンを使います。</p>
+
+        <p>そして 9 文字で 32 だったものが <strong>10 文字では 31 に減ります</strong>。文字を一つ増やしたのにトークンが一つ減りました。</p>
+
+        <p>理由は Byte Pair Encoding です。tokenizer
+        はよく一緒に現れる文字の組を一つにまとめますが、文字列を一文字だけ長く切ると、
+        境界でまとまる組が変わります。前のほうで三トークンに分かれていた箇所が二トークンにまとまれば、
+        後ろに一文字増えていても全体は減ります。</p>
+
+        <p>同じ区間でこうした箇所が 21 箇所ありました。 <code>9 文字 32 トークン → 10 文字 31 トークン</code>,
+        <code>21 文字 34 → 22 文字 33</code>, <code>37 文字 37 → 38 文字 36</code>, <code>44 文字 38 → 45 文字 37</code> といった具合です。</p>
+        <h2 id="同じ値を与える長さ">同じトークン数を与える長さが複数あります</h2>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 720 360" role="img" aria-labelledby="tok4-t tok4-d" class="figure-svg" xmlns="http://www.w3.org/2000/svg" font-family="system-ui, sans-serif">
+            <title id="tok4-t">一つのトークン数を与える文字長の個数</title>
+            <desc id="tok4-d">256 トークン付近の文字長 301 個をトークン数ごとに数えたものです。異なるトークン数が 57 個あり、一つのトークン数あたり平均 5.28 個の長さが同じ値を与えます。</desc>
+            <line x1="74" y1="302" x2="686" y2="302" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="307" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">0</text>
+            <line x1="74" y1="249" x2="686" y2="249" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="254" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">2</text>
+            <line x1="74" y1="195" x2="686" y2="195" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="200" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">4</text>
+            <line x1="74" y1="142" x2="686" y2="142" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="147" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">6</text>
+            <line x1="74" y1="89" x2="686" y2="89" stroke="#d8dee4" stroke-width="1"/>
+            <text x="64" y="94" font-size="14" fill="#6e7781" text-anchor="end" font-weight="normal">8</text>
+            <rect x="74" y="115" width="9" height="187" fill="#6e7781"/>
+            <rect x="85" y="142" width="9" height="160" fill="#6e7781"/>
+            <rect x="95" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="106" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="117" y="115" width="9" height="187" fill="#6e7781"/>
+            <rect x="128" y="222" width="9" height="80" fill="#6e7781"/>
+            <rect x="138" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="149" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="160" y="169" width="9" height="133" fill="#6e7781"/>
+            <rect x="171" y="115" width="9" height="187" fill="#6e7781"/>
+            <rect x="181" y="115" width="9" height="187" fill="#6e7781"/>
+            <rect x="192" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="203" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="214" y="169" width="9" height="133" fill="#6e7781"/>
+            <rect x="224" y="115" width="9" height="187" fill="#6e7781"/>
+            <rect x="235" y="222" width="9" height="80" fill="#6e7781"/>
+            <rect x="246" y="89" width="9" height="213" fill="#6e7781"/>
+            <rect x="257" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="267" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="278" y="222" width="9" height="80" fill="#6e7781"/>
+            <rect x="289" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="299" y="222" width="9" height="80" fill="#6e7781"/>
+            <rect x="310" y="115" width="9" height="187" fill="#6e7781"/>
+            <rect x="321" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="332" y="222" width="9" height="80" fill="#6e7781"/>
+            <rect x="342" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="353" y="115" width="9" height="187" fill="#6e7781"/>
+            <rect x="364" y="62" width="9" height="240" fill="#6e7781"/>
+            <rect x="375" y="89" width="9" height="213" fill="#6e7781"/>
+            <rect x="385" y="89" width="9" height="213" fill="#cf222e"/>
+            <polygon points="391,81 385,69 397,69" fill="#cf222e"/>
+            <text x="391" y="61" font-size="14" fill="#cf222e" text-anchor="middle" font-weight="bold">256 トークン · 8 個の長さ</text>
+            <rect x="396" y="142" width="9" height="160" fill="#6e7781"/>
+            <rect x="407" y="142" width="9" height="160" fill="#6e7781"/>
+            <rect x="418" y="62" width="9" height="240" fill="#6e7781"/>
+            <rect x="428" y="115" width="9" height="187" fill="#6e7781"/>
+            <rect x="439" y="169" width="9" height="133" fill="#6e7781"/>
+            <rect x="450" y="62" width="9" height="240" fill="#6e7781"/>
+            <rect x="461" y="142" width="9" height="160" fill="#6e7781"/>
+            <rect x="471" y="169" width="9" height="133" fill="#6e7781"/>
+            <rect x="482" y="142" width="9" height="160" fill="#6e7781"/>
+            <rect x="493" y="249" width="9" height="53" fill="#6e7781"/>
+            <rect x="503" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="514" y="169" width="9" height="133" fill="#6e7781"/>
+            <rect x="525" y="142" width="9" height="160" fill="#6e7781"/>
+            <rect x="536" y="142" width="9" height="160" fill="#6e7781"/>
+            <rect x="546" y="222" width="9" height="80" fill="#6e7781"/>
+            <rect x="557" y="142" width="9" height="160" fill="#6e7781"/>
+            <rect x="568" y="249" width="9" height="53" fill="#6e7781"/>
+            <rect x="579" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="589" y="115" width="9" height="187" fill="#6e7781"/>
+            <rect x="600" y="169" width="9" height="133" fill="#6e7781"/>
+            <rect x="611" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="622" y="169" width="9" height="133" fill="#6e7781"/>
+            <rect x="632" y="142" width="9" height="160" fill="#6e7781"/>
+            <rect x="643" y="195" width="9" height="107" fill="#6e7781"/>
+            <rect x="654" y="142" width="9" height="160" fill="#6e7781"/>
+            <rect x="665" y="142" width="9" height="160" fill="#6e7781"/>
+            <rect x="675" y="195" width="9" height="107" fill="#6e7781"/>
+            <text x="74" y="30" font-size="14" fill="#6e7781" text-anchor="start" font-weight="normal">同じ値を与える文字長の個数</text>
+            <text x="74" y="342" font-size="14" fill="#6e7781" text-anchor="start" font-weight="normal">トークン数 227 → 283</text>
+            <text x="686" y="342" font-size="14" fill="#cf222e" text-anchor="end" font-weight="normal">256 トークンで選んだ長さは最小の 1174 文字</text>
+          </svg>
+          <figcaption>一つのトークン数を複数の文字長が一緒に与えます。256 トークンを与える長さは八つでした。</figcaption>
+        </figure>
+        <p>256 トークン付近を 301 個の長さで走査すると、異なるトークン数が 57 個出てきました。 <strong>一つのトークン数あたり平均 5.28 個の長さが同じ値を与えます。</strong> 最も多く重なるものは 9 個でした。</p>
+
+        <p>256 トークンを与える長さは次のとおりです。</p>
+
+        <pre><code>1174  1175  1178  1179  1180  1181  1182  1185</code></pre>
+
+        <p>八つのうちどれを使うかを決める必要があります。最小のものに決めました。
+        同じトークン数なら行き来するバイトが最も少なく、
+        それ以上踏み込んだ根拠を必要としない唯一の選択だからです。運用でこの選択がすることはもう一つあります。
+        窓を広げて測り直しても同じ規則が同じ値を選ぶので、表を作り直すときに値が揺れません。</p>
+
+        <p>その規則が実際に強制されるかは、わざと壊して試しました。記録された値を 1175 に変えました。
+        1175 も一覧にある値ですが最小のものではないため、 <strong>対照 test と計画 test の二つで赤になりました。</strong></p>
+        <h2 id="エンジンの中で">tokenizer を取り込まず Engine の中で数えました</h2>
+
+        <p>このリポジトリには「tokenizer を取り込まない」という決定がすでにありました。理由が書かれています。</p>
+
+        <blockquote>
+          <p>「Engine に訊くのであって tokenizer を import するのではない。Engine
+          が権威だ。その tokenizer と Chat Template がすることが、
+          まさにその基準が意味する数だ。ここに tokenizer を置けば served model
+          にある決定の写しがもう一つ生まれ、どちらかが動いた瞬間に食い違う。」</p>
+        </blockquote>
+
+        <p>その反論は正しいです。だから <strong>Serving に使うその Image の中で数えました。</strong> Digest で固定された <code>vllm/vllm-openai@sha256:0a51ea…</code> で、その Image には <code>transformers 5.15.0</code> と
+        <code>tokenizers 0.22.2</code> が入っています。CPU Image と同じバージョンであることも測って確認しました。
+        写しではなく同じ実装です。</p>
+
+        <p>モデルの重みは落としていません。トークンを数えるのに 3.7GB が足すものはありません。
+        tokenizer のファイル 4 個だけを取得し、Qwen2.5 の 0.5B・3B・7B がその
+        4 個を <strong>バイト単位でまったく同じに</strong> 持っていることも測って確認しました。リポジトリの revision は三つとも異なります。
+        revision だけではこの事実を言えず、ファイルの hash が言いました。</p>
+        <h2 id="何に対して測ったか">表が何に対して測られたかも併せて記録します</h2>
+
+        <p>表に値だけがあると、次の人が再現できません。そこで一緒に書いたものです。</p>
+
+        <table>
+          <caption class="sr-only">表と一緒に記録した五つの識別子と、それぞれが必要な理由。</caption>
+          <thead><tr><th scope="col">記録したもの</th><th scope="col">値</th><th scope="col">なぜ必要か</th></tr></thead>
+          <tbody>
+            <tr><td>tokenizer revision</td><td><code>aa8e7253…</code></td><td>表がどの tokenizer についてのものか</td></tr>
+            <tr><td>tokenizer ファイル 4 個の結合 hash</td><td><code>81feaac8…</code></td><td>revision は重みだけが変わっても変わります。この値は tokenizer のバイトそのものを固定します</td></tr>
+            <tr><td>Chat Template の hash</td><td><code>cd8e9439…</code></td><td>30 トークンの固定費用はここから出ます</td></tr>
+            <tr><td>プロンプトコーパスの hash</td><td><code>dec10207…</code></td><td>コーパスが変わればすべてのトークン数が変わります</td></tr>
+            <tr><td>Serving Image の digest</td><td><code>sha256:0a51ea…</code></td><td>どの実装が数えたのか</td></tr>
+          </tbody>
+        </table>
+
+        <p>コーパスの hash は最初 <strong>抜けていました。</strong> 表の最初のコメントはコーパスを記録すると言っているのに実際にはなく、
+        そうなるとコーパスを変えても表の二つの写しは互いに一致したまま、トークン数だけが無効になります。
+        外部のレビューがそれを指摘したので入れました。一文字だけ変えてみると、対照 test が
+        <code>every count in it is stale</code> で赤になりました。</p>
+        <h2 id="凍結で比較が切れた">凍結したら以前の表との比較が切れました</h2>
+
+        <p>表を作ったあとに、その値を実行契約に入れました。登録が固定していたものは五つで、到着率、重み三つ、
+        再生時間です。プロンプト長はその中にありませんでした。</p>
+
+        <p>無いということがどういう意味かは、有料の実行を二回してから分かりました。同じ study、同じ
+        seed 11、同じ到着スケジュール、同じコーパスの hash で回した二つの実行が <strong>互いに比較できない数を出しました。</strong></p>
+
+        <table>
+          <caption>同じ登録を満たした二つの実行が送ったもの。三つの単位が違います。</caption>
+          <thead><tr><th>送ったもの</th><th>2026-09-13</th><th>2026-10-01</th></tr></thead>
+          <tbody>
+            <tr><td>生成器の入力</td><td>200 文字</td><td>1,174 文字</td></tr>
+            <tr><td>目安の推定 <code>ceil(chars/4)</code></td><td>50 トークン</td><td>294 トークン</td></tr>
+            <tr><td>Engine が数えた値</td><td>68 トークン</td><td><code>256</code> トークン</td></tr>
+            <tr><td>リクエスト Timeout</td><td>30,000ms</td><td>60,000ms</td></tr>
+            <tr><td>繰り返し</td><td>2</td><td>5</td></tr>
+          </tbody>
+        </table>
+
+        <p>三行目がこの記事の表がしたことです。2026-10-01 の実行で Engine は premium
+        リクエスト 46,549 件すべてを <code>256</code> トークンと数えました。宣言が <code>inputTokens: 256</code>
+         だったので、宣言と実行が初めて一致したことになります。</p>
+
+        <p>2026-09-13 の実行はこの表ができる前なので、生成器の既定値 200 文字で回りました。
+        その長さを Engine は 68 トークンと読みます。どの <code>inputTokens</code> 宣言にも対応しない数です。</p>
+
+        <p>そのため二つの実行の隔離の基準線が動きました。同じカード、同じ Engine なのに、
+        被害リクエストの尾部遅延が 69.5ms と 174ms です。リクエストごとに載せる prefill
+        の量が違えば基準線も一緒に動き、
+        そうなると一方の基準線に対する比をもう一方のものと並べて読むことができません。</p>
+
+        <p>凍結タプルを五つから九つに増やしました。プロンプト長が二つ、リクエスト Timeout、出力上限が二つ、
+        そして上の表の識別子です。Timeout を入れた理由は、
+        それがどのリクエストを切り落とすかを決めるからです。長さだけを固定して Timeout を放っておくと、
+        次の比較で同じことが繰り返されます。</p>
+
+        <h2 id="読み違え">計測を一度読み違えました</h2>
+
+        <p>最初の測定で 11 文字と 200 文字がどちらも 2 トークンになりました。tokenizer が故障したように見えました。</p>
+
+        <p>故障ではありませんでした。 <code>transformers 5.15.0</code> の
+        <code>apply_chat_template(tokenize=True)</code> はリストではなく <code>BatchEncoding</code> を返し、 <strong><code>len()</code> はその key の個数である 2 を数えます。</strong> トークン数は
+        <code>['input_ids']</code> の長さです。</p>
+
+        <p>対照群を一つ置いてはじめて分かりました。Template なしで平文だけをエンコードすると、11 文字
+        2 トークン、200 文字 25 トークン、2,000 文字 250 トークンと、長さに従って増えます。
+        Template を適用すると 31・54・279 です。
+        前のものが増えているのに後ろのものが増えないなら、読み取りが間違っています。</p>
+
+        <p><strong>その数字を表に入れていたら、すべての長さが 2 トークンだという表がコミットされていたはずです。</strong></p>
+        <h2 id="主張しないこと">この記事が主張しないこと</h2>
+
+        <ul>
+          <li>⚠️ <strong>ほかのモデルの tokenizer については何も言いません。</strong> 測ってみたのは Qwen2.5 一つです。同じリポジトリに Phi-3 と比べた記録があり、
+          40,000 文字のプロンプト一つを Qwen2.5 は 5,029 トークン、Phi-3 は
+          10,004 トークンと読みました。倍が違います。</li>
+          <li>ここで決めた文字長が Engine が数える数と同じだと確立してはいません。Engine が権威であり、
+          実行時にもう一度訊く道具が別にあります。二つが食い違えば Engine が正しく、
+          表が古いということです。</li>
+          <li>「最小のもの」は走査した窓の中で最小のものです。窓の外にもっと小さい長さがあるかもしれず、
+          それを確認はしていません。</li>
+          <li>非単調がすべての区間で同じ密度で出るとは言いません。三つの窓で 21・21・30 回であり、
+          その間の区間は測っていません。</li>
+          <li><strong>この表は CRD の <code>status</code> を埋めません。</strong> 測定プロトコルを実行器へ移す断片の一つであり、結果を CRD に記録するものはまだありません。</li>
+          <li>この校正が以前の結果を説明するとは言いません。二つの実行の間でプロンプト長とリクエスト Timeout
+          と繰り返し数が一緒に変わり、三つを切り分けた測定がありません。尾部遅延の比が 27.2 から 23.0
+          に変わったことを、長さの校正の効果として読む根拠はここにはありません。</li>
+        </ul>
+        <div class="wrapup">
+        <h2 id="おわりに">おわりに</h2>
+
+        <ul>
+          <li><strong>目安は窓を狭めるためだけに使い、答えとしては使いませんでした。</strong> 三点に合わせた直線の残差が 1.1 トークン以内であっても、
+          受理は実測した値が一致したときだけにしました。</li>
+          <li><strong>単調性を確認してから探索方法を決めました。</strong> 確認せずに二分探索を使っていたら、答えがあるのに無いと報告していたはずです。</li>
+          <li>tokenizer を取り込む代わりに Serving Image の中で数えました。
+          ライブラリのバージョンが同じであることを測って確認したので、写しではないと言えます。</li>
+          <li>表が何に対して測られたかを値と一緒に書きました。revision・ファイルの
+          hash・Template の hash・コーパスの hash・Image の digest
+          の五つです。</li>
+        </ul>
+
+        <p>単位が違う二つの層をつなぐ場所では、変換関数を探す前に、その関数があるのかを先に訊くほうがよかったです。</p>
+
+        <p>お読みいただきありがとうございました。</p>
+        </div>
+      </article>
+    </main>
+    <footer class="notranslate">
+      <div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div>
+      <div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div>
+    </footer>
+  </div>
+
+  <script>window.CONTENT_BASE = "../";</script>
+  <script src="../assets/i18n.js?v=e0fa0917be"></script>
+  <script src="../assets/content.js?v=87103a74f0"></script>
+  <script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script defer src="../assets/highlight.js?v=d4af83b541"></script>
+  <script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>
+    (function () {
+      var el = document.querySelector(".article-aside");
+      if (el && window.renderArticleAside) {
+        renderArticleAside(el, el.dataset.aside, el.dataset.slug);
+      }
+    })();
+  </script>
+</body>
+</html>

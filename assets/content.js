@@ -196,6 +196,28 @@
       },
       items: [
         {
+          title: "The Build Setting That Git Was Told to Ignore",
+          title_ko: "Gradle 빌드가 제 컴퓨터에서만 성공했습니다",
+          url: "writing/the-setting-git-never-tracked.ko.html",
+          source: "commercial", sourceLabel: "Commercial project",
+          date: "2026-10-06",
+          desc: "Verifying a dependency bot's Kotlin bump, the build died with OutOfMemoryError and I reported the version as the cause. Reverting the version failed the same way, which is how the real cause surfaced: the heap setting sat in git's exclude list, so CI and every fresh clone never received it.",
+          desc_ko: "의존성 봇이 올린 Kotlin 버전 범프를 검증하다 빌드가 OutOfMemoryError로 죽었고 저는 그것을 버전 탓으로 보고했습니다. 버전을 되돌려도 똑같이 죽는 것을 보고서야 원인이 git 추적에서 빠진 힙 설정임을 알았습니다. 추적이 0건이면 CI와 새 클론도 그 설정을 받지 못합니다.",
+          tags: ["Social Polling Platform", "Tooling", "Backend", "Method"]
+        },
+        {
+          title: "GPUaaS Input Length: One Character Still Cost 30 Tokens",
+          title_ko: "GPUaaS 플랫폼 입력 길이: 1자를 보내도 30토큰이었습니다",
+          title_ja: "GPUaaS プラットフォームの入力長: 1 文字でも 30 トークンでした",
+          url: "writing/gpu-input-length-in-characters.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10", dateLabel: "Oct 2026",
+          desc: "The CRD declares input length in tokens and the trace generator takes characters. The ceil(chars/4) estimate that joined them puts 50 tokens against a measured 68 at 200 characters and 10,000 against 7,695 at 40,000, so the direction flips, and the characters-to-tokens curve is not monotone either. Measured inside the serving image, 256 tokens is 1,174 characters and 8,192 is 42,579.",
+          desc_ko: "CRD는 입력 길이를 토큰으로 선언하고 트레이스 생성기는 문자 수를 받습니다. 둘을 잇는 ceil(chars/4) 어림은 200자에서 50토큰을 추정했는데 실측이 68이고 40,000자에서 10,000을 추정했는데 실측이 7,695여서 방향이 뒤집혔고 문자에서 토큰으로 가는 곡선은 단조도 아니었습니다. 서빙 이미지 안에서 재서 256토큰은 1,174자, 8,192토큰은 42,579자로 고정했습니다.",
+          desc_ja: "CRD は入力長をトークンで宣言し、トレース生成器は文字数を受け取ります。両者をつなぐ ceil(chars/4) の目安は 200 文字で 50 トークンと見積もったのに実測は 68 で、40,000 文字で 10,000 と見積もったのに実測は 7,695 でした。方向が逆転します。文字からトークンへの曲線は単調でもありません。Serving Image の中で測り、256 トークンは 1,174 文字、8,192 トークンは 42,579 文字に固定しました。",
+          tags: ["GPUaaS Control Plane", "GPU", "Method", "Observability"]
+        },
+        {
           title: "Why the Console Does Not Show \"Approved\" When You Click Approve",
           title_ko: "자율주행 데이터 플랫폼 09. 운영 콘솔은 승인 버튼을 눌러도 왜 바로 「승인됨」을 띄우지 않을까",
           url: "writing/autonomy-9-no-optimistic-approve.ko.html",
