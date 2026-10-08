@@ -189,12 +189,92 @@
       tagGroups: {
         /* 프로젝트를 맨 위에 둔다 — 「어느 시스템 이야기인가」가 독자의 첫 질문이다.
            글 머리의 #태그 버튼이 여기로 걸러 들어온다. */
-        "Project": ["IaaS Backend", "GPUaaS Control Plane", "Social Polling Platform", "Driving Data Studio"],
+        "Project": ["IaaS Backend", "GPUaaS Control Plane", "Social Polling Platform", "Driving Data Studio", "Product Retrieval Studio"],
         "Area": ["GPU", "Kubernetes", "Backend", "Postgres", "IaaS", "Control Plane", "Data Platform"],
         "Perspective": ["Method", "Observability", "Reliability", "Performance",
                 "Security", "Privacy", "Cost", "Operations", "Migration"]
       },
       items: [
+        {
+          title: "Product Retrieval 08. Graded relevance labels are not adopted for now",
+          title_ko: "상품 검색 08. 세 단계 판단은 지금 적용하지 않습니다",
+          url: "writing/product-retrieval-08-graded-labels.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-09", dateLabel: "Oct 9, 2026",
+          desc: "Industry datasets collect graded relevance, but people disagree at the boundaries. Simulated corrections cannot produce a similar label and the preregistered target is same-product R@5, so M1 keeps two levels. A 200-pair pilot and its pass criteria are fixed in advance. Korean only.",
+          desc_ko: "업계는 판단을 여러 단계로 받지만 경계에서 의견이 갈립니다. 모의 교정은 유사를 만들 수 없고 사전등록 기준과도 맞지 않아 M1은 두 단계로 두었습니다. 200쌍 시험과 통과 기준을 먼저 정했습니다.",
+          tags: ["Product Retrieval Studio", "Method", "Design"]
+        },
+        {
+          title: "Product Retrieval 07. With 20% of simulated corrections wrong, R@5 fell from 0.857 to 0.299",
+          title_ko: "상품 검색 07. 모의 교정의 20%가 틀리자 R@5가 0.857에서 0.299로 떨어졌습니다",
+          url: "writing/product-retrieval-07-noisy-corrections.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-09", dateLabel: "Oct 9, 2026",
+          desc: "Flipping 20% of simulated answers dropped one seed to R@5 0.2985 at 100 labels, and the 3,000-label mean stayed below baseline. Because positives are rare, a 20% flip makes about 80% of positive labels fake by calculation. A deployment gate on R@5, positive-label rate and R@1 is designed but not built. Korean only.",
+          desc_ko: "모의 교정의 20%를 뒤집자 라벨 100개에서 R@5가 0.2985까지 떨어진 seed가 있었습니다. 정답이 드물어서 뒤집기 20%가 정답 라벨에서는 계산상 80%의 오염이 됩니다. R@5, 정답 라벨 비율, R@1을 확인하는 배포 게이트를 설계했고 아직 구현하지 않았습니다.",
+          tags: ["Product Retrieval Studio", "Method", "Operations"]
+        },
+        {
+          title: "Product Retrieval 06. 108 runs and the R@5 0.887 target was not reached",
+          title_ko: "상품 검색 06. 108번 실행했지만 목표 R@5 0.887에 미치지 못했습니다",
+          url: "writing/product-retrieval-06-learning-curve.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-09", dateLabel: "Oct 9, 2026",
+          desc: "All 108 preregistered runs completed. No seed reached validation R@5 0.887 within 3,000 labels, and the one-time test check came in at +0.0096 over baseline, 0.0204 short of the success line. The small gain reproduced on both splits; the +0.03 target did not. Korean only.",
+          desc_ko: "사전등록한 108개 조건을 모두 실행했습니다. 어느 seed도 라벨 3,000개까지 목표 R@5 0.887에 도달하지 못했습니다. 한 번 연 시험셋에서도 기준선보다 0.0096 높아 성공 기준에 0.0204 모자랐습니다.",
+          tags: ["Product Retrieval Studio", "Method"]
+        },
+        {
+          title: "Product Retrieval 05. A reranker stuck at R@5 0.858 even with 100,000 labels",
+          title_ko: "상품 검색 05. 라벨 10만 개로도 R@5가 0.858에 머문 재정렬 모델",
+          url: "writing/product-retrieval-05-reranker-features.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-09", dateLabel: "Oct 9, 2026",
+          desc: "Rerankers fed score features and image statistics stayed at R@5 0.858 even with 33 times the label budget, because every feature came from the cosine similarity the search had already used. Feeding the vector components directly (v2) was the first model that improved as labels grew. Korean only.",
+          desc_ko: "점수와 이미지 통계를 넣은 재정렬 모델은 라벨을 예산의 33배로 늘려도 R@5가 0.858에 머물렀습니다. 특징이 모두 검색이 이미 쓴 코사인 유사도에서 나왔기 때문입니다. 벡터 성분을 직접 넣은 v2에서 처음으로 라벨이 늘수록 R@5가 올랐습니다.",
+          tags: ["Product Retrieval Studio", "Method", "Design"]
+        },
+        {
+          title: "Product Retrieval 04. Candidates nobody clicked are not negative labels",
+          title_ko: "상품 검색 04. 누르지 않은 후보는 오답 라벨로 쓰지 않습니다",
+          url: "writing/product-retrieval-04-event-labels.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-09", dateLabel: "Oct 9, 2026",
+          desc: "Only match and not-match become labels; skips and no-response do not. When judgements on the same candidate disagree, the last one within a session wins and sessions vote, with the winning share kept as a weight. Simulated corrections produced no conflicts. Korean only.",
+          desc_ko: "\"맞다\"와 \"아니다\"만 라벨이 됩니다. 건너뛰기와 무반응은 라벨을 만들지 않습니다. 같은 후보에 판단이 엇갈리면 세션 안에서는 고친 판단을, 세션 사이에서는 다수결을 씁니다. 모의 교정에서는 충돌이 없었습니다.",
+          tags: ["Product Retrieval Studio", "Method", "Design"]
+        },
+        {
+          title: "Product Retrieval 03. Fixing the order to collect 3,000 correction labels before running",
+          title_ko: "상품 검색 03. 교정 라벨 3,000개를 모을 순서를 미리 정했습니다",
+          url: "writing/product-retrieval-03-preregistration.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-09", dateLabel: "Oct 9, 2026",
+          desc: "Before the experiment, a contract fixed how candidates are picked for labels (alternating across three rank bands), nine measurement points from 100 to 3,000, and the target of validation R@5 0.887. Same seed, same labels and same answers. Korean only.",
+          desc_ko: "실험 전에 계약으로 라벨 고르는 방법, 측정 지점, 성공 기준을 고정했습니다. 후보는 순위 구간 세 층에서 번갈아 고릅니다. 목표는 검증셋 R@5 0.887입니다. 같은 seed면 같은 후보와 같은 답이 나옵니다.",
+          tags: ["Product Retrieval Studio", "Method"]
+        },
+        {
+          title: "Product Retrieval 02. The IDs of all 53,882 training queries contained the answer",
+          title_ko: "상품 검색 02. 학습 질의 53,882개의 ID에 정답 상품 ID를 넣었습니다",
+          url: "writing/product-retrieval-02-query-id-leak.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-09", dateLabel: "Oct 9, 2026",
+          desc: "Every one of the 53,882 training query IDs carried its answer product ID, so any code could read the answer by splitting a string. Found in a contract review before any experiment; the ID became a hash and the old format is now refused. Korean only.",
+          desc_ko: "학습셋 질의 53,882개 전부의 ID에 정답 상품 ID가 그대로 들어 있었습니다. 문자열을 나누기만 하면 정답을 읽을 수 있었습니다. 실험 전 계약 검토에서 찾아 ID를 Hash로 바꿨습니다. 옛 형식이 다시 들어오면 실행을 거부하게 했습니다.",
+          tags: ["Product Retrieval Studio", "Method"]
+        },
+        {
+          title: "Product Retrieval 01. If 98% of answers are already in the top 100, what should change",
+          title_ko: "상품 검색 01. 정답의 98%가 이미 후보 100개 안에 있다면 무엇을 고쳐야 할까",
+          url: "writing/product-retrieval-01-reorder-not-retrain.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-09", dateLabel: "Oct 9, 2026",
+          desc: "Changing the embedding model means re-embedding the whole gallery. On 3,243 validation products, product-level R@100 was 98.1% and R@5 was 85.7%, so I fixed the embedding and decided to change only the order of candidates. The code is split into three layers to match. Korean only.",
+          desc_ko: "임베딩 모델을 바꾸면 갤러리 전체를 다시 임베딩해야 합니다. 검증셋 상품 3,243개에서 상품 단위 R@100은 98.1%, R@5는 85.7%였습니다. 임베딩은 고정한 채 후보의 순서만 고치기로 했습니다. 그 결정에 맞춰 코드를 세 층으로 나눈 방식도 다룹니다.",
+          tags: ["Product Retrieval Studio", "Method", "Design"]
+        },
         {
           title: "The Build Setting That Git Was Told to Ignore",
           title_ko: "Gradle 빌드가 제 컴퓨터에서만 성공했습니다",

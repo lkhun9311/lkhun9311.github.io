@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>상품 검색 06. 108번 실행했지만 목표 R@5 0.887에 미치지 못했습니다 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet"><link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/product-retrieval-06-learning-curve.ko.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/product-retrieval-06-learning-curve.ko.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" /><meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="상품 검색 06. 108번 실행했지만 목표 R@5 0.887에 미치지 못했습니다" />
+  <meta property="og:description" content="사전등록한 학습 곡선을 108번 실행하고 시험셋을 한 번 열었습니다. 목표에는 미치지 못했습니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/product-retrieval-06-learning-curve.ko.html" /><meta property="og:locale" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content="상품 검색 06. 108번 실행했지만 목표 R@5 0.887에 미치지 못했습니다" />
+  <meta name="twitter:description" content="판정 조건의 세 seed 모두 라벨 3,000개까지 목표 R@5 0.887에 도달하지 못했습니다. 시험셋 평균은 기준선보다 0.0096 높아 성공 기준에 0.0204 모자랐습니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta name="description" content="판정 조건의 세 seed 모두 라벨 3,000개까지 목표 R@5 0.887에 도달하지 못했습니다. 시험셋 평균은 기준선보다 0.0096 높아 성공 기준에 0.0204 모자랐습니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar"><div class="topbar-inner notranslate"><a class="site-name" href="../index.html#about">Kwanghun</a>
+    <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+      <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang" data-authored='{"ko":"product-retrieval-06-learning-curve.ko.html"}'>
+        <option value="ko" selected>한국어</option><option value="en">English</option><option value="ja">日本語</option><option value="zh-CN">简体中文</option><option value="zh-TW">繁體中文</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ru">Русский</option><option value="vi">Tiếng Việt</option><option value="id">Bahasa Indonesia</option><option value="hi">हिन्दी</option><option value="ar">العربية</option>
+      </select><div id="google_translate_element" aria-hidden="true"></div>
+      <a href="../index.html#about">About</a><a href="../index.html#news">News</a><a href="../index.html#projects">Projects</a><a href="../index.html#writing" class="active">Writing</a><a href="../index.html#notes">Notes</a><a href="../index.html#cv">CV</a>
+    </nav>
+  </div></div>
+  <div class="container reading"><main>
+    <div class="hero-top">
+      <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
+      <div class="article-meta"><span class="source-tag side notranslate">개인 프로젝트</span><a class="project-tag notranslate" href="../writing/index.html?tag=Product%20Retrieval%20Studio">#Product Retrieval Studio</a></div>
+    </div>
+    <section class="page-hero"><h1>상품 검색 06. 108번 실행했지만 목표 R@5 0.887에 미치지 못했습니다</h1><p class="article-date">2026년 10월</p></section>
+    <aside class="article-aside" data-aside="writing" data-slug="product-retrieval-06-learning-curve"></aside>
+    <nav class="article-toc" aria-label="목차"><p class="toc-label">목차</p><ul>
+      <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+      <li><a href="#고정">실행 전에 고정한 것</a></li>
+      <li><a href="#결과">108번을 모두 실행했지만 목표에는 미치지 못했습니다</a></li>
+      <li><a href="#시험셋">시험셋 평균도 성공 기준에 미치지 못했습니다</a></li>
+      <li><a href="#보조">보조 조건에서 교정 오류를 넣자 R@5가 낮아졌습니다</a></li>
+      <li><a href="#주장하지-않는-것">이 글이 주장하지 않는 것</a></li>
+      <li><a href="#마치며">마치며</a></li>
+    </ul></nav>
+    <article class="article-body">
+      <p>사진 속 옷과 같은 상품을 찾는 검색에서 사용자 교정으로 학습한 재정렬 모델이 검색 성능을 얼마나 높이는지 쟀습니다. 결과를 보기 전에 목표를 정해 두었습니다. 검증셋에서 상품별 재현율을 평균한 Macro Recall@5를 기준선 0.857에서 0.887까지 올리는 것입니다.</p>
+
+      <p>라벨 100개부터 3,000개까지 측정 지점 9곳, <code>seed</code> 3개, 조건 4가지로 모두 108번 실행했습니다. 어느 <code>seed</code>에서도 목표에 도달하지 못했습니다. 마지막에 한 번만 연 시험셋에서도 목표에 미치지 못했습니다.</p>
+
+      <p>교정은 전부 시뮬레이터가 정답을 보고 답한 모의 교정입니다. 실제 사용자 효과는 재지 않았습니다.</p>
+
+      <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
+      <ul class="callout">
+        <li>실험 결과를 보기 전에 판정 기준을 먼저 정해 두는 방법이 궁금한 분</li>
+        <li>목표에 못 미친 결과를 어떻게 기록할지 고민하는 분</li>
+        <li>학습 곡선을 여러 <code>seed</code>로 재 본 분</li>
+      </ul>
+
+      <h2 id="고정">실행 전에 고정한 것<a class="anchor" href="#고정" aria-label="이 절로 가는 링크">#</a></h2>
+
+      <div class="table-scroll"><div class="table-scroll-hint">가로로 넘겨 표 전체를 볼 수 있습니다.</div><div class="table-scroll-viewport">
+        <table><thead><tr><th>항목</th><th>고정한 값</th></tr></thead><tbody>
+          <tr><td>목표</td><td>검증셋 상품 단위 Macro R@5 ≥ 0.887</td></tr>
+          <tr><td>측정 지점</td><td>라벨 100, 200, 300, 500, 700, 1,000, 1,500, 2,000, 3,000</td></tr>
+          <tr><td><code>seed</code></td><td>0, 1, 2. <code>seed</code> 하나가 라벨 선택, 답의 노이즈, 재정렬 모델 학습을 함께 정합니다</td></tr>
+          <tr><td>판정</td><td><code>seed</code>마다 목표에 처음 도달한 측정 지점. 3,000까지 도달하지 못하면 「지정 지점 3,000까지 도달 관측 없음」</td></tr>
+          <tr><td>시험셋</td><td>라벨 3,000개로 학습한 모델 세 개만 마지막에 한 번 엽니다. 성공 = 세 모델 평균 R@5 ≥ 시험셋 기준선 + 0.03</td></tr>
+        </tbody></table>
+      </div></div>
+
+      <figure class="diagram">
+        <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+          <svg viewBox="0 0 720 230" role="img" aria-labelledby="plan-t plan-d" xmlns="http://www.w3.org/2000/svg">
+            <title id="plan-t">실행 계획 108개의 구성</title>
+            <desc id="plan-d">조건 4가지, seed 3개, 측정 지점 9곳을 곱해 108개입니다. 판정은 층화 선택에 노이즈 0인 조건 하나로만 합니다.</desc>
+            <g font-family="Inter, sans-serif" font-size="12" fill="#444">
+              <rect x="20" y="30" width="230" height="40" rx="8" fill="#f4f5ff" stroke="#4f5bd5" stroke-width="1.8"/><text x="135" y="55" text-anchor="middle" fill="#4f5bd5" font-weight="700">층화 선택 · 노이즈 0 (판정)</text>
+              <rect x="20" y="80" width="230" height="40" rx="8" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="135" y="105" text-anchor="middle">층화 선택 · 노이즈 0.1</text>
+              <rect x="20" y="130" width="230" height="40" rx="8" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="135" y="155" text-anchor="middle">층화 선택 · 노이즈 0.2</text>
+              <rect x="20" y="180" width="230" height="40" rx="8" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="135" y="205" text-anchor="middle">무작위 선택 · 노이즈 0</text>
+              <text x="290" y="130" font-size="22" fill="#999">×</text>
+              <rect x="320" y="100" width="110" height="44" rx="8" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="375" y="127" text-anchor="middle">seed 3개</text>
+              <text x="450" y="130" font-size="22" fill="#999">×</text>
+              <rect x="480" y="100" width="110" height="44" rx="8" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="535" y="127" text-anchor="middle">지점 9곳</text>
+              <text x="610" y="130" font-size="22" fill="#999">=</text>
+              <rect x="636" y="100" width="70" height="44" rx="8" fill="#fdf0f5" stroke="#d62976" stroke-width="1.8"/><text x="671" y="127" text-anchor="middle" fill="#d62976" font-weight="700">108</text>
+            </g>
+          </svg>
+        </div>
+        <figcaption>계획에 108개를 먼저 적었습니다. 실행이 끝나면 조건마다 완료, 실패, 미실행을 남깁니다.</figcaption>
+      </figure>
+
+      <p>실행 계획에 조건 108개를 먼저 적고 실행이 끝나면 조건마다 완료, 실패, 미실행을 남기도록 했습니다. 일부 실행만 골라 보고하는 일을 막기 위해서입니다. 실행 전에 다른 모델에게 이 계약을 반대 입장에서 검토해 달라고 요청했고 지적 11건 중 10건을 반영했습니다.</p>
+
+      <p>그중 하나는 계약 문구의 실수였습니다. 처음에는 「개선 폭 구간의 하한이 기준선 이하이면 함께 적는다」고 썼습니다. 개선 폭(Δ)의 하한을 기준선 점수(0.857)와 비교하면 거의 언제나 참이 됩니다. 0과 비교해야 개선 여부를 알 수 있습니다. 0.03과 비교해야 목표 개선 폭을 뒷받침하는지 알 수 있습니다. 두 비교로 나눠 적었습니다.</p>
+
+      <h2 id="결과">108번을 모두 실행했지만 목표에는 미치지 못했습니다<a class="anchor" href="#결과" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>108개 조건을 모두 실행했고 실패는 0건입니다. 아래는 판정 조건(층화 선택, 노이즈 0)에서 세 <code>seed</code>의 평균입니다.</p>
+
+      <figure class="diagram">
+        <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+          <svg viewBox="0 0 720 260" role="img" aria-labelledby="cv-t cv-d" xmlns="http://www.w3.org/2000/svg">
+            <title id="cv-t">판정 조건의 세 seed 평균 R@5</title>
+            <desc id="cv-d">라벨 100에서 0.8515, 2,000까지 0.854에서 0.857 사이, 3,000에서 0.8664입니다. 기준선 0.8571과 목표 0.887을 함께 표시합니다.</desc>
+            <g font-family="Inter, sans-serif" font-size="12" fill="#444">
+              <line x1="90" y1="50" x2="90" y2="215" stroke="#ccc"/><line x1="90" y1="215" x2="620" y2="215" stroke="#ccc"/>
+              <text x="80" y="219" text-anchor="end" fill="#777">0.845</text><text x="80" y="69" text-anchor="end" fill="#777">0.895</text>
+              <line x1="90" y1="179" x2="620" y2="179" stroke="#999" stroke-dasharray="4 4"/><text x="626" y="183" fill="#777" font-size="11">기준선 0.857</text>
+              <line x1="90" y1="89" x2="620" y2="89" stroke="#d62976" stroke-dasharray="4 4"/><text x="626" y="93" fill="#d62976" font-size="11">목표 0.887</text>
+              <polyline points="110,196 170,188 230,183 290,183 350,182 410,183 470,184 530,179 590,151" fill="none" stroke="#4f5bd5" stroke-width="2.5"/>
+              <g fill="#4f5bd5"><circle cx="110" cy="196" r="3.5"/><circle cx="170" cy="188" r="3.5"/><circle cx="230" cy="183" r="3.5"/><circle cx="290" cy="183" r="3.5"/><circle cx="350" cy="182" r="3.5"/><circle cx="410" cy="183" r="3.5"/><circle cx="470" cy="184" r="3.5"/><circle cx="530" cy="179" r="3.5"/><circle cx="590" cy="151" r="3.5"/></g>
+              <text x="590" y="140" text-anchor="middle" fill="#4f5bd5" font-weight="700">0.8664</text>
+              <g text-anchor="middle" fill="#777" font-size="11"><text x="110" y="234">100</text><text x="170" y="234">200</text><text x="230" y="234">300</text><text x="290" y="234">500</text><text x="350" y="234">700</text><text x="410" y="234">1,000</text><text x="470" y="234">1,500</text><text x="530" y="234">2,000</text><text x="590" y="234">3,000</text></g>
+            </g>
+          </svg>
+        </div>
+        <figcaption>가로축은 측정 지점 순서이고 간격은 라벨 수에 비례하지 않습니다. 3,000에서만 기준선 위로 올라갑니다.</figcaption>
+      </figure>
+
+      <ul>
+        <li>2,000개까지는 기준선(0.8571)과 같거나 조금 낮습니다.</li>
+        <li>3,000개에서는 세 <code>seed</code> 모두 개선 폭 구간의 하한이 0보다 컸습니다. 하한은 모두 0.03보다 작았습니다.</li>
+        <li>같은 3,000개를 무작위로 고르면 R@5가 0.8573–0.8588로 기준선 수준이었습니다. 순위 구간을 나눠 고른 쪽이 더 많이 올랐습니다.</li>
+      </ul>
+
+      <p>세 <code>seed</code> 모두 「지정 지점 3,000까지 도달 관측 없음」으로 판정했고 결과는 「미도달」로 기록했습니다.</p>
+
+      <h2 id="시험셋">시험셋 평균도 성공 기준에 미치지 못했습니다<a class="anchor" href="#시험셋" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>검증셋 곡선을 측정한 데이터는 재정렬 모델을 고를 때 쓴 데이터와 같습니다. 그래서 검증셋 숫자에는 선택 편향이 남습니다. 이 편향을 피하려고 실행 전에 정한 대로 시험셋을 한 번만 열었습니다.</p>
+
+      <figure class="diagram">
+        <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+          <svg viewBox="0 0 720 230" role="img" aria-labelledby="ts-t ts-d" xmlns="http://www.w3.org/2000/svg">
+            <title id="ts-t">시험셋 R@5와 성공 기준</title>
+            <desc id="ts-d">시험셋 기준선 0.8600, seed 0은 0.8705, seed 1은 0.8736, seed 2는 0.8646, 평균 0.8696입니다. 성공 기준은 0.8900입니다.</desc>
+            <g font-family="Inter, sans-serif" font-size="12" fill="#444">
+              <text x="120" y="46" text-anchor="end">기준선</text><rect x="140" y="30" width="120" height="24" rx="4" fill="#ccc"/><text x="268" y="47">0.8600</text>
+              <text x="120" y="82" text-anchor="end">seed 0</text><rect x="140" y="66" width="246" height="24" rx="4" fill="#8f97e6"/><text x="394" y="83">0.8705</text>
+              <text x="120" y="118" text-anchor="end">seed 1</text><rect x="140" y="102" width="283" height="24" rx="4" fill="#8f97e6"/><text x="431" y="119">0.8736</text>
+              <text x="120" y="154" text-anchor="end">seed 2</text><rect x="140" y="138" width="175" height="24" rx="4" fill="#8f97e6"/><text x="323" y="155">0.8646</text>
+              <text x="120" y="190" text-anchor="end" font-weight="700">평균</text><rect x="140" y="174" width="235" height="24" rx="4" fill="#4f5bd5"/><text x="383" y="191" font-weight="700" fill="#4f5bd5">0.8696</text>
+              <line x1="620" y1="22" x2="620" y2="206" stroke="#d62976" stroke-width="1.5" stroke-dasharray="4 4"/><text x="620" y="222" text-anchor="middle" fill="#d62976" font-size="11">성공 기준 0.8900</text>
+            </g>
+          </svg>
+        </div>
+        <figcaption>막대는 R@5 0.85에서 시작합니다. 평균은 성공 기준보다 0.0204 낮았습니다.</figcaption>
+      </figure>
+
+      <div class="table-scroll"><div class="table-scroll-hint">가로로 넘겨 표 전체를 볼 수 있습니다.</div><div class="table-scroll-viewport">
+        <table><thead><tr><th></th><th>R@5</th><th>기준선 대비</th></tr></thead><tbody>
+          <tr><td>시험셋 기준선</td><td>0.8600</td><td></td></tr>
+          <tr><td><code>seed</code> 0</td><td>0.8705</td><td>+0.0105</td></tr>
+          <tr><td><code>seed</code> 1</td><td>0.8736</td><td>+0.0136</td></tr>
+          <tr><td><code>seed</code> 2</td><td>0.8646</td><td>+0.0046</td></tr>
+          <tr><td>세 <code>seed</code> 평균</td><td>0.8696</td><td>+0.0096</td></tr>
+        </tbody></table>
+      </div></div>
+
+      <p>성공 기준은 0.8900이었고 평균은 0.0204 모자랍니다. 평균 개선 폭은 검증셋에서 라벨 3,000개일 때의 개선 폭(약 +0.009)과 거의 같습니다. 시험셋에서도 기준선보다 높았지만 두 데이터셋 모두 목표 개선 폭인 +0.03에 미치지 못했습니다. 1위 정확도(R@1)는 시험셋에서 세 <code>seed</code> 모두 기준선보다 조금 낮았습니다. 구간은 모두 0을 포함했습니다.</p>
+
+      <h2 id="보조">보조 조건에서 교정 오류를 넣자 R@5가 낮아졌습니다<a class="anchor" href="#보조" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>판정에 쓰지 않은 보조 조건도 함께 실행했습니다. 시뮬레이터 답의 10%나 20%를 뒤집는 조건입니다.</p>
+      <ul>
+        <li>노이즈 0.2, 라벨 100개에서 <code>seed</code> 하나는 R@5가 0.2985까지 떨어졌습니다. 기준선 0.857의 절반보다 낮았습니다.</li>
+        <li>노이즈 0.2, 라벨 3,000개에서도 세 <code>seed</code> 평균이 0.8444로 기준선보다 낮았습니다.</li>
+      </ul>
+
+      <p>이 모의 교정 실험에서는 잘못된 교정이 섞였을 때 재정렬 모델의 검색 성능이 기준선보다 낮아졌습니다. 자세한 내용은 07편에서 다룹니다.</p>
+
+      <h2 id="주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
+      <ul>
+        <li>실제 사용자 효과. 교정은 모두 모의 교정입니다.</li>
+        <li>다른 재정렬 방법의 한계. 측정한 것은 05편의 재정렬 모델 v2 하나입니다. 불확실성 기반 라벨 선택이나 임베딩 일부 미세조정은 재지 않았습니다.</li>
+        <li>큰 갤러리에서의 숫자. 검증셋 상품 3,243개, 시험셋 3,196개 기준입니다.</li>
+        <li>구간의 일반화. 개선 폭 구간은 학습이 끝난 한 모델에 조건부인 지점별 구간입니다. 모델 선택, 지점 선택, 학습 <code>seed</code>의 변동은 반영하지 않습니다.</li>
+      </ul>
+
+      <div class="wrapup">
+        <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>실행 전에 고정한 108개 조건을 모두 돌렸습니다. 판정 조건의 세 <code>seed</code> 모두 3,000개까지 목표 0.887에 도달하지 못했습니다. 시험셋 평균도 기준선보다 0.0096 높은 데 그쳐 성공 기준에 0.0204 모자랐습니다.</p>
+        <p>개선은 작지만 두 데이터셋에서 같은 방향으로 재현됐습니다. 목표 개선 폭 +0.03은 어느 쪽에서도 뒷받침되지 않았습니다.</p>
+        <p>07편은 교정 오류가 섞였을 때 성능이 떨어진 경우와 배포 전에 막는 방법을 다룹니다.</p>
+        <p>읽어 주셔서 감사합니다.</p>
+      </div>
+    </article>
+  </main>
+  <footer class="notranslate"><div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div><div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div></footer>
+  </div>
+  <script>window.CONTENT_BASE = "../";</script><script src="../assets/i18n.js?v=e0fa0917be"></script><script src="../assets/content.js?v=24429b3983"></script><script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script><script defer src="../assets/highlight.js?v=d4af83b541"></script><script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>(function(){var el=document.querySelector(".article-aside");if(el&&window.renderArticleAside){renderArticleAside(el,el.dataset.aside,el.dataset.slug);}})();</script>
+</body>
+</html>
