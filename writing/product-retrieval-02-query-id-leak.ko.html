@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>상품 검색 02. 학습 질의 53,882개의 ID에 정답 상품 ID를 넣었습니다 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet"><link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/product-retrieval-02-query-id-leak.ko.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/product-retrieval-02-query-id-leak.ko.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" /><meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="상품 검색 02. 학습 질의 53,882개의 ID에 정답 상품 ID를 넣었습니다" />
+  <meta property="og:description" content="디버깅하기 쉽게 만든 질의 ID에 정답 상품 ID가 들어 있었습니다. 실험 전 계약 검토에서 찾아 ID 형식을 바꿨습니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/product-retrieval-02-query-id-leak.ko.html" /><meta property="og:locale" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content="상품 검색 02. 학습 질의 53,882개의 ID에 정답 상품 ID를 넣었습니다" />
+  <meta name="twitter:description" content="학습셋 질의 53,882개 전부의 ID에 정답 상품 ID가 그대로 들어 있었습니다. 실험 전 계약 검토에서 찾아 ID를 Hash로 바꿨습니다. 옛 형식이 다시 들어오면 실행을 거부하게 했습니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta name="description" content="학습셋 질의 53,882개 전부의 ID에 정답 상품 ID가 그대로 들어 있었습니다. 실험 전 계약 검토에서 찾아 ID를 Hash로 바꿨습니다. 옛 형식이 다시 들어오면 실행을 거부하게 했습니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar"><div class="topbar-inner notranslate"><a class="site-name" href="../index.html#about">Kwanghun</a>
+    <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+      <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang" data-authored='{"ko":"product-retrieval-02-query-id-leak.ko.html"}'>
+        <option value="ko" selected>한국어</option><option value="en">English</option><option value="ja">日本語</option><option value="zh-CN">简体中文</option><option value="zh-TW">繁體中文</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ru">Русский</option><option value="vi">Tiếng Việt</option><option value="id">Bahasa Indonesia</option><option value="hi">हिन्दी</option><option value="ar">العربية</option>
+      </select><div id="google_translate_element" aria-hidden="true"></div>
+      <a href="../index.html#about">About</a><a href="../index.html#news">News</a><a href="../index.html#projects">Projects</a><a href="../index.html#writing" class="active">Writing</a><a href="../index.html#notes">Notes</a><a href="../index.html#cv">CV</a>
+    </nav>
+  </div></div>
+  <div class="container reading"><main>
+    <div class="hero-top">
+      <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
+      <div class="article-meta"><span class="source-tag side notranslate">개인 프로젝트</span><a class="project-tag notranslate" href="../writing/index.html?tag=Product%20Retrieval%20Studio">#Product Retrieval Studio</a></div>
+    </div>
+    <section class="page-hero"><h1>상품 검색 02. 학습 질의 53,882개의 ID에 정답 상품 ID를 넣었습니다</h1><p class="article-date">2026년 10월</p></section>
+    <aside class="article-aside" data-aside="writing" data-slug="product-retrieval-02-query-id-leak"></aside>
+    <nav class="article-toc" aria-label="목차"><p class="toc-label">목차</p><ul>
+      <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+      <li><a href="#어떤-id">ID에 정답 상품 ID가 들어 있었습니다</a></li>
+      <li><a href="#위험">무엇이 위험했을까</a></li>
+      <li><a href="#발견">계약 검토에서 찾았습니다</a></li>
+      <li><a href="#수정">두 Commit으로 고쳤습니다</a></li>
+      <li><a href="#한계">남은 한계</a></li>
+      <li><a href="#주장하지-않는-것">이 글이 주장하지 않는 것</a></li>
+      <li><a href="#마치며">마치며</a></li>
+    </ul></nav>
+    <article class="article-body">
+      <p>사진 속 옷과 같은 상품을 찾는 검색을 만들고 있습니다. 질의 사진마다 ID를 붙였는데 그 ID 안에 정답 상품 ID를 그대로 넣었습니다. 학습셋 질의 53,882개 전부였습니다.</p>
+
+      <p>실험을 돌리기 전, 실험 계약을 검토하는 단계에서 이 문제를 찾았습니다. 이 글에서는 ID 형식을 고친 이유와 방법, 남은 한계를 설명합니다.</p>
+
+      <p>옛 ID로 돌린 학습·판정 실험은 없습니다. 정답이 실제로 샌 결과는 없습니다. 샐 수 있던 경로를 실험 전에 막은 이야기입니다.</p>
+
+      <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
+      <ul class="callout">
+        <li>평가 데이터의 정답을 학습 쪽에 새지 않게 관리해야 하는 분</li>
+        <li>사람이 읽기 쉬운 ID를 만들어 쓰고 있는 분</li>
+        <li>모의 사용자(시뮬레이터)로 피드백 데이터를 만드는 분</li>
+      </ul>
+
+      <h2 id="어떤-id">ID에 정답 상품 ID가 들어 있었습니다<a class="anchor" href="#어떤-id" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>처음 형식은 <code>출처:상품ID:이미지 Hash 앞 12자</code>였습니다. 로그나 순위 파일을 열면 어느 상품의 질의인지 바로 알 수 있어 디버깅할 때 썼습니다. 그런데 그 상품 ID가 바로 그 질의의 정답이었습니다.</p>
+
+      <figure class="diagram">
+        <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+          <svg viewBox="0 0 720 210" role="img" aria-labelledby="id-t id-d" xmlns="http://www.w3.org/2000/svg">
+            <title id="id-t">옛 질의 ID와 새 질의 ID</title>
+            <desc id="id-d">옛 ID는 출처, 상품 ID, 이미지 Hash 앞 12자를 콜론으로 이은 문자열이라 가운데 조각이 정답 상품 ID입니다. 새 ID는 출처 뒤에 세 값을 sha256으로 묶은 값의 앞 16자만 붙입니다.</desc>
+            <g font-family="Inter, sans-serif" font-size="13" fill="#444">
+              <text x="20" y="34" font-weight="700">옛 형식</text>
+              <rect x="20" y="46" width="120" height="44" rx="8" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="80" y="73" text-anchor="middle">lrvs</text>
+              <rect x="150" y="46" width="180" height="44" rx="8" fill="#fdf0f5" stroke="#d62976" stroke-width="1.8"/><text x="240" y="73" text-anchor="middle" fill="#d62976" font-weight="700">12345 (정답 상품 ID)</text>
+              <rect x="340" y="46" width="200" height="44" rx="8" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="440" y="73" text-anchor="middle">a1b2c3d4e5f6</text>
+              <text x="556" y="73" fill="#d62976">← 나누면 정답</text>
+
+              <text x="20" y="132" font-weight="700">새 형식</text>
+              <rect x="20" y="144" width="120" height="44" rx="8" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="80" y="171" text-anchor="middle">lrvs</text>
+              <rect x="150" y="144" width="390" height="44" rx="8" fill="#f4f5ff" stroke="#4f5bd5" stroke-width="1.8"/><text x="345" y="171" text-anchor="middle" fill="#4f5bd5" font-weight="700">sha256(출처, 상품ID, 이미지 Hash) 앞 16자</text>
+              <text x="556" y="171" fill="#4f5bd5">← 상품 ID 없음</text>
+            </g>
+          </svg>
+        </div>
+        <figcaption>예시 값입니다. 옛 ID는 <code>:</code>로 나누기만 하면 가운데 조각이 정답입니다. 새 ID에는 상품 ID 문자열이 들어가지 않습니다.</figcaption>
+      </figure>
+
+      <h2 id="위험">무엇이 위험했을까<a class="anchor" href="#위험" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>이 프로젝트에서는 시뮬레이터가 정답을 보고 "맞다" 또는 "아니다"를 답합니다. 이 모의 교정으로 얻은 라벨로 재정렬 모델을 학습합니다. 정답은 시뮬레이터와 평가 코드만 읽어야 합니다.</p>
+
+      <p>그런데 순위 파일, 교정 이벤트, 라벨에 모두 질의 ID가 들어갑니다. 어떤 후보에 라벨을 붙일지 고르는 선택기도 질의 ID를 받습니다.</p>
+
+      <figure class="diagram">
+        <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="leak-t leak-d" xmlns="http://www.w3.org/2000/svg">
+            <title id="leak-t">질의 ID가 지나가는 경로</title>
+            <desc id="leak-d">순위 파일에서 시뮬레이터, 교정 이벤트, 라벨로 이어지고 라벨은 선택기와 재정렬 학습으로 들어갑니다. 정답을 읽어도 되는 곳은 시뮬레이터와 평가뿐인데 질의 ID는 모든 단계를 지나갑니다.</desc>
+            <defs><marker id="leak-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#999"/></marker></defs>
+            <g font-family="Inter, sans-serif" text-anchor="middle" font-size="13" fill="#444">
+              <rect x="20" y="30" width="130" height="52" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="85" y="61">순위 파일</text>
+              <rect x="200" y="30" width="130" height="52" rx="10" fill="#f4f5ff" stroke="#4f5bd5" stroke-width="1.8"/><text x="265" y="61" fill="#4f5bd5" font-weight="700">시뮬레이터</text>
+              <rect x="380" y="30" width="130" height="52" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="445" y="61">교정 이벤트</text>
+              <rect x="560" y="30" width="130" height="52" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="625" y="61">라벨</text>
+              <path d="M154 56 H196" stroke="#999" stroke-width="1.5" marker-end="url(#leak-a)"/>
+              <path d="M334 56 H376" stroke="#999" stroke-width="1.5" marker-end="url(#leak-a)"/>
+              <path d="M514 56 H556" stroke="#999" stroke-width="1.5" marker-end="url(#leak-a)"/>
+              <path d="M625 86 V112 H445 V126" fill="none" stroke="#999" stroke-width="1.5" marker-end="url(#leak-a)"/>
+              <path d="M625 86 V126" fill="none" stroke="#999" stroke-width="1.5" marker-end="url(#leak-a)"/>
+              <rect x="380" y="130" width="130" height="52" rx="10" fill="#fdf0f5" stroke="#d62976" stroke-width="1.8"/><text x="445" y="161" fill="#d62976" font-weight="700">선택기</text>
+              <rect x="560" y="130" width="130" height="52" rx="10" fill="#fdf0f5" stroke="#d62976" stroke-width="1.8"/><text x="625" y="161" fill="#d62976" font-weight="700">재정렬 학습</text>
+              <text x="200" y="152" text-anchor="start" fill="#4f5bd5" font-size="12">파란색: 정답을 읽어도 되는 곳</text>
+              <text x="200" y="172" text-anchor="start" fill="#d62976" font-size="12">분홍색: 정답을 읽으면 안 되는 곳</text>
+            </g>
+          </svg>
+        </div>
+        <figcaption>정답을 읽어도 되는 곳은 시뮬레이터와 평가뿐입니다. 질의 ID는 선택기와 재정렬 학습까지 그대로 전달됩니다.</figcaption>
+      </figure>
+
+      <p>ID에 정답이 들어 있으면 정답을 읽지 않도록 설계한 코드도 문자열을 나누기만 하면 정답을 얻습니다. 예를 들어 후보 상품 ID가 질의 ID에 들어 있는지 확인하는 특징을 넣으면 모델이 ID에서 정답을 읽을 수 있습니다. 이 모델의 학습 곡선으로는 검색 모델의 학습 효과를 판단할 수 없습니다.</p>
+
+      <h2 id="발견">계약 검토에서 찾았습니다<a class="anchor" href="#발견" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>라벨 선택 계약(c4)을 확정하기 전에 다른 모델에게 이 계약을 반대 입장에서 검토해 달라고 요청했습니다. 지적 중 하나(<code>[A10]</code>)는 ID 형식이 「정답 대응은 시뮬레이터와 평가만 읽는다」는 계약을 어긴다는 것이었습니다.</p>
+
+      <p>학습셋 질의 53,882개를 확인해 보니 100%가 질의 ID 안에 정답 상품 ID를 그대로 갖고 있었습니다.</p>
+
+      <h2 id="수정">두 Commit으로 고쳤습니다<a class="anchor" href="#수정" aria-label="이 절로 가는 링크">#</a></h2>
+
+      <div class="table-scroll"><div class="table-scroll-hint">가로로 넘겨 표 전체를 볼 수 있습니다.</div><div class="table-scroll-viewport">
+        <table><thead><tr><th>Commit</th><th>바꾼 것</th></tr></thead><tbody>
+          <tr><td><code>071505e</code></td><td>질의 ID를 <code>출처:sha256(출처, 상품ID, 이미지 Hash)의 앞 16자</code>로 바꿨습니다. 같은 질의는 늘 같은 ID를 얻습니다. ID 문자열에 상품 ID를 그대로 넣지 않습니다</td></tr>
+          <tr><td><code>adf658a</code></td><td>시뮬레이터가 순위 파일을 읽을 때 <code>:</code>로 나눈 질의 ID 조각 중 정답 상품 ID와 같은 것이 있으면 실행을 거부합니다. 옛 형식의 순위 파일이 다시 들어오는 것을 막습니다</td></tr>
+        </tbody></table>
+      </div></div>
+
+      <figure class="diagram">
+        <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="guard-t guard-d" xmlns="http://www.w3.org/2000/svg">
+            <title id="guard-t">시뮬레이터가 순위 파일을 받기 전에 하는 확인</title>
+            <desc id="guard-d">순위 파일의 질의 ID를 콜론으로 나눕니다. 조각 중 정답 상품 ID와 같은 것이 있으면 실행을 거부합니다. 없으면 교정을 만듭니다.</desc>
+            <defs><marker id="guard-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#999"/></marker></defs>
+            <g font-family="Inter, sans-serif" text-anchor="middle" font-size="13" fill="#444">
+              <rect x="20" y="74" width="140" height="52" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="90" y="105">순위 파일</text>
+              <rect x="210" y="74" width="170" height="52" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="295" y="105">질의 ID를 <tspan font-family="monospace">:</tspan>로 나눔</text>
+              <rect x="430" y="74" width="120" height="52" rx="10" fill="#f4f5ff" stroke="#4f5bd5" stroke-width="1.8"/><text x="490" y="98" fill="#4f5bd5" font-weight="700">정답 상품 ID와</text><text x="490" y="116" fill="#4f5bd5" font-weight="700">같은 조각</text>
+              <rect x="600" y="16" width="100" height="44" rx="10" fill="#fdf0f5" stroke="#d62976" stroke-width="1.8"/><text x="650" y="43" fill="#d62976" font-weight="700">실행 거부</text>
+              <rect x="600" y="140" width="100" height="44" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="650" y="167">교정 생성</text>
+              <path d="M164 100 H206" stroke="#999" stroke-width="1.5" marker-end="url(#guard-a)"/>
+              <path d="M384 100 H426" stroke="#999" stroke-width="1.5" marker-end="url(#guard-a)"/>
+              <path d="M554 90 L596 46" stroke="#d62976" stroke-width="1.5" marker-end="url(#guard-a)"/><text x="560" y="58" fill="#d62976" font-size="12">있음</text>
+              <path d="M554 110 L596 156" stroke="#999" stroke-width="1.5" marker-end="url(#guard-a)"/><text x="560" y="152" fill="#777" font-size="12">없음</text>
+            </g>
+          </svg>
+        </div>
+        <figcaption><code>adf658a</code>가 넣은 확인입니다. 옛 형식으로 만든 순위 파일은 시뮬레이터 입구에서 멈춥니다.</figcaption>
+      </figure>
+
+      <p>ID를 바꾸면 라벨 선택 결과도 달라집니다. 라벨 선택 정책은 질의 ID 순서로 질의를 정렬한 뒤 난수로 고릅니다. ID가 바뀌면 같은 <code>seed</code>로도 고르는 질의가 달라집니다.</p>
+
+      <p>그래서 순위 파일을 새 ID로 다시 만들었습니다. 사전등록 실험에서 쓸 파일도 이 새 파일로 고정했습니다. 실험 결과를 보기 전에 바꿨으므로 결과를 보고 파일을 고르지는 않았습니다.</p>
+
+      <h2 id="한계">남은 한계<a class="anchor" href="#한계" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>새 ID도 공개된 공식으로 만든 값입니다. 이미지 Hash와 후보 상품 ID를 아는 코드라면 후보마다 같은 공식으로 Hash를 계산해 질의 ID와 맞춰 볼 수 있습니다. 비밀 키를 섞은 Hash로 바꾸면 이 비교를 막을 수 있습니다. 다만 ID를 바꾸면 선택 순서도 다시 바뀝니다.</p>
+
+      <p>이번에는 ID를 더 바꾸지 않고 선택기와 학습기가 받을 수 있는 입력을 정해 두었습니다. 입력은 순위 파일의 질의 ID, 후보 목록, 점수, 후보 통계, 임베딩 벡터, 라벨입니다. 정답 필드를 바꿔도 학습 결과와 재정렬 순서가 바뀌지 않는지 테스트로 확인합니다. 이 한계는 학습 곡선 계약(§8)에 그대로 적었습니다.</p>
+
+      <h2 id="주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
+      <ul>
+        <li>실제로 정답이 샌 실험이 있었다는 것. 옛 ID로 돌린 학습·판정 실험은 없습니다. 실험 전에 고쳤습니다.</li>
+        <li>새 ID가 완전히 안전하다는 것. 공식이 공개돼 있어서 입력 제한과 테스트로 막고 있습니다.</li>
+        <li>다른 데이터의 ID도 안전하다는 것. 이 확인은 LRVS 학습셋 질의에 대한 것입니다.</li>
+      </ul>
+
+      <div class="wrapup">
+        <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>디버깅하기 쉽게 만든 질의 ID에 정답 상품 ID가 들어 있었습니다. 학습셋 질의 53,882개 전부였습니다. 실험 전 계약 검토에서 찾았습니다.</p>
+        <p>ID에서 상품 ID를 뺐습니다. 옛 형식이 다시 들어오면 실행을 거부하게 했습니다. 공식이 공개된 한계는 입력 제한과 테스트로 막고 있습니다.</p>
+        <p>03편은 교정 라벨을 몇 개, 어떤 순서로 모을지를 결과를 보기 전에 정한 과정을 다룹니다.</p>
+        <p>읽어 주셔서 감사합니다.</p>
+      </div>
+    </article>
+  </main>
+  <footer class="notranslate"><div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div><div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div></footer>
+  </div>
+  <script>window.CONTENT_BASE = "../";</script><script src="../assets/i18n.js?v=e0fa0917be"></script><script src="../assets/content.js?v=ed16796d99"></script><script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script><script defer src="../assets/highlight.js?v=d4af83b541"></script><script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>(function(){var el=document.querySelector(".article-aside");if(el&&window.renderArticleAside){renderArticleAside(el,el.dataset.aside,el.dataset.slug);}})();</script>
+</body>
+</html>
