@@ -196,6 +196,16 @@
       },
       items: [
         {
+          title: "Product Retrieval 09. Searching a whole room photo found one product in ten",
+          title_ko: "상품 검색 09. 방 사진을 통째로 검색해 상품 10개 중 1개를 찾았습니다",
+          url: "writing/product-retrieval-09-crop-before-search.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-09", dateLabel: "Oct 9, 2026",
+          desc: "On 205 IKEA room photos, searching the whole photo put 11.8% of each room's products in the top 10. Detecting objects, searching each crop and merging by rank raised that to 24.8% (+0.1295, 95% interval +0.1116 to +0.1475). The settings were chosen after seeing aggregate numbers, so this is exploratory. Korean only.",
+          desc_ko: "IKEA 방 사진 205장을 통째로 검색하면 상위 10개에 방에 있는 상품의 11.8%가 들어왔습니다. 검출기로 잘라 검색하고 순위로 합치자 24.8%였습니다. 설정을 결과를 본 뒤에 골라 탐색 결과로만 보고합니다.",
+          tags: ["Product Retrieval Studio", "Method"]
+        },
+        {
           title: "Product Retrieval 08. Graded relevance labels are not adopted for now",
           title_ko: "상품 검색 08. 세 단계 판단은 지금 적용하지 않습니다",
           url: "writing/product-retrieval-08-graded-labels.ko.html",
