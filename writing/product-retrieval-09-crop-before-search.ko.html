@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>상품 검색 09. 방 사진을 통째로 검색해 상품 10개 중 1개를 찾았습니다 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet"><link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/product-retrieval-09-crop-before-search.ko.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/product-retrieval-09-crop-before-search.ko.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" /><meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="상품 검색 09. 방 사진을 통째로 검색해 상품 10개 중 1개를 찾았습니다" />
+  <meta property="og:description" content="IKEA 방 사진을 통째로 검색할 때와 검출기로 잘라 검색할 때의 Recall@10을 비교했습니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/product-retrieval-09-crop-before-search.ko.html" /><meta property="og:locale" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content="상품 검색 09. 방 사진을 통째로 검색해 상품 10개 중 1개를 찾았습니다" />
+  <meta name="twitter:description" content="IKEA 방 사진 205장을 통째로 검색하면 상위 10개에 방에 있는 상품의 11.8%가 들어왔습니다. 검출기로 잘라 검색하고 순위로 합치자 24.8%였습니다. 설정을 결과를 본 뒤에 골라 탐색 결과로만 보고합니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta name="description" content="IKEA 방 사진 205장을 통째로 검색하면 상위 10개에 방에 있는 상품의 11.8%가 들어왔습니다. 검출기로 잘라 검색하고 순위로 합치자 24.8%였습니다. 설정을 결과를 본 뒤에 골라 탐색 결과로만 보고합니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar"><div class="topbar-inner notranslate"><a class="site-name" href="../index.html#about">Kwanghun</a>
+    <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+      <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang" data-authored='{"ko":"product-retrieval-09-crop-before-search.ko.html"}'>
+        <option value="ko" selected>한국어</option><option value="en">English</option><option value="ja">日本語</option><option value="zh-CN">简体中文</option><option value="zh-TW">繁體中文</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ru">Русский</option><option value="vi">Tiếng Việt</option><option value="id">Bahasa Indonesia</option><option value="hi">हिन्दी</option><option value="ar">العربية</option>
+      </select><div id="google_translate_element" aria-hidden="true"></div>
+      <a href="../index.html#about">About</a><a href="../index.html#news">News</a><a href="../index.html#projects">Projects</a><a href="../index.html#writing" class="active">Writing</a><a href="../index.html#notes">Notes</a><a href="../index.html#cv">CV</a>
+    </nav>
+  </div></div>
+  <div class="container reading"><main>
+    <div class="hero-top">
+      <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
+      <div class="article-meta"><span class="source-tag side notranslate">개인 프로젝트</span><a class="project-tag notranslate" href="../writing/index.html?tag=Product%20Retrieval%20Studio">#Product Retrieval Studio</a></div>
+    </div>
+    <section class="page-hero"><h1>상품 검색 09. 방 사진을 통째로 검색해 상품 10개 중 1개를 찾았습니다</h1><p class="article-date">2026년 10월</p></section>
+    <aside class="article-aside" data-aside="writing" data-slug="product-retrieval-09-crop-before-search"></aside>
+    <nav class="article-toc" aria-label="목차"><p class="toc-label">목차</p><ul>
+      <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+      <li><a href="#데이터">IKEA 방 사진 205장과 상품 2,173개</a></li>
+      <li><a href="#통째">통째로 검색하면 정답 상품 일부만 찾습니다</a></li>
+      <li><a href="#자르기">검출기로 잘라 검색하고 순위로 합칩니다</a></li>
+      <li><a href="#결과">잘라서 검색하자 Recall@K가 올랐습니다</a></li>
+      <li><a href="#탐색">탐색 결과로만 보고하는 이유</a></li>
+      <li><a href="#주장하지-않는-것">이 글이 주장하지 않는 것</a></li>
+      <li><a href="#마치며">마치며</a></li>
+    </ul></nav>
+    <article class="article-body">
+      <p>01–08편은 옷 사진 한 장에 정답 상품이 하나인 데이터(LRVS-Fashion)로 실험했습니다. 실제로 사용자가 올리는 사진은 방 전체일 때가 많습니다. 의자, 조명, 쿠션이 한 장에 같이 찍힙니다.</p>
+
+      <p>IKEA 방 사진 205장으로 두 가지를 쟀습니다. 먼저 방 사진을 통째로 검색했습니다. 그다음 물체 검출기로 물건을 잘라 따로 검색하고 결과를 합쳤습니다.</p>
+
+      <p>통째로 검색하면 상위 10개에 방에 있는 상품의 11.8%가 들어왔습니다. 잘라서 검색하면 24.8%였습니다. 다만 자르는 설정은 통째 검색의 집계 결과를 본 뒤에 골랐고 같은 방 사진으로 쟀습니다. 그래서 이 결과는 탐색 결과로만 보고합니다.</p>
+
+      <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
+      <ul class="callout">
+        <li>상품 사진으로 학습한 검색을 실제 실내 사진에 써 보려는 분</li>
+        <li>사진 한 장에 상품이 여러 개 있을 때 검색을 어떻게 나눌지 고민하는 분</li>
+        <li>결과를 본 뒤에 고른 설정을 어떻게 보고할지 고민하는 분</li>
+      </ul>
+
+      <h2 id="데이터">IKEA 방 사진 205장과 상품 2,173개<a class="anchor" href="#데이터" aria-label="이 절로 가는 링크">#</a></h2>
+
+      <div class="table-scroll"><div class="table-scroll-hint">가로로 넘겨 표 전체를 볼 수 있습니다.</div><div class="table-scroll-viewport">
+        <table><thead><tr><th>항목</th><th>값</th></tr></thead><tbody>
+          <tr><td>질의</td><td>IKEA 카탈로그 방 사진 205장, 제외 0장</td></tr>
+          <tr><td>갤러리</td><td>IKEA 상품 이미지 2,173개 (찾은 2,175개 중 내용이 다른데 파일 이름이 같은 2개 제외)</td></tr>
+          <tr><td>방마다 정답 상품 수</td><td>최소 2, 중앙값 13, 최대 27</td></tr>
+          <tr><td>임베딩</td><td>SigLIP2 base, 고정</td></tr>
+        </tbody></table>
+      </div></div>
+
+      <p>정답은 방 사진마다 공개 데이터에 실린 상품 목록입니다. 목록을 검수하지는 않았습니다. 사진에 보이지만 목록에 없는 상품은 어느 쪽에서도 정답으로 세지 않습니다.</p>
+
+      <p>제외한 2개는 숫자를 계산하기 전에 계약(v1.1)에 적고 뺐습니다.</p>
+
+      <h2 id="통째">통째로 검색하면 정답 상품 일부만 찾습니다<a class="anchor" href="#통째" aria-label="이 절로 가는 링크">#</a></h2>
+
+      <div class="table-scroll"><div class="table-scroll-hint">가로로 넘겨 표 전체를 볼 수 있습니다.</div><div class="table-scroll-viewport">
+        <table><thead><tr><th>K</th><th>Hit@K</th><th>Recall@K</th></tr></thead><tbody>
+          <tr><td>1</td><td>0.2244</td><td>0.0312</td></tr>
+          <tr><td>5</td><td>0.5707</td><td>0.0823</td></tr>
+          <tr><td>10</td><td>0.7415</td><td>0.1183</td></tr>
+          <tr><td>100</td><td>0.9463</td><td>0.2413</td></tr>
+        </tbody></table>
+      </div></div>
+
+      <p>Hit@K는 상위 K개에 정답이 하나라도 있는 방의 비율입니다. Recall@K는 방에 있는 정답 상품 중 상위 K개에 들어온 비율입니다.</p>
+
+      <p>방의 57%는 상위 5개에 정답이 하나 이상 있었습니다. 전체 정답 상품 중 상위 5개에 들어온 것은 8%였습니다. 방마다 정답 상품은 중앙값 13개입니다.</p>
+
+      <p>이 수치는 01–08편의 상품 단위 Recall@K와 비교할 수 없습니다. 그쪽은 질의 하나에 정답이 하나입니다.</p>
+
+      <h2 id="자르기">검출기로 잘라 검색하고 순위로 합칩니다<a class="anchor" href="#자르기" aria-label="이 절로 가는 링크">#</a></h2>
+
+      <figure class="diagram">
+        <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+          <svg viewBox="0 0 720 250" role="img" aria-labelledby="arm-t arm-d" xmlns="http://www.w3.org/2000/svg">
+            <title id="arm-t">통째 검색과 자르기 파이프라인</title>
+            <desc id="arm-d">통째 검색은 방 사진 하나를 벡터 하나로 바꿔 검색합니다. 자르기 파이프라인은 검출기로 상자를 최대 10개 고르고 조각마다 검색한 뒤 순위를 합칩니다. 두 방식 모두 상위 K개를 보여 줍니다.</desc>
+            <defs><marker id="arm-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#999"/></marker></defs>
+            <g font-family="Inter, sans-serif" font-size="12" fill="#444" text-anchor="middle">
+              <rect x="20" y="85" width="110" height="80" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="75" y="130">방 사진</text>
+              <text x="200" y="38" fill="#777">통째</text>
+              <rect x="170" y="48" width="120" height="40" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="230" y="73">벡터 1개</text>
+              <rect x="340" y="48" width="120" height="40" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="400" y="73">검색 1번</text>
+              <text x="200" y="160" fill="#777">자르기</text>
+              <rect x="170" y="170" width="120" height="40" rx="10" fill="#f4f5ff" stroke="#4f5bd5" stroke-width="1.8"/><text x="230" y="195" fill="#4f5bd5" font-weight="700">OWLv2 상자 ≤ 10</text>
+              <rect x="340" y="170" width="120" height="40" rx="10" fill="#f4f5ff" stroke="#4f5bd5" stroke-width="1.8"/><text x="400" y="195" fill="#4f5bd5" font-weight="700">조각마다 검색</text>
+              <rect x="500" y="170" width="90" height="40" rx="10" fill="#f4f5ff" stroke="#4f5bd5" stroke-width="1.8"/><text x="545" y="195" fill="#4f5bd5" font-weight="700">순위 합치기</text>
+              <rect x="630" y="105" width="70" height="40" rx="10" fill="#fdf0f5" stroke="#d62976" stroke-width="1.8"/><text x="665" y="130" fill="#d62976" font-weight="700">상위 K</text>
+              <path d="M134 110 L166 70" stroke="#999" stroke-width="1.5" marker-end="url(#arm-a)"/>
+              <path d="M134 140 L166 186" stroke="#999" stroke-width="1.5" marker-end="url(#arm-a)"/>
+              <path d="M294 68 H336" stroke="#999" stroke-width="1.5" marker-end="url(#arm-a)"/>
+              <path d="M464 68 H600 L626 116" fill="none" stroke="#999" stroke-width="1.5" marker-end="url(#arm-a)"/>
+              <path d="M294 190 H336" stroke="#999" stroke-width="1.5" marker-end="url(#arm-a)"/>
+              <path d="M464 190 H496" stroke="#999" stroke-width="1.5" marker-end="url(#arm-a)"/>
+              <path d="M594 182 L626 136" stroke="#999" stroke-width="1.5" marker-end="url(#arm-a)"/>
+            </g>
+          </svg>
+        </div>
+        <figcaption>두 방식 모두 상위 K개를 똑같이 보여 줍니다. 비교 대상은 검출기부터 합치기까지의 파이프라인 전체입니다.</figcaption>
+      </figure>
+
+      <div class="table-scroll"><div class="table-scroll-hint">가로로 넘겨 표 전체를 볼 수 있습니다.</div><div class="table-scroll-viewport">
+        <table><thead><tr><th>단계</th><th>설정</th></tr></thead><tbody>
+          <tr><td>검출기</td><td>OWLv2 base(<code>google/owlv2-base-patch16-ensemble</code>), 리비전 고정, CPU</td></tr>
+          <tr><td>프롬프트</td><td>침대, 소파, 의자, 조명, 쿠션, 러그 등 일반 가구 이름 24개. 방마다의 상품 목록은 쓰지 않습니다</td></tr>
+          <tr><td>상자 고르기</td><td>점수 0.10 이상, IoU 0.5로 겹친 상자 제거(NMS), 점수 순으로 최대 10개</td></tr>
+          <tr><td>자르기</td><td>상자를 가로세로 10%씩 넓혀 자릅니다. 16픽셀보다 작은 조각은 버립니다</td></tr>
+          <tr><td>합치기</td><td>조각마다 갤러리를 검색합니다. 각 조각의 1위를 차례로 넣고 그다음 각 조각의 2위를 넣습니다. 이미 넣은 상품은 건너뜁니다</td></tr>
+        </tbody></table>
+      </div></div>
+
+      <figure class="diagram">
+        <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+          <svg viewBox="0 0 720 200" role="img" aria-labelledby="mg-t mg-d" xmlns="http://www.w3.org/2000/svg">
+            <title id="mg-t">조각별 순위를 깊이 순서로 합치는 방법</title>
+            <desc id="mg-d">조각 세 개의 1위를 차례로 넣고 그다음 2위를 넣습니다. 조각 2의 2위가 이미 들어간 상품이면 건너뜁니다.</desc>
+            <defs><marker id="mg-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#999"/></marker></defs>
+            <g font-family="Inter, sans-serif" font-size="12" fill="#444" text-anchor="middle">
+              <text x="70" y="44" text-anchor="start" font-weight="700">조각 1</text>
+              <rect x="150" y="28" width="44" height="26" rx="6" fill="#4f5bd5"/><text x="172" y="46" fill="#fff">A</text>
+              <rect x="200" y="28" width="44" height="26" rx="6" fill="#4f5bd5"/><text x="222" y="46" fill="#fff">D</text>
+              <text x="70" y="84" text-anchor="start" font-weight="700">조각 2</text>
+              <rect x="150" y="68" width="44" height="26" rx="6" fill="#8f97e6"/><text x="172" y="86" fill="#fff">B</text>
+              <rect x="200" y="68" width="44" height="26" rx="6" fill="#fdf0f5" stroke="#d62976" stroke-width="1.5"/><text x="222" y="86" fill="#d62976">A</text>
+              <text x="70" y="124" text-anchor="start" font-weight="700">조각 3</text>
+              <rect x="150" y="108" width="44" height="26" rx="6" fill="#b9beef"/><text x="172" y="126">C</text>
+              <rect x="200" y="108" width="44" height="26" rx="6" fill="#b9beef"/><text x="222" y="126">E</text>
+              <text x="172" y="160" fill="#777" font-size="11">1위</text><text x="222" y="160" fill="#777" font-size="11">2위</text>
+              <path d="M270 80 H310" stroke="#999" stroke-width="1.5" marker-end="url(#mg-a)"/>
+              <rect x="320" y="68" width="44" height="26" rx="6" fill="#4f5bd5"/><text x="342" y="86" fill="#fff">A</text>
+              <rect x="368" y="68" width="44" height="26" rx="6" fill="#8f97e6"/><text x="390" y="86" fill="#fff">B</text>
+              <rect x="416" y="68" width="44" height="26" rx="6" fill="#b9beef"/><text x="438" y="86">C</text>
+              <rect x="464" y="68" width="44" height="26" rx="6" fill="#4f5bd5"/><text x="486" y="86" fill="#fff">D</text>
+              <rect x="512" y="68" width="44" height="26" rx="6" fill="#b9beef"/><text x="534" y="86">E</text>
+              <text x="590" y="86" fill="#999">…</text>
+              <text x="438" y="126" fill="#d62976" font-size="11">조각 2의 A는 건너뜀</text>
+            </g>
+          </svg>
+        </div>
+        <figcaption>조각 사이의 점수는 비교하지 않고 순위만 씁니다. 점수로 합치는 방식과는 비교하지 않았습니다.</figcaption>
+      </figure>
+
+      <h2 id="결과">잘라서 검색하자 Recall@K가 올랐습니다<a class="anchor" href="#결과" aria-label="이 절로 가는 링크">#</a></h2>
+
+      <figure class="diagram">
+        <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+          <svg viewBox="0 0 720 260" role="img" aria-labelledby="rc-t rc-d" xmlns="http://www.w3.org/2000/svg">
+            <title id="rc-t">K별 Recall, 통째와 자르기</title>
+            <desc id="rc-d">통째 검색의 Recall은 K 1, 5, 10, 20, 100에서 0.031, 0.082, 0.118, 0.143, 0.241입니다. 자르기는 0.046, 0.159, 0.248, 0.314, 0.459입니다.</desc>
+            <g font-family="Inter, sans-serif" font-size="12" fill="#444">
+              <line x1="90" y1="30" x2="90" y2="230" stroke="#ccc"/><line x1="90" y1="230" x2="600" y2="230" stroke="#ccc"/>
+              <text x="80" y="234" text-anchor="end" fill="#777">0</text><text x="80" y="134" text-anchor="end" fill="#777">0.25</text><text x="80" y="34" text-anchor="end" fill="#777">0.50</text>
+              <polyline points="120,217.5 230,197.1 340,182.7 450,172.8 560,133.5" fill="none" stroke="#999" stroke-width="2"/>
+              <polyline points="120,211.6 230,166.3 340,130.9 450,104.4 560,46.3" fill="none" stroke="#4f5bd5" stroke-width="2.5"/>
+              <g fill="#999"><circle cx="120" cy="217.5" r="3.5"/><circle cx="230" cy="197.1" r="3.5"/><circle cx="340" cy="182.7" r="3.5"/><circle cx="450" cy="172.8" r="3.5"/><circle cx="560" cy="133.5" r="3.5"/></g>
+              <g fill="#4f5bd5"><circle cx="120" cy="211.6" r="3.5"/><circle cx="230" cy="166.3" r="3.5"/><circle cx="340" cy="130.9" r="3.5"/><circle cx="450" cy="104.4" r="3.5"/><circle cx="560" cy="46.3" r="3.5"/></g>
+              <text x="348" y="124" fill="#4f5bd5" font-weight="700">0.248</text><text x="348" y="198" fill="#777">0.118</text>
+              <text x="572" y="50" fill="#4f5bd5" font-weight="700">자르기</text><text x="572" y="137" fill="#777">통째</text>
+              <g text-anchor="middle" fill="#777" font-size="11"><text x="120" y="248">K=1</text><text x="230" y="248">5</text><text x="340" y="248">10</text><text x="450" y="248">20</text><text x="560" y="248">100</text></g>
+            </g>
+          </svg>
+        </div>
+        <figcaption>가로축은 K 순서이고 간격은 K에 비례하지 않습니다. 주 지표는 K=10의 차이입니다.</figcaption>
+      </figure>
+
+      <div class="table-scroll"><div class="table-scroll-hint">가로로 넘겨 표 전체를 볼 수 있습니다.</div><div class="table-scroll-viewport">
+        <table><thead><tr><th>K</th><th>Recall 통째</th><th>Recall 자르기</th><th>차이</th></tr></thead><tbody>
+          <tr><td>1</td><td>0.0312</td><td>0.0459</td><td>+0.0147</td></tr>
+          <tr><td>5</td><td>0.0823</td><td>0.1593</td><td>+0.0770</td></tr>
+          <tr><td>10</td><td>0.1183</td><td>0.2478</td><td>+0.1295</td></tr>
+          <tr><td>20</td><td>0.1430</td><td>0.3141</td><td>+0.1711</td></tr>
+          <tr><td>100</td><td>0.2413</td><td>0.4593</td><td>+0.2179</td></tr>
+        </tbody></table>
+      </div></div>
+
+      <p>주 지표는 Recall@10의 차이로 미리 정했습니다. 평균 +0.1295, 95% 구간 [+0.1116, +0.1475]입니다. 205개 방 중 157개에서 Recall@10이 올랐습니다. 39개는 같았고 9개에서 내려갔습니다.</p>
+
+      <p>통째 임베딩의 코사인 0.95 이상인 비슷한 방을 묶었습니다. 202개 묶음 단위로 1만 번 다시 뽑아 구간을 계산했습니다. 거의 같은 방 사진을 독립된 표본처럼 세지 않으려는 것입니다.</p>
+
+      <p>계약에 미리 적은 문장대로 판정하면 「이 방들에서 자르기 파이프라인이 Recall@10을 높였다」입니다.</p>
+
+      <p>방마다 상자는 9–10개였습니다. 검출기는 CPU에서 방마다 평균 약 1.08초, 조각 임베딩은 약 0.33초 걸렸습니다.</p>
+
+      <h2 id="탐색">탐색 결과로만 보고하는 이유<a class="anchor" href="#탐색" aria-label="이 절로 가는 링크">#</a></h2>
+      <ul>
+        <li>검출기, 프롬프트, 상자 수, 합치는 규칙을 통째 검색의 집계 결과(Hit@5 0.571, Recall@5 0.082)를 본 뒤에 골랐습니다. 방별 결과는 보지 않았습니다.</li>
+        <li>같은 205장으로 쟀습니다. 확인하려면 새 실내 사진이 필요합니다.</li>
+        <li>SigLIP2와 OWLv2가 사전학습에서 IKEA 카탈로그 이미지를 봤을 수 있습니다. 확인하지 않았습니다.</li>
+      </ul>
+
+      <p>실행 전에 다른 모델에게 계약을 반대 입장에서 검토해 달라고 요청했고 지적 9건을 모두 반영했습니다. 이 검토를 반영해 탐색 결과라고 표시했습니다. 비교 대상도 「자르기 하나」 대신 「검출기부터 합치기까지 전체」로 적었습니다.</p>
+
+      <h2 id="주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
+      <ul>
+        <li>사용자가 물건 하나를 가리켰을 때의 성능. 재지 않았습니다. 이번 실험은 검출기가 상자를 고릅니다.</li>
+        <li>자르기만의 효과. 비교한 것은 검출기, 자르기, 최대 10번 검색, 합치기를 묶은 파이프라인 전체입니다.</li>
+        <li>다른 집 사진에서도 같다는 것. 한 판매사의 연출된 카탈로그 방 사진입니다.</li>
+        <li>정답 목록이 완전하다는 것. 목록을 검수하지 않았습니다.</li>
+      </ul>
+
+      <div class="wrapup">
+        <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>IKEA 방 사진을 통째로 검색하면 상위 10개에 방에 있는 상품의 11.8%가 들어왔습니다. 검출기로 잘라 검색하고 순위로 합치자 24.8%가 되었습니다.</p>
+        <p>설정을 결과를 본 뒤에 골랐고 같은 사진으로 쟀기 때문에 탐색 결과입니다. 새 실내 사진 세트로 같은 계약을 다시 재야 이 결과를 확인할 수 있습니다.</p>
+        <p>읽어 주셔서 감사합니다.</p>
+      </div>
+    </article>
+  </main>
+  <footer class="notranslate"><div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div><div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div></footer>
+  </div>
+  <script>window.CONTENT_BASE = "../";</script><script src="../assets/i18n.js?v=e0fa0917be"></script><script src="../assets/content.js?v=04ce2d82a5"></script><script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script><script defer src="../assets/highlight.js?v=d4af83b541"></script><script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>(function(){var el=document.querySelector(".article-aside");if(el&&window.renderArticleAside){renderArticleAside(el,el.dataset.aside,el.dataset.slug);}})();</script>
+</body>
+</html>
