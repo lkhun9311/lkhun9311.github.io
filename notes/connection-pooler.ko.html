@@ -79,8 +79,8 @@
 
         <h2 id="왜">개요<a class="anchor" href="#왜" aria-label="이 절로 가는 링크">#</a></h2>
 
-<p class="term-oneline">애플리케이션이 여는 <strong>Connection 수천 개를 DB Connection 수십 개로 묶어 주는 중간 서버</strong>입니다. RDS Proxy · PgBouncer · Supavisor 같은 것들입니다.</p>
-        <p>PostgreSQL은 <strong>Connection 하나마다 Backend 프로세스를 하나씩</strong> 만듭니다. 그 프로세스는 아무 일도
+<p class="term-oneline">앱이 여는 <strong>Connection 수천 개를 DB Connection 수십 개로 묶어 주는 중간 서버</strong>입니다. RDS Proxy · PgBouncer · Supavisor 같은 것들입니다.</p>
+        <p>PostgreSQL은 <strong>Connection 하나마다 Backend Process를 하나씩</strong> 만듭니다. 그 Process는 아무 일도
         안 하고 있어도 메모리를 씁니다. 그래서 앱 Instance를 늘릴수록 DB 쪽이 먼저 한계에 부딪힙니다.</p>
 
         <pre data-lang="text">앱 instance 100대 × pool 크기 20 = connection 2,000개
@@ -108,7 +108,7 @@
 
         <p>이유는 <a href="transaction-pooling.html">Transaction Pooling</a>의 정의에 있습니다. Connection 재사용은 Transaction과
         Transaction <em>사이</em>에서만 일어나는데 Transaction이 열려 있는 동안에는 그 Connection이 한 클라이언트에 묶이기
-        때문입니다. Transaction이 10s 열려 있으면 뒤쪽 Connection도 10s 묶입니다.</p>
+        때문입니다. Transaction이 10초 열려 있으면 뒤쪽 Connection도 10초 묶입니다.</p>
 
         </article>
     </main>
@@ -120,7 +120,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=bec7a51a41"></script>
+  <script src="../assets/content.js?v=24429b3983"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

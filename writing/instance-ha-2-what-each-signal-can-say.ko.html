@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Instance HA ②: 신호마다 볼 수 있는 것이 다릅니다 | Kwanghun Lee</title>
+  <title>Instance HA 02. HeartBeat와 외부 Probe: 무엇을 더 믿어야 할까 | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Instance HA ②: 신호마다 볼 수 있는 것이 다릅니다" />
+  <meta property="og:title" content="Instance HA 02. HeartBeat와 외부 Probe: 무엇을 더 믿어야 할까" />
   <meta property="og:description" content="관측 정확도를 올려도 관측자가 고립되면 무엇을 봐도 믿을 수 없습니다. 신호를 신뢰도 4등급으로 세우고 EXT Probe가 볼 수 있는 범위를 좁힌 과정과 파라미터 여섯 개에 각각 근거를 붙인 방식을 정리했습니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
@@ -26,7 +26,7 @@
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Instance HA ②: 신호마다 볼 수 있는 것이 다릅니다" />
+  <meta name="twitter:title" content="Instance HA 02. HeartBeat와 외부 Probe: 무엇을 더 믿어야 할까" />
   <meta name="twitter:description" content="감지 정확도 대신 신호의 자격을 정했습니다. 신뢰도 4등급과 EXT Probe 파라미터 여섯 개의 근거를 정리한 Instance HA 연작 ②편입니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="관측 정확도를 올려도 관측자가 고립되면 무엇을 봐도 믿을 수 없습니다. 신호를 신뢰도 4등급으로 세우고 EXT Probe가 볼 수 있는 범위를 좁힌 과정과 파라미터 여섯 개에 각각 근거를 붙인 방식을 정리했습니다." />
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div>
       </div>
       <section class="page-hero">
-        <h1>Instance HA ②: 신호마다 볼 수 있는 것이 다릅니다<br><span class="h1-sub">감지를 더 정교하게 만드는 대신 어느 신호가 무엇을 볼 수 있는지를 먼저 정했습니다. Instance HA 장애 대응 설계 연작의 두 번째 편입니다.</span></h1>
+        <h1>Instance HA 02. HeartBeat와 외부 Probe: 무엇을 더 믿어야 할까</h1>
         <p class="article-date">2026년 9월</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="instance-ha-2-what-each-signal-can-say"></aside>
@@ -97,8 +97,9 @@
         들으면 대개 같은 처방이 먼저 나옵니다. 감지를 더 정교하게 만들자는 것입니다. 저도 처음에는 그쪽을
         생각했습니다.</p>
 
-        <p>그런데 그 방향은 이 사고에 듣지 않습니다. <strong>관측자가 고립됐을 때는 무엇을 더 정밀하게 봐도
-        그 관측을 믿을 수 없기 때문</strong>입니다. 정확도를 올리는 것과 자격을 따지는 것은 다른 일입니다.</p>
+        <p>그런데 이 사고는 감지를 더 정밀하게 만드는 것만으로는 막을 수 없습니다. <strong>관측자인
+        Controller가 고립된 상태라면, 검사를 아무리 정밀하게 해도 그 결과를 믿을 수 없기 때문</strong>입니다.
+        정확도를 올리는 것과 신호의 자격을 따지는 것은 다른 일입니다.</p>
 
         <p>그래서 설계의 첫 결정은 감지기를 손보는 것이 아니라 <strong>신호마다 무엇을 말할 자격이 있는지를
         정하는 것</strong>이 됐습니다. 이 편은 그 등급표와, 가장 낮은 등급으로 내린 EXT Probe의 파라미터
@@ -108,7 +109,7 @@
 
         <ul class="callout">
           <li>장애 판정에 여러 신호를 섞어 쓰는 시스템을 설계하시는 분</li>
-          <li>외부 도달성 검사로 노드의 생사를 판정하고 있는 구성을 쓰시는 분</li>
+          <li>외부 도달성 검사로 Node의 생사를 판정하고 있는 구성을 쓰시는 분</li>
           <li>Timeout과 재시도 횟수 같은 값을 정할 때 근거를 남기고 싶은 분</li>
           <li>①편을 읽고 그래서 무엇을 고쳤는지가 궁금하신 분</li>
         </ul>
@@ -157,7 +158,7 @@
           </div>
         </div>
 
-        <p>순서의 근거는 관측 지점입니다. Agent HeartBeat는 Compute 위에서 돌며 그 노드 자신이 보내는
+        <p>순서의 근거는 관측 지점입니다. Agent HeartBeat는 Compute 위에서 돌며 그 Node 자신이 보내는
         신호라 대상의 상태를 직접 말합니다. 반대로 EXT Probe는 Controller에서 바깥으로 나가는 검사라
         Compute를 한 번도 건드리지 않습니다.</p>
 
@@ -170,7 +171,7 @@
         <figure class="diagram">
           <svg viewBox="0 0 720 250" role="img" aria-labelledby="ext-t ext-d" class="figure-svg">
             <title id="ext-t">EXT Probe 결과가 갈라 놓는 두 갈래</title>
-            <desc id="ext-d">Agent HeartBeat가 끊긴 상태에서 EXT Probe가 성공하면 Compute 장애 의심으로, 실패하면 Network Partition 의심으로 갑니다. 파티션 의심 쪽은 복구를 실행하지 않고 보류합니다.</desc>
+            <desc id="ext-d">Agent HeartBeat가 끊긴 상태에서 EXT Probe가 성공하면 Compute 장애 의심으로, 실패하면 Network Partition 의심으로 갑니다. Partition 의심 쪽은 복구를 실행하지 않고 보류합니다.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="250" y="25" width="220" height="44" rx="8" fill="none" stroke="#4a4a4a" stroke-width="1.8"/>
               <text x="360" y="52" font-size="12" fill="#4a4a4a" text-anchor="middle">HeartBeat TTL 초과</text>
@@ -190,7 +191,7 @@
           <figcaption>같은 「닿지 않음」이 두 갈래로 갈립니다. 오른쪽 갈래에서 멈추는 것이 이 설계가 택한 기본값입니다.</figcaption>
         </figure>
 
-        <p>그래서 EXT Probe를 없애지 않고 <strong>역할을 바꿔 남겼습니다.</strong> 이 신호는 「저 노드가
+        <p>그래서 EXT Probe를 없애지 않고 <strong>역할을 바꿔 남겼습니다.</strong> 이 신호는 「저 Node가
         죽었는가」에 답하지 않고 「내가 지금 판단해도 되는 처지인가」에 답합니다. 같은 검사를 그대로 두고
         질문만 바꾼 셈입니다.</p>
 
@@ -207,8 +208,8 @@
 
         <h2 id="파라미터">값 여섯 개를 정했습니다<a class="anchor" href="#파라미터" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>역할을 정하고 나면 값이 남습니다. 얼마나 자주 찌르고 몇 번 실패해야 판단으로 올릴지입니다.
-        여섯 개를 정했고 각각에 왜 그 값인지를 붙였습니다.</p>
+        <p>역할을 정하고 나면 값이 남습니다. 얼마나 자주 찌르고 몇 번 실패해야 판단으로 올릴지 같은
+        세부 파라미터입니다. 모두 여섯 개이고, 각 값에 왜 그 값인지 근거를 함께 적었습니다.</p>
 
         <div class="table-scroll">
           <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
@@ -233,16 +234,16 @@
             <g font-family="Inter, sans-serif">
               <rect x="50" y="56" width="270" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.5"/>
               <text x="185" y="78" font-size="10.5" fill="#5b7fa6" text-anchor="middle">관리 쪽 요청이 끊김</text>
-              <path d="M320 73 H 400" stroke="#666" stroke-width="1.2" fill="none"/>
+              <path d="M320 73 H 380 V 110 H 400" stroke="#666" stroke-width="1.2" fill="none"/>
               <rect x="50" y="104" width="270" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.5"/>
               <text x="185" y="126" font-size="10.5" fill="#5b7fa6" text-anchor="middle">Gateway에 닿지 않음</text>
               <path d="M320 121 H 400" stroke="#666" stroke-width="1.2" fill="none"/>
               <rect x="50" y="152" width="270" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.5"/>
               <text x="185" y="174" font-size="10.5" fill="#5b7fa6" text-anchor="middle">지정한 주소로 TCP 실패</text>
-              <path d="M320 169 H 400" stroke="#666" stroke-width="1.2" fill="none"/>
+              <path d="M320 169 H 380 V 138 H 400" stroke="#666" stroke-width="1.2" fill="none"/>
               <rect x="50" y="200" width="270" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.5"/>
               <text x="185" y="222" font-size="10.5" fill="#5b7fa6" text-anchor="middle">Network Interface가 내려감</text>
-              <path d="M320 217 H 400" stroke="#666" stroke-width="1.2" fill="none"/>
+              <path d="M320 217 H 380 V 150 H 400" stroke="#666" stroke-width="1.2" fill="none"/>
               <rect x="400" y="100" width="90" height="56" rx="8" fill="none" stroke="#b8860b" stroke-width="1.8"/>
               <text x="445" y="134" font-size="13" fill="#b8860b" text-anchor="middle">OR</text>
               <path d="M490 128 H 560" stroke="#d62976" stroke-width="1.4" fill="none"/>
@@ -254,7 +255,7 @@
           <figcaption>설계는 신호에 등급을 매겼고 구현은 조건을 OR로 묶었습니다.</figcaption>
         </figure>
 
-        <p>노드 쪽 Agent는 네 가지를 봅니다. 관리 쪽에서 상태 확인 요청이 일정 시간 오지 않는 것,
+        <p>Node 쪽 Agent는 네 가지를 봅니다. 관리 쪽에서 상태 확인 요청이 일정 시간 오지 않는 것,
         지정한 Gateway로 닿지 않는 것, 지정한 VIP에 닿지 않는 것, 설정된
         Network Interface가 내려갔거나 loopback인 것입니다.</p>
 
@@ -276,7 +277,7 @@
         외부 검토에서 그 점이 지적됐고 이 연작이 다루는 범위 밖의 숙제로 남았습니다.</p>
 
 
-        <p>판정이 한 곳에서 끝나지도 않습니다. 노드 쪽 Agent가 답을 보내면 관리 쪽 배치가 그 답을
+        <p>판정이 한 곳에서 끝나지도 않습니다. Node 쪽 Agent가 답을 보내면 관리 쪽 배치가 그 답을
         그대로 믿지 않고 일곱 항목을 다시 확인합니다.</p>
 
         <div class="table-scroll">
@@ -285,7 +286,7 @@
           <table>
             <caption class="sr-only">관리 쪽 배치가 Agent 응답을 다시 확인하는 일곱 항목.</caption>
             <thead><tr><th>다시 보는 것</th><th>무엇을 확인하나</th></tr></thead>
-            <tbody><tr><td>Agent 통신</td><td>Agent에 닿지 못하면 그것만으로 offline</td></tr><tr><td>Agent 응답 상태</td><td>Agent가 스스로 offline이라 답했는지</td></tr><tr><td>호스트 주소</td><td>Hypervisor 주소에 닿는지</td></tr><tr><td>응답 주소 목록</td><td>Agent가 돌려준 주소들에 닿는지</td></tr><tr><td>Gateway 상태</td><td>돌려준 Gateway 가운데 offline이 있는지</td></tr><tr><td>VIP 상태</td><td>돌려준 VIP 가운데 offline이 있는지</td></tr><tr><td>Interface 상태</td><td>돌려준 Interface 가운데 down이 있는지</td></tr></tbody>
+            <tbody><tr><td>Agent 통신</td><td>Agent에 닿지 못하면 그것만으로 offline</td></tr><tr><td>Agent 응답 상태</td><td>Agent가 스스로 offline이라 답했는지</td></tr><tr><td>Host 주소</td><td>Hypervisor 주소에 닿는지</td></tr><tr><td>응답 주소 목록</td><td>Agent가 돌려준 주소들에 닿는지</td></tr><tr><td>Gateway 상태</td><td>돌려준 Gateway 가운데 offline이 있는지</td></tr><tr><td>VIP 상태</td><td>돌려준 VIP 가운데 offline이 있는지</td></tr><tr><td>Interface 상태</td><td>돌려준 Interface 가운데 down이 있는지</td></tr></tbody>
           </table>
           </div>
         </div>
@@ -316,11 +317,11 @@
           <figcaption>TTL은 따로 고른 숫자가 아니라 간격과 횟수에서 나옵니다. 줄이려면 둘 중 하나를 줄여야 하고 그만큼 흔들림에 약해집니다.</figcaption>
         </figure>
 
-        <p>세 값은 따로 놀지 않습니다. 간격과 횟수를 정하면 TTL은 곱셈으로 따라 나옵니다. 그래서 복구를
-        빨리 시작하고 싶으면 간격을 줄이거나 횟수를 줄여야 하고 <strong>그만큼 흔들림 한 번에 판단이
-        서는 쪽으로 기웁니다.</strong> 줄이는 방법과 그 대가를 같이 적어 둔 이유입니다.</p>
+        <p>세 값은 따로 놀지 않습니다. 간격과 횟수를 정하면 TTL도 그 곱으로 함께 정해집니다. 그래서 복구를
+        더 빨리 시작하려면 간격이나 횟수를 줄여야 하는데, <strong>그만큼 일시적인 흔들림 한 번을 장애로
+        잘못 읽을 가능성이 커집니다.</strong> 줄이는 방법과 그 대가를 같이 적어 둔 이유입니다.</p>
 
-        <p>주소를 세 개 이상 두고 그중 둘이 실패해야 파티션으로 보는 것도 같은 모양입니다. 하나만 보면
+        <p>주소를 세 개 이상 두고 그중 둘이 실패해야 Partition으로 보는 것도 같은 모양입니다. 하나만 보면
         그 주소 쪽 장애와 내 고립을 구별할 수 없고 둘만 두면 둘이 함께 죽는 경우가 남습니다. 숫자 자체보다
         무엇을 구별하려고 그 숫자를 골랐는지가 설계의 내용입니다.</p>
 
@@ -339,8 +340,8 @@
         <div class="wrapup">
         <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
         <p>이 편의 결론은 한 줄입니다. <strong>감지의 정확도를 올리는 것과 신호의 자격을 정하는 것은 다른
-        일입니다.</strong> 고립된 관측자는 정밀하게 봐도 틀리고 자격을 정해 두면 자기가 판단할 처지가
-        아니라는 것을 스스로 알 수 있습니다.</p>
+        일입니다.</strong> 관측자가 고립된 상태에서는 아무리 정밀하게 봐도 그 결과를 믿기 어렵지만, 신호의
+        역할과 범위를 미리 정해 두면 지금 자기가 판단해도 되는 상태인지 구별할 수 있습니다.</p>
         <p>다음 편은 이 등급을 실제 판정으로 옮기는 이야기입니다. 「정말 장애인가」와 「지금 실행해도
         되는가」를 두 단계로 가르고 시나리오 여덟 개를 판정한 결과로 이어집니다. <a href="seven-of-eight-should-not-recover.ko.html">③편</a>으로 갑니다.</p>
         <p>읽어 주셔서 감사합니다.</p>
@@ -355,7 +356,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=bec7a51a41"></script>
+  <script src="../assets/content.js?v=24429b3983"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=d4af83b541"></script>

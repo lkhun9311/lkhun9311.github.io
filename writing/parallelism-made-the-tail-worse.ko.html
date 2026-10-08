@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Volume 목록을 병렬로 바꾸자 P99가 1.85배 나빠졌습니다 | Kwanghun Lee</title>
+  <title>Volume/Snapshot 조회 성능 개선 02. 병렬 조회 P99 악화: 공유 Thread Pool 포화와 CallerRunsPolicy의 Request Thread 실행 | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Volume 목록을 병렬로 바꾸자 P99가 1.85배 나빠졌습니다 | Kwanghun Lee" />
+  <meta property="og:title" content="Volume/Snapshot 조회 성능 개선 02. 병렬 조회 P99 악화: 공유 Thread Pool 포화와 CallerRunsPolicy의 Request Thread 실행 | Kwanghun Lee" />
   <meta property="og:description" content="Cache 설정을 고정한 채 순차를 병렬로 바꾸니 P99가 42.6s에서 79.0s로 악화됐습니다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다. 여섯 구성을 같은 조건으로 재고 나서야 보인 것." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
@@ -26,7 +26,7 @@
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Volume 목록을 병렬로 바꾸자 P99가 1.85배 나빠졌습니다 | Kwanghun Lee" />
+  <meta name="twitter:title" content="Volume/Snapshot 조회 성능 개선 02. 병렬 조회 P99 악화: 공유 Thread Pool 포화와 CallerRunsPolicy의 Request Thread 실행 | Kwanghun Lee" />
   <meta name="twitter:description" content="Cache를 고정한 채 병렬화하니 P99가 42.6s에서 79.0s로 악화됐습니다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="Cache 설정을 고정한 채 순차를 병렬로 바꾸니 P99가 42.6s에서 79.0s로 악화됐습니다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다. 여섯 구성을 같은 조건으로 재고 나서야 보인 것." />
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div>
       </div>
       <section class="page-hero">
-        <h1>Volume 목록을 병렬로 바꾸자 P99가 1.85배 나빠졌습니다<br><span class="h1-sub">computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다.</span></h1>
+        <h1>Volume/Snapshot 조회 성능 개선 02. 병렬 조회 P99 악화: 공유 Thread Pool 포화와 CallerRunsPolicy의 Request Thread 실행</h1>
         <p class="article-date">2026년 9월</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="parallelism-made-the-tail-worse"></aside>
@@ -82,6 +82,7 @@
             <li><a href="#예상-독자">이 글의 예상 독자</a></li>
             <li><a href="#여섯-줄">여섯 줄</a></li>
             <li><a href="#왜-3이-2보다-나쁜가">왜 ③이 ②보다 나쁜가</a></li>
+            <li><a href="#공유-executor">한 걸음 더: 그 Executor를 세 경로가 나눠 씁니다</a></li>
             <li><a href="#없음을-cache하지-않았다">두 번째 결함: "없음"을 Cache에 담지 않았습니다</a></li>
             <li><a href="#무엇이-실제로-컸는가">고친 것 중 무엇이 실제로 컸는가</a></li>
             <li><a href="#전후만-쟀다면">전후만 쟀다면 무엇을 잘못 보고했을까</a></li>
@@ -146,8 +147,9 @@
 
         <p>Cache를 고정한 쌍은 ②와 ④입니다. 둘 다 Cache 5s이고 순차냐 병렬이냐만 다릅니다.</p>
 
-        <p>P99가 42.6s → 79.0s로 올랐습니다. Thread를 늘렸는데 꼬리가 1.85배가 됐습니다.
-        이것이 이 실험에서 병렬화 단독의 효과로 말할 수 있는 전부이고 방향은 분명합니다. 해로웠습니다.</p>
+        <p>P99가 42.6s → 79.0s로 올랐습니다. 다만 같은 쌍에서 중앙값(Median)은 10,974ms → 508ms로 약 21배 빨라졌고
+        Apdex도 0.014 → 0.526으로 올랐습니다. 병렬화는 전형값을 크게 낮추고 <strong>꼬리(P99)만 1.85배로 늘렸습니다.</strong>
+        이 화면에선 그 꼬리가 Timeout으로 이어지니, 병렬화 단독은 P99를 악화시켰다고 말할 수 있습니다.</p>
 
         <h2 id="왜-3이-2보다-나쁜가">왜 ③이 ②보다 나쁜가<a class="anchor" href="#왜-3이-2보다-나쁜가" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -281,11 +283,11 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         <figure class="diagram">
           <svg viewBox="0 0 720 300" role="img" aria-labelledby="p9-t p9-d" class="figure-svg">
             <title id="p9-t">여섯 구성 중 네 줄의 P99를 나란히 놓은 막대</title>
-            <desc id="p9-d">가로 막대가 넷 있습니다. 위에서부터 Cache 없음 순차, Cache 없음 병렬, Cache 5s 순차, Cache 5s 병렬 순서입니다. Cache를 고정한 두 쌍이 각각 같은 색으로 묶여 있습니다. 아래에 분홍색으로 Cache를 고정한 쌍만 비교할 수 있다고 적혀 있습니다.</desc>
+            <desc id="p9-d">가로 막대가 넷 있습니다. 위에서부터 Cache 없음 순차, Cache 없음 병렬, Cache 5s 순차, Cache 5s 병렬 순서입니다. 비교 불가한 ①③은 회색, 비교 가능한 ②④는 서로 다른 색으로 두어 꼬리 악화를 대비시켰습니다. 아래에 분홍색으로 Cache를 고정한 쌍만 비교할 수 있다고 적혀 있습니다.</desc>
             <g font-family="Inter, sans-serif">
               <text x="176" y="70" font-size="11.5" fill="#8a8a8a" text-anchor="end">① Cache 없음 · 순차</text>
               <rect x="190" y="50" width="430" height="28" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.8"/>
-              <text x="630" y="70" font-size="11.5" fill="#4a4a4a">600s · Timeout 상한</text>
+              <text x="614" y="70" font-size="11.5" fill="#4a4a4a" text-anchor="end">600s · Timeout 상한</text>
               <text x="176" y="122" font-size="11.5" fill="#8a8a8a" text-anchor="end">③ Cache 없음 · 병렬</text>
               <rect x="190" y="102" width="92" height="28" rx="5" fill="none" stroke="#8a8a8a" stroke-width="1.8"/>
               <text x="292" y="122" font-size="11.5" fill="#4a4a4a">129.9s</text>
@@ -300,6 +302,115 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
           </svg>
           <figcaption>②와 ③은 Cache와 실행 방식이 동시에 바뀌어서 비교가 안 됩니다. 하나만 바뀐 쌍은 ②와 ④이고 거기서 <strong>병렬 쪽이 1.85배 나빴습니다.</strong></figcaption>
         </figure>
+
+        <h2 id="공유-executor">한 걸음 더: 그 Executor를 세 경로가 나눠 씁니다<a class="anchor" href="#공유-executor" aria-label="이 절로 가는 링크">#</a></h2>
+
+        <p>②와 ④의 차이를 읽을 때 코드에서 확인되는 실행 경로가 하나 더 있습니다.
+        목록 DTO를 만드는 fan-out, Caffeine의 refresh Loader, Volume 생성 완료를 기다리는 Polling이
+        <strong>같은 Executor bean</strong>을 씁니다. 이 셋은 서로 다른 일이지만 worker 자리는 하나의 Pool에서 꺼내 씁니다.</p>
+
+<pre data-lang="java"><code>// 세 경로가 공유하는 하나의 ThreadPoolTaskExecutor
+corePoolSize   = 5;
+maxPoolSize    = 100;
+queueCapacity  = 0;                 // 대기열 없음 → SynchronousQueue
+rejectedPolicy = CallerRunsPolicy;  // 넘길 곳이 없으면 '제출한 Thread'가 실행
+
+// (i) 목록 DTO fan-out
+volumes.forEach(v -&gt; CompletableFuture.supplyAsync(() -&gt; buildDto(v), executor));
+// (ii) Caffeine 갱신 Loader
+Caffeine.newBuilder().refreshAfterWrite(5, SECONDS).executor(executor).build(loader);
+// (iii) 생성 완료 Polling — 같은 executor에서 Thread.sleep 반복(최대 3600s)</code></pre>
+
+        <table>
+          <thead><tr><th>설정</th><th>코드상 동작</th></tr></thead>
+          <tbody>
+            <tr><td><code>corePoolSize=5</code></td><td>기본 worker 5개</td></tr>
+            <tr><td><code>maxPoolSize=100</code></td><td>필요하면 100개까지 증가</td></tr>
+            <tr><td><code>queueCapacity=0</code></td><td>작업을 쌓지 않고 worker에게 바로 넘김(<code>SynchronousQueue</code>)</td></tr>
+            <tr><td><code>CallerRunsPolicy</code></td><td>거부된 작업을 제출한 Thread에서 실행</td></tr>
+          </tbody>
+        </table>
+
+        <p><code>queueCapacity=0</code>이면 내부 대기열은 <code>SynchronousQueue</code>가 됩니다.
+        작업을 받을 worker가 없으면 Thread 수를 100까지 늘리고, 그 상태에서도 넘길 곳이 없으면
+        제출이 거부되어 <code>CallerRunsPolicy</code>가 그 작업을 <strong>제출한 Thread</strong>에서 실행합니다.</p>
+
+        <p>목록 경로는 Volume마다 <code>supplyAsync</code> 작업 하나를 제출합니다.
+        요청 R개가 각각 Volume N개를 처리하면 최대 R×N개의 제출이 일어납니다.
+        Executor가 포화된 상태에서 <code>CallerRunsPolicy</code>가 걸리면 일부 작업이 요청을 처리하던
+        Tomcat Thread에서 실행됩니다. 그 작업이 끝날 때까지 그 Thread는 다음 Volume 작업을 제출하지 못하니,
+        그 요청의 fan-out 속도가 떨어지고 요청 Thread까지 외부 I/O에 묶입니다.
+        이미 도는 worker까지 순차화되는 것은 아니지만, 병렬화하려고 만든 작업의 일부가
+        제출 경로에서 그대로 실행되는 구조입니다.</p>
+
+        <figure class="diagram">
+          <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+            <svg viewBox="0 0 720 300" role="img" aria-labelledby="ex-t ex-d" xmlns="http://www.w3.org/2000/svg">
+              <title id="ex-t">공유 Executor의 포화와 CallerRuns 되돌림</title>
+              <desc id="ex-d">왼쪽에 요청을 처리하는 Tomcat Thread가 있고, 거기서 Volume마다 작업을 가운데의 공유 Executor로 제출합니다.
+              Executor 안에는 worker 자리가 있고 최대 100개까지 늘어납니다. worker가 다 차면 제출이 거부되고, 그 작업은 분홍색 화살표를 따라
+              제출한 Tomcat Thread로 되돌아가 거기서 실행됩니다. 오른쪽 상자에는 이 같은 Executor를 목록 fan-out, Caffeine refresh Loader,
+              생성 완료 Polling 셋이 함께 쓴다고 적혀 있습니다.</desc>
+
+              <g font-size="15" fill="#7b7186">
+                <text x="16" y="30">요청 Thread · Tomcat</text>
+                <text x="300" y="30">공유 Executor · worker ≤ 100</text>
+                <text x="566" y="30">이 Executor를 함께 쓰는 셋</text>
+              </g>
+
+              <rect x="16" y="44" width="150" height="150" rx="8" fill="none" stroke="#3b3344" stroke-width="2"/>
+              <text x="34" y="120" font-size="14" fill="#18121d">요청 처리 중</text>
+              <text x="34" y="140" font-size="13" fill="#7b7186">Volume별 submit</text>
+
+              <rect x="288" y="44" width="196" height="150" rx="8" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <g>
+                <rect x="304" y="60" width="164" height="26" rx="5" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+                <rect x="304" y="92" width="164" height="26" rx="5" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+                <rect x="304" y="124" width="164" height="26" rx="5" fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="5 4"/>
+              </g>
+              <g font-size="13" fill="#18121d">
+                <text x="316" y="78">worker 1</text>
+                <text x="316" y="110">worker 5 … 100</text>
+              </g>
+              <text x="316" y="142" font-size="13" fill="#7b7186">가득 참 · 거부</text>
+              <text x="304" y="180" font-size="13" fill="#7b7186">넘길 worker가 없으면 제출 거부</text>
+
+              <!-- submit 화살표 -->
+              <path d="M166 100 H 286" fill="none" stroke="#3b3344" stroke-width="2" marker-end="url(#ex-a)"/>
+              <text x="182" y="90" font-size="13" fill="#3b3344">submit</text>
+
+              <!-- CallerRuns 되돌림(강조) -->
+              <path d="M304 137 H 240 V 210 H 91 V 194" fill="none" stroke="#d62976" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#ex-b)"/>
+              <text x="150" y="228" font-size="14" fill="#d62976" font-weight="700">포화 시 CallerRuns · 제출 Thread에서 실행</text>
+
+              <rect x="560" y="44" width="150" height="150" rx="8" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+              <g font-size="13" fill="#18121d">
+                <text x="574" y="86">· 목록 fan-out</text>
+                <text x="574" y="114">· refresh Loader</text>
+                <text x="574" y="142">· 생성 Polling</text>
+                <text x="574" y="166" font-size="12" fill="#7b7186">Polling ≤ 3600s 점유</text>
+              </g>
+              <path d="M484 119 H 558" fill="none" stroke="#7b7186" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#ex-c)"/>
+
+              <defs>
+                <marker id="ex-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#3b3344"/></marker>
+                <marker id="ex-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d62976"/></marker>
+                <marker id="ex-c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#7b7186"/></marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption>같은 Pool을 fan-out·refresh Loader·생성 Polling이 나눠 씁니다. worker가 다 차면 초과 작업은 분홍 경로처럼 제출한 Tomcat Thread로 되돌아가 거기서 실행됩니다(<code>CallerRunsPolicy</code>). 그 요청의 병렬화가 그만큼 제출 Thread로 되말립니다.</figcaption>
+        </figure>
+
+        <p>이 Executor는 목록 조회만 처리하지 않습니다. Caffeine refresh Loader도 같은 Executor를 쓰고,
+        Volume 생성 완료를 확인하는 Polling은 <code>Thread.sleep</code>을 반복하며 최대 3600s 동안 같은 Pool의
+        worker를 점유할 수 있습니다. 세 경로가 겹치면 서로 쓸 수 있는 worker 수에 영향을 줍니다.</p>
+
+        <p>Caffeine을 적용해도 이 Executor를 안 쓰게 되는 것은 아닙니다. Cache hit에서는 목록 Loader와
+        그 안의 fan-out이 돌지 않아 제출 횟수가 줄고, refresh가 시작되면 Loader가 다시 같은 Executor를 씁니다.</p>
+
+        <p>여기까지는 코드 구조에서 확인한 것입니다. 앞의 여섯 구성은 Executor 공유나 <code>CallerRunsPolicy</code>의
+        실행 횟수를 따로 떼어 재지 않았습니다. 그러니 42.6s에서 79.0s로 늘어난 몫을 이 Executor에 배정할 수는 없습니다.</p>
 
         <h2 id="없음을-cache하지-않았다">두 번째 결함: "없음"을 Cache에 담지 않았습니다<a class="anchor" href="#없음을-cache하지-않았다" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -408,8 +519,9 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         <p>①과 ⑥만 쟀다면 보고서는 이렇게 나왔을 것입니다. <em>"Cache와 병렬화를 적용해 오류율 83.3%를 0%로,
         P99를 10min에서 23ms로 개선했다."</em></p>
 
-        <p>모든 숫자가 참입니다. 그리고 <strong>병렬화가 기여했다는 함의는 거짓</strong>입니다. 병렬화는 단독으로는
-        해로웠습니다. Cache를 고정해도 병렬이 순차보다 나빴으므로 이 실험은 병렬화의 양의 기여를 보이지 않습니다. 그 사실을 모른 채 다른 화면에 "여기도 병렬화하자"를 처방했다면
+        <p>모든 숫자가 참입니다. 그러나 <strong>그 개선을 병렬화가 이끌었다는 함의는 거짓</strong>입니다.
+        Cache를 고정한 ②↔④에서 병렬화는 중앙값을 21배 당겼지만 <strong>꼬리(P99)는 1.85배로 악화</strong>시켰고,
+        목록 화면에선 그 꼬리가 Timeout으로 이어집니다. 그 사실을 모른 채 다른 화면에 "여기도 병렬화하자"를 처방했다면
         같은 함정에 다시 들어갔을 것입니다.</p>
 
         <p>실제로 이 표는 진단 근거로도 쓰였습니다. Cache를 고정한 채 병렬화가 악화라는 것은 병목이 CPU나
@@ -422,8 +534,8 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
         ②↔④ 가 정확히 그 실험입니다. 같은 Cache 설정에서 순차보다 병렬이 느렸습니다.</p>
 
         <p><strong>"Median 4ms는 Cache 히트라 당연한 것 아닌가?"</strong>. 맞습니다. 그래서 Median만 보지 않습니다.
-        같은 줄의 P99가 23ms이고 Apdex가 1.000입니다. Apdex는 만족·용인·불만족을 가중해 세는 값이라
-        Apdex는 모든 표본을 만족·용인·불만족 세 구간으로 나눠 집계합니다. 따라서 분포 전체의 모양을 보여 주지는 않습니다. 1.000이라는 표기가 표본 전체를 증명하지도 않습니다.</p>
+        같은 줄의 P99가 23ms이고 Apdex가 1.000입니다. Apdex는 만족 표본에 1, 용인 표본에 0.5, 불만족 표본에 0을
+        적용해 집계하는 값이라 응답 시간 분포 전체를 나타내지는 않습니다. 1.000으로 표시됐더라도 모든 표본이 만족 구간이라 단정할 수는 없습니다.</p>
 
         <h2 id="이-글이-주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#이-글이-주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -485,7 +597,7 @@ final List&lt;VolumeDto&gt; dtos = volumes.stream()
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=bec7a51a41"></script>
+  <script src="../assets/content.js?v=24429b3983"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=d4af83b541"></script>

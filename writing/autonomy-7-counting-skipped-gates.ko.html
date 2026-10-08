@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>자율주행 데이터 플랫폼 07. 센서 품질 Gate는 왜 건너뜀과 평가 횟수까지 셀까 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet"><link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/autonomy-7-counting-skipped-gates.ko.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/autonomy-7-counting-skipped-gates.ko.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" /><meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="자율주행 데이터 플랫폼 07. 센서 품질 Gate는 왜 건너뜀과 평가 횟수까지 셀까" />
+  <meta property="og:description" content="「실패 0건」은 깨끗한 날과 검사가 멈춘 날에 똑같이 나옵니다. 평가 횟수와 건너뜀을 함께 세고 미완료를 따로 둔 센서 품질 Gate 설계입니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/autonomy-7-counting-skipped-gates.ko.html" /><meta property="og:locale" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content="자율주행 데이터 플랫폼 07. 센서 품질 Gate는 왜 건너뜀과 평가 횟수까지 셀까" />
+  <meta name="twitter:description" content="「실패 0건」은 깨끗한 날과 검사가 멈춘 날에 똑같이 나옵니다. 평가 횟수와 건너뜀을 함께 세고 미완료를 따로 둔 센서 품질 Gate 설계입니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta name="description" content="「실패 0건」은 깨끗한 날과 검사가 멈춘 날에 똑같이 나옵니다. 평가 횟수와 건너뜀을 함께 세고 미완료를 따로 둔 센서 품질 Gate 설계입니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar"><div class="topbar-inner notranslate"><a class="site-name" href="../index.html#about">Kwanghun</a>
+    <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+      <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang" data-authored='{"ko":"autonomy-7-counting-skipped-gates.ko.html"}'>
+        <option value="ko" selected>한국어</option><option value="en">English</option><option value="ja">日本語</option><option value="zh-CN">简体中文</option><option value="zh-TW">繁體中文</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ru">Русский</option><option value="vi">Tiếng Việt</option><option value="id">Bahasa Indonesia</option><option value="hi">हिन्दी</option><option value="ar">العربية</option>
+      </select><div id="google_translate_element" aria-hidden="true"></div>
+      <a href="../index.html#about">About</a><a href="../index.html#news">News</a><a href="../index.html#projects">Projects</a><a href="../index.html#writing" class="active">Writing</a><a href="../index.html#notes">Notes</a><a href="../index.html#cv">CV</a>
+    </nav>
+  </div></div>
+  <div class="container reading"><main>
+    <div class="hero-top">
+      <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
+      <div class="article-meta"><span class="source-tag side notranslate">개인 프로젝트</span><a class="project-tag notranslate" href="../writing/index.html?tag=Driving%20Data%20Studio">#Driving Data Studio</a></div>
+    </div>
+    <section class="page-hero"><h1>자율주행 데이터 플랫폼 07. 센서 품질 Gate는 왜 건너뜀과 평가 횟수까지 셀까</h1><p class="article-date">2026년 10월</p></section>
+    <aside class="article-aside" data-aside="writing" data-slug="autonomy-7-counting-skipped-gates"></aside>
+    <nav class="article-toc" aria-label="목차"><p class="toc-label">목차</p><ul>
+      <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+      <li><a href="#M1의-센서-검사-여섯-가지">M1의 센서 검사 여섯 가지</a></li>
+      <li><a href="#통과와-실패만-세면-모르는-것">통과와 실패만 세면 모르는 것</a></li>
+      <li><a href="#건너뜀과-미완료를-나눴습니다">건너뜀과 미완료를 나눴습니다</a></li>
+      <li><a href="#completeness는-성과-수치가-아닙니다">completeness는 성과 수치가 아닙니다</a></li>
+      <li><a href="#관측-스택으로-Prometheus-Loki를-고른-이유">관측 스택으로 Prometheus · Loki를 고른 이유</a></li>
+      <li><a href="#이-글이-주장하지-않는-것">이 글이 주장하지 않는 것</a></li>
+      <li><a href="#마치며">마치며</a></li>
+    </ul></nav>
+    <article class="article-body">
+      <p>데이터 플랫폼의 품질 검사는 보통 행이 올바른 곳을 가리키는지 봅니다. 참조한 파일이 있는지, Checksum이 맞는지, 외래 키가 끊기지 않았는지입니다. 이 검사들은 행이 존재하는 객체를 가리킨다는 것까지만 말해 줍니다. 그날 오후 라이다의 레이저 하나가 죽어 있었는지는 말해 주지 않습니다.</p>
+      <p>자율주행 센서 데이터에서는 그 두 번째 질문을 따로 물어야 합니다. 레이저 하나가 죽은 라이다의 Sweep도 파일은 멀쩡히 있고 Checksum도 맞아서 첫 번째 종류의 검사는 모두 통과합니다. 이 프로젝트가 M1에서 센서 단위 검사를 따로 두는 이유입니다.</p>
+      <p>검사를 늘리는 것보다 어려웠던 것은 검사 결과를 세는 방식이었습니다. 「실패 0건」이라는 화면은 두 가지 상황에서 똑같이 나옵니다. 데이터가 정말 깨끗했을 때와, 검사가 아예 돌지 않았을 때입니다.</p>
+      <p>이 구분을 제가 처음부터 지킨 것은 아닙니다. 10월 4일의 설계 종합본에서 저는 Release가 후보가 되는 조건을 「Gate 평가 완료, 건너뜀 0」으로 적었습니다. 독립 검토가 이 줄을 짚었습니다. 그때 설계에는 「평가가 끝났다」를 판정할 기준이 없었고 도착한 결과만 세고 있었습니다. 평가 결과가 <strong>도착하지 않으면</strong> 실패도 건너뜀도 0이고 더 기다릴 것이 없으니 평가는 끝난 것으로 보입니다. 그러면 Release는 아무도 검사하지 않은 채 후보가 됩니다. 이 프로젝트가 막으려던 결함을 제 설계가 다시 만들고 있었습니다.</p>
+      <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
+      <ul class="callout"><li>센서 데이터 품질 검사를 설계하는 분</li><li>「실패 0건」 대시보드가 검사가 멈춘 날에도 초록인 문제를 겪어 본 분</li><li>completeness와 결함 탐지율을 어떻게 나눠 보고할지 정하려는 분</li></ul>
+      <h2 id="M1의-센서-검사-여섯-가지">M1의 센서 검사 여섯 가지<a class="anchor" href="#M1의-센서-검사-여섯-가지" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>각 검사는 Sweep 하나마다 한 번 돌고 참, 거짓 하나를 돌려주는 대신 <code>sweep_stat</code> 테이블에 행을 씁니다. 나중에 분포를 다시 볼 수 있게 하려는 것입니다. 아래에서 「평가 한 번」은 이 행 하나, 즉 Sweep 하나에 대한 검사 하나입니다.</p>
+      <div class="table-wrap"><table><thead><tr><th>검사</th><th>보는 것</th><th>잡으려는 것</th></tr></thead><tbody><tr><td>레이저별 반사점 수</td><td><code>laser_number</code>(두 유닛 합쳐 64개)마다 점 수</td><td>같은 레이저의 지난 기록보다 점 수가 크게 줄어든 경우. 한 로그만의 문제보다 장비 열화를 먼저 의심할 근거가 됨</td></tr><tr><td>Sweep 점 수와 거리 분포</td><td>Sweep 하나의 점 수 · 거리</td><td>비 · 가림 · 센서 탈락은 분포 모양이 서로 다름</td></tr><tr><td>Sweep 안의 시간</td><td><code>offset_ns</code>가 10 Hz 한 바퀴를 덮고 레이저마다 증가하는지</td><td>행 개수로는 안 보이는 동기 오류</td></tr><tr><td>센서 사이 시각 차</td><td>Sweep마다 카메라 9대 각각의 가장 가까운 프레임과의 차이</td><td>특정 카메라만 늘 늦거나 이른 동기 문제. 평균 하나로는 묻히므로 카메라별 분포로 남김</td></tr><tr><td>자차 자세 연속성</td><td>6자유도 자세의 끊김 · 튐</td><td>그 자세를 쓰는 움직임 보정이 깨짐</td></tr><tr><td>보정 잔차</td><td>라이다가 지면에서 받은 점의 높이와, HD 지도에 30 cm 간격으로 적힌 지면 높이의 차이</td><td>라이다 위치 · 자세 보정이 틀어진 경우. 지도가 실제와 달라진 곳에 라벨이 붙은 TbV 데이터셋에서는 이 차이가 맞게 잡혔는지 채점할 수 있음</td></tr></tbody></table></div>
+      <figure class="diagram"><svg viewBox="0 0 720 346" role="img" aria-labelledby="f07-1-t" class="figure-svg"><title id="f07-1-t">검사 여섯 가지는 Sweep 하나에서 서로 다른 자리를 봅니다.</title><defs><marker id="f07-1-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#bbb"/></marker></defs><g font-family="Inter, sans-serif"><text x="360" y="34" text-anchor="middle" font-size="12" fill="#777" font-weight="700">Sweep 하나</text><rect x="20" y="48" width="680" height="40" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="360" y="72" text-anchor="middle" font-size="11" fill="#444">레이저별 점 수</text><rect x="20" y="96" width="680" height="40" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="360" y="120" text-anchor="middle" font-size="11" fill="#444">점 수 · 거리 분포</text><rect x="20" y="144" width="680" height="40" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="360" y="168" text-anchor="middle" font-size="11" fill="#444">한 바퀴 시간</text><rect x="20" y="192" width="680" height="40" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="360" y="216" text-anchor="middle" font-size="11" fill="#444">카메라 9대와의 시각 차</text><rect x="20" y="240" width="680" height="40" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="360" y="264" text-anchor="middle" font-size="11" fill="#444">자차 자세</text><rect x="20" y="288" width="680" height="40" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="360" y="312" text-anchor="middle" font-size="11" fill="#444">지면 높이 잔차</text></g></svg><figcaption>검사 여섯 가지는 Sweep 하나에서 서로 다른 자리를 봅니다.</figcaption></figure>
+      <p>센서 사이 시각 차는 Argoverse 2 val 로그 하나(<code>0bae3b5e</code>)를 직접 계산해 봤습니다. 라이다 Sweep 하나를 기준으로 카메라 프레임의 시각 차가 −22.36 ms에서 +17.70 ms 사이에 퍼져 있었습니다. 이 값을 보고 「반 프레임(25 ms) 이내」를 기준으로 하는 동기 Gate를 M1에 넣을지 고민했고 결국 M2 이후로 미뤘습니다. 한 로그의 Sweep 하나를 보고 기준값을 정할 수는 없기 때문입니다. 지금은 분포를 남기는 검사로만 둡니다.</p>
+      <h2 id="통과와-실패만-세면-모르는-것">통과와 실패만 세면 모르는 것<a class="anchor" href="#통과와-실패만-세면-모르는-것" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>README에는 「실패하는 모습을 보여 줄 수 없는 Gate는 돌았다고 보여 준 적도 없다」는 규칙이 있습니다. CI에서는 Gate를 일부러 꺼서 테스트가 빨개지는지 봅니다. 그런데 CI는 물어본 Gate만 봅니다. 운영 중에는 같은 실패가 다른 모습으로 옵니다. Gate가 돌지 않았고 아무것도 빨개지지 않았고 Release는 나갔습니다.</p>
+      <p>그래서 Gate마다 숫자 넷을 셉니다.</p>
+      <pre><code>gate_evaluated_total{gate, dataset, release}
+gate_passed_total
+gate_failed_total
+gate_skipped_total</code></pre>
+      <p>보통 경보는 실패 수에 겁니다. 그러면 「데이터가 깨끗했다」와 「아무도 보지 않았다」는 둘 다 실패 0이라 경보가 울리지 않습니다. 두 상황을 가르는 것은 평가 횟수와 건너뜀 수입니다. 그래서 경보를 건너뜀 수가 늘어날 때, 그리고 수집은 계속 진행되는데 평가 횟수가 그대로일 때 겁니다.</p>
+      <figure class="diagram"><svg viewBox="0 0 720 250" role="img" aria-labelledby="f07-2-t" class="figure-svg"><title id="f07-2-t">실패 수만 보면 두 날이 같고 평가 횟수를 같이 세야 갈립니다.</title><defs><marker id="f07-2-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#bbb"/></marker></defs><g font-family="Inter, sans-serif"><text x="184" y="34" text-anchor="middle" font-size="12" fill="#777" font-weight="700">데이터가 깨끗한 날</text><rect x="20" y="48" width="328" height="40" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="184" y="72" text-anchor="middle" font-size="11" fill="#444">평가 1,284</text><rect x="20" y="96" width="328" height="40" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="184" y="120" text-anchor="middle" font-size="11" fill="#444">통과 1,284</text><rect x="20" y="144" width="328" height="40" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="184" y="168" text-anchor="middle" font-size="11" fill="#444">실패 0</text><rect x="20" y="192" width="328" height="40" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="184" y="216" text-anchor="middle" font-size="11" fill="#444">건너뜀 0</text><text x="536" y="34" text-anchor="middle" font-size="12" fill="#777" font-weight="700">검사가 멈춘 날</text><rect x="372" y="48" width="328" height="40" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="536" y="72" text-anchor="middle" font-size="11" fill="#444">평가 0</text><rect x="372" y="96" width="328" height="40" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="536" y="120" text-anchor="middle" font-size="11" fill="#444">통과 0</text><rect x="372" y="144" width="328" height="40" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="536" y="168" text-anchor="middle" font-size="11" fill="#444">실패 0</text><rect x="372" y="192" width="328" height="40" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="536" y="216" text-anchor="middle" font-size="11" fill="#444">건너뜀 0</text></g></svg><figcaption>실패 수만 보면 두 날이 같고 평가 횟수를 같이 세야 갈립니다.</figcaption></figure>
+      <h2 id="건너뜀과-미완료를-나눴습니다">건너뜀과 미완료를 나눴습니다<a class="anchor" href="#건너뜀과-미완료를-나눴습니다" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>종합본의 결함을 고친 방식은 이렇습니다. 평가를 시작할 때 <strong>기대 목록</strong>을 고정합니다. 묶음에 든 Sweep마다 돌아야 할 검사를 적은 목록이고 목록의 한 칸이 평가 한 번입니다. Gate 평가는 기대 목록의 모든 칸에 결과가 도착했을 때만 끝납니다. 도착하지 않은 결과는 「건너뜀」이 아니라 「미완료」로 남고 정한 시간을 넘기면 미완료 자체가 Release를 막는 사유가 됩니다.</p>
+      <p>10월 5일의 실패 처리 검토에서 이 규칙에 두 가지가 더 붙었습니다. 기대 목록을 「지금 켜져 있는 Gate」로 만들면 누군가 Gate를 끄는 순간 그 Gate는 기대 목록에서도 사라집니다. 그래서 기대 목록은 품질 정책 문서에서 만들고 켜고 끄는 설정과 떼어 놓습니다. 또 필수 Gate가 「건너뜀」 결과를 보내면 「결과가 모두 도착했다」는 조건은 채워집니다. 그래서 필수 Gate의 건너뜀은 통과로 세지 않고 한 건이라도 있으면 Release는 후보가 되지 못하고 막힘(blocked) 상태로 갑니다.</p>
+      <h2 id="completeness는-성과-수치가-아닙니다">completeness는 성과 수치가 아닙니다<a class="anchor" href="#completeness는-성과-수치가-아닙니다" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>같은 맥락에서 숫자 하나를 고쳤습니다. 초기 판정 문서(Fable 초안)에 「completeness 99.97%」를 성과 후보로 적은 적이 있습니다. 일부러 넣은 결함 가운데 검사가 잡은 비율을 상정한 숫자였는데 이름은 completeness로 붙어 있었습니다. 두 번째 codex 검토가 이 혼동을 짚었습니다.</p>
+      <p>공개 데이터셋은 원본이 고정돼 있습니다. 원본을 올바르게 옮기면 completeness는 100%가 정상이고 completeness가 99.97%라면 데이터를 잃었다는 뜻입니다. 결함을 99.97% 잡았다는 것은 탐지 재현율이고 완전히 다른 수치입니다.</p>
+      <div class="table-wrap"><table><thead><tr><th>수치</th><th>뜻</th><th>정상 입력에서의 값</th></tr></thead><tbody><tr><td>completeness</td><td>들어와야 할 레코드 · 파일 가운데 실제로 들어온 비율</td><td>100%가 정답</td></tr><tr><td>결함 탐지 재현율</td><td>일부러 넣은 결함 가운데 Gate가 잡은 비율</td><td>결함 종류별로 따로 보고</td></tr></tbody></table></div>
+      <p>지금 README는 두 수치를 다른 줄에 쓰고 섞지 않습니다. 재현율은 결함 종류별로 보고하고 평균 내지 않습니다. completeness의 분모는 정규화 결과가 아니라 원본에서 따로 센 값입니다.</p>
+      <h2 id="관측-스택으로-Prometheus-Loki를-고른-이유">관측 스택으로 Prometheus · Loki를 고른 이유<a class="anchor" href="#관측-스택으로-Prometheus-Loki를-고른-이유" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>이 숫자들을 모으는 곳으로 Prometheus, Loki, Grafana, Alertmanager를 OpenTelemetry로 묶기로 했습니다. ELK를 고르지 않은 이유는 두 가지입니다.</p>
+      <p>첫째, 이 프로젝트의 신호는 <code>release_id</code>, <code>log_id</code>, <code>snapshot_id</code>가 붙은 시계열과 구조화된 이벤트입니다. 비구조화 로그의 전문 검색은 필요하지 않고 그 검색이 Elasticsearch의 강점이자 비용입니다. 둘째, M2는 저장 경로의 성능을 잽니다. 로그 내용 전체를 색인하는 Elasticsearch는 재려는 디스크를 같이 많이 씁니다. Loki는 라벨만 색인해 디스크를 덜 쓸 것으로 예측했습니다. 덜 쓴다고 0은 아니므로 벤치마크 실행마다 그 머신에서 같이 돌던 프로세스를 기록해 결과 옆에 붙이기로 했습니다.</p>
+      <p>대시보드 자체는 산출물로 치지 않습니다. 초록색 보드의 스크린숏은 아무것도 증명하지 않습니다. 증거가 되는 것은 Gate 하나를 끄면 그 Gate의 평가 횟수가 멈추고 수집은 계속되므로 「평가 정지」 경보가 뜨고 다시 켜면 경보가 사라지는 보드입니다. 기대 목록 쪽은 따로 시험합니다. 결과 하나를 일부러 보내지 않으면 Release가 미완료로 남다가 정한 시간이 지나 막힘으로 가야 합니다.</p>
+      <figure class="diagram"><svg viewBox="0 0 720 98" role="img" aria-labelledby="f07-3-t" class="figure-svg"><title id="f07-3-t">증거가 되는 보드는 Gate를 끄면 경보가 뜨고 다시 켜면 사라지는 보드입니다.</title><defs><marker id="f07-3-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#bbb"/></marker></defs><g font-family="Inter, sans-serif"><rect x="20" y="20" width="121" height="56" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="80" y="52" text-anchor="middle" font-size="11" fill="#444">Gate 하나 끔</text><path d="M143 48 L157 48" stroke="#bbb" stroke-width="1.5" marker-end="url(#f07-3-a)"/><rect x="159" y="20" width="121" height="56" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="220" y="52" text-anchor="middle" font-size="11" fill="#444">평가 횟수 정지</text><path d="M283 48 L297 48" stroke="#bbb" stroke-width="1.5" marker-end="url(#f07-3-a)"/><rect x="299" y="20" width="121" height="56" rx="10" fill="#f4f5ff" stroke="#4f5bd5" stroke-width="1.5"/><text x="360" y="52" text-anchor="middle" font-size="11" fill="#444">「평가 정지」 경보</text><path d="M422 48 L436 48" stroke="#bbb" stroke-width="1.5" marker-end="url(#f07-3-a)"/><rect x="438" y="20" width="121" height="56" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="499" y="52" text-anchor="middle" font-size="11" fill="#444">다시 켬</text><path d="M562 48 L576 48" stroke="#bbb" stroke-width="1.5" marker-end="url(#f07-3-a)"/><rect x="578" y="20" width="121" height="56" rx="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/><text x="639" y="52" text-anchor="middle" font-size="11" fill="#444">경보 해제</text></g></svg><figcaption>증거가 되는 보드는 Gate를 끄면 경보가 뜨고 다시 켜면 사라지는 보드입니다.</figcaption></figure>
+      <h2 id="이-글이-주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#이-글이-주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
+      <ul><li><strong>아직 구현하지 않았습니다.</strong> 여섯 가지 검사, 숫자 넷, 경보는 모두 설계입니다. 관측 스택은 M3에서 세웁니다.</li><li>센서 사이 시각 차 −22.36 ~ +17.70 ms는 val 로그 하나의 Sweep 하나를 일회용 스크립트로 계산한 값입니다. 플랫폼이 잰 값이 아니고 데이터셋 전체의 분포도 아닙니다.</li><li>「Loki가 Elasticsearch보다 가볍다」는 이 머신에서 재지 않았습니다. 두 도구의 색인 방식에서 예측한 것입니다.</li></ul>
+      <div class="wrapup">
+      <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>아직 정하지 않은 것은 미완료를 막힘으로 바꾸는 시간입니다. 너무 짧으면 느린 검사가 Release를 막고 너무 길면 멈춘 검사를 늦게 알아챕니다. 첫 실측에서 검사 하나가 걸리는 시간의 분포를 보고 정합니다. 다음 편은 이 프로젝트가 스스로 정한 수치만으로 결론을 내지 않으려고 바깥에서 가져온 계측기 셋을 다룹니다.</p>
+      <p>읽어 주셔서 감사합니다.</p></div>
+    </article>
+  </main>
+  <footer class="notranslate"><div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div><div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div></footer>
+  </div>
+  <script>window.CONTENT_BASE = "../";</script><script src="../assets/i18n.js?v=e0fa0917be"></script><script src="../assets/content.js?v=24429b3983"></script><script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script><script defer src="../assets/highlight.js?v=d4af83b541"></script><script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>(function(){var el=document.querySelector(".article-aside");if(el&&window.renderArticleAside){renderArticleAside(el,el.dataset.aside,el.dataset.slug);}})();</script>
+</body>
+</html>

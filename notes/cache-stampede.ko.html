@@ -71,8 +71,8 @@
           <p class="toc-label">목차</p>
           <ul>
             <li><a href="#무엇">개요</a></li>
-            <li><a href="#없음">「없음」도 값입니다</a></li>
-            <li><a href="#막기">막는 자리는 Lock이 아니라 자료구조입니다</a></li>
+            <li><a href="#없음">[없음]도 값입니다</a></li>
+            <li><a href="#막기">막아 주는 것은 자료구조입니다</a></li>
             <li><a href="#쓰인-곳">이 사이트에서 쓰인 곳</a></li>
           </ul>
         </nav>
@@ -81,7 +81,7 @@
         <h2 id="무엇">개요<a class="anchor" href="#무엇" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p><strong>Cache Stampede는 키 하나가 비는 순간 그 키를 필요로 하던 여럿이 동시에 원본을 부르는 일입니다.</strong>
-        Cache는 있는데 가장 바쁜 순간에만 없는 것처럼 굴게 됩니다.</p>
+        Cache가 있는데도 가장 바쁜 순간에만 없는 것처럼 동작합니다.</p>
 
         <p>직접 짠 Cache는 대개 이렇게 생겼습니다. 비었는지 보고 비었으면 불러서 채웁니다.
         그 두 줄 사이에 <strong>다른 Thread가 들어올 자리</strong>가 있습니다.</p>
@@ -93,7 +93,7 @@
                 <figure class="diagram">
           <svg viewBox="0 0 720 216" role="img" aria-labelledby="cs-t cs-d" class="figure-svg">
             <title id="cs-t">직접 짠 검사와 키마다 하나인 Loader</title>
-            <desc id="cs-d">왼쪽 상자는 직접 짠 Cache입니다. 비었는지 보는 검사를 N 개가 동시에 통과하고 외부 호출이 N 번 나가며 결과가 0건이면 아무것도 저장되지 않습니다. 오른쪽 상자는 Loader를 쓰는 Cache입니다. 키마다 Loader가 한 번 돌고 나머지는 그 결과를 기다리며 빈 결과도 값으로 저장됩니다. 아래에 분홍색으로 다음 요청을 막는 것은 「없음」을 담는 쪽이라고 적혀 있습니다.</desc>
+            <desc id="cs-d">왼쪽 상자는 직접 짠 Cache입니다. 비었는지 보는 검사를 N 개가 동시에 통과하고 외부 호출이 N 번 나가며 결과가 0건이면 아무것도 저장되지 않습니다. 오른쪽 상자는 Loader를 쓰는 Cache입니다. 키마다 Loader가 한 번 돌고 나머지는 그 결과를 기다리며 빈 결과도 값으로 저장됩니다. 아래에 분홍색으로 다음 요청을 막는 것은 [없음]을 담는 쪽이라고 적혀 있습니다.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="40" y="54" width="328" height="112" rx="12" fill="none" stroke="#d62976" stroke-width="1.6"/>
               <text x="204" y="44" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">직접 짠 검사</text>
@@ -105,35 +105,35 @@
               <text x="556" y="82" font-size="11.5" fill="#4a4a4a" text-anchor="middle">Loader 1회 실행</text>
               <text x="556" y="108" font-size="11.5" fill="#4a4a4a" text-anchor="middle">나머지는 결과 대기</text>
               <text x="556" y="134" font-size="11.5" fill="#4a4a4a" text-anchor="middle">빈 결과도 값</text>
-              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">다음 요청을 막는 것은 「없음」을 담는 쪽</text>
+              <text x="360" y="192" font-size="11.5" fill="#d62976" text-anchor="middle">다음 요청을 막는 것은 [없음]을 담는 쪽</text>
             </g>
           </svg>
-          <figcaption>두 쪽 모두 Cache 라고 불립니다. 다음 요청을 실제로 막아 주는 것은 오른쪽뿐입니다.</figcaption>
+          <figcaption>두 쪽 모두 Cache라고 불립니다. 다음 요청을 실제로 막아 주는 것은 오른쪽뿐입니다.</figcaption>
         </figure>
 
-        <h2 id="없음">「없음」도 값입니다<a class="anchor" href="#없음" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="없음">[없음]도 값입니다<a class="anchor" href="#없음" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>같은 자리에서 더 오래 사는 결함이 하나 더 나옵니다. 조회 결과가 0건이면 채우는 반복문이 한 번도 돌지 않고
+        <p>같은 자리에서 더 오래 남는 결함이 하나 더 나옵니다. 조회 결과가 0건이면 채우는 반복문이 한 번도 돌지 않고
         Cache 에는 아무것도 저장되지 않습니다. 다음 요청도 Cache를 비어 있다고 보고 또 부릅니다.</p>
 
-        <p><strong>「값이 없다」와 「아직 안 물어봤다」를 같은 검사로 뭉갠 것입니다.</strong> 0건이 흔한 경로라면
+        <p><strong>[값이 없다]와 [아직 안 물어봤다]를 같은 검사로 뭉갠 것입니다.</strong> 0건이 흔한 경로라면
         가장 빈번한 경우에 Cache가 통째로 작동하지 않습니다. 그런데도 코드에는 Cache가 있으므로
         아무도 의심하지 않습니다. 채워지는지 세어 보기 전까지는 그렇습니다.</p>
 
-        <h2 id="막기">막는 자리는 Lock이 아니라 자료구조입니다<a class="anchor" href="#막기" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="막기">막아 주는 것은 자료구조입니다<a class="anchor" href="#막기" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>Caffeine의 LoadingCache는 Cache 미스에서 키마다 Loader를 정확히 한 번 실행하고 나머지 호출자는
         그 결과를 기다립니다. Loader가 빈 리스트를 돌려주면 <strong>그 빈 리스트를 값으로 저장합니다.</strong>
         위의 두 결함이 한꺼번에 사라지는 이유입니다.</p>
 
-        <p><code>computeIfAbsent</code> 로도 한 번만 부르게 만들 수 있지만 그쪽은 값을 따로 치릅니다.
-        기다리는 Thread가 맵의 Bucket을 붙든 채 서 있습니다. <a href="bin-lock.ko.html">Bin Lock</a>에 적어 두었습니다.</p>
+        <p><code>computeIfAbsent</code>로도 한 번만 부르게 만들 수 있지만 그쪽은 값을 따로 치릅니다.
+        기다리는 Thread가 맵의 Bucket을 붙잡고 있습니다. <a href="bin-lock.ko.html">Bin Lock</a>에 적어 두었습니다.</p>
 
         <h2 id="쓰인-곳">이 사이트에서 쓰인 곳<a class="anchor" href="#쓰인-곳" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul class="callout">
-          <li><a href="../writing/parallelism-made-the-tail-worse.ko.html">Volume 목록을 병렬로 바꾸자 P99가 1.85배 나빠졌습니다</a></li>
-          <li><a href="../writing/slow-screens-1-volume-list.ko.html">Volume 목록 P99가 10min → 23ms로 줄었습니다</a></li>
+          <li><a href="../writing/parallelism-made-the-tail-worse.ko.html">Volume/Snapshot 조회 성능 개선 02. 병렬 조회 P99 악화: 공유 Thread Pool 포화와 CallerRunsPolicy의 Request Thread 실행</a></li>
+          <li><a href="../writing/slow-screens-1-volume-list.ko.html">Volume/Snapshot 조회 성능 개선 01. 목록 조회 Caching: Caffeine LoadingCache로 Cache Stampede 해결</a></li>
         </ul>
 
       </article>
@@ -146,7 +146,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=bec7a51a41"></script>
+  <script src="../assets/content.js?v=24429b3983"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>통합 모니터링 이슈 01. UI Rendering 부분 실패: Cold Cache Regression | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet"><link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/cold-cache-hid-the-boxes.ko.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/cold-cache-hid-the-boxes.ko.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" /><meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="통합 모니터링 이슈 01. UI Rendering 부분 실패: Cold Cache Regression" />
+  <meta property="og:description" content="부분 실패에 강하게 만든 공유 Cache 리팩터가, 재기동 직후 cold 상태에서 node는 채우고 instance는 비운 반쪽 상태를 만들었습니다. 프론트가 그 빈 목록을 프로젝트 박스 소스로 읽었고, 살렸어야 할 REST 폴백은 자기대입 no-op으로 수년째 죽어 있었습니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/cold-cache-hid-the-boxes.ko.html" /><meta property="og:locale" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content="통합 모니터링 이슈 01. UI Rendering 부분 실패: Cold Cache Regression" />
+  <meta name="twitter:description" content="node·instance를 독립 채택하게 만든 리팩터가 cold에서 만든 회귀와, 수년째 죽어 있던 폴백, 그리고 단일 소스로 되돌린 수정을 재현 로그와 함께 설명합니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta name="description" content="node·instance를 독립 채택하게 만든 리팩터가 cold에서 만든 회귀와, 수년째 죽어 있던 폴백, 그리고 단일 소스로 되돌린 수정을 재현 로그와 함께 설명합니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar"><div class="topbar-inner notranslate"><a class="site-name" href="../index.html#about">Kwanghun</a>
+    <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+      <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang" data-authored='{"ko":"cold-cache-hid-the-boxes.ko.html"}'>
+        <option value="ko" selected>한국어</option><option value="en">English</option><option value="ja">日本語</option><option value="zh-CN">简体中文</option><option value="zh-TW">繁體中文</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ru">Русский</option><option value="vi">Tiếng Việt</option><option value="id">Bahasa Indonesia</option><option value="hi">हिन्दी</option><option value="ar">العربية</option>
+      </select><div id="google_translate_element" aria-hidden="true"></div>
+      <a href="../index.html#about">About</a><a href="../index.html#news">News</a><a href="../index.html#projects">Projects</a><a href="../index.html#writing" class="active">Writing</a><a href="../index.html#notes">Notes</a><a href="../index.html#cv">CV</a>
+    </nav>
+  </div></div>
+  <div class="container reading"><main>
+    <div class="hero-top">
+      <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
+      <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div>
+    </div>
+    <section class="page-hero"><h1>통합 모니터링 이슈 01. UI Rendering 부분 실패: Cold Cache Regression</h1><p class="article-date">2026년 9월</p></section>
+    <aside class="article-aside" data-aside="writing" data-slug="cold-cache-hid-the-boxes"></aside>
+    <nav class="article-toc" aria-label="목차"><p class="toc-label">목차</p><ul>
+      <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+      <li><a href="#증상">증상: 빠르게 뜨는데 박스만 없다</a></li>
+      <li><a href="#배경">배경: 부분 실패에 강하게 만든 리팩터</a></li>
+      <li><a href="#반쪽-상태">cold가 만든 반쪽 상태</a></li>
+      <li><a href="#빈-목록">프론트가 빈 목록을 박스 소스로 읽었습니다</a></li>
+      <li><a href="#죽은-폴백">죽은 안전망: 자기대입 no-op</a></li>
+      <li><a href="#수정">수정: 한 소스에서 파생하도록</a></li>
+      <li><a href="#검증">검증: 결정론적 재현</a></li>
+      <li><a href="#정석">정석은 백엔드에 있습니다</a></li>
+      <li><a href="#마치며">마치며</a></li>
+    </ul></nav>
+    <article class="article-body">
+
+      <p>사내 Cloud 관리 Console의 통합 모니터링 대시보드를 만들고 있습니다. 어느 배포 직후,
+      토폴로지 UI는 평소처럼 빠르게 렌더됐는데 <strong>네트워크 노드 레이어의 프로젝트 박스만 안 보였습니다.</strong>
+      화면 전체가 아니라 한 레이어의 렌더링만 부분적으로 실패한 것입니다.</p>
+
+      <p>데이터가 아예 안 온 것이면 화면이 느리거나 비어야 하는데, 화면은 빨랐습니다. ‘빠른 렌더 + 박스만 없음’이
+      힌트였습니다. 화면은 그렸는데 그 레이어가 읽는 소스만 비어 있었던 것입니다.</p>
+
+      <p>원인은 앞서 <strong>부분 실패에 강하도록 공유 Cache를 리팩터한 변경</strong>이 cold(재기동 직후)라는
+      특정 초기 상태에서 새 조합을 만든 것이었고, 그걸 살렸어야 할 안전망 코드는 수년째 죽어 있었습니다.
+      이 글은 그 반쪽 상태와 죽은 폴백, 그리고 한 소스로 되돌린 수정에 대한 것입니다.</p>
+
+      <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
+      <ul class="callout">
+        <li>구조 정보는 REST로, 실시간 값은 SSE로 받아 한 화면에 섞으시는 분</li>
+        <li>부분 실패에 강하게 만든 변경이 특정 초기 상태에서 회귀를 낸 적이 있는 분</li>
+        <li>폴백·안전망 코드가 실제로 도는지 확인해 본 적이 없는 분</li>
+      </ul>
+
+      <h2 id="증상">증상: 빠르게 뜨는데 박스만 없다<a class="anchor" href="#증상" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>대시보드 토폴로지에는 노드 레이어가 여러 겹 있고, 그 위에 프로젝트가 사각형 박스로 얹힙니다.
+      증상은 <strong>네트워크 노드 레이어의 박스만 0개</strong>였습니다. 다른 레이어와 노드 자체는 정상으로 그려졌습니다.</p>
+
+      <figure class="diagram">
+        <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+          <svg viewBox="0 0 720 214" role="img" aria-labelledby="dash-t dash-d" xmlns="http://www.w3.org/2000/svg">
+            <title id="dash-t">토폴로지에서 네트워크 노드 레이어의 프로젝트 박스만 빈 상태</title>
+            <desc id="dash-d">위쪽 두 레이어는 프로젝트 박스가 채워져 있고, 아래 네트워크 노드 레이어만 박스가 비어 있습니다. 화면은 빠르게 렌더됐지만 그 레이어의 소스만 비었습니다. 실제 콘솔 화면이 아니라 구조만 옮긴 추상 도식입니다.</desc>
+            <g font-size="13" fill="#7b7186">
+              <text x="16" y="30">대시보드 토폴로지 (추상 도식)</text>
+            </g>
+            <g>
+              <rect x="16" y="44" width="688" height="44" rx="7" fill="none" stroke="#3b3344" stroke-width="1.4"/>
+              <text x="28" y="60" font-size="12.5" fill="#7b7186">Compute 레이어</text>
+              <rect x="150" y="52" width="70" height="28" rx="5" fill="none" stroke="#4f5bd5" stroke-width="1.5"/><text x="185" y="70" font-size="12" fill="#18121d" text-anchor="middle">proj A</text>
+              <rect x="230" y="52" width="70" height="28" rx="5" fill="none" stroke="#4f5bd5" stroke-width="1.5"/><text x="265" y="70" font-size="12" fill="#18121d" text-anchor="middle">proj B</text>
+            </g>
+            <g>
+              <rect x="16" y="96" width="688" height="44" rx="7" fill="none" stroke="#3b3344" stroke-width="1.4"/>
+              <text x="28" y="112" font-size="12.5" fill="#7b7186">Storage 레이어</text>
+              <rect x="150" y="104" width="70" height="28" rx="5" fill="none" stroke="#4f5bd5" stroke-width="1.5"/><text x="185" y="122" font-size="12" fill="#18121d" text-anchor="middle">proj A</text>
+              <rect x="230" y="104" width="70" height="28" rx="5" fill="none" stroke="#4f5bd5" stroke-width="1.5"/><text x="265" y="122" font-size="12" fill="#18121d" text-anchor="middle">proj B</text>
+            </g>
+            <g>
+              <rect x="16" y="148" width="688" height="50" rx="7" fill="none" stroke="#d62976" stroke-width="2"/>
+              <text x="28" y="166" font-size="12.5" fill="#d62976" font-weight="700">네트워크 노드 레이어</text>
+              <rect x="150" y="160" width="70" height="28" rx="5" fill="none" stroke="#7b7186" stroke-width="1.3" stroke-dasharray="5 4"/><text x="185" y="178" font-size="12" fill="#7b7186" text-anchor="middle">(빈 칸)</text>
+              <rect x="230" y="160" width="70" height="28" rx="5" fill="none" stroke="#7b7186" stroke-width="1.3" stroke-dasharray="5 4"/><text x="265" y="178" font-size="12" fill="#7b7186" text-anchor="middle">(빈 칸)</text>
+              <text x="420" y="178" font-size="13" fill="#d62976">← 이 레이어의 박스만 0개</text>
+            </g>
+          </svg>
+        </div>
+        <figcaption>노드와 다른 레이어는 정상, 네트워크 노드 레이어의 프로젝트 박스만 비었습니다. 실제 콘솔이 아니라 구조만 옮긴 추상 도식입니다.</figcaption>
+      </figure>
+
+      <h2 id="배경">배경: 부분 실패에 강하게 만든 리팩터<a class="anchor" href="#배경" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>이 대시보드는 <strong>구조 정보(노드·프로젝트)는 REST로 한 번</strong> 받고,
+      <strong>실시간 값은 SSE로</strong> 받습니다. <a href="monitoring-one-shared-cache.ko.html">앞선 공유 Cache 설계</a>에서, 한쪽이 실패해도 다른 쪽은 살리도록
+      SSE 페이로드의 <strong>node 반쪽과 instance 반쪽을 독립적으로 채택</strong>하게 했습니다.
+      부분 실패에 강해지는 견고화였습니다.</p>
+      <p>각 반쪽은 세대 번호(<code>gen</code>)와 <code>degraded</code> 플래그를 달고 옵니다.
+      <code>gen ≥ 1</code>이면 실측이 붙은 fresh, <code>gen 0</code>이면 아직 실측 전입니다.</p>
+
+      <h2 id="반쪽-상태">cold가 만든 반쪽 상태<a class="anchor" href="#반쪽-상태" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>재기동 직후(cold)에는 그전에 없던 조합이 생깁니다. <strong>node는 이미 채워졌는데(gen ≥ 1),
+      instance는 아직 실측이 안 붙어 빈 목록 + <code>degraded</code> + <code>gen 0</code></strong>으로 옵니다.
+      실행 중인 인스턴스는 있지만 수집 값이 아직 매칭되지 않아 ‘빈 목록’으로 나가는 것입니다.</p>
+
+      <figure class="diagram">
+        <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+          <svg viewBox="0 0 720 268" role="img" aria-labelledby="mx-t mx-d" xmlns="http://www.w3.org/2000/svg">
+            <title id="mx-t">node 채택과 instance 채택의 2×2와 cold 칸</title>
+            <desc id="mx-d">가로축은 instance 반쪽을 채택했는지, 세로축은 node 반쪽을 채택했는지입니다. node는 채택했으나 instance는 빈 목록이라 못 채택한 cold 칸에서 화면은 빠르게 뜨지만 프로젝트 박스가 0개가 됩니다. 나머지 칸은 정상, node 없음, 둘 다 없음입니다.</desc>
+            <g font-size="13" fill="#7b7186">
+              <text x="150" y="30">instance 채택 ✓</text>
+              <text x="420" y="30">instance 빈 목록 · gen 0 ✗</text>
+              <text x="16" y="90" transform="rotate(-90 16 90)">node ✓</text>
+              <text x="16" y="210" transform="rotate(-90 16 210)">node ✗</text>
+            </g>
+            <!-- node✓ instance✓ 정상 -->
+            <rect x="130" y="44" width="250" height="88" rx="8" fill="none" stroke="#3b3344" stroke-width="1.5"/>
+            <text x="146" y="72" font-size="14" fill="#18121d" font-weight="700">정상</text>
+            <text x="146" y="94" font-size="12.5" fill="#7b7186">박스 채워짐 · 화면 정상</text>
+            <!-- node✓ instance✗ cold ★ -->
+            <rect x="400" y="44" width="300" height="88" rx="8" fill="none" stroke="#d62976" stroke-width="2.5"/>
+            <text x="416" y="72" font-size="14" fill="#d62976" font-weight="700">cold — 이번 회귀</text>
+            <text x="416" y="94" font-size="12.5" fill="#18121d">빠른 렌더 + 박스 0개</text>
+            <text x="416" y="114" font-size="12" fill="#7b7186">node gen ≥ 1 / instance gen 0·degraded</text>
+            <!-- node✗ instance✓ -->
+            <rect x="130" y="144" width="250" height="88" rx="8" fill="none" stroke="#3b3344" stroke-width="1.3" stroke-dasharray="5 4"/>
+            <text x="146" y="180" font-size="13" fill="#7b7186">node 없음</text>
+            <!-- node✗ instance✗ -->
+            <rect x="400" y="144" width="300" height="88" rx="8" fill="none" stroke="#3b3344" stroke-width="1.3" stroke-dasharray="5 4"/>
+            <text x="416" y="180" font-size="13" fill="#7b7186">둘 다 없음</text>
+          </svg>
+        </div>
+        <figcaption>독립 채택은 견고화였지만, cold의 ‘node ✓ / instance ✗’ 칸이 새로 생겼습니다. node가 채워지니 화면은 빠르게 뜨고, instance가 비니 박스가 0개가 됩니다 — 증상과 정확히 같습니다.</figcaption>
+      </figure>
+
+      <h2 id="빈-목록">프론트가 빈 목록을 박스 소스로 읽었습니다<a class="anchor" href="#빈-목록" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>프론트는 네트워크 노드 레이어의 프로젝트 박스를 <strong>instance 반쪽</strong>에서 가져옵니다.
+      cold에서는 그 반쪽이 빈 목록이라 박스가 0개가 됩니다. node 반쪽은 채워졌으니 화면은 빨리 뜹니다.</p>
+      <p>원래는 SSE가 비면 <strong>REST로 받아 둔 구조 정보로 폴백</strong>했어야 합니다. 그 폴백이 있었다면
+      cold에도 박스는 REST 구조에서 채워졌을 것입니다.</p>
+
+      <h2 id="죽은-폴백">죽은 안전망: 자기대입 no-op<a class="anchor" href="#죽은-폴백" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>그 폴백을 담당하던 한 줄이 수년째 죽어 있었습니다.</p>
+<pre data-lang="js"><code>// 안전망: SSE가 비면 REST 구조로 폴백해야 한다 — 그런데
+data[0].items = arrayData(socketData)[0]?.items || [];
+//              └─ socketData(자기 자신)에서 다시 읽는다 → 자기대입 no-op
+// REST(server_info_list)로 가는 폴백이 아니라, 빈 값을 빈 값으로 덮어쓴다</code></pre>
+      <p>REST 구조가 아니라 <strong>방금 본 빈 SSE 값을 자기 자신에서 다시 읽어</strong> 대입하고 있었습니다.
+      폴백은 한 번도 돌지 않았고, cold의 빈 목록이 그대로 화면에 남았습니다. 오래전부터 있던 줄이라
+      아무도 이상을 못 느꼈습니다 — 평소(warm)에는 SSE가 채워져 있어 이 줄이 무해했기 때문입니다.</p>
+
+      <h2 id="수정">수정: 한 소스에서 파생하도록<a class="anchor" href="#수정" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>먼저 좁게 고쳤습니다. 죽은 no-op을 지우고, <strong>instance 반쪽을 한 번이라도 정상 채택했는지</strong>로
+      판정해 cold 구간에만 REST 구조로 폴백했습니다. 인스턴스가 붙은 뒤의 빈 목록은 실제 상태로 둬서
+      ‘유령 프로젝트’가 되살아나지 않게 했습니다.</p>
+      <p>그다음 좁은 패치를 <strong>단일 소스</strong>로 교체했습니다. 박스·서버 상태 위젯·프로젝트별 카운트를
+      전부 하나의 파생값에서 뽑게 했습니다. 흩어져 있던 상태와 여러 참조를 걷어내 코드가 45줄 줄었습니다.</p>
+<pre data-lang="js"><code>// 수정: 화면의 여러 요소가 '한 소스'에서 파생한다
+const visibleInstances = arrayData(sse ?? rest);   // SSE 없으면 REST 구조로
+// 프로젝트 박스 · 서버 상태 위젯 · 프로젝트별 카운트 → 모두 visibleInstances 하나에서</code></pre>
+
+      <figure class="diagram">
+        <div class="diagram-scroll" tabindex="0" role="region" aria-label="스크롤 가능한 도해">
+          <svg viewBox="0 0 720 236" role="img" aria-labelledby="src-t src-d" xmlns="http://www.w3.org/2000/svg">
+            <title id="src-t">데이터 소스 선택: 죽은 no-op vs 단일 소스</title>
+            <desc id="src-d">위 흐름은 수정 전입니다. 빈 SSE가 죽은 자기대입 no-op을 지나 그대로 빈 값이 되고 박스가 0개가 됩니다. 아래 흐름은 수정 후입니다. SSE가 없으면 REST 구조로 폴백하는 단일 소스에서 박스·위젯·카운트가 모두 파생됩니다.</desc>
+            <text x="16" y="28" font-size="13" fill="#7b7186">수정 전</text>
+            <rect x="16" y="40" width="120" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.4"/><text x="76" y="64" font-size="12.5" fill="#18121d" text-anchor="middle">SSE (빈 items)</text>
+            <path d="M136 60 H 196" fill="none" stroke="#7b7186" stroke-width="1.5" marker-end="url(#src-a)"/>
+            <rect x="196" y="40" width="180" height="40" rx="6" fill="none" stroke="#d62976" stroke-width="2"/><text x="286" y="58" font-size="12" fill="#d62976" text-anchor="middle" font-weight="700">자기대입 no-op</text><text x="286" y="73" font-size="11" fill="#7b7186" text-anchor="middle">socketData ← socketData</text>
+            <path d="M376 60 H 436" fill="none" stroke="#7b7186" stroke-width="1.5" marker-end="url(#src-a)"/>
+            <rect x="436" y="40" width="120" height="40" rx="6" fill="none" stroke="#7b7186" stroke-width="1.3" stroke-dasharray="5 4"/><text x="496" y="64" font-size="12.5" fill="#7b7186" text-anchor="middle">빈 값 그대로</text>
+            <path d="M556 60 H 616" fill="none" stroke="#7b7186" stroke-width="1.5" marker-end="url(#src-a)"/>
+            <text x="620" y="64" font-size="13" fill="#d62976">박스 0</text>
+
+            <text x="16" y="140" font-size="13" fill="#7b7186">수정 후</text>
+            <rect x="16" y="152" width="120" height="40" rx="6" fill="none" stroke="#3b3344" stroke-width="1.4"/><text x="76" y="176" font-size="12" fill="#18121d" text-anchor="middle">SSE ?? REST</text>
+            <path d="M136 172 H 196" fill="none" stroke="#7b7186" stroke-width="1.5" marker-end="url(#src-a)"/>
+            <rect x="196" y="152" width="180" height="40" rx="6" fill="none" stroke="#4f5bd5" stroke-width="2"/><text x="286" y="170" font-size="12.5" fill="#18121d" text-anchor="middle" font-weight="700">visibleInstances</text><text x="286" y="185" font-size="11" fill="#7b7186" text-anchor="middle">단일 소스</text>
+            <path d="M376 172 H 436" fill="none" stroke="#7b7186" stroke-width="1.5" marker-end="url(#src-a)"/>
+            <g font-size="12" fill="#18121d">
+              <rect x="436" y="146" width="180" height="22" rx="4" fill="none" stroke="#3b3344" stroke-width="1.2"/><text x="446" y="161">프로젝트 박스</text>
+              <rect x="436" y="172" width="180" height="22" rx="4" fill="none" stroke="#3b3344" stroke-width="1.2"/><text x="446" y="187">서버 상태 위젯</text>
+              <rect x="436" y="198" width="180" height="22" rx="4" fill="none" stroke="#3b3344" stroke-width="1.2"/><text x="446" y="213">프로젝트별 카운트</text>
+            </g>
+            <defs><marker id="src-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#7b7186"/></marker></defs>
+          </svg>
+        </div>
+        <figcaption>수정 전(위)은 죽은 no-op이 빈 SSE를 그대로 통과시켜 박스가 0개였습니다. 수정 후(아래)는 SSE가 없으면 REST 구조로 폴백하는 <strong>한 소스</strong>에서 박스·위젯·카운트가 모두 파생됩니다.</figcaption>
+      </figure>
+
+      <h2 id="검증">검증: 결정론적 재현<a class="anchor" href="#검증" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>프론트의 채택·렌더 로직을 그대로 떼어, cold 페이로드 시퀀스로 재현했습니다.
+      수정 전후를 같은 입력으로 돌려 박스 개수를 셌습니다.</p>
+      <table>
+        <thead><tr><th>시나리오</th><th>수정 전 (죽은 no-op)</th><th>수정 후</th></tr></thead>
+        <tbody>
+          <tr><td>cold #1</td><td>박스 0</td><td>박스 2</td></tr>
+          <tr><td>cold #2</td><td>박스 0</td><td>박스 2</td></tr>
+          <tr><td>복구 (instance 매칭됨)</td><td>박스 2</td><td>박스 2</td></tr>
+          <tr><td>권위 있는 0개 (실제로 프로젝트 0)</td><td>박스 0</td><td>박스 0</td></tr>
+        </tbody>
+      </table>
+      <p>마지막 줄이 중요합니다. <strong>실제로 프로젝트가 0개</strong>일 때는 폴백이 유령을 되살리면 안 됩니다.
+      수정본은 이 경우 0을 유지했습니다 — cold의 빈 목록은 채우고, 권위 있는 0개는 그대로 둔 것입니다.</p>
+
+      <h2 id="정석">정석은 백엔드에 있습니다<a class="anchor" href="#정석" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>프론트가 <strong>REST 구조와 SSE 실측을 섞어</strong> 화면을 그리는 구조 자체가 이런 반쪽 상태에 약합니다.
+      진짜 해결은 백엔드가 <strong>cold에도 프로젝트·VM 구조를 ‘no-data/degraded’ 상태로 emit</strong>해서,
+      프론트가 한 소스만 읽게 하는 것입니다.</p>
+      <p><strong>이건 아직 하지 않았습니다.</strong> 이 글의 수정은 증상을 없애고 정합을 되돌린 것이고,
+      구조적 정석은 백엔드 emit로 남아 있습니다. 또 cold가 아주 길면 마운트 시 한 번 받은 REST 스냅샷
+      이후에 생기거나 사라진 프로젝트는 못 따라갑니다 — 이 한계도 백엔드 emit로만 완전히 풀립니다.</p>
+
+      <div class="wrapup">
+        <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>부분 실패에 강하게 만든 변경이 cold라는 특정 초기 상태에서 ‘반쪽만 참’인 조합을 만들었고,
+        그걸 살렸어야 할 안전망은 자기대입 no-op으로 죽어 있었습니다. 세 가지가 남습니다.
+        반쪽씩 독립 채택하면 그 반쪽을 소비하는 쪽의 가정을 다시 봐야 하고, 폴백 코드는 실제로 도는지
+        확인해야 하며, 화면 한 요소는 한 소스에서 파생하는 편이 안전합니다.</p>
+      </div>
+    </article>
+  </main>
+  <footer class="notranslate"><div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div><div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div></footer>
+  </div>
+  <script>window.CONTENT_BASE = "../";</script><script src="../assets/i18n.js?v=e0fa0917be"></script><script src="../assets/content.js?v=24429b3983"></script><script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script><script defer src="../assets/highlight.js?v=d4af83b541"></script><script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>(function(){var el=document.querySelector(".article-aside");if(el&&window.renderArticleAside){renderArticleAside(el,el.dataset.aside,el.dataset.slug);}})();</script>
+</body>
+</html>

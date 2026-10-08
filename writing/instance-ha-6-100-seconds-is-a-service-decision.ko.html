@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Instance HA ⑥: 복구 시간은 한 숫자로 적을 수 없었습니다 | Kwanghun Lee</title>
+  <title>Instance HA 06. 왜 복구 시간은 단일 목표치로 정할 수 없을까: 단계와 서비스 유형마다 다른 허용치 | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Instance HA ⑥: 복구 시간은 한 숫자로 적을 수 없었습니다" />
+  <meta property="og:title" content="Instance HA 06. 왜 복구 시간은 단일 목표치로 정할 수 없을까: 단계와 서비스 유형마다 다른 허용치" />
   <meta property="og:description" content="복구 시간을 감지와 Fencing과 Evacuate 세 단계로 나눠 약 100~160초로 산정하고 Stateless와 DB와 NFV로 허용 기준을 갈랐습니다. 실측이 아니라 산정치이며 팀 합의가 필요한 값입니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
@@ -26,7 +26,7 @@
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Instance HA ⑥: 복구 시간은 한 숫자로 적을 수 없었습니다" />
+  <meta name="twitter:title" content="Instance HA 06. 왜 복구 시간은 단일 목표치로 정할 수 없을까: 단계와 서비스 유형마다 다른 허용치" />
   <meta name="twitter:description" content="복구 시간을 세 단계로 나누고 서비스 유형마다 허용 여부를 따로 적었습니다. Instance HA 연작 ⑥편입니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta name="description" content="복구 시간을 감지와 Fencing과 Evacuate 세 단계로 나눠 약 100~160초로 산정하고 Stateless와 DB와 NFV로 허용 기준을 갈랐습니다. 실측이 아니라 산정치이며 팀 합의가 필요한 값입니다." />
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div>
       </div>
       <section class="page-hero">
-        <h1>Instance HA ⑥: 복구 시간은 한 숫자로 적을 수 없었습니다<br><span class="h1-sub">복구 시간을 한 숫자로 적으려다 그만두었습니다. 세 단계로 나누고 서비스 유형마다 허용 여부를 따로 적은 뒤에야 합의할 수 있는 값이 되었습니다.</span></h1>
+        <h1>Instance HA 06. 왜 복구 시간은 단일 목표치로 정할 수 없을까: 단계와 서비스 유형마다 다른 허용치</h1>
         <p class="article-date">2026년 9월</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="instance-ha-6-100-seconds-is-a-service-decision"></aside>
@@ -116,15 +116,16 @@
 
         <h2 id="하나의-숫자">처음에는 한 숫자로 적으려 했습니다<a class="anchor" href="#하나의-숫자" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>한 숫자로 적으면 두 가지를 못 합니다. 줄이자는 말이 나왔을 때 어디를 줄일지 짚을 수 없고
-        충분하냐는 질문에 답할 수 없습니다. <strong>두 가지 다 숫자가 아니라 그 안의 구성이 답합니다.</strong></p>
+        <p>복구 시간을 숫자 하나로만 적으면 줄여야 할 구간을 짚기도, 그 시간이 충분한지 판단하기도 어렵습니다.
+        <strong>어디를 줄일지는 시간을 단계별로 나눠야 알 수 있고, 충분한지는 서비스 유형별 허용 기준과
+        비교해야 알 수 있습니다.</strong></p>
 
         <p>그래서 두 방향으로 갈랐습니다. 시간 쪽으로는 단계별로 나누고 사람 쪽으로는 서비스 유형별로
         나눴습니다. 앞의 것은 어디를 줄일지 말해 주고 뒤의 것은 줄일 필요가 있는지 말해 줍니다.</p>
 
         <h2 id="단계-분해">세 단계로 나눠 산정했습니다<a class="anchor" href="#단계-분해" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>복구는 세 단계를 지납니다. 죽었다고 판정하기까지, 전원을 내리고 확인하기까지, 다른 호스트에서
+        <p>복구는 세 단계를 지납니다. 죽었다고 판정하기까지, 전원을 내리고 확인하기까지, 다른 Host에서
         다시 띄우기까지입니다.</p>
 
         <figure class="diagram">
@@ -183,7 +184,7 @@
 
         <h2 id="동시-복구">100초는 한 대를 복구할 때의 숫자였습니다<a class="anchor" href="#동시-복구" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>여기까지의 산정은 전부 <strong>한 대를 복구할 때의 숫자입니다.</strong> 노드가 내려가면 그
+        <p>여기까지의 산정은 전부 <strong>한 대를 복구할 때의 숫자입니다.</strong> Node가 내려가면 그
         위에 올라가 있던 Instance가 한꺼번에 대상이 됩니다. 한 대가 아니라 스무 대입니다.</p>
 
         <p>한꺼번에 복구하면 공유 저장소 쪽에서 오류가 급증했습니다. 같은 10G 망에서 다섯 개째부터
@@ -237,19 +238,19 @@
           <table>
             <caption class="sr-only">동시 복구 때문에 바뀐 설정과 그 이유.</caption>
             <thead><tr><th>바뀐 것</th><th>어떻게</th><th>왜</th></tr></thead>
-            <tbody><tr><td>동시 복구 최대 개수</td><td>설정한 개수를 넘지 않도록 제한한다</td><td>공유 저장소가 동시 요청을 받아 내지 못한다</td></tr><tr><td>다음 복구 시작 시점</td><td>한 대의 이관이 끝난 뒤 다음을 시작한다</td><td>한꺼번에 던지면 실패분을 다시 해야 해서 더 길어진다</td></tr><tr><td>탐지 주기 최소값</td><td>20초에서 10초로 내렸다</td><td>앞단은 줄일 수 있다. 뒷단은 이 값으로 줄지 않는다</td></tr><tr><td>복구 총 시간</td><td>한 대 기준 수치에 대기열 길이를 곱한다</td><td>노드에 올라간 Instance 수가 실제 RTO를 정한다</td></tr></tbody>
+            <tbody><tr><td>동시 복구 최대 개수</td><td>설정한 개수를 넘지 않도록 제한한다</td><td>공유 저장소가 동시 요청을 받아 내지 못한다</td></tr><tr><td>다음 복구 시작 시점</td><td>한 대의 이관이 끝난 뒤 다음을 시작한다</td><td>한꺼번에 던지면 실패분을 다시 해야 해서 더 길어진다</td></tr><tr><td>탐지 주기 최소값</td><td>20초에서 10초로 내렸다</td><td>앞단은 줄일 수 있다. 뒷단은 이 값으로 줄지 않는다</td></tr><tr><td>복구 총 시간</td><td>한 대 기준 수치에 대기열 길이를 곱한다</td><td>Node에 올라간 Instance 수가 실제 RTO를 정한다</td></tr></tbody>
           </table>
           </div>
         </div>
 
-        <p class="table-note">이것이 앞 절의 산정을 다시 읽게 합니다. 100초는 대기열의 맨 앞에 선 한 대의
-        숫자입니다. 맨 뒤에 선 Instance에게 RTO는 앞에 몇 대가 있느냐로 정해집니다. 탐지 주기를 20초에서
-        10초로 내려도 이 구간은 줄지 않습니다.</p>
+        <p class="table-note">동시 복구 개수를 제한하면 앞 절의 산정도 달리 봐야 합니다. 약 100초는 대기열
+        맨 앞에 선 Instance 한 대의 복구 시간일 뿐이고, 맨 뒤에 선 Instance의 RTO는 앞에 대기 중인 대수에
+        따라 정해집니다. 탐지 주기를 20초에서 10초로 줄여도 이 대기 시간은 줄지 않습니다.</p>
 
         <h2 id="유형별-허용">같은 100초가 서비스마다 다릅니다<a class="anchor" href="#유형별-허용" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>시간을 갈라도 충분하냐는 질문에는 아직 답하지 못합니다. 그 답은 설계가 아니라 서비스가
-        가지고 있습니다.</p>
+        <p>복구 시간을 단계별로 나눈 것만으로는 이 시간이 충분한지 판단할 수 없습니다. 허용 가능한 복구
+        시간은 설계가 아니라 서비스의 특성에 따라 달라지기 때문입니다.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 225" role="img" aria-labelledby="svc-t svc-d" class="figure-svg">
@@ -283,8 +284,8 @@
           </div>
         </div>
 
-        <p class="table-note">같은 산정치인데 판정이 셋으로 갈립니다. NFV 쪽은 이 설계를 손봐서 닿을 수
-        있는 값이 아니라 아키텍처를 바꿔야 하는 자리입니다.
+        <p class="table-note">같은 복구 시간이라도 서비스 유형에 따라 평가가 갈립니다. 특히 NFV·실시간
+        서비스가 요구하는 10~20초대는 이 설계를 손봐서 닿는 값이 아니라 아키텍처를 바꿔야 하는 수준입니다.
         <strong>그 결정은 개발자 혼자 내릴 수 있는 것이 아닙니다.</strong></p>
 
         <p>설계서에 「RTO 목표, 팀 합의 필요」라고 적은 이유가 이것입니다. 숫자를 합의 사항으로 올려 둔
@@ -295,18 +296,18 @@
         <p>줄이는 방법 자체는 있습니다. 감지 구간은 외부 Probe의 TTL이 정하므로 재시도 횟수를 줄이면
         30초가 15초가 됩니다.</p>
 
-        <pre data-lang="shell"><code># 현 설계: 5초 간격으로 여섯 번 놓치면 죽은 것으로 봅니다
-probe_interval=5s
-probe_retry=6      # 30s TTL
+        <pre data-lang="shell"><code># 현 설계: 10초 간격으로 세 번 놓치면 죽은 것으로 봅니다
+probe_interval=10s
+probe_retry=3      # 30s TTL
 
-# 단축안: 세 번으로 줄이면 TTL 이 15초가 됩니다
+# 단축안: 간격을 5초로 줄이면 TTL이 15초가 됩니다
+probe_interval=5s
 probe_retry=3      # 15s TTL
 
 # 대가: 순간 지연을 죽음으로 읽을 여지가 함께 커집니다</code></pre>
 
-        <p>다만 ②편에서 본 대로 그 TTL은 순간 지연과 진짜 정지를 가르는 값이기도 합니다. 짧게 잡을수록
-        지연을 죽음으로 읽을 여지가 커집니다. <strong>줄어드는 것은 복구 시간이고 늘어나는 것은 오판
-        가능성입니다.</strong></p>
+        <p>다만 ②편에서 본 대로 그 TTL은 순간 지연과 진짜 정지를 가르는 기준이기도 합니다. <strong>TTL을
+        짧게 잡을수록 복구 시간은 줄지만, 일시적인 지연을 장애로 잘못 판단할 가능성은 커집니다.</strong></p>
 
         <p>그래서 단축안을 적을 때 대가를 같이 적었습니다. 줄일 수 있다는 말만 하면 받는 사람이 결정을
         할 수 없습니다.</p>
@@ -348,7 +349,7 @@ probe_retry=3      # 15s TTL
           <table>
             <caption class="sr-only">설계서가 적은 문제와 설계가 노린 효과.</caption>
             <thead><tr><th>문제</th><th>설계가 노린 효과</th></tr></thead>
-            <tbody><tr><td>L2/L3 스위치 장애</td><td>복합 판단을 적용해 복구를 보류하도록 설계</td></tr><tr><td>외부 Probe 과의존</td><td>보조 신호로 격하하고 Quorum과 HeartBeat를 앞에 둠</td></tr><tr><td>Storage 경로 장애 오판</td><td>실행 조건으로 옮겨 과억제를 줄이도록 설계</td></tr><tr><td>Controller 단독 판단</td><td>Quorum을 먼저 확인</td></tr><tr><td>Split-Brain</td><td>Fencing을 통과 조건으로 둠</td></tr></tbody>
+            <tbody><tr><td>L2/L3 Switch 장애</td><td>복합 판단을 적용해 복구를 보류하도록 설계</td></tr><tr><td>외부 Probe 과의존</td><td>보조 신호로 격하하고 Quorum과 HeartBeat를 앞에 둠</td></tr><tr><td>Storage 경로 장애 오판</td><td>실행 조건으로 옮겨 과억제를 줄이도록 설계</td></tr><tr><td>Controller 단독 판단</td><td>Quorum을 먼저 확인</td></tr><tr><td>Split-Brain</td><td>Fencing을 통과 조건으로 둠</td></tr></tbody>
           </table>
           </div>
         </div>
@@ -366,7 +367,7 @@ probe_retry=3      # 15s TTL
           <li>서비스 유형 셋은 판단을 돕는 구분이지 모든 서비스가 셋 중 하나에 들어간다는 뜻은 아닙니다.</li>
           <li>후속 문서가 설계서를 인용했다는 것까지는 문서로 확인했습니다. 두 문서의 선후 관계와
           작성 이력은 확인하지 못했으므로 그 이상은 적지 않습니다.</li>
-          <li>사내 자료라 제품명과 고객사와 주소와 계정과 호스트명과 이슈 번호와 작성자 이름은
+          <li>사내 자료라 제품명과 고객사와 주소와 계정과 Host명과 이슈 번호와 작성자 이름은
           쓰지 않았습니다.</li>
         </ul>
 
@@ -374,7 +375,7 @@ probe_retry=3      # 15s TTL
         <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
         <p>이 연작을 관통하는 것은 하나입니다. <strong>판단의 근거를 숫자 하나나 신호 하나에 몰아 두면
         그것이 틀렸을 때 빠져나갈 길이 없습니다.</strong> 기존 복구 로직이 관측 지점 하나를 믿어 살아 있는
-        노드를 죽었다고 본 것이 ①편이고 그 뒤로는 전부 근거를 나누는 이야기였습니다.</p>
+        Node를 죽었다고 본 것이 ①편이고 그 뒤로는 전부 근거를 나누는 이야기였습니다.</p>
         <p>신호를 증언할 수 있는 범위로 나누고 장애인가와 지금 해도 되는가를 나누고 명령과 확인을
         나누고 합의와 Fencing을 나누고 마지막으로 시간을 단계와 서비스로 나눴습니다.</p>
         <p><a href="recovery-host-must-have-the-device.ko.html">⑦편</a>은 옮긴다고 정한 뒤의 이야기입니다. 장치를 요구하는 Instance를 어디로 보낼지 정하는 부분으로 이어집니다.</p>
@@ -389,7 +390,7 @@ probe_retry=3      # 15s TTL
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=bec7a51a41"></script>
+  <script src="../assets/content.js?v=24429b3983"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=d4af83b541"></script>

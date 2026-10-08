@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gradle 빌드가 제 컴퓨터에서만 성공했습니다 | Kwanghun Lee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/waltograph" rel="stylesheet"><link rel="icon" type="image/x-icon" href="../assets/title_favicon.ico?v=3" />
+  <link rel="alternate" hreflang="ko" href="https://lkhun9311.github.io/writing/the-setting-git-never-tracked.ko.html" />
+  <link rel="alternate" hreflang="x-default" href="https://lkhun9311.github.io/writing/the-setting-git-never-tracked.ko.html" />
+  <!-- og:start -->
+  <meta property="og:type" content="article" /><meta property="og:site_name" content="Kwanghun Lee" />
+  <meta property="og:title" content="Gradle 빌드가 제 컴퓨터에서만 성공했습니다" />
+  <meta property="og:description" content="의존성 봇이 올린 Kotlin 버전 범프를 검증하다 빌드가 OutOfMemoryError로 죽었습니다. 저는 그것을 버전 탓으로 보고했고 버전을 되돌려도 똑같이 죽는 것을 보고서야 원인이 git 추적에서 빠진 힙 설정임을 알았습니다." />
+  <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://lkhun9311.github.io/writing/the-setting-git-never-tracked.ko.html" /><meta property="og:locale" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content="Gradle 빌드가 제 컴퓨터에서만 성공했습니다" />
+  <meta name="twitter:description" content="빌드의 전제 조건이 git 밖에 있으면 CI와 새 클론은 그것을 받지 못합니다. 되돌려 보는 대조군 하나가 제 원인 보고를 뒤집었습니다." />
+  <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" /><meta name="description" content="빌드의 전제 조건이 git 밖에 있으면 CI와 새 클론은 그것을 받지 못합니다. 되돌려 보는 대조군 하나가 제 원인 보고를 뒤집었습니다." />
+  <!-- og:end -->
+  <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
+</head>
+<body>
+  <div class="topbar"><div class="topbar-inner notranslate"><a class="site-name" href="../index.html#about">Kwanghun</a>
+    <nav aria-label="Primary navigation" data-i18n-attr="aria-label:a11y.nav">
+      <select id="langPicker" class="lang-picker notranslate" translate="no" aria-label="Select language" data-i18n-attr="aria-label:a11y.lang" data-authored='{"ko":"the-setting-git-never-tracked.ko.html"}'>
+        <option value="ko" selected>한국어</option><option value="en">English</option><option value="ja">日本語</option><option value="zh-CN">简体中文</option><option value="zh-TW">繁體中文</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ru">Русский</option><option value="vi">Tiếng Việt</option><option value="id">Bahasa Indonesia</option><option value="hi">हिन्दी</option><option value="ar">العربية</option>
+      </select><div id="google_translate_element" aria-hidden="true"></div>
+      <a href="../index.html#about">About</a><a href="../index.html#news">News</a><a href="../index.html#projects">Projects</a><a href="../index.html#writing" class="active">Writing</a><a href="../index.html#notes">Notes</a><a href="../index.html#cv">CV</a>
+    </nav>
+  </div></div>
+  <div class="container reading"><main>
+    <div class="hero-top">
+      <a class="back-link notranslate" href="index.html"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>목록</a>
+      <div class="article-meta"><span class="source-tag commercial notranslate">사업화 프로젝트</span><span class="repo-private notranslate" translate="no">Private</span><a class="project-tag notranslate" href="../writing/index.html?tag=Social%20Polling%20Platform">#소셜 투표 플랫폼</a></div>
+    </div>
+    <section class="page-hero"><h1>Gradle 빌드가 제 컴퓨터에서만 성공했습니다</h1><p class="article-date">2026년 10월</p></section>
+    <aside class="article-aside" data-aside="writing" data-slug="the-setting-git-never-tracked"></aside>
+    <nav class="article-toc" aria-label="목차"><p class="toc-label">목차</p><ul>
+      <li><a href="#예상-독자">이 글의 예상 독자</a></li>
+      <li><a href="#처음-판정">처음에는 버전 문제로 봤습니다</a></li>
+      <li><a href="#로그-머리">답은 로그의 여덟 번째 줄에 있었습니다</a></li>
+      <li><a href="#대조군">되돌려 보니 같이 죽었습니다</a></li>
+      <li><a href="#왜-안-보였나">증상이 거꾸로 보이게 만든 두 가지</a></li>
+      <li><a href="#고친-것">제외 목록에서 꺼내 커밋했습니다</a></li>
+      <li><a href="#내가-틀린-것">제가 틀린 네 가지</a></li>
+      <li><a href="#주장하지-않는-것">이 글이 주장하지 않는 것</a></li>
+      <li><a href="#마치며">마치며</a></li>
+    </ul></nav>
+    <article class="article-body">
+      <p>출시 전 소셜 투표 앱의 Backend를 혼자 만들고 있습니다. 의존성 봇이 Kotlin 버전을 올리는
+      Pull Request를 열었고 충돌이 났다는 보고를 받았습니다. 충돌을 보려고 기준 브랜치를 임시 작업
+      폴더로 떼어 컴파일했습니다.</p>
+
+      <p>실패했습니다. 로그 꼬리에 Kotlin 컴파일러 내부의 호출 스택이 있었습니다. 그래서 저는
+      그 버전이 빌드를 깬다고 보고했습니다.</p>
+
+      <p>그 보고는 틀렸습니다. 잘라내지 않은 로그의 여덟 번째 줄은 메모리 부족이었습니다.
+      버전을 되돌려서 같은 조건으로 돌려 보니 구버전도 똑같이 죽었습니다. 범인은 버전이 아니라
+      빌드에 필요한 힙 설정이 git 추적에서 빠져 있던 것이었습니다.</p>
+
+      <p>이 글은 그 하루를 따라갑니다. 제가 원인을 어디에 잘못 붙였는지, 어떤 실험 하나가 그 판정을
+      뒤집었는지, 왜 이 결함이 넉 달 동안 아무 신호도 내지 않았는지를 적습니다.</p>
+
+      <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
+      <ul class="callout">
+        <li>의존성 봇이 올린 버전 범프를 사람이 검토해 머지하시는 분</li>
+        <li>비용 때문에 CI 자동 실행을 내려 두신 분</li>
+        <li>「제 컴퓨터에서는 되는데요」를 들었거나 말해 보신 분</li>
+      </ul>
+
+      <p>대상 시스템은 저장소 하나에 담긴 Kotlin + Spring Boot 서버와 React Native 앱입니다.
+      서버를 빌드할 때 데이터베이스 접근 코드를 생성해서 전체 소스와 함께 한 번에 컴파일합니다.
+      이 「한 번에」가 뒤에서 중요해집니다.</p>
+
+      <figure class="diagram">
+        <svg viewBox="0 0 720 196" role="img" aria-labelledby="repo-t repo-d" class="figure-svg">
+          <title id="repo-t">저장소 하나와 빌드 입력</title>
+          <desc id="repo-d">서버와 앱이 한 저장소에 있습니다. 서버 빌드는 손으로 쓴 소스와 빌드 때 만들어지는 생성 코드를 한 번에 컴파일합니다. 피크 메모리는 이 합류 지점에서 가장 큽니다.</desc>
+          <g font-family="Inter, sans-serif">
+            <rect x="24" y="24" width="300" height="40" rx="8" fill="none" stroke="#5b7fa6" stroke-width="1.7"/>
+            <text x="174" y="49" font-size="11.5" fill="#5b7fa6" text-anchor="middle">services/api · Kotlin + Spring Boot</text>
+            <rect x="24" y="78" width="300" height="40" rx="8" fill="none" stroke="#888" stroke-width="1.5"/>
+            <text x="174" y="103" font-size="11.5" fill="#888" text-anchor="middle">apps/mobile · React Native</text>
+            <text x="174" y="142" font-size="10" fill="#666" text-anchor="middle">저장소 하나</text>
+            <path d="M330 46 H 392" stroke="#666" stroke-width="1.3" fill="none"/>
+            <rect x="392" y="24" width="150" height="40" rx="8" fill="none" stroke="#5b7fa6" stroke-width="1.5"/>
+            <text x="467" y="49" font-size="11" fill="#5b7fa6" text-anchor="middle">손으로 쓴 소스</text>
+            <rect x="392" y="78" width="150" height="40" rx="8" fill="none" stroke="#b8860b" stroke-width="1.5"/>
+            <text x="467" y="103" font-size="11" fill="#b8860b" text-anchor="middle">빌드가 만든 코드</text>
+            <path d="M548 46 H 580 V 86 H 600" stroke="#666" stroke-width="1.3" fill="none"/>
+            <path d="M548 98 H 580" stroke="#666" stroke-width="1.3" fill="none"/>
+            <rect x="600" y="62" width="96" height="48" rx="8" fill="none" stroke="#d62976" stroke-width="1.7"/>
+            <text x="648" y="84" font-size="11" fill="#d62976" text-anchor="middle">한 번에</text>
+            <text x="648" y="100" font-size="11" fill="#d62976" text-anchor="middle">컴파일</text>
+            <text x="648" y="140" font-size="10" fill="#d62976" text-anchor="middle">피크 메모리 최대</text>
+            <text x="360" y="176" font-size="10" fill="#666" text-anchor="middle">앱은 이 빌드에 들어가지 않음</text>
+          </g>
+        </svg>
+        <figcaption>생성 코드가 합류하는 지점이 메모리를 가장 많이 씁니다. 사고는 늘 여기서 났습니다.</figcaption>
+      </figure>
+
+      <h2 id="처음-판정">처음에는 버전 문제로 봤습니다<a class="anchor" href="#처음-판정" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>작업 중인 브랜치를 더럽히지 않으려고 기준 브랜치를 임시 작업 폴더로 떼어 두 플러그인 버전을
+      새 버전으로 맞추고 컴파일했습니다. 7분 만에 실패했고 로그 꼬리는 이렇게 끝났습니다.</p>
+      <pre><code class="language-text">at org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen.generateMethod(ClassCodegen.kt:489)
+at org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory.generateFile(JvmIrCodegenFactory.kt:220)
+...
+BUILD FAILED in 7m 9s</code></pre>
+      <p>Kotlin 컴파일러 안에서 죽었으니 Kotlin 버전이 원인이라고 적었습니다. 변경이 들어온 직후에
+      실패했다는 사실이 그 판정을 더 그럴듯하게 만들었습니다. 시간적으로 붙어 있는 것을 인과로
+      읽은 것입니다.</p>
+
+      <h2 id="로그-머리">답은 로그의 여덟 번째 줄에 있었습니다<a class="anchor" href="#로그-머리" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>자르지 않은 로그를 처음부터 읽으니 여덟 번째 줄이 답을 들고 있었습니다.</p>
+      <pre><code class="language-text">e: java.lang.OutOfMemoryError: Java heap space</code></pre>
+      <p>메모리가 모자라서 죽었습니다. 제가 본 호출 스택은 <strong>원인이 아니라 사고 현장</strong>이었습니다.
+      앞 그림의 합류 지점이 메모리를 가장 많이 쓰므로 어느 버전이든 거기서 쓰러집니다.</p>
+      <p>필요한 설정은 저장소 안에 있었습니다. 다만 git이 보지 않는 곳에 있었습니다.
+      제외 목록에 이 한 줄이 있었고 거기 붙은 주석은 「머신별 값이니 커밋을 금지한다」는 뜻이었습니다.</p>
+      <pre><code class="language-text"># .git/info/exclude
+services/api/gradle.properties</code></pre>
+      <p>그런데 그 설정 파일 자신의 주석은 반대를 말하고 있었습니다. 한 달 전에 적어 둔 문장이
+      「로컬 우회가 아니라 저장소 설정이어야 한다. CI와 새 클론도 전체 빌드라 같은 조건이다」였습니다.
+      주석이 맞고 제외 규칙이 틀렸습니다.</p>
+
+      <h2 id="대조군">되돌려 보니 같이 죽었습니다<a class="anchor" href="#대조군" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>버전이 원인인지 알아보는 방법은 하나입니다. 버전을 되돌려서 같은 조건으로 돌려 보는 것입니다.
+      되돌려도 죽으면 버전은 원인이 아닙니다.</p>
+      <div class="table-scroll"><div class="table-scroll-hint">가로로 넘겨 표 전체를 볼 수 있습니다.</div><div class="table-scroll-viewport">
+        <table><thead><tr><th>Kotlin 플러그인</th><th>힙 설정</th><th>결과</th></tr></thead><tbody>
+          <tr><td>새 버전 둘</td><td>기본값</td><td>실패 <code>OutOfMemoryError</code></td></tr>
+          <tr><td>구버전 포함(원래 상태)</td><td>기본값</td><td>같은 실패</td></tr>
+          <tr><td>새 버전 둘</td><td><code>-Xmx4g</code> 둘</td><td>성공 30초</td></tr>
+          <tr><td>기준 브랜치 최신 + 새 빌드 도구</td><td><code>-Xmx4g</code> 둘</td><td>성공 53초</td></tr>
+        </tbody></table>
+      </div></div>
+      <p>둘째 줄이 판정을 뒤집었습니다. 첫째 줄만 보고 「버전이 깼다」고 쓴 것은 <strong>대조군 없이
+      단일 실패를 원인으로 올린 것</strong>이었습니다. 성공과 실패는 빌드 도구 자신의 종료 코드로
+      판정했습니다. 래퍼를 파이프에 물리면 파이프 끝의 코드를 읽게 되는데 그것은 빌드 결과가 아닙니다.</p>
+
+      <figure class="diagram">
+        <svg viewBox="0 0 720 210" role="img" aria-labelledby="before-t before-d" class="figure-svg">
+          <title id="before-t">설정 전파 전후</title>
+          <desc id="before-d">왼쪽은 설정이 제 작업 폴더에만 있던 상태입니다. 나머지 세 곳은 받지 못합니다. 오른쪽은 추적으로 올려 네 곳이 같은 설정을 받는 상태입니다.</desc>
+          <g font-family="Inter, sans-serif">
+            <text x="168" y="22" font-size="11" fill="#d62976" text-anchor="middle">전 · 추적 0건</text>
+            <rect x="24" y="36" width="134" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.6"/>
+            <text x="91" y="57" font-size="10.5" fill="#5b7fa6" text-anchor="middle">내 작업 폴더</text>
+            <text x="188" y="57" font-size="10.5" fill="#5b7fa6" text-anchor="middle">설정 있음</text>
+            <rect x="24" y="82" width="134" height="34" rx="7" fill="none" stroke="#d62976" stroke-width="1.6"/>
+            <text x="91" y="103" font-size="10.5" fill="#d62976" text-anchor="middle">새 작업 폴더</text>
+            <text x="188" y="103" font-size="10.5" fill="#d62976" text-anchor="middle">설정 없음</text>
+            <rect x="24" y="128" width="134" height="34" rx="7" fill="none" stroke="#d62976" stroke-width="1.6"/>
+            <text x="91" y="149" font-size="10.5" fill="#d62976" text-anchor="middle">CI</text>
+            <text x="188" y="149" font-size="10.5" fill="#d62976" text-anchor="middle">설정 없음</text>
+            <rect x="24" y="174" width="134" height="30" rx="7" fill="none" stroke="#d62976" stroke-width="1.6"/>
+            <text x="91" y="193" font-size="10.5" fill="#d62976" text-anchor="middle">새 클론</text>
+            <text x="188" y="193" font-size="10.5" fill="#d62976" text-anchor="middle">설정 없음</text>
+            <path d="M258 110 H 318" stroke="#666" stroke-width="1.4" fill="none"/>
+            <text x="288" y="100" font-size="10" fill="#666" text-anchor="middle">git 추적</text>
+            <text x="546" y="22" font-size="11" fill="#5b7fa6" text-anchor="middle">후 · 추적 1건</text>
+            <rect x="402" y="36" width="134" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.6"/>
+            <text x="469" y="57" font-size="10.5" fill="#5b7fa6" text-anchor="middle">내 작업 폴더</text>
+            <text x="566" y="57" font-size="10.5" fill="#5b7fa6" text-anchor="middle">설정 있음</text>
+            <rect x="402" y="82" width="134" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.6"/>
+            <text x="469" y="103" font-size="10.5" fill="#5b7fa6" text-anchor="middle">새 작업 폴더</text>
+            <text x="566" y="103" font-size="10.5" fill="#5b7fa6" text-anchor="middle">설정 있음</text>
+            <rect x="402" y="128" width="134" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.6"/>
+            <text x="469" y="149" font-size="10.5" fill="#5b7fa6" text-anchor="middle">CI</text>
+            <text x="566" y="149" font-size="10.5" fill="#5b7fa6" text-anchor="middle">설정 있음</text>
+            <rect x="402" y="174" width="134" height="30" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.6"/>
+            <text x="469" y="193" font-size="10.5" fill="#5b7fa6" text-anchor="middle">새 클론</text>
+            <text x="566" y="193" font-size="10.5" fill="#5b7fa6" text-anchor="middle">설정 있음</text>
+          </g>
+        </svg>
+        <figcaption>고친 것은 한 줄입니다. 바뀐 것은 그 설정을 받는 곳의 개수입니다.</figcaption>
+      </figure>
+
+      <h2 id="왜-안-보였나">증상이 거꾸로 보이게 만든 두 가지<a class="anchor" href="#왜-안-보였나" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>첫째, 이미 한 번 빌드한 폴더에서는 통과합니다. 중간 산출물이 남아 있으면 한 번에 컴파일할
+      양이 줄어 기본 메모리로도 끝납니다. 설정이 없는 곳은 새로 뗀 폴더뿐이었습니다.</p>
+      <p>둘째, 아무도 깨끗한 환경에서 전체 빌드를 돌리지 않았습니다. 비용을 아끼려고 CI 워크플로의
+      자동 실행을 떼고 수동 실행만 남겨 두었습니다.</p>
+      <pre><code class="language-yaml">on:
+  # 비용 방지: push/PR 자동 트리거 제거 → 수동 실행만.
+  workflow_dispatch:</code></pre>
+      <p>그래서 증상이 「제 컴퓨터에서는 되는데 새 폴더에서만 깨진다」로 보였습니다. 그 모양은
+      「그러니까 컴퓨터마다 다른 값이겠지」라는 틀린 결론을 거드는 것처럼 읽힙니다. 방향은 반대입니다.
+      추적이 0건이면 CI도 새 클론도 설정이 없는 쪽입니다. 즉 「제 컴퓨터에서만 된다」는
+      모두의 빌드가 깨져 있다는 뜻입니다.</p>
+
+      <figure class="diagram">
+        <svg viewBox="0 0 720 168" role="img" aria-labelledby="signal-t signal-d" class="figure-svg">
+          <title id="signal-t">신호가 사라지는 경로</title>
+          <desc id="signal-d">증분 빌드가 제 폴더의 실패를 가리고 자동 실행이 없는 CI가 깨끗한 환경의 실패를 가립니다. 두 가리개가 겹치면 관측되는 것은 성공뿐입니다.</desc>
+          <g font-family="Inter, sans-serif">
+            <rect x="20" y="30" width="170" height="44" rx="8" fill="none" stroke="#b8860b" stroke-width="1.6"/>
+            <text x="105" y="48" font-size="10.5" fill="#b8860b" text-anchor="middle">증분 빌드</text>
+            <text x="105" y="64" font-size="10" fill="#b8860b" text-anchor="middle">내 폴더의 실패를 가림</text>
+            <rect x="20" y="96" width="170" height="44" rx="8" fill="none" stroke="#b8860b" stroke-width="1.6"/>
+            <text x="105" y="114" font-size="10.5" fill="#b8860b" text-anchor="middle">자동 실행 없는 CI</text>
+            <text x="105" y="130" font-size="10" fill="#b8860b" text-anchor="middle">깨끗한 실패를 가림</text>
+            <path d="M196 52 H 250 V 78 H 286" stroke="#666" stroke-width="1.3" fill="none"/>
+            <path d="M196 118 H 250 V 92 H 286" stroke="#666" stroke-width="1.3" fill="none"/>
+            <rect x="286" y="60" width="164" height="48" rx="8" fill="none" stroke="#5b7fa6" stroke-width="1.7"/>
+            <text x="368" y="80" font-size="10.5" fill="#5b7fa6" text-anchor="middle">관측되는 것</text>
+            <text x="368" y="96" font-size="10.5" fill="#5b7fa6" text-anchor="middle">성공뿐</text>
+            <path d="M456 84 H 512" stroke="#666" stroke-width="1.3" fill="none"/>
+            <rect x="512" y="60" width="186" height="48" rx="8" fill="none" stroke="#d62976" stroke-width="1.7"/>
+            <text x="605" y="80" font-size="10.5" fill="#d62976" text-anchor="middle">읽히는 결론</text>
+            <text x="605" y="96" font-size="10.5" fill="#d62976" text-anchor="middle">컴퓨터마다 다른 값</text>
+          </g>
+        </svg>
+        <figcaption>가리개가 둘이면 남는 신호는 성공 하나입니다. 그 하나가 틀린 결론을 거듭니다.</figcaption>
+      </figure>
+
+      <p>비용 결정이 틀렸다는 말은 아닙니다. 적어 두려는 것은 그 결정이 동시에 탐지기를 껐다는
+      사실입니다. 무언가를 끌 때는 「이걸 끄면 무엇을 못 보게 되는가」를 같이 적어야 합니다.</p>
+
+      <h2 id="고친-것">제외 목록에서 꺼내 커밋했습니다<a class="anchor" href="#고친-것" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>고친 것은 한 줄입니다. 다만 확인은 문장이 아니라 실행으로 했습니다.</p>
+      <pre><code class="language-bash">$ git check-ignore -v services/api/gradle.properties
+$ echo $?
+1                      # 1 = 더 이상 무시하지 않습니다
+
+$ git worktree add --detach &lt;임시폴더&gt; HEAD
+$ grep -E '^(org\.gradle|kotlin\.daemon)' &lt;임시폴더&gt;/services/api/gradle.properties
+org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1g
+kotlin.daemon.jvmargs=-Xmx4g</code></pre>
+      <p>「이제 새 클론도 설정을 받습니다」라고 쓰기 전에 실제로 새 작업 폴더를 떼어 파일과 값을
+      확인하고 지웠습니다. 그다음 전체 테스트를 돌렸습니다. 1,284건 중 1건이 실패했고 그 1건은
+      버전을 올리기 전 커밋에서도 똑같이 실패했습니다. 기존 결함이고 이번 작업이 만든 것이 아닙니다.</p>
+
+      <h2 id="내가-틀린-것">제가 틀린 네 가지<a class="anchor" href="#내가-틀린-것" aria-label="이 절로 가는 링크">#</a></h2>
+      <p>앞의 셋은 모양이 같습니다. 출력을 자르거나 버린 뒤 그 결과로 판정했습니다.</p>
+      <div class="table-scroll"><div class="table-scroll-hint">가로로 넘겨 표 전체를 볼 수 있습니다.</div><div class="table-scroll-viewport">
+        <table><thead><tr><th>무엇을</th><th>어떻게 틀렸나</th><th>드러난 계기</th></tr></thead><tbody>
+          <tr><td>원인 귀속</td><td>로그 꼬리만 보고 의존성 범프 탓으로 보고</td><td>머리 8번째 줄을 읽음</td></tr>
+          <tr><td>진단 스크립트</td><td>오류 출력을 버려 실패 이유가 한 줄로 사라짐</td><td>같은 명령을 다시 돌림</td></tr>
+          <tr><td>작업 대상</td><td>고치려던 Pull Request는 이미 머지돼 있었음</td><td>상태를 조회함</td></tr>
+          <tr><td>중복 조사</td><td>남은 실패 1건을 새 결함처럼 처음부터 조사</td><td>기존 기록을 검색함</td></tr>
+        </tbody></table>
+      </div></div>
+      <p>네 번째가 가장 비쌉니다. 그 1건은 여드레 전 기록이 같은 기전을 같은 줄 번호까지 적어
+      두고 있었습니다. 제가 「더 중요한 발견」이라고 보고한 내용까지 거기 있었습니다.
+      조사를 시작할 때 기존 기록을 먼저 검색하라는 규칙은 나흘 전에 제가 직접 적은 것입니다.
+      저는 그 규칙을 「주장을 쓸 때」용으로 기억하고 「조사를 시작할 때」용으로는 쓰지 않았습니다.</p>
+
+      <h2 id="주장하지-않는-것">이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
+      <ul class="callout">
+        <li>⚠️ 메모리를 4g로 올린 것이 근본 수리라고 말하지 않습니다. 「왜 깨졌나」의 원인은 설정이
+        추적되지 않은 것이고 그것은 고쳤습니다. 「왜 피크가 큰가」는 별개이고 줄이려면 컴파일 단위를
+        쪼개야 합니다. 그 작업은 측정하지도 수행하지도 않았습니다.</li>
+        <li>⚠️ 의존성 봇이나 버전 범프가 위험하다고 말하지 않습니다. 이 사건에서 봇은 무죄입니다.</li>
+        <li>⚠️ CI를 끈 것이 잘못이라고 말하지 않습니다. 비용 판단은 유효합니다. 적어 두려는 것은
+        그 판단이 무엇을 못 보게 했는지입니다.</li>
+        <li>⚠️ 이 글의 성공·실패는 컴파일과 테스트 실행 두 종류이고 섞어 적지 않았습니다.
+        남은 테스트 실패 1건의 수리 방법은 기록돼 있지만 아직 고치지 않았습니다.</li>
+      </ul>
+
+      <div class="wrapup">
+        <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
+        <p>「제 컴퓨터에서만 됩니다」는 환경 차이가 아니라 추적 누락의 증상일 수 있습니다.
+        빌드의 전제 조건이 git 밖에 있으면 CI와 새 클론은 그것을 받지 못합니다.</p>
+        <p>원인을 정하기 전에 되돌려 보시기 바랍니다. 되돌려도 같은 실패가 나면 그것은 원인이
+        아닙니다. 대조군 하나가 제 보고를 뒤집었습니다. 그리고 로그는 꼬리가 아니라 머리부터
+        읽어야 합니다. 호출 스택은 사고가 난 자리이고 원인이 아닐 수 있습니다.</p>
+        <p>이번에 제가 어긴 규칙 넷은 모두 제가 직접 적어 둔 것이었습니다. 규칙을 가진 것과
+        그 규칙이 발동할 순간을 아는 것은 다른 일입니다.</p>
+        <p>읽어 주셔서 감사합니다.</p>
+      </div>
+    </article>
+  </main>
+  <footer class="notranslate"><div class="footer-links"><a class="icon-link" href="mailto:honeys29311@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a><a class="icon-link" href="https://github.com/lkhun9311" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a><a class="icon-link" href="https://www.linkedin.com/in/edward-lee-4992b8110/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.98 3.5A2.48 2.48 0 1 1 5 8.46a2.48 2.48 0 0 1-.02-4.96ZM3 9h4v12H3V9Zm7 0h3.84v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C21.13 8.63 22 10.38 22 13.1V21h-4v-6.98c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.66 1.8-2.66 3.67V21h-4V9Z"/></svg></a></div><div>© 2026 Kwanghun Lee. Built with GitHub Pages.</div></footer>
+  </div>
+  <script>window.CONTENT_BASE = "../";</script><script src="../assets/i18n.js?v=e0fa0917be"></script><script src="../assets/content.js?v=24429b3983"></script><script src="../assets/lang.js?v=905b81f32a"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script><script defer src="../assets/highlight.js?v=d4af83b541"></script><script defer src="../assets/article.js?v=6f23973a30"></script>
+  <script>(function(){var el=document.querySelector(".article-aside");if(el&&window.renderArticleAside){renderArticleAside(el,el.dataset.aside,el.dataset.slug);}})();</script>
+</body>
+</html>

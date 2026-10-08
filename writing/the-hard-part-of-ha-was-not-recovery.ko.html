@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Instance HA ①: 살아 있는 노드를 죽었다고 판정했습니다 | Kwanghun Lee</title>
+  <title>Instance HA 01. 왜 Switch 한 대에 장애가 발생하면 Controller는 살아 있는 Compute Node를 [Down]으로 판정할까 | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Instance HA ①: 살아 있는 노드를 죽었다고 판정했습니다" />
-  <meta property="og:description" content="L2/L3 스위치 장애로 Controller끼리만 끊겼는데 살아 있는 Compute를 죽었다고 판정해 Nova Evacuate가 대량 실행됐습니다. 네트워크 4종이 서로 다른 상태가 되는 구조와 관측자의 고립을 대상의 장애로 오인한 경로를 정리했습니다." />
+  <meta property="og:title" content="Instance HA 01. 왜 Switch 한 대에 장애가 발생하면 Controller는 살아 있는 Compute Node를 [Down]으로 판정할까" />
+  <meta property="og:description" content="L2/L3 Switch 장애로 Controller끼리만 끊겼는데 살아 있는 Compute를 죽었다고 판정해 Nova Evacuate가 대량 실행됐습니다. 네트워크 4종이 서로 다른 상태가 되는 구조와 관측자의 고립을 대상의 장애로 오인한 경로를 정리했습니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -26,10 +26,10 @@
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Instance HA ①: 살아 있는 노드를 죽었다고 판정했습니다" />
+  <meta name="twitter:title" content="Instance HA 01. 왜 Switch 한 대에 장애가 발생하면 Controller는 살아 있는 Compute Node를 [Down]으로 판정할까" />
   <meta name="twitter:description" content="살아 있는 Compute를 죽었다고 판정해 복구가 사고가 된 사건. 네트워크마다 상태가 갈리는 구조와 오판 경로를 정리한 Instance HA 연작 ①편입니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="L2/L3 스위치 장애로 Controller끼리만 끊겼는데 살아 있는 Compute를 죽었다고 판정해 Nova Evacuate가 대량 실행됐습니다. 네트워크 4종이 서로 다른 상태가 되는 구조와 관측자의 고립을 대상의 장애로 오인한 경로를 정리했습니다." />
+  <meta name="description" content="L2/L3 Switch 장애로 Controller끼리만 끊겼는데 살아 있는 Compute를 죽었다고 판정해 Nova Evacuate가 대량 실행됐습니다. 네트워크 4종이 서로 다른 상태가 되는 구조와 관측자의 고립을 대상의 장애로 오인한 경로를 정리했습니다." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div>
       </div>
       <section class="page-hero">
-        <h1>Instance HA ①: 살아 있는 노드를 죽었다고 판정했습니다<br><span class="h1-sub">스위치 하나가 죽자 네트워크마다 상태가 갈렸고 Controller는 자기가 고립된 것을 Compute의 죽음으로 읽었습니다. Instance HA 장애 대응 설계 연작의 첫 편입니다.</span></h1>
+        <h1>Instance HA 01. 왜 Switch 한 대에 장애가 발생하면 Controller는 살아 있는 Compute Node를 [Down]으로 판정할까</h1>
         <p class="article-date">2026년 9월</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="the-hard-part-of-ha-was-not-recovery"></aside>
@@ -82,7 +82,7 @@
             
             <li><a href="#예상-독자">이 글의 예상 독자</a></li>
             <li><a href="#사건">복구가 사고가 된 날</a></li>
-            <li><a href="#네트워크">스위치 하나에 네 갈래가 매달려 있었습니다</a></li>
+            <li><a href="#네트워크">Switch 하나에 네 갈래가 매달려 있었습니다</a></li>
             <li><a href="#오판">닿지 못한 것과 죽은 것을 가르지 못했습니다</a></li>
             <li><a href="#두-번째-사건">같은 구조의 사건이 하나 더 있었습니다</a></li>
             <li><a href="#스플릿브레인">잘못 살린 복구가 볼륨을 깹니다</a></li>
@@ -92,12 +92,12 @@
           </ul>
         </nav>
       <article>
-        <p>사내 제품의 Instance HA는 Compute 호스트가 죽으면 그 위의 VM을 살아 있는 다른 호스트로
-        대피(evacuate)시켜 다시 띄우는 기능입니다. 자동 복구입니다. 그런데 이 기능이 가장 위험해지는 순간은
-        <strong>죽지 않은 호스트를 죽었다고 판정할 때</strong>입니다. 그때 시스템은 멀쩡히 돌고 있는 VM을
-        강제로 옮기고 운이 나쁘면 데이터를 깹니다.</p>
+        <p>사내 제품의 Instance HA는 Compute Host가 죽으면 그 위의 VM을 살아 있는 다른 Host로
+        대피(evacuate)시켜 다시 띄우는 자동 복구 기능입니다. 이 기능이 가장 위험해지는 순간은
+        <strong>죽지 않은 Host를 죽었다고 판정할 때</strong>입니다. 이때 시스템은 멀쩡히 돌고 있는 VM을
+        강제로 옮기고, 운이 나쁘면 데이터까지 깨뜨립니다.</p>
 
-        <p>2026년 3월에 그 일이 실제로 일어났습니다. L2/L3 스위치가 죽었습니다. 그런데 끊긴 것은 Compute가 아니라 Controller끼리의 통신이었습니다. 그 상태에서 Leader Controller가 살아 있는 Compute를 장애로 판정해 Nova Evacuate를 대량으로 실행했습니다. 저는 사고를 직접 조사하지 않았습니다. 정리된 사실을 전달받아 재발을 막을 판정 체계를 설계했습니다.</p>
+        <p>2026년 3월에 그 일이 실제로 일어났습니다. L2/L3 Switch가 죽었습니다. 그런데 끊긴 것은 Compute가 아니라 Controller끼리의 통신이었습니다. 그 상태에서 Leader Controller가 살아 있는 Compute를 장애로 판정해 Nova Evacuate를 대량으로 실행했습니다. 저는 사고를 직접 조사하지 않았습니다. 정리된 사실을 전달받아 재발을 막을 판정 체계를 설계했습니다.</p>
 
         <p>이 글은 그 설계를 나눠 쓰는 연작의 첫 편이고 ①편은 원인까지만 다룹니다. 네 갈래의 네트워크가 어떻게 서로 다른 상태가 됐는지, 왜 Controller가 자기 고립을 대상의 죽음으로 읽었는지, 잘못 실행된 복구가 어디까지 갈 수 있었는지를 다룹니다. 신호에 등급을 매기는 이야기와 Phase를
         가르는 이야기는 다음 편들에 있습니다.</p>
@@ -105,16 +105,16 @@
         <h2 id="예상-독자">이 글의 예상 독자<a class="anchor" href="#예상-독자" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul class="callout">
-          <li>죽은 노드를 자동 복구하는 시스템을 설계하거나 운영하시는 분</li>
+          <li>죽은 Node를 자동 복구하는 시스템을 설계하거나 운영하시는 분</li>
           <li>네트워크 분단에서 자동화가 오히려 사고를 키우는 경우를 겪어 보신 분</li>
-          <li>「노드가 죽었다」를 어느 신호로 판정할지 정해야 하는 분</li>
+          <li>「Node가 죽었다」를 어느 신호로 판정할지 정해야 하는 분</li>
           <li>Split-Brain이 왜 빠른 복구보다 먼저 와야 하는지 궁금한 분</li>
         </ul>
 
         <h2 id="사건">복구가 사고가 된 날<a class="anchor" href="#사건" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>사건은 한 줄로 요약됩니다. <strong>L2/L3 스위치 장애 때 Leader Controller가 살아 있는 Compute를
-        장애로 오판해 불필요한 Instance HA를 대량으로 실행했습니다.</strong> 멀쩡한 VM을 다른 호스트에서 다시 세우는 evacuate가 동시에 다발로 일어났습니다. 원본이 아직 살아 있는데 재구축된 쪽이 같은 볼륨에 붙으면 최악의 경우 파일시스템이 깨질 수 있는 상황이었습니다.</p>
+        <p>사건은 한 줄로 요약됩니다. <strong>L2/L3 Switch 장애 때 Leader Controller가 살아 있는 Compute를
+        장애로 오판해 불필요한 Instance HA를 대량으로 실행했습니다.</strong> 멀쩡한 VM을 다른 Host에서 다시 세우는 evacuate가 동시에 다발로 일어났습니다. 원본이 아직 살아 있는데 재구축된 쪽이 같은 볼륨에 붙으면 최악의 경우 파일시스템이 깨질 수 있는 상황이었습니다.</p>
 
         <div class="table-scroll">
           <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
@@ -122,7 +122,7 @@
           <table>
             <caption class="sr-only">사건 요약: 상황과 결과와 영향과 잠재 위험.</caption>
             <thead><tr><th>항목</th><th>내용</th></tr></thead>
-            <tbody><tr><td>상황</td><td>L2/L3 스위치 장애 때 Leader Controller가 Compute를 장애로 잘못 판단</td></tr><tr><td>결과</td><td>불필요한 Instance HA 실행, 곧 Nova Evacuate</td></tr><tr><td>영향</td><td>살아 있는 Compute를 향해 불필요한 Evacuate가 동시에 다발로 실행</td></tr><tr><td>잠재 위험</td><td>False Positive HA가 Split-Brain을 거쳐 Storage 손상까지</td></tr></tbody>
+            <tbody><tr><td>상황</td><td>L2/L3 Switch 장애 때 Leader Controller가 Compute를 장애로 잘못 판단</td></tr><tr><td>결과</td><td>불필요한 Instance HA 실행, 곧 Nova Evacuate</td></tr><tr><td>영향</td><td>살아 있는 Compute를 향해 불필요한 Evacuate가 동시에 다발로 실행</td></tr><tr><td>잠재 위험</td><td>False Positive HA가 Split-Brain을 거쳐 Storage 손상까지</td></tr></tbody>
           </table>
           </div>
         </div>
@@ -130,15 +130,16 @@
         <p class="table-note">여기서 중요한 것은 「복구가 늦었다」가 아니라 「하지 말았어야 할 복구를 했다」는
         점입니다. 이 방향의 실패는 되돌리기가 훨씬 어렵습니다.</p>
 
-        <h2 id="네트워크">스위치 하나에 네 갈래가 매달려 있었습니다<a class="anchor" href="#네트워크" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="네트워크">Switch 하나에 네 갈래가 매달려 있었습니다<a class="anchor" href="#네트워크" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>핵심은 이겁니다. 스위치가 죽으면 <strong>네트워크마다 상태가 달라집니다.</strong> 하나가 끊겼다고
-        전부 끊긴 것이 아닙니다. 이 팜에는 갈래가 넷 있었습니다. 장애가 났을 때 운명이 갈린 것은 셋입니다. 넷째인 BMC는 애초에 깔려 있지 않았습니다.</p>
+        <p>Switch가 죽으면 <strong>네트워크마다 상태가 달라집니다.</strong> 하나가 끊겼다고 전부 끊긴 것은
+        아닙니다. 이 팜에는 MGMT·DATA·Controller·BMC 네 갈래가 있었는데, 장애 때 실제로 상태가 갈린 것은
+        앞의 세 갈래였습니다. BMC 경로는 처음부터 깔려 있지 않았습니다.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 250" role="img" aria-labelledby="net-t net-d" class="figure-svg">
-            <title id="net-t">스위치 하나에 매달린 네 갈래 네트워크</title>
-            <desc id="net-d">왼쪽에 Controller 세 대, 오른쪽에 Compute 두 대가 있습니다. 둘 사이를 MGMT, DATA, Controller 세 갈래가 잇고 네 번째 갈래인 BMC 자리는 비어 있습니다. L2/L3 스위치가 죽으면 MGMT만 살아남고 DATA와 Controller가 끊깁니다.</desc>
+            <title id="net-t">Switch 하나에 매달린 네 갈래 네트워크</title>
+            <desc id="net-d">왼쪽에 Controller 세 대, 오른쪽에 Compute 두 대가 있습니다. 둘 사이를 MGMT, DATA, Controller 세 갈래가 잇고 네 번째 갈래인 BMC 자리는 비어 있습니다. L2/L3 Switch가 죽으면 MGMT만 살아남고 DATA와 Controller가 끊깁니다.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="40" y="40" width="150" height="150" rx="10" fill="none" stroke="#4f5bd5" stroke-width="1.8"/>
               <text x="115" y="30" font-size="12" fill="#4f5bd5" text-anchor="middle">Controller ×3</text>
@@ -155,7 +156,7 @@
               <text x="360" y="225" font-size="11" fill="#8a8a8a" text-anchor="middle">초록은 살아남은 갈래, 분홍은 끊긴 갈래</text>
             </g>
           </svg>
-          <figcaption>같은 스위치에 네 갈래가 매달려 있었고 살아남은 것은 MGMT뿐입니다. Fencing에 쓸 BMC 갈래는 처음부터 없었습니다.</figcaption>
+          <figcaption>같은 Switch에 네 갈래가 매달려 있었고 살아남은 것은 MGMT뿐입니다. Fencing에 쓸 BMC 갈래는 처음부터 없었습니다.</figcaption>
         </figure>
 
         <div class="table-scroll">
@@ -169,16 +170,16 @@
           </div>
         </div>
 
-        <p>Controller끼리의 통신이 끊기면 Controller들이 서로의 상태를 합의할 수 없게 됩니다. 제대로 된
-        Quorum이라면 다수를 잃고 고립된 쪽은 판단을 멈춰야 하는데 이때는 고립된 쪽이 멈추지 않고 단독으로
-        판정을 내렸습니다. 그런데 MGMT는 살아 있어서 그 Compute의 Agent HeartBeat는 정상적으로 수신되고
-        있었습니다. 죽었다고 판정된 노드가 사실은 자기 상태를 또박또박 보고하고 있었던 것입니다.</p>
+        <p>Controller끼리의 통신이 끊기면 서로의 상태에 합의할 수 없습니다. 정족수(Quorum)를 잃고 고립된
+        Controller는 판단을 멈춰야 하지만, 이때는 고립된 Controller가 멈추지 않고 단독으로 장애를 판정했습니다.
+        반면 MGMT는 살아 있어서, 장애로 지목된 그 Compute의 Agent HeartBeat는 정상적으로 수신되고
+        있었습니다. 죽었다고 판정된 Node가 사실은 자기 상태를 정상적으로 보고하고 있었던 것입니다.</p>
 
         <h2 id="오판">닿지 못한 것과 죽은 것을 가르지 못했습니다<a class="anchor" href="#오판" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>「내가 저 노드에 닿지 못한다」는 두 가지를 뜻할 수 있습니다. 저 노드가 죽었다는 뜻일 수도 있고
-        <strong>나와 저 노드 사이의 길이 끊겼다</strong>는 뜻일 수도 있습니다. 둘은 완전히 다른 상황인데
-        밖에서 보면 똑같아 보입니다.</p>
+        <p>「내가 저 Node에 닿지 못한다」는 두 가지를 뜻할 수 있습니다. 저 Node가 죽었을 수도 있고,
+        <strong>나와 저 Node 사이의 네트워크 경로만 끊겼을</strong> 수도 있습니다. 원인은 전혀 다르지만
+        관측자에게는 둘 다 똑같은 통신 실패로 보입니다.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 240" role="img" aria-labelledby="iso-t iso-d" class="figure-svg">
@@ -205,28 +206,28 @@
         </figure>
 
         <p>사고의 뿌리는 <strong>관측자의 고립을 대상의 장애로 오인</strong>한 것이었습니다. 판정이 관측자
-        자신의 네트워크 건전성을 입력으로 쓰지 않았기 때문에, 원격 노드의 죽음과 관측 경로의 단절을 끝내
+        자신의 네트워크 건전성을 입력으로 쓰지 않았기 때문에, 원격 Node의 죽음과 관측 경로의 단절을 끝내
         구분하지 못했습니다. 무엇을 더 정교하게 볼 것인가가 아니라 누구의 말을 믿을 것인가의 문제였습니다.</p>
 
         <h2 id="두-번째-사건">같은 구조의 사건이 하나 더 있었습니다<a class="anchor" href="#두-번째-사건" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p>이 사고만 있었던 것이 아닙니다. Controller를 셋으로 두는 구성에서 그중 일부가 장애나 단절을
-        겪었을 때, <strong>장애가 난 그 노드가 리더로 뽑혀</strong> 복구가 전체 노드와 VM으로 번진 건이
+        겪었을 때, <strong>장애가 난 그 Node가 Leader로 뽑혀</strong> 복구가 전체 Node와 VM으로 번진 건이
         따로 있었습니다.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 268" role="img" aria-labelledby="two-t two-d" class="figure-svg">
             <title id="two-t">두 사건이 같은 구조를 갖는다</title>
-            <desc id="two-d">첫 번째 사건은 스위치 장애로 갈래가 끊긴 것이고 두 번째는 Controller 일부가 단절된 것입니다. 둘 다 관측 지점의 장애인데 대상의 장애로 오판되어 복구가 번졌습니다.</desc>
+            <desc id="two-d">첫 번째 사건은 Switch 장애로 갈래가 끊긴 것이고 두 번째는 Controller 일부가 단절된 것입니다. 둘 다 관측 지점의 장애인데 대상의 장애로 오판되어 복구가 번졌습니다.</desc>
             <g font-family="Inter, sans-serif">
               <text x="180" y="30" font-size="11" fill="#5b7fa6" text-anchor="middle">첫 번째 사건</text>
               <text x="540" y="30" font-size="11" fill="#7a5ba6" text-anchor="middle">두 번째 사건</text>
               <rect x="60" y="46" width="240" height="40" rx="8" fill="none" stroke="#5b7fa6" stroke-width="1.6"/>
-              <text x="180" y="71" font-size="10.5" fill="#5b7fa6" text-anchor="middle">스위치 장애로 갈래가 끊김</text>
+              <text x="180" y="71" font-size="10.5" fill="#5b7fa6" text-anchor="middle">Switch 장애로 갈래가 끊김</text>
               <rect x="420" y="46" width="240" height="40" rx="8" fill="none" stroke="#7a5ba6" stroke-width="1.6"/>
               <text x="540" y="71" font-size="10.5" fill="#7a5ba6" text-anchor="middle">Controller 일부가 단절</text>
-              <path d="M180 86 V 112" stroke="#666" stroke-width="1.2" fill="none"/>
-              <path d="M540 86 V 112" stroke="#666" stroke-width="1.2" fill="none"/>
+              <path d="M180 86 V 99 H 360 V 112" stroke="#666" stroke-width="1.2" fill="none"/>
+              <path d="M540 86 V 99 H 360 V 112" stroke="#666" stroke-width="1.2" fill="none"/>
               <rect x="210" y="112" width="300" height="44" rx="8" fill="none" stroke="#d62976" stroke-width="1.8"/>
               <text x="360" y="139" font-size="11" fill="#d62976" text-anchor="middle">관측 지점의 장애</text>
               <path d="M360 156 V 182" stroke="#d62976" stroke-width="1.3" fill="none"/>
@@ -244,12 +245,12 @@
           <table>
             <caption class="sr-only">두 사건의 대비.</caption>
             <thead><tr><th></th><th>첫 번째 사건</th><th>두 번째 사건</th></tr></thead>
-            <tbody><tr><td>끊긴 곳</td><td>스위치 장애로 데이터 갈래와 Controller 갈래</td><td>Controller 사이의 통신</td></tr><tr><td>관측자가 본 것</td><td>저 Compute에 닿지 않는다</td><td>저 Compute에 닿지 않는다</td></tr><tr><td>실제 Compute</td><td>살아 있었음</td><td>살아 있었음</td></tr><tr><td>번진 방식</td><td>한 Controller가 단독으로 판정</td><td>단절된 노드가 리더로 뽑혀 전체로</td></tr><tr><td>공통 원인</td><td>관측 지점의 장애</td><td>관측 지점의 장애</td></tr></tbody>
+            <tbody><tr><td>끊긴 곳</td><td>Switch 장애로 데이터 갈래와 Controller 갈래</td><td>Controller 사이의 통신</td></tr><tr><td>관측자가 본 것</td><td>저 Compute에 닿지 않는다</td><td>저 Compute에 닿지 않는다</td></tr><tr><td>실제 Compute</td><td>살아 있었음</td><td>살아 있었음</td></tr><tr><td>번진 방식</td><td>한 Controller가 단독으로 판정</td><td>단절된 Node가 Leader로 뽑혀 전체로</td></tr><tr><td>공통 원인</td><td>관측 지점의 장애</td><td>관측 지점의 장애</td></tr></tbody>
           </table>
           </div>
         </div>
 
-        <p class="table-note">끊긴 자리는 다릅니다. 한쪽은 스위치가 죽어 갈래가 끊겼고 다른 쪽은
+        <p class="table-note">끊긴 자리는 다릅니다. 한쪽은 Switch가 죽어 갈래가 끊겼고 다른 쪽은
         Controller끼리의 통신이 끊겼습니다. 그런데 <strong>관측자가 본 화면은 같았고 실제 Compute도
         양쪽 다 살아 있었습니다.</strong></p>
 
@@ -259,7 +260,7 @@
 
         <h2 id="스플릿브레인">잘못 살린 복구가 볼륨을 깹니다<a class="anchor" href="#스플릿브레인" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>오판이 비싼 이유는 그다음에 있습니다. 원본 VM이 아직 살아서 디스크에 쓰고 있습니다. 여기에 재구축된 쪽이 다른 호스트에서 같은 볼륨에 붙어 동시에 쓰도록 허용되면 깨지는 것은 VM 하나가 아니라 볼륨 전체가 될 수 있습니다.</p>
+        <p>오판이 비싼 이유는 그다음에 있습니다. 원본 VM이 아직 살아서 디스크에 쓰고 있습니다. 여기에 재구축된 쪽이 다른 Host에서 같은 볼륨에 붙어 동시에 쓰도록 허용되면 깨지는 것은 VM 하나가 아니라 볼륨 전체가 될 수 있습니다.</p>
 
         <div class="table-scroll">
           <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
@@ -273,20 +274,20 @@
         </div>
 
         <p class="table-note">그래서 이 설계는 「빨리 복구한다」가 아니라 「확신할 수 없으면 멈춘다」를
-        기본값으로 잡게 됩니다. 비대칭적인 비용이 판정을 정했습니다.</p>
+        기본값으로 잡습니다. 잘못 실행한 복구는 되돌리기 어렵고, 그 비대칭이 기본값을 정했습니다.</p>
 
         <h2 id="복구-대상">무엇을 복구할지는 이미 두 겹으로 정해져 있었습니다<a class="anchor" href="#복구-대상" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>설계를 시작할 때 한 가지는 이미 제품에 있었습니다. 복구 대상을 고르는 축이 호스트 제어 속성과
+        <p>설계를 시작할 때 한 가지는 이미 제품에 있었습니다. 복구 대상을 고르는 축이 Host 제어 속성과
         Instance 메타데이터 두 겹이라는 것입니다. 2024년 9월에 이 기능을 검증하면서 세 값을 전부 확인해
         둔 것이 있었습니다.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 230" role="img" aria-labelledby="tgt-t tgt-d" class="figure-svg">
             <title id="tgt-t">복구 대상을 고르는 두 겹</title>
-            <desc id="tgt-d">위쪽은 호스트 제어 속성 세 가지이고 아래쪽은 Instance 메타데이터입니다. 두 겹이 겹쳐 복구 대상 목록과 제외 목록이 갈립니다.</desc>
+            <desc id="tgt-d">위쪽은 Host 제어 속성 세 가지이고 아래쪽은 Instance 메타데이터입니다. 두 겹이 겹쳐 복구 대상 목록과 제외 목록이 갈립니다.</desc>
             <g font-family="Inter, sans-serif">
-              <text x="360" y="30" font-size="12" fill="#4f5bd5" text-anchor="middle">첫째 겹 · 호스트 제어 속성</text>
+              <text x="360" y="30" font-size="12" fill="#4f5bd5" text-anchor="middle">첫째 겹 · Host 제어 속성</text>
               <rect x="60" y="45" width="180" height="50" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
               <text x="150" y="75" font-size="11.5" fill="#4a4a4a" text-anchor="middle">HA_Enabled</text>
               <rect x="270" y="45" width="180" height="50" rx="8" fill="none" stroke="#4f5bd5" stroke-width="1.6"/>
@@ -301,13 +302,13 @@
               <text x="360" y="215" font-size="11" fill="#8a8a8a" text-anchor="middle">위험한 쪽은 복구되지 않는 것이 아니라 복구되면 안 되는 것이 복구되는 것</text>
             </g>
           </svg>
-          <figcaption>호스트 설정과 Instance 메타데이터가 겹쳐 대상이 갈립니다. 2024년에 세 값을 전수로 확인하며 제외 목록이 의도대로 채워지는지를 같이 봤습니다.</figcaption>
+          <figcaption>Host 설정과 Instance 메타데이터가 겹쳐 대상이 갈립니다. 2024년에 세 값을 전수로 확인하며 제외 목록이 의도대로 채워지는지를 같이 봤습니다.</figcaption>
         </figure>
 
-        <p>호스트 속성이 <code>HA_Enabled</code>면 메타데이터에 <code>HA_Enabled</code> 표시가 붙은
+        <p>Host 속성이 <code>HA_Enabled</code>면 메타데이터에 <code>HA_Enabled</code> 표시가 붙은
         Instance만 대상이 되고 <code>HA_Disabled</code>면 반대로 <code>HA_Disabled</code> 표시가 붙지
         않은 것이 전부 대상이 되며(메타데이터가 아예 없는 Instance도 대상에 포함됩니다), <code>NONE</code>이면
-        메타데이터와 무관하게 전부 대상이 됩니다. 곧 opt-in과 opt-out과 전체를 호스트 단위로 고를 수
+        메타데이터와 무관하게 전부 대상이 됩니다. 곧 opt-in과 opt-out과 전체를 Host 단위로 고를 수
         있는 구조입니다.</p>
 
         <p>그때 대상 목록뿐 아니라 제외 목록이 의도대로 채워지는지를 같이 봤습니다. 복구 기능에서 위험한
@@ -324,14 +325,14 @@
           설계했습니다. 오판한 것은 기존 복구 로직입니다.</li>
           <li>2024년 확인은 설계나 구현이 아니라 기능 검증이고 근거는 화면 기록입니다. 자동화된 테스트가
           아닙니다.</li>
-          <li>사내 자료라 제품명과 고객사와 서버 주소와 호스트명과 계정은 쓰지 않았습니다. 네트워크 구성은
+          <li>사내 자료라 제품명과 고객사와 서버 주소와 Host명과 계정은 쓰지 않았습니다. 네트워크 구성은
           판정 구조를 설명하는 데 필요한 만큼만 일반화했습니다.</li>
         </ul>
 
         <div class="wrapup">
         <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
         <p>이 편에서 말하고 싶은 것은 하나입니다. 자동 복구가 위험해지는 자리는 복구가 느릴 때가 아니라
-        <strong>관측자가 자기 상태를 모른 채 대상을 판정할 때</strong>입니다. 스위치 하나가 죽었을 뿐인데 갈래마다 운명이 갈렸습니다. 살아남은 갈래는 저 노드가 살아 있다고 말하고 있었습니다. 그런데 판정을 내린 것은 끊긴 갈래를 든 쪽이었습니다.</p>
+        <strong>관측자가 자기 상태를 모른 채 대상을 판정할 때</strong>입니다. Switch 하나가 죽었을 뿐인데 갈래마다 상태가 달라졌습니다. 살아남은 갈래는 저 Node가 살아 있다고 말하고 있었습니다. 그런데 판정을 내린 것은 끊긴 갈래를 든 쪽이었습니다.</p>
         <p>다음 편은 그래서 무엇을 다르게 설계했는가입니다. 감지를 더 정교하게 만드는 대신 신호마다 무엇을 볼 수 있는지를 정한 설계 이야기로 이어집니다. <a href="instance-ha-2-what-each-signal-can-say.ko.html">②편</a>으로 갑니다.</p>
         <p>읽어 주셔서 감사합니다.</p>
         </div>
@@ -345,7 +346,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=bec7a51a41"></script>
+  <script src="../assets/content.js?v=24429b3983"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=d4af83b541"></script>

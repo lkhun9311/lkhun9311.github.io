@@ -97,7 +97,7 @@
           text_ja: "Instance HA の連作を実装記録十八件と突き合わせて書き直しました。設計が求めたものと実際に作られたものが分かれる地点を編ごとに示しました。" },
         { date: "2026-09-20", dateLabel: "Sep 20, 2026",
           text: "Published the Instance HA design series in three languages. It starts with one observation point calling a live node dead. Everything after that is about dividing up the grounds for a decision.",
-          text_ko: "Instance HA 설계 연작을 세 언어로 냈습니다. 관측 지점 하나를 믿어 살아 있는 노드를 죽었다고 판정한 것이 시작입니다. 그 뒤로는 전부 판단의 근거를 나누는 이야기입니다.",
+          text_ko: "Instance HA 설계 연작을 세 언어로 냈습니다. 관측 지점 하나를 믿어 살아 있는 Node를 죽었다고 판정한 것이 시작입니다. 그 뒤로는 전부 판단의 근거를 나누는 이야기입니다.",
           text_ja: "Instance HA 設計の連作を三言語で公開しました。観測地点を一つ信じて生きているノードを死んだと判定したのが始まりです。そのあとはすべて判断の根拠を分ける話です。" },
         { date: "2026-09-13", dateLabel: "Sep 13, 2026",
           text: "Published \u201cLogging Out When Validation Fails Evicts Only the Busiest Users\u201d in three languages. The browser drives the polling, so the check is stopped at exactly the moments that are risky.",
@@ -109,7 +109,7 @@
           text_ja: "韓国語・英語・日本語を機械翻訳ではなく人が書きます。メニューと一覧ページ、カードの文言まで書き下ろしに変えました。" },
         { date: "2026-09-06", dateLabel: "Sep 6, 2026",
           text: "Published “The Moderation Throughput Ceiling Was an SDK Default” in three languages. The limit was a default of five connections per host in a library the AWS SDK pulled in.",
-          text_ko: "‘콘텐츠 검열 처리량 상한이 SDK 기본값에 있었습니다’를 세 언어로 냈습니다. 상한은 AWS SDK가 끌고 온 라이브러리의 ‘호스트당 5’ 기본값이었습니다.",
+          text_ko: "‘콘텐츠 검열 처리량 상한이 SDK 기본값에 있었습니다’를 세 언어로 냈습니다. 상한은 AWS SDK가 끌고 온 라이브러리의 ‘Host당 5’ 기본값이었습니다.",
           text_ja: "「検閲経路のスループット上限は SDK の既定値でした」を三言語で公開しました。上限は AWS SDK が引き連れてきたライブラリの「ホストあたり5」という既定値でした。" },
         { date: "2026-09-05", dateLabel: "Sep 5, 2026",
           text: "Corrected the connection-exhaustion article: the claims without numbers were replaced with harness measurements, and what is still unmeasured is now said so.",
@@ -129,7 +129,7 @@
     projects: {
       /* Writing과 같은 축으로 나눈다 — 섹션마다 기준이 달라지면 왼쪽 레일을 매번 다시 배운다. */
       tagGroups: {
-        "Area": ["GPU", "Kubernetes", "Backend", "Postgres", "IaaS", "Control Plane"],
+        "Area": ["GPU", "Kubernetes", "Backend", "Postgres", "IaaS", "Control Plane", "Data Platform"],
         "Perspective": ["Operations", "Privacy"]
       },
       items: [
@@ -189,8 +189,8 @@
       tagGroups: {
         /* 프로젝트를 맨 위에 둔다 — 「어느 시스템 이야기인가」가 독자의 첫 질문이다.
            글 머리의 #태그 버튼이 여기로 걸러 들어온다. */
-        "Project": ["IaaS Backend", "GPUaaS Control Plane", "Social Polling Platform", "Product Retrieval Studio"],
-        "Area": ["GPU", "Kubernetes", "Backend", "Postgres", "IaaS", "Control Plane"],
+        "Project": ["IaaS Backend", "GPUaaS Control Plane", "Social Polling Platform", "Driving Data Studio", "Product Retrieval Studio"],
+        "Area": ["GPU", "Kubernetes", "Backend", "Postgres", "IaaS", "Control Plane", "Data Platform"],
         "Perspective": ["Method", "Observability", "Reliability", "Performance",
                 "Security", "Privacy", "Cost", "Operations", "Migration"]
       },
@@ -200,7 +200,7 @@
           title_ko: "상품 검색 08. 세 단계 판단은 지금 적용하지 않습니다",
           url: "writing/product-retrieval-08-graded-labels.ko.html",
           source: "side", sourceLabel: "Personal project",
-          date: "2026-10-08", dateLabel: "Oct 8, 2026",
+          date: "2026-10-09", dateLabel: "Oct 9, 2026",
           desc: "Industry datasets collect graded relevance, but people disagree at the boundaries. Simulated corrections cannot produce a similar label and the preregistered target is same-product R@5, so M1 keeps two levels. A 200-pair pilot and its pass criteria are fixed in advance. Korean only.",
           desc_ko: "업계는 판단을 여러 단계로 받지만 경계에서 의견이 갈립니다. 모의 교정은 유사를 만들 수 없고 사전등록 기준과도 맞지 않아 M1은 두 단계로 두었습니다. 200쌍 시험과 통과 기준을 먼저 정했습니다.",
           tags: ["Product Retrieval Studio", "Method", "Design"]
@@ -210,7 +210,7 @@
           title_ko: "상품 검색 07. 모의 교정의 20%가 틀리자 R@5가 0.857에서 0.299로 떨어졌습니다",
           url: "writing/product-retrieval-07-noisy-corrections.ko.html",
           source: "side", sourceLabel: "Personal project",
-          date: "2026-10-08", dateLabel: "Oct 8, 2026",
+          date: "2026-10-09", dateLabel: "Oct 9, 2026",
           desc: "Flipping 20% of simulated answers dropped one seed to R@5 0.2985 at 100 labels, and the 3,000-label mean stayed below baseline. Because positives are rare, a 20% flip makes about 80% of positive labels fake by calculation. A deployment gate on R@5, positive-label rate and R@1 is designed but not built. Korean only.",
           desc_ko: "모의 교정의 20%를 뒤집자 라벨 100개에서 R@5가 0.2985까지 떨어진 seed가 있었습니다. 정답이 드물어서 뒤집기 20%가 정답 라벨에서는 계산상 80%의 오염이 됩니다. R@5, 정답 라벨 비율, R@1을 확인하는 배포 게이트를 설계했고 아직 구현하지 않았습니다.",
           tags: ["Product Retrieval Studio", "Method", "Operations"]
@@ -220,7 +220,7 @@
           title_ko: "상품 검색 06. 108번 실행했지만 목표 R@5 0.887에 미치지 못했습니다",
           url: "writing/product-retrieval-06-learning-curve.ko.html",
           source: "side", sourceLabel: "Personal project",
-          date: "2026-10-08", dateLabel: "Oct 8, 2026",
+          date: "2026-10-09", dateLabel: "Oct 9, 2026",
           desc: "All 108 preregistered runs completed. No seed reached validation R@5 0.887 within 3,000 labels, and the one-time test check came in at +0.0096 over baseline, 0.0204 short of the success line. The small gain reproduced on both splits; the +0.03 target did not. Korean only.",
           desc_ko: "사전등록한 108개 조건을 모두 실행했습니다. 어느 seed도 라벨 3,000개까지 목표 R@5 0.887에 도달하지 못했습니다. 한 번 연 시험셋에서도 기준선보다 0.0096 높아 성공 기준에 0.0204 모자랐습니다.",
           tags: ["Product Retrieval Studio", "Method"]
@@ -230,7 +230,7 @@
           title_ko: "상품 검색 05. 라벨 10만 개로도 R@5가 0.858에 머문 재정렬 모델",
           url: "writing/product-retrieval-05-reranker-features.ko.html",
           source: "side", sourceLabel: "Personal project",
-          date: "2026-10-08", dateLabel: "Oct 8, 2026",
+          date: "2026-10-09", dateLabel: "Oct 9, 2026",
           desc: "Rerankers fed score features and image statistics stayed at R@5 0.858 even with 33 times the label budget, because every feature came from the cosine similarity the search had already used. Feeding the vector components directly (v2) was the first model that improved as labels grew. Korean only.",
           desc_ko: "점수와 이미지 통계를 넣은 재정렬 모델은 라벨을 예산의 33배로 늘려도 R@5가 0.858에 머물렀습니다. 특징이 모두 검색이 이미 쓴 코사인 유사도에서 나왔기 때문입니다. 벡터 성분을 직접 넣은 v2에서 처음으로 라벨이 늘수록 R@5가 올랐습니다.",
           tags: ["Product Retrieval Studio", "Method", "Design"]
@@ -240,7 +240,7 @@
           title_ko: "상품 검색 04. 누르지 않은 후보는 오답 라벨로 쓰지 않습니다",
           url: "writing/product-retrieval-04-event-labels.ko.html",
           source: "side", sourceLabel: "Personal project",
-          date: "2026-10-08", dateLabel: "Oct 8, 2026",
+          date: "2026-10-09", dateLabel: "Oct 9, 2026",
           desc: "Only match and not-match become labels; skips and no-response do not. When judgements on the same candidate disagree, the last one within a session wins and sessions vote, with the winning share kept as a weight. Simulated corrections produced no conflicts. Korean only.",
           desc_ko: "\"맞다\"와 \"아니다\"만 라벨이 됩니다. 건너뛰기와 무반응은 라벨을 만들지 않습니다. 같은 후보에 판단이 엇갈리면 세션 안에서는 고친 판단을, 세션 사이에서는 다수결을 씁니다. 모의 교정에서는 충돌이 없었습니다.",
           tags: ["Product Retrieval Studio", "Method", "Design"]
@@ -250,7 +250,7 @@
           title_ko: "상품 검색 03. 교정 라벨 3,000개를 모을 순서를 미리 정했습니다",
           url: "writing/product-retrieval-03-preregistration.ko.html",
           source: "side", sourceLabel: "Personal project",
-          date: "2026-10-07", dateLabel: "Oct 7, 2026",
+          date: "2026-10-09", dateLabel: "Oct 9, 2026",
           desc: "Before the experiment, a contract fixed how candidates are picked for labels (alternating across three rank bands), nine measurement points from 100 to 3,000, and the target of validation R@5 0.887. Same seed, same labels and same answers. Korean only.",
           desc_ko: "실험 전에 계약으로 라벨 고르는 방법, 측정 지점, 성공 기준을 고정했습니다. 후보는 순위 구간 세 층에서 번갈아 고릅니다. 목표는 검증셋 R@5 0.887입니다. 같은 seed면 같은 후보와 같은 답이 나옵니다.",
           tags: ["Product Retrieval Studio", "Method"]
@@ -260,7 +260,7 @@
           title_ko: "상품 검색 02. 학습 질의 53,882개의 ID에 정답 상품 ID를 넣었습니다",
           url: "writing/product-retrieval-02-query-id-leak.ko.html",
           source: "side", sourceLabel: "Personal project",
-          date: "2026-10-07", dateLabel: "Oct 7, 2026",
+          date: "2026-10-09", dateLabel: "Oct 9, 2026",
           desc: "Every one of the 53,882 training query IDs carried its answer product ID, so any code could read the answer by splitting a string. Found in a contract review before any experiment; the ID became a hash and the old format is now refused. Korean only.",
           desc_ko: "학습셋 질의 53,882개 전부의 ID에 정답 상품 ID가 그대로 들어 있었습니다. 문자열을 나누기만 하면 정답을 읽을 수 있었습니다. 실험 전 계약 검토에서 찾아 ID를 Hash로 바꿨습니다. 옛 형식이 다시 들어오면 실행을 거부하게 했습니다.",
           tags: ["Product Retrieval Studio", "Method"]
@@ -270,32 +270,164 @@
           title_ko: "상품 검색 01. 정답의 98%가 이미 후보 100개 안에 있다면 무엇을 고쳐야 할까",
           url: "writing/product-retrieval-01-reorder-not-retrain.ko.html",
           source: "side", sourceLabel: "Personal project",
-          date: "2026-10-07", dateLabel: "Oct 7, 2026",
+          date: "2026-10-09", dateLabel: "Oct 9, 2026",
           desc: "Changing the embedding model means re-embedding the whole gallery. On 3,243 validation products, product-level R@100 was 98.1% and R@5 was 85.7%, so I fixed the embedding and decided to change only the order of candidates. The code is split into three layers to match. Korean only.",
           desc_ko: "임베딩 모델을 바꾸면 갤러리 전체를 다시 임베딩해야 합니다. 검증셋 상품 3,243개에서 상품 단위 R@100은 98.1%, R@5는 85.7%였습니다. 임베딩은 고정한 채 후보의 순서만 고치기로 했습니다. 그 결정에 맞춰 코드를 세 층으로 나눈 방식도 다룹니다.",
           tags: ["Product Retrieval Studio", "Method", "Design"]
         },
         {
+          title: "The Build Setting That Git Was Told to Ignore",
+          title_ko: "Gradle 빌드가 제 컴퓨터에서만 성공했습니다",
+          url: "writing/the-setting-git-never-tracked.ko.html",
+          source: "commercial", sourceLabel: "Commercial project",
+          date: "2026-10-06",
+          desc: "Verifying a dependency bot's Kotlin bump, the build died with OutOfMemoryError and I reported the version as the cause. Reverting the version failed the same way, which is how the real cause surfaced: the heap setting sat in git's exclude list, so CI and every fresh clone never received it.",
+          desc_ko: "의존성 봇이 올린 Kotlin 버전 범프를 검증하다 빌드가 OutOfMemoryError로 죽었고 저는 그것을 버전 탓으로 보고했습니다. 버전을 되돌려도 똑같이 죽는 것을 보고서야 원인이 git 추적에서 빠진 힙 설정임을 알았습니다. 추적이 0건이면 CI와 새 클론도 그 설정을 받지 못합니다.",
+          tags: ["Social Polling Platform", "Tooling", "Backend", "Method"]
+        },
+        {
+          title: "GPUaaS Input Length: One Character Still Cost 30 Tokens",
+          title_ko: "GPUaaS 플랫폼 입력 길이: 1자를 보내도 30토큰이었습니다",
+          title_ja: "GPUaaS プラットフォームの入力長: 1 文字でも 30 トークンでした",
+          url: "writing/gpu-input-length-in-characters.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10", dateLabel: "Oct 2026",
+          desc: "The CRD declares input length in tokens and the trace generator takes characters. The ceil(chars/4) estimate that joined them puts 50 tokens against a measured 68 at 200 characters and 10,000 against 7,695 at 40,000, so the direction flips, and the characters-to-tokens curve is not monotone either. Measured inside the serving image, 256 tokens is 1,174 characters and 8,192 is 42,579.",
+          desc_ko: "CRD는 입력 길이를 토큰으로 선언하고 트레이스 생성기는 문자 수를 받습니다. 둘을 잇는 ceil(chars/4) 어림은 200자에서 50토큰을 추정했는데 실측이 68이고 40,000자에서 10,000을 추정했는데 실측이 7,695여서 방향이 뒤집혔고 문자에서 토큰으로 가는 곡선은 단조도 아니었습니다. 서빙 이미지 안에서 재서 256토큰은 1,174자, 8,192토큰은 42,579자로 고정했습니다.",
+          desc_ja: "CRD は入力長をトークンで宣言し、トレース生成器は文字数を受け取ります。両者をつなぐ ceil(chars/4) の目安は 200 文字で 50 トークンと見積もったのに実測は 68 で、40,000 文字で 10,000 と見積もったのに実測は 7,695 でした。方向が逆転します。文字からトークンへの曲線は単調でもありません。Serving Image の中で測り、256 トークンは 1,174 文字、8,192 トークンは 42,579 文字に固定しました。",
+          tags: ["GPUaaS Control Plane", "GPU", "Method", "Observability"]
+        },
+        {
+          title: "Why the Console Does Not Show \"Approved\" When You Click Approve",
+          title_ko: "자율주행 데이터 플랫폼 09. 운영 콘솔은 승인 버튼을 눌러도 왜 바로 「승인됨」을 띄우지 않을까",
+          url: "writing/autonomy-9-no-optimistic-approve.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-06", dateLabel: "Oct 6, 2026",
+          desc: "The operator console changes a release badge only after the event arrives, borrows AWS console and CI/CD grammar, and keeps one name in three languages.",
+          desc_ko: "승인을 눌러도 결과 이벤트가 오기 전에는 「승인됨」을 띄우지 않습니다. AWS 콘솔과 CI/CD 도구의 화면 문법을 빌린 운영 콘솔 설계입니다.",
+          tags: ["Driving Data Studio", "Data Platform", "Method"]
+        },
+        {
+          title: "Three Outside Instruments Instead of Grading Ourselves",
+          title_ko: "자율주행 데이터 플랫폼 08. 자기 채점을 피하려고 외부 계측기 3개를 붙였습니다",
+          url: "writing/autonomy-8-borrowed-instruments.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-06", dateLabel: "Oct 6, 2026",
+          desc: "MLPerf Storage, Croissant and RefAV score three results; reading the MLPerf rules split M2 into a closed-division run and a separate format comparison.",
+          desc_ko: "스스로 정한 숫자만 내놓지 않으려고 외부 계측기 셋을 붙였습니다. MLPerf Storage 규칙을 끝까지 읽고 M2를 Closed 실행과 별도 포맷 비교로 나눈 과정도 적었습니다.",
+          tags: ["Driving Data Studio", "Data Platform", "Performance"]
+        },
+        {
+          title: "Why Sensor Gates Count Evaluations and Skips",
+          title_ko: "자율주행 데이터 플랫폼 07. 센서 품질 Gate는 왜 건너뜀과 평가 횟수까지 셀까",
+          url: "writing/autonomy-7-counting-skipped-gates.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-06", dateLabel: "Oct 6, 2026",
+          desc: "Six sensor-level checks, four counters per gate, and separating \"incomplete\" from \"skipped\" so a stopped check never looks green.",
+          desc_ko: "「실패 0건」은 깨끗한 날과 검사가 멈춘 날에 똑같이 나옵니다. 평가 횟수와 건너뜀을 함께 세고 미완료를 따로 둔 센서 품질 Gate 설계입니다.",
+          tags: ["Driving Data Studio", "Data Platform", "Observability"]
+        },
+        {
+          title: "How Far Can \"Batch and Streaming Agree\" Go?",
+          title_ko: "자율주행 데이터 플랫폼 06. 배치와 스트리밍 결과가 같다는 주장은 어디까지 할 수 있을까",
+          url: "writing/autonomy-6-how-far-equivalence-goes.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-06", dateLabel: "Oct 6, 2026",
+          desc: "Two README claims were retracted: sensor rates do not reorder events by themselves, and equal final tables do not prove exactly-once.",
+          desc_ko: "센서 주기가 순서를 뒤섞는다는 문장과 결과가 같으면 exactly-once라는 문장을 폐기하고 주장을 출고된 테이블의 다중집합 비교로 좁혔습니다.",
+          tags: ["Driving Data Studio", "Data Platform", "Method"]
+        },
+        {
+          title: "Four Defaults That Break a Transactional Outbox",
+          title_ko: "자율주행 데이터 플랫폼 05. Outbox로 Release 상태를 알릴 때 기본값 4개가 만드는 실패",
+          url: "writing/autonomy-5-outbox-defaults.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-06", dateLabel: "Oct 6, 2026",
+          desc: "An adversarial review turned a ten-row failure table into thirty findings; four documented defaults in Kafka, Debezium and Postgres anchor them.",
+          desc_ko: "실패 처리 표 10행을 공격받아 30줄이 돌아왔습니다. Kafka · Debezium · Postgres 기본값 넷이 만드는 실패와, 그 결과로 바뀐 원칙 다섯입니다.",
+          tags: ["Driving Data Studio", "Data Platform", "Reliability"]
+        },
+        {
+          title: "Kafka Stays Out of the M1 Data Path Because Batch Is the Reference",
+          title_ko: "자율주행 데이터 플랫폼 04. Kafka를 M1 데이터 경로에서 뺀 이유: 배치가 스트리밍의 비교 기준입니다",
+          url: "writing/autonomy-4-where-kafka-sits.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-06", dateLabel: "Oct 6, 2026",
+          desc: "Kafka was placed seven times in a month; the M1 data path never used it, and why that changed from \"static data\" to \"batch is the oracle\".",
+          desc_ko: "Kafka의 자리는 한 달 사이 일곱 번 정해졌습니다. M1 데이터 경로에는 한 번도 들어가지 않았고 그 이유가 정적 데이터에서 비교 기준으로 바뀐 기록입니다.",
+          tags: ["Driving Data Studio", "Data Platform", "Method"]
+        },
+        {
+          title: "Does an Iceberg Snapshot Protect the File Behind blob_uri?",
+          title_ko: "자율주행 데이터 플랫폼 03. Iceberg Snapshot은 blob_uri가 가리키는 파일까지 지켜 줄까",
+          url: "writing/autonomy-3-snapshots-do-not-guard-blobs.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-06", dateLabel: "Oct 6, 2026",
+          desc: "A snapshot guards table files, not the sensor files rows point to; content-addressed names, immutability and read-time checks fill the gap.",
+          desc_ko: "Snapshot은 Iceberg가 관리하는 테이블 파일만 지킵니다. 행이 가리키는 센서 파일을 지키려고 내용 기반 이름 · 덮어쓰기 금지 · 읽을 때 대조를 더했습니다.",
+          tags: ["Driving Data Studio", "Data Platform", "Reliability"]
+        },
+        {
+          title: "What a Release Id Has to Pin to Return the Same Rows and Bytes",
+          title_ko: "자율주행 데이터 플랫폼 02. Release id 하나로 같은 rows와 bytes를 다시 받으려면 무엇을 고정해야 할까",
+          url: "writing/autonomy-2-what-a-release-pins.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-06", dateLabel: "Oct 6, 2026",
+          desc: "Five things a dataset release pins, publishing across Iceberg and Postgres in one transaction, and fixing the pin when evaluation starts.",
+          desc_ko: "Snapshot id · 파일 Hash · 변환과 정책 버전 · 검사 결과 · 선택된 행을 함께 고정합니다. Iceberg와 Postgres에 걸친 공개를 한 Transaction으로 묶고 평가 시작에 Pin을 고정한 이유입니다.",
+          tags: ["Driving Data Studio", "Data Platform", "Reliability"]
+        },
+        {
+          title: "Why a Solo Autonomous-Driving Project Became a Data Platform",
+          title_ko: "자율주행 데이터 플랫폼 01. 로컬 GPU 없이 시작한 자율주행 프로젝트는 왜 데이터 플랫폼이 됐을까",
+          url: "writing/autonomy-1-why-a-data-platform.ko.html",
+          source: "side", sourceLabel: "Personal project",
+          date: "2026-10-06", dateLabel: "Oct 6, 2026",
+          desc: "Measuring the machine first, finding the AWS path, and narrowing twelve planned directories to one data platform with a release contract.",
+          desc_ko: "로컬 GPU가 없다는 이유로 범위를 줄이려던 첫 판정이 틀렸습니다. 제약을 시간과 예산으로 다시 적고 Iceberg가 해 주는 일과 직접 만들 일을 가른 과정입니다.",
+          tags: ["Driving Data Studio", "Data Platform", "Method"]
+        },
+        {
+          title: "A Half-Filled Cache Erased the Project Boxes on Cold Start",
+          title_ko: "통합 모니터링 이슈 01. UI Rendering 부분 실패: Cold Cache Regression",
+          url: "writing/cold-cache-hid-the-boxes.ko.html",
+          source: "company", sourceLabel: "Company work",
+          date: "2026-09-22", dateLabel: "Sep 22, 2026",
+          desc: "A shared-cache refactor that made partial failures robust created a cold-start state where node was filled but instance was empty; the front end read that empty half as the source for project boxes, and the REST fallback that should have saved it had been a self-assignment no-op for years.",
+          desc_ko: "부분 실패에 강하게 만든 공유 Cache 리팩터가 cold에서 node는 채우고 instance는 비운 반쪽 상태를 만들었고, 프론트가 그 빈 목록을 프로젝트 박스 소스로 읽었습니다. 살렸어야 할 REST Fallback은 자기대입 no-op으로 죽어 있었고, 결정론적 재현으로 단일 소스 수정을 검증했습니다.",
+          tags: ["IaaS Backend", "Frontend", "Observability", "Reliability", "Method"]
+        },
+        {
+          title: "Self-Heal Is a Mechanism, Not a Fixed Number",
+          title_ko: "Snapshot Scheduler 이슈 01. Quota가 만든 Snapshot 회전 Deadlock: 여유 한 칸을 확보하기 위한 단계적 해결 방안",
+          url: "writing/self-heal-is-not-a-fixed-number.ko.html",
+          source: "company", sourceLabel: "Company work",
+          date: "2026-09-21", dateLabel: "Sep 21, 2026",
+          desc: "Lossless snapshot rotation needs one spare slot at the moment it rotates; when a hard quota equals the retention count, that slot never appears and every run fails forever. Why lowering retention or raising the quota both fail, how three major clouds avoid it, and the serialization, reservation, and tiering design we backlogged.",
+          desc_ko: "무손실 회전은 회전 순간 보관수+1칸이 필요한데, 하드 Quota가 보관수와 같으면 그 칸이 사라져 매 실행이 영구 실패합니다. 보관수를 줄여도 Quota를 키워도 안 되는 이유, 클라우드 3사가 피하는 원리, 직렬화·예약·지연 재시도와 티어링 설계를 코드 착수 전 설계 판단으로 정리했습니다.",
+          tags: ["IaaS Backend", "Reliability", "Design", "Method"]
+        },
+        {
           title: "Instance HA ⑧: Recovery Succeeded and It Still Was Not Over",
-          title_ko: "Instance HA ⑧: 복구가 성공해도 끝난 것은 아니었습니다",
+          title_ko: "Instance HA 08. 왜 Evacuate가 성공해도 다음 복구는 실패할까: 정리되지 않은 자원 할당과 서비스 상태",
           title_ja: "Instance HA ⑧: 復旧が成功しても終わりではありませんでした",
           url: "writing/what-recovery-leaves-behind.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-21", dateLabel: "Sep 21, 2026",
           desc: "Part 8 of the Instance HA design series. A successful move makes recovery look finished, but an allocation stays where the instance left, the failed node's compute service is still off, a shared state file can be overwritten, and the agent may not come back. The next recovery is the one that fails for it.",
-          desc_ko: "Instance HA 설계 8편. 옮기는 데 성공하면 끝난 것처럼 보이지만 떠난 자리에 자원 할당이 남고 장애 노드의 Compute 서비스는 꺼진 채이며 공유된 상태 파일이 덮어써지기도 하고 Agent가 돌아오지 않기도 합니다. 그 대가는 다음 복구가 치릅니다.",
+          desc_ko: "Instance HA 설계 8편. 옮기는 데 성공하면 끝난 것처럼 보이지만 떠난 자리에 자원 할당이 남고 장애 Node의 Compute 서비스는 꺼진 채이며 공유된 상태 파일이 덮어써지기도 하고 Agent가 돌아오지 않기도 합니다. 그 대가는 다음 복구가 치릅니다.",
           desc_ja: "Instance HA 設計の第8編。移すのに成功すると終わったように見えますが、去った場所に資源の割り当てが残り、障害ノードの Compute サービスは切れたままで、共有された状態ファイルが上書きされ、Agent が戻らないこともあります。その代償は次の復旧が払います。",
           tags: ["IaaS Backend", "Reliability", "Operations", "Method"]
         },
         {
           title: "Instance HA ⑦: A GPU Instance Only Goes to a Host That Has the Device",
-          title_ko: "Instance HA ⑦: GPU Instance는 장치를 가진 호스트로만 갑니다",
+          title_ko: "Instance HA 07. GPU Instance는 Device를 가진 Host로만 Evacuate된다",
           title_ja: "Instance HA ⑦: GPU Instance は装置を持つホストにだけ行きます",
           url: "writing/recovery-host-must-have-the-device.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-21", dateLabel: "Sep 21, 2026",
           desc: "Part 7 of the Instance HA design series. Recovery evacuation names its target host outright, so no scheduler picks a suitable one. Required resources and traits are read from the flavor and matched against what each host actually holds across its provider tree. Two quiet defects in that logic are written up with what each one did.",
-          desc_ko: "Instance HA 설계 7편. 복구의 evacuate는 타깃 호스트를 강제로 지정해 스케줄러가 끼어들지 않습니다. flavor에서 요구 자원과 필수 특성을 읽고 호스트가 공급자 트리에 실제로 가진 것과 맞춰 봅니다. 그 로직에서 조용히 틀린 두 곳도 증상과 함께 적었습니다.",
+          desc_ko: "Instance HA 설계 7편. 복구의 evacuate는 타깃 Host를 강제로 지정해 Scheduler가 끼어들지 않습니다. flavor에서 요구 자원과 필수 특성을 읽고 Host가 공급자 트리에 실제로 가진 것과 맞춰 봅니다. 그 로직에서 조용히 틀린 두 곳도 증상과 함께 적었습니다.",
           desc_ja: "Instance HA 設計の第7編。復旧の evacuate は対象ホストを強制で指定するため、スケジューラが入りません。flavor から要求資源と必須の特性を読み、ホストが提供者ツリーに実際に持つものと突き合わせます。その処理で静かに間違えた二箇所も症状とともに書きました。",
           tags: ["IaaS Backend", "Reliability", "GPU", "Method"]
         },
@@ -325,7 +457,7 @@
         },
         {
           title: "Instance HA ⑥: Recovery Time Would Not Fit in One Number",
-          title_ko: "Instance HA ⑥: 복구 시간은 한 숫자로 적을 수 없었습니다",
+          title_ko: "Instance HA 06. 왜 복구 시간은 단일 목표치로 정할 수 없을까: 단계와 서비스 유형마다 다른 허용치",
           title_ja: "Instance HA ⑥: 復旧時間は一つの数字では書けませんでした",
           url: "writing/instance-ha-6-100-seconds-is-a-service-decision.html",
           source: "company", sourceLabel: "Company work",
@@ -337,7 +469,7 @@
         },
         {
           title: "Instance HA ⑤: Quorum Cannot Cut the Power",
-          title_ko: "Instance HA ⑤: Quorum은 전원을 내리지 못합니다",
+          title_ko: "Instance HA 05. 3가지 아키텍처를 가른 기준: 전원 차단 수단(STONITH) 유무",
           title_ja: "Instance HA ⑤: Quorum は電源を落とせません",
           url: "writing/instance-ha-5-quorum-does-not-cut-power.html",
           source: "company", sourceLabel: "Company work",
@@ -349,19 +481,19 @@
         },
         {
           title: "Instance HA ④: The Design Asked for Fencing and the Build Kills Processes",
-          title_ko: "Instance HA ④: 펜싱 대신 프로세스를 종료하고 있었습니다",
+          title_ko: "Instance HA 04. Process 종료만으로는 Fencing이 아니다",
           title_ja: "Instance HA ④: Fencing の代わりにプロセスを終了していました",
           url: "writing/instance-ha-4-no-fencing-no-recovery.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-20", dateLabel: "Sep 20, 2026",
           desc: "Part 4 of the Instance HA design series. The design required cutting power and confirming it went down before moving anything. The shipped build has no such confirmation, and in its place a node that decides it has failed kills the VM processes running on itself, with an exempt list for anything being moved.",
-          desc_ko: "Instance HA 설계 4편. 설계는 전원을 내리고 내려갔는지 확인한 뒤에만 옮기라고 요구했습니다. 그런데 현재 구현에는 그 확인이 없고 대신 노드가 스스로 장애를 확정하면 자기 위의 VM 프로세스를 종료합니다. 이주 중인 VM은 종료 제외 목록으로 따로 둡니다.",
+          desc_ko: "Instance HA 설계 4편. 설계는 전원을 내리고 내려갔는지 확인한 뒤에만 옮기라고 요구했습니다. 그런데 현재 구현에는 그 확인이 없고 대신 Node가 스스로 장애를 확정하면 자기 위의 VM Process를 종료합니다. 이주 중인 VM은 종료 제외 목록으로 따로 둡니다.",
           desc_ja: "Instance HA 設計の第4編。設計は電源を落として落ちたと確認できてから移すよう求めました。ところが現在の実装にはその確認がなく、代わりにノードが自分で障害を確定すると自分の上の VM プロセスを終了します。移動中の VM は除外リストで別に扱います。",
           tags: ["IaaS Backend", "Reliability", "Method", "Operations"]
         },
         {
           title: "Instance HA ②: Each Signal Can See Something Different",
-          title_ko: "Instance HA ②: 신호마다 볼 수 있는 것이 다릅니다",
+          title_ko: "Instance HA 02. HeartBeat와 외부 Probe: 무엇을 더 믿어야 할까",
           title_ja: "Instance HA ②: 信号ごとに見えているものが違います",
           url: "writing/instance-ha-2-what-each-signal-can-say.html",
           source: "company", sourceLabel: "Company work",
@@ -372,26 +504,26 @@
           tags: ["IaaS Backend", "Reliability", "Method", "Operations"]
         },
         {
-          title: "A Teardown Destroyed 96 Resources and Two of Its Seven Lines Never Asked",
-          title_ko: "AWS 자원 96개를 지운 Teardown이 「잔여 없음」을 찍었는데 두 줄은 조회하지 않았습니다",
-          title_ja: "AWS リソース96個を消した Teardown が「残存なし」と出しましたが、2行は照会していません",
+          title: "The AWS Teardown Report's [No Remnants] Was Not [Empty] but [Not Queried]",
+          title_ko: "AWS 자원 정리 Report의 [잔여 없음]: Load Balancer와 ENI는 조회하지 않았다",
+          title_ja: "AWS Teardown Report の [残存なし] は [Empty] ではなく [Not Queried] だった",
           url: "writing/two-lines-that-asked-nothing.html",
           source: "side", sourceLabel: "Personal project",
           date: "2026-09-18", dateLabel: "Sep 18, 2026",
-          desc: "An EKS cluster was stood up and torn down once to find out whether the teardown removes what it created. It did, and the seven-line list that confirmed it had two lines that never ran a query: the load balancer and interface lookups sit behind a check for the VPC value, so once it was empty both printed the value they started with.",
-          desc_ko: "Teardown이 만든 것을 실제로 지우는지 확인하려고 EKS 클러스터를 한 번 세웠다가 지웠습니다. 지우는 것은 됐고 그것을 확인한 일곱 줄 가운데 두 줄은 질의를 실행한 적이 없었습니다. Load Balancer와 Network Interface 조회는 VPC 값이 있어야 돌기 때문에 그 값이 비면 빈 초기값이 그대로 찍혔습니다.",
-          desc_ja: "Teardown が作ったものを本当に消すのかを確かめるため、EKS クラスタを一度立てて消しました。消すことはできましたが、それを確認した七行のうち2行は照会を実行していませんでした。Load Balancer と Network Interface の照会は VPC の値がないと回らないので、値が空になった後は初期値がそのまま出ていました。",
+          desc: "A nightly AWS Teardown always reported [No Remnants] as success. But some of that output was an empty value that AWS was never even queried for, because the VPC was already gone — [Not Queried], not [Empty].",
+          desc_ko: "밤마다 도는 AWS Teardown이 늘 [잔여 없음]으로 성공했습니다. 그러나 출력 일부는 VPC가 이미 없어 AWS에 조회조차 하지 않은 빈 값이었습니다 — [Empty]가 아니라 [Not Queried]이었습니다.",
+          desc_ja: "毎晩走る AWS Teardown はいつも [残存なし] で成功していました。しかし出力の一部は、VPC がすでに無いため AWS に照会すらしていない空値でした — [Empty] ではなく [Not Queried] でした。",
           tags: ["GPUaaS Control Plane", "Operations", "Cost", "Method"]
         },
         {
           title: "Instance HA ①: We Judged a Live Node Dead",
-          title_ko: "Instance HA ①: 살아 있는 노드를 죽었다고 판정했습니다",
+          title_ko: "Instance HA 01. 왜 Switch 한 대에 장애가 발생하면 Controller는 살아 있는 Compute Node를 [Down]으로 판정할까",
           title_ja: "Instance HA ①: 生きているノードを死んだと判定しました",
           url: "writing/the-hard-part-of-ha-was-not-recovery.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-19", dateLabel: "Sep 19, 2026",
           desc: "Part 1 of the Instance HA design series. An L2/L3 switch failure cut the controllers from each other rather than the compute nodes, and in that state a leader controller judged a live Compute dead and fired Nova Evacuate at scale. This part covers how four network strands ended up in different states and how an observer's isolation was read as the target's failure. Also in Korean and Japanese.",
-          desc_ko: "Instance HA 설계 1편. L2/L3 스위치가 죽었는데 끊긴 것은 Compute가 아니라 Controller끼리의 통신이었고 그 상태에서 Leader Controller가 살아 있는 Compute를 죽었다고 판정해 Nova Evacuate가 대량 실행됐습니다. 네트워크 네 갈래가 서로 다른 상태가 되는 구조와 관측자의 고립을 대상의 장애로 읽은 경로를 정리했습니다.",
+          desc_ko: "Instance HA 설계 1편. L2/L3 Switch가 죽었는데 끊긴 것은 Compute가 아니라 Controller끼리의 통신이었고 그 상태에서 Leader Controller가 살아 있는 Compute를 죽었다고 판정해 Nova Evacuate가 대량 실행됐습니다. 네트워크 네 갈래가 서로 다른 상태가 되는 구조와 관측자의 고립을 대상의 장애로 읽은 경로를 정리했습니다.",
           desc_ja: "Instance HA 設計の第1編。L2/L3 スイッチが死んだとき切れたのは Compute ではなく Controller 同士の通信で、その状態で Leader Controller が生きている Compute を死んだと判定して Nova Evacuate が大量に実行されました。四本のネットワークが別々の状態になる構造と、観測者の孤立を対象の障害として読んだ経路をまとめました。",
           tags: ["IaaS Backend", "Reliability", "Method", "Operations"]
         },
@@ -403,13 +535,13 @@
           source: "company", sourceLabel: "Company work",
           date: "2026-09-18", dateLabel: "Sep 18, 2026",
           desc: "A snapshot was said to take three hours, so I wrote the cause down first — then measured two real snapshots and watched the 40 GiB model fall apart: the bytes tracked the real ~1.8 GiB and it finished in minutes. Instead of guessing why 'three hours' was real, I filled a disk on purpose and timed snapshots at 1.8, 5.7, and 11 GiB — 11 GiB alone took 30 minutes. Also in Korean and Japanese.",
-          desc_ko: "느린 스냅샷의 원인을 문서로 먼저 적었다가, 실제 스냅샷 두 건을 재보며 40 GiB 모델을 지웠습니다. 바이트는 실데이터(약 1.8 GiB)를 따라갔고 실행은 몇 분에 끝났습니다. '세 시간'을 추측으로 메우는 대신 디스크를 직접 채워 1.8·5.7·11 GiB에서 스냅샷을 쟀고 11 GiB만으로 30분이 걸렸습니다. 영어·일본어로도 볼 수 있습니다.",
+          desc_ko: "느린 Snapshot의 원인을 문서로 먼저 적었다가, 실제 Snapshot 두 건을 재보며 40 GiB 모델을 지웠습니다. 바이트는 실데이터(약 1.8 GiB)를 따라갔고 실행은 몇 분에 끝났습니다. '세 시간'을 추측으로 메우는 대신 디스크를 직접 채워 1.8·5.7·11 GiB에서 Snapshot을 쟀고 11 GiB만으로 30분이 걸렸습니다. 영어·일본어로도 볼 수 있습니다.",
           desc_ja: "遅いスナップショットの原因を先に書きましたが、実際のスナップショット2件を測って 40 GiB モデルを消しました。バイトは実データ（約 1.8 GiB）に沿い、実行は数分で終わりました。「3時間」を推測で埋める代わりにディスクを直接埋めて 1.8・5.7・11 GiB でスナップショットを測り、11 GiB だけで 30 分かかりました。韓国語・英語でも読めます。",
           tags: ["IaaS Backend", "Method", "Performance", "Reliability"]
         },
         {
           title: "Did the Snapshot Scheduler Run? Making Invisible Automation Trustworthy",
-          title_ko: "스냅샷 스케줄러는 실행됐는가: 보이지 않던 자동화를 신뢰하게 만들기",
+          title_ko: "Snapshot Scheduler 실행 이력: 자동화의 추적과 기록",
           url: "writing/snapshot-scheduler-observability.ko.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-16", dateLabel: "Sep 16, 2026",
@@ -419,7 +551,7 @@
         },
         {
           title: "Which Volume Is Root When Both Are Bootable?",
-          title_ko: "둘 다 bootable인 Volume 중 실제 Root를 어떻게 찾았나",
+          title_ko: "Snapshot Scheduler 실행 이력 05. Root Volume 식별: OpenStack4j를 확장한다",
           url: "writing/snapshot-root-volume-identity.ko.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-16", dateLabel: "Sep 16, 2026",
@@ -429,7 +561,7 @@
         },
         {
           title: "Run History Should Outlive Its Schedule",
-          title_ko: "스케줄을 지워도 실행 이력은 지우지 않았습니다",
+          title_ko: "Snapshot Scheduler 실행 이력 04. 사후 보존: 추적은 사후에도 필요하다",
           url: "writing/snapshot-history-outlives-schedule.ko.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-16", dateLabel: "Sep 16, 2026",
@@ -439,12 +571,12 @@
         },
         {
           title: "Why Is a 2/2 Run Only Partially Successful?",
-          title_ko: "성공 2/2인데 왜 일부 작업 실패인가",
+          title_ko: "Snapshot Scheduler 실행 이력 03. 일부 작업 실패: 보조 작업도 실행 이력에 남긴다",
           url: "writing/snapshot-history-result-model.ko.html",
           source: "company", sourceLabel: "Company work",
           date: "2026-09-16", dateLabel: "Sep 16, 2026",
           desc: "The first article in a Korean series models snapshot creation counts separately from retention and local-save outcomes so that 2/2 and PARTIAL can both be true without contradiction.",
-          desc_ko: "실행 이력 설계 상세 1편. Snapshot 생성 카운트와 보관 정리·로컬 저장 결과를 분리해 2/2와 일부 작업 실패가 모순 없이 함께 참이 되게 했습니다.",
+          desc_ko: "실행 이력 설계 상세 1편. Snapshot 생성 Count와 보관 정리·로컬 저장 결과를 분리해 2/2와 일부 작업 실패가 모순 없이 함께 참이 되게 했습니다.",
           tags: ["IaaS Backend", "Backend", "Observability", "Reliability"]
         },
         {
@@ -463,7 +595,7 @@
           title: "The Run History Tab Had a Path That Left No History",
           url: "writing/the-history-tab-that-had-a-hole.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "실행 이력은 모든 종료 경로에 남아야 합니다",
+          title_ko: "Snapshot Scheduler 실행 이력 02. 정지와 재시도의 기준: 대상 부재는 정지, 오류는 이력을 남기고 재시도한다",
           desc_ko: "대상이 사라져 중단된 실행까지 기록해야 미실행과 실패를 구분할 수 있었습니다. 모든 종료 경로가 한 줄의 증거를 남기게 만든 과정입니다.",
           title_ja: "履歴タブを作ってみたら履歴が残らない経路がありました",
           desc_ja: "スナップショットスケジューラの実行履歴を画面に付けたのに、対象が消えて停止した実行は履歴が一行も残りませんでした。照会の失敗を対象無しと読み、一時的な障害が永久停止になっていました。",
@@ -475,7 +607,7 @@
           title: "A Snapshot Schedule Failed Every Run and the Screen Said STARTED",
           url: "writing/a-schedule-that-failed-in-silence.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "스냅샷이 생성되지 않았는데 화면은 STARTED였습니다",
+          title_ko: "Snapshot Scheduler 실행 이력 01. 실패해도 Status [STARTED]를 표시하는 현상: [FAILED] Enum을 정의만 하고 사용하지 않았다",
           desc_ko: "할당량 부족으로 Snapshot 생성이 거절됐지만 실패가 화면에 전달되지 않아 Scheduler 장애로 오인됐습니다. 실패 경로와 이전 백업을 먼저 지우던 보관 순서를 바로잡았습니다.",
           title_ja: "スナップショットスケジューラが毎回失敗しても画面は STARTED でした",
           desc_ja: "プロジェクトのスナップショットクォータが満杯だとスケジューラが毎回失敗するのに画面は STARTED でした。FAILED という状態値はすでにあり、それを書くコードがありませんでした。そしてその瞬間にコードは前のバックアップを先に消していました。",
@@ -520,15 +652,15 @@
           tags: ["Social Polling Platform", "Postgres", "Backend", "Method"]
         },
         {
-          title: "A Go Benchmark Harness Opened 884 TCP Connections for 884 Rejections",
+          title: "Why the Go Benchmark Harness Could Not Reuse a Connection",
           url: "writing/every-rejection-opened-a-new-connection.html",
           source: "side", sourceLabel: "Personal project",
-          title_ko: "Go 벤치 Harness가 거부 응답 884건에 TCP Connection 884개를 열었습니다",
-          desc_ko: "429 응답의 Body를 읽지 않고 닫아서 실제 런이 쓰는 pooled 모드가 요청 하나에 Connection 하나를 열고 있었습니다. 읽어 비우게 고치자 22개가 됐습니다. Pool의 효과를 보여 준 431 → 6은 거부가 0건인 트레이스에서 잰 숫자였습니다. 한국어와 일본어로도 읽을 수 있습니다.",
-          title_ja: "Go ベンチ Harness が拒否応答884件に TCP Connection を884本開きました",
-          desc_ja: "429 応答の Body を読まずに閉じていたため、実際のランが使う pooled モードが要求1件ごとに Connection を1本開いていました。読み切るように直すと22本になりました。Pool の効果を示した 431 → 6 は、拒否が0件のトレースで測った数字でした。",
+          title_ko: "왜 Go Benchmark Harness는 Connection을 재사용하지 못했을까",
+          desc_ko: "pooled 모드인 Go Benchmark Harness가 요청마다 새 Connection을 열고 있었습니다. 429 Response의 Body를 읽지 않고 닫아 Connection이 Pool로 돌아가지 못했기 때문입니다. Pool 효과의 근거였던 431→6은 거부가 0건인 Trace에서 잰 값이었습니다. 한국어와 일본어로도 읽을 수 있습니다.",
+          title_ja: "なぜ Go Benchmark Harness は Connection を再利用できなかったのか",
+          desc_ja: "pooled モードの Go Benchmark Harness が要求ごとに新しい Connection を開いていました。429 Response の Body を読まずに閉じたため、Connection が Pool へ戻らなかったからです。Pool の効果を示した 431 → 6 は、拒否が 0 件の Trace で測った数字でした。",
           date: "2026-09", dateLabel: "Sep 2026",
-          desc: "The harness closed 429 responses without reading their bodies, so the pooled mode real runs use opened one connection per request. Draining them brought it to 22. The 431 → 6 figure that showed the pool working had been measured on a trace with zero rejections. Also in Korean and Japanese.",
+          desc: "The Go Benchmark Harness ran in pooled mode yet opened a new Connection for every request. It closed each 429 Response without reading the Body, so the Connection never returned to the Pool. The 431 → 6 figure that showed the Pool working had been measured on a Trace with zero rejections. Also in Korean and Japanese.",
           tags: ["GPUaaS Control Plane", "Performance", "Method"]
         },
         {
@@ -559,7 +691,7 @@
           title: "Four GPU Quota Defences Broke the Same Way",
           url: "writing/every-guarantee-ends-at-a-writable-field.html",
           source: "side", sourceLabel: "Personal project",
-          title_ko: "GPU 쿼터 방어 4건이 같은 방식으로 뚫렸습니다",
+          title_ko: "GPU Quota 방어 4건이 같은 방식으로 뚫렸습니다",
           desc_ko: "같은 방식으로 뚫린 방어 4건. 전부 읽어서가 아니라 공격해서 찾았습니다. 검사는 자기가 읽은 것에 대해 옳았고 틀린 것은 테넌트가 쓰는 값을 테넌트에 관한 증거로 읽은 쪽이었습니다.",
           title_ja: "GPU クォータの防御 4 件が同じ形で破れました",
           desc_ja: "同じやり方で破られた防御が 4 件。すべて読んで見つけたのではなく攻撃して見つけた。検査は自分が読んだものについては正しく、誤っていたのはテナントが書く値をテナントについての証拠として読んだ側だった。",
@@ -580,15 +712,15 @@
           tags: ["GPUaaS Control Plane", "Cost", "Operations", "Method"]
         },
         {
-          title: "GPU Admission Control Did Not Protect p99. It Dropped 1,788 Requests.",
+          title: "The Hallucination in the GPU Admission Control Report That Omitted the 413 Response",
           url: "writing/it-deleted-the-tenant.html",
           source: "side", sourceLabel: "Personal project",
-          title_ko: "GPU 입장 제어가 p99를 지킨 게 아니라 요청 1,788건을 버렸습니다",
-          desc_ko: "GPU 한 장 위의 4-arm 실험. 거절을 0건 했다는 Arm이 완료 수는 프리미엄 요청 수와 정확히 같았습니다. Report의 판정이 전부 비율이라 유료 반복 4회 동안 아무도 그것을 보지 못했습니다.",
-          title_ja: "GPU 入場制御は p99 を守らず、リクエスト 1,788 件を捨てていました",
-          desc_ja: "GPU 1 枚の上での 4-arm 実験。拒否 0 件だという Arm の完了数が、プレミアムの要求数とぴったり同じだった。レポートの判定がすべて比だったため、4 回の有料実行の間それは見えなかった。",
+          title_ko: "GPU 요청 거절 0건 Report: 413 Response 1,788건을 집계하지 않았다",
+          desc_ko: "단일 GPU 4-arm 실험에서 p99를 지켰다던 Admission Control Arm이 실은 요청 1,788건을 413으로 버렸습니다. Report가 429만 집계하고 413을 빼서 유료 실험 네 번 내내 드러나지 않았습니다.",
+          title_ja: "413 Response を落とした GPU Admission Control Report の Hallucination",
+          desc_ja: "GPU 1 枚の 4-arm 実験で、p99 を守ったとされた Admission Control Arm が、実際には要求 1,788 件を 413 で捨てていました。Report が 429 だけを集計して 413 を除いたため、有料の実験 4 回のあいだ表に出ませんでした。",
           date: "2026-09", dateLabel: "Sep 2026",
-          desc: "A four-arm experiment on one A10G. The arm that rejected nothing completed exactly the premium request count, and every check was a tail ratio. Also in Korean and Japanese.",
+          desc: "On a single-GPU four-arm experiment, the Admission Control Arm that supposedly protected p99 had in fact dropped 1,788 requests with 413. The Report counted only 429 and left 413 out, so it stayed hidden across four paid experiments. Also in Korean and Japanese.",
           tags: ["GPUaaS Control Plane", "GPU", "Method", "Observability"]
         },
         {
@@ -607,7 +739,7 @@
           title: "Instance HA ③: Of Eight Failures, Only One Should Recover",
           url: "writing/seven-of-eight-should-not-recover.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "Instance HA ③: 여덟 가지 장애 중 복구해도 되는 것은 하나였습니다",
+          title_ko: "Instance HA 03. 왜 8가지 장애 중 복구해도 되는 것은 하나뿐일까",
           desc_ko: "Instance HA 설계 3편. 「정말 장애인가」와 「지금 실행해도 되는가」가 한 판정에 섞여 있어 Storage 장애가 Compute 장애로 읽혔습니다. 두 질문을 Phase 1과 Phase 2로 가르고 판정 순서를 의사코드로 고정했습니다. 같은 기준으로 시나리오 여덟 개를 판정하니 Fencing 1건에 Hold 7건이었습니다.",
           title_ja: "Instance HA ③: 八つの障害のうち復旧してよいのは一つでした",
           desc_ja: "Instance HA 設計の第3編。「本当に障害か」と「今実行してよいか」が一つの判定に混ざり、Storage の障害が Compute の障害として読まれていました。二つを Phase 1 と Phase 2 に分け、判定順序を擬似コードで固定しました。同じ基準で八つのシナリオを判定すると Fencing 1 件と Hold 7 件でした。",
@@ -643,8 +775,8 @@
           title: "Merging Three Monitoring Caches Made Them Erase Each Other",
           url: "writing/monitoring-one-shared-cache.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "모니터링 Cache 세 개를 합치자 서로의 값을 지웠습니다",
-          desc_ko: "세 화면이 같은 원천을 따로 수집하고 있어 Cache 셋을 하나로 합쳤습니다. 합치자마자 한 화면만 열어 두면 다른 화면의 마지막 값이 사라지는 회귀가 나왔습니다. 분리된 Cache가 말없이 갖고 있던 계약이 사라진 것이고 아무도 그것을 적어 둔 적이 없었습니다. 연작 ‘통합 모니터링’ ⑤, 마지막 편.",
+          title_ko: "통합 모니터링 성능 개선 05. 공유 Cache 설계: 대시보드, 물리 Node, 가상자원 Cache를 통합한다",
+          desc_ko: "세 화면이 같은 원천을 따로 수집하고 있어 Cache 셋을 하나로 합쳤습니다. 합치자마자 한 화면만 열어 두면 다른 화면의 마지막 값이 사라지는 회귀가 나왔습니다. 분리된 Cache가 암묵적으로 지키던 규칙이 사라진 것이고 아무도 그것을 적어 둔 적이 없었습니다. 연작 ‘통합 모니터링’ ⑤, 마지막 편.",
           title_ja: "モニタリングの Cache 三つをまとめたら互いの値を消しました",
           desc_ja: "三画面が同じ源を別々に収集していたので Cache 三つを一つにまとめました。まとめた直後に、一つの画面だけ開いていると別の画面の最後の値が消える回帰が出ました。分離された Cache が黙って持っていた契約が消えたのであり、誰もそれを書き残していませんでした。連載「統合モニタリング」⑤、最終編。",
           date: "2026-09", dateLabel: "Sep 2026",
@@ -655,7 +787,7 @@
           title: "Fixing Only REST or Only SSE Left the Screen Where It Was",
           url: "writing/monitoring-two-gates-one-screen.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "REST와 SSE 중 한쪽만 고치니 화면은 그대로였습니다",
+          title_ko: "통합 모니터링 성능 개선 04. 화면 로딩 병목 분석: REST Response와 SSE Connection 두 경로 중 오래 걸리는 경로가 화면 완료 시점을 정한다",
           desc_ko: "가상자원 화면에는 따로 시작하는 경로가 둘 있어 한쪽만 고쳐서는 빨라지지 않았습니다. 프로젝트마다 도는 호출을 병렬화 대신 요청에서 떼어 냈고 빈 목록을 성공으로 받으면 기존 값이 0으로 덮인다는 지적을 받았습니다. 그리고 SSE가 빨라지자 숨어 있던 순서 의존이 드러났습니다. 연작 ‘통합 모니터링’ ④.",
           title_ja: "REST と SSE の片方だけ直しても画面はそのままでした",
           desc_ja: "仮想リソース画面には別々に始まる経路が二つあり、片方だけ直しても速くなりませんでした。プロジェクトごとに回る呼び出しを並列化ではなくリクエストから外し、空のリストを成功として受け取ると既存の値が 0 で塗り替えられるという指摘を受けました。そして SSE が速くなると隠れていた順序依存が表に出ました。連載「統合モニタリング」④。",
@@ -667,7 +799,7 @@
           title: "An Empty List Could Mean Zero Nodes or a Failed Query",
           url: "writing/monitoring-empty-is-not-zero.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "빈 목록이 Node가 0대인지 조회가 실패한 것인지 구분하지 못했습니다",
+          title_ko: "통합 모니터링 성능 개선 03. Empty Metric 판별 설계: Metric 수집 실패와 실제 Node 0대를 구분한다",
           desc_ko: "물리 Node 화면에 같은 serve-stale 패턴을 옮기다가 ‘빈 결과를 0대로 발행해도 되는가’에서 멈췄습니다. 대상이 없어서 빈 것과 못 가져와서 빈 것이 같은 모양으로 옵니다. 빈 결과를 다섯 갈래로 갈라 둘만 새 값으로 발행하고 나머지는 마지막 정상값을 유지하도록 했습니다. 연작 ‘통합 모니터링’ ③.",
           title_ja: "空のリストがノード 0 台なのか取得失敗なのか分かりませんでした",
           desc_ja: "物理ノード画面に同じ serve-stale のパターンを移す途中で「空の結果を 0 台として公開してよいのか」で止まりました。対象が無くて空なのと、取れなくて空なのが同じ形で届きます。空の結果を五つに分け、二つだけを新しい値として公開しました。連載「統合モニタリング」③。",
@@ -679,7 +811,7 @@
           title: "Adding One Cache to a Monitoring Screen Created Three Kinds of Race",
           url: "writing/monitoring-three-races-in-one-cache.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "모니터링 화면에 Cache를 넣자 세 종류의 경합이 생겼습니다",
+          title_ko: "통합 모니터링 성능 개선 02. Cache 동시성 설계: 공유 상태의 Update와 Publish를 Single Coordinator로 제어한다",
           desc_ko: "대시보드의 첫 데이터가 6.8s였던 이유는 접속이 곧 계산이었기 때문입니다. 요청 경로에서 계산을 떼어 내 10ms가 됐는데 그 과정에서 갱신이 취소되는 것·같은 값을 전체에 여러 번 뿌리는 것·Timeout 하나가 남의 Query를 끊는 것, 경합 셋이 나왔습니다. 연작 ‘통합 모니터링’ ②.",
           title_ja: "モニタリング画面に Cache を入れたら三種類の競合が生まれました",
           desc_ja: "ダッシュボードの最初のデータが 6.8 秒だった理由は、接続がそのまま計算だったからです。リクエスト経路から計算を外して 10ms になりましたが、その過程で更新が取り消されること・同じ値を全体に何度も配ること・Timeout 一つが他人のクエリを切ることという競合が三つ出てきました。連載「統合モニタリング」②。",
@@ -691,7 +823,7 @@
           title: "The Screen I Found No Case to Fix Took 6.8 Seconds",
           url: "writing/monitoring-the-screen-i-said-not-to-fix.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "고칠 근거를 못 찾았다고 쓴 모니터링 화면이 6.8s였습니다",
+          title_ko: "통합 모니터링 성능 개선 01. 성능 측정 사각지대: 개발자는 REST Response 조회 성능을 보지만 사용자는 실제 화면을 본다",
           desc_ko: "모니터링 화면 3개를 검토하고 ‘고칠 근거를 못 찾았다’고 발행했는데 같은 화면의 첫 데이터가 6.8s였습니다. 저는 REST 응답을 쟀고 사용자는 SSE의 첫 data를 기다리고 있었습니다. 요청 경로에서 계산을 떼어 내자 세 화면 모두 약 23ms가 됐습니다. 연작 ‘통합 모니터링’ ①.",
           title_ja: "直す根拠が見つからないと書いた画面が 6.8 秒でした",
           desc_ja: "モニタリング画面 3 つをレビューして「直す根拠が見つからなかった」と公開したのに、同じ画面の最初のデータが 6.8 秒でした。私は REST の応答を測り、利用者は SSE の最初の data を待っていました。リクエスト経路から計算を外すと、三画面とも約 23ms になりました。連載「統合モニタリング」①。",
@@ -703,8 +835,8 @@
           title: "I Pinned the Declared Load Conditions Across Six Runs",
           url: "writing/slow-screens-8-load-test-harness.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "선언한 부하 조건을 상수로 고정해 여섯 번을 쟀습니다",
-          desc_ko: "구성 6가지를 비교하려면 같은 조건으로 6번을 돌려야 합니다. 부하 조건을 상수로 옮겨 JMX를 생성하는 Harness를 짰습니다. 그런데 결과 파일이 하나도 없어도 실행 스크립트는 ‘완료’를 찍고 0으로 끝났고 어느 회차가 어느 구성이었는지는 도구 밖에만 남았습니다. 연작 ‘느린 화면’ ⑧, 마지막 편.",
+          title_ko: "Volume/Snapshot 조회 성능 개선 04. JMeter Harness 설계 및 구축: 부하 조건을 코드로 고정하고 동일 조건으로 비교",
+          desc_ko: "구성 6가지를 비교하려면 같은 조건으로 6번을 돌려야 합니다. 부하 조건을 상수로 옮겨 JMX를 생성하는 Harness를 짰습니다. 그런데 결과 파일이 하나도 없어도 실행 스크립트는 ‘완료’를 찍고 0으로 끝났고 어느 회차가 어느 구성이었는지는 도구 밖에만 남았습니다. Volume/Snapshot 조회 성능 개선 연작 04, 마지막 편.",
           title_ja: "宣言した負荷条件を定数で固定して 6 回測りました",
           desc_ja: "構成 6 通りを比べるには同じ条件で 6 回まわす必要があります。負荷条件を定数に移して JMX を生成する Harness を書きました。ところが結果ファイルが 1 つもなくても実行スクリプトは「完了」と出して 0 で終わり、どの回がどの構成だったかは道具の外にしか残りませんでした。連載「遅い画面」⑧、最終編。",
           date: "2026-09", dateLabel: "Sep 2026",
@@ -715,8 +847,8 @@
           title: "A Performance Review That Found No Case to Change Anything",
           url: "writing/slow-screens-7-nothing-to-fix.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "모니터링 성능 검토에서 고칠 근거를 못 찾았습니다",
-          desc_ko: "모니터링 화면 3개를 검토했는데 새로 최적화할 근거를 못 찾았습니다. Cache를 더 넣으려던 자리는 줄일 것이 작아 보였고 과해 보이던 설정 하나는 화면 깜빡임을 막고 있었습니다. 부하 테스트는 돌리지 않았고 왜 안 돌렸는지도 적었습니다. 연작 ‘느린 화면’ ⑦.",
+          title_ko: "모니터링 화면 3개를 고치지 않은 판단: 측정 대상을 잘못 골랐다",
+          desc_ko: "모니터링 화면 3개를 검토했는데 새로 최적화할 근거를 못 찾았습니다. Cache를 더 넣으려던 자리는 줄일 것이 작아 보였고 과해 보이던 설정 하나는 화면 깜빡임을 막고 있었습니다. 부하 테스트는 돌리지 않았고 왜 안 돌렸는지도 적었습니다.",
           title_ja: "モニタリングの性能レビューで、直す根拠が見つかりませんでした",
           desc_ja: "モニタリング画面 3 つをレビューしましたが、新しく最適化する根拠が見つかりませんでした。Cache を足そうとした場所は削れるものが小さく、過剰に見えた設定 1 つはグラフのちらつきを防いでいました。負荷試験は回しておらず、なぜ回さなかったのかも書きます。連載「遅い画面」⑦。",
           date: "2026-09", dateLabel: "Sep 2026",
@@ -724,23 +856,23 @@
           tags: ["IaaS Backend", "Performance", "Method"]
         },
         {
-          title: "Pre-fetching Everything and Polling a Ten-Second Query Blocked the Dialog",
+          title: "The Request Pileup in the Cloud Console Made by Prefetch and 5s Polling",
           url: "writing/slow-screens-6-polling-pileup.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "안 고른 것까지 미리 받고 10s 조회를 5s마다 불러 창이 막혔습니다",
-          desc_ko: "버튼을 눌러도 창이 안 열리고 로딩만 돌았습니다. 개발자 도구에는 끝나지 않은 요청이 4건 남아 있었습니다. 목록 조회가 10s 넘게 걸리는데 화면은 5s마다 다시 불렀고 창이 열려 있는 동안에도 멈추지 않았습니다. 그리고 그 5s가 Backend Cache 결정의 근거가 됐습니다. 연작 ‘느린 화면’ ⑥.",
-          title_ja: "選んでいないものまで先に取り、10 秒の取得を 5 秒ごとに呼んでダイアログが塞がりました",
-          desc_ja: "ボタンを押してもダイアログが開かず、ローディングだけが回っていました。開発者ツールには未完了のリクエストが 4 件。一覧の取得に 10 秒以上かかるのに画面は 5 秒ごとに取り直し、ダイアログが開いているあいだも止まりませんでした。そしてその 5 秒が Backend Cache の判断の根拠になりました。連載「遅い画面」⑥。",
+          title_ko: "Volume/Snapshot 조회 성능 개선 03. 생성 Modal 조회 지연: 세부 항목을 선택하기 전 Prefetch Request 적체",
+          desc_ko: "Volume 생성 Modal이 열리지 않았습니다. 안 고른 선택지까지 전부 미리 조회하는 Prefetch와, 10s 넘는 목록을 5s마다 다시 부르는 Polling이 겹쳐 요청 적체를 만들었습니다. 그리고 그 5s가 Backend Cache 결정의 근거가 됐습니다. Volume/Snapshot 조회 성능 개선 연작 03.",
+          title_ja: "Prefetch と 5s Polling が生んだ Cloud Console の Request Pileup",
+          desc_ja: "Volume 作成 Modal が開きませんでした。選んでいない選択肢まで先に取る Prefetch と、10s を超える一覧を 5s ごとに取り直す Polling が重なって Request Pileup を作りました。そしてその 5s が Backend Cache の判断の根拠になりました。連載「遅い画面」⑥。",
           date: "2026-09", dateLabel: "Sep 2026",
-          desc: "Clicking the create button left the dialog spinning. DevTools showed four requests still pending. The list query took over ten seconds while the screen re-fetched it every five, and kept doing so while the dialog was open — and those five seconds became the reason behind a backend cache setting. Slow Screens, part six. Also in Korean and Japanese.",
+          desc: "The Volume create Modal would not open. A Prefetch that fetched every option no one had selected, layered over Polling that re-ran a 10s list every 5s, combined into a Request Pileup — and those 5s became the reason behind a Backend Cache setting. Slow Screens, part six. Also in Korean and Japanese.",
           tags: ["IaaS Backend", "Frontend", "Performance", "Method"]
         },
         {
           title: "A Monitoring Screen's Initial Load Authenticated Once Per Project",
           url: "writing/slow-screens-4-client-per-loop.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "모니터링 화면 초기 로드가 프로젝트 수만큼 Keystone에 인증했습니다",
-          desc_ko: "시계열 그래프를 그리는 화면이라 Query를 의심했는데 아니었습니다. 초기 로드가 프로젝트마다 Client를 새로 만들고 있었고 우리가 쓰던 팩터리는 Client를 줄 때마다 Keystone에 인증합니다. 다만 이 글에는 전후를 잰 숫자가 없습니다. 왜 없는지가 글의 절반입니다. 연작 ‘느린 화면’ ④.",
+          title_ko: "모니터링 화면의 초기 로드가 느린 이유는 프로젝트마다 Client를 생성해 Keystone 인증을 반복했기 때문입니다",
+          desc_ko: "시계열 그래프를 그리는 화면이라 Query를 의심했는데 아니었습니다. 초기 로드가 프로젝트마다 Client를 새로 만들고 있었고 우리가 쓰던 팩터리는 Client를 줄 때마다 Keystone에 인증합니다. 다만 이 글에는 전후를 잰 숫자가 없습니다. 왜 없는지가 글의 절반입니다.",
           title_ja: "モニタリング画面の初期ロードがプロジェクトの数だけ認証していました",
           desc_ja: "時系列グラフを描く画面なのでクエリを疑いましたが違いました。初期ロードがプロジェクトごとに Client を作り直しており、使っていたファクトリは Client を渡すたびに Keystone へ認証します。ただしこの記事には前後を測った数値がありません。なぜ無いのかが記事の半分です。連載「遅い画面」④。",
           date: "2026-09", dateLabel: "Sep 2026",
@@ -751,8 +883,8 @@
           title: "A Project Role Lookup: 1,409 ms → 1 ms",
           url: "writing/slow-screens-3-role-lookup.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "프로젝트 역할 조회가 1,409ms → 1ms로 줄었습니다",
-          desc_ko: "화면에 Cache가 이미 있었는데 그 Cache 때문에 느렸습니다. 찾은 8줄은 전부 0ms였고 못 찾은 6줄을 더하면 1,409ms로 타이머가 찍은 총계와 같았습니다. 못 찾을 때마다 프로젝트 전체 목록을 다시 부르고 있었는데 그 6개 id는 다시 받아도 없는 프로젝트였습니다. 연작 ‘느린 화면’ ③.",
+          title_ko: "역할 목록 조회 지연: 없는 프로젝트 ID마다 전체 목록을 다시 조회했다",
+          desc_ko: "화면에 Cache가 이미 있었는데 그 Cache 때문에 느렸습니다. 찾은 8줄은 전부 0ms였고 못 찾은 6줄을 더하면 1,409ms로 타이머가 찍은 총계와 같았습니다. 못 찾을 때마다 프로젝트 전체 목록을 다시 부르고 있었는데 그 6개 id는 다시 받아도 없는 프로젝트였습니다.",
           title_ja: "プロジェクトのロール取得が 1,409ms → 1ms に減りました",
           desc_ja: "画面にはすでに Cache があり、その Cache のせいで遅くなっていました。解決できた 8 行はすべて 0ms、できなかった 6 行を足すと 1,409ms でタイマーの合計と同じでした。解決できないたびにプロジェクト全件を取り直しており、その 6 つの id は取り直しても存在しません。連載「遅い画面」③。",
           date: "2026-09", dateLabel: "Sep 2026",
@@ -763,8 +895,8 @@
           title: "Listing Instances: 54 Seconds → One",
           url: "writing/slow-screens-2-instance-list.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "Instance 목록 조회가 54s → 1s로 줄었습니다",
-          desc_ko: "Instance는 20개인데 목록이 Timeout이 났습니다. CLI로 불러도 54s여서 느린 구간이 Backend 아래에 있다는 것까지는 알았습니다. Swap이 8.0GiB 전부 차 있었고 instances Table에는 삭제 표시만 된 행이 1,021개 남아 있었습니다. 그리고 제가 쓴 명령은 운영에서 쓰면 안 되는 것이었습니다. 연작 ‘느린 화면’ ②.",
+          title_ko: "Instance 목록 조회 지연: Swap 포화와 soft-delete로 남은 1,021행",
+          desc_ko: "Instance는 20개인데 목록이 Timeout이 났습니다. CLI로 불러도 54s여서 느린 구간이 Backend 아래에 있다는 것까지는 알았습니다. Swap이 8.0GiB 전부 차 있었고 instances Table에는 삭제 표시만 된 행이 1,021개 남아 있었습니다. 그리고 제가 쓴 명령은 운영에서 쓰면 안 되는 것이었습니다.",
           title_ja: "Instance 一覧が 54 秒から 1 秒になりました",
           desc_ja: "Instance は 20 個なのに一覧が Timeout しました。同じ取得を CLI で実行しても 54 秒で、コードが容疑から外れました。Swap が 8.0GiB すべて埋まり、instances テーブルには削除の印だけが付いた行が 1,021 件。そして私が使ったコマンドは本番で使ってはいけないものでした。連載「遅い画面」②。",
           date: "2026-09", dateLabel: "Sep 2026",
@@ -775,8 +907,8 @@
           title: "A Volume List: Ten-Minute Timeout → 23 ms",
           url: "writing/slow-screens-1-volume-list.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "Volume 목록 P99가 10min → 23ms로 줄었습니다",
-          desc_ko: "관리 Volume 목록이 6번에 5번 Timeout이 났습니다. 고친 뒤 구성을 6가지로 나눠 같은 부하로 따로 쟀더니, 초를 가장 많이 줄인 것은 Cache 하나였고 병렬화는 중앙값과 꼬리를 반대 방향으로 움직였습니다. 연작 ‘느린 화면’ ①.",
+          title_ko: "Volume/Snapshot 조회 성능 개선 01. 목록 조회 Caching: Caffeine LoadingCache로 Cache Stampede 해결",
+          desc_ko: "관리 Volume 목록이 6번에 5번 Timeout이 났습니다. 고친 뒤 구성을 6가지로 나눠 같은 부하로 따로 쟀더니, 초를 가장 많이 줄인 것은 Cache 하나였고 병렬화는 중앙값과 꼬리를 반대 방향으로 움직였습니다. Volume/Snapshot 조회 성능 개선 연작 01.",
           title_ja: "ボリューム一覧の P99 が 10 分の Timeout → 23ms になりました",
           desc_ja: "管理ボリューム一覧が 6 回に 5 回 Timeout しました。直したあと構成を 6 通りに分けて同じ負荷で測ると、秒を最も減らしたのは Cache 1 つで、並列化は中央値と裾を逆方向に動かしました。連載「遅い画面」①。",
           date: "2026-09", dateLabel: "Sep 2026",
@@ -787,8 +919,8 @@
           title: "Going Parallel Made the Volume List p99 1.85 Times Worse",
           url: "writing/parallelism-made-the-tail-worse.html",
           source: "company", sourceLabel: "Company work",
-          title_ko: "Volume 목록을 병렬로 바꾸자 P99가 1.85배 나빠졌습니다",
-          desc_ko: "Cache 설정을 고정한 채 순차를 병렬로 바꾸니 P99가 42.6s에서 79.0s로 나빠졌습니다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다. 여섯 구성을 같은 조건으로 재고 나서야 보였습니다. 연작 ‘느린 화면’ ⑤.",
+          title_ko: "Volume/Snapshot 조회 성능 개선 02. 병렬 조회 P99 악화: 공유 Thread Pool 포화와 CallerRunsPolicy의 Request Thread 실행",
+          desc_ko: "Cache 설정을 고정한 채 순차를 병렬로 바꾸니 P99가 42.6s에서 79.0s로 나빠졌습니다. computeIfAbsent 안에서 외부 API를 부르면 그 자리가 잠깁니다. 여섯 구성을 같은 조건으로 재고 나서야 보였습니다. Volume/Snapshot 조회 성능 개선 연작 02.",
           title_ja: "ボリューム一覧を並列にしたら P99 が 1.85 倍悪化しました",
           desc_ja: "キャッシュ設定を固定したまま逐次を並列に変えると、p99 が 42.6 秒から 79.0 秒へ悪化した。computeIfAbsent の中で外部 API を呼ぶとそのビンがロックされる。6 構成を同条件で測って初めて見えたこと。連載「遅い画面」⑤。",
           date: "2026-09", dateLabel: "Sep 2026",
@@ -824,13 +956,13 @@
           tags: ["IaaS Backend", "Performance", "Backend", "Method"]
         },
         {
-          title: "Ten Bugs, Zero Failed Tests",
+          title: "Why Every Kubernetes GPU Scheduling Test Passed With the Implementation as Its Oracle",
           url: "writing/bugs-that-return-exit-code-zero.html",
           source: "side", sourceLabel: "Personal project",
-          title_ko: "결함 10건, 실패한 테스트 0건",
-          desc_ko: "멀티테넌트 GPU 스케줄링용 쿠버네티스 오퍼레이터와 Gateway를 일주일 검증하며 결함 10건을 찾았고 어느 것도 테스트를 실패시키거나 0이 아닌 종료 코드를 내지 않았습니다. 아홉은 옳아 보이는 결과를 읽다가, 하나는 산출물이 스스로 모순되면서 나왔습니다. 우연이었던 관측 합의, 객체를 지울 수 없게 만들 수 있었던 웹훅, 그리고 테스트 스위트가 볼 수 없었던 O(N) 비용을 자세히 봅니다.",
+          title_ko: "왜 Implementation을 Oracle로 삼은 Kubernetes GPU Scheduling Test는 모두 통과했나",
+          desc_ko: "Multi-tenant GPU Scheduling Kubernetes Operator와 Gateway를 일주일 검증하며 결함 10건을 찾았지만, 어느 것도 Test를 실패시키지 않았습니다. Test의 Oracle이 Spec이 아니라 코드의 현재 Implementation이었기 때문입니다.",
           date: "2026-08", dateLabel: "Aug 2026",
-          desc: "Control-plane verification on a Kubernetes GPU operator. What each defect broke, how it was found, and the guard that now holds it.",
+          desc: "A week of verifying a multi-tenant GPU Scheduling Kubernetes Operator and Gateway turned up ten defects, yet none of them failed a Test. The Test's Oracle was the code's current Implementation, not the Spec.",
           tags: ["GPUaaS Control Plane", "Kubernetes", "Observability", "GPU"]
         }
       ]
@@ -1124,7 +1256,7 @@
     );
   }
 
-  /* 섹션 인덱스는 **행**으로 그린다.
+  /* 섹션 Index는 **행**으로 그린다.
      카드 격자였을 때는 열세 장이 전부 같은 무게로 서 있고 카드마다 요약이 네댓 줄이라
      "먼저 읽을 것"이 보이지 않았다. 행으로 바꾸면 제목이 왼쪽 한 줄로 정렬돼 훑는 축이 하나가
      되고 요약을 한 줄로 자르면 행 높이가 균일해져 눈이 흔들리지 않는다. 테두리도 사라진다.
@@ -1429,7 +1561,7 @@
 
     /* 관련 글은 **주제**로 고른다(사용자 지시, 2026-09-12).
        예전에는 `source` 가 같은 글 넷을 그냥 잘라 왔다. 「회사 업무」가 같다는 것은 주제가
-       아니라 출처라, 볼륨 목록 글 옆에 프라이버시 보장선 글이 붙었다. 태그가 겹치는 수로
+       아니라 출처라, Volume 목록 글 옆에 프라이버시 보장선 글이 붙었다. 태그가 겹치는 수로
        줄을 세우고 겹치는 것이 없을 때만 같은 출처로 내려간다. */
     /* 겹치는 태그를 그냥 세면 **흔한 태그가 이긴다.** `#Method` 는 거의 모든 글에 붙어 있어서
        그것 하나만 겹치는 글 넷이 올라왔다. 태그마다 **드문 정도**로 무게를 준다. */

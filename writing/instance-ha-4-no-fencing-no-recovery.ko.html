@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Instance HA ④: 펜싱 대신 프로세스를 종료하고 있었습니다 | Kwanghun Lee</title>
+  <title>Instance HA 04. Process 종료만으로는 Fencing이 아니다 | Kwanghun Lee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
   <!-- og:start -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Kwanghun Lee" />
-  <meta property="og:title" content="Instance HA ④: 펜싱 대신 프로세스를 종료하고 있었습니다" />
-  <meta property="og:description" content="원본이 살아 있는데 복제본이 같은 볼륨에 붙으면 파일시스템이 깨집니다. 그래서 설계는 전원을 내리고 내려갔는지 확인한 뒤에만 옮기라고 요구했습니다. 그런데 현재 구현에는 그 확인이 없고 대신 노드 자신이 장애를 확정했을 때 로컬 VM 프로세스를 종료하는 장치가 들어가 있습니다." />
+  <meta property="og:title" content="Instance HA 04. Process 종료만으로는 Fencing이 아니다" />
+  <meta property="og:description" content="원본이 살아 있는데 복제본이 같은 볼륨에 붙으면 파일시스템이 깨집니다. 그래서 설계는 전원을 내리고 내려갔는지 확인한 뒤에만 옮기라고 요구했습니다. 그런데 현재 구현에는 그 확인이 없고 대신 Node 자신이 장애를 확정했을 때 로컬 VM Process를 종료하는 장치가 들어가 있습니다." />
   <meta property="og:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -26,10 +26,10 @@
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:locale:alternate" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Instance HA ④: 펜싱 대신 프로세스를 종료하고 있었습니다" />
-  <meta name="twitter:description" content="설계는 전원 확인을 요구했고 구현은 프로세스를 종료합니다. 그 차이를 그대로 적었습니다." />
+  <meta name="twitter:title" content="Instance HA 04. Process 종료만으로는 Fencing이 아니다" />
+  <meta name="twitter:description" content="설계는 전원 확인을 요구했고 구현은 Process를 종료합니다. 그 차이를 그대로 적었습니다." />
   <meta name="twitter:image" content="https://lkhun9311.github.io/assets/og-cover.png" />
-  <meta name="description" content="원본이 살아 있는데 복제본이 같은 볼륨에 붙으면 파일시스템이 깨집니다. 그래서 설계는 전원을 내리고 내려갔는지 확인한 뒤에만 옮기라고 요구했습니다. 그런데 현재 구현에는 그 확인이 없고 대신 노드 자신이 장애를 확정했을 때 로컬 VM 프로세스를 종료하는 장치가 들어가 있습니다." />
+  <meta name="description" content="원본이 살아 있는데 복제본이 같은 볼륨에 붙으면 파일시스템이 깨집니다. 그래서 설계는 전원을 내리고 내려갔는지 확인한 뒤에만 옮기라고 요구했습니다. 그런데 현재 구현에는 그 확인이 없고 대신 Node 자신이 장애를 확정했을 때 로컬 VM Process를 종료하는 장치가 들어가 있습니다." />
   <!-- og:end -->
   <link rel="stylesheet" href="../assets/styles.css?v=cef8b49cf1" />
 </head>
@@ -72,7 +72,7 @@
         <div class="article-meta"><span class="source-tag company notranslate">회사 업무</span><a class="project-tag notranslate" href="../writing/index.html?tag=IaaS%20Backend">#IaaS 백엔드</a></div>
       </div>
       <section class="page-hero">
-        <h1>Instance HA ④: 펜싱 대신 프로세스를 종료하고 있었습니다<br><span class="h1-sub">설계는 전원이 내려간 것을 확인한 뒤에만 옮기라고 했습니다. 구현에는 그 확인이 없고 대신 다른 장치가 들어가 있습니다.</span></h1>
+        <h1>Instance HA 04. Process 종료만으로는 Fencing이 아니다</h1>
         <p class="article-date">2026년 9월</p>
       </section>
       <aside class="article-aside" data-aside="writing" data-slug="instance-ha-4-no-fencing-no-recovery"></aside>
@@ -88,7 +88,7 @@
             <li><a href="#전원-확인">명령과 확인 사이에 5초를 넣었습니다</a></li>
             <li><a href="#storage-정리">Storage 유형마다 정리 조건이 다릅니다</a></li>
             <li><a href="#구현은-다릅니다">구현에는 그 확인이 없습니다</a></li>
-            <li><a href="#프로세스-종료">대신 노드가 자기 VM을 종료합니다</a></li>
+            <li><a href="#Process-종료">대신 Node가 자기 VM을 종료합니다</a></li>
             <li><a href="#주장하지-않는-것">한계: 이 글이 주장하지 않는 것</a></li>
             <li><a href="#마치며">마치며</a></li>
           </ul>
@@ -116,7 +116,7 @@
 
         <h2 id="설계가-요구한-것">설계는 확인 없이는 옮기지 말라고 했습니다<a class="anchor" href="#설계가-요구한-것" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>복구는 VM을 다른 호스트에서 다시 띄우는 일입니다. 원본이 죽지 않았는데 재기동된 쪽이 같은 볼륨에
+        <p>복구는 VM을 다른 Host에서 다시 띄우는 일입니다. 원본이 죽지 않았는데 재기동된 쪽이 같은 볼륨에
         붙어 두 쪽이 동시에 쓰도록 허용되면 <strong>깨지는 것은 VM 하나가 아니라 볼륨 전체가 될 수
         있습니다.</strong></p>
 
@@ -161,34 +161,34 @@
         영향을 주기 시작합니다. 그중에서도 되돌릴 수 없는 것은 맨 끝의 Recover입니다.</p>
 
         <p>그리고 전원을 내릴 경로가 장애와 함께 끊기면 원칙 자체가 성립하지 않습니다. 그래서 전용 물리
-        스위치를 전제 조건으로 요구했습니다.</p>
+        Switch를 전제 조건으로 요구했습니다.</p>
 
         <figure class="diagram">
           <svg viewBox="0 0 720 250" role="img" aria-labelledby="bmc-t bmc-d" class="figure-svg">
             <title id="bmc-t">BMC 결선 세 구성과 장애 때의 결과</title>
-            <desc id="bmc-d">BMC와 관리망이 같은 스위치이거나 VLAN으로만 나뉜 구성은 스위치가 죽을 때 전원을 내릴 경로까지 함께 사라집니다. 전용 물리 스위치만 남습니다.</desc>
+            <desc id="bmc-d">BMC와 관리망이 같은 Switch이거나 VLAN으로만 나뉜 구성은 Switch가 죽을 때 전원을 내릴 경로까지 함께 사라집니다. 전용 물리 Switch만 남습니다.</desc>
             <g font-family="Inter, sans-serif">
               <rect x="40" y="45" width="290" height="46" rx="8" fill="none" stroke="#d62976" stroke-width="1.7"/>
-              <text x="185" y="73" font-size="11" fill="#d62976" text-anchor="middle">BMC와 MGMT 같은 스위치</text>
+              <text x="185" y="73" font-size="11" fill="#d62976" text-anchor="middle">BMC와 MGMT 같은 Switch</text>
               <text x="530" y="73" font-size="11" fill="#d62976" text-anchor="middle">IPMI 동시 차단</text>
               <rect x="40" y="115" width="290" height="46" rx="8" fill="none" stroke="#d62976" stroke-width="1.7"/>
               <text x="185" y="143" font-size="11" fill="#d62976" text-anchor="middle">BMC VLAN 분리</text>
-              <text x="530" y="143" font-size="11" fill="#d62976" text-anchor="middle">스위치 소실 시 VLAN 소실</text>
+              <text x="530" y="143" font-size="11" fill="#d62976" text-anchor="middle">Switch 소실 시 VLAN 소실</text>
               <rect x="40" y="185" width="290" height="46" rx="8" fill="none" stroke="#2e9e5b" stroke-width="1.7"/>
-              <text x="185" y="213" font-size="11" fill="#2e9e5b" text-anchor="middle">BMC 전용 물리 스위치</text>
+              <text x="185" y="213" font-size="11" fill="#2e9e5b" text-anchor="middle">BMC 전용 물리 Switch</text>
               <text x="530" y="213" font-size="11" fill="#2e9e5b" text-anchor="middle">MGMT 차단 · IPMI 유지</text>
             </g>
           </svg>
-          <figcaption>VLAN 분리는 논리적 분리라 스위치가 통째로 죽는 경우를 막지 못합니다.</figcaption>
+          <figcaption>VLAN 분리는 논리적 분리라 Switch가 통째로 죽는 경우를 막지 못합니다.</figcaption>
         </figure>
 
         <h2 id="전원-확인">명령과 확인 사이에 5초를 넣었습니다<a class="anchor" href="#전원-확인" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>Fence 단계에서 가장 틀리기 쉬운 자리가 여기입니다. <strong>전원을 내린 직후에 상태를 조회하면
-        아직 off가 아닙니다.</strong> 명령이 전달되는 것과 실제로 전원이 내려가는 것 사이에 시간이 있기
-        때문입니다.</p>
+        <p>Fence 단계에서는 전원 차단 명령 직후에 상태를 확인하는 실수를 하기 쉽습니다. <strong>명령을 보낸
+        직후에는 상태를 조회해도 아직 off가 아닙니다.</strong> 명령이 전달되는 것과 실제로 전원이 내려가는
+        것 사이에 시간이 있기 때문입니다.</p>
 
-        <pre data-lang="shell"><code># BMC 전용 물리 스위치 경로로 전원을 내린다
+        <pre data-lang="shell"><code># BMC 전용 물리 Switch 경로로 전원을 내린다
 ipmitool chassis power off
 
 # 최소 5초 대기. 즉시 조회하면 아직 off 가 아니다
@@ -200,13 +200,14 @@ ipmitool chassis power status
 # Storage 유형별 잔여 연결 정리를 확인한 뒤에야
 # Nova Evacuate 로 넘어간다</code></pre>
 
-        <p>대기를 빼면 두 방향으로 틀립니다. 멀쩡히 동작한 Fencing을 실패로 읽어 복구를 막거나, 반대로
-        낙관적으로 넘어가 내려가지도 않은 서버의 VM을 옮깁니다. 5초는 하한이고 상한은 따로 둡니다.</p>
+        <p>대기 시간을 두지 않으면 두 가지 문제가 생깁니다. 정상적으로 진행 중인 Fencing을 실패로 판단해
+        복구를 막거나, 반대로 서버가 아직 꺼지지 않았는데도 VM을 옮겨 버립니다. 5초는 하한이고 상한은
+        따로 둡니다.</p>
 
         <h2 id="storage-정리">Storage 유형마다 정리 조건이 다릅니다<a class="anchor" href="#storage-정리" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>전원이 내려갔다고 해서 바로 옮길 수 있는 것은 아닙니다. 원본이 잡고 있던 연결이 정리돼야 하고
-        그 방법이 Storage 유형마다 다릅니다.</p>
+        <p>전원이 내려갔다고 해서 바로 옮길 수 있는 것은 아닙니다. 원본 VM이 잡고 있던 스토리지 연결을
+        먼저 정리해야 하는데, 확인하고 정리할 대상이 Storage 유형마다 다릅니다.</p>
 
         <div class="table-scroll">
           <p class="table-scroll-hint">가로로 스크롤하면 나머지가 보입니다</p>
@@ -219,8 +220,8 @@ ipmitool chassis power status
           </div>
         </div>
 
-        <p class="table-note">네 줄을 한 줄로 묶지 않은 이유는 확인 대상이 서로 다른 층에 있기 때문입니다.
-        전송 규약과 Volume 계층과 관리 서비스가 섞여 있어 하나의 조건으로는 덮이지 않습니다.</p>
+        <p class="table-note">네 항목을 한 줄로 묶지 않은 이유는 확인하는 시스템 계층이 서로 다르기 때문입니다.
+        전송 규약, Volume 계층, 관리 서비스에서 각각 상태를 확인해야 해서 하나의 조건으로는 덮이지 않습니다.</p>
 
         <h2 id="구현은-다릅니다">구현에는 그 확인이 없습니다<a class="anchor" href="#구현은-다릅니다" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -266,7 +267,7 @@ ipmitool chassis power status
           <table>
             <caption class="sr-only">설계 요소가 코드에 어디까지 들어갔나.</caption>
             <thead><tr><th>설계 요소</th><th>상태</th><th>코드에서 확인되는 것</th></tr></thead>
-            <tbody><tr><td>관측자가 자기 상태를 먼저 본다</td><td>활성</td><td>복구 배치가 자기 노드 상태를 먼저 확인하고 비정상이면 복구를 넘김</td></tr><tr><td>복구 대상 선별 두 겹</td><td>활성</td><td>호스트 제어 속성과 Instance 메타데이터를 함께 사용</td></tr><tr><td>복구 방식 미설정 시 차단</td><td>활성</td><td>방식이 없으면 복구를 건너뜀</td></tr><tr><td>Fencing</td><td><strong>골격만 · 비활성</strong></td><td>전원 대기와 재시도 설정이 주석 골격으로만 존재</td></tr><tr><td>분산 합의 실행 제어</td><td>골격만 · 비활성</td><td>같은 골격에 딸려 있음</td></tr><tr><td>Phase 1과 Phase 2 분리</td><td>코드에 없음</td><td>해당 구조가 확인되지 않음</td></tr></tbody>
+            <tbody><tr><td>관측자가 자기 상태를 먼저 본다</td><td>활성</td><td>복구 배치가 자기 Node 상태를 먼저 확인하고 비정상이면 복구를 넘김</td></tr><tr><td>복구 대상 선별 두 겹</td><td>활성</td><td>Host 제어 속성과 Instance 메타데이터를 함께 사용</td></tr><tr><td>복구 방식 미설정 시 차단</td><td>활성</td><td>방식이 없으면 복구를 건너뜀</td></tr><tr><td>Fencing</td><td><strong>골격만 · 비활성</strong></td><td>전원 대기와 재시도 설정이 주석 골격으로만 존재</td></tr><tr><td>분산 합의 실행 제어</td><td>골격만 · 비활성</td><td>같은 골격에 딸려 있음</td></tr><tr><td>Phase 1과 Phase 2 분리</td><td>코드에 없음</td><td>해당 구조가 확인되지 않음</td></tr></tbody>
           </table>
           </div>
         </div>
@@ -275,19 +276,19 @@ ipmitool chassis power status
         도입 대기인 쪽이 있어서 그렇게 적었습니다. 전원 대기와 재시도 설정이 주석 골격으로
         들어가 있습니다.</p>
 
-        <h2 id="프로세스-종료">대신 노드가 자기 VM을 종료합니다<a class="anchor" href="#프로세스-종료" aria-label="이 절로 가는 링크">#</a></h2>
+        <h2 id="Process-종료">대신 Node가 자기 VM을 종료합니다<a class="anchor" href="#Process-종료" aria-label="이 절로 가는 링크">#</a></h2>
 
-        <p>그러면 원본이 계속 쓰는 것은 무엇이 막느냐가 남습니다. 답은 노드 자신입니다. 각 노드에서 도는
-        Agent가 스스로 장애를 확정하면 <strong>자기 위에 있는 VM 프로세스를 종료합니다.</strong></p>
+        <p>그러면 원본이 계속 디스크를 쓰는 것은 무엇이 막을까요. 이 구현에서는 Node 자신이 막습니다. 각
+        Node에서 도는 Agent가 스스로 장애를 확정하면 <strong>자기 위에 있는 VM Process를 종료합니다.</strong></p>
 
-        <pre data-lang="text"><code># 노드가 스스로 장애를 확정하는 조건. 어느 하나만 걸려도 장애다
+        <pre data-lang="text"><code># Node가 스스로 장애를 확정하는 조건. 어느 하나만 걸려도 장애다
   관리 쪽에서 상태 확인 요청이 일정 시간 오지 않음
   지정된 Gateway 로 ping 이 닿지 않음
   지정된 IP 와 Port 로 TCP 연결이 되지 않음
   지정된 Network Interface 가 up 이 아니거나 loopback 임
 
 # 확정이 일정 시간 이어지면
-  자기 위의 VM 프로세스를 찾아 종료
+  자기 위의 VM Process를 찾아 종료
   단, 이주 중으로 표시된 VM 은 제외</code></pre>
 
         <p>조건은 네 가지이고 어느 하나만 걸려도 장애로 봅니다. 관리 쪽 요청이 끊긴 것, Gateway에 ping이
@@ -295,8 +296,8 @@ ipmitool chassis power status
 
         <figure class="diagram">
           <svg viewBox="0 0 720 215" role="img" aria-labelledby="kill-t kill-d" class="figure-svg">
-            <title id="kill-t">장애 확정 뒤의 프로세스 종료와 이주 이벤트</title>
-            <desc id="kill-d">노드가 장애를 확정하면 잠시 기다린 뒤 자기 위의 VM 프로세스를 종료합니다. 그 사이에 이주 시작 이벤트가 오면 해당 VM은 종료 제외 목록에 들어가고 이주가 끝나면 목록에서 빠집니다.</desc>
+            <title id="kill-t">장애 확정 뒤의 Process 종료와 이주 이벤트</title>
+            <desc id="kill-d">Node가 장애를 확정하면 잠시 기다린 뒤 자기 위의 VM Process를 종료합니다. 그 사이에 이주 시작 이벤트가 오면 해당 VM은 종료 제외 목록에 들어가고 이주가 끝나면 목록에서 빠집니다.</desc>
             <g font-family="Inter, sans-serif">
               <path d="M50 80 H 670" stroke="#666" stroke-width="1.3" fill="none"/>
               <circle cx="110" cy="80" r="5" fill="#d62976"/>
@@ -304,7 +305,7 @@ ipmitool chassis power status
               <circle cx="330" cy="80" r="5" fill="#666"/>
               <text x="330" y="62" font-size="10" fill="#666" text-anchor="middle">대기</text>
               <circle cx="560" cy="80" r="5" fill="#d62976"/>
-              <text x="560" y="62" font-size="10" fill="#d62976" text-anchor="middle">프로세스 종료</text>
+              <text x="560" y="62" font-size="10" fill="#d62976" text-anchor="middle">Process 종료</text>
               <rect x="240" y="120" width="300" height="34" rx="7" fill="none" stroke="#2e9e5b" stroke-width="1.6"/>
               <text x="390" y="142" font-size="10.5" fill="#2e9e5b" text-anchor="middle">이주 시작 · 종료 제외 목록에 추가</text>
               <rect x="240" y="168" width="300" height="34" rx="7" fill="none" stroke="#5b7fa6" stroke-width="1.6"/>
@@ -318,8 +319,8 @@ ipmitool chassis power status
         <p>그런데 종료가 이주보다 빠를 수 있습니다. 옮기는 중인 VM을 종료해 버리면 복구가 실패합니다.
         그래서 이주 시작과 완료를 메시지로 받아 <strong>종료 제외 목록을 따로 둡니다.</strong></p>
 
-        <p>이 장치는 전원 차단과 같은 것이 아닙니다. 노드가 자기 상태를 잘못 읽으면 종료도 일어나지
-        않습니다. 전원 차단은 밖에서 확인하지만 이것은 안에서 판단합니다.</p>
+        <p>Agent가 VM을 종료하는 이 방식은 밖에서 상태를 확인하는 전원 차단과는 다릅니다. Node 내부의
+        판단에 기대므로, Node가 자기 상태를 잘못 읽으면 종료 자체가 일어나지 않습니다.</p>
 
         <h2 id="주장하지-않는-것">한계: 이 글이 주장하지 않는 것<a class="anchor" href="#주장하지-않는-것" aria-label="이 절로 가는 링크">#</a></h2>
 
@@ -330,14 +331,14 @@ ipmitool chassis power status
           기록으로 확인한 것이 아닙니다.</li>
           <li>5초는 제안값입니다. 장비별로 전원이 내려가는 시간을 재서 고른 값이 아닙니다.</li>
           <li>Storage 네 항목은 배타적인 분류가 아닙니다. 한 구성에서 둘이 함께 나타날 수 있습니다.</li>
-          <li>사내 자료라 제품명과 고객사와 주소와 계정과 호스트명은 쓰지 않았습니다.</li>
+          <li>사내 자료라 제품명과 고객사와 주소와 계정과 Host명은 쓰지 않았습니다.</li>
         </ul>
 
         <div class="wrapup">
         <h2 id="마치며">마치며<a class="anchor" href="#마치며" aria-label="이 절로 가는 링크">#</a></h2>
         <p>이 편의 결론은 한 줄입니다. <strong>설계가 요구한 것과 구현이 하는 것을 같은 문장으로 적으면
         읽는 사람이 속습니다.</strong> 이전 판의 제목이 그랬고 그래서 제목부터 바꿨습니다.</p>
-        <p>가장 위험한 차이는 하나입니다. 전원 차단은 밖에서 확인하고 프로세스 종료는 안에서 판단합니다.
+        <p>가장 위험한 차이는 하나입니다. 전원 차단은 밖에서 확인하고 Process 종료는 안에서 판단합니다.
         관측자가 자기를 잘못 읽으면 두 번째 방법은 작동하지 않습니다.</p>
         <p>다음 편은 이 절차를 누가 실행할지 정하는 이야기입니다.</p>
         <p>읽어 주셔서 감사합니다.</p>
@@ -351,7 +352,7 @@ ipmitool chassis power status
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=bec7a51a41"></script>
+  <script src="../assets/content.js?v=24429b3983"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script defer src="../assets/highlight.js?v=d4af83b541"></script>

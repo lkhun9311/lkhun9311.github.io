@@ -81,7 +81,7 @@
         <h2 id="무엇">개요<a class="anchor" href="#무엇" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p><strong>Swap은 RAM이 모자랄 때 페이지를 디스크로 내려두는 자리입니다.</strong>
-        내려가면 Swap Out, 다시 필요해서 올라오면 Swap In입니다. 프로세스는 그 사이를 모릅니다.
+        내려가면 Swap Out, 다시 필요해서 올라오면 Swap In입니다. Process는 그 사이를 모릅니다.
         읽기 1건의 비용만 조용히 바뀝니다.</p>
 
         <p>Swap은 메모리를 늘려 주는 장치처럼 보이지만 늘어난 것은 <strong>주소 공간</strong>이지 속도가 아닙니다.
@@ -119,14 +119,14 @@
         페이지로 가득 차 있어도 숫자는 똑같이 8.0GiB입니다.</p>
 
         <p>지금 느린 이유가 Swap이라고 말하려면 <strong>오가는 양</strong>을 재야 합니다.
-        <code>vmstat</code>의 <code>si</code>·<code>so</code>가 초당 몇 KiB인지, 문제의 프로세스에
+        <code>vmstat</code>의 <code>si</code>·<code>so</code>가 초당 몇 KiB인지, 문제의 Process에
         major page fault가 초당 몇 건 나는지입니다. 이 둘이 없으면 남는 것은
-        「꽉 차 있었다」와 「비웠더니 빨라졌다」 두 사실이고 그 사이는 짐작입니다.</p>
+        [꽉 차 있었다]와 [비웠더니 빨라졌다] 두 사실이고 그 사이는 짐작입니다.</p>
 
         <h2 id="끄기">끄는 명령은 되돌릴 준비를 하고 씁니다<a class="anchor" href="#끄기" aria-label="이 절로 가는 링크">#</a></h2>
 
         <p><code>swapoff -a</code>는 Swap에 있던 것을 <strong>전부 RAM으로 끌어올립니다.</strong>
-        그만한 자리가 없으면 명령이 실패하거나 커널이 OOM killer로 프로세스를 죽입니다.
+        그만한 자리가 없으면 명령이 실패하거나 커널이 OOM killer로 Process를 죽입니다.
         먼저 볼 것은 <code>free -h</code>의 <code>available</code>이고 이 값이 Swap의 used보다 커야 합니다.</p>
 
         <p><code>swapoff -a &amp;&amp; swapon -a</code>에는 함정이 하나 더 있습니다. 장치가 여럿이면 일부만 꺼진 채
@@ -136,7 +136,7 @@
         <h2 id="쓰인-곳">이 사이트에서 쓰인 곳<a class="anchor" href="#쓰인-곳" aria-label="이 절로 가는 링크">#</a></h2>
 
         <ul class="callout">
-          <li><a href="../writing/slow-screens-2-instance-list.ko.html">Instance 목록 조회가 54s → 1s로 줄었습니다</a></li>
+          <li><a href="../writing/slow-screens-2-instance-list.ko.html">Instance 목록 조회 지연: Swap 포화와 soft-delete로 남은 1,021행</a></li>
         </ul>
 
       </article>
@@ -149,7 +149,7 @@
 
   <script>window.CONTENT_BASE = "../";</script>
   <script src="../assets/i18n.js?v=e0fa0917be"></script>
-  <script src="../assets/content.js?v=bec7a51a41"></script>
+  <script src="../assets/content.js?v=24429b3983"></script>
   <script src="../assets/lang.js?v=905b81f32a"></script>
   <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script>

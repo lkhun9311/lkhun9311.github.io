@@ -6,9 +6,12 @@
 부제가 「…하나만 고칩니다. 출시 전 소셜 투표 플랫폼 점검」 꼴이었다. 뒤쪽은 서술어가 없어
 문장이 아니고, 문장 뒤에 그냥 붙어 있어 부제로 읽히지 않는다.
 
-  1) 모든 글에 머리의 `<a class="project-tag">#프로젝트</a>` 와
-     `<h1>제목<br><span class="h1-sub">…</span></h1>`
-  2) 부제는 **문장으로 끝난다** — 한국어는 `다.`/`요.`, 영어는 `.`, 일본어는 `。`
+  1) 모든 글에 머리의 `<a class="project-tag">#프로젝트</a>`
+  1b) 제목은 **한 줄로 완결**한다 — 부제(`h1-sub`)는 두지 않는다(CLAUDE.md 제목 규칙 1).
+      ⚠️ 2026-09-12 에는 이 검사기가 부제를 **전원에게 요구**했다. 그 뒤 규약이 뒤집혔고
+      검사기만 따라가지 못해 **폐기된 요구사항이 42건의 진단**을 만들고 있었다. 지금은
+      `SUBTITLE_GRANDFATHERED` 가 전환 전 파일을 유예하고, 그 밖에서는 부제가 실패다.
+  2) 유예된 부제는 **문장으로 끝난다** — 한국어는 `다.`/`요.`, 영어는 `.`, 일본어는 `。`
   3) 부제 안에 맥락 표지가 다시 들어 있으면 안 된다 (‘사내 …’·‘A personal project…’)
   4) 프로젝트 태그는 **하나**이고 `#` 으로 시작한다
   5) 태그가 `<a>` 면 가리키는 파일이 실제로 있어야 한다 — 누를 수 있게 보이면 눌린다
@@ -26,6 +29,108 @@ CTX_IN_SUB = {
     "ja": re.compile(r"(社内クラウド管理コンソール|個人プロジェクト|連載「)"),
 }
 END = {"ko": re.compile(r"[다요]\.$"), "en": re.compile(r"[.?]$"), "ja": re.compile(r"[。]$")}
+
+# 「부제 없음」으로 전환하기 **전**에 쓰인 파일들이다. 부제를 아직 들고 있고, 이번 주에
+# 일괄 재작성하지 않는다 — 전환은 글을 손볼 때 함께 한다.
+#
+# 목록을 두는 이유는 필수 검사를 그냥 지우면 **부제가 선택사항이 되기** 때문이다. 그러면
+# 「부제 없음」을 구현한 것이 아니라 아무것도 보지 않게 된다. 그래서 두 방향을 본다 —
+#   목록 밖에 부제가 생기면  : 신규 도입·복원이므로 실패
+#   목록 안에 부제가 없으면  : 전환을 마쳤다는 뜻이므로 목록에서 지우라고 실패
+# 뒤쪽이 없으면 목록이 조용히 낡아 「안 걸림」과 「통과」를 구분할 수 없게 된다.
+SUBTITLE_GRANDFATHERED = {
+    "a-pooler-fixes-only-one.html",
+    "a-pooler-fixes-only-one.ja.html",
+    "a-pooler-fixes-only-one.ko.html",
+    "a-schedule-that-failed-in-silence.html",
+    "a-schedule-that-failed-in-silence.ja.html",
+    "every-guarantee-ends-at-a-writable-field.html",
+    "every-guarantee-ends-at-a-writable-field.ja.html",
+    "every-guarantee-ends-at-a-writable-field.ko.html",
+    "four-fixes-that-were-not-there.html",
+    "four-fixes-that-were-not-there.ja.html",
+    "four-fixes-that-were-not-there.ko.html",
+    "gpu-node-readiness.html",
+    "gpu-node-readiness.ko.html",
+    "gpu-quota-control-plane.html",
+    "gpu-quota-control-plane.ko.html",
+    "iaas-backend-performance.html",
+    "instance-ha-2-what-each-signal-can-say.html",
+    "instance-ha-2-what-each-signal-can-say.ja.html",
+    "instance-ha-4-no-fencing-no-recovery.html",
+    "instance-ha-4-no-fencing-no-recovery.ja.html",
+    "instance-ha-5-quorum-does-not-cut-power.html",
+    "instance-ha-5-quorum-does-not-cut-power.ja.html",
+    "instance-ha-6-100-seconds-is-a-service-decision.html",
+    "instance-ha-6-100-seconds-is-a-service-decision.ja.html",
+    "monitoring-empty-is-not-zero.html",
+    "monitoring-empty-is-not-zero.ja.html",
+    "monitoring-one-shared-cache.html",
+    "monitoring-one-shared-cache.ja.html",
+    "monitoring-the-screen-i-said-not-to-fix.html",
+    "monitoring-the-screen-i-said-not-to-fix.ja.html",
+    "monitoring-three-races-in-one-cache.html",
+    "monitoring-three-races-in-one-cache.ja.html",
+    "monitoring-two-gates-one-screen.html",
+    "monitoring-two-gates-one-screen.ja.html",
+    "parallelism-made-the-tail-worse.html",
+    "parallelism-made-the-tail-worse.ja.html",
+    "recovery-host-must-have-the-device.html",
+    "recovery-host-must-have-the-device.ja.html",
+    "refusal-paths-exercised-for-real.html",
+    "refusal-paths-exercised-for-real.ja.html",
+    "refusal-paths-exercised-for-real.ko.html",
+    "seven-of-eight-should-not-recover.html",
+    "seven-of-eight-should-not-recover.ja.html",
+    "slow-screens-1-volume-list.html",
+    "slow-screens-1-volume-list.ja.html",
+    "slow-screens-2-instance-list.html",
+    "slow-screens-2-instance-list.ja.html",
+    "slow-screens-3-role-lookup.html",
+    "slow-screens-3-role-lookup.ja.html",
+    "slow-screens-4-client-per-loop.html",
+    "slow-screens-4-client-per-loop.ja.html",
+    "slow-screens-7-nothing-to-fix.html",
+    "slow-screens-7-nothing-to-fix.ja.html",
+    "slow-screens-8-load-test-harness.html",
+    "slow-screens-8-load-test-harness.ja.html",
+    "the-40-gib-that-did-not-move.html",
+    "the-40-gib-that-did-not-move.ja.html",
+    "the-40-gib-that-did-not-move.ko.html",
+    "the-ceiling-was-not-in-the-code.html",
+    "the-ceiling-was-not-in-the-code.ja.html",
+    "the-ceiling-was-not-in-the-code.ko.html",
+    "the-dependency-only-the-tests-installed.html",
+    "the-dependency-only-the-tests-installed.ja.html",
+    "the-dependency-only-the-tests-installed.ko.html",
+    "the-hard-part-of-ha-was-not-recovery.html",
+    "the-hard-part-of-ha-was-not-recovery.ja.html",
+    "the-history-tab-that-had-a-hole.html",
+    "the-history-tab-that-had-a-hole.ja.html",
+    "the-ladder-that-could-not-be-climbed.html",
+    "the-ladder-that-could-not-be-climbed.ja.html",
+    "the-ladder-that-could-not-be-climbed.ko.html",
+    "the-only-control-that-caught-something.html",
+    "the-only-control-that-caught-something.ja.html",
+    "the-only-control-that-caught-something.ko.html",
+    "the-review-that-skipped-the-big-file.html",
+    "the-review-that-skipped-the-big-file.ja.html",
+    "the-review-that-skipped-the-big-file.ko.html",
+    "three-documents-on-a-false-premise.html",
+    "three-documents-on-a-false-premise.ja.html",
+    "three-documents-on-a-false-premise.ko.html",
+    "twenty-three-runs-one-condition.html",
+    "twenty-three-runs-one-condition.ja.html",
+    "twenty-three-runs-one-condition.ko.html",
+    "until-the-guarantee-was-a-sentence.html",
+    "until-the-guarantee-was-a-sentence.ja.html",
+    "until-the-guarantee-was-a-sentence.ko.html",
+    "validation-failed-is-not-invalid.html",
+    "validation-failed-is-not-invalid.ja.html",
+    "validation-failed-is-not-invalid.ko.html",
+    "what-recovery-leaves-behind.html",
+    "what-recovery-leaves-behind.ja.html",
+}
 
 # content.js 에 실제로 있는 태그 — 「눌러도 안 걸러지는 태그」를 잡으려면 이것이 필요하다.
 TAGS = set(re.findall(r'"([^"]+)"', " ".join(
@@ -113,8 +218,13 @@ def main():
             m2 = re.search(r"tag=([^&]+)", query)
             if m2 and TAGS and urllib.parse.unquote(m2.group(1)) not in TAGS:
                 bad.append("%s: 거르지 못하는 태그를 가리킨다 — %s" % (b, m2.group(1)))
+        if b not in SUBTITLE_GRANDFATHERED:
+            # 전환을 마친 파일과 새 글. 부제가 **없는 것**이 통과다.
+            if sub:
+                bad.append("%s: 부제(h1-sub)를 새로 뒀다 — 현행 규약은 부제 없음이다" % b)
+            continue
         if not sub:
-            bad.append("%s: 부제(h1-sub)가 없다" % b)
+            bad.append("%s: 부제를 지웠으면 SUBTITLE_GRANDFATHERED 에서도 지워라" % b)
             continue
         t = re.sub(r"<[^>]+>", "", sub.group(1)).strip()
         if not END[lang].search(t):
