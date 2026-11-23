@@ -3,7 +3,11 @@
  * Two mechanisms live behind one <select>, and conflating them is the bug this file exists to prevent.
  *
  *   ko / en / ja   pages written by hand. The picker NAVIGATES to them.
- *   everything else Google's website widget translates the page in place.
+ *   no variant     Google's website widget translates the page in place, between ko, en and ja only.
+ *
+ * The picker used to offer eleven more machine-translated languages.
+ * They are commented out in every page's <select>.
+ * SUPPORTED below is the one list the widget, the cookie and the stored preference obey.
  *
  * Before this file, the picker only ever did the second thing. Choosing "Japanese" on a hand-written
  * Japanese page asked Google to translate ja→ja, and choosing it on the Korean page produced a machine
@@ -83,6 +87,10 @@ if (typeof module !== "undefined" && module.exports) module.exports = LangRoute;
   var PAGE = (document.documentElement.getAttribute("lang") || "en").toLowerCase();
   var I18N_FULL = document.documentElement.getAttribute("data-i18n-full") || "";
 
+  // 사람이 쓴 세 언어만 고를 수 있다.
+  // 위젯은 손으로 쓴 판이 없는 글을 이 셋 사이에서만 옮긴다.
+  var SUPPORTED = ["en", "ko", "ja"];
+
   var picker = document.getElementById("langPicker");
 
   // {"en": "post.html", "ko": "post.ko.html", ...} — the hand-written variants of THIS page.
@@ -126,6 +134,9 @@ if (typeof module !== "undefined" && module.exports) module.exports = LangRoute;
     // A cookie whose source is not this page's language was set somewhere else. Applying it here would
     // translate from a language the page is not written in.
     if (source && source !== PAGE) { clearCookie(); return null; }
+    // 선택기에서 뺀 언어로 남은 쿠키다.
+    // 그대로 두면 위젯이 고를 수 없는 언어로 페이지를 번역한다.
+    if (SUPPORTED.indexOf(target) < 0) { clearCookie(); return null; }
     return target;
   }
 
@@ -138,7 +149,7 @@ if (typeof module !== "undefined" && module.exports) module.exports = LangRoute;
     new google.translate.TranslateElement(
       {
         pageLanguage: PAGE,
-        includedLanguages: "en,ko,ja,zh-CN,zh-TW,es,fr,de,pt,ru,vi,id,hi,ar",
+        includedLanguages: SUPPORTED.join(","),
         autoDisplay: false
       },
       "google_translate_element"
@@ -169,6 +180,10 @@ if (typeof module !== "undefined" && module.exports) module.exports = LangRoute;
      그래서 선호가 비어 있을 때 **지금 읽고 있는 페이지의 언어**를 선호로 적어 둔다.
      이미 기록이 있으면 건드리지 않는다. 덮어쓰면 「영어 전용 페이지를 한 번 들렀다」는 이유로
      한국어 선호가 날아간다. */
+  // 선택기에서 뺀 언어가 선호로 남아 있으면 지운다.
+  // 남겨 두면 선택기에 없는 값을 가리켜 빈 칸으로 보인다.
+  if (readPref() && SUPPORTED.indexOf(String(readPref()).toLowerCase()) < 0) writePref(null);
+
   var seeded = LangRoute.seedPreference(PAGE, readPref());
   if (seeded && seeded !== readPref()) writePref(seeded);
 
@@ -232,7 +247,13 @@ if (typeof module !== "undefined" && module.exports) module.exports = LangRoute;
     // variant map exists. Handing that to the widget would ask Google to translate en→en.
     if (lang === PAGE) {
       clearCookie();
-      if (active) location.reload();
+      // i18n.js 가 이번 로드에서 다른 언어 문자열을 바꿔 끼웠다면 그것도 원문으로 되돌려야 한다.
+      // 예전에는 위젯 번역만 보고 새로 고쳐서, 한국어로 보던 홈에서 English 를 골라도 한국어가 남았다.
+      var swapped = typeof I18N !== "undefined" && I18N.lang && I18N.lang !== PAGE;
+      // `active` 는 로드 시점 값이라, 이번 로드에서 위젯이 막 번역한 것은 모른다.
+      // 그래서 지금의 쿠키와 위젯이 붙이는 class 도 함께 본다.
+      var translatedNow = !!readCookie() || /\btranslated-(ltr|rtl)\b/.test(document.documentElement.className);
+      if (active || swapped || translatedNow) location.reload();
       return;
     }
 
